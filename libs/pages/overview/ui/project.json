@@ -1,0 +1,23 @@
+{
+  "root": "libs/pages/overview/ui",
+  "sourceRoot": "libs/pages/overview/ui/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/pages/overview/ui/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/pages/overview/ui"],
+      "options": {
+        "jestConfig": "libs/pages/overview/ui/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

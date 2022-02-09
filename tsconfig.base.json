@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@console/domains/organizations": ["libs/domains/organizations/src/index.ts"],
+      "@console/domains/user": ["libs/domains/user/src/index.ts"],
+      "@console/pages/login/feature": ["libs/pages/login/feature/src/index.ts"],
+      "@console/pages/login/ui": ["libs/pages/login/ui/src/index.ts"],
+      "@console/pages/overview/feature": ["libs/pages/overview/feature/src/index.ts"],
+      "@console/pages/overview/ui": ["libs/pages/overview/ui/src/index.ts"],
+      "@console/providers/organizations": ["libs/providers/organizations/src/index.ts"],
+      "@console/shared-ui": ["libs/shared/ui/src/index.ts"],
+      "@console/shared/utils": ["libs/shared/utils/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,12 @@
+.env
+node_modules
+.idea
+/.vscode
+dist
+/build
+/coverage
+./test
+.DS_Store
+tmp
+.tool-versions
+/.nx-cache
