@@ -1,0 +1,61 @@
+.text-medium {
+  @apply text-sm leading-5 font-sans;
+}
+
+//
+//@mixin h1($color: $primary, $font-weight: bold, $font-family: $hk) {
+//  @include text(24px, 32px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//}
+//
+//@mixin h2($color: $primary, $font-weight: bold, $font-family: $hk) {
+//  @include text(20px, 24px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//}
+//
+//@mixin h3($color: $primary, $font-weight: normal, $font-family: $hk) {
+//  @include text(18px, 23px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//}
+//
+//@mixin h4($color: $primary, $font-weight: bold, $font-family: $hk) {
+//  @include text(12px, 18px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//  text-transform: uppercase;
+//}
+//
+//@mixin textBody($color: $primary, $font-weight: normal, $font-family: $sf) {
+//  @include text(16px, 24px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//}
+//
+//@mixin textMedium($color: $primary, $font-weight: normal, $font-family: $sf) {
+//  @include text(14px, 20px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//}
+//
+//@mixin textSmall($color: $primary, $font-weight: normal, $font-family: $sf) {
+//  @include text(12px, 18px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//}
+//
+//@mixin textCaption($color: $primary, $font-weight: normal, $font-family: $sf) {
+//  @include text(11px, 16px, $color);
+//  font-weight: $font-weight;
+//  font-family: $font-family;
+//}
+//
+//@mixin a($color: $info) {
+//  @include text(14px, 21px, $color);
+//
+//  &:hover {
+//    color: $link-visited;
+//  }
+//}

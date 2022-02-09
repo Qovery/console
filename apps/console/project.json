@@ -15,7 +15,15 @@
         "main": "apps/console/src/main.tsx",
         "polyfills": "apps/console/src/polyfills.ts",
         "tsConfig": "apps/console/tsconfig.app.json",
-        "assets": ["apps/console/src/favicon.ico", "apps/console/src/assets"],
+        "assets": [
+          "apps/console/src/favicon.ico",
+          "apps/console/src/assets",
+          {
+            "glob": "**/*",
+            "input": "./libs/shared/ui/src/lib/assets",
+            "output": ""
+          }
+        ],
         "styles": ["apps/console/src/styles.scss"],
         "scripts": [],
         "webpackConfig": "@nrwl/react/plugins/webpack"
