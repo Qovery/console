@@ -1,4 +1,3 @@
-import './button.module.css'
 import { Color } from '../../enums/colors.enum'
 import Icon from '../icon/icon'
 import { IconEnum } from '../../enums/icon.enum'
@@ -30,7 +29,14 @@ export interface ButtonProps {
 }
 
 export function Button(props: ButtonProps) {
-  const { children, size = ButtonSize.NORMAL, type = ButtonType.FLAT, color = Color.VIOLET, iconLeft, iconRight } = props
+  const {
+    children,
+    size = ButtonSize.NORMAL,
+    type = ButtonType.FLAT,
+    color = Color.VIOLET,
+    iconLeft,
+    iconRight,
+  } = props
 
   const defineClassName = () => {
     let className = ''
