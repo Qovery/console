@@ -27,7 +27,7 @@ module.exports = {
           900: '#130f66',
         },
         accent1: {
-          50: '#F7DFFE', // need update,
+          50: '#FCF4FF',
           100: '#F7DFFE',
           200: '#EDC0FD',
           300: '#DDA0FA',
@@ -39,7 +39,7 @@ module.exports = {
           900: '#331273',
         },
         accent2: {
-          50: '#CAF5FD', // need update
+          50: '#ECFBFE',
           100: '#CAF5FD',
           200: '#96E6FB',
           300: '#61CDF4',
@@ -51,7 +51,7 @@ module.exports = {
           900: '#002769',
         },
         accent3: {
-          50: '#DAFCF4', // need
+          50: '#F2FEFB',
           100: '#DAFCF4',
           200: '#B6FAEF',
           300: '#8EF2EA',
@@ -63,7 +63,7 @@ module.exports = {
           900: '#0C4166',
         },
         success: {
-          50: '#DAFCDA', // need update
+          50: '#F2FEF2',
           100: '#DAFCDA',
           200: '#B7F9BE',
           300: '#8FEEA2',
@@ -75,7 +75,7 @@ module.exports = {
           900: '#0D604F',
         },
         progressing: {
-          50: '#FFEFCC', // need update
+          50: '#FFF9ED',
           100: '#FFEFCC',
           200: '#FFDA99',
           300: '#FFC066',
@@ -87,7 +87,7 @@ module.exports = {
           900: '#7A2200',
         },
         warning: {
-          50: '#FEF8CC', // need update
+          50: '#FFFDED',
           100: '#FEF8CC',
           200: '#FDEE9A',
           300: '#FBE267',
@@ -99,7 +99,7 @@ module.exports = {
           900: '#755100',
         },
         error: {
-          50: '#FFEBD8', // need update
+          50: '#FFF8F1',
           100: '#FFEBD8',
           200: '#FFD1B2',
           300: '#FFB28C',
@@ -120,29 +120,33 @@ module.exports = {
           700: '#363963',
           800: '#232343',
         },
-        elementLightDarker: {
-          100: '#383E50',
-          200: '#2A3041',
-          300: '#212738',
-          400: '#1A2031',
-          500: '#151B2B',
-          600: '#101420',
-          700: '#0B0E16',
-        },
-        elementLightLighter: {
-          100: '#FFFFFF',
-          200: '#FBFCFD',
-          300: '#F8F9FC',
-          400: '#EDF1F7',
-          500: '#E2E9F3',
-          600: '#C6D3E7',
-          700: '#A0AFC5',
-          800: '#67778E',
-        },
-        elementDark: {
-          400: '#23243C',
-          500: '#292B46',
-          600: '#1D1D31',
+        element: {
+          light: {
+            darker: {
+              100: '#383E50',
+              200: '#2A3041',
+              300: '#212738',
+              400: '#1A2031',
+              500: '#151B2B',
+              600: '#101420',
+              700: '#0B0E16',
+            },
+            lighter: {
+              100: '#FFFFFF',
+              200: '#FBFCFD',
+              300: '#F8F9FC',
+              400: '#EDF1F7',
+              500: '#E2E9F3',
+              600: '#C6D3E7',
+              700: '#A0AFC5',
+              800: '#67778E',
+            },
+          },
+          dark: {
+            400: '#23243C',
+            500: '#292B46',
+            600: '#1D1D31',
+          },
         },
       },
     },
@@ -152,7 +156,7 @@ module.exports = {
   },
   safelist: [
     {
-      pattern: /(bg|border|text|fill)-(violet|red)(-\w+\d+)*/,
+      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success)(-\w+\d+)*/,
       variants: ['focus', 'hover'],
     },
     {
