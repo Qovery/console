@@ -1,0 +1,4 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo 'Formatting commit message' && npx --no-install commitlint --edit "$1"

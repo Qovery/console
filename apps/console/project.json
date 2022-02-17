@@ -20,8 +20,8 @@
           "apps/console/src/assets",
           {
             "glob": "**/*",
-            "input": "./libs/shared/ui/src/lib/assets",
-            "output": ""
+            "input": "libs/shared/ui/src/lib/assets",
+            "output": "/assets"
           }
         ],
         "styles": ["apps/console/src/styles.scss"],
