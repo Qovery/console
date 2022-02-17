@@ -1,14 +1,27 @@
 import axios from 'axios'
 import { Navigate, Routes, Route } from 'react-router-dom'
-import { LOGIN_URL, OVERVIEW_URL, ProtectedRoute, useAuth, SetupInterceptor } from '@console/shared/utils'
+import {
+  LOGIN_URL,
+  OVERVIEW_URL,
+  ONBOARDING_URL,
+  ProtectedRoute,
+  useAuth,
+  SetupInterceptor,
+} from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
+import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { environment } from '../environments/environment'
 
 export const ROUTER = [
   {
     path: LOGIN_URL,
     component: <LoginPage />,
+    protected: false,
+  },
+  {
+    path: `${ONBOARDING_URL}/*`,
+    component: <OnboardingPage />,
     protected: false,
   },
   {

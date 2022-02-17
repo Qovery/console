@@ -1,0 +1,23 @@
+{
+  "root": "libs/pages/onboarding/feature",
+  "sourceRoot": "libs/pages/onboarding/feature/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/pages/onboarding/feature/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/pages/onboarding/feature"],
+      "options": {
+        "jestConfig": "libs/pages/onboarding/feature/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
