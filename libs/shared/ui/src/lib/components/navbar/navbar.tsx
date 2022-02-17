@@ -6,7 +6,7 @@ export function Navbar() {
     <nav className="flex items-center h-16 w-23 bg-element-light-darker-300">
       <div className="h-full">
         <Link to={INDEX_URL} className="flex items-center px-6 border-r border-element-light-darker-100 h-full">
-          <img className="w-[90px]" src="./logos/logo-white.svg" alt="Qovery logo white" />
+          <img className="w-[90px]" src="/assets/logos/logo-white.svg" alt="Qovery logo white" />
         </Link>
       </div>
     </nav>

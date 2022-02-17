@@ -1,61 +1,90 @@
-.text-medium {
-  @apply text-sm leading-5 font-sans;
+// Title
+h1,
+.h1 {
+  font-size: 36px;
+  line-height: 48px;
+  letter-spacing: -0.001em;
+  font-weight: 700;
 }
 
-//
-//@mixin h1($color: $primary, $font-weight: bold, $font-family: $hk) {
-//  @include text(24px, 32px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//}
-//
-//@mixin h2($color: $primary, $font-weight: bold, $font-family: $hk) {
-//  @include text(20px, 24px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//}
-//
-//@mixin h3($color: $primary, $font-weight: normal, $font-family: $hk) {
-//  @include text(18px, 23px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//}
-//
-//@mixin h4($color: $primary, $font-weight: bold, $font-family: $hk) {
-//  @include text(12px, 18px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//  text-transform: uppercase;
-//}
-//
-//@mixin textBody($color: $primary, $font-weight: normal, $font-family: $sf) {
-//  @include text(16px, 24px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//}
-//
-//@mixin textMedium($color: $primary, $font-weight: normal, $font-family: $sf) {
-//  @include text(14px, 20px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//}
-//
-//@mixin textSmall($color: $primary, $font-weight: normal, $font-family: $sf) {
-//  @include text(12px, 18px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//}
-//
-//@mixin textCaption($color: $primary, $font-weight: normal, $font-family: $sf) {
-//  @include text(11px, 16px, $color);
-//  font-weight: $font-weight;
-//  font-family: $font-family;
-//}
-//
-//@mixin a($color: $info) {
-//  @include text(14px, 21px, $color);
-//
-//  &:hover {
-//    color: $link-visited;
-//  }
-//}
+h2,
+.h2 {
+  font-size: 32px;
+  line-height: 48px;
+  letter-spacing: -0.001em;
+  font-weight: 700;
+}
+
+h3,
+.h3 {
+  font-size: 28px;
+  line-height: 40px;
+  letter-spacing: -0.001em;
+  font-weight: 700;
+}
+
+h4,
+.h4 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.001em;
+  font-weight: 700;
+}
+
+h5,
+.h5 {
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -0.001em;
+  font-weight: 700;
+}
+
+// Text
+.text-subtitle {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: 0.0015em;
+}
+
+.text-body {
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.005em;
+}
+
+.text-caption {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.004em;
+  text-transform: uppercase;
+}
+
+.text-overline {
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0.015em;
+}
+
+// Helper
+.ft-100 {
+  font-weight: 100;
+}
+.ft-300 {
+  font-weight: 300;
+}
+.ft-400 {
+  font-weight: 400;
+}
+.ft-500 {
+  font-weight: 500;
+}
+.ft-600 {
+  font-weight: 600;
+}
+.ft-700 {
+  font-weight: 700;
+}
+.ft-900 {
+  font-weight: 900;
+}
