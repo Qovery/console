@@ -1,10 +1,7 @@
-/* eslint-disable-next-line */
-
 import { IconEnum } from '../../enums/icon.enum'
-import Refresh from './icons/refresh'
-import Trash from './icons/trash'
-import Rollback from './icons/rollback'
-
+import GithubIcon from './icons-git/github'
+import GitlabIcon from './icons-git/gitlab'
+import BitbucketIcon from './icons-git/bitbucket'
 export interface IconProps {
   name: IconEnum
   width?: string
@@ -15,18 +12,16 @@ export interface IconProps {
 export function Icon(props: IconProps) {
   const formattedProps = { ...props }
 
-  formattedProps.width = formattedProps.width || '1.25rem'
+  formattedProps.width = formattedProps.width || '1.5rem'
   formattedProps.viewBox = formattedProps.viewBox || '0 0 24 24'
 
   switch (props.name) {
-    case IconEnum.REFRESH:
-      return <Refresh {...formattedProps} />
-    case IconEnum.TRASH:
-      return <Trash {...formattedProps} />
-    case IconEnum.ROLLBACK:
-      return <Rollback {...formattedProps} />
+    case IconEnum.GITHUB:
+      return <GithubIcon {...formattedProps} />
+    case IconEnum.GITLAB:
+      return <GitlabIcon {...formattedProps} />
     default:
-      return <Refresh {...formattedProps} />
+      return <BitbucketIcon {...formattedProps} />
   }
 }
 

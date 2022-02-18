@@ -1,15 +1,29 @@
 import { Navigate } from 'react-router'
-import { Login } from '@console/pages/login/ui'
-import { OVERVIEW_URL, useAuth } from '@console/shared/utils'
+import { LayoutLogin, Login } from '@console/pages/login/ui'
+import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL, OVERVIEW_URL, useAuth } from '@console/shared/utils'
+import { useOrganizations } from '@console/domains/organizations'
 
 export function LoginPage() {
-  const { authLogin, authLogout, isAuthenticated } = useAuth()
+  const { authLogin, isAuthenticated } = useAuth()
+  const { organizations, loadingStatus } = useOrganizations()
 
-  if (isAuthenticated) {
+  if (isAuthenticated && loadingStatus !== 'loaded') {
+    return <></>
+  }
+
+  if (isAuthenticated && organizations.length > 0) {
     return <Navigate to={OVERVIEW_URL} replace />
   }
 
-  return <Login authLogin={authLogin} authLogout={authLogout} />
+  if (isAuthenticated && organizations.length === 0) {
+    return <Navigate to={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`} replace />
+  }
+
+  return (
+    <LayoutLogin>
+      <Login authLogin={authLogin} />
+    </LayoutLogin>
+  )
 }
 
 export default LoginPage

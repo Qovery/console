@@ -12,5 +12,5 @@ const Template: Story<IconProps> = (args) => <Icon {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
-  name: select('Icon', IconEnum, IconEnum.ENVELOPE),
+  name: select('Icon', IconEnum, IconEnum.GITHUB),
 }

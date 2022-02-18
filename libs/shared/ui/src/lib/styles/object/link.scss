@@ -1,0 +1,11 @@
+.link {
+  transition: 0.25s color $timing-cubic;
+
+  &.text-accent2-500 {
+    @apply hover:text-accent2-600;
+  }
+
+  &.text-brand-500 {
+    @apply hover:text-brand-600;
+  }
+}

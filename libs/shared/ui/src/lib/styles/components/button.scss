@@ -1,0 +1,12 @@
+.btn-login {
+  @apply relative h-11 w-full font-medium flex items-center justify-center px-5 rounded-md cursor-pointer text-sm;
+  transition: 0.25s all $timing-cubic;
+}
+
+.btn-login--github {
+  @apply bg-black text-white hover:bg-element-light-darker-400;
+}
+
+.btn-login--default {
+  @apply bg-element-light-lighter-300 text-text-700 border border-element-light-lighter-600 hover:bg-element-light-lighter-400;
+}

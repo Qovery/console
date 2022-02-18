@@ -22,7 +22,7 @@ export const ROUTER = [
   {
     path: `${ONBOARDING_URL}/*`,
     component: <OnboardingPage />,
-    protected: false,
+    protected: true,
   },
   {
     path: OVERVIEW_URL,

@@ -63,3 +63,5 @@ const { selectAll } = organizationsAdapter.getSelectors()
 export const getOrganizationsState = (rootState: any): OrganizationsState => rootState[ORGANIZATIONS_KEY]
 
 export const selectAllOrganizations = createSelector(getOrganizationsState, selectAll)
+
+export const selectOrganizationsLoadingStatus = createSelector(getOrganizationsState, (state) => state.loadingStatus)

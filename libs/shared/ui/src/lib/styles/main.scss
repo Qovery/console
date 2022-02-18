@@ -1,0 +1,18 @@
+@tailwind components;
+@tailwind base;
+@tailwind utilities;
+
+@import 'base/variable';
+@import 'base/fonts';
+
+@import 'object/typography';
+@import 'object/animation';
+@import 'object/link';
+
+@import 'components/button';
+
+body {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
