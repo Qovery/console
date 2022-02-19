@@ -1,11 +1,19 @@
 import { Navigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
-import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL, OVERVIEW_URL, useAuth } from '@console/shared/utils'
+import {
+  ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_URL,
+  OVERVIEW_URL,
+  useAuth,
+  useDocumentTitle,
+} from '@console/shared/utils'
 import { useOrganizations } from '@console/domains/organizations'
 
 export function LoginPage() {
   const { authLogin, isAuthenticated } = useAuth()
   const { organizations, loadingStatus } = useOrganizations()
+
+  useDocumentTitle('Login - Qovery')
 
   if (isAuthenticated && loadingStatus !== 'loaded') {
     return <></>

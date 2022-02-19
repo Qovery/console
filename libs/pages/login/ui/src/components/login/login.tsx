@@ -8,10 +8,10 @@ export function Login(props: ILoginProps) {
 
   return (
     <div className="flex h-full">
-      <div className="flex-[4_1_0%] px-20">
+      <div className="flex-[2_1_0%] px-20">
         <div className="max-w-lg mt-28 mx-auto">
           <h1 className="h3 text-text-700 mb-3">Welcome to Qovery</h1>
-          <p className="text-xs mb-10 text-text-500">
+          <p className="text-sm mb-10 text-text-500">
             By registering and using Qovery, you agree to the processing of your personal data by Qovery as described in
             the
             <a href="/" className="link text-accent2-500 ml-1">
@@ -33,7 +33,7 @@ export function Login(props: ILoginProps) {
           </button>
         </div>
       </div>
-      <div className="flex-[2_1_0%] bg-element-light-lighter-300 px-20">
+      <div className="flex-[1_1_0%] bg-element-light-lighter-300 px-20">
         <div className="max-w-md">
           <h2 className="h1 text-text-700 mt-44 mb-6">
             The Simplest Way To Deploy Your Apps on AWS and Kubernetes
@@ -41,8 +41,8 @@ export function Login(props: ILoginProps) {
               🚀
             </span>
           </h2>
-          <p className="text-text-500 mb-6 text-xs">Push your code, Qovery handles the rest</p>
-          <ul className="list-disc pl-4 text-xs">
+          <p className="text-text-500 mb-6 text-sm">Push your code, Qovery handles the rest</p>
+          <ul className="list-disc pl-4 text-sm">
             <li className="font-bold text-text-500 mb-2">
               <a href="/" className="link text-brand-500 mr-1">
                 Deploy your apps
