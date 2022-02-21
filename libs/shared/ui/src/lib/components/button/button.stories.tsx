@@ -15,15 +15,14 @@ const ButtonContent = () => {
 
 const Template: Story<ButtonProps> = (args) => (
   <Button {...args}>
-    <ButtonContent></ButtonContent>
+    <ButtonContent />
   </Button>
 )
 
 export const Primary = Template.bind({})
 Primary.args = {
   size: select('Size', ButtonSize, ButtonSize.NORMAL),
-  type: select('Type', ButtonType, ButtonType.FLAT),
-  color: select('Color', Color, Color.VIOLET),
+  type: select('Type', ButtonType, ButtonType.BASIC),
   iconLeft: select('Icon Left', IconEnum, undefined),
   iconRight: select('Color', IconEnum, undefined),
 }
