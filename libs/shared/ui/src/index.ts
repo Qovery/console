@@ -1,3 +1,4 @@
+export * from './lib/components/inputs/input-text/input-text'
 export * from './lib/components/navbar/navbar'
 export * from './lib/components/layouts/layout-page/layout-page'
 export * from './lib/components/button/button'
