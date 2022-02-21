@@ -36,33 +36,20 @@ export function InputText(props: InputTextProps) {
 
   const hasFocus = focused || value.length > 0
 
-  const borderColors = hasFocus
-    ? 'border-brand-500'
+  const inputActions = hasFocus
+    ? 'input--focused'
     : error && error.length > 0
-    ? 'border-error-500'
+    ? 'input--error'
     : isValid && value.length > 0
-    ? 'border-success-500'
-    : 'border-element-light-lighter-500'
-
-  const isDisabled = disabled
-    ? 'bg-element-light-lighter-200 border-element-light-lighter-500 pointer-events-none'
-    : 'bg-white'
+    ? 'input--success'
+    : disabled
+    ? 'input--disabled'
+    : ''
 
   return (
-    <div
-      className={className}
-      onClick={() => {
-        setFocused(true)
-        inputRef.current && inputRef.current.focus()
-      }}
-    >
-      <div className={`relative h-[52px] px-4 py-2 rounded-sm border ${borderColors} ${isDisabled}`}>
-        <label
-          htmlFor={label}
-          className={`absolute ease-in-out duration-[120ms] ${hasFocus ? 'text-xs' : 'text-sm translate-y-2'} ${
-            disabled ? 'text-text-400' : 'text-text-500'
-          }`}
-        >
+    <div className={className} onClick={() => inputRef.current && inputRef.current.focus()}>
+      <div className={`input ${inputActions}`}>
+        <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
         </label>
         <input
@@ -74,7 +61,6 @@ export function InputText(props: InputTextProps) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           onChange={(e) => inputChange(e.target.value)}
-          className="absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-xs text-text-700 outline-0"
         />
       </div>
       {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}

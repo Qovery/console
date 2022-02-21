@@ -1,4 +1,4 @@
-import { InputText } from '@console/shared-ui'
+import { InputSelect, InputText } from '@console/shared-ui'
 import { ONBOARDING_COMPANY_URL, ONBOARDING_URL, useAuth, useDocumentTitle } from '@console/shared/utils'
 import { Link } from 'react-router-dom'
 
@@ -6,6 +6,21 @@ export function StepPersonalize() {
   const { authLogout } = useAuth()
 
   useDocumentTitle('Onboarding Personalize - Qovery')
+
+  const data = [
+    {
+      label: 'Personal',
+      value: 'personal',
+    },
+    {
+      label: 'Work',
+      value: 'work',
+    },
+    {
+      label: 'School',
+      value: 'school',
+    },
+  ]
 
   return (
     <div>
@@ -18,6 +33,7 @@ export function StepPersonalize() {
         <InputText className="mb-3" name="firstName" label="First name" />
         <InputText className="mb-3" name="lastName" label="Last name" />
         <InputText className="mb-3" name="email" label="Email" type="email" />
+        <InputSelect className="mb-3" name="type" label="Type of use" items={data} />
         <span className="mr-4" onClick={() => authLogout()}>
           Logout
         </span>
