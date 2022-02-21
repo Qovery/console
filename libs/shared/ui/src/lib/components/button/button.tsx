@@ -1,31 +1,35 @@
 import { Color } from '../../enums/colors.enum'
 import Icon from '../icon/icon'
 import { IconEnum } from '../../enums/icon.enum'
+import { IconFaEnum } from '../../enums/icon-fa.enum'
+import { Link } from 'react-router-dom'
+import IconFa from '../icon-fa/icon-fa'
 
 export enum ButtonSize {
   BIG = 'BIG',
   NORMAL = 'NORMAL',
   SMALL = 'SMALL',
+  VERY_SMALL = 'VERY_SMALL'
 }
 
 export enum ButtonType {
   BASIC = 'BASIC',
   RAISED = 'RAISED',
   STROKED = 'STROKED',
-  FLAT = 'FLAT',
-  ICON = 'ICON',
-  FAB = 'FAB',
-  MINI_FAB = 'MINI_FAB',
+  FLAT = 'FLAT'
 }
 
-/* eslint-disable-next-line */
 export interface ButtonProps {
   children: React.ReactNode
   size?: ButtonSize
   type?: ButtonType
-  color?: Color
   iconLeft?: IconEnum
   iconRight?: IconEnum
+  faLeft?: string
+  faRight?: string
+  faLeftType?: IconFaEnum
+  faRightType?: IconFaEnum
+  link?: string
 }
 
 export function Button(props: ButtonProps) {
@@ -33,44 +37,41 @@ export function Button(props: ButtonProps) {
     children,
     size = ButtonSize.NORMAL,
     type = ButtonType.FLAT,
-    color = Color.VIOLET,
     iconLeft,
     iconRight,
+    faLeft,
+    faRight,
+    faLeftType,
+    faRightType,
+    link = '/',
   } = props
 
-  const defineClassName = () => {
-    let className = ''
-
-    switch (size) {
-      case ButtonSize.NORMAL:
-        className += ` h-9 px-4`
-        break
-      case ButtonSize.BIG:
-        className += ` h-12 px-4`
-        break
-    }
-
-    switch (type) {
-      case ButtonType.FLAT:
-        className += ` bg-${color}-500 hover:bg-${color}-600 text-white`
-        break
-      case ButtonType.STROKED:
-        className += ` border border-${color}-500 text-${color}-500`
-        break
-    }
-
-    return className
+  function content() {
+    return (
+      <>
+        {faLeft && faLeftType ? <IconFa type={faLeftType} name={faLeft} /> : null}
+        {iconLeft ? <Icon name={iconLeft} /> : null}
+        <span>{children}</span>
+        {faRight && faRightType ? <IconFa type={faRightType} name={faRight} /> : null}
+        {iconRight ? <Icon name={iconRight} /> : null}
+      </>
+    )
   }
 
-  const className = defineClassName()
-
-  return (
-    <button className={`inline-flex items-center leading-none rounded font-sans text-medium ${className}`}>
-      {iconLeft && <Icon name={iconLeft} data-cy="icon-left" className=" mr-2 w-7 fill-white" />}
-      {children}
-      {iconRight && <Icon name={iconRight} data-cy="icon-right" className=" ml-2 w-7 fill-white" />}
-    </button>
-  )
+  if(!link) {
+    return (
+      <button className={`btn btn--${size} btn--${type}`}>
+        {content()} 
+      </button>
+    )
+  } else {
+    return (
+      <Link to={link} className={`btn btn--${size} btn--${type}`}>
+        {content()} 
+      </Link>
+    )
+  }
+  
 }
 
 export default Button
