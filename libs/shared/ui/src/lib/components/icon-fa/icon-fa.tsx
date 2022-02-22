@@ -9,12 +9,12 @@ export interface IconFaProps {
 export function IconFa(props: IconFaProps) {
 
   const {
-    type = IconFaEnum.REGULAR,
+    type = IconFaEnum.SOLID,
     name
   } = props
 
   return (
-    <i className={`${type === IconFaEnum.REGULAR ? 'fa-regular' : 'fa-solid'} ${name}`}></i>
+    <i className={`${type === IconFaEnum.SOLID ? 'fa-solid' : 'fa-brands'} fa-${name}`}></i>
   )
 }
 

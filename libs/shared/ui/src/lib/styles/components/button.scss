@@ -5,6 +5,18 @@
   & svg {
     @apply w-4 h-auto;
   }
+
+  & i {
+    font-family: 'FontAwesome';
+
+    &.fa-brands {
+      @apply font-normal
+    }
+
+    &.fa-solid {
+      @apply font-black
+    }
+  }
 }
 
 // Size

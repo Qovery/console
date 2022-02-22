@@ -1,4 +1,4 @@
 export enum IconFaEnum {
-  REGULAR = 'REGULAR',
+  BRAND = 'BRAND',
   SOLID = 'SOLID'
 }

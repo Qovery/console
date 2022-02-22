@@ -1,6 +1,5 @@
 import { Button, ButtonProps, ButtonSize, ButtonType } from './button'
 import { select } from '@storybook/addon-knobs'
-import { Color } from '../../enums/colors.enum'
 import { Meta, Story } from '@storybook/react'
 import { IconEnum } from '../../enums/icon.enum'
 
