@@ -1,35 +1,44 @@
 import { DetectClickOutside } from '@console/shared/utils'
 import { useState } from 'react'
+import { Value } from '../../../types/value.interface'
 
 export interface InputSelectProps {
   name: string
   label: string
-  items: { label: string; value: string }[]
-  defaultItem?: { label: string; value: string }
+  items: Value[]
+  getValue?: (name: string, value: Value | null) => void
+  defaultItem?: Value
   className?: string
 }
 
 export function InputSelect(props: InputSelectProps) {
-  const { label, name, items, defaultItem, className = '' } = props
+  const { label, name, items, defaultItem, getValue, className = '' } = props
 
   const [isOpen, setIsOpen] = useState(false)
   const [item, setItem] = useState(defaultItem || null)
 
-  const onClickItem = (value: { label: string; value: string }) => {
+  const onClickItem = (value: Value | null) => {
     setIsOpen(false)
 
-    if (value !== item) {
-      setItem(value)
+    let currentValue = value
+
+    if (currentValue !== item) {
+      setItem(currentValue)
     } else {
+      currentValue = null
       setItem(null)
     }
+
+    getValue && getValue(name, currentValue)
   }
 
   return (
     <DetectClickOutside callback={() => setIsOpen(false)}>
-      <div className={`input ${className} ${item !== null ? 'input--focused' : ''}`} onClick={() => setIsOpen(true)}>
-        <label>{label}</label>
-        {item && <div className="input__value">{item.label}</div>}
+      <div className={`input ${className} ${item !== null ? 'input--focused' : ''}`}>
+        <div className="input__label" onClick={() => setIsOpen(!isOpen)}>
+          <label>{label}</label>
+          {item && <div className="input__value">{item.label}</div>}
+        </div>
         <div className={`input__select ${isOpen ? 'is-open' : ''}`}>
           {items.map((currentItem, index) => (
             <div
