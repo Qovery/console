@@ -6,17 +6,17 @@ import { Link } from 'react-router-dom'
 import IconFa from '../icon-fa/icon-fa'
 
 export enum ButtonSize {
-  BIG = 'BIG',
-  NORMAL = 'NORMAL',
-  SMALL = 'SMALL',
-  VERY_SMALL = 'VERY_SMALL'
+  BIG = 'big',
+  NORMAL = 'normal',
+  SMALL = 'small',
+  VERY_SMALL = 'very-small'
 }
 
 export enum ButtonType {
-  BASIC = 'BASIC',
-  RAISED = 'RAISED',
-  STROKED = 'STROKED',
-  FLAT = 'FLAT'
+  BASIC = 'basic',
+  RAISED = 'raised',
+  STROKED = 'stroked',
+  FLAT = 'flat'
 }
 
 export interface ButtonProps {
@@ -29,7 +29,9 @@ export interface ButtonProps {
   faRight?: string
   faLeftType?: IconFaEnum
   faRightType?: IconFaEnum
-  link?: string
+  link?: string,
+  disabled?: boolean,
+  className?: string
 }
 
 export function Button(props: ButtonProps) {
@@ -44,6 +46,8 @@ export function Button(props: ButtonProps) {
     faLeftType,
     faRightType,
     link = '/',
+    disabled = false,
+    className
   } = props
 
   function content() {
@@ -58,15 +62,17 @@ export function Button(props: ButtonProps) {
     )
   }
 
+  const defineClass = `btn btn--${size} btn--${type} ${disabled ? 'btn--disabled' : null} ${className}`
+
   if(!link) {
     return (
-      <button className={`btn btn--${size} btn--${type}`}>
+      <button className={defineClass}>
         {content()} 
       </button>
     )
   } else {
     return (
-      <Link to={link} className={`btn btn--${size} btn--${type}`}>
+      <Link to={link} className={defineClass}>
         {content()} 
       </Link>
     )

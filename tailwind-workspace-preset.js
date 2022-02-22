@@ -6,13 +6,6 @@ module.exports = {
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
       },
-      borderRadius: {
-        none: '0',
-        sm: '.25rem',
-        DEFAULT: '.375rem',
-        lg: '.5rem',
-        full: '50%',
-      },
       fontSize: {
         xs: [
           '0.75rem',

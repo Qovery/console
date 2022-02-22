@@ -1,0 +1,55 @@
+.input {
+  @apply relative h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white;
+
+  label {
+    @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2;
+  }
+
+  input,
+  .input__value {
+    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-xs text-text-700 outline-0;
+  }
+}
+
+.input--focused {
+  @apply border-brand-500;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+
+  label {
+    @apply text-xs translate-y-0;
+  }
+}
+
+.input--disabled {
+  @apply bg-element-light-lighter-200 border-element-light-lighter-500 pointer-events-none;
+
+  label {
+    @apply text-text-400;
+  }
+}
+
+.input--error {
+  @apply border-error-500;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.input--success {
+  @apply border-success-500;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.input__select {
+  @apply w-full absolute left-0 top-14 bg-element-light-lighter-100 rounded-lg border border-element-light-lighter-500 p-2 opacity-0 pointer-events-none h-0;
+
+  &.is-open {
+    @apply opacity-100 pointer-events-auto h-auto;
+  }
+}
+
+.input__select__item {
+  @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 select-none;
+
+  &.is-active {
+    @apply bg-element-light-lighter-300;
+  }
+}

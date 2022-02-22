@@ -6,44 +6,36 @@
     @apply w-4 h-auto;
   }
 
-  & i {
-    font-family: 'FontAwesome';
-
-    &.fa-brands {
-      @apply font-normal
-    }
-
-    &.fa-solid {
-      @apply font-black
-    }
+  & .fa-solid, & .fas, & .fab, & .fa-brands {
+    @apply text-xs;
   }
 }
 
 // Size
-
-.btn--VERY_SMALL {
+ 
+.btn--very-small {
   @apply h-7 text-xs px-3;
 }
 
-.btn--SMALL {
+.btn--small {
   @apply h-8 text-xs px-3;
 }
 
-.btn--BIG {
+.btn--big {
   @apply h-11 text-base px-5;
 }
 
 // Color
 
-.btn--RAISED {
+.btn--raised {
   @apply bg-brand-100 text-brand-300;
 }
 
-.btn--STROKED {
+.btn--stroked {
   @apply bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 text-text-500
 }
 
-.btn--FLAT {
+.btn--flat {
   @apply bg-transparent text-brand-500
 }
 
@@ -60,4 +52,10 @@
 
 .btn-login--default {
   @apply bg-element-light-lighter-300 text-text-700 border border-element-light-lighter-600 hover:bg-element-light-lighter-400;
+}
+
+// State 
+
+.btn--disabled {
+  @apply cursor-default bg-brand-100 text-brand-300 border-0;
 }
