@@ -8,7 +8,13 @@ export default {
   title: 'Icon',
 } as Meta
 
-const Template: Story<IconProps> = (args) => <Icon {...args} />
+const Template: Story<IconProps> = (args) => (
+  <div>
+    <span className="fa-brands fa-accessible-icon"></span>
+    <span className="fa-solid fa-star"></span>
+    <Icon {...args} />
+  </div>
+)
 
 export const Primary = Template.bind({})
 Primary.args = {

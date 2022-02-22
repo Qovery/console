@@ -39,10 +39,10 @@
 }
 
 .input__select {
-  @apply w-full absolute left-0 top-14 bg-element-light-lighter-100 rounded-lg border border-element-light-lighter-500 p-2 opacity-0;
+  @apply w-full absolute left-0 top-14 bg-element-light-lighter-100 rounded-lg border border-element-light-lighter-500 p-2 opacity-0 pointer-events-none h-0;
 
   &.is-open {
-    @apply opacity-100;
+    @apply opacity-100 pointer-events-auto h-auto;
   }
 }
 
