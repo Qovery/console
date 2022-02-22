@@ -28,7 +28,7 @@ export interface ButtonProps {
   iconRight?: IconEnum
 }
 
-export function Button(props: ButtonProps) {
+const Button = (props: ButtonProps) => {
   const {
     children,
     size = ButtonSize.NORMAL,

@@ -10,6 +10,7 @@ import { organizations } from '@console/domains/organizations'
 import { environment } from './environments/environment.prod'
 import App from './app/app'
 import './styles.scss'
+import React from 'react'
 
 const OAUTH_CALLBACK = '/login/auth0-callback'
 
@@ -20,29 +21,35 @@ const onRedirectCallback = (appState: AppState) => {
   history.replace(appState?.returnTo || window.location.pathname)
 }
 
-const reducers = combineReducers({
+const rootReducer = combineReducers({
   user: user,
   organizations: organizations,
 })
 
 export const store = configureStore({
-  reducer: reducers,
+  reducer: rootReducer,
 })
 
+export type RootState = ReturnType<typeof rootReducer>
+
+export type AppDispatch = typeof store.dispatch
+
 ReactDOM.render(
-  <Auth0Provider
-    domain={environment.oauth_domain}
-    clientId={environment.oauth_key}
-    redirectUri={`${window.location.origin}${OAUTH_CALLBACK}`}
-    audience={environment.oauth_audience}
-    useRefreshTokens={true}
-    onRedirectCallback={onRedirectCallback}
-  >
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
-  </Auth0Provider>,
+  <React.StrictMode>
+    <Auth0Provider
+      domain={environment.oauth_domain}
+      clientId={environment.oauth_key}
+      redirectUri={`${window.location.origin}${OAUTH_CALLBACK}`}
+      audience={environment.oauth_audience}
+      useRefreshTokens={true}
+      onRedirectCallback={onRedirectCallback}
+    >
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </Auth0Provider>
+  </React.StrictMode>,
   document.getElementById('root')
 )
