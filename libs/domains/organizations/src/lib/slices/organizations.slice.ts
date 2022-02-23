@@ -20,6 +20,7 @@ export const organizationsAdapter = createEntityAdapter<OrganizationInterface>()
 
 export const fetchOrganizations = createAsyncThunk('organization/fetch', async () => {
   const response = await axios.get('/organization').then((response) => response.data)
+
   return response.results
 })
 
@@ -44,6 +45,7 @@ export const organizationsSlice = createSlice({
         fetchOrganizations.fulfilled,
         (state: OrganizationsState, action: PayloadAction<OrganizationInterface[]>) => {
           organizationsAdapter.setAll(state, action.payload)
+
           state.loadingStatus = 'loaded'
         }
       )

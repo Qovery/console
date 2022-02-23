@@ -20,14 +20,18 @@ const onRedirectCallback = (appState: AppState) => {
   history.replace(appState?.returnTo || window.location.pathname)
 }
 
-const reducers = combineReducers({
+const rootReducer = combineReducers({
   user: user,
   organizations: organizations,
 })
 
 export const store = configureStore({
-  reducer: reducers,
+  reducer: rootReducer,
 })
+
+export type RootState = ReturnType<typeof rootReducer>
+
+export type AppDispatch = typeof store.dispatch
 
 ReactDOM.render(
   <Auth0Provider
@@ -44,5 +48,5 @@ ReactDOM.render(
       </BrowserRouter>
     </Provider>
   </Auth0Provider>,
-  document.getElementById('root')
+  document.getElementById('root') || document.createElement('div')
 )

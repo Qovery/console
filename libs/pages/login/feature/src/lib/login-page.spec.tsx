@@ -1,10 +1,10 @@
 import { render } from '__mocks__/utils/test-utils'
 
-import StepPersonalize from './step-personalize'
+import PagesLoginFeature from './login-page'
 
-describe('StepPersonalize', () => {
+describe('PagesLoginFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<StepPersonalize />)
+    const { baseElement } = render(<PagesLoginFeature />)
     expect(baseElement).toBeTruthy()
   })
 })

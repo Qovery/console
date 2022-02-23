@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__mocks__/utils/test-utils'
 
 import DetectClickOutside from './use-detect-click-outside'
 

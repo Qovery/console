@@ -1,4 +1,4 @@
-import { fetchOrganizations, organizationsAdapter, organizationsReducer } from './organizations.slice'
+import { fetchOrganizations, organizations, organizationsAdapter } from './organizations.slice'
 
 describe('organizations reducer', () => {
   it('should handle initial state', () => {
@@ -7,11 +7,11 @@ describe('organizations reducer', () => {
       error: null,
     })
 
-    expect(organizationsReducer(undefined, { type: '' })).toEqual(expected)
+    expect(organizations(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchOrganizationss', () => {
-    let state = organizationsReducer(undefined, fetchOrganizations.pending(null, null))
+  it('should handle fetchOrganizationss', async () => {
+    let state = organizations(undefined, fetchOrganizations.pending('mdr'))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -21,7 +21,7 @@ describe('organizations reducer', () => {
       })
     )
 
-    state = organizationsReducer(state, fetchOrganizations.fulfilled([{ id: 1 }], null, null))
+    state = organizations(state, fetchOrganizations.fulfilled([{ id: 1 }], 'fulfilled'))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -31,7 +31,7 @@ describe('organizations reducer', () => {
       })
     )
 
-    state = organizationsReducer(state, fetchOrganizations.rejected(new Error('Uh oh'), null, null))
+    state = organizations(state, fetchOrganizations.rejected(new Error('Uh oh'), 'rejected'))
 
     expect(state).toEqual(
       expect.objectContaining({
