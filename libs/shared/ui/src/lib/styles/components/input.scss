@@ -53,28 +53,3 @@
     @apply bg-element-light-lighter-300;
   }
 }
-
-.input__radio {
-  @apply flex gap-2 items-center;
-
-  input {
-    @apply relative w-0 h-0 mr-5;
-
-    &:before {
-      content: '';
-      font-family: 'FontAwesome';
-      @apply absolute flex justify-center items-center text-white w-5 h-5 top-0 left-0 -translate-y-1/2 rounded-full bg-white border-element-light-lighter-600 border font-black text-xs leading-none;
-    }
-
-    &:checked {
-      &:before {
-        @apply bg-brand-500 border-brand-500;
-        content: '\f00c'
-      }
-    }
-  }
-}
-
-.input__radio label {
-  @apply leading-5 h-5 text-text-700;
-}

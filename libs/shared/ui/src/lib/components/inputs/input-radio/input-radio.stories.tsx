@@ -15,6 +15,5 @@ Primary.args = {
   name: 'test',
   isChecked: false,
   label: 'Choose Qovery',
-  labelVisible: true,
   value: 'qovery'
 }
