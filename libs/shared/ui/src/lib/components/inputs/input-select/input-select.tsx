@@ -34,8 +34,8 @@ export function InputSelect(props: InputSelectProps) {
 
   return (
     <DetectClickOutside callback={() => setIsOpen(false)}>
-      <div className={`input ${className} ${item !== null ? 'input--focused' : ''}`}>
-        <div className="input__label" onClick={() => setIsOpen(!isOpen)}>
+      <div className={`input ${className} ${item !== null ? 'input--focused' : ''}`} onClick={() => setIsOpen(!isOpen)}>
+        <div className="input__label">
           <label>{label}</label>
           {item && <div className="input__value">{item.label}</div>}
         </div>

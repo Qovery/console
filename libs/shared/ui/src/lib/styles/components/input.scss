@@ -1,5 +1,5 @@
 .input {
-  @apply relative h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white cursor-pointer;
+  @apply relative min-h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white cursor-pointer;
   transition: 120ms all $timing-cubic;
 
   label {
@@ -42,12 +42,16 @@
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
 }
 
+.input--text-area {
+  @apply pb-0 pr-2;
+}
+
 .input__label {
   @apply w-full h-full;
 }
 
 .input__select {
-  @apply w-full absolute left-0 top-16 bg-element-light-lighter-100 rounded p-2 opacity-0 pointer-events-none h-0 -translate-y-2;
+  @apply w-full absolute left-0 top-16 z-10 bg-element-light-lighter-100 rounded p-2 opacity-0 pointer-events-none h-0 -translate-y-2;
   @apply before:content-[''] before:block before:absolute before:-top-1.5 before:right-6 before:border-element-light-lighter-100 before:border-r-8 before:border-l-8 before:border-b-8 before:bg-transparent before:border-l-transparent before:border-r-transparent;
   transition: all 150ms $timing-cubic;
 
