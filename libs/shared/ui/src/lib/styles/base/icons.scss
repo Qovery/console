@@ -1,0 +1,31 @@
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'FontAwesome';
+}
+
+[class^="icon-solid"], [class*=" icon-solid"] {
+  font-weight: 900
+}
+
+[class^="icon-brands"], [class*=" icon-brands"] {
+  font-weight: 400
+}
+
+.icon-brands-accessible:before {
+  content: '\f368';
+}
+
+.icon-solid-star:before {
+  content: '\f005';
+}
+
+.icon-solid-plus:before {
+  content: '\2b'
+}
+
+.icon-solid-check:before {
+  content: '\f00c'
+}
+
+.icon-solid-circle-plus:before {
+  content: '\f055'
+}
