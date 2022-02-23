@@ -1,3 +1,41 @@
+.btn {
+  @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 text-white font-medium text-sm gap-2;
+
+  & svg {
+    @apply w-4 h-auto;
+  }
+}
+
+// Size
+ 
+.btn--very-small {
+  @apply h-7 text-xs px-3;
+}
+
+.btn--small {
+  @apply h-8 text-xs px-3;
+}
+
+.btn--big {
+  @apply h-11 text-base px-5;
+}
+
+// Color
+
+.btn--raised {
+  @apply bg-brand-100 text-brand-300;
+}
+
+.btn--stroked {
+  @apply bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 text-text-500
+}
+
+.btn--flat {
+  @apply bg-transparent text-brand-500
+}
+
+// Login
+
 .btn-login {
   @apply relative h-11 w-full font-medium flex items-center justify-center px-5 rounded-md cursor-pointer text-sm;
   transition: 0.25s all $timing-cubic;
@@ -9,4 +47,10 @@
 
 .btn-login--default {
   @apply bg-element-light-lighter-300 text-text-700 border border-element-light-lighter-600 hover:bg-element-light-lighter-400;
+}
+
+// State 
+
+.btn--disabled {
+  @apply cursor-default bg-brand-100 text-brand-300 border-0;
 }
