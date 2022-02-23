@@ -1,11 +1,12 @@
 export interface IconFaProps {
   name: string
+  className?: string
 }
 
 export function IconFa(props: IconFaProps) {
-  const { name } = props
+  const { name, className = '' } = props
 
-  return <span className={name}></span>
+  return <span className={`${name} ${className}`}></span>
 }
 
 export default IconFa

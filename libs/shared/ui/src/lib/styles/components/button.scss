@@ -1,13 +1,13 @@
 .btn {
-  @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 text-white font-medium text-sm gap-2;
+  @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm gap-2;
+  transition: 0.25s all $timing-cubic;
 
   & svg {
     @apply w-4 h-auto;
   }
 }
 
-// Size
- 
+// size
 .btn--very-small {
   @apply h-7 text-xs px-3;
 }
@@ -20,22 +20,25 @@
   @apply h-11 text-base px-5;
 }
 
-// Color
-
+// color
 .btn--raised {
-  @apply bg-brand-100 text-brand-300;
+  @apply bg-brand-100 text-brand-300 hover:bg-brand-200;
 }
 
 .btn--stroked {
-  @apply bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 text-text-500
+  @apply bg-element-light-lighter-300 hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-text-500;
 }
 
 .btn--flat {
-  @apply bg-transparent text-brand-500
+  @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
 }
 
-// Login
+// state
+.btn--disabled {
+  @apply cursor-default bg-brand-100 text-brand-300 border-0;
+}
 
+// login
 .btn-login {
   @apply relative h-11 w-full font-medium flex items-center justify-center px-5 rounded-md cursor-pointer text-sm;
   transition: 0.25s all $timing-cubic;
@@ -47,10 +50,4 @@
 
 .btn-login--default {
   @apply bg-element-light-lighter-300 text-text-700 border border-element-light-lighter-600 hover:bg-element-light-lighter-400;
-}
-
-// State 
-
-.btn--disabled {
-  @apply cursor-default bg-brand-100 text-brand-300 border-0;
 }
