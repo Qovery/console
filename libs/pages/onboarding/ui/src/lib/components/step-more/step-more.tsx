@@ -1,4 +1,5 @@
-import { InputTextArea } from '@console/shared-ui'
+import { Button, ButtonSize, ButtonType, InputTextArea } from '@console/shared-ui'
+import { ONBOARDING_COMPANY_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 export function StepMore() {
   return (
@@ -11,7 +12,19 @@ export function StepMore() {
       <form>
         <InputTextArea className="mb-3" name="why" label="Why do you want to use Qovery?" />
         <InputTextArea className="mb-3" name="recommendations" label="Any questions or recommendations?" />
-        {/* <Link to={`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`}>Continue</Link> */}
+        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+          <Button
+            link={`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`}
+            size={ButtonSize.BIG}
+            type={ButtonType.STROKED}
+            iconLeft="icon-solid-arrow-left"
+          >
+            Back
+          </Button>
+          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`}>
+            Continue
+          </Button>
+        </div>
       </form>
     </div>
   )

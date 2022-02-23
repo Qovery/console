@@ -1,10 +1,7 @@
-import { InputSelect, InputText } from '@console/shared-ui'
-import { ONBOARDING_COMPANY_URL, ONBOARDING_URL, useAuth, useDocumentTitle } from '@console/shared/utils'
-import { Link } from 'react-router-dom'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared-ui'
+import { LOGIN_URL, ONBOARDING_COMPANY_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
 
 export function StepPersonalize() {
-  const { authLogout } = useAuth()
-
   useDocumentTitle('Onboarding Personalize - Qovery')
 
   const dataTypes = [
@@ -33,11 +30,15 @@ export function StepPersonalize() {
         <InputText className="mb-3" name="firstName" label="First name" />
         <InputText className="mb-3" name="lastName" label="Last name" />
         <InputText className="mb-3" name="email" label="Email" type="email" />
-        <InputSelect className="mb-3" name="type" label="Type of use" items={dataTypes} />
-        <span className="mr-4" onClick={() => authLogout()}>
-          Logout
-        </span>
-        <Link to={`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`}>Continue</Link>
+        <InputSelect name="type" label="Type of use" items={dataTypes} />
+        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+          <Button link={LOGIN_URL} size={ButtonSize.BIG} type={ButtonType.STROKED} iconLeft="icon-solid-arrow-left">
+            Back
+          </Button>
+          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`}>
+            Continue
+          </Button>
+        </div>
       </form>
     </div>
   )
