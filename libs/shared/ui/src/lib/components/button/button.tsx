@@ -6,14 +6,14 @@ export enum ButtonSize {
   BIG = 'big',
   NORMAL = 'normal',
   SMALL = 'small',
-  VERY_SMALL = 'very-small'
+  VERY_SMALL = 'very-small',
 }
 
 export enum ButtonType {
   BASIC = 'basic',
   RAISED = 'raised',
   STROKED = 'stroked',
-  FLAT = 'flat'
+  FLAT = 'flat',
 }
 
 export interface ButtonProps {
@@ -31,40 +31,37 @@ export function Button(props: ButtonProps) {
   const {
     children,
     size = ButtonSize.NORMAL,
-    type = ButtonType.FLAT,
+    type = ButtonType.BASIC,
     iconLeft,
     iconRight,
     link,
     disabled = false,
-    className = ''
+    className = '',
   } = props
 
   function content() {
     return (
       <>
-        {iconLeft && <Icon name={iconLeft} />} 
+        {iconLeft && <Icon name={iconLeft} />}
         <span>{children}</span>
         {iconRight && <Icon name={iconRight} />}
       </>
     )
   }
 
-  const defineClass = `btn ${size ? `btn--${size}` : ''} ${type ? `btn--${type}` : ''} ${disabled && 'btn--disabled'} ${className}`
+  const defineClass = `btn ${size ? `btn--${size}` : ''} ${type ? `btn--${type}` : ''} ${
+    disabled && 'btn--disabled'
+  } ${className}`
 
-  if(!link) {
-    return (
-      <button className={defineClass}> 
-        {content()} 
-      </button>
-    )
+  if (!link) {
+    return <button className={defineClass}>{content()}</button>
   } else {
     return (
       <Link to={link} className={defineClass}>
-        {content()} 
+        {content()}
       </Link>
     )
   }
-  
 }
 
 export default Button

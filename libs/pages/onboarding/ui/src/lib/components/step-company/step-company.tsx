@@ -1,6 +1,10 @@
-import { InputSelect, InputText } from '@console/shared-ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
-import { Link } from 'react-router-dom'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared-ui'
+import {
+  ONBOARDING_MORE_URL,
+  ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_URL,
+  useDocumentTitle,
+} from '@console/shared/utils'
 
 export function StepCompany() {
   useDocumentTitle('Onboarding Personalize - Qovery')
@@ -69,9 +73,20 @@ export function StepCompany() {
       <form>
         <InputText className="mb-3" name="company" label="Company" />
         <InputSelect className="mb-3" name="companySize" label="Company size" items={dataSize} />
-        <InputSelect className="mb-3" name="companySize" label="Company size" items={dataRole} />
-        <span className="mr-4">back</span>
-        <Link to={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}>Continue</Link>
+        <InputSelect className="mb-3" name="role" label="Role" items={dataRole} />
+        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+          <Button
+            link={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`}
+            size={ButtonSize.BIG}
+            type={ButtonType.STROKED}
+            iconLeft="icon-solid-arrow-left"
+          >
+            Back
+          </Button>
+          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}>
+            Continue
+          </Button>
+        </div>
       </form>
     </div>
   )

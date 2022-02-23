@@ -1,13 +1,16 @@
-[class^="icon-"], [class*=" icon-"] {
+[class^='icon-'],
+[class*=' icon-'] {
   font-family: 'FontAwesome';
 }
 
-[class^="icon-solid"], [class*=" icon-solid"] {
-  font-weight: 900
+[class^='icon-solid'],
+[class*=' icon-solid'] {
+  font-weight: 900;
 }
 
-[class^="icon-brands"], [class*=" icon-brands"] {
-  font-weight: 400
+[class^='icon-brands'],
+[class*=' icon-brands'] {
+  font-weight: 400;
 }
 
 .icon-brands-accessible:before {
@@ -19,13 +22,17 @@
 }
 
 .icon-solid-plus:before {
-  content: '\2b'
+  content: '\2b';
 }
 
 .icon-solid-check:before {
-  content: '\f00c'
+  content: '\f00c';
 }
 
 .icon-solid-circle-plus:before {
-  content: '\f055'
+  content: '\f055';
+}
+
+.icon-solid-arrow-left:before {
+  content: '\f060';
 }
