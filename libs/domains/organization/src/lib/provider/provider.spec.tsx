@@ -1,10 +1,10 @@
-import { render } from '@testing-library/react'
-
-import Provider from './provider'
+import { renderHook } from '@testing-library/react-hooks'
+import { useOrganization } from './provider'
 
 describe('Provider', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Provider />)
-    expect(baseElement).toBeTruthy()
+    const { result } = renderHook(() => useOrganization())
+
+    expect(result).toBeTruthy()
   })
 })

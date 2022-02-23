@@ -23,7 +23,7 @@ const onRedirectCallback = (appState: AppState) => {
   history.replace(appState?.returnTo || window.location.pathname)
 }
 
-const reducers = combineReducers({
+const rootReducer = combineReducers({
   user: user,
   userSignUp: userSignUp,
   organization: organization,
@@ -31,8 +31,12 @@ const reducers = combineReducers({
 })
 
 export const store = configureStore({
-  reducer: reducers,
+  reducer: rootReducer,
 })
+
+export type RootState = ReturnType<typeof rootReducer>
+
+export type AppDispatch = typeof store.dispatch
 
 ReactDOM.render(
   <IntercomProvider appId={environment.intercom} autoBoot={process.env['NODE_ENV'] === 'production'}>
@@ -53,5 +57,5 @@ ReactDOM.render(
       </Provider>
     </Auth0Provider>
   </IntercomProvider>,
-  document.getElementById('root')
+  document.getElementById('root') || document.createElement('div')
 )

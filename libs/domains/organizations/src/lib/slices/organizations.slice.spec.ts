@@ -1,17 +1,17 @@
-import { fetchOrganization, organization, organizationAdapter } from './organization.slice'
+import { fetchOrganizations, organizations, organizationsAdapter } from './organizations.slice'
 
-describe('organization reducer', () => {
+describe('organizations reducer', () => {
   it('should handle initial state', () => {
-    const expected = organizationAdapter.getInitialState({
+    const expected = organizationsAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
     })
 
-    expect(organization(undefined, { type: '' })).toEqual(expected)
+    expect(organizations(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchOrganization', async () => {
-    let state = organization(undefined, fetchOrganization.pending('mdr'))
+  it('should handle fetchOrganizationss', async () => {
+    let state = organizations(undefined, fetchOrganizations.pending('mdr'))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -21,7 +21,7 @@ describe('organization reducer', () => {
       })
     )
 
-    state = organization(state, fetchOrganization.fulfilled([{ id: 1 }], 'fulfilled'))
+    state = organizations(state, fetchOrganizations.fulfilled([{ id: 1 }], 'fulfilled'))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -31,7 +31,7 @@ describe('organization reducer', () => {
       })
     )
 
-    state = organization(state, fetchOrganization.rejected(new Error('Uh oh'), 'rejected'))
+    state = organizations(state, fetchOrganizations.rejected(new Error('Uh oh'), 'rejected'))
 
     expect(state).toEqual(
       expect.objectContaining({

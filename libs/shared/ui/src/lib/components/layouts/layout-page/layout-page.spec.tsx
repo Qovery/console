@@ -1,10 +1,12 @@
-import { render } from '@testing-library/react'
-
 import LayoutPage from './layout-page'
+import { render } from '__mocks__/utils/test-utils'
+import React from 'react'
 
 describe('LayoutPage', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<LayoutPage />)
+    const children = React.createElement('div')
+
+    const { baseElement } = render(<LayoutPage children={children} />)
     expect(baseElement).toBeTruthy()
   })
 })
