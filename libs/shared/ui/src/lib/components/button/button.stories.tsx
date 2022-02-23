@@ -1,6 +1,5 @@
 import { Button, ButtonProps, ButtonSize, ButtonType } from './button'
 import { select } from '@storybook/addon-knobs'
-import { Color } from '../../enums/colors.enum'
 import { Meta, Story } from '@storybook/react'
 import { IconEnum } from '../../enums/icon.enum'
 
@@ -15,15 +14,14 @@ const ButtonContent = () => {
 
 const Template: Story<ButtonProps> = (args) => (
   <Button {...args}>
-    <ButtonContent></ButtonContent>
+    <ButtonContent />
   </Button>
 )
 
 export const Primary = Template.bind({})
 Primary.args = {
   size: select('Size', ButtonSize, ButtonSize.NORMAL),
-  type: select('Type', ButtonType, ButtonType.FLAT),
-  color: select('Color', Color, Color.VIOLET),
+  type: select('Type', ButtonType, ButtonType.BASIC),
   iconLeft: select('Icon Left', IconEnum, undefined),
   iconRight: select('Color', IconEnum, undefined),
 }
