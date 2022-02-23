@@ -7,7 +7,7 @@ export function StepPersonalize() {
 
   useDocumentTitle('Onboarding Personalize - Qovery')
 
-  const data = [
+  const dataTypes = [
     {
       label: 'Personal',
       value: 'personal',
@@ -33,7 +33,7 @@ export function StepPersonalize() {
         <InputText className="mb-3" name="firstName" label="First name" />
         <InputText className="mb-3" name="lastName" label="Last name" />
         <InputText className="mb-3" name="email" label="Email" type="email" />
-        <InputSelect className="mb-3" name="type" label="Type of use" items={data} />
+        <InputSelect className="mb-3" name="type" label="Type of use" items={dataTypes} />
         <span className="mr-4" onClick={() => authLogout()}>
           Logout
         </span>

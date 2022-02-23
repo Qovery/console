@@ -1,10 +1,63 @@
-import { useDocumentTitle } from '@console/shared/utils'
+import { InputSelect, InputText } from '@console/shared-ui'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import { Link } from 'react-router-dom'
 
-/* eslint-disable-next-line */
-export interface StepCompanyProps {}
-
-export function StepCompany(props: StepCompanyProps) {
+export function StepCompany() {
   useDocumentTitle('Onboarding Personalize - Qovery')
+
+  const dataSize = [
+    {
+      label: '1-10',
+      value: '1-10',
+    },
+    {
+      label: '11-50',
+      value: '11-50',
+    },
+    {
+      label: '51-200',
+      value: '51-200',
+    },
+    {
+      label: '201-500',
+      value: '201-500',
+    },
+    {
+      label: '500+',
+      value: '500+',
+    },
+  ]
+
+  const dataRole = [
+    {
+      label: 'Tech Lead',
+      value: 'tech-lead',
+    },
+    {
+      label: 'Software Developer',
+      value: 'software-developer',
+    },
+    {
+      label: 'DevOps',
+      value: 'devops',
+    },
+    {
+      label: 'Product/Project Manager',
+      value: 'product-project-manager',
+    },
+    {
+      label: 'CTO',
+      value: 'cto',
+    },
+    {
+      label: 'Founder',
+      value: 'founder',
+    },
+    {
+      label: 'Other',
+      value: 'other',
+    },
+  ]
 
   return (
     <div>
@@ -13,6 +66,13 @@ export function StepCompany(props: StepCompanyProps) {
         Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim
         velit mollit.
       </p>
+      <form>
+        <InputText className="mb-3" name="company" label="Company" />
+        <InputSelect className="mb-3" name="companySize" label="Company size" items={dataSize} />
+        <InputSelect className="mb-3" name="companySize" label="Company size" items={dataRole} />
+        <span className="mr-4">back</span>
+        <Link to={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}>Continue</Link>
+      </form>
     </div>
   )
 }

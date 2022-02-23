@@ -1,20 +1,24 @@
 .input {
-  @apply relative h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white;
+  @apply relative min-h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white cursor-pointer;
+  transition: 120ms all $timing-cubic;
 
   label {
-    @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2;
+    @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
   }
 
   input,
   .input__value {
     @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-xs text-text-700 outline-0;
   }
+
+  &:hover,
+  &.input--focused {
+    @apply border-brand-500;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+  }
 }
 
 .input--focused {
-  @apply border-brand-500;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-
   label {
     @apply text-xs translate-y-0;
   }
@@ -38,11 +42,22 @@
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
 }
 
+.input--text-area {
+  @apply pb-0 pr-2;
+}
+
+.input__label {
+  @apply w-full h-full;
+}
+
 .input__select {
-  @apply w-full absolute left-0 top-14 bg-element-light-lighter-100 rounded-lg border border-element-light-lighter-500 p-2 opacity-0 pointer-events-none h-0;
+  @apply w-full absolute left-0 top-16 z-10 bg-element-light-lighter-100 rounded p-2 opacity-0 pointer-events-none h-0 -translate-y-2;
+  @apply before:content-[''] before:block before:absolute before:-top-1.5 before:right-6 before:border-element-light-lighter-100 before:border-r-8 before:border-l-8 before:border-b-8 before:bg-transparent before:border-l-transparent before:border-r-transparent;
+  transition: all 150ms $timing-cubic;
 
   &.is-open {
-    @apply opacity-100 pointer-events-auto h-auto;
+    @apply opacity-100 pointer-events-auto h-auto translate-y-0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   }
 }
 
