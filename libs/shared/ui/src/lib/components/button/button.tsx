@@ -34,7 +34,7 @@ export function Button(props: ButtonProps) {
     type = ButtonType.FLAT,
     iconLeft,
     iconRight,
-    link = '/',
+    link,
     disabled = false,
     className = ''
   } = props
@@ -42,18 +42,18 @@ export function Button(props: ButtonProps) {
   function content() {
     return (
       <>
-        {iconLeft ? <Icon name={iconLeft} /> : null} 
+        {iconLeft && <Icon name={iconLeft} />} 
         <span>{children}</span>
-        {iconRight ? <Icon name={iconRight} /> : null}
+        {iconRight && <Icon name={iconRight} />}
       </>
     )
   }
 
-  const defineClass = `btn ${size ? 'btn--' + size : ''} ${type ? 'btn--' + type : ''} ${disabled ? 'btn--disabled' : null} ${className}`
+  const defineClass = `btn ${size ? `btn--${size}` : ''} ${type ? `btn--${type}` : ''} ${disabled && 'btn--disabled'} ${className}`
 
   if(!link) {
     return (
-      <button className={defineClass}>
+      <button className={defineClass}> 
         {content()} 
       </button>
     )

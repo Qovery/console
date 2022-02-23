@@ -11,7 +11,7 @@ export function IconFa(props: IconFaProps) {
   } = props
 
   return (
-    <span className={`${name}`}></span>
+    <span className={name}></span>
   )
 }
 
