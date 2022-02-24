@@ -22,6 +22,7 @@ export function StepPricing(props: StepPricingProps) {
     }
   })
 
+  
   const planChoose = select;
   const displayDeploy = planChoose === 'pro' || planChoose === 'business';
 
