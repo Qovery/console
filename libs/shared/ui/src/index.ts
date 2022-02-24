@@ -1,5 +1,6 @@
 // enums
 export * from './lib/enums/icon.enum'
+export * from './lib/enums/plan.enum'
 // types
 export * from './lib/types/value.interface'
 // components
