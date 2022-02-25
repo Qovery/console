@@ -50,7 +50,7 @@ export function Button(props: ButtonProps) {
   }
 
   const defineClass = `btn ${size ? `btn--${size}` : ''} ${type ? `btn--${type}` : ''} ${
-    disabled && 'btn--disabled'
+    disabled ? 'btn--disabled' : ''
   } ${className}`
 
   if (!link) {

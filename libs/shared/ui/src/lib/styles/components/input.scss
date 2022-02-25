@@ -8,7 +8,12 @@
 
   input,
   .input__value {
-    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-xs text-text-700 outline-0;
+    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-xs text-text-700;
+  }
+
+  input,
+  textarea {
+    @apply focus:outline-none;
   }
 
   &:hover,
@@ -62,7 +67,8 @@
 }
 
 .input__select__item {
-  @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 select-none;
+  @apply mb-1 last:mb-0 text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 select-none;
+  transition: all 150ms $timing-cubic;
 
   &.is-active {
     @apply bg-element-light-lighter-300;

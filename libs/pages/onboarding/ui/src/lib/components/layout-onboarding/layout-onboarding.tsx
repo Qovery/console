@@ -47,7 +47,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
         <div className="flex-[1_1_0%] bg-element-light-lighter-300 overflow-hidden max-w-2xl">
           <div className="relative mt-32">
             <img
-              className="absolute top-[80px] right-[-100px] min-w-[80%] overflow-hidden pointer-events-none select-none"
+              className="absolute top-[70px] right-[-100px] min-w-[80%] overflow-hidden pointer-events-none select-none"
               src="/assets/onboarding.png"
               alt="Qovery onboarding screen"
             />
