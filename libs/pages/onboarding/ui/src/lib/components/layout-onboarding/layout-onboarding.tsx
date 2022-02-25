@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { Route } from '@console/shared/utils'
+import { ONBOARDING_PROJECT_URL, Route } from '@console/shared/utils'
 import { Navbar } from '@console/shared/ui'
 interface LayoutOnboardingProps {
   children: React.ReactElement
@@ -46,11 +46,15 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
         </div>
         <div className="flex-[1_1_0%] bg-element-light-lighter-300 overflow-hidden max-w-2xl">
           <div className="relative mt-32">
-            <img
-              className="absolute top-[70px] right-[-100px] min-w-[80%] overflow-hidden pointer-events-none select-none"
-              src="/assets/onboarding.png"
-              alt="Qovery onboarding screen"
-            />
+            {step === ONBOARDING_PROJECT_URL.replace('/', '') ? (
+              <div>Step project</div>
+            ) : (
+              <img
+                className="absolute top-[70px] right-[-100px] min-w-[80%] overflow-hidden pointer-events-none select-none"
+                src="/assets/onboarding.png"
+                alt="Qovery onboarding screen"
+              />
+            )}
           </div>
         </div>
       </div>
