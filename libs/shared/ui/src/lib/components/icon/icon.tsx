@@ -24,7 +24,7 @@ export function Icon(props: IconProps) {
     case IconEnum.BITBUCKET:
       return <BitbucketIcon {...formattedProps} />
     default:
-      return <IconFa name={props.name} />
+      return <IconFa {...formattedProps} />
   }
 }
 
