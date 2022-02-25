@@ -5,10 +5,6 @@ export interface Price {
   price: string
 }
 
-export interface Current {
-  [name: string]: { number: string }
-}
-
 export interface PlanCardProps {
   name: string
   selected: string
@@ -16,7 +12,7 @@ export interface PlanCardProps {
   text: string
   price?: number
   listPrice?: Price[]
-  currentValue?: Current
+  currentValue?: { [name: string]: { number: string | undefined } }
   onClick: (plan: string) => void
 }
 
@@ -41,7 +37,7 @@ export function PlanCard(props: PlanCardProps) {
       </div>
       {name !== PlanEnum.ENTERPRISE && (
         <p className="text-xl font-bold flex items-center gap-1">
-          &#36;
+          {'$'}
           {name === PlanEnum.PRO}
           {name === PlanEnum.FREE && price}
           {name === PlanEnum.BUSINESS &&
