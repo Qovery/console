@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { ONBOARDING_PROJECT_URL, Route } from '@console/shared/utils'
 import { Navbar } from '@console/shared/ui'
+import BenefitsCard from '../benefits-card/benefits-card'
 interface LayoutOnboardingProps {
   children: React.ReactElement
   routes: Route[]
@@ -47,7 +48,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
         <div className="flex-[1_1_0%] bg-element-light-lighter-300 overflow-hidden max-w-2xl">
           <div className="relative mt-32">
             {step === ONBOARDING_PROJECT_URL.replace('/', '') ? (
-              <div>Step project</div>
+              <BenefitsCard />
             ) : (
               <img
                 className="absolute top-[70px] right-[-100px] min-w-[80%] overflow-hidden pointer-events-none select-none"
