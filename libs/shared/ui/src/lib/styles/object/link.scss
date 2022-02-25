@@ -12,6 +12,6 @@
 
   & [class^='icon-'],
   & [class*=' icon-'] {
-    font-size: 10px;
+    @apply text-[10px];
   }
 }
