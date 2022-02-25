@@ -15,7 +15,7 @@ export interface Plan {
 
 const PLANS: Plan[] = [
   {
-    name: 'free',
+    name: PlanEnum.FREE,
     title: 'Free',
     text: 'Adapted for personnal project',
     price: 0,
@@ -23,7 +23,7 @@ const PLANS: Plan[] = [
     listPrice: [],
   },
   {
-    name: 'professional',
+    name: PlanEnum.PRO,
     title: 'Professional',
     text: 'For 5-20 members',
     price: 49,
@@ -53,7 +53,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: 'business',
+    name: PlanEnum.BUSINESS,
     title: 'Business',
     text: 'For medium compagny',
     price: 399,
@@ -89,7 +89,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: 'enterprise',
+    name: PlanEnum.ENTERPRISE,
     title: 'Enterprise',
     text: 'For large compagny',
     price: 0,
