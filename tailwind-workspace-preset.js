@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
+        icons: ['FontAwesome']
       },
       fontSize: {
         xs: [
