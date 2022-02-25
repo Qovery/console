@@ -1,7 +1,6 @@
-import { Button, ButtonSize, ButtonType, InputSelect, Value } from '@console/shared/ui'
-import { ONBOARDING_URL, ONBOARDING_MORE_URL } from '@console/shared/utils'
+import { Button, ButtonSize, ButtonType, InputSelect, Value, PlanEnum } from '@console/shared/ui'
+import { ONBOARDING_URL, ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, useDocumentTitle } from '@console/shared/utils'
 import { useState } from 'react'
-import { PlanEnum } from '@console/shared/ui'
 import { PlanCard, Price } from '../plan-card/plan-card'
 
 export interface Plan {
@@ -110,6 +109,8 @@ const DEFAULT_PRICE = {
 }
 
 export function StepPricing() {
+  useDocumentTitle('Onboarding Pricing - Qovery')
+
   const [select, setSelect] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
 
@@ -177,7 +178,7 @@ export function StepPricing() {
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}`}>
+          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
             Select plan
           </Button>
         </div>

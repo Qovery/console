@@ -1,12 +1,7 @@
-/* eslint-disable-next-line */
-export interface OnboardingProjectPageProps {}
+import { StepProject } from '@console/pages/onboarding/ui'
 
-export function OnboardingProjectPage(props: OnboardingProjectPageProps) {
-  return (
-    <div>
-      <h1>Welcome to OnboardingProjectPage!</h1>
-    </div>
-  )
+export function OnboardingProjectPage() {
+  return <StepProject />
 }
 
 export default OnboardingProjectPage

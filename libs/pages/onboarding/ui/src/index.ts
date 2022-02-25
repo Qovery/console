@@ -1,3 +1,4 @@
+export * from './lib/components/step-project/step-project'
 export * from './lib/components/step-pricing/step-pricing'
 export * from './lib/components/step-more/step-more'
 export * from './lib/components/step-personalize/step-personalize'
