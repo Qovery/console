@@ -1,4 +1,4 @@
-import { Icon, IconEnum } from '@console/shared-ui'
+import { Icon, IconEnum } from '@console/shared/ui'
 interface ILoginProps {
   authLogin: (provider: string) => void
 }

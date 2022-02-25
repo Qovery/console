@@ -1,4 +1,4 @@
-import { Navbar } from '@console/shared-ui'
+import { Navbar } from '@console/shared/ui'
 
 interface LayoutLoginProps {
   children: React.ReactElement

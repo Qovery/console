@@ -1,6 +1,5 @@
 export * from './lib/components/step-pricing/step-pricing'
 export * from './lib/components/step-more/step-more'
-export * from './lib/router/router'
 export * from './lib/components/step-personalize/step-personalize'
 export * from './lib/components/step-company/step-company'
 export * from './lib/components/layout-onboarding/layout-onboarding'

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { Navbar } from '@console/shared-ui'
-import { ROUTER_ONBOARDING } from '../../router/router'
-
+import { Route } from '@console/shared/utils'
+import { Navbar } from '@console/shared/ui'
 interface LayoutOnboardingProps {
   children: React.ReactElement
+  routes: Route[]
 }
 
 export function LayoutOnboarding(props: LayoutOnboardingProps) {
-  const { children } = props
+  const { children, routes } = props
 
   const params = useParams()
   const [step, setStep] = useState(params['*'])
@@ -17,8 +17,8 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
     setStep(params['*'])
   }, [params, setStep])
 
-  const stepsNumber: number = ROUTER_ONBOARDING.length
-  const currentStepPosition: number = ROUTER_ONBOARDING.findIndex((route) => route.path === `/${step}`) + 1
+  const stepsNumber: number = routes.length
+  const currentStepPosition: number = routes.findIndex((route: Route) => route.path === `/${step}`) + 1
 
   function getProgressPercentValue(): number {
     return (100 * currentStepPosition) / stepsNumber

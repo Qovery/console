@@ -56,7 +56,7 @@
 }
 
 .input__select {
-  @apply w-full absolute left-0 top-16 z-10 bg-element-light-lighter-100 rounded p-2 opacity-0 pointer-events-none h-0 -translate-y-2;
+  @apply w-full absolute left-0 top-16 z-10 bg-element-light-lighter-100 rounded p-2 opacity-0 pointer-events-none h-0 max-h-60 overflow-scroll -translate-y-2;
   @apply before:content-[''] before:block before:absolute before:-top-1.5 before:right-6 before:border-element-light-lighter-100 before:border-r-8 before:border-l-8 before:border-b-8 before:bg-transparent before:border-l-transparent before:border-r-transparent;
   transition: all 150ms $timing-cubic;
 

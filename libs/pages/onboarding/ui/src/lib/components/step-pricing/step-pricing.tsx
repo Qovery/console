@@ -1,7 +1,7 @@
-import { Button, ButtonSize, ButtonType, InputSelect, Value } from '@console/shared-ui'
+import { Button, ButtonSize, ButtonType, InputSelect, Value } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_MORE_URL } from '@console/shared/utils'
 import { useState } from 'react'
-import { PlanEnum } from '@console/shared-ui'
+import { PlanEnum } from '@console/shared/ui'
 import { PlanCard, Price } from '../plan-card/plan-card'
 
 export interface Plan {

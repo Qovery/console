@@ -1,4 +1,4 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared-ui'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
 import { LOGIN_URL, ONBOARDING_COMPANY_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
 
 export function StepPersonalize() {

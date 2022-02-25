@@ -1,4 +1,4 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared-ui'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
 import {
   ONBOARDING_MORE_URL,
   ONBOARDING_PERSONALIZE_URL,

@@ -1,4 +1,4 @@
-import { Button, ButtonSize, ButtonType, InputTextArea } from '@console/shared-ui'
+import { Button, ButtonSize, ButtonType, InputTextArea } from '@console/shared/ui'
 import { ONBOARDING_COMPANY_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 export function StepMore() {
