@@ -14,6 +14,7 @@ const FaIcons = [
   'icon-solid-plus',
   'icon-solid-circle-plus',
   'icon-solid-check',
+  // schema: favicons name
 ]
 
 function copyName(name: string) {
