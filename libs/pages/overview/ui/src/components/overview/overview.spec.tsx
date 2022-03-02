@@ -1,4 +1,4 @@
-import { render } from '__mocks__/utils/test-utils'
+import { renderWithRouter } from '__mocks__/utils/test-utils'
 
 import Overview from './overview'
 import { OrganizationInterface, organizationsFactoryMock } from '@console/domains/organizations'
@@ -10,7 +10,7 @@ describe('Overview', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Overview organizations={organizations} />)
+    const { baseElement } = renderWithRouter(<Overview organizations={organizations} />)
     expect(baseElement).toBeTruthy()
   })
 })
