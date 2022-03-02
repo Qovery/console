@@ -12,7 +12,7 @@ afterEach(() => server.resetHandlers())
 
 afterAll(() => server.close())
 
-const Wrapper: React.FC = ({ children }) => <Provider store={store}></Provider>
+const Wrapper: React.FC = ({ children }) => <Provider store={store}>{children}</Provider>
 
 const RouterWrapper: React.FC = ({ children }) => (
   <Provider store={store}>
@@ -33,4 +33,4 @@ export * from '@testing-library/react'
 
 export { customRender as render }
 
-export default renderWithRouter
+export { renderWithRouter }
