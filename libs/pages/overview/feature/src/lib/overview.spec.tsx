@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react'
 
-import OnboardingPage from './onboarding-page'
+import Overview from './overview'
 
-describe('OnboardingPage', () => {
+describe('Overview', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<OnboardingPage />)
+    const { baseElement } = render(<Overview />)
     expect(baseElement).toBeTruthy()
   })
 })

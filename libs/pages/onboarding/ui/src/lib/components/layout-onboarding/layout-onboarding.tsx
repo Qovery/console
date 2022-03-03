@@ -1,35 +1,24 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
 import { ONBOARDING_PROJECT_URL, Route } from '@console/shared/utils'
 import { Navbar } from '@console/shared/ui'
-import BenefitsCard from '../benefits-card/benefits-card'
+import { BenefitsCard } from '../benefits-card/benefits-card'
+
 interface LayoutOnboardingProps {
   children: React.ReactElement
+  currentStepPosition: number
+  stepsNumber: number
+  getProgressPercentValue: number
+  step: string | undefined
   routes: Route[]
 }
 
 export function LayoutOnboarding(props: LayoutOnboardingProps) {
-  const { children, routes } = props
-
-  const params = useParams()
-  const [step, setStep] = useState(params['*'])
-
-  useEffect(() => {
-    setStep(params['*'])
-  }, [params, setStep])
-
-  const stepsNumber: number = routes.length
-  const currentStepPosition: number = routes.findIndex((route: Route) => route.path === `/${step}`) + 1
-
-  function getProgressPercentValue(): number {
-    return (100 * currentStepPosition) / stepsNumber
-  }
+  const { children, currentStepPosition, stepsNumber, getProgressPercentValue, step } = props
 
   return (
     <main className="h-screen">
       <Navbar
         className="absolute top-0 w-full"
-        progress={getProgressPercentValue()}
+        progress={getProgressPercentValue}
         contentLeft={
           <div className="flex items-center ml-6">
             <div className="bg-element-light-lighter-400 text-text-400 text-xs rounded-sm font-bold py-0.5 px-1">

@@ -1,23 +1,12 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
-import { LOGIN_URL, ONBOARDING_COMPANY_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText, Value } from '@console/shared/ui'
+import { LOGIN_URL, ONBOARDING_COMPANY_URL, ONBOARDING_URL } from '@console/shared/utils'
 
-export function StepPersonalize() {
-  useDocumentTitle('Onboarding Personalize - Qovery')
+interface StepPersonalizeProps {
+  dataTypes: Array<Value>
+}
 
-  const dataTypes = [
-    {
-      label: 'Personal',
-      value: 'personal',
-    },
-    {
-      label: 'Work',
-      value: 'work',
-    },
-    {
-      label: 'School',
-      value: 'school',
-    },
-  ]
+export function StepPersonalize(props: StepPersonalizeProps) {
+  const { dataTypes } = props
 
   return (
     <div>

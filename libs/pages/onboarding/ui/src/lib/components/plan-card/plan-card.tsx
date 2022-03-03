@@ -1,9 +1,4 @@
-import { InputRadio, PlanEnum } from '@console/shared/ui'
-
-export interface Price {
-  number: string
-  price: string
-}
+import { InputRadio, PlanEnum, Price } from '@console/shared/ui'
 
 export interface PlanCardProps {
   name: string

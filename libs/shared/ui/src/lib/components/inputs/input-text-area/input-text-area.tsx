@@ -30,7 +30,7 @@ export function InputTextArea(props: InputTextAreaProps) {
           {label}
         </label>
         <textarea
-          className="w-full h-4 mt-5 pr-3 bg-transparent appearance-none text-xs text-text-700 outline-0"
+          className="w-full h-4 mt-5 pr-3 bg-transparent appearance-none text-sm text-text-700 outline-0"
           id={label}
           ref={inputRef}
           name={name}

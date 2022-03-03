@@ -1,7 +1,7 @@
 import { StepMore } from '@console/pages/onboarding/ui'
 
-export function OnboardingMorePage() {
+export function OnboardingMore() {
   return <StepMore />
 }
 
-export default OnboardingMorePage
+export default OnboardingMore

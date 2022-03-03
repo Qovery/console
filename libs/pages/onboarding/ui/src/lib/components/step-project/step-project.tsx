@@ -1,9 +1,7 @@
 import { InputText, Button, ButtonSize, ButtonType } from '@console/shared/ui'
-import { ONBOARDING_PRICING_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 export function StepProject() {
-  useDocumentTitle('Onboarding Project - Qovery')
-
   return (
     <div>
       <h1 className="h3 text-text-700 mb-3">
@@ -29,7 +27,7 @@ export function StepProject() {
             Back
           </Button>
           <Button size={ButtonSize.BIG} type={ButtonType.BASIC}>
-            Let’s go{' '}
+            Let’s go
             <span className="ml-1" role="img" aria-label="star">
               💫
             </span>

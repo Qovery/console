@@ -1,67 +1,13 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
-import {
-  ONBOARDING_MORE_URL,
-  ONBOARDING_PERSONALIZE_URL,
-  ONBOARDING_URL,
-  useDocumentTitle,
-} from '@console/shared/utils'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText, Value } from '@console/shared/ui'
+import { ONBOARDING_MORE_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/utils'
 
-export function StepCompany() {
-  useDocumentTitle('Onboarding Personalize - Qovery')
+interface StepCompanyProps {
+  dataSize: Array<Value>
+  dataRole: Array<Value>
+}
 
-  const dataSize = [
-    {
-      label: '1-10',
-      value: '1-10',
-    },
-    {
-      label: '11-50',
-      value: '11-50',
-    },
-    {
-      label: '51-200',
-      value: '51-200',
-    },
-    {
-      label: '201-500',
-      value: '201-500',
-    },
-    {
-      label: '500+',
-      value: '500+',
-    },
-  ]
-
-  const dataRole = [
-    {
-      label: 'Tech Lead',
-      value: 'tech-lead',
-    },
-    {
-      label: 'Software Developer',
-      value: 'software-developer',
-    },
-    {
-      label: 'DevOps',
-      value: 'devops',
-    },
-    {
-      label: 'Product/Project Manager',
-      value: 'product-project-manager',
-    },
-    {
-      label: 'CTO',
-      value: 'cto',
-    },
-    {
-      label: 'Founder',
-      value: 'founder',
-    },
-    {
-      label: 'Other',
-      value: 'other',
-    },
-  ]
+export function StepCompany(props: StepCompanyProps) {
+  const { dataSize, dataRole } = props
 
   return (
     <div>

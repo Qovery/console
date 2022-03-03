@@ -15,6 +15,6 @@
     "**/*.test.jsx",
     "**/*.spec.jsx",
     "**/*.d.ts",
-    "src/lib/overview-page.tsx"
+    "src/lib/overview.tsx"
   ]
 }

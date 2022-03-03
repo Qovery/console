@@ -55,6 +55,7 @@ export function InputText(props: InputTextProps) {
         <input
           id={label}
           name={name}
+          className="input__value"
           type={type}
           value={value}
           ref={inputRef}

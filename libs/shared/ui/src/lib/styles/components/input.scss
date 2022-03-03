@@ -6,9 +6,8 @@
     @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
   }
 
-  input,
   .input__value {
-    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-xs text-text-700;
+    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
   }
 
   input,

@@ -1,6 +1,6 @@
 import { DetectClickOutside } from '@console/shared/utils'
 import { useState } from 'react'
-import { Value } from '../../../types/value.interface'
+import { Value } from '../../../types/common/value.interface'
 import IconFa from '../../icon-fa/icon-fa'
 
 export interface InputSelectProps {
