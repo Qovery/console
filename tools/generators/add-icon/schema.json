@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "cli": "nx",
+  "$id": "add-icon",
+  "type": "object",
+  "title": "Adding an icon to the project scss file and in the storybook",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Icon name",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
+    "unicode": {
+      "type": "string",
+      "description": "Unicode icon",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
+    "type": {
+      "type": "string",
+      "description": "Provide the font type",
+      "x-prompt": {
+        "message": "Which type font do you want?",
+        "type": "list",
+        "items": [
+          {
+            "value": "solid",
+            "label": "solid"
+          },
+          {
+            "value": "brands",
+            "label": "brands"
+          }
+        ]
+      }
+    }
+  },
+  "required": ["name", "unicode", "type"]
+}
