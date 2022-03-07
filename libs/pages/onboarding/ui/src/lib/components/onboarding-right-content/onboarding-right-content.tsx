@@ -1,6 +1,6 @@
 import { IconFa } from '@console/shared/ui'
 import {
-  ONBOARDING_PRICING_BUSINESS_URL,
+  ONBOARDING_PRICING_ENTERPRISE_URL,
   ONBOARDING_PRICING_PRO_URL,
   ONBOARDING_PROJECT_URL,
 } from '@console/shared/utils'
@@ -81,7 +81,7 @@ export function OnboardingRightContent(props: OnboardingRightContentProps) {
           lists={ProList}
           infos="* Price plan does not include your AWS costs"
         />
-      ) : detectCurrentStep(ONBOARDING_PRICING_BUSINESS_URL) ? (
+      ) : detectCurrentStep(ONBOARDING_PRICING_ENTERPRISE_URL) ? (
         <PlanList
           title="Enterprise plan"
           description="Scale up with an unrestricted project and run your code in a production ready environment."
