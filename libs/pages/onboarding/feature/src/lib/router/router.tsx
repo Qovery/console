@@ -26,7 +26,7 @@ export const ROUTER_ONBOARDING: Route[] = [
     component: <OnboardingMore />,
   },
   {
-    path: ONBOARDING_PRICING_URL,
+    path: `${ONBOARDING_PRICING_URL}/:plan`,
     component: <OnboardingPricing />,
   },
   {

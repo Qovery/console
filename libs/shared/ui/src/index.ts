@@ -3,6 +3,7 @@ export * from './lib/enums/icon.enum'
 export * from './lib/enums/plan.enum'
 // components
 export * from './lib/components/icon/icon'
+export * from './lib/components/icon-fa/icon-fa'
 export * from './lib/components/inputs/input-select/input-select'
 export * from './lib/components/inputs/input-text/input-text'
 export * from './lib/components/inputs/input-text-area/input-text-area'

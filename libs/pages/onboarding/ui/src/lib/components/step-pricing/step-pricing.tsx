@@ -20,7 +20,16 @@ export function StepPricing(props: StepPricingProps) {
     <div>
       <h1 className="h3 text-text-700 mb-3">Simple, transparent pricing</h1>
       <p className="text-sm mb-10 text-text-500">
-        14 day trial and no credit card required for all paid plans. See details plan.
+        14 day trial and no credit card required for all paid plans.
+        <a
+          href="https://qovery.com/pricing"
+          target="_blank"
+          rel="noreferrer"
+          className="link text-accent2-500 text-sm ml-1"
+        >
+          See details plan
+        </a>
+        .
       </p>
       <form>
         {plans.map((plan: Plan, index: number) => (
