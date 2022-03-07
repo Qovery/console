@@ -1,4 +1,5 @@
-import { Button, ButtonSize, ButtonType, InputSelect, Value, Plan } from '@console/shared/ui'
+import { Plan, Value } from '@console/shared/interfaces'
+import { Button, ButtonSize, ButtonType, InputSelect } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 

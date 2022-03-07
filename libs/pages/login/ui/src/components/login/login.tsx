@@ -1,10 +1,14 @@
 import { Icon, IconEnum } from '@console/shared/ui'
+import { AuthEnum } from '@console/shared/utils'
 interface ILoginProps {
   authLogin: (provider: string) => void
+  githubType: AuthEnum
+  gitlabType: AuthEnum
+  bitbucketType: AuthEnum
 }
 
 export function Login(props: ILoginProps) {
-  const { authLogin } = props
+  const { authLogin, githubType, gitlabType, bitbucketType } = props
 
   return (
     <div className="flex h-full">
@@ -19,15 +23,15 @@ export function Login(props: ILoginProps) {
             </a>
             .
           </p>
-          <button className="btn-login btn-login--github mb-3" onClick={() => authLogin('github')}>
+          <button className="btn-login btn-login--github mb-3" onClick={() => authLogin(githubType)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.GITHUB} />
             Sign in with Github
           </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => authLogin('Gitlab')}>
+          <button className="btn-login btn-login--default mb-3" onClick={() => authLogin(gitlabType)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.GITLAB} />
             Sign in with Gitlab
           </button>
-          <button className="btn-login btn-login--default mb-3" onClick={() => authLogin('bitbucket')}>
+          <button className="btn-login btn-login--default mb-3" onClick={() => authLogin(bitbucketType)}>
             <Icon className="absolute left-3" width="20" name={IconEnum.BITBUCKET} />
             Sign in with Bitbucket
           </button>

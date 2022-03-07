@@ -12,6 +12,7 @@
     "pages-onboarding-ui": "libs/pages/onboarding/ui",
     "pages-overview-feature": "libs/pages/overview/feature",
     "pages-overview-ui": "libs/pages/overview/ui",
+    "shared-interfaces": "libs/shared/interfaces",
     "shared-ui": "libs/shared/ui",
     "shared-utils": "libs/shared/utils"
   }

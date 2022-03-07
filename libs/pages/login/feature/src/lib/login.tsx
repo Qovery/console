@@ -6,6 +6,7 @@ import {
   OVERVIEW_URL,
   useAuth,
   useDocumentTitle,
+  AuthEnum,
 } from '@console/shared/utils'
 import { useOrganizations } from '@console/domains/organizations'
 
@@ -29,7 +30,12 @@ export function LoginPage() {
 
   return (
     <LayoutLogin>
-      <Login authLogin={authLogin} />
+      <Login
+        authLogin={authLogin}
+        githubType={AuthEnum.GITHUB}
+        gitlabType={AuthEnum.GITLAB}
+        bitbucketType={AuthEnum.BITBUCKET}
+      />
     </LayoutLogin>
   )
 }

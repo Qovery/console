@@ -1,5 +1,6 @@
 import { StepPricing } from '@console/pages/onboarding/ui'
-import { PlanEnum, Value, Price } from '@console/shared/ui'
+import { Value, Price } from '@console/shared/interfaces'
+import { PlanEnum } from '@console/shared/ui'
 import { useDocumentTitle } from '@console/shared/utils'
 import { useState } from 'react'
 

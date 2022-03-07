@@ -1,4 +1,5 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText, Value } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
+import { Value } from '@console/shared/interfaces'
 import { LOGIN_URL, ONBOARDING_COMPANY_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 interface StepPersonalizeProps {

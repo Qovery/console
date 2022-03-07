@@ -1,4 +1,5 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText, Value } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
+import { Value } from '@console/shared/interfaces'
 import { ONBOARDING_MORE_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 interface StepCompanyProps {
