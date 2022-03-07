@@ -11,11 +11,11 @@
 **Quick start**
 
 ```jsx
-npm install
+yarn
 // start project
-npm start
+yarn start
 // start storybook
-npm run storybook
+yarn run storybook
 ```
 
 <br />

@@ -1,1 +1,1 @@
-export * from './lib/overview-page'
+export * from './lib/overview'

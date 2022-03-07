@@ -1,5 +1,5 @@
 import { OrganizationInterface } from '@console/domains/organizations'
-import { LayoutPage } from '@console/shared-ui'
+import { LayoutPage } from '@console/shared/ui'
 
 interface IOverviewProps {
   organizations: OrganizationInterface[]

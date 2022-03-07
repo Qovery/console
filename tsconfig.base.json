@@ -19,9 +19,12 @@
       "@console/domains/user": ["libs/domains/user/src/index.ts"],
       "@console/pages/login/feature": ["libs/pages/login/feature/src/index.ts"],
       "@console/pages/login/ui": ["libs/pages/login/ui/src/index.ts"],
+      "@console/pages/onboarding/feature": ["libs/pages/onboarding/feature/src/index.ts"],
+      "@console/pages/onboarding/ui": ["libs/pages/onboarding/ui/src/index.ts"],
       "@console/pages/overview/feature": ["libs/pages/overview/feature/src/index.ts"],
       "@console/pages/overview/ui": ["libs/pages/overview/ui/src/index.ts"],
-      "@console/shared-ui": ["libs/shared/ui/src/index.ts"],
+      "@console/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
+      "@console/shared/ui": ["libs/shared/ui/src/index.ts"],
       "@console/shared/utils": ["libs/shared/utils/src/index.ts"]
     }
   },
