@@ -18,7 +18,9 @@ export function PlanCard(props: PlanCardProps) {
   return (
     <div
       className={`${
-        selected === name ? 'bg-white text-text-700' : 'text-text-500 bg-element-light-lighter-200'
+        selected === name
+          ? 'bg-white text-text-700'
+          : 'text-text-500 bg-element-light-lighter-200 hover:bg-white hover:text-text-700'
       } p-5 mb-2 border border-element-light-lighter-500 rounded flex justify-between items-center cursor-pointer transition-all`}
       onClick={() => onClick(name)}
     >
