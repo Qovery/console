@@ -5,7 +5,7 @@ ENV NODE_ENV production
 WORKDIR /app
 # Cache and Install dependencies
 COPY yarn.lock .
-RUN yarn install --production
+RUN yarn install
 # Copy app files
 COPY . .
 # Build the app
