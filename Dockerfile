@@ -18,8 +18,10 @@ ENV NX_OAUTH_AUDIENCE $NX_OAUTH_AUDIENCE
 
 # Cache and Install dependencies
 COPY yarn.lock .
-RUN yarn add @nrwl/cli
+RUN yarn global add @nrwl/cli
+RUN yarn add @nrwl/workspace
 RUN yarn install
+
 # Copy app files
 COPY . .
 # Build the app
