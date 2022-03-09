@@ -28,7 +28,7 @@
     "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.12.13",
-    "@nrwl/cli": "13.7.2",
+    "@nrwl/cli": "^13.8.5",
     "@nrwl/cypress": "13.7.2",
     "@nrwl/devkit": "13.7.2",
     "@nrwl/eslint-plugin-nx": "13.7.2",
