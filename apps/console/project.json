@@ -26,7 +26,8 @@
         ],
         "styles": ["apps/console/src/styles.scss"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "@nrwl/react/plugins/webpack",
+        "postcssConfig": "apps/console/postcss.config.js"
       },
       "configurations": {
         "production": {

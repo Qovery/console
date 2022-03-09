@@ -17,9 +17,9 @@ ARG NX_OAUTH_AUDIENCE
 ENV NX_OAUTH_AUDIENCE $NX_OAUTH_AUDIENCE
 
 # Cache and Install dependencies
+COPY package.json .
 COPY yarn.lock .
 RUN yarn global add @nrwl/cli
-RUN yarn add @nrwl/workspace
 RUN yarn install
 
 # Copy app files
@@ -30,7 +30,7 @@ RUN yarn build
 # Bundle static assets with nginx
 FROM nginx:latest
 # Copy built assets from builder
-COPY --from=builder /app/dist/apps/console/ /usr/share/nginx/html
+COPY --from=builder /app/dist/apps/console /usr/share/nginx/html
 # Add your nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port
