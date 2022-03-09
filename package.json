@@ -22,7 +22,9 @@
     "react-router-dom": "^6.2.1",
     "regenerator-runtime": "0.13.7",
     "tailwindcss": "^3.0.18",
-    "tslib": "^2.0.0",
+    "tslib": "^2.0.0"
+  },
+  "devDependencies": {
     "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.12.13",
