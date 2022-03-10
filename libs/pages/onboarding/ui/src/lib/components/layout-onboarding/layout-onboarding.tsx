@@ -24,9 +24,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
             <div className="bg-element-light-lighter-400 text-text-400 text-xs rounded-sm font-bold py-0.5 px-1">
               {currentStepPosition}/{stepsNumber}
             </div>
-            <p className="text-text-600 text-sm font-medium ml-4">
-              Just a few questions <span className="ml-4 text-text-400">13 minutes left</span>
-            </p>
+            <p className="text-text-600 text-sm font-medium ml-4">Just a few questions</p>
           </div>
         }
       />
