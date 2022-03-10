@@ -76,8 +76,8 @@ export function OnboardingRightContent(props: OnboardingRightContentProps) {
         <BenefitsCard />
       ) : detectCurrentStep(ONBOARDING_PRICING_PRO_URL) ? (
         <PlanList
-          title="Professional plan $99/month*"
-          description="Scale up with an unrestricted project and run your code in a production ready environment."
+          title="Professional plan $49/month*"
+          description="Ideal for scaling apps and growing teams"
           lists={ProList}
           infos="* Price plan does not include your AWS costs"
         />

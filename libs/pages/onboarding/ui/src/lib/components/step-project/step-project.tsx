@@ -11,8 +11,7 @@ export function StepProject() {
         </span>
       </h1>
       <p className="text-sm mb-10 text-text-500">
-        Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim
-        velit mollit.
+        Please select the name of the Organization and the name of your first project (they can be edited afterwards).
       </p>
       <form>
         <InputText className="mb-3" name="organization" label="Organization name" />

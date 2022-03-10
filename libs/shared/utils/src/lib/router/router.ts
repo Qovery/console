@@ -11,6 +11,7 @@ export const ONBOARDING_PRICING_PRO_URL = `${ONBOARDING_PRICING_URL}/professiona
 export const ONBOARDING_PRICING_BUSINESS_URL = `${ONBOARDING_PRICING_URL}/business`
 export const ONBOARDING_PRICING_ENTERPRISE_URL = `${ONBOARDING_PRICING_URL}/enterprise`
 export const ONBOARDING_PROJECT_URL = '/project'
+export const ONBOARDING_THANKS_URL = '/thanks'
 
 export interface Route {
   component: React.ReactElement
