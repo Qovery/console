@@ -1,6 +1,6 @@
-import { ONBOARDING_PROJECT_URL, Route } from '@console/shared/utils'
+import { Route } from '@console/shared/utils'
 import { Navbar } from '@console/shared/ui'
-import { BenefitsCard } from '../benefits-card/benefits-card'
+import OnboardingRightContent from '../onboarding-right-content/onboarding-right-content'
 
 interface LayoutOnboardingProps {
   children: React.ReactElement
@@ -35,17 +35,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
           <div className="max-w-lg mt-36 mx-auto">{children}</div>
         </div>
         <div className="flex-[1_1_0%] bg-element-light-lighter-300 overflow-hidden max-w-2xl">
-          <div className="relative mt-32">
-            {step === ONBOARDING_PROJECT_URL.replace('/', '') ? (
-              <BenefitsCard />
-            ) : (
-              <img
-                className="absolute top-[70px] right-[-100px] min-w-[80%] overflow-hidden pointer-events-none select-none"
-                src="/assets/onboarding.png"
-                alt="Qovery onboarding screen"
-              />
-            )}
-          </div>
+          <OnboardingRightContent step={step} />
         </div>
       </div>
     </main>

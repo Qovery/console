@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
-import { Route } from '@console/shared/utils'
+import { useParams, useNavigate } from 'react-router'
+import { ONBOARDING_PRICING_FREE_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL, Route } from '@console/shared/utils'
 import { LayoutOnboarding } from '@console/pages/onboarding/ui'
 import { ROUTER_ONBOARDING } from '../../router/router'
 
@@ -12,14 +12,20 @@ export function Container(props: ContainerProps) {
   const { children } = props
 
   const params = useParams()
+  const navigate = useNavigate()
   const [step, setStep] = useState(params['*'])
 
   useEffect(() => {
     setStep(params['*'])
-  }, [params, setStep])
+
+    if (step === ONBOARDING_PRICING_URL.replace('/', '')) {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PRICING_FREE_URL}`)
+    }
+  }, [params, setStep, step, navigate])
 
   const stepsNumber: number = ROUTER_ONBOARDING.length
-  const currentStepPosition: number = ROUTER_ONBOARDING.findIndex((route: Route) => route.path === `/${step}`) + 1
+  const currentStepPosition: number =
+    ROUTER_ONBOARDING.findIndex((route: Route) => route.path.replace('/:plan', '') === `/${step?.split('/')[0]}`) + 1
 
   function getProgressPercentValue(): number {
     return (100 * currentStepPosition) / stepsNumber

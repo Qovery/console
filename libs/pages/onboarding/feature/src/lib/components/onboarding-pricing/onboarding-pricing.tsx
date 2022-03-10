@@ -1,8 +1,9 @@
 import { StepPricing } from '@console/pages/onboarding/ui'
 import { Value, Price } from '@console/shared/interfaces'
 import { PlanEnum } from '@console/shared/ui'
-import { useDocumentTitle } from '@console/shared/utils'
-import { useState } from 'react'
+import { ONBOARDING_PRICING_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router'
 
 export interface Plan {
   name: string
@@ -112,10 +113,15 @@ const DEFAULT_PRICE = {
 export function OnboardingPricing() {
   useDocumentTitle('Onboarding Pricing - Qovery')
 
+  const navigate = useNavigate()
   const [select, setSelect] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
 
   const displayDeploy = select === PlanEnum.PRO || select === PlanEnum.BUSINESS
+
+  useEffect(() => {
+    navigate(`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}/${select}`)
+  }, [select, navigate])
 
   const chooseDeploy = (value: Value | null, plan: string) => {
     if (value) {
