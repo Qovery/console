@@ -28,15 +28,15 @@ export const ROUTER_ONBOARDING: Route[] = [
     component: <OnboardingMore />,
   },
   {
+    path: ONBOARDING_THANKS_URL,
+    component: <OnboardingThanks />,
+  },
+  {
     path: `${ONBOARDING_PRICING_URL}/:plan`,
     component: <OnboardingPricing />,
   },
   {
     path: ONBOARDING_PROJECT_URL,
     component: <OnboardingProject />,
-  },
-  {
-    path: ONBOARDING_THANKS_URL,
-    component: <OnboardingThanks />,
   },
 ]
