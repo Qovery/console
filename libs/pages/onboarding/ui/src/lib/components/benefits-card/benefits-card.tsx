@@ -2,19 +2,18 @@ import { Icon } from '@console/shared/ui'
 
 export function BenefitsCard() {
   const LIST = [
-    'An environment help you to amet minim mollit non deserunt.',
-    'Ullamco est sit aliqua dolor do amet sint.',
-    'Velit officia consequat duis enim velit mollit.',
-    'Exercitation veniam consequat sunt nostrud amet.',
+    'An organization is a shared account where developers can collaborate across many projects at once. On Qovery side, this is where you will manage your projects, team members, clusters and billing.',
+    'A project allows you to group a set of applications and their dependencies (databases & other services) into environments. An organization can contain multiple projects.',
+    'An environment is a standalone copy of your project, including apps, databases, storage, data, and all other services.',
   ]
 
   return (
     <div className="w-80 bg-white border border-element-light-lighter-500 rounded-md ml-10">
-      <div className="p-8 border-b border-element-light-lighter-500">
+      <div className="p-8">
         <span className="text-4xl" role="img" aria-label="light">
           💡
         </span>
-        <h2 className="h5 text-text-700 mt-5 mb-5">What are the benefits</h2>
+        <h2 className="h5 text-text-700 mt-5 mb-5">What is an organization, what is a project?</h2>
         <ul className="text-sm ml-2">
           {LIST.map((l, index) => (
             <li
@@ -26,7 +25,7 @@ export function BenefitsCard() {
           ))}
         </ul>
       </div>
-      <div className="p-8">
+      <div className="p-8 hidden">
         <p className="text-sm text-text-500 mb-5">You may find these links useful</p>
         <a
           href="https://hub.qovery.com/docs/getting-started/what-is-qovery/"
