@@ -1,64 +1,44 @@
-import { IconFa } from '@console/shared/ui'
 import {
+  ONBOARDING_PRICING_BUSINESS_URL,
   ONBOARDING_PRICING_ENTERPRISE_URL,
+  ONBOARDING_PRICING_FREE_URL,
   ONBOARDING_PRICING_PRO_URL,
   ONBOARDING_PROJECT_URL,
 } from '@console/shared/utils'
 import BenefitsCard from '../benefits-card/benefits-card'
 import PlanList from '../plan-list/plan-list'
 
+const FreeList = [
+  <span>Deploy on your AWS account</span>,
+  <span>3 users</span>,
+  <span>Up to 10 applications</span>,
+  <span>Github, and Gitlab auto-deploy</span>,
+  <span>Managed infrastructure</span>,
+  <span>Community support (forum)</span>,
+]
+
 const ProList = [
-  <>
-    <b className="text-text-700 mr-2">24/5</b> Support
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Team members
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Projects
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Domains
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Subdomains
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Addons
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Jobs
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Services
-  </>,
+  <span>All FREE features</span>,
+  <span>15 users included</span>,
+  <span>Unlimited applications</span>,
+  <span>Application auto-scaling</span>,
+  <span>Preview environment (optional)</span>,
+  <span>24/5 support (email and chat)</span>,
+]
+
+const BusinessList = [
+  <span>All PROFESSIONAL features</span>,
+  <span>30 users included</span>,
+  <span>Multi clusters</span>,
+  <span>Single Sign-On (SSO)</span>,
+  <span>Cloud cost optimization</span>,
+  <span>Priority support</span>,
 ]
 
 const EnterpriseList = [
-  <>
-    <b className="text-text-700 mr-2">24/5</b> Support
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Team members
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Projects
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Domains
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Subdomains
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Addons
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Jobs
-  </>,
-  <>
-    <IconFa name="icon-solid-infinity" className="mr-2 text-text-700" /> Services
-  </>,
+  <span>Extended security and compliance</span>,
+  <span>Hybrid cloud</span>,
+  <span>24/7 support</span>,
 ]
 
 export interface OnboardingRightContentProps {
@@ -74,11 +54,20 @@ export function OnboardingRightContent(props: OnboardingRightContentProps) {
     <div className="relative mt-32">
       {detectCurrentStep(ONBOARDING_PROJECT_URL) ? (
         <BenefitsCard />
+      ) : detectCurrentStep(ONBOARDING_PRICING_FREE_URL) ? (
+        <PlanList title="Free" description="Start to deploy your apps on your cloud account" lists={FreeList} />
       ) : detectCurrentStep(ONBOARDING_PRICING_PRO_URL) ? (
         <PlanList
           title="Professional plan $49/month*"
           description="Ideal for scaling apps and growing teams"
           lists={ProList}
+          infos="* Price plan does not include your AWS costs"
+        />
+      ) : detectCurrentStep(ONBOARDING_PRICING_BUSINESS_URL) ? (
+        <PlanList
+          title="Business plan $599/month*"
+          description="Ideal for better security and compliance"
+          lists={BusinessList}
           infos="* Price plan does not include your AWS costs"
         />
       ) : detectCurrentStep(ONBOARDING_PRICING_ENTERPRISE_URL) ? (

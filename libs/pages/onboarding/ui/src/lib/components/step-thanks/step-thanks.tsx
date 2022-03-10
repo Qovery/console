@@ -25,7 +25,7 @@ export function StepThanks() {
       </p>
       <div className="flex flex-col">
         <a
-          href="https://hub.qovery.com/docs/getting-started/what-is-qovery/"
+          href="https://hub.qovery.com/docs/using-qovery/configuration/organization/"
           target="_blank"
           rel="noreferrer"
           className="link text-accent2-500 text-sm mb-3"
@@ -33,7 +33,7 @@ export function StepThanks() {
           How to configure an Organization <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>
         <a
-          href="https://hub.qovery.com/docs/getting-started/what-is-qovery/"
+          href="https://hub.qovery.com/docs/using-qovery/configuration/project/"
           target="_blank"
           rel="noreferrer"
           className="link text-accent2-500 text-sm mb-3"
