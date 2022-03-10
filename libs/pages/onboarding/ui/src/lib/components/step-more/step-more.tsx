@@ -1,5 +1,5 @@
 import { Button, ButtonSize, ButtonType, InputTextArea } from '@console/shared/ui'
-import { ONBOARDING_COMPANY_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { ONBOARDING_COMPANY_URL, ONBOARDING_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
 
 export function StepMore() {
   return (
@@ -18,7 +18,7 @@ export function StepMore() {
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`}>
+          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`}>
             Continue
           </Button>
         </div>

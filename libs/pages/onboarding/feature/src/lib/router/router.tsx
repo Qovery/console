@@ -4,6 +4,7 @@ import {
   ONBOARDING_PERSONALIZE_URL,
   ONBOARDING_PRICING_URL,
   ONBOARDING_PROJECT_URL,
+  ONBOARDING_THANKS_URL,
   Route,
 } from '@console/shared/utils'
 import { OnboardingPersonalize } from '../components/onboarding-personalize/onboarding-personalize'
@@ -11,6 +12,7 @@ import { OnboardingMore } from '../components/onboarding-more/onboarding-more'
 import { OnboardingCompany } from '../components/onboarding-company/onboarding-company'
 import { OnboardingPricing } from '../components/onboarding-pricing/onboarding-pricing'
 import { OnboardingProject } from '../components/onboarding-project/onboarding-project'
+import { OnboardingThanks } from '../components/onboarding-thanks/onboarding-thanks'
 
 export const ROUTER_ONBOARDING: Route[] = [
   {
@@ -32,5 +34,9 @@ export const ROUTER_ONBOARDING: Route[] = [
   {
     path: ONBOARDING_PROJECT_URL,
     component: <OnboardingProject />,
+  },
+  {
+    path: ONBOARDING_THANKS_URL,
+    component: <OnboardingThanks />,
   },
 ]
