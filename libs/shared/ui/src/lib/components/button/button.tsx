@@ -25,6 +25,7 @@ export interface ButtonProps {
   link?: string
   disabled?: boolean
   className?: string
+  onClick?: () => void
 }
 
 export function Button(props: ButtonProps) {
@@ -37,6 +38,7 @@ export function Button(props: ButtonProps) {
     link,
     disabled = false,
     className = '',
+    onClick,
   } = props
 
   function content() {
@@ -54,10 +56,14 @@ export function Button(props: ButtonProps) {
   } ${className}`
 
   if (!link) {
-    return <button className={defineClass}>{content()}</button>
+    return (
+      <button className={defineClass} onClick={() => onClick}>
+        {content()}
+      </button>
+    )
   } else {
     return (
-      <Link to={link} className={defineClass}>
+      <Link to={link} className={defineClass} onClick={() => onClick}>
         {content()}
       </Link>
     )

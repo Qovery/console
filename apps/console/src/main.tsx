@@ -5,7 +5,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { Provider } from 'react-redux'
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import { createBrowserHistory } from 'history'
-import { user } from '@console/domains/user'
+import { user, userSignUp } from '@console/domains/user'
 import { organizations } from '@console/domains/organizations'
 import { environment } from './environments/environment.prod'
 import App from './app/app'
@@ -22,6 +22,7 @@ const onRedirectCallback = (appState: AppState) => {
 
 const reducers = combineReducers({
   user: user,
+  userSignUp: userSignUp,
   organizations: organizations,
 })
 

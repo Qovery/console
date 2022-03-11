@@ -40,7 +40,10 @@ export function useAuth() {
 
       if (user) {
         const userInfos: UserInterface = {
-          ...user,
+          name: user.name,
+          email: user.email,
+          sub: user.sub,
+          picture: user.picture,
           isAuthenticated,
           isLoading,
           token,
