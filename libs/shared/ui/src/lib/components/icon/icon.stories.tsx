@@ -15,6 +15,7 @@ const FaIcons = [
   'icon-solid-circle-plus',
   'icon-solid-check',
   'icon-solid-infinity',
+  'icon-solid-angle-down',
   // schema: favicons name
 ]
 

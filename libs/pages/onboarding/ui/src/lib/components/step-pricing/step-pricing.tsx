@@ -1,5 +1,5 @@
 import { Plan, Value } from '@console/shared/interfaces'
-import { Button, ButtonSize, ButtonType, InputSelect } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonType, InputSelectSmall } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
@@ -32,6 +32,23 @@ export function StepPricing(props: StepPricingProps) {
         .
       </p>
       <form>
+        {plans.map((plan: Plan) => (
+          <div key={plan.name} className="mt-5">
+            {select === plan.name && (
+              <div className="flex justify-between items-center">
+                <p className="text-text-500 text-sm">Number of deployments needed</p>
+                <InputSelectSmall
+                  name="pricing"
+                  items={plan.listDeploy}
+                  defaultItem={defaultValue[plan.name]}
+                  getValue={(name, value: Value | null) => chooseDeploy(value, plan.name)}
+                  className="w-36"
+                ></InputSelectSmall>
+              </div>
+            )}
+          </div>
+        ))}
+
         {plans.map((plan: Plan, index: number) => (
           <PlanCard
             key={index}
@@ -45,25 +62,6 @@ export function StepPricing(props: StepPricingProps) {
             onClick={() => setSelect(plan.name)}
           />
         ))}
-
-        {displayDeploy &&
-          plans.map((plan: Plan) => (
-            <div key={plan.name} className="mt-5">
-              {select === plan.name && (
-                <div className="flex justify-between items-center">
-                  <p className="text-text-500 text-sm">Price calculate on deployments need</p>
-                  <InputSelect
-                    name="pricing"
-                    label="Number of deployement"
-                    items={plan.listDeploy}
-                    className="w-48"
-                    getValue={(name, value: Value | null) => chooseDeploy(value, plan.name)}
-                    defaultItem={defaultValue[plan.name]}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
 
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
