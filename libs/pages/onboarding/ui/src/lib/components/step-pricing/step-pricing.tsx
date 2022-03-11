@@ -42,7 +42,7 @@ export function StepPricing(props: StepPricingProps) {
                   items={plan.listDeploy}
                   defaultItem={defaultValue[plan.name]}
                   getValue={(name, value: Value | null) => chooseDeploy(value, plan.name)}
-                  className="w-36"
+                  className="w-32"
                 ></InputSelectSmall>
               </div>
             )}

@@ -76,6 +76,10 @@
   }
 }
 
+.input__select--small {
+  @apply pl-2 pr-8 py-2 bg-element-light-lighter-200 border border-element-light-lighter-500 text-text-700 rounded text-sm appearance-none w-full;
+}
+
 [data-reach-listbox-input] {
   span[role='button'] {
     @apply w-full bg-element-light-lighter-200 rounded border border-element-light-lighter-500 px-4 py-2 text-sm text-text-700 focus-within:outline-brand-400;

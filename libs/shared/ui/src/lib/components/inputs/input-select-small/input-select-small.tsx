@@ -1,5 +1,4 @@
 import { Value } from '@console/shared/interfaces'
-import { Listbox, ListboxOption } from '@reach/listbox'
 import { useState } from 'react'
 import Icon from '../../icon/icon'
 
@@ -19,28 +18,26 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
 
   const onClickItem = (value: string) => {
     const selectedItem = items.find((i) => i.value === value) || null
-    setItem(selectedItem)
+    if (selectedItem !== defaultItem) setItem(selectedItem)
     if (getValue) getValue(name, selectedItem)
   }
 
   return (
-    <div>
+    <div className={`${className} relative`}>
       {label && <label>{label}</label>}
-      <Listbox
-        defaultValue={defaultItem?.value}
-        className={className}
-        arrow={<Icon name="icon-solid-angle-down" className="text-sm" />}
+      <select
         name={name}
-        onChange={onClickItem}
+        value={item?.value}
+        className="input__select--small"
+        onChange={(e) => onClickItem(e.target.value)}
       >
-        {items.map((item: Value, index: number) => {
-          return (
-            <ListboxOption key={index} value={item.value}>
-              {item.label}
-            </ListboxOption>
-          )
-        })}
-      </Listbox>
+        {items.map((item: Value, index: number) => (
+          <option key={index} value={item.value}>
+            {item.label}
+          </option>
+        ))}
+      </select>
+      <Icon name="icon-solid-angle-down" className="absolute top-3 right-4 text-sm text-text-500 leading-3" />
     </div>
   )
 }
