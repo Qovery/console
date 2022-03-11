@@ -23,12 +23,12 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
   }
 
   return (
-    <div className={`${className} relative`}>
-      {label && <label>{label}</label>}
+    <div className={`${className} relative flex gap-4 items-center`}>
+      {label && <label className="text-sm shrink-0">{label}</label>}
       <select
         name={name}
         value={item?.value}
-        className="input__select--small"
+        className="input input__select--small"
         onChange={(e) => onClickItem(e.target.value)}
       >
         {items.map((item: Value, index: number) => (
