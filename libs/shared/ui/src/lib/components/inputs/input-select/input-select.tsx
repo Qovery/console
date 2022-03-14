@@ -42,6 +42,10 @@ export function InputSelect(props: InputSelectProps) {
               key={index}
               value={currentItem.value}
             >
+              <Icon
+                name="icon-solid-check"
+                className={`text-success-500 mr-3 ${item?.value === currentItem.value ? 'opacity-100' : 'opacity-0'}`}
+              ></Icon>
               {currentItem.label}
             </ListboxOption>
           ))}
