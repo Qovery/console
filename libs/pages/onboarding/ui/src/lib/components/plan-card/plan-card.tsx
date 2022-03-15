@@ -8,24 +8,25 @@ export interface PlanCardProps {
   text: string
   price?: number
   listPrice?: Price[]
-  currentValue?: { [name: string]: { number: string | undefined } }
-  onClick: (plan: string) => void
+  currentValue?: { [name: string]: { number?: string | undefined } }
+  onClick: (plan: string) => void,
+  disable?: boolean | undefined
 }
 
 export function PlanCard(props: PlanCardProps) {
-  const { name, selected, title, text, price, listPrice = [], currentValue = {}, onClick } = props
+  const { name, selected, title, text, price, listPrice = [], currentValue = {}, onClick, disable = false } = props
 
   return (
     <div
       className={`${
         selected === name
           ? 'bg-white text-text-700'
-          : 'text-text-500 bg-element-light-lighter-200 hover:bg-white hover:text-text-700'
-      } p-5 mb-2 border border-element-light-lighter-500 rounded flex justify-between items-center cursor-pointer transition-all`}
-      onClick={() => onClick(name)}
+          : 'text-text-500 bg-element-light-lighter-200 hover:bg-white'
+      } p-5 mb-2 border border-element-light-lighter-500 rounded flex justify-between items-center  transition-all ${disable ? 'opacity-50' : 'cursor-pointer hover:text-text-700'}`}
+      onClick={() => !disable ? onClick(name) : null}
     >
       <div className="flex items-start gap-3">
-        <InputRadio name="plan" value={name} isChecked={selected === name} />
+        <InputRadio name="plan" value={name} isChecked={selected === name} disable={disable} />
         <div>
           <h2 className="leading-none text-base font-normal mb-1">
             <b className="font-bold">{title}</b> <span className="text-text-500">plan</span>
