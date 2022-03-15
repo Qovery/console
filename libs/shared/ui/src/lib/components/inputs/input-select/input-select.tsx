@@ -25,9 +25,9 @@ export function InputSelect(props: InputSelectProps) {
 
   return (
     <div className={`${className} input__select ${item !== null ? 'input--focused' : ''}`}>
-      <ListboxInput onChange={onClickItem}>
+      <ListboxInput onChange={onClickItem} className="input__select__box">
         <ListboxButton
-          className={`input__select__button`}
+          className="input__select__button"
           arrow={<Icon name="icon-solid-angle-down" className="input__select__arrow" />}
         >
           <div className="input__label">
@@ -35,7 +35,7 @@ export function InputSelect(props: InputSelectProps) {
           </div>
           {item && <div className="input__value">{item.label}</div>}
         </ListboxButton>
-        <ListboxPopover portal={false}>
+        <ListboxPopover portal={false} className='input__select__list'>
           {items.map((currentItem, index) => (
             <ListboxOption
               className={`input__select__item ${item?.value === currentItem.value ? 'is-active' : ''}`}

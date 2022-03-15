@@ -1,5 +1,5 @@
 import { Plan, Value } from '@console/shared/interfaces'
-import { Button, ButtonSize, ButtonType, InputSelectSmall } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonType, InputSelectSmall, PlanEnum } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
@@ -8,13 +8,15 @@ interface StepPricingProps {
   setSelect: (value: string) => void
   displayDeploy: boolean
   plans: Plan[]
-  chooseDeploy: (value: Value | null, plan: string) => void
-  currentValue: { [name: string]: { number: string | undefined } }
-  defaultValue: { [name: string]: Value | undefined }
+  chooseDeploy: (value: Value | null) => void
+  currentValue: { [name: string]: { number?: string | undefined, disable: boolean | undefined } }
+  defaultValue: { [name: string]: Value | undefined },
+  currentDeploy: Value
+  deploys: Value[],
 }
 
 export function StepPricing(props: StepPricingProps) {
-  const { select, setSelect, plans, displayDeploy, chooseDeploy, currentValue, defaultValue } = props
+  const { select, setSelect, plans, displayDeploy, chooseDeploy, currentValue, defaultValue, deploys, currentDeploy } = props
 
   return (
     <div>
@@ -32,22 +34,16 @@ export function StepPricing(props: StepPricingProps) {
         .
       </p>
       <form>
-        {plans.map((plan: Plan) => (
-          <div key={plan.name} className="mt-5">
-            {select === plan.name && (
-              <div className="flex justify-between items-center">
-                <p className="text-text-500 text-sm">Number of deployments needed</p>
-                <InputSelectSmall
-                  name="pricing"
-                  items={plan.listDeploy}
-                  defaultItem={defaultValue[plan.name]}
-                  getValue={(name, value: Value | null) => chooseDeploy(value, plan.name)}
-                  className="w-32"
-                ></InputSelectSmall>
-              </div>
-            )}
-          </div>
-        ))}
+        <div className="flex justify-between items-center mb-4">
+          <p className="text-text-500 text-sm">Number of deployments needed</p>
+          <InputSelectSmall
+            name="pricing"
+            items={deploys}
+            defaultItem={currentDeploy}
+            getValue={(name, value: Value | null) => chooseDeploy(value)}
+            className="w-32"
+          ></InputSelectSmall>
+        </div>
 
         {plans.map((plan: Plan, index: number) => (
           <PlanCard
@@ -60,6 +56,7 @@ export function StepPricing(props: StepPricingProps) {
             listPrice={plan.listPrice}
             currentValue={currentValue}
             onClick={() => setSelect(plan.name)}
+            disable={currentValue[plan.name].disable}
           />
         ))}
 
@@ -72,9 +69,12 @@ export function StepPricing(props: StepPricingProps) {
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
+          {select === PlanEnum.ENTERPRISE && <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
+            Contact us
+          </Button>}
+          {select !== PlanEnum.ENTERPRISE && <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
             Select plan
-          </Button>
+          </Button>}
         </div>
       </form>
     </div>
