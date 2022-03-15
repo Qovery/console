@@ -1,4 +1,4 @@
-import { Button, ButtonSize, ButtonType, InputTextArea } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputTextArea } from '@console/shared/ui'
 import { ONBOARDING_COMPANY_URL, ONBOARDING_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
 
 export function StepMore() {
@@ -13,12 +13,12 @@ export function StepMore() {
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`}
             size={ButtonSize.BIG}
-            type={ButtonType.STROKED}
+            style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`}>
+          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`}>
             Continue
           </Button>
         </div>

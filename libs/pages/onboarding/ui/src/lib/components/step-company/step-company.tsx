@@ -1,4 +1,4 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
 import { ONBOARDING_MORE_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/utils'
 
@@ -22,12 +22,12 @@ export function StepCompany(props: StepCompanyProps) {
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`}
             size={ButtonSize.BIG}
-            type={ButtonType.STROKED}
+            style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}>
+          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}>
             Continue
           </Button>
         </div>

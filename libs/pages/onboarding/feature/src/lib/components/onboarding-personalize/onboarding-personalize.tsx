@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useUser } from '@console/domains/user'
 import { StepPersonalize } from '@console/pages/onboarding/ui'
-import { useDocumentTitle } from '@console/shared/utils'
+import { useDocumentTitle, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
+import { FormPersonalize } from '@console/shared/interfaces'
 
 const dataTypes = [
   {
@@ -20,50 +22,42 @@ const dataTypes = [
 
 export function OnboardingPersonalize() {
   useDocumentTitle('Onboarding Personalize - Qovery')
+  const { user, userSignUp, updateUserSignUp } = useUser()
+  const { register, handleSubmit } = useForm()
 
-  const { user, updateUserSignUp } = useUser()
+  const defaultValue = useMemo(
+    () => ({
+      first_name: userSignUp.first_name || '',
+      last_name: userSignUp.last_name || '',
+      user_email: userSignUp.user_email || '',
+    }),
+    [userSignUp]
+  )
 
-  const [formData, setFormData] = useState<any>({
-    first_name: '',
-    last_name: '',
-    user_email: '',
-  })
+  const [formData, setFormData] = useState<FormPersonalize>(defaultValue)
 
   useEffect(() => {
     const { email, name } = user
 
-    setFormData({
-      first_name: name?.split(' ')[0],
-      last_name: name?.split(' ')[1],
-      user_email: email,
-    })
-  }, [user, setFormData])
+    if (formData.first_name === '') {
+      setFormData({
+        first_name: name?.split(' ')[0] || '',
+        last_name: name?.split(' ')[1] || '',
+        user_email: email || '',
+      })
+    } else {
+      setFormData(defaultValue)
+    }
+  }, [user, defaultValue, formData.first_name])
 
-  const submitForm = () => {
-    // updateUserSignUp({
-    //   first_name: 'Rémi',
-    //   last_name: 'Bonnet',
-    // })
-  }
+  const onSubmit = handleSubmit((data) => {
+    data = Object.assign(data, { current_step: ONBOARDING_PERSONALIZE_URL })
+    updateUserSignUp(data)
+  })
 
-  // updateUserSignUp({
-  //   first_name: 'Rémi',
-  //   last_name: 'Bonnet',
-  //   company_name: null,
-  //   company_size: null,
-  //   current_step: null,
-  //   dx_auth: false,
-  //   qovery_usage: null,
-  //   type_of_use: null,
-  //   user_email: null,
-  //   user_questions: null,
-  //   user_role: null,
-  // })
-  if (formData.first_name && formData.first_name.length > 0) {
-    return <StepPersonalize data={formData} dataTypes={dataTypes} submitForm={submitForm} />
-  } else {
-    return null
-  }
+  if (formData.first_name.length > 0)
+    return <StepPersonalize data={formData} dataTypes={dataTypes} onSubmit={onSubmit} register={register} />
+  return null
 }
 
 export default OnboardingPersonalize

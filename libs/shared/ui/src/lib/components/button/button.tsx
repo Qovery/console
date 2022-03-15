@@ -9,7 +9,7 @@ export enum ButtonSize {
   VERY_SMALL = 'very-small',
 }
 
-export enum ButtonType {
+export enum ButtonStyle {
   BASIC = 'basic',
   RAISED = 'raised',
   STROKED = 'stroked',
@@ -19,25 +19,27 @@ export enum ButtonType {
 export interface ButtonProps {
   children: React.ReactNode
   size?: ButtonSize
-  type?: ButtonType
+  style?: ButtonStyle
   iconLeft?: IconEnum | string
   iconRight?: IconEnum | string
   link?: string
   disabled?: boolean
   className?: string
   onClick?: () => void
+  type?: 'button' | 'submit' | 'reset' | undefined
 }
 
 export function Button(props: ButtonProps) {
   const {
     children,
     size = ButtonSize.NORMAL,
-    type = ButtonType.BASIC,
+    style = ButtonStyle.BASIC,
     iconLeft,
     iconRight,
     link,
     disabled = false,
     className = '',
+    type = 'button',
     onClick,
   } = props
 
@@ -51,13 +53,13 @@ export function Button(props: ButtonProps) {
     )
   }
 
-  const defineClass = `btn ${size ? `btn--${size}` : ''} ${type ? `btn--${type}` : ''} ${
+  const defineClass = `btn ${size ? `btn--${size}` : ''} ${style ? `btn--${style}` : ''} ${
     disabled ? 'btn--disabled' : ''
   } ${className}`
 
   if (!link) {
     return (
-      <button className={defineClass} onClick={() => onClick}>
+      <button className={defineClass} onClick={() => onClick} type={type}>
         {content()}
       </button>
     )

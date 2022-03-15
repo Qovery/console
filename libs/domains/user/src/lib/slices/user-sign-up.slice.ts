@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 export const USERSIGNUP_KEY = 'userSignUp'
@@ -22,15 +22,16 @@ export interface UserSignUpState extends UserSignUpInterface {
   error: string | null | undefined
 }
 
+export const Adapter = createEntityAdapter<UserSignUpInterface>()
+
 export const fetchUserSignUp = createAsyncThunk('userSignUp/get', async () => {
   const response = await axios.get('/admin/userSignUp').then((response) => response.data)
-  return response.results
+  return response
 })
 
 export const postUserSignUp = createAsyncThunk<any, UserSignUpInterface>('userSignUp/post', async (data) => {
-  console.log(data)
-  const response = await axios.post('/admin/userSignUp', data).then((response) => response.data)
-  return response.results
+  await axios.post('/admin/userSignUp', data).then((response) => response)
+  return data
 })
 
 export const initialUserSignUpState: UserSignUpState = {
@@ -48,22 +49,25 @@ export const userSignUpSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // get action
       .addCase(fetchUserSignUp.pending, (state: UserSignUpState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(fetchUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<UserSignUpInterface[]>) => {
-        // initialUserSignUpState.add(state, action.payload)
-        // state = action.payload
-        console.log(action)
+      .addCase(fetchUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<UserSignUpInterface>) => {
         state.loadingStatus = 'loaded'
+        state = Object.assign(state, action.payload)
       })
       .addCase(fetchUserSignUp.rejected, (state: UserSignUpState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
-      .addCase(postUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<UserSignUpInterface[]>) => {
-        console.log(state)
-        // state = action.payload
+      // post action
+      .addCase(postUserSignUp.pending, (state: UserSignUpState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(postUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<UserSignUpInterface>) => {
+        state.loadingStatus = 'loaded'
+        state = Object.assign(state, action.payload)
       })
   },
 })

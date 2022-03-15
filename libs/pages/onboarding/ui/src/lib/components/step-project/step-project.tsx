@@ -1,4 +1,4 @@
-import { InputText, Button, ButtonSize, ButtonType } from '@console/shared/ui'
+import { InputText, Button, ButtonSize, ButtonStyle } from '@console/shared/ui'
 import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 export function StepProject() {
@@ -20,12 +20,12 @@ export function StepProject() {
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`}
             size={ButtonSize.BIG}
-            type={ButtonType.STROKED}
+            style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC}>
+          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
             Let’s go
             <span className="ml-1" role="img" aria-label="star">
               💫

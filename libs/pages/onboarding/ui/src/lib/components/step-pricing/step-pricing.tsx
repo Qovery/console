@@ -1,5 +1,5 @@
 import { Plan, Value } from '@console/shared/interfaces'
-import { Button, ButtonSize, ButtonType, InputSelect } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputSelect } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
@@ -69,12 +69,12 @@ export function StepPricing(props: StepPricingProps) {
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`}
             size={ButtonSize.BIG}
-            type={ButtonType.STROKED}
+            style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
+          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
             Select plan
           </Button>
         </div>

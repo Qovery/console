@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react'
+import { UseFormRegister } from 'react-hook-form'
 
 export interface InputTextProps {
   name: string
   label: string
+  register?: UseFormRegister<any>
   type?: string
   defaultValue?: string
   getValue?: (name: string, value: string) => void
@@ -10,6 +12,7 @@ export interface InputTextProps {
   isValid?: boolean
   disabled?: boolean
   className?: string
+  required?: boolean
 }
 
 export function InputText(props: InputTextProps) {
@@ -23,6 +26,8 @@ export function InputText(props: InputTextProps) {
     type = 'text',
     defaultValue = '',
     className = '',
+    register,
+    required = false,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -52,17 +57,33 @@ export function InputText(props: InputTextProps) {
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
         </label>
-        <input
-          id={label}
-          name={name}
-          className="input__value"
-          type={type}
-          value={value}
-          ref={inputRef}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          onChange={(e) => inputChange(e.target.value)}
-        />
+        {register ? (
+          <input
+            id={label}
+            className="input__value"
+            type={type}
+            defaultValue={defaultValue}
+            onFocus={() => setFocused(true)}
+            {...register(name, {
+              required,
+              value: value,
+              onBlur: () => setFocused(false),
+              onChange: (e) => inputChange(e.target.value),
+            })}
+          />
+        ) : (
+          <input
+            id={label}
+            defaultValue={defaultValue}
+            name={name}
+            className="input__value"
+            type={type}
+            ref={inputRef}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onChange={(e) => inputChange(e.target.value)}
+          />
+        )}
       </div>
       {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}
     </div>

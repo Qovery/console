@@ -1,4 +1,4 @@
-import { Button, ButtonSize, ButtonType, Icon } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon } from '@console/shared/ui'
 import { ONBOARDING_MORE_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 export function StepThanks() {
@@ -46,12 +46,12 @@ export function StepThanks() {
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}
             size={ButtonSize.BIG}
-            type={ButtonType.STROKED}
+            style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          <Button link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`} size={ButtonSize.BIG} type={ButtonType.BASIC}>
+          <Button link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
             Go to Youtube{' '}
             <span role="img" aria-label="cat">
               🐈
