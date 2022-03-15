@@ -23,6 +23,7 @@
     "@nrwl/tao": "13.8.5",
     "@nrwl/web": "13.8.5",
     "@nrwl/workspace": "13.8.5",
+    "@reach/listbox": "^0.16.2",
     "@reduxjs/toolkit": "^1.7.2",
     "@types/react": "17.0.30",
     "@types/react-dom": "17.0.9",

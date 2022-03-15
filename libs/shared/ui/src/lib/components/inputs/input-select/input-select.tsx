@@ -1,7 +1,7 @@
 import { Value } from '@console/shared/interfaces'
-import { DetectClickOutside } from '@console/shared/utils'
 import { useState } from 'react'
-import IconFa from '../../icon-fa/icon-fa'
+import Icon from '../../icon/icon'
+import { ListboxButton, ListboxInput, ListboxOption, ListboxPopover } from '@reach/listbox'
 
 export interface InputSelectProps {
   name: string
@@ -15,50 +15,43 @@ export interface InputSelectProps {
 export function InputSelect(props: InputSelectProps) {
   const { label, name, items, defaultItem, getValue, className = '' } = props
 
-  const [isOpen, setIsOpen] = useState(false)
   const [item, setItem] = useState(defaultItem || null)
 
-  const onClickItem = (value: Value | null) => {
-    setIsOpen(false)
-
-    let currentValue = value
-
-    if (currentValue !== item) {
-      setItem(currentValue)
-    } else {
-      currentValue = null
-      setItem(null)
-    }
-
-    getValue && getValue(name, currentValue)
+  const onClickItem = (value: string) => {
+    const selectedItem = items.find((i) => i.value === value) || null
+    if (selectedItem !== defaultItem) setItem(selectedItem)
+    if (getValue) getValue(name, selectedItem)
   }
 
   return (
-    <DetectClickOutside callback={() => setIsOpen(false)}>
-      <div className={`input ${className} ${item !== null ? 'input--focused' : ''}`} onClick={() => setIsOpen(!isOpen)}>
-        <div className="input__label">
-          <label>{label}</label>
+    <div className={`${className} input__select ${item !== null ? 'input--focused' : ''}`}>
+      <ListboxInput onChange={onClickItem} className="input__select__box">
+        <ListboxButton
+          className="input__select__button"
+          arrow={<Icon name="icon-solid-angle-down" className="input__select__arrow" />}
+        >
+          <div className="input__label">
+            <label>{label}</label>
+          </div>
           {item && <div className="input__value">{item.label}</div>}
-          <IconFa name="icon-solid-angle-down" className="absolute text-text-500 text-sm right-4 top-4" />
-        </div>
-        <div className={`input__select ${isOpen ? 'is-open' : ''}`}>
+        </ListboxButton>
+        <ListboxPopover portal={false} className='input__select__list'>
           {items.map((currentItem, index) => (
-            <div
-              role="button"
-              key={index}
+            <ListboxOption
               className={`input__select__item ${item?.value === currentItem.value ? 'is-active' : ''}`}
-              onClick={() => onClickItem(currentItem)}
+              key={index}
+              value={currentItem.value}
             >
-              <IconFa
+              <Icon
                 name="icon-solid-check"
                 className={`text-success-500 mr-3 ${item?.value === currentItem.value ? 'opacity-100' : 'opacity-0'}`}
-              />
+              ></Icon>
               {currentItem.label}
-            </div>
+            </ListboxOption>
           ))}
-        </div>
-      </div>
-    </DetectClickOutside>
+        </ListboxPopover>
+      </ListboxInput>
+    </div>
   )
 }
 
