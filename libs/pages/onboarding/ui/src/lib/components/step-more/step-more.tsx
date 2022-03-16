@@ -1,5 +1,5 @@
 import { Button, ButtonSize, ButtonStyle, InputTextArea } from '@console/shared/ui'
-import { ONBOARDING_COMPANY_URL, ONBOARDING_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
+import { ONBOARDING_URL, ONBOARDING_THANKS_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
 
 export function StepMore() {
   return (
@@ -11,7 +11,7 @@ export function StepMore() {
         <InputTextArea className="mb-3" name="recommendations" label="Any questions or recommendations?" />
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
-            link={`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`}
+            link={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`}
             size={ButtonSize.BIG}
             style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"

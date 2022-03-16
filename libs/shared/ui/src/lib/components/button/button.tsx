@@ -59,13 +59,13 @@ export function Button(props: ButtonProps) {
 
   if (!link) {
     return (
-      <button className={defineClass} onClick={() => onClick} type={type}>
+      <button className={defineClass} onClick={onClick} type={type}>
         {content()}
       </button>
     )
   } else {
     return (
-      <Link to={link} className={defineClass} onClick={() => onClick}>
+      <Link to={link} className={defineClass} onClick={onClick}>
         {content()}
       </Link>
     )

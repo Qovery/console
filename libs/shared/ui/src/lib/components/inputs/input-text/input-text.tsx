@@ -41,7 +41,7 @@ export function InputText(props: InputTextProps) {
     if (getValue) getValue(name, value)
   }
 
-  const hasFocus = focused || value.length > 0
+  const hasFocus = focused || (value && value.length > 0)
 
   const inputActions = hasFocus
     ? 'input--focused'

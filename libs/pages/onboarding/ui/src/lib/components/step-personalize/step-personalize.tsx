@@ -1,6 +1,6 @@
 import { UseFormRegister, Control, Controller, ErrorOption } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
-import { FormPersonalize, Value } from '@console/shared/interfaces'
+import { Value } from '@console/shared/interfaces'
 import { LOGIN_URL } from '@console/shared/utils'
 
 interface StepPersonalizeProps {
@@ -9,7 +9,7 @@ interface StepPersonalizeProps {
   register: UseFormRegister<any>
   control: Control<any, any>
   errors: { [key: string]: ErrorOption }
-  defaultValues: FormPersonalize | { [x: string]: string }
+  defaultValues: { [x: string]: string }
 }
 
 export function StepPersonalize(props: StepPersonalizeProps) {
