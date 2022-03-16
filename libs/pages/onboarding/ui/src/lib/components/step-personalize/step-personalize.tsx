@@ -1,17 +1,19 @@
-import { SubmitHandler, UseFormRegister } from 'react-hook-form'
+import { UseFormRegister, Control, Controller, ErrorOption } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { FormPersonalize, Value } from '@console/shared/interfaces'
-import { LOGIN_URL, ONBOARDING_COMPANY_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { LOGIN_URL } from '@console/shared/utils'
 
 interface StepPersonalizeProps {
   dataTypes: Array<Value>
-  data: FormPersonalize
   onSubmit: () => void
   register: UseFormRegister<any>
+  control: Control<any, any>
+  errors: { [key: string]: ErrorOption }
+  defaultValues: FormPersonalize | { [x: string]: string }
 }
 
 export function StepPersonalize(props: StepPersonalizeProps) {
-  const { dataTypes, data, onSubmit, register } = props
+  const { dataTypes, onSubmit, register, control, errors, defaultValues } = props
 
   return (
     <div>
@@ -22,28 +24,45 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           className="mb-3"
           name="first_name"
           label="First name"
-          defaultValue={data.first_name}
+          defaultValue={defaultValues['first_name']}
           register={register}
-          required
+          required="Please enter your first name."
+          error={errors && errors['first_name']?.message}
         />
         <InputText
           className="mb-3"
           name="last_name"
           label="Last name"
-          defaultValue={data.last_name}
+          defaultValue={defaultValues['last_name']}
           register={register}
-          required
+          required="Please enter your last name."
+          error={errors && errors['last_name']?.message}
         />
         <InputText
           className="mb-3"
           name="user_email"
           label="Professional email"
           type="email"
-          defaultValue={data.user_email}
+          defaultValue={defaultValues['user_email']}
           register={register}
-          required
+          required="Please enter your email."
+          error={errors && errors['user_email']?.message}
         />
-        <InputSelect name="type" label="Type of use" items={dataTypes} />
+        <Controller
+          name="type_of_use"
+          control={control}
+          rules={{ required: 'Please enter your type of use.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              label="Type of use"
+              items={dataTypes}
+              onChange={field.onChange}
+              value={field.value}
+              inputRef={field.ref}
+              error={error?.message}
+            />
+          )}
+        />
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button link={LOGIN_URL} size={ButtonSize.BIG} style={ButtonStyle.STROKED} iconLeft="icon-solid-arrow-left">
             Back

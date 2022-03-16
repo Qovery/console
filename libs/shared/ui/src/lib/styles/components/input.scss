@@ -8,20 +8,20 @@
     @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
   }
 
-  .input__value {
-    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
-  }
-
   input,
   textarea {
     @apply focus:outline-none;
   }
 
-  &:hover,
+  &:hover:not(&.input--error),
   &.input--focused {
     @apply border-brand-500;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   }
+}
+
+.input__value {
+  @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
 }
 
 .input--focused {
@@ -56,7 +56,7 @@
   @apply w-full h-full;
 }
 
-.input__select {
+.input--select {
   @apply relative min-h-[52px] rounded;
 
   label {
@@ -74,7 +74,7 @@
   }
 
   .input__value {
-    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
+    @apply capitalize;
   }
 
   &.input--focused {
@@ -88,14 +88,14 @@
     }
   }
 
-  .input__select__box {
+  .input__select {
     @apply w-full max-h-[52px];
   }
 
   .input__select__list {
-      @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    }
+    @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
 
   .input__select__item {
     @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { UseFormRegister } from 'react-hook-form'
 
 export interface InputTextProps {
@@ -12,7 +12,7 @@ export interface InputTextProps {
   isValid?: boolean
   disabled?: boolean
   className?: string
-  required?: boolean
+  required?: boolean | string
 }
 
 export function InputText(props: InputTextProps) {
@@ -33,6 +33,8 @@ export function InputText(props: InputTextProps) {
   const [focused, setFocused] = useState(false)
   const [value, setValue] = useState(defaultValue)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => setValue(defaultValue), [defaultValue])
 
   const inputChange = (value: string) => {
     setValue(value)
@@ -62,11 +64,11 @@ export function InputText(props: InputTextProps) {
             id={label}
             className="input__value"
             type={type}
-            defaultValue={defaultValue}
             onFocus={() => setFocused(true)}
             {...register(name, {
-              required,
+              required: required,
               value: value,
+              min: 3,
               onBlur: () => setFocused(false),
               onChange: (e) => inputChange(e.target.value),
             })}

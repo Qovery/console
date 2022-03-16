@@ -1,9 +1,15 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { useUser } from '@console/domains/user'
 import { StepPersonalize } from '@console/pages/onboarding/ui'
-import { useDocumentTitle, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
-import { FormPersonalize } from '@console/shared/interfaces'
+import {
+  useDocumentTitle,
+  ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_COMPANY_URL,
+  ONBOARDING_URL,
+  ONBOARDING_MORE_URL,
+} from '@console/shared/utils'
 
 const dataTypes = [
   {
@@ -23,41 +29,54 @@ const dataTypes = [
 export function OnboardingPersonalize() {
   useDocumentTitle('Onboarding Personalize - Qovery')
   const { user, userSignUp, updateUserSignUp } = useUser()
-  const { register, handleSubmit } = useForm()
+  const navigate = useNavigate()
 
-  const defaultValue = useMemo(
-    () => ({
-      first_name: userSignUp.first_name || '',
-      last_name: userSignUp.last_name || '',
-      user_email: userSignUp.user_email || '',
-    }),
-    [userSignUp]
-  )
-
-  const [formData, setFormData] = useState<FormPersonalize>(defaultValue)
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useForm()
 
   useEffect(() => {
     const { email, name } = user
 
-    if (formData.first_name === '') {
-      setFormData({
-        first_name: name?.split(' ')[0] || '',
-        last_name: name?.split(' ')[1] || '',
-        user_email: email || '',
-      })
-    } else {
-      setFormData(defaultValue)
+    // adding default values by oAuth
+    if (name && email && userSignUp) {
+      setValue('first_name', name?.split(' ')[0])
+      setValue('last_name', name?.split(' ')[1])
+      setValue('user_email', email)
+      setValue('type_of_use', userSignUp.type_of_use)
     }
-  }, [user, defaultValue, formData.first_name])
+  }, [user, setValue, userSignUp])
 
   const onSubmit = handleSubmit((data) => {
-    data = Object.assign(data, { current_step: ONBOARDING_PERSONALIZE_URL })
-    updateUserSignUp(data)
+    if (data) {
+      const checkIfCompany = data['type_of_use'] === 'work'
+      // submit data and the current step
+      data = Object.assign(data, { current_step: ONBOARDING_PERSONALIZE_URL })
+      updateUserSignUp(data)
+
+      if (checkIfCompany) {
+        navigate(`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`)
+      } else {
+        navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
+      }
+    }
   })
 
-  if (formData.first_name.length > 0)
-    return <StepPersonalize data={formData} dataTypes={dataTypes} onSubmit={onSubmit} register={register} />
-  return null
+  return (
+    <StepPersonalize
+      dataTypes={dataTypes}
+      onSubmit={onSubmit}
+      register={register}
+      control={control}
+      errors={errors}
+      defaultValues={getValues()}
+    />
+  )
 }
 
 export default OnboardingPersonalize

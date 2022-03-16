@@ -39,7 +39,7 @@
 
 // state
 .btn--disabled {
-  @apply cursor-default bg-brand-100 text-brand-300 border-0;
+  @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;
 }
 
 // login
