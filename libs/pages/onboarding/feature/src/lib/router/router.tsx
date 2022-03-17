@@ -12,7 +12,7 @@ import { OnboardingPricing } from '../components/onboarding-pricing/onboarding-p
 import { OnboardingProject } from '../components/onboarding-project/onboarding-project'
 import { OnboardingThanks } from '../components/onboarding-thanks/onboarding-thanks'
 
-export const ROUTER_ONBOARDING: Route[] = [
+export const ROUTER_ONBOARDING_STEP_1: Route[] = [
   {
     path: ONBOARDING_PERSONALIZE_URL,
     component: <OnboardingPersonalize />,
@@ -25,12 +25,15 @@ export const ROUTER_ONBOARDING: Route[] = [
     path: ONBOARDING_THANKS_URL,
     component: <OnboardingThanks />,
   },
-  {
-    path: `${ONBOARDING_PRICING_URL}/:plan`,
-    component: <OnboardingPricing />,
-  },
+]
+
+export const ROUTER_ONBOARDING_STEP_2: Route[] = [
   {
     path: ONBOARDING_PROJECT_URL,
     component: <OnboardingProject />,
+  },
+  {
+    path: `${ONBOARDING_PRICING_URL}/:plan`,
+    component: <OnboardingPricing />,
   },
 ]

@@ -1,6 +1,6 @@
-import { Control, Controller, ErrorOption, UseFormRegister } from 'react-hook-form'
+import { Control, Controller, UseFormRegister } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@console/shared/ui'
-import { ONBOARDING_URL, ONBOARDING_THANKS_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
+import { ONBOARDING_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
 import { Value } from '@console/shared/interfaces'
 
 interface StepCompanyProps {

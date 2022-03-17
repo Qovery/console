@@ -7,23 +7,23 @@ import { useUser } from '@console/domains/user'
 const dataQuestions = [
   {
     label: 'I want to easily deploy my apps on AWS',
-    value: 'I want to easily deploy my apps on AWS',
+    value: 'i-want-to-easily-deploy-my-apps-on-aws',
   },
   {
     label: 'I want to find a better alternative to Heroku',
-    value: 'I want to find a better alternative to Heroku',
+    value: 'i-want-to-find-a-better-alternative-to-heroku',
   },
   {
     label: 'I want to get a faster AWS production-ready infrastructure',
-    value: 'I want to get a faster AWS production-ready infrastructure',
+    value: 'i-want-to-get-a-faster-aws-production-ready-infrastructure',
   },
   {
     label: 'I want to easily manage Preview Environments',
-    value: 'I want to easily manage Preview Environments',
+    value: 'i-want-to-easily-manage-preview-environments',
   },
   {
     label: 'Other',
-    value: 'Other',
+    value: 'other',
   },
 ]
 
