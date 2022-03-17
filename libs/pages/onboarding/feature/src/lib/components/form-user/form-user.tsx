@@ -30,14 +30,7 @@ export function FormUser(props: FormUserProps) {
   const { user, userSignUp, updateUserSignUp } = useUser()
   const { authLogout } = useAuth()
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = useForm()
+  const { handleSubmit, control, setValue } = useForm()
 
   useEffect(() => {
     const { email, name } = user
@@ -74,17 +67,7 @@ export function FormUser(props: FormUserProps) {
     }
   })
 
-  return (
-    <StepPersonalize
-      dataTypes={dataTypes}
-      onSubmit={onSubmit}
-      register={register}
-      control={control}
-      errors={errors}
-      defaultValues={getValues()}
-      authLogout={authLogout}
-    />
-  )
+  return <StepPersonalize dataTypes={dataTypes} onSubmit={onSubmit} control={control} authLogout={authLogout} />
 }
 
 export default FormUser

@@ -67,21 +67,12 @@ export function FormCompany(props: FormCompanyProps) {
   const { setStepCompany } = props
   const navigate = useNavigate()
   const { userSignUp, updateUserSignUp } = useUser()
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = useForm()
+  const { handleSubmit, control, setValue } = useForm()
 
   useEffect(() => {
-    if (userSignUp) {
-      setValue('company_name', userSignUp?.company_name || undefined)
-      setValue('company_size', userSignUp?.company_size || undefined)
-      setValue('user_role', userSignUp?.user_role || undefined)
-    }
+    setValue('company_name', userSignUp?.company_name || undefined)
+    setValue('company_size', userSignUp?.company_size || undefined)
+    setValue('user_role', userSignUp?.user_role || undefined)
   }, [setValue, userSignUp])
 
   const onSubmit = handleSubmit((data) => {
@@ -99,10 +90,7 @@ export function FormCompany(props: FormCompanyProps) {
       dataSize={dataSize}
       dataRole={dataRole}
       onSubmit={onSubmit}
-      register={register}
       control={control}
-      errors={errors}
-      defaultValues={getValues()}
       setStepCompany={setStepCompany}
     />
   )

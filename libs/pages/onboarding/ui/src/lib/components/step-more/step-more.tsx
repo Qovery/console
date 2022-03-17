@@ -1,4 +1,4 @@
-import { Control, Controller, UseFormRegister } from 'react-hook-form'
+import { Control, Controller } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
 import { Value } from '@console/shared/interfaces'
@@ -6,13 +6,11 @@ import { Value } from '@console/shared/interfaces'
 interface StepCompanyProps {
   dataQuestions: Array<Value>
   onSubmit: () => void
-  register: UseFormRegister<any>
   control: Control<any, any>
-  defaultValues: { [x: string]: string }
 }
 
 export function StepMore(props: StepCompanyProps) {
-  const { dataQuestions, onSubmit, control, register, defaultValues } = props
+  const { dataQuestions, onSubmit, control } = props
 
   return (
     <div>
@@ -30,17 +28,23 @@ export function StepMore(props: StepCompanyProps) {
               items={dataQuestions}
               onChange={field.onChange}
               value={field.value}
-              inputRef={field.ref}
               error={error?.message}
             />
           )}
         />
-        <InputTextArea
-          className="mb-3"
+        <Controller
           name="qovery_usage"
-          label="Any questions or recommendations?"
-          defaultValue={defaultValues['company_name']}
-          register={register}
+          control={control}
+          rules={{ required: false }}
+          render={({ field }) => (
+            <InputTextArea
+              className="mb-3"
+              label="Any questions or recommendations?"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+            />
+          )}
         />
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button

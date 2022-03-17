@@ -1,4 +1,3 @@
-import { RefCallBack } from 'react-hook-form'
 import { ListboxButton, ListboxInput, ListboxOption, ListboxPopover } from '@reach/listbox'
 import { Value } from '@console/shared/interfaces'
 import Icon from '../../icon/icon'
@@ -9,17 +8,16 @@ export interface InputSelectProps {
   items: Value[]
   className?: string
   onChange?: () => void
-  inputRef?: RefCallBack
-  // need remove
-  name?: string
   error?: string
 }
 
 export function InputSelect(props: InputSelectProps) {
-  const { label, value, items, className = '', onChange, inputRef, error } = props
+  const { label, value, items, className = '', onChange, error } = props
+
+  const selectedLabel = value && items.find((item) => item.value === value)?.label
 
   return (
-    <div className={`${className} input input--select`}>
+    <div className={`input input--select ${className}`}>
       <ListboxInput onChange={onChange} className="input--container">
         <ListboxButton
           className={`input--button ${value !== undefined ? 'input--focused' : ''}`}
@@ -28,10 +26,10 @@ export function InputSelect(props: InputSelectProps) {
           <div className="input__label">
             <label>{label}</label>
           </div>
-          {value && <div className="input__value">{value}</div>}
+          {value && <div className="input__value">{selectedLabel}</div>}
         </ListboxButton>
         <ListboxPopover className="input--list">
-          <ListboxOption label='Hidden' className='hidden' value='hidden'></ListboxOption>
+          <ListboxOption label="Hidden" className="hidden" value="hidden"></ListboxOption>
           {items.map((currentItem, index) => (
             <ListboxOption
               key={index}

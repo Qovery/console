@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
-import { Control, Controller, ErrorOption, UseFormRegister } from 'react-hook-form'
+import { Control, Controller } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
 
@@ -7,29 +7,32 @@ interface StepCompanyProps {
   dataSize: Array<Value>
   dataRole: Array<Value>
   onSubmit: () => void
-  register: UseFormRegister<any>
   control: Control<any, any>
-  errors: { [key: string]: ErrorOption }
-  defaultValues: { [x: string]: string }
   setStepCompany: Dispatch<SetStateAction<boolean>>
 }
 
 export function StepCompany(props: StepCompanyProps) {
-  const { dataSize, dataRole, onSubmit, defaultValues, register, control, errors, setStepCompany } = props
+  const { dataSize, dataRole, onSubmit, control, setStepCompany } = props
 
   return (
     <div>
       <h1 className="h3 text-text-700 mb-3">About your company</h1>
       <p className="text-sm mb-10 text-text-500">We need some information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
-        <InputText
-          className="mb-3"
+        <Controller
           name="company_name"
-          label="Company"
-          defaultValue={defaultValues['company_name']}
-          register={register}
-          required="Please enter your company name."
-          error={errors && errors['company_name']?.message}
+          control={control}
+          rules={{ required: 'Please enter your company name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="Company"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
         />
         <Controller
           name="company_size"
@@ -42,7 +45,6 @@ export function StepCompany(props: StepCompanyProps) {
               items={dataSize}
               onChange={field.onChange}
               value={field.value}
-              inputRef={field.ref}
               error={error?.message}
             />
           )}
@@ -58,7 +60,6 @@ export function StepCompany(props: StepCompanyProps) {
               items={dataRole}
               onChange={field.onChange}
               value={field.value}
-              inputRef={field.ref}
               error={error?.message}
             />
           )}

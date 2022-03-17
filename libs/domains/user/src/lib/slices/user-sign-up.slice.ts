@@ -9,7 +9,7 @@ export interface UserSignUpInterface {
   company_name?: string
   company_size?: string
   current_step?: string
-  dx_auth?: false
+  dx_auth?: boolean
   qovery_usage?: string
   type_of_use?: string
   user_email?: string

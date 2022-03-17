@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { StepMore } from '@console/pages/onboarding/ui'
 import { ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@console/shared/utils'
 import { useUser } from '@console/domains/user'
+import { useEffect } from 'react'
 
 const dataQuestions = [
   {
@@ -28,9 +29,14 @@ const dataQuestions = [
 ]
 
 export function OnboardingMore() {
-  const { register, handleSubmit, control, getValues } = useForm()
+  const { handleSubmit, control, setValue } = useForm()
   const { userSignUp, updateUserSignUp } = useUser()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    setValue('user_questions', userSignUp?.user_questions || undefined)
+    setValue('qovery_usage', userSignUp?.qovery_usage || undefined)
+  }, [setValue, userSignUp])
 
   const onSubmit = handleSubmit((data) => {
     if (data) {
@@ -42,15 +48,7 @@ export function OnboardingMore() {
     }
   })
 
-  return (
-    <StepMore
-      dataQuestions={dataQuestions}
-      control={control}
-      register={register}
-      onSubmit={onSubmit}
-      defaultValues={getValues()}
-    />
-  )
+  return <StepMore dataQuestions={dataQuestions} control={control} onSubmit={onSubmit} />
 }
 
 export default OnboardingMore

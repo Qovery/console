@@ -14,8 +14,8 @@ export function StepProject() {
         Please select the name of the Organization and the name of your first project (they can be edited afterwards).
       </p>
       <form>
-        <InputText className="mb-3" name="organization" label="Organization name" />
-        <InputText name="project" label="Project name" />
+        {/* <InputText className="mb-3" name="organization" label="Organization name" /> */}
+        {/* <InputText name="project" label="Project name" /> */}
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`}

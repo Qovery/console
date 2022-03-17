@@ -1,53 +1,67 @@
-import { UseFormRegister, Control, Controller, ErrorOption } from 'react-hook-form'
+import { Control, Controller } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
-import { LOGIN_URL } from '@console/shared/utils'
 
 interface StepPersonalizeProps {
   dataTypes: Array<Value>
   onSubmit: () => void
-  register: UseFormRegister<any>
   control: Control<any, any>
-  errors: { [key: string]: ErrorOption }
-  defaultValues: { [x: string]: string }
   authLogout: () => void
 }
 
 export function StepPersonalize(props: StepPersonalizeProps) {
-  const { dataTypes, onSubmit, register, control, errors, defaultValues, authLogout } = props
+  const { dataTypes, onSubmit, control, authLogout } = props
 
   return (
     <div>
       <h1 className="h3 text-text-700 mb-3">To tailor your experience</h1>
       <p className="text-sm mb-10 text-text-500">We need some information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
-        <InputText
-          className="mb-3"
+        <Controller
           name="first_name"
-          label="First name"
-          defaultValue={defaultValues['first_name']}
-          register={register}
-          required="Please enter your first name."
-          error={errors && errors['first_name']?.message}
+          control={control}
+          rules={{ required: 'Please enter your first name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="First name"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
         />
-        <InputText
-          className="mb-3"
+        <Controller
           name="last_name"
-          label="Last name"
-          defaultValue={defaultValues['last_name']}
-          register={register}
-          required="Please enter your last name."
-          error={errors && errors['last_name']?.message}
+          control={control}
+          rules={{ required: 'Please enter your last name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="Last name"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
         />
-        <InputText
-          className="mb-3"
+        <Controller
           name="user_email"
-          label="Professional email"
-          type="email"
-          defaultValue={defaultValues['user_email']}
-          register={register}
-          required="Please enter your email."
-          error={errors && errors['user_email']?.message}
+          control={control}
+          rules={{ required: 'Please enter your last name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="Last name"
+              type="email"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
         />
         <Controller
           name="type_of_use"
@@ -59,7 +73,6 @@ export function StepPersonalize(props: StepPersonalizeProps) {
               items={dataTypes}
               onChange={field.onChange}
               value={field.value}
-              inputRef={field.ref}
               error={error?.message}
             />
           )}

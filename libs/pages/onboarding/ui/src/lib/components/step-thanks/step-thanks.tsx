@@ -1,13 +1,14 @@
 import { Button, ButtonSize, ButtonStyle, Icon } from '@console/shared/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 interface StepThanksProps {
   firstName: string
   email: string
+  nextStep: () => void
 }
 
 export function StepThanks(props: StepThanksProps) {
-  const { firstName, email } = props
+  const { firstName, email, nextStep } = props
 
   return (
     <div>
@@ -62,7 +63,7 @@ export function StepThanks(props: StepThanksProps) {
           >
             Back
           </Button>
-          <Button link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
+          <Button onClick={() => nextStep()} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
             Go to Youtube{' '}
             <span role="img" aria-label="cat">
               🐈
