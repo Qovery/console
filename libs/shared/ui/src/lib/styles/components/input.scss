@@ -58,7 +58,7 @@
   }
 }
 
-.input--button {
+.input__button {
   @apply relative flex w-full h-full min-h-[52px] px-4 py-2 flex-col cursor-pointer border rounded outline-none focus-visible:outline-none;
   transition: 120ms all $timing-cubic;
 
@@ -73,12 +73,12 @@
   }
 }
 
-.input--list {
+.input__list {
   @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10 list-none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-.input--item {
+.input__item {
   @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
 
   &.is-active,
@@ -88,7 +88,7 @@
   }
 }
 
-.input--arrow {
+.input__arrow {
   @apply absolute top-1/2 -translate-y-1/2 text-sm text-text-500 right-4;
 }
 

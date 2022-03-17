@@ -20,22 +20,22 @@ export function InputSelect(props: InputSelectProps) {
 
   return (
     <div className={`${className} input input--select`}>
-      <ListboxInput onChange={onChange} className="input--container">
+      <ListboxInput onChange={onChange} className="input__container">
         <ListboxButton
-          className={`input--button ${value !== undefined ? 'input--focused' : ''}`}
-          arrow={<Icon name="icon-solid-angle-down" className="input--arrow" />}
+          className={`input__button ${value !== undefined ? 'input--focused' : ''}`}
+          arrow={<Icon name="icon-solid-angle-down" className="input__arrow" />}
         >
           <div className="input__label">
             <label>{label}</label>
           </div>
           {value && <div className="input__value">{value}</div>}
         </ListboxButton>
-        <ListboxPopover className="input--list">
+        <ListboxPopover className="input__list">
           <ListboxOption label='Hidden' className='hidden' value='hidden'></ListboxOption>
           {items.map((currentItem, index) => (
             <ListboxOption
               key={index}
-              className={`input--item ${value === currentItem.value ? 'is-active' : ''}`}
+              className={`input__item ${value === currentItem.value ? 'is-active' : ''}`}
               value={currentItem.value}
             >
               <Icon
