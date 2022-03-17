@@ -1,5 +1,6 @@
 .link {
   transition: 0.25s color $timing-cubic;
+  line-height: 1rem;
   @apply align-bottom inline-block;
 
   &.text-accent2-500 {

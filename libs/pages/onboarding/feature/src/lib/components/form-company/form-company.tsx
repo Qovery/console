@@ -88,7 +88,8 @@ export function FormCompany(props: FormCompanyProps) {
     if (data) {
       // submit data and the current step
       data = Object.assign(data, { current_step: ONBOARDING_MORE_URL })
-      updateUserSignUp(data)
+
+      updateUserSignUp({ ...userSignUp, ...data })
       navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
     }
   })

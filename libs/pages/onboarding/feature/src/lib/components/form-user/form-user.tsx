@@ -52,7 +52,7 @@ export function FormUser(props: FormUserProps) {
       const checkIfCompany = data['type_of_use'] === 'work'
       // submit data and the current step
       data = Object.assign(data, { current_step: ONBOARDING_PERSONALIZE_URL })
-      updateUserSignUp(data)
+      updateUserSignUp({ ...userSignUp, ...data })
 
       if (checkIfCompany) {
         setStepCompany(true)

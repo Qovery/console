@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from 'react'
 import { Control, Controller, ErrorOption, UseFormRegister } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
-import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 interface StepCompanyProps {
   dataSize: Array<Value>

@@ -18,7 +18,7 @@ export interface UserSignUpInterface {
 }
 
 export interface UserSignUpState extends UserSignUpInterface {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error'
+  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
 }
 
@@ -29,10 +29,17 @@ export const fetchUserSignUp = createAsyncThunk('userSignUp/get', async () => {
   return response
 })
 
-export const postUserSignUp = createAsyncThunk<any, UserSignUpInterface>('userSignUp/post', async (data) => {
-  await axios.post('/admin/userSignUp', data).then((response) => response)
-  return data
-})
+export const postUserSignUp = createAsyncThunk<any, UserSignUpState>(
+  'userSignUp/post',
+  async (data: UserSignUpState) => {
+    // remove useless field for post request
+    delete data['error']
+    delete data['loadingStatus']
+
+    await axios.post('/admin/userSignUp', data).then((response) => response)
+    return data
+  }
+)
 
 export const initialUserSignUpState: UserSignUpState = {
   loadingStatus: 'not loaded',

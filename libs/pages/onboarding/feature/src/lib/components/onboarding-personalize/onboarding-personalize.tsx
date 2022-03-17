@@ -5,7 +5,7 @@ import FormCompany from '../form-company/form-company'
 
 export function OnboardingPersonalize() {
   useDocumentTitle('Onboarding Personalize - Qovery')
-  const [stepCompany, setStepCompany] = useState(true)
+  const [stepCompany, setStepCompany] = useState(false)
 
   if (!stepCompany) {
     return <FormUser setStepCompany={setStepCompany} />

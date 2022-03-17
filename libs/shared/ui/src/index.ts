@@ -1,3 +1,4 @@
+export * from './lib/components/loading-screen/loading-screen'
 // enums
 export * from './lib/enums/icon.enum'
 export * from './lib/enums/plan.enum'
