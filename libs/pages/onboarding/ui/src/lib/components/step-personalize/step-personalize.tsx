@@ -10,10 +10,11 @@ interface StepPersonalizeProps {
   control: Control<any, any>
   errors: { [key: string]: ErrorOption }
   defaultValues: { [x: string]: string }
+  authLogout: () => void
 }
 
 export function StepPersonalize(props: StepPersonalizeProps) {
-  const { dataTypes, onSubmit, register, control, errors, defaultValues } = props
+  const { dataTypes, onSubmit, register, control, errors, defaultValues, authLogout } = props
 
   return (
     <div>
@@ -64,7 +65,12 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           )}
         />
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
-          <Button link={LOGIN_URL} size={ButtonSize.BIG} style={ButtonStyle.STROKED} iconLeft="icon-solid-arrow-left">
+          <Button
+            onClick={() => authLogout()}
+            size={ButtonSize.BIG}
+            style={ButtonStyle.STROKED}
+            iconLeft="icon-solid-arrow-left"
+          >
             Back
           </Button>
           <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} type="submit">

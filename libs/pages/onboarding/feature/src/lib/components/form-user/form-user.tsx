@@ -1,8 +1,9 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router'
 import { useUser } from '@console/domains/user'
 import { StepPersonalize } from '@console/pages/onboarding/ui'
-import { ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
+import { ONBOARDING_MORE_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL, useAuth } from '@console/shared/utils'
 
 const dataTypes = [
   {
@@ -25,7 +26,10 @@ interface FormUserProps {
 
 export function FormUser(props: FormUserProps) {
   const { setStepCompany } = props
+  const navigate = useNavigate()
   const { user, userSignUp, updateUserSignUp } = useUser()
+  const { authLogout } = useAuth()
+
   const {
     register,
     handleSubmit,
@@ -52,10 +56,20 @@ export function FormUser(props: FormUserProps) {
       const checkIfCompany = data['type_of_use'] === 'work'
       // submit data and the current step
       data = Object.assign(data, { current_step: ONBOARDING_PERSONALIZE_URL })
-      updateUserSignUp({ ...userSignUp, ...data })
 
       if (checkIfCompany) {
         setStepCompany(true)
+        updateUserSignUp({ ...userSignUp, ...data })
+      } else {
+        navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
+
+        const resetCompany = {
+          company_name: undefined,
+          company_size: undefined,
+          user_role: undefined,
+        }
+
+        updateUserSignUp({ ...userSignUp, ...data, ...resetCompany })
       }
     }
   })
@@ -68,6 +82,7 @@ export function FormUser(props: FormUserProps) {
       control={control}
       errors={errors}
       defaultValues={getValues()}
+      authLogout={authLogout}
     />
   )
 }
