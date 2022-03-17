@@ -22,7 +22,7 @@ export function InputSelect(props: InputSelectProps) {
     <div className={`${className} input input--select`}>
       <ListboxInput onChange={onChange} className="input__container">
         <ListboxButton
-          className={`input__button ${value !== undefined ? 'input--focused' : ''}`}
+          className={`input__button ${value !== undefined ? 'input__button--focused' : ''}`}
           arrow={<Icon name="icon-solid-angle-down" className="input__arrow" />}
         >
           <div className="input__label">
