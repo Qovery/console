@@ -19,22 +19,23 @@ export function InputSelect(props: InputSelectProps) {
   const { label, value, items, className = '', onChange, inputRef, error } = props
 
   return (
-    <div className={`${className} input--select ${value !== undefined ? 'input--focused' : ''}`}>
-      <ListboxInput onChange={onChange} className="input__select" ref={inputRef}>
+    <div className={`${className} input input--select`}>
+      <ListboxInput onChange={onChange} className="input--container">
         <ListboxButton
-          className="input__select__button"
-          arrow={<Icon name="icon-solid-angle-down" className="input__select__arrow" />}
+          className={`input--button ${value !== undefined ? 'input--focused' : ''}`}
+          arrow={<Icon name="icon-solid-angle-down" className="input--arrow" />}
         >
           <div className="input__label">
             <label>{label}</label>
           </div>
           {value && <div className="input__value">{value}</div>}
         </ListboxButton>
-        <ListboxPopover portal={false} className="input__select__list">
+        <ListboxPopover className="input--list">
+          <ListboxOption label='Hidden' className='hidden' value='hidden'></ListboxOption>
           {items.map((currentItem, index) => (
             <ListboxOption
               key={index}
-              className={`input__select__item ${value === currentItem.value ? 'is-active' : ''}`}
+              className={`input--item ${value === currentItem.value ? 'is-active' : ''}`}
               value={currentItem.value}
             >
               <Icon
