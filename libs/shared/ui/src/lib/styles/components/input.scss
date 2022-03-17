@@ -1,5 +1,3 @@
-@import '@reach/listbox/styles.css';
-
 .input {
   @apply relative min-h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white cursor-pointer;
   transition: 120ms all $timing-cubic;
@@ -53,59 +51,45 @@
 }
 
 .input--select {
-  @apply relative min-h-[52px] rounded;
-
-  label {
-    @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
-  }
-
-  .input__select__button {
-    @apply flex w-full h-full border border-element-light-lighter-500 min-h-[52px] px-4 py-2 flex-col focus-visible:border-brand-500 focus-visible:outline-none rounded outline-none bg-white cursor-pointer;
-    transition: 120ms all $timing-cubic;
-
-    &:hover {
-      @apply border-brand-500;
-      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-    }
-  }
+  @apply relative p-0 border-0;
 
   .input__value {
-    @apply capitalize;
+    @apply capitalize translate-y-0;
   }
+}
+
+.input--button {
+  @apply relative flex w-full h-full min-h-[52px] px-4 py-2 flex-col cursor-pointer border rounded outline-none focus-visible:outline-none;
+  transition: 120ms all $timing-cubic;
 
   &.input--focused {
-    .input__select__button {
-      @apply border-brand-500;
-      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-    }
-
-    label {
-      @apply text-xs translate-y-0;
-    }
+    @apply border-brand-500;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   }
 
-  .input__select {
-    @apply w-full max-h-[52px];
+  &:hover {
+    @apply border-brand-500;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   }
+}
 
-  .input__select__list {
-    @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+.input--list {
+  @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10 list-none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.input--item {
+  @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
+
+  &.is-active,
+  &[data-current-selected],
+  &[data-current-nav] {
+    @apply bg-element-light-lighter-300 text-text-600;
   }
+}
 
-  .input__select__item {
-    @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
-
-    &.is-active,
-    &[data-current-selected],
-    &[data-current-nav] {
-      @apply bg-element-light-lighter-300 text-text-600;
-    }
-  }
-
-  .input__select__arrow {
-    @apply absolute top-1/2 -translate-y-1/2 text-sm text-text-500 right-4;
-  }
+.input--arrow {
+  @apply absolute top-1/2 -translate-y-1/2 text-sm text-text-500 right-4;
 }
 
 .input__select--small {
