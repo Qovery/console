@@ -2,9 +2,8 @@ import { Icon } from '@console/shared/ui'
 
 export function BenefitsCard() {
   const LIST = [
-    'An organization is a shared account where developers can collaborate across many projects at once. On Qovery side, this is where you will manage your projects, team members, clusters and billing.',
-    'A project allows you to group a set of applications and their dependencies (databases & other services) into environments. An organization can contain multiple projects.',
-    'An environment is a standalone copy of your project, including apps, databases, storage, data, and all other services.',
+    'An organization is a shared account where developers can collaborate across many projects at once. This is the where you will manage your projects, team members, clusters and billing.',
+    'A project allows you to group a set of applications and their dependencies (databases & other services) into environments (prod, staging, dev etc..). An organization can contain multiple projects.',
   ]
 
   return (

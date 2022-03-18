@@ -12,7 +12,7 @@ import { OrganizationInterface } from '../interfaces/organizations.interface'
 export const ORGANIZATIONS_KEY = 'organizations'
 
 export interface OrganizationsState extends EntityState<OrganizationInterface> {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error'
+  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
 }
 
@@ -22,6 +22,18 @@ export const fetchOrganizations = createAsyncThunk('organization/fetch', async (
   const response = await axios.get('/organization').then((response) => response.data)
   return response.results
 })
+
+export const postOrganization = createAsyncThunk<any, OrganizationsState>(
+  'userSignUp/post',
+  async (data: OrganizationsState) => {
+    // remove useless field for post request
+    delete data['error']
+    delete data['loadingStatus']
+
+    await axios.post('/organization', data).then((response) => response)
+    return data
+  }
+)
 
 export const initialOrganizationState: OrganizationsState = organizationsAdapter.getInitialState({
   loadingStatus: 'not loaded',

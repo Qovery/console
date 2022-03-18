@@ -1,11 +1,12 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { StepMore } from '@console/pages/onboarding/ui'
 import { ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@console/shared/utils'
 import { useUser } from '@console/domains/user'
-import { useEffect } from 'react'
+import { Value } from '@console/shared/interfaces'
 
-const dataQuestions = [
+const dataQuestions: Value[] = [
   {
     label: 'I want to easily deploy my apps on AWS',
     value: 'i-want-to-easily-deploy-my-apps-on-aws',

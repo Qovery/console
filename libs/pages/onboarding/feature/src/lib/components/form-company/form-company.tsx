@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router'
 import { useUser } from '@console/domains/user'
 import { StepCompany } from '@console/pages/onboarding/ui'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { Value } from '@console/shared/interfaces'
 
-const dataSize = [
+const dataSize: Value[] = [
   {
     label: '1-10',
     value: '1-10',
@@ -28,7 +29,7 @@ const dataSize = [
   },
 ]
 
-const dataRole = [
+const dataRole: Value[] = [
   {
     label: 'Tech Lead',
     value: 'tech-lead',

@@ -1,35 +1,60 @@
+import { Control, Controller } from 'react-hook-form'
 import { InputText, Button, ButtonSize, ButtonStyle } from '@console/shared/ui'
-import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
 
-export function StepProject() {
+interface StepProjectProps {
+  onSubmit: () => void
+  control: Control<any, any>
+}
+
+export function StepProject(props: StepProjectProps) {
+  const { onSubmit, control } = props
+
   return (
     <div>
       <h1 className="h3 text-text-700 mb-3">
-        Create your first project
+        Create your Organization
         <span className="ml-2" role="img" aria-label="star">
           ✨
         </span>
       </h1>
       <p className="text-sm mb-10 text-text-500">
-        Please select the name of the Organization and the name of your first project (they can be edited afterwards).
+        You will now create your Organization and a first project within it. Both the Organization and Project name can
+        be edited afterwards.
       </p>
-      <form>
-        {/* <InputText className="mb-3" name="organization" label="Organization name" /> */}
-        {/* <InputText name="project" label="Project name" /> */}
-        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
-          <Button
-            link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`}
-            size={ButtonSize.BIG}
-            style={ButtonStyle.STROKED}
-            iconLeft="icon-solid-arrow-left"
-          >
-            Back
-          </Button>
-          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
-            Let’s go
-            <span className="ml-1" role="img" aria-label="star">
-              💫
-            </span>
+      <form onSubmit={onSubmit}>
+        <Controller
+          name="organization_name"
+          control={control}
+          rules={{ required: 'Please enter your organization name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="Organization name"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="project_name"
+          control={control}
+          rules={{ required: 'Please enter your project name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="Project name"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <div className="mt-10 pt-5 flex justify-end border-t border-element-light-lighter-400">
+          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} type="submit">
+            Continue
           </Button>
         </div>
       </form>

@@ -76,6 +76,10 @@ export const userSignUpSlice = createSlice({
         state.loadingStatus = 'loaded'
         state = Object.assign(state, action.payload)
       })
+      .addCase(postUserSignUp.rejected, (state: UserSignUpState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
   },
 })
 

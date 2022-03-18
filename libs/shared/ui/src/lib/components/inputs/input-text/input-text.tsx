@@ -19,10 +19,10 @@ export function InputText(props: InputTextProps) {
 
   const hasFocus = focused || (value && value.length > 0)
 
+  const hasError = error && error.length > 0 ? 'input--error' : ''
+
   const inputActions = hasFocus
     ? 'input--focused'
-    : error && error.length > 0
-    ? 'input--error'
     : value && value.length > 0
     ? 'input--success'
     : disabled
@@ -31,7 +31,7 @@ export function InputText(props: InputTextProps) {
 
   return (
     <div className={className} onClick={() => inputRef.current?.querySelector('input')?.focus()}>
-      <div className={`input ${inputActions}`} ref={inputRef}>
+      <div className={`input ${inputActions} ${hasError}`} ref={inputRef}>
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
         </label>
