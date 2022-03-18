@@ -1,7 +1,7 @@
 import { Button, ButtonProps, ButtonSize, ButtonStyle } from './button'
 import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
-import { IconEnum } from '../../enums/icon.enum'
+import { IconEnum } from '@console/shared/enums'
 
 export default {
   component: Button,

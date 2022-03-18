@@ -1,17 +1,11 @@
-import { StepPricing } from '@console/pages/onboarding/ui'
-import { Value, Price } from '@console/shared/interfaces'
-import { PlanEnum } from '@console/shared/ui'
-import { ONBOARDING_PRICING_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
-
-export interface Plan {
-  name: string
-  title: string
-  text: string
-  price?: number
-  listPrice: Price[]
-}
+import { StepPricing } from '@console/pages/onboarding/ui'
+import { Value, Plan } from '@console/shared/interfaces'
+import { useOrganizations } from '@console/domains/organizations'
+import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import { PlanEnum } from '@console/shared/enums'
+import { ContextOnboarding } from '../container/container'
 
 const DEPLOYS: Value[] = [
   { label: '100/month', value: '100' },
@@ -47,7 +41,7 @@ const PLANS: Plan[] = [
     listPrice: [],
   },
   {
-    name: PlanEnum.PRO,
+    name: PlanEnum.PROFESSIONAL,
     title: 'Professional',
     text: 'For 5-20 members',
     price: 49,
@@ -115,12 +109,15 @@ const PLANS: Plan[] = [
   },
 ]
 
-const PLAN_DEFAULT: string = PlanEnum.FREE
+const PLAN_DEFAULT: PlanEnum = PlanEnum.FREE
 const DEPLOY_DEFAULT: Value = DEPLOYS[0]
 
 const DEFAULT_PRICE = {
   [PlanEnum.FREE]: { disable: false },
-  [PlanEnum.PRO]: { number: PLANS.find((p) => p.name === PlanEnum.PRO)?.listPrice[0].number, disable: false },
+  [PlanEnum.PROFESSIONAL]: {
+    number: PLANS.find((p) => p.name === PlanEnum.PROFESSIONAL)?.listPrice[0].number,
+    disable: false,
+  },
   [PlanEnum.BUSINESS]: { number: PLANS.find((p) => p.name === PlanEnum.BUSINESS)?.listPrice[0].number, disable: false },
   [PlanEnum.ENTERPRISE]: { disable: false },
 }
@@ -129,30 +126,36 @@ export function OnboardingPricing() {
   useDocumentTitle('Onboarding Pricing - Qovery')
 
   const navigate = useNavigate()
-  const [select, setSelect] = useState(PLAN_DEFAULT)
+  const { organization_name, project_name } = useContext(ContextOnboarding)
+  const { createOrganization } = useOrganizations()
+  const [selectPlan, setSelectPlan] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
   const [currentDeploy, setCurrentDeploy] = useState(DEPLOY_DEFAULT)
 
   useEffect(() => {
-    navigate(`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}/${select}`)
-  }, [select, navigate])
+    if (organization_name === '' && project_name === '') {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+    } else {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}/${selectPlan.toLowerCase()}`)
+    }
+  }, [selectPlan, navigate, organization_name, project_name])
 
   const chooseDeploy = (value: Value | null) => {
     if (value) {
       setCurrentDeploy(value)
 
-      if(parseFloat(value.value) > 100) {
-        setSelect(PlanEnum.PRO)
+      if (parseFloat(value.value) > 100) {
+        setSelectPlan(PlanEnum.PROFESSIONAL)
         setCurrentValue({
           [PlanEnum.FREE]: { disable: true },
-          [PlanEnum.PRO]: { number: value?.value, disable: false },
+          [PlanEnum.PROFESSIONAL]: { number: value?.value, disable: false },
           [PlanEnum.BUSINESS]: { number: value?.value, disable: false },
           [PlanEnum.ENTERPRISE]: { disable: false },
         })
       } else {
         setCurrentValue({
           [PlanEnum.FREE]: { disable: false },
-          [PlanEnum.PRO]: { number: value?.value, disable: false },
+          [PlanEnum.PROFESSIONAL]: { number: value?.value, disable: false },
           [PlanEnum.BUSINESS]: { number: value?.value, disable: false },
           [PlanEnum.ENTERPRISE]: { disable: false },
         })
@@ -160,15 +163,24 @@ export function OnboardingPricing() {
     }
   }
 
+  const onSubmit = () => {
+    createOrganization({
+      name: organization_name,
+      plan: selectPlan,
+    })
+    // https://console.qovery.com/platform/organization/141c07c8-0dd9-4623-983b-3fdd61867255
+  }
+
   return (
     <StepPricing
-      select={select}
-      setSelect={setSelect}
+      selectPlan={selectPlan}
+      setSelectPlan={setSelectPlan}
       currentValue={currentValue}
       plans={PLANS}
       chooseDeploy={chooseDeploy}
       deploys={DEPLOYS}
       currentDeploy={currentDeploy}
+      onSubmit={onSubmit}
     />
   )
 }

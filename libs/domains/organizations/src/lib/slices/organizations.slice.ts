@@ -23,13 +23,9 @@ export const fetchOrganizations = createAsyncThunk('organization/fetch', async (
   return response.results
 })
 
-export const postOrganization = createAsyncThunk<any, OrganizationsState>(
-  'userSignUp/post',
-  async (data: OrganizationsState) => {
-    // remove useless field for post request
-    delete data['error']
-    delete data['loadingStatus']
-
+export const postOrganization = createAsyncThunk<any, OrganizationInterface>(
+  'organization/post',
+  async (data: OrganizationInterface) => {
     await axios.post('/organization', data).then((response) => response)
     return data
   }
@@ -61,6 +57,22 @@ export const organizationsSlice = createSlice({
       )
       .addCase(fetchOrganizations.rejected, (state: OrganizationsState, action) => {
         state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // post action
+      .addCase(postOrganization.pending, (state: OrganizationsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(
+        postOrganization.fulfilled,
+        (state: OrganizationsState, action: PayloadAction<OrganizationInterface>) => {
+          organizationsAdapter.setOne(state, action.payload)
+          state.loadingStatus = 'loaded'
+        }
+      )
+      .addCase(postOrganization.rejected, (state: OrganizationsState, action) => {
+        state.loadingStatus = 'error'
+        console.log(action)
         state.error = action.error.message
       })
   },

@@ -1,5 +1,5 @@
 import Icon from '../icon/icon'
-import { IconEnum } from '../../enums/icon.enum'
+import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
 
 export enum ButtonSize {

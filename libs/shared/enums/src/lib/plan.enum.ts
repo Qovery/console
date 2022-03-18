@@ -1,4 +1,4 @@
-export const enum OrganizationPlanType {
+export const enum PlanEnum {
   COMMUNITY = 'COMMUNITY',
   FREE = 'FREE',
   PROFESSIONAL = 'PROFESSIONAL',

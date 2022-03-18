@@ -1,7 +1,7 @@
+import { IconEnum } from '@console/shared/enums'
 import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
 import Icon, { IconProps } from './icon'
-import { IconEnum } from '../../enums/icon.enum'
 
 export default {
   component: Icon,

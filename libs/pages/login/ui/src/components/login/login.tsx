@@ -1,5 +1,6 @@
-import { Icon, IconEnum } from '@console/shared/ui'
+import { Icon } from '@console/shared/ui'
 import { AuthEnum } from '@console/shared/utils'
+import { IconEnum } from '@console/shared/enums'
 interface ILoginProps {
   authLogin: (provider: string) => void
   githubType: AuthEnum
