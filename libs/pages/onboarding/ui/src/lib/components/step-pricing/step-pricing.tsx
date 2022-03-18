@@ -6,17 +6,15 @@ import { PlanCard } from '../plan-card/plan-card'
 interface StepPricingProps {
   select: string
   setSelect: (value: string) => void
-  displayDeploy: boolean
   plans: Plan[]
   chooseDeploy: (value: Value | null) => void
   currentValue: { [name: string]: { number?: string | undefined; disable: boolean | undefined } }
-  defaultValue: { [name: string]: Value | undefined }
   currentDeploy: Value
   deploys: Value[]
 }
 
 export function StepPricing(props: StepPricingProps) {
-  const { select, setSelect, plans, displayDeploy, chooseDeploy, currentValue, defaultValue, deploys, currentDeploy } =
+  const { select, setSelect, plans, chooseDeploy, currentValue, deploys, currentDeploy } =
     props
 
   return (

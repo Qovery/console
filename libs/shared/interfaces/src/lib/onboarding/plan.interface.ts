@@ -7,5 +7,4 @@ export interface Plan {
   text: string
   price?: number
   listPrice: Price[]
-  listDeploy: Value[]
 }
