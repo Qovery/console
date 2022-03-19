@@ -1,17 +1,13 @@
+import { AppState, Auth0Provider } from '@auth0/auth0-react'
+import { store } from '@console/store/data'
+import { createBrowserHistory } from 'history'
 import * as ReactDOM from 'react-dom'
-import { BrowserRouter } from 'react-router-dom'
-import { combineReducers } from 'redux'
-import { configureStore } from '@reduxjs/toolkit'
 import { Toaster } from 'react-hot-toast'
 import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
-import { AppState, Auth0Provider } from '@auth0/auth0-react'
-import { createBrowserHistory } from 'history'
-import { user, userSignUp } from '@console/domains/user'
-import { organization } from '@console/domains/organization'
-import { projects } from '@console/domains/projects'
-import { environment } from './environments/environment'
 import App from './app/app'
+import { environment } from './environments/environment'
 import './styles.scss'
 
 const OAUTH_CALLBACK = '/login/auth0-callback'
@@ -22,21 +18,6 @@ const onRedirectCallback = (appState: AppState) => {
   // use the router's history module to replace the url
   history.replace(appState?.returnTo || window.location.pathname)
 }
-
-const rootReducer = combineReducers({
-  user: user,
-  userSignUp: userSignUp,
-  organization: organization,
-  projects: projects,
-})
-
-export const store = configureStore({
-  reducer: rootReducer,
-})
-
-export type RootState = ReturnType<typeof rootReducer>
-
-export type AppDispatch = typeof store.dispatch
 
 ReactDOM.render(
   <IntercomProvider appId={environment.intercom} autoBoot={process.env['NODE_ENV'] === 'production'}>

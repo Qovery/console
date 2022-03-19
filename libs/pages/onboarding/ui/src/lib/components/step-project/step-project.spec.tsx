@@ -1,10 +1,10 @@
-import { renderWithRouter } from '__mocks__/utils/test-utils'
+import { render } from '__tests__/utils/setup-jest'
 
 import StepProject from './step-project'
 
 describe('StepProject', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithRouter(<StepProject />)
+    const { baseElement } = render(<StepProject />)
 
     expect(baseElement).toBeTruthy()
   })

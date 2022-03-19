@@ -1,9 +1,9 @@
 import App from './app'
-import { renderWithRouter } from '__mocks__/utils/test-utils'
+import { render } from '__tests__/utils/setup-jest'
 
 describe('App', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithRouter(<App />)
+    const { baseElement } = render(<App />)
 
     expect(baseElement).toBeTruthy()
   })

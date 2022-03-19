@@ -1,4 +1,4 @@
-import { render } from '__mocks__/utils/test-utils'
+import { render } from '__tests__/utils/setup-jest'
 
 import InputText from './input-text'
 

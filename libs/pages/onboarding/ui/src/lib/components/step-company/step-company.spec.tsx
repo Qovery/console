@@ -1,10 +1,19 @@
-import { renderWithRouter } from '__mocks__/utils/test-utils'
+import { render } from '__tests__/utils/setup-jest'
 
-import StepCompany from './step-company'
+import StepCompany, { StepCompanyProps } from './step-company'
 
 describe('StepCompany', () => {
+  let props: StepCompanyProps
+
+  beforeEach(() => {
+    props = {
+      dataRole: [{ label: 'some-label', value: 'some-value' }],
+      dataSize: [{ label: 'some-label', value: 'some-value' }],
+    }
+  })
+
   it('should render successfully', () => {
-    const { baseElement } = renderWithRouter(<StepCompany />)
+    const { baseElement } = render(<StepCompany {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })
