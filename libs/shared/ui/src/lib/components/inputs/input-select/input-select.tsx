@@ -35,7 +35,7 @@ export function InputSelect(props: InputSelectProps) {
           </div>
           {item && <div className="input__value">{item.label}</div>}
         </ListboxButton>
-        <ListboxPopover portal={false} className='input__select__list'>
+        <ListboxPopover portal={false} className="input__select__list">
           {items.map((currentItem, index) => (
             <ListboxOption
               className={`input__select__item ${item?.value === currentItem.value ? 'is-active' : ''}`}

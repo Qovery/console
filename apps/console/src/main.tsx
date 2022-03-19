@@ -1,14 +1,11 @@
-import * as ReactDOM from 'react-dom'
-import { BrowserRouter } from 'react-router-dom'
-import { combineReducers } from 'redux'
-import { configureStore } from '@reduxjs/toolkit'
-import { Provider } from 'react-redux'
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
+import { store } from '@console/store/data'
 import { createBrowserHistory } from 'history'
-import { user } from '@console/domains/user'
-import { organizations } from '@console/domains/organizations'
-import { environment } from './environments/environment.prod'
+import * as ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { BrowserRouter } from 'react-router-dom'
 import App from './app/app'
+import { environment } from './environments/environment.prod'
 import './styles.scss'
 
 const OAUTH_CALLBACK = '/login/auth0-callback'
@@ -19,19 +16,6 @@ const onRedirectCallback = (appState: AppState) => {
   // use the router's history module to replace the url
   history.replace(appState?.returnTo || window.location.pathname)
 }
-
-const rootReducer = combineReducers({
-  user: user,
-  organizations: organizations,
-})
-
-export const store = configureStore({
-  reducer: rootReducer,
-})
-
-export type RootState = ReturnType<typeof rootReducer>
-
-export type AppDispatch = typeof store.dispatch
 
 ReactDOM.render(
   <Auth0Provider

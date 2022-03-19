@@ -3,20 +3,21 @@ import { Button, ButtonSize, ButtonType, InputSelectSmall, PlanEnum } from '@con
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
-interface StepPricingProps {
+export interface StepPricingProps {
   select: string
   setSelect: (value: string) => void
   displayDeploy: boolean
   plans: Plan[]
   chooseDeploy: (value: Value | null) => void
-  currentValue: { [name: string]: { number?: string | undefined, disable: boolean | undefined } }
-  defaultValue: { [name: string]: Value | undefined },
+  currentValue: { [name: string]: { number?: string | undefined; disable: boolean | undefined } }
+  defaultValue: { [name: string]: Value | undefined }
   currentDeploy: Value
-  deploys: Value[],
+  deploys: Value[]
 }
 
 export function StepPricing(props: StepPricingProps) {
-  const { select, setSelect, plans, displayDeploy, chooseDeploy, currentValue, defaultValue, deploys, currentDeploy } = props
+  const { select, setSelect, plans, displayDeploy, chooseDeploy, currentValue, defaultValue, deploys, currentDeploy } =
+    props
 
   return (
     <div>
@@ -69,12 +70,16 @@ export function StepPricing(props: StepPricingProps) {
           >
             Back
           </Button>
-          {select === PlanEnum.ENTERPRISE && <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
-            Contact us
-          </Button>}
-          {select !== PlanEnum.ENTERPRISE && <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
-            Select plan
-          </Button>}
+          {select === PlanEnum.ENTERPRISE && (
+            <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
+              Contact us
+            </Button>
+          )}
+          {select !== PlanEnum.ENTERPRISE && (
+            <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
+              Select plan
+            </Button>
+          )}
         </div>
       </form>
     </div>

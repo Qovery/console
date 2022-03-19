@@ -14,6 +14,7 @@
     "pages-overview-ui": "libs/pages/overview/ui",
     "shared-interfaces": "libs/shared/interfaces",
     "shared-ui": "libs/shared/ui",
-    "shared-utils": "libs/shared/utils"
+    "shared-utils": "libs/shared/utils",
+    "store-data": "libs/store/data"
   }
 }

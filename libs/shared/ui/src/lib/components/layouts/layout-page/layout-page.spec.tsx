@@ -1,12 +1,12 @@
 import LayoutPage from './layout-page'
-import { renderWithRouter } from '__mocks__/utils/test-utils'
+import { render } from '__tests__/utils/setup-jest'
 import React from 'react'
 
 describe('LayoutPage', () => {
   it('should render successfully', () => {
     const children = React.createElement('div')
 
-    const { baseElement } = renderWithRouter(<LayoutPage children={children} />)
+    const { baseElement } = render(<LayoutPage children={children} />)
     expect(baseElement).toBeTruthy()
   })
 })

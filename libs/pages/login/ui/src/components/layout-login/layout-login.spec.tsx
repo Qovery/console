@@ -1,4 +1,4 @@
-import { renderWithRouter } from '__mocks__/utils/test-utils'
+import { render } from '__tests__/utils/setup-jest'
 
 import LayoutLogin from './layout-login'
 import React from 'react'
@@ -6,7 +6,7 @@ import React from 'react'
 describe('LayoutLogin', () => {
   it('should render successfully', () => {
     const children = React.createElement('div')
-    const { baseElement } = renderWithRouter(<LayoutLogin children={children} />)
+    const { baseElement } = render(<LayoutLogin children={children} />)
     expect(baseElement).toBeTruthy()
   })
 })

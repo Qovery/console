@@ -2,7 +2,7 @@ import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console
 import { Value } from '@console/shared/interfaces'
 import { ONBOARDING_MORE_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/utils'
 
-interface StepCompanyProps {
+export interface StepCompanyProps {
   dataSize: Array<Value>
   dataRole: Array<Value>
 }

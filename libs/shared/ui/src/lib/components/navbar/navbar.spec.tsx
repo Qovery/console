@@ -1,10 +1,10 @@
-import { renderWithRouter } from '__mocks__/utils/test-utils'
+import { render } from '__tests__/utils/setup-jest'
 
 import Navbar from './navbar'
 
 describe('Navbar', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithRouter(<Navbar />)
+    const { baseElement } = render(<Navbar />)
     expect(baseElement).toBeTruthy()
   })
 })
