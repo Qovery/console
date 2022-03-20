@@ -10,21 +10,6 @@ jest.mock('@auth0/auth0-react', () => ({
   },
 }))
 
-// jest.mock('axios', () => {
-//   return {
-//     interceptors: {
-//       request: {
-//         use: jest.fn(),
-//         eject: jest.fn(),
-//       },
-//       response: {
-//         use: jest.fn(),
-//         eject: jest.fn(),
-//       },
-//     },
-//   }
-// })
-
 describe('UseAuthInterceptor', () => {
   it('should render successfully', () => {
     const { result } = renderHook(() => useAuthInterceptor(axios, 'some-url'))
