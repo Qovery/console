@@ -8,4 +8,10 @@ describe('UseDocumentTitle', () => {
 
     expect(result).toBeTruthy()
   })
+
+  it('should set the document title', () => {
+    renderHook(() => useDocumentTitle('some page title'))
+
+    expect(document.title).toBe('some page title')
+  })
 })

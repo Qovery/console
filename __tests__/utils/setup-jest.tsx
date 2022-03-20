@@ -1,17 +1,20 @@
 import '@testing-library/jest-dom'
-import { render, RenderOptions } from '@testing-library/react'
+import { cleanup, render, RenderOptions } from '@testing-library/react'
 import React from 'react'
 import { server } from '../server'
 import { Wrapper } from './providers'
 
 beforeAll(() => server.listen())
 
-afterEach(() => server.resetHandlers())
+afterEach(() => {
+  server.resetHandlers()
+  cleanup()
+})
 
 afterAll(() => server.close())
 
 type CustomRenderOptions = {
-  wrapperProps: {}
+  wrapperProps?: {}
 } & Omit<RenderOptions, 'wrapper'>
 
 const customRender = (ui: React.ReactElement, options?: CustomRenderOptions) =>

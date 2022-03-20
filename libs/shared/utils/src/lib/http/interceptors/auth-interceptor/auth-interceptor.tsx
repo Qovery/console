@@ -3,7 +3,7 @@ import { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'ax
 import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 
-export function SetupInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
+export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
 
   useEffect(() => {
