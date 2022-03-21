@@ -7,10 +7,11 @@ interface StepCompanyProps {
   dataQuestions: Array<Value>
   onSubmit: () => void
   control: Control<any, any>
+  displayQoveryUsageOther: boolean
 }
 
 export function StepMore(props: StepCompanyProps) {
-  const { dataQuestions, onSubmit, control } = props
+  const { dataQuestions, onSubmit, control, displayQoveryUsageOther } = props
 
   return (
     <div>
@@ -32,6 +33,22 @@ export function StepMore(props: StepCompanyProps) {
             />
           )}
         />
+        {displayQoveryUsageOther && (
+          <Controller
+            name="qovery_usage_other"
+            control={control}
+            rules={{ required: false }}
+            render={({ field }) => (
+              <InputTextArea
+                className="mb-3"
+                label="Precise us why you want to use Qovery"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+              />
+            )}
+          />
+        )}
         <Controller
           name="user_questions"
           control={control}

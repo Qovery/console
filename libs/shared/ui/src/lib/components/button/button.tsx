@@ -27,6 +27,7 @@ export interface ButtonProps {
   className?: string
   onClick?: () => void
   type?: 'button' | 'submit' | 'reset' | undefined
+  external?: boolean
 }
 
 export function Button(props: ButtonProps) {
@@ -41,6 +42,7 @@ export function Button(props: ButtonProps) {
     className = '',
     type = 'button',
     onClick,
+    external = false,
   } = props
 
   function content() {
@@ -62,6 +64,12 @@ export function Button(props: ButtonProps) {
       <button className={defineClass} onClick={onClick} type={type}>
         {content()}
       </button>
+    )
+  } else if (link && external) {
+    return (
+      <a className={defineClass} href={link} target="_blank" rel="noreferrer">
+        {content()}
+      </a>
     )
   } else {
     return (

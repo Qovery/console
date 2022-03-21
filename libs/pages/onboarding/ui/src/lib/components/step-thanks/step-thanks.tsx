@@ -63,7 +63,12 @@ export function StepThanks(props: StepThanksProps) {
           >
             Back
           </Button>
-          <Button onClick={() => nextStep()} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
+          <Button
+            external
+            link="https://www.youtube.com/watch?v=eX2qFMC8cFo"
+            size={ButtonSize.BIG}
+            style={ButtonStyle.BASIC}
+          >
             Go to Youtube{' '}
             <span role="img" aria-label="cat">
               🐈

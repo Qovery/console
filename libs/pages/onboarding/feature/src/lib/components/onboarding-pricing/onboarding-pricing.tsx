@@ -3,13 +3,7 @@ import { useNavigate } from 'react-router'
 import { StepPricing } from '@console/pages/onboarding/ui'
 import { Value, Plan } from '@console/shared/interfaces'
 import { useOrganization } from '@console/domains/organization'
-import {
-  ONBOARDING_PRICING_URL,
-  ONBOARDING_PROJECT_URL,
-  ONBOARDING_URL,
-  useAuth,
-  useDocumentTitle,
-} from '@console/shared/utils'
+import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
 import { PlanEnum } from '@console/shared/enums'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
@@ -136,7 +130,6 @@ export function OnboardingPricing() {
   const { organization_name, project_name } = useContext(ContextOnboarding)
   const { createOrganization } = useOrganization()
   const { createProject } = useProjects()
-  const { getAccessTokenSilently } = useAuth()
   const [selectPlan, setSelectPlan] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
   const [currentDeploy, setCurrentDeploy] = useState(DEPLOY_DEFAULT)
@@ -184,7 +177,7 @@ export function OnboardingPricing() {
       })
 
       if (project) {
-        const url = `https://console.qovery.com`
+        const url = `https://console.qovery.com/platform/${organization.id}/projects`
         window.location.replace(url)
       }
     }

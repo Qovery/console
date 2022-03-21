@@ -30,26 +30,38 @@ const dataQuestions: Value[] = [
 ]
 
 export function OnboardingMore() {
-  const { handleSubmit, control, setValue } = useForm()
+  const { handleSubmit, control, setValue, watch } = useForm()
   const { userSignUp, updateUserSignUp } = useUser()
   const navigate = useNavigate()
+
+  const displayQoveryUsageOther = watch('qovery_usage') === 'other'
 
   useEffect(() => {
     setValue('user_questions', userSignUp?.user_questions || undefined)
     setValue('qovery_usage', userSignUp?.qovery_usage || undefined)
+    setValue('qovery_usage_other', userSignUp?.qovery_usage_other || undefined)
   }, [setValue, userSignUp])
 
   const onSubmit = handleSubmit((data) => {
     if (data) {
-      // submit data and the current step
-      data = Object.assign(data, { current_step: ONBOARDING_THANKS_URL })
+      // reset qovery usage other
+      if (data['qovery_usage'] !== 'other') {
+        data['qovery_usage_other'] = null
+      }
 
       updateUserSignUp({ ...userSignUp, ...data })
       navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)
     }
   })
 
-  return <StepMore dataQuestions={dataQuestions} control={control} onSubmit={onSubmit} />
+  return (
+    <StepMore
+      dataQuestions={dataQuestions}
+      control={control}
+      onSubmit={onSubmit}
+      displayQoveryUsageOther={displayQoveryUsageOther}
+    />
+  )
 }
 
 export default OnboardingMore

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { useUser } from '@console/domains/user'
 import { StepPersonalize } from '@console/pages/onboarding/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL, useAuth } from '@console/shared/utils'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL, useAuth } from '@console/shared/utils'
 
 const dataTypes = [
   {
@@ -47,9 +47,6 @@ export function FormUser(props: FormUserProps) {
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
       const checkIfCompany = data['type_of_use'] === 'work'
-      // submit data and the current step
-      data = Object.assign(data, { current_step: ONBOARDING_PERSONALIZE_URL })
-
       if (checkIfCompany) {
         setStepCompany(true)
         await updateUserSignUp({ ...userSignUp, ...data })

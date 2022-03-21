@@ -11,6 +11,7 @@ export interface UserSignUpInterface {
   current_step?: string
   dx_auth?: boolean
   qovery_usage?: string
+  qovery_usage_other?: string
   type_of_use?: string
   user_email?: string
   user_questions?: string
