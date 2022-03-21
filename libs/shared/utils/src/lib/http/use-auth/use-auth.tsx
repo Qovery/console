@@ -4,7 +4,8 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { userActions, UserInterface } from '@console/domains/user'
 
 export function useAuth() {
-  const { loginWithPopup, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
+  const { loginWithPopup, logout, user, getAccessTokenSilently, getIdTokenClaims, isAuthenticated, isLoading } =
+    useAuth0()
   const dispatch = useDispatch()
 
   /**
@@ -55,7 +56,7 @@ export function useAuth() {
     }
   }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
 
-  return { authLogin, authLogout, getCurrentUser, isAuthenticated, isLoading }
+  return { authLogin, authLogout, getCurrentUser, isAuthenticated, isLoading, getAccessTokenSilently, getIdTokenClaims }
 }
 
 export default useAuth

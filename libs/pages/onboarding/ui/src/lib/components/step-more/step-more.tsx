@@ -18,7 +18,7 @@ export function StepMore(props: StepCompanyProps) {
       <p className="text-sm mb-10 text-text-500">We need some information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
         <Controller
-          name="user_questions"
+          name="qovery_usage"
           control={control}
           rules={{ required: 'Please enter this field.' }}
           render={({ field, fieldState: { error } }) => (
@@ -33,7 +33,7 @@ export function StepMore(props: StepCompanyProps) {
           )}
         />
         <Controller
-          name="qovery_usage"
+          name="user_questions"
           control={control}
           rules={{ required: false }}
           render={({ field }) => (
