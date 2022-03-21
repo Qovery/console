@@ -4,11 +4,10 @@ import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/utils'
 interface StepThanksProps {
   firstName: string
   email: string
-  nextStep: () => void
 }
 
 export function StepThanks(props: StepThanksProps) {
-  const { firstName, email, nextStep } = props
+  const { firstName, email } = props
 
   return (
     <div>
