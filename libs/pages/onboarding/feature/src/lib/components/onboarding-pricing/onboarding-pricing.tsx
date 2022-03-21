@@ -133,6 +133,7 @@ export function OnboardingPricing() {
   const [selectPlan, setSelectPlan] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
   const [currentDeploy, setCurrentDeploy] = useState(DEPLOY_DEFAULT)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (organization_name === '' && project_name === '') {
@@ -166,6 +167,8 @@ export function OnboardingPricing() {
   }
 
   const onSubmit = async () => {
+    setLoading(true)
+
     const organization = await createOrganization({
       name: organization_name,
       plan: selectPlan,
@@ -177,6 +180,8 @@ export function OnboardingPricing() {
       })
 
       if (project) {
+        setLoading(false)
+
         const url = `https://console.qovery.com/platform/${organization.id}/projects`
         window.location.replace(url)
       }
@@ -193,6 +198,7 @@ export function OnboardingPricing() {
       deploys={DEPLOYS}
       currentDeploy={currentDeploy}
       onSubmit={onSubmit}
+      loading={loading}
     />
   )
 }

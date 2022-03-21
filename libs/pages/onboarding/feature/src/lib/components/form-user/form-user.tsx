@@ -29,7 +29,6 @@ export function FormUser(props: FormUserProps) {
   const navigate = useNavigate()
   const { user, userSignUp, updateUserSignUp } = useUser()
   const { authLogout } = useAuth()
-
   const { handleSubmit, control, setValue } = useForm()
 
   useEffect(() => {
