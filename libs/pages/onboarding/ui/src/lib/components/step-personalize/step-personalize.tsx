@@ -50,11 +50,11 @@ export function StepPersonalize(props: StepPersonalizeProps) {
         <Controller
           name="user_email"
           control={control}
-          rules={{ required: 'Please enter your last name.' }}
+          rules={{ required: 'Please enter your email.' }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"
-              label="Last name"
+              label="Email"
               type="email"
               name={field.name}
               onChange={field.onChange}

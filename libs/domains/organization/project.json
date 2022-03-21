@@ -1,6 +1,6 @@
 {
-  "root": "libs/domains/organizations",
-  "sourceRoot": "libs/domains/organizations/src",
+  "root": "libs/domains/organization",
+  "sourceRoot": "libs/domains/organization/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -8,14 +8,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/domains/organizations/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/domains/organization/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/domains/organizations"],
+      "outputs": ["coverage/libs/domains/organization"],
       "options": {
-        "jestConfig": "libs/domains/organizations/jest.config.js",
+        "jestConfig": "libs/domains/organization/jest.config.js",
         "passWithNoTests": true
       }
     }

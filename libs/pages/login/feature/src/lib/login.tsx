@@ -8,23 +8,19 @@ import {
   useDocumentTitle,
   AuthEnum,
 } from '@console/shared/utils'
-import { useOrganizations } from '@console/domains/organizations'
+import { useOrganization } from '@console/domains/organization'
 
 export function LoginPage() {
   const { authLogin, isAuthenticated } = useAuth()
-  const { organizations, loadingStatus } = useOrganizations()
+  const { organization } = useOrganization()
 
   useDocumentTitle('Login - Qovery')
 
-  if (isAuthenticated && loadingStatus !== 'loaded') {
-    return <></>
-  }
-
-  if (isAuthenticated && organizations.length > 0) {
+  if (isAuthenticated && organization.length > 0) {
     return <Navigate to={OVERVIEW_URL} replace />
   }
 
-  if (isAuthenticated && organizations.length === 0) {
+  if (isAuthenticated && organization.length === 0) {
     return <Navigate to={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`} replace />
   }
 

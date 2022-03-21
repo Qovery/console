@@ -31,13 +31,21 @@ export const fetchUserSignUp = createAsyncThunk('userSignUp/get', async () => {
 
 export const postUserSignUp = createAsyncThunk<any, UserSignUpState>(
   'userSignUp/post',
-  async (data: UserSignUpState) => {
+  async (data: UserSignUpState, { rejectWithValue }) => {
     // remove useless field for post request
     delete data['error']
     delete data['loadingStatus']
 
-    await axios.post('/admin/userSignUp', data).then((response) => response)
-    return data
+    try {
+      const result = await axios.post('/admin/userSignUp', data).then((response) => response)
+      if (typeof result === 'object') {
+        return data
+      } else {
+        return result
+      }
+    } catch (error) {
+      return rejectWithValue(error)
+    }
   }
 )
 

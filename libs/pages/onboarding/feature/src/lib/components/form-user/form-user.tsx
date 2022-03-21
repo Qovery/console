@@ -44,7 +44,7 @@ export function FormUser(props: FormUserProps) {
     }
   }, [user, setValue, userSignUp])
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data) {
       const checkIfCompany = data['type_of_use'] === 'work'
       // submit data and the current step
@@ -52,7 +52,7 @@ export function FormUser(props: FormUserProps) {
 
       if (checkIfCompany) {
         setStepCompany(true)
-        updateUserSignUp({ ...userSignUp, ...data })
+        await updateUserSignUp({ ...userSignUp, ...data })
       } else {
         navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
 
@@ -62,7 +62,7 @@ export function FormUser(props: FormUserProps) {
           user_role: undefined,
         }
 
-        updateUserSignUp({ ...userSignUp, ...data, ...resetCompany })
+        await updateUserSignUp({ ...userSignUp, ...data, ...resetCompany })
       }
     }
   })

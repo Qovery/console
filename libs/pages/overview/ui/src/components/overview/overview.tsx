@@ -1,19 +1,19 @@
-import { OrganizationInterface } from '@console/domains/organizations'
+import { OrganizationInterface } from '@console/domains/organization'
 import { LayoutPage } from '@console/shared/ui'
 
 interface IOverviewProps {
-  organizations: OrganizationInterface[]
+  organization: OrganizationInterface[]
 }
 
 export function Overview(props: IOverviewProps) {
-  const { organizations } = props
+  const { organization } = props
 
   return (
     <LayoutPage>
       <div>
         <h2 className="text-3xl font-extrabold text-brand-500">Overview</h2>
         <ul className="mt-8">
-          {organizations.map((organization: OrganizationInterface) => (
+          {organization.map((organization: OrganizationInterface) => (
             <li key={organization.id}>{organization.name}</li>
           ))}
         </ul>

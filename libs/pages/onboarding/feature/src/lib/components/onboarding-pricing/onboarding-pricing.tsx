@@ -2,9 +2,10 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
 import { StepPricing } from '@console/pages/onboarding/ui'
 import { Value, Plan } from '@console/shared/interfaces'
-import { useOrganizations } from '@console/domains/organizations'
+import { useOrganization } from '@console/domains/organization'
 import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
 import { PlanEnum } from '@console/shared/enums'
+import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
 
 const DEPLOYS: Value[] = [
@@ -127,7 +128,8 @@ export function OnboardingPricing() {
 
   const navigate = useNavigate()
   const { organization_name, project_name } = useContext(ContextOnboarding)
-  const { createOrganization } = useOrganizations()
+  const { createOrganization } = useOrganization()
+  const { createProject } = useProjects()
   const [selectPlan, setSelectPlan] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
   const [currentDeploy, setCurrentDeploy] = useState(DEPLOY_DEFAULT)
@@ -163,12 +165,20 @@ export function OnboardingPricing() {
     }
   }
 
-  const onSubmit = () => {
-    createOrganization({
+  const onSubmit = async () => {
+    const organization = await createOrganization({
       name: organization_name,
       plan: selectPlan,
     })
-    // https://console.qovery.com/platform/organization/141c07c8-0dd9-4623-983b-3fdd61867255
+
+    const project = await createProject(organization.id, {
+      name: project_name,
+    })
+
+    if (project) {
+      const url = `https://console.qovery.com/platform/organization/${organization.id}`
+      window.location.replace(url)
+    }
   }
 
   return (

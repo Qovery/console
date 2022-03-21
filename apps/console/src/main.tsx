@@ -2,11 +2,13 @@ import * as ReactDOM from 'react-dom'
 import { BrowserRouter } from 'react-router-dom'
 import { combineReducers } from 'redux'
 import { configureStore } from '@reduxjs/toolkit'
+import { Toaster } from 'react-hot-toast'
 import { Provider } from 'react-redux'
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import { createBrowserHistory } from 'history'
 import { user, userSignUp } from '@console/domains/user'
-import { organizations } from '@console/domains/organizations'
+import { organization } from '@console/domains/organization'
+import { projects } from '@console/domains/projects'
 import { environment } from './environments/environment.prod'
 import App from './app/app'
 import './styles.scss'
@@ -23,7 +25,8 @@ const onRedirectCallback = (appState: AppState) => {
 const reducers = combineReducers({
   user: user,
   userSignUp: userSignUp,
-  organizations: organizations,
+  organization: organization,
+  projects: projects,
 })
 
 export const store = configureStore({
@@ -42,6 +45,7 @@ ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
         <App />
+        <Toaster position="bottom-right" />
       </BrowserRouter>
     </Provider>
   </Auth0Provider>,
