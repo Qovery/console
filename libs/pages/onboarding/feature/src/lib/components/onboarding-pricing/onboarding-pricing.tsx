@@ -3,13 +3,7 @@ import { useNavigate } from 'react-router'
 import { StepPricing } from '@console/pages/onboarding/ui'
 import { Value, Plan } from '@console/shared/interfaces'
 import { useOrganization } from '@console/domains/organization'
-import {
-  ONBOARDING_PRICING_URL,
-  ONBOARDING_PROJECT_URL,
-  ONBOARDING_URL,
-  useAuth,
-  useDocumentTitle,
-} from '@console/shared/utils'
+import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
 import { PlanEnum } from '@console/shared/enums'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
@@ -134,7 +128,6 @@ export function OnboardingPricing() {
 
   const navigate = useNavigate()
   const { organization_name, project_name } = useContext(ContextOnboarding)
-  const { getLocalStorageAuthData } = useAuth()
   const { createOrganization } = useOrganization()
   const { createProject } = useProjects()
   const [selectPlan, setSelectPlan] = useState(PLAN_DEFAULT)
@@ -176,38 +169,22 @@ export function OnboardingPricing() {
   const onSubmit = async () => {
     setLoading(true)
 
-    const userLocalStorageToken: any = getLocalStorageAuthData()
-    const a = JSON.parse(userLocalStorageToken)
+    const organization = await createOrganization({
+      name: organization_name,
+      plan: selectPlan,
+    })
 
-    console.log(a.body.access_token)
-    console.log(a.body.id_token)
-    const customParams = `"access_token": "${a.body.access}", "id_token": ${a.body.id_token}`
+    if (organization) {
+      const project = await createProject(organization.id, {
+        name: project_name,
+      })
 
-    // delete a.body.decodedToken
-    // delete a.body.decodedToken
-    // delete a.body.decodedToken
-
-    // console.log(a)
-
-    // const organization = await createOrganization({
-    //   name: organization_name,
-    //   plan: selectPlan,
-    // })
-
-    // if (organization) {
-    //   const project = await createProject(organization.id, {
-    //     name: project_name,
-    //   })
-
-    //   if (project) {
-    //     setLoading(false)
-    // const url = `https://console-staging.qovery.com/platform/${
-    //   organization.id
-    // }/projects?v3JwtToken=${JSON.stringify(a)}`
-    const url = `https://console-staging.qovery.com?v3JwtToken=${JSON.stringify(a.body.id_token)}`
-    window.location.href = url
-    //   }
-    // }
+      if (project) {
+        setLoading(false)
+        const url = `https://console-staging.qovery.com/platform/${organization.id}/projects`
+        window.location.replace(url)
+      }
+    }
   }
 
   return (

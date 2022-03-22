@@ -55,15 +55,6 @@ export function useAuth() {
     }
   }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
 
-  /**
-   * Get localStorage auth data
-   */
-  const getLocalStorageAuthData = useCallback(() => {
-    return localStorage.getItem(
-      '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
-    )
-  }, [])
-
   return {
     authLogin,
     authLogout,
@@ -71,7 +62,6 @@ export function useAuth() {
     isAuthenticated,
     isLoading,
     getAccessTokenSilently,
-    getLocalStorageAuthData,
   }
 }
 
