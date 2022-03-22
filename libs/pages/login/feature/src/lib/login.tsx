@@ -17,7 +17,7 @@ export function LoginPage() {
 
       if (isAuthenticated && organization.length > 0) {
         await createAuthCookies()
-        window.location.replace('https://console.qovery.com?redirectLoginV3')
+        window.location.replace('https://console-staging.qovery.com?redirectLoginV3')
       } else if (isAuthenticated) {
         setUserWithOnboarding(true)
       }
