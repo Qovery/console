@@ -12,6 +12,4 @@ export const Primary = Template.bind({})
 Primary.args = {
   label: 'First name',
   name: 'firstName',
-  defaultValue: 'Rémi Bonnet',
-  isValid: true,
 }

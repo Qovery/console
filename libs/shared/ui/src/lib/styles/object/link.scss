@@ -2,6 +2,10 @@
   transition: 0.25s color $timing-cubic;
   @apply align-bottom inline-block;
 
+  &.text-sm {
+    line-height: 1rem;
+  }
+
   &.text-accent2-500 {
     @apply hover:text-accent2-600;
   }

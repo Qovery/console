@@ -1,6 +1,4 @@
-// enums
-export * from './lib/enums/icon.enum'
-export * from './lib/enums/plan.enum'
+export * from './lib/components/loading-screen/loading-screen'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'

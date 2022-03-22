@@ -40,7 +40,10 @@ export function useAuth() {
 
       if (user) {
         const userInfos: UserInterface = {
-          ...user,
+          name: user.name,
+          email: user.email,
+          sub: user.sub,
+          picture: user.picture,
           isAuthenticated,
           isLoading,
           token,
@@ -52,7 +55,24 @@ export function useAuth() {
     }
   }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
 
-  return { authLogin, authLogout, getCurrentUser, isAuthenticated, isLoading }
+  /**
+   * Get localStorage auth data
+   */
+  const getLocalStorageAuthData = useCallback(() => {
+    return localStorage.getItem(
+      '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
+    )
+  }, [])
+
+  return {
+    authLogin,
+    authLogout,
+    getCurrentUser,
+    isAuthenticated,
+    isLoading,
+    getAccessTokenSilently,
+    getLocalStorageAuthData,
+  }
 }
 
 export default useAuth

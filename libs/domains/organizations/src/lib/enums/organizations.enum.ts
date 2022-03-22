@@ -1,8 +1,0 @@
-export const enum OrganizationPlanType {
-  COMMUNITY = 'COMMUNITY',
-  FREE = 'FREE',
-  PROFESSIONAL = 'PROFESSIONAL',
-  STARTUP = 'STARTUP',
-  ENTERPRISE = 'ENTERPRISE',
-  BUSINESS = 'BUSINESS',
-}
