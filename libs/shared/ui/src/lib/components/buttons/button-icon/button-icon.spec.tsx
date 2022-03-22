@@ -1,5 +1,4 @@
-import { render } from '@testing-library/react'
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { ButtonIcon, ButtonIconProps, ButtonIconSize, ButtonIconStyle } from './button-icon'
 import { Chance } from 'chance'
 import { BrowserRouter } from 'react-router-dom'

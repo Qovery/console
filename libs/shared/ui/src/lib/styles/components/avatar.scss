@@ -1,0 +1,12 @@
+.avatar {
+  @apply w-8 h-8 block rounded-full;
+
+  img {
+    @apply w-full h-full rounded-full;
+  }
+}
+
+// style
+.avatar--stroked {
+  @apply border-2 border-element-light-lighter-400;
+}
