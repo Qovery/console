@@ -55,6 +55,30 @@ export function useAuth() {
     }
   }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
 
+  /**
+   * Create authentification cookies
+   */
+  const createAuthCookies = useCallback(async () => {
+    const currentToken = localStorage.getItem(
+      '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
+    )
+
+    function setCookie(name: string, value: string, days: number) {
+      let expires = ''
+      if (days) {
+        const date = new Date()
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
+        expires = '; expires=' + date.toUTCString()
+      }
+      document.cookie = name + '=' + (value || '') + expires + '; path=/'
+    }
+
+    const data = currentToken && JSON.parse(currentToken)
+
+    setCookie('jwtToken', data.body.access_token, 100000)
+    setCookie('idToken', data.body.id_token, 100000)
+  }, [])
+
   return {
     authLogin,
     authLogout,
@@ -62,6 +86,7 @@ export function useAuth() {
     isAuthenticated,
     isLoading,
     getAccessTokenSilently,
+    createAuthCookies,
   }
 }
 

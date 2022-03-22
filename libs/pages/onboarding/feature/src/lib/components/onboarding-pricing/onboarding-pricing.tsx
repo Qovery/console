@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router'
 import { StepPricing } from '@console/pages/onboarding/ui'
 import { Value, Plan } from '@console/shared/interfaces'
 import { useOrganization } from '@console/domains/organization'
-import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import {
+  ONBOARDING_PRICING_URL,
+  ONBOARDING_PROJECT_URL,
+  ONBOARDING_URL,
+  useAuth,
+  useDocumentTitle,
+} from '@console/shared/utils'
 import { PlanEnum } from '@console/shared/enums'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
@@ -130,6 +136,7 @@ export function OnboardingPricing() {
   const { organization_name, project_name } = useContext(ContextOnboarding)
   const { createOrganization } = useOrganization()
   const { createProject } = useProjects()
+  const { createAuthCookies } = useAuth()
   const [selectPlan, setSelectPlan] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
   const [currentDeploy, setCurrentDeploy] = useState(DEPLOY_DEFAULT)
@@ -169,6 +176,8 @@ export function OnboardingPricing() {
   const onSubmit = async () => {
     setLoading(true)
 
+    await createAuthCookies()
+
     const organization = await createOrganization({
       name: organization_name,
       plan: selectPlan,
@@ -181,7 +190,7 @@ export function OnboardingPricing() {
 
       if (project) {
         setLoading(false)
-        const url = `https://console-staging.qovery.com/platform/${organization.id}/projects`
+        const url = `https://console-staging.qovery.com/platform/${organization.id}/projects?redirectLoginV3`
         window.location.replace(url)
       }
     }

@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { OVERVIEW_URL } from '@console/shared/utils'
 interface NavbarProps {
   className?: string
   logoUrl?: string
@@ -8,7 +7,7 @@ interface NavbarProps {
 }
 
 export function Navbar(props: NavbarProps) {
-  const { className, progress = 0, logoUrl = OVERVIEW_URL, contentLeft } = props
+  const { className, progress = 0, logoUrl, contentLeft } = props
 
   return (
     <nav
@@ -18,9 +17,15 @@ export function Navbar(props: NavbarProps) {
     >
       <div className="relative h-full w-full">
         <div className="h-full flex items-center">
-          <Link to={logoUrl} className="flex items-center px-6 border-r border-element-light-lighter-400 h-full">
-            <img className="w-[90px]" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
-          </Link>
+          {logoUrl ? (
+            <Link to={logoUrl} className="flex items-center px-6 border-r border-element-light-lighter-400 h-full">
+              <img className="w-[90px]" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
+            </Link>
+          ) : (
+            <div className="flex items-center px-6 border-r border-element-light-lighter-400 h-full">
+              <img className="w-[90px]" src="/assets/logos/logo-black.svg" alt="Qovery logo black" />
+            </div>
+          )}
           {contentLeft}
         </div>
         <div className={`${progress > 0 ? 'bg-element-light-lighter-500' : ''} w-full h-[6px] absolute bottom-[-6px]`}>

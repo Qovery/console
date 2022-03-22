@@ -1,26 +1,31 @@
 import { Navigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
-import {
-  ONBOARDING_PERSONALIZE_URL,
-  ONBOARDING_URL,
-  OVERVIEW_URL,
-  useAuth,
-  useDocumentTitle,
-  AuthEnum,
-} from '@console/shared/utils'
+import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum } from '@console/shared/utils'
 import { useOrganization } from '@console/domains/organization'
+import { useEffect, useState } from 'react'
 
 export function LoginPage() {
-  const { authLogin, isAuthenticated } = useAuth()
-  const { organization } = useOrganization()
+  const { authLogin, isAuthenticated, createAuthCookies } = useAuth()
+  const { organization, getOrganization } = useOrganization()
+  const [userWithOnboarding, setUserWithOnboarding] = useState(false)
 
   useDocumentTitle('Login - Qovery')
 
-  if (isAuthenticated && organization.length > 0) {
-    return <Navigate to={OVERVIEW_URL} replace />
-  }
+  useEffect(() => {
+    async function fetchData() {
+      await getOrganization()
 
-  if (isAuthenticated && organization.length === 0) {
+      if (isAuthenticated && organization.length > 0) {
+        await createAuthCookies()
+        window.location.replace('https://console.qovery.com?redirectLoginV3')
+      } else if (isAuthenticated) {
+        setUserWithOnboarding(true)
+      }
+    }
+    fetchData()
+  }, [getOrganization, isAuthenticated, organization.length, createAuthCookies])
+
+  if (userWithOnboarding && isAuthenticated && organization.length === 0) {
     return <Navigate to={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`} replace />
   }
 
