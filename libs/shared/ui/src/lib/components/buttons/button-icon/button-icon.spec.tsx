@@ -2,6 +2,7 @@ import { render } from '@testing-library/react'
 import { screen } from '@testing-library/react'
 import { ButtonIcon, ButtonIconProps, ButtonIconSize, ButtonIconStyle } from './button-icon'
 import { Chance } from 'chance'
+import { BrowserRouter } from 'react-router-dom'
 
 const props: ButtonIconProps = {
   icon: 'icon-solid-star'
@@ -51,7 +52,11 @@ describe('ButtonIcon', () => {
   it('should return a link instead of a button', () => {
     props.link = chance.url()
 
-    render(<ButtonIcon {...props} />)
+    render(
+      <BrowserRouter>
+        <ButtonIcon {...props} />
+      </BrowserRouter>
+    )
 
     const link = screen.getByRole('link')
 
