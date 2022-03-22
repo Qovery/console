@@ -1,22 +1,24 @@
+import { PlanEnum } from '@console/shared/enums'
 import { Plan, Value } from '@console/shared/interfaces'
-import { Button, ButtonSize, ButtonType, InputSelectSmall, PlanEnum } from '@console/shared/ui'
-import { ONBOARDING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL } from '@console/shared/utils'
+import { Button, ButtonSize, ButtonStyle, Icon, InputSelectSmall } from '@console/shared/ui'
+import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
 interface StepPricingProps {
-  select: string
-  setSelect: (value: string) => void
-  displayDeploy: boolean
+  selectPlan: string
+  setSelectPlan: (value: PlanEnum) => void
   plans: Plan[]
   chooseDeploy: (value: Value | null) => void
-  currentValue: { [name: string]: { number?: string | undefined, disable: boolean | undefined } }
-  defaultValue: { [name: string]: Value | undefined },
+  currentValue: { [name: string]: { number?: string | undefined; disable: boolean | undefined } }
   currentDeploy: Value
-  deploys: Value[],
+  deploys: Value[]
+  onSubmit: () => void
+  loading: boolean
 }
 
 export function StepPricing(props: StepPricingProps) {
-  const { select, setSelect, plans, displayDeploy, chooseDeploy, currentValue, defaultValue, deploys, currentDeploy } = props
+  const { selectPlan, setSelectPlan, plans, chooseDeploy, currentValue, deploys, currentDeploy, onSubmit, loading } =
+    props
 
   return (
     <div>
@@ -29,7 +31,8 @@ export function StepPricing(props: StepPricingProps) {
           rel="noreferrer"
           className="link text-accent2-500 text-sm ml-1"
         >
-          See details plan
+          see details plan
+          <Icon name="icon-solid-arrow-up-right-from-square" className="ml-1" />
         </a>
         .
       </p>
@@ -49,32 +52,39 @@ export function StepPricing(props: StepPricingProps) {
           <PlanCard
             key={index}
             name={plan.name}
-            selected={select}
+            selected={selectPlan}
             title={plan.title}
             text={plan.text}
             price={plan.price}
             listPrice={plan.listPrice}
             currentValue={currentValue}
-            onClick={() => setSelect(plan.name)}
+            onClick={() => setSelectPlan(plan.name)}
             disable={currentValue[plan.name].disable}
           />
         ))}
 
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
-            link={`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`}
+            link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
             size={ButtonSize.BIG}
-            type={ButtonType.STROKED}
+            style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          {select === PlanEnum.ENTERPRISE && <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
-            Contact us
-          </Button>}
-          {select !== PlanEnum.ENTERPRISE && <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}>
-            Select plan
-          </Button>}
+          {selectPlan === PlanEnum.ENTERPRISE && (
+            <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
+              Contact us
+            </Button>
+          )}
+          {selectPlan !== PlanEnum.ENTERPRISE && (
+            <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} onClick={onSubmit} loading={loading}>
+              Let’s go
+              <span className="ml-1" role="img" aria-label="star">
+                💫
+              </span>
+            </Button>
+          )}
         </div>
       </form>
     </div>

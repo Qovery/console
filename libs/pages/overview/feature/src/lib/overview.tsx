@@ -1,13 +1,17 @@
-import { useOrganizations } from '@console/domains/organizations'
+import { useEffect } from 'react'
+import { useOrganization } from '@console/domains/organization'
 import { Overview } from '@console/pages/overview/ui'
 import { useDocumentTitle } from '@console/shared/utils'
 
 export function OverviewPage() {
-  const { organizations } = useOrganizations()
-
   useDocumentTitle('Overview - Qovery')
+  const { organization, getOrganization } = useOrganization()
 
-  return <Overview organizations={organizations} />
+  useEffect(() => {
+    getOrganization()
+  }, [getOrganization])
+
+  return <Overview organization={organization} />
 }
 
 export default OverviewPage

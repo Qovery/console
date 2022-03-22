@@ -1,6 +1,1 @@
-export * from './lib/components/onboarding-project/onboarding-project'
-export * from './lib/components/onboarding-pricing/onboarding-pricing'
-export * from './lib/components/onboarding-more/onboarding-more'
-export * from './lib/components/onboarding-company/onboarding-company'
-export * from './lib/components/onboarding-personalize/onboarding-personalize'
 export * from './lib/onboarding'

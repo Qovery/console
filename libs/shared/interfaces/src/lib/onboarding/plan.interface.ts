@@ -1,11 +1,9 @@
-import { Value } from '../common/value.interface'
+import { PlanEnum } from '@console/shared/enums'
 import { Price } from './price.interface'
-
 export interface Plan {
-  name: string
+  name: PlanEnum
   title: string
   text: string
   price?: number
   listPrice: Price[]
-  listDeploy: Value[]
 }

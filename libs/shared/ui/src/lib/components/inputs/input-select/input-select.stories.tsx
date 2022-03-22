@@ -11,7 +11,6 @@ const Template: Story<InputSelectProps> = (args) => <InputSelect {...args} />
 export const Primary = Template.bind({})
 Primary.args = {
   label: 'Type of use',
-  name: 'type',
   items: [
     {
       label: 'Personal',

@@ -1,5 +1,6 @@
 import { Price } from '@console/shared/interfaces'
-import { InputRadio, PlanEnum } from '@console/shared/ui'
+import { InputRadio } from '@console/shared/ui'
+import { PlanEnum } from '@console/shared/enums'
 
 export interface PlanCardProps {
   name: string
@@ -9,7 +10,7 @@ export interface PlanCardProps {
   price?: number
   listPrice?: Price[]
   currentValue?: { [name: string]: { number?: string | undefined } }
-  onClick: (plan: string) => void,
+  onClick: (plan: string) => void
   disable?: boolean | undefined
 }
 
@@ -19,11 +20,11 @@ export function PlanCard(props: PlanCardProps) {
   return (
     <div
       className={`${
-        selected === name
-          ? 'bg-white text-text-700'
-          : 'text-text-500 bg-element-light-lighter-200 hover:bg-white'
-      } p-5 mb-2 border border-element-light-lighter-500 rounded flex justify-between items-center  transition-all ${disable ? 'opacity-50' : 'cursor-pointer hover:text-text-700'}`}
-      onClick={() => !disable ? onClick(name) : null}
+        selected === name ? 'bg-white text-text-700' : 'text-text-500 bg-element-light-lighter-200 hover:bg-white'
+      } p-5 mb-2 border border-element-light-lighter-500 rounded flex justify-between items-center  transition-all ${
+        disable ? 'opacity-50' : 'cursor-pointer hover:text-text-700'
+      }`}
+      onClick={() => (!disable ? onClick(name) : null)}
     >
       <div className="flex items-start gap-3">
         <InputRadio name="plan" value={name} isChecked={selected === name} disable={disable} />
@@ -37,11 +38,12 @@ export function PlanCard(props: PlanCardProps) {
       {name !== PlanEnum.ENTERPRISE && (
         <p className="text-xl font-bold flex items-center gap-1">
           {'$'}
-          {name === PlanEnum.PRO}
+          {name === PlanEnum.PROFESSIONAL}
           {name === PlanEnum.FREE && price}
           {name === PlanEnum.BUSINESS &&
             listPrice.find((p) => p.number === currentValue[PlanEnum.BUSINESS].number)?.price}
-          {name === PlanEnum.PRO && listPrice.find((p) => p.number === currentValue[PlanEnum.PRO].number)?.price}
+          {name === PlanEnum.PROFESSIONAL &&
+            listPrice.find((p) => p.number === currentValue[PlanEnum.PROFESSIONAL].number)?.price}
           <span className="text-sm font-normal text-text-500">/ Month</span>
         </p>
       )}

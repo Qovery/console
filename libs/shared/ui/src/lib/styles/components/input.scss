@@ -1,5 +1,3 @@
-@import '@reach/listbox/styles.css';
-
 .input {
   @apply relative min-h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white cursor-pointer;
   transition: 120ms all $timing-cubic;
@@ -8,23 +6,25 @@
     @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
   }
 
-  .input__value {
-    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
-  }
-
   input,
   textarea {
     @apply focus:outline-none;
   }
 
-  &:hover,
-  &.input--focused {
+  &:hover:not(.input--error),
+  &.input--focused:not(.input--error),
+  .input__button--focused {
     @apply border-brand-500;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   }
 }
 
-.input--focused {
+.input__value {
+  @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
+}
+
+.input--focused,
+.input__button--focused {
   label {
     @apply text-xs translate-y-0;
   }
@@ -41,6 +41,9 @@
 .input--error {
   @apply border-error-500;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+  &:hover {
+    @apply border-error-500;
+  }
 }
 
 .input--success {
@@ -48,68 +51,45 @@
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
 }
 
-.input--text-area {
-  @apply pb-0 pr-2;
-}
-
 .input__label {
   @apply w-full h-full;
 }
 
-.input__select {
-  @apply relative min-h-[52px] rounded;
-
-  label {
-    @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
-  }
-
-  .input__select__button {
-    @apply flex w-full h-full border border-element-light-lighter-500 min-h-[52px] px-4 py-2 flex-col focus-visible:border-brand-500 focus-visible:outline-none rounded outline-none bg-white cursor-pointer;
-    transition: 120ms all $timing-cubic;
-
-    &:hover {
-      @apply border-brand-500;
-      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-    }
-  }
+.input--select {
+  @apply relative p-0 border-0;
 
   .input__value {
-    @apply absolute left-0 bottom-2 w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
+    @apply translate-y-0;
   }
+}
 
-  &.input--focused {
-    .input__select__button {
-      @apply border-brand-500;
-      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-    }
+.input__button {
+  @apply relative flex w-full h-full min-h-[52px] px-4 py-2 flex-col cursor-pointer border rounded outline-none focus-visible:outline-none;
+  transition: 120ms all $timing-cubic;
 
-    label {
-      @apply text-xs translate-y-0;
-    }
+  &:hover {
+    @apply border-brand-500;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   }
+}
 
-  .input__select__box {
-    @apply w-full max-h-[52px];
+.input__list {
+  @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10 list-none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.input__item {
+  @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
+
+  &.is-active,
+  &[data-current-selected],
+  &[data-current-nav] {
+    @apply bg-element-light-lighter-300 text-text-600;
   }
+}
 
-  .input__select__list {
-      @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    }
-
-  .input__select__item {
-    @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
-
-    &.is-active,
-    &[data-current-selected],
-    &[data-current-nav] {
-      @apply bg-element-light-lighter-300 text-text-600;
-    }
-  }
-
-  .input__select__arrow {
-    @apply absolute top-1/2 -translate-y-1/2 text-sm text-text-500 right-4;
-  }
+.input__arrow {
+  @apply absolute top-1/2 -translate-y-1/2 text-sm text-text-500 right-4;
 }
 
 .input__select--small {

@@ -20,12 +20,12 @@ ENV NX_OAUTH_AUDIENCE $NX_OAUTH_AUDIENCE
 COPY package.json .
 COPY yarn.lock .
 RUN yarn global add @nrwl/cli
-RUN yarn install
+RUN yarn install --production
 
 # Copy app files
 COPY . .
 # Build the app
-RUN yarn build
+RUN yarn build-onboarding
 
 # Bundle static assets with nginx
 FROM nginx:latest

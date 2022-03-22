@@ -1,8 +1,8 @@
-import { IconEnum } from '../../enums/icon.enum'
 import GithubIcon from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'
 import BitbucketIcon from './icons-git/bitbucket'
 import IconFa from '../icon-fa/icon-fa'
+import { IconEnum } from '@console/shared/enums'
 export interface IconProps {
   name: IconEnum | string
   width?: string

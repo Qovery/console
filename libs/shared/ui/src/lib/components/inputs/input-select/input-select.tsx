@@ -1,56 +1,51 @@
-import { Value } from '@console/shared/interfaces'
-import { useState } from 'react'
-import Icon from '../../icon/icon'
 import { ListboxButton, ListboxInput, ListboxOption, ListboxPopover } from '@reach/listbox'
+import { Value } from '@console/shared/interfaces'
+import Icon from '../../icon/icon'
 
 export interface InputSelectProps {
-  name: string
   label: string
+  value?: string | undefined
   items: Value[]
-  getValue?: (name: string, value: Value | null) => void
-  defaultItem?: Value
   className?: string
+  onChange?: () => void
+  error?: string
 }
 
 export function InputSelect(props: InputSelectProps) {
-  const { label, name, items, defaultItem, getValue, className = '' } = props
+  const { label, value, items, className = '', onChange, error } = props
 
-  const [item, setItem] = useState(defaultItem || null)
-
-  const onClickItem = (value: string) => {
-    const selectedItem = items.find((i) => i.value === value) || null
-    if (selectedItem !== defaultItem) setItem(selectedItem)
-    if (getValue) getValue(name, selectedItem)
-  }
+  const selectedLabel = value && items.find((item) => item.value === value)?.label
 
   return (
-    <div className={`${className} input__select ${item !== null ? 'input--focused' : ''}`}>
-      <ListboxInput onChange={onClickItem} className="input__select__box">
+    <div className={`input input--select ${className}`}>
+      <ListboxInput onChange={onChange} className="input__container">
         <ListboxButton
-          className="input__select__button"
-          arrow={<Icon name="icon-solid-angle-down" className="input__select__arrow" />}
+          className={`input__button ${value !== undefined ? 'input__button--focused' : ''}`}
+          arrow={<Icon name="icon-solid-angle-down" className="input__arrow" />}
         >
           <div className="input__label">
             <label>{label}</label>
           </div>
-          {item && <div className="input__value">{item.label}</div>}
+          {value && <div className="input__value">{selectedLabel}</div>}
         </ListboxButton>
-        <ListboxPopover portal={false} className='input__select__list'>
+        <ListboxPopover className="input__list">
+          <ListboxOption label="Hidden" className="hidden" value="hidden"></ListboxOption>
           {items.map((currentItem, index) => (
             <ListboxOption
-              className={`input__select__item ${item?.value === currentItem.value ? 'is-active' : ''}`}
               key={index}
+              className={`input__item ${value === currentItem.value ? 'is-active' : ''}`}
               value={currentItem.value}
             >
               <Icon
                 name="icon-solid-check"
-                className={`text-success-500 mr-3 ${item?.value === currentItem.value ? 'opacity-100' : 'opacity-0'}`}
+                className={`text-success-500 mr-3 ${value === currentItem.value ? 'opacity-100' : 'opacity-0'}`}
               ></Icon>
               {currentItem.label}
             </ListboxOption>
           ))}
         </ListboxPopover>
       </ListboxInput>
+      {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}
     </div>
   )
 }

@@ -1,57 +1,73 @@
-import { Button, ButtonSize, ButtonType, Icon } from '@console/shared/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { Button, ButtonSize, ButtonStyle, Icon } from '@console/shared/ui'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/utils'
 
-export function StepThanks() {
+interface StepThanksProps {
+  firstName: string
+  email: string
+}
+
+export function StepThanks(props: StepThanksProps) {
+  const { firstName, email } = props
+
   return (
     <div>
       <h1 className="h3 text-text-700 mb-3">Almost there..</h1>
-      <p className="text-sm mb-6 text-text-500">Thanks for signing up!</p>
-      <p className="text-sm mb-6 text-text-500">
+      <p className="text-sm mb-5 text-text-500">Hey {firstName}, thanks for signing up!</p>
+      <p className="text-sm mb-5 text-text-500">
         To ensure that Qovery is the right product for you and that you get the best out of it, we have put in place an
         onboarding process requiring a validation by our teams.
       </p>
-      <p className="text-sm mb-6 text-text-500">We will try to get back to you as soon as possible!</p>
-      <p className="text-sm mb-6 text-text-500">
+      <p className="text-sm mb-5 text-text-500">
+        We will get back to you as soon as possible on the following email address:
+      </p>
+      <div className="text-sm text-center border border-element-light-lighter-500 bg-element-light-lighter-200 text-text-500 px-4 py-2.5 rounded mb-5">
+        {email}
+      </div>
+      <p className="text-sm mb-5 text-text-500">
         <span role="img" aria-label="Warning">
           ⚠️
         </span>{' '}
         Because we receive hundreds of requests per day, we will prioritize access requests with a work email address.
         Please keep an eye on your inbox.
       </p>
-      <p className="text-sm mb-6 text-text-500 italic">
-        In the meantime, have a look at <strong>our guide</strong> and <strong>tutorial</strong> sections on our
-        website, they will show you what you can achieve with Qovery and guide you step by step in your progress with
-        our tool.
+      <p className="text-sm mb-5 text-text-500">
+        In the meantime, have a look at{' '}
+        <a
+          href="https://hub.qovery.com/guides/"
+          target="_blank"
+          rel="noreferrer"
+          className="link text-accent2-500 text-sm"
+        >
+          our guide <Icon name="icon-solid-arrow-up-right-from-square" />
+        </a>{' '}
+        and{' '}
+        <a
+          href="https://hub.qovery.com/guides/tutorial/"
+          target="_blank"
+          rel="noreferrer"
+          className="link text-accent2-500 text-sm"
+        >
+          tutorial <Icon name="icon-solid-arrow-up-right-from-square" />
+        </a>{' '}
+        sections on our website, they will show you what you can achieve with Qovery and guide you step by step in your
+        progress with our tool.
       </p>
-      <div className="flex flex-col">
-        <a
-          href="https://hub.qovery.com/docs/using-qovery/configuration/organization/"
-          target="_blank"
-          rel="noreferrer"
-          className="link text-accent2-500 text-sm mb-3"
-        >
-          How to configure an Organization <Icon name="icon-solid-arrow-up-right-from-square" />
-        </a>
-        <a
-          href="https://hub.qovery.com/docs/using-qovery/configuration/project/"
-          target="_blank"
-          rel="noreferrer"
-          className="link text-accent2-500 text-sm mb-3"
-        >
-          How to configure a Project <Icon name="icon-solid-arrow-up-right-from-square" />
-        </a>
-      </div>
       <form>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}
             size={ButtonSize.BIG}
-            type={ButtonType.STROKED}
+            style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          <Button link={`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`} size={ButtonSize.BIG} type={ButtonType.BASIC}>
+          <Button
+            external
+            link="https://www.youtube.com/watch?v=eX2qFMC8cFo"
+            size={ButtonSize.BIG}
+            style={ButtonStyle.BASIC}
+          >
             Go to Youtube{' '}
             <span role="img" aria-label="cat">
               🐈

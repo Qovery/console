@@ -40,7 +40,10 @@ export function useAuth() {
 
       if (user) {
         const userInfos: UserInterface = {
-          ...user,
+          name: user.name,
+          email: user.email,
+          sub: user.sub,
+          picture: user.picture,
           isAuthenticated,
           isLoading,
           token,
@@ -52,7 +55,14 @@ export function useAuth() {
     }
   }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
 
-  return { authLogin, authLogout, getCurrentUser, isAuthenticated, isLoading }
+  return {
+    authLogin,
+    authLogout,
+    getCurrentUser,
+    isAuthenticated,
+    isLoading,
+    getAccessTokenSilently,
+  }
 }
 
 export default useAuth

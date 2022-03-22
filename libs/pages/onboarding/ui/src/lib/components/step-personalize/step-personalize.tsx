@@ -1,28 +1,92 @@
-import { Button, ButtonSize, ButtonType, InputSelect, InputText } from '@console/shared/ui'
+import { Control, Controller } from 'react-hook-form'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
-import { LOGIN_URL, ONBOARDING_COMPANY_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 interface StepPersonalizeProps {
   dataTypes: Array<Value>
+  onSubmit: () => void
+  control: Control<any, any>
+  authLogout: () => void
 }
 
 export function StepPersonalize(props: StepPersonalizeProps) {
-  const { dataTypes } = props
+  const { dataTypes, onSubmit, control, authLogout } = props
 
   return (
     <div>
       <h1 className="h3 text-text-700 mb-3">To tailor your experience</h1>
       <p className="text-sm mb-10 text-text-500">We need some information to proceed with your account creation.</p>
-      <form>
-        <InputText className="mb-3" name="firstName" label="First name" />
-        <InputText className="mb-3" name="lastName" label="Last name" />
-        <InputText className="mb-3" name="email" label="Professional email" type="email" />
-        <InputSelect name="type" label="Type of use" items={dataTypes} />
+      <form onSubmit={onSubmit}>
+        <Controller
+          name="first_name"
+          control={control}
+          rules={{ required: 'Please enter your first name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="First name"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="last_name"
+          control={control}
+          rules={{ required: 'Please enter your last name.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="Last name"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="user_email"
+          control={control}
+          rules={{ required: 'Please enter your email.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-3"
+              label="Email"
+              type="email"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="type_of_use"
+          control={control}
+          rules={{ required: 'Please enter your type of use.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              label="Type of use"
+              items={dataTypes}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+            />
+          )}
+        />
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
-          <Button link={LOGIN_URL} size={ButtonSize.BIG} type={ButtonType.STROKED} iconLeft="icon-solid-arrow-left">
+          <Button
+            onClick={() => authLogout()}
+            size={ButtonSize.BIG}
+            style={ButtonStyle.STROKED}
+            iconLeft="icon-solid-arrow-left"
+          >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} type={ButtonType.BASIC} link={`${ONBOARDING_URL}${ONBOARDING_COMPANY_URL}`}>
+          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} type="submit">
             Continue
           </Button>
         </div>
