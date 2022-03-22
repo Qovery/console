@@ -4,8 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { userActions, UserInterface } from '@console/domains/user'
 
 export function useAuth() {
-  const { loginWithPopup, logout, user, getAccessTokenSilently, getIdTokenClaims, isAuthenticated, isLoading } =
-    useAuth0()
+  const { loginWithPopup, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
   const dispatch = useDispatch()
 
   /**
@@ -56,7 +55,24 @@ export function useAuth() {
     }
   }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
 
-  return { authLogin, authLogout, getCurrentUser, isAuthenticated, isLoading, getAccessTokenSilently, getIdTokenClaims }
+  /**
+   * Get localStorage auth data
+   */
+  const getLocalStorageAuthData = useCallback(() => {
+    return localStorage.getItem(
+      '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
+    )
+  }, [])
+
+  return {
+    authLogin,
+    authLogout,
+    getCurrentUser,
+    isAuthenticated,
+    isLoading,
+    getAccessTokenSilently,
+    getLocalStorageAuthData,
+  }
 }
 
 export default useAuth

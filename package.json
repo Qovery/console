@@ -4,15 +4,16 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
+    "start-onboarding": "nx run onboarding:serve",
     "storybook": "nx storybook shared-ui",
     "build": "npx nx build",
+    "build-onboarding": "npx nx onboarding:build",
     "test": "nx test"
   },
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^1.9.0",
     "@nrwl/cli": "13.8.5",
-    "@nrwl/cypress": "13.8.5",
     "@nrwl/devkit": "13.8.5",
     "@nrwl/eslint-plugin-nx": "13.8.5",
     "@nrwl/linter": "13.8.5",
@@ -43,6 +44,7 @@
     "@babel/core": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.12.13",
+    "@nrwl/cypress": "13.8.5",
     "@nrwl/jest": "13.8.5",
     "@nrwl/react": "13.8.5",
     "@nrwl/web": "13.8.5",
