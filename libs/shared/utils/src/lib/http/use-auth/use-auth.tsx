@@ -77,6 +77,7 @@ export function useAuth() {
 
     setCookie('jwtToken', data.body.access_token, 100000)
     setCookie('idToken', data.body.id_token, 100000)
+    setCookie('authExpiresAt', data.expiresAt, 100000)
   }, [])
 
   return {
