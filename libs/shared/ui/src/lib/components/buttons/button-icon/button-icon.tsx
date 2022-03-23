@@ -49,14 +49,14 @@ export function ButtonIcon(props: ButtonIconProps) {
   if(!link) {
     return (
       <button className={defineClass} onClick={onClick}>
-        {notification && <span className='btn-notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5'></span>}
+        {notification && <span className='btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5'></span>}
         <Icon name={icon}></Icon>
       </button>
     )
   } else {
     return (
       <Link to={link} className={defineClass} onClick={onClick}>
-        {notification && <span className='btn-notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5'></span>}
+        {notification && <span className='btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5'></span>}
         <Icon name={icon}></Icon>
       </Link>
     )

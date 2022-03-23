@@ -1,3 +1,4 @@
+import { IconEnum } from '@console/shared/enums'
 import { render, screen } from '@testing-library/react'
 import { Chance } from 'chance'
 import { BrowserRouter } from 'react-router-dom'
@@ -33,6 +34,18 @@ describe('Avatar', () => {
     const avatar = rendered.container.querySelector('div')
 
     expect(avatar?.className).toBe('avatar avatar--normal some-class-name')
+  })
+
+  it('should have an icon', () => {
+
+    props.icon = IconEnum.GITHUB
+
+    const rendered = render(<Avatar {...props} />)
+
+    const icon = rendered.container.querySelector('div svg')
+
+    expect(icon).toBeTruthy()
+
   })
 
   it('shoud have a link', () => {

@@ -14,5 +14,6 @@ const Template: Story<AvatarProps> = (args) => (
 
 export const Primary = Template.bind({})
 Primary.args = {
-  url: 'https://avatars.githubusercontent.com/u/33811490?v=4'
+  url: 'https://avatars.githubusercontent.com/u/33811490?v=4',
+  icon: IconEnum.GITLAB
 }

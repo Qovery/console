@@ -43,7 +43,7 @@ describe('ButtonIcon', () => {
 
     render(<ButtonIcon {...props} />)
 
-    const notification = screen.getByRole('button').querySelector('.btn-notification')
+    const notification = screen.getByRole('button').querySelector('.btn__notification')
 
     expect(notification).toBeTruthy()
   })
