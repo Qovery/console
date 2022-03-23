@@ -187,10 +187,10 @@ export function OnboardingPricing() {
       })
 
       if (project) {
-        createAuthCookies()
+        await createAuthCookies()
         setLoading(false)
 
-        const url = `https://console-staging.qovery.com/organization/platform/${organization.id}/projects?redirectLoginV3`
+        const url = `${process.env['NX_URL']}/organization/platform/${organization.id}/projects?redirectLoginV3`
         window.location.replace(url)
       }
     } else {

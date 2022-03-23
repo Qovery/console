@@ -14,9 +14,10 @@ export function LoginPage() {
   useEffect(() => {
     async function fetchData() {
       const organization = await getOrganization()
+
       if (organization.payload.length > 0) {
-        createAuthCookies()
-        window.location.replace('https://console-staging.qovery.com?redirectLoginV3')
+        await createAuthCookies()
+        window.location.replace(`${process.env['NX_URL']}?redirectLoginV3`)
       } else {
         navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
       }

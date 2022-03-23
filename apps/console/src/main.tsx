@@ -4,6 +4,7 @@ import { combineReducers } from 'redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { Toaster } from 'react-hot-toast'
 import { Provider } from 'react-redux'
+import { IntercomProvider } from 'react-use-intercom'
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import { createBrowserHistory } from 'history'
 import { user, userSignUp } from '@console/domains/user'
@@ -34,21 +35,23 @@ export const store = configureStore({
 })
 
 ReactDOM.render(
-  <Auth0Provider
-    domain={environment.oauth_domain}
-    clientId={environment.oauth_key}
-    redirectUri={`${window.location.origin}${OAUTH_CALLBACK}`}
-    audience={environment.oauth_audience}
-    useRefreshTokens={true}
-    onRedirectCallback={onRedirectCallback}
-    cacheLocation={'localstorage'}
-  >
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-        <Toaster position="bottom-right" />
-      </BrowserRouter>
-    </Provider>
-  </Auth0Provider>,
+  <IntercomProvider appId={environment.intercom}>
+    <Auth0Provider
+      domain={environment.oauth_domain}
+      clientId={environment.oauth_key}
+      redirectUri={`${window.location.origin}${OAUTH_CALLBACK}`}
+      audience={environment.oauth_audience}
+      useRefreshTokens={true}
+      onRedirectCallback={onRedirectCallback}
+      cacheLocation={'localstorage'}
+    >
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+          <Toaster position="bottom-right" />
+        </BrowserRouter>
+      </Provider>
+    </Auth0Provider>
+  </IntercomProvider>,
   document.getElementById('root')
 )

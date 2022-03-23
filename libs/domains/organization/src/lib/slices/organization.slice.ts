@@ -73,7 +73,6 @@ export const organizationSlice = createSlice({
       })
       .addCase(postOrganization.rejected, (state: OrganizationState, action) => {
         state.loadingStatus = 'error'
-        console.log(action)
         state.error = action.error.message
       })
   },

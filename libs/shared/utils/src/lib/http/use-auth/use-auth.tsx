@@ -58,7 +58,9 @@ export function useAuth() {
   /**
    * Create authentification cookies
    */
-  const createAuthCookies = () => {
+  const createAuthCookies = async () => {
+    await getAccessTokenSilently({ ignoreCache: true })
+
     const currentToken = localStorage.getItem(
       '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
     )
