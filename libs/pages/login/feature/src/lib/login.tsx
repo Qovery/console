@@ -1,38 +1,33 @@
-import { Navigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum } from '@console/shared/utils'
 import { useOrganization } from '@console/domains/organization'
-import { useEffect, useState } from 'react'
 
 export function LoginPage() {
+  const navigate = useNavigate()
   const { authLogin, isAuthenticated, createAuthCookies } = useAuth()
-  const { organization, getOrganization } = useOrganization()
-  const [userWithOnboarding, setUserWithOnboarding] = useState(false)
+  const { getOrganization } = useOrganization()
 
   useDocumentTitle('Login - Qovery')
 
-  useEffect(() => {
-    async function fetchData() {
-      await getOrganization()
+  const onClickAuthLogin = async (provider: string) => {
+    await authLogin(provider)
+    const organization = await getOrganization()
 
-      if (isAuthenticated && organization.length > 0) {
+    if (isAuthenticated) {
+      if (organization.payload.length > 0) {
         await createAuthCookies()
         window.location.replace('https://console-staging.qovery.com?redirectLoginV3')
-      } else if (isAuthenticated) {
-        setUserWithOnboarding(true)
+      } else {
+        navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
       }
     }
-    fetchData()
-  }, [getOrganization, isAuthenticated, organization.length, createAuthCookies])
-
-  if (userWithOnboarding && isAuthenticated && organization.length === 0) {
-    return <Navigate to={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`} replace />
   }
 
   return (
     <LayoutLogin>
       <Login
-        authLogin={authLogin}
+        onClickAuthLogin={onClickAuthLogin}
         githubType={AuthEnum.GITHUB}
         gitlabType={AuthEnum.GITLAB}
         bitbucketType={AuthEnum.BITBUCKET}
