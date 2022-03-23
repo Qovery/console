@@ -13,7 +13,7 @@ export function useAuth() {
    */
   const authLogin = useCallback(
     async (provider: string) => {
-      return loginWithPopup({
+      return await loginWithPopup({
         connection: provider,
         login: 'login',
       })
