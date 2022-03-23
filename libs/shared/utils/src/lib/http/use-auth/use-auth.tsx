@@ -12,7 +12,7 @@ export function useAuth() {
    * Gitlab uppercase is needed
    */
   const authLogin = useCallback(
-    (provider: string) => {
+    async (provider: string) => {
       return loginWithPopup({
         connection: provider,
         login: 'login',
@@ -58,10 +58,15 @@ export function useAuth() {
   /**
    * Create authentification cookies
    */
-  const createAuthCookies = useCallback(async () => {
+  const createAuthCookies = () => {
     const currentToken = localStorage.getItem(
       '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
     )
+    const domainName = window.location.hostname
+
+    function eraseCookie(name: string) {
+      document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+    }
 
     function setCookie(name: string, value: string, days: number) {
       let expires = ''
@@ -70,15 +75,19 @@ export function useAuth() {
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
         expires = '; expires=' + date.toUTCString()
       }
-      document.cookie = name + '=' + (value || '') + expires + ';domain=.qovery.com;path=/'
+      document.cookie = name + '=' + (value || '') + expires + `;domain=${domainName};path=/`
     }
+
+    eraseCookie('jwtToken')
+    eraseCookie('idToken')
+    eraseCookie('authExpiresAt')
 
     const data = currentToken && JSON.parse(currentToken)
 
     setCookie('jwtToken', data.body.access_token, 100000)
     setCookie('idToken', data.body.id_token, 100000)
     setCookie('authExpiresAt', data.expiresAt, 100000)
-  }, [])
+  }
 
   return {
     authLogin,

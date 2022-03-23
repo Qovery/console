@@ -176,23 +176,25 @@ export function OnboardingPricing() {
   const onSubmit = async () => {
     setLoading(true)
 
-    await createAuthCookies()
-
     const organization = await createOrganization({
       name: organization_name,
       plan: selectPlan,
     })
 
     if (organization) {
+      createAuthCookies()
       const project = await createProject(organization.id, {
         name: project_name,
       })
 
       if (project) {
         setLoading(false)
-        const url = `https://console-staging.qovery.com/platform/${organization.id}/projects?redirectLoginV3`
+
+        const url = `https://console-staging.qovery.com/organization/platform/${organization.id}/projects?redirectLoginV3`
         window.location.replace(url)
       }
+    } else {
+      setLoading(false)
     }
   }
 
