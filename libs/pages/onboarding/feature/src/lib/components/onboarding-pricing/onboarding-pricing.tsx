@@ -182,12 +182,12 @@ export function OnboardingPricing() {
     })
 
     if (organization) {
-      createAuthCookies()
       const project = await createProject(organization.id, {
         name: project_name,
       })
 
       if (project) {
+        createAuthCookies()
         setLoading(false)
 
         const url = `https://console-staging.qovery.com/organization/platform/${organization.id}/projects?redirectLoginV3`

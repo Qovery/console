@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum } from '@console/shared/utils'
@@ -10,20 +11,24 @@ export function LoginPage() {
 
   useDocumentTitle('Login - Qovery')
 
-  const onClickAuthLogin = async (provider: string) => {
-    await authLogin(provider)
-    const organization = await getOrganization()
-
-    console.log(organization)
-
-    if (isAuthenticated) {
+  useEffect(() => {
+    async function fetchData() {
+      const organization = await getOrganization()
       if (organization.payload.length > 0) {
         createAuthCookies()
-        setTimeout(() => window.location.replace('https://console-staging.qovery.com?redirectLoginV3'), 500)
+        window.location.replace('https://console-staging.qovery.com?redirectLoginV3')
       } else {
         navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
       }
     }
+
+    if (isAuthenticated) {
+      fetchData()
+    }
+  }, [createAuthCookies, getOrganization, isAuthenticated, navigate])
+
+  const onClickAuthLogin = async (provider: string) => {
+    await authLogin(provider)
   }
 
   return (
