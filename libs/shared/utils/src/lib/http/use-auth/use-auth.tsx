@@ -62,7 +62,8 @@ export function useAuth() {
     const currentToken = localStorage.getItem(
       '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
     )
-    const domainName = window.location.hostname
+    const hostname = window.location.hostname
+    const domainName = hostname.match(/^(?:.*?\.)?([a-zA-Z0-9\-_]{3,}\.(?:\w{2,8}|\w{2,4}\.\w{2,4}))$/)
 
     function eraseCookie(name: string) {
       document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
@@ -75,7 +76,7 @@ export function useAuth() {
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000)
         expires = '; expires=' + date.toUTCString()
       }
-      document.cookie = name + '=' + (value || '') + expires + `;domain=${domainName};path=/`
+      document.cookie = name + '=' + (value || '') + expires + `;domain=${domainName && domainName[1]};path=/`
     }
 
     eraseCookie('jwtToken')
