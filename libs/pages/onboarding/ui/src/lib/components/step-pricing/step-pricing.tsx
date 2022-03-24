@@ -14,11 +14,22 @@ interface StepPricingProps {
   deploys: Value[]
   onSubmit: () => void
   loading: boolean
+  onClickContact: () => void
 }
 
 export function StepPricing(props: StepPricingProps) {
-  const { selectPlan, setSelectPlan, plans, chooseDeploy, currentValue, deploys, currentDeploy, onSubmit, loading } =
-    props
+  const {
+    selectPlan,
+    setSelectPlan,
+    plans,
+    chooseDeploy,
+    currentValue,
+    deploys,
+    currentDeploy,
+    onSubmit,
+    loading,
+    onClickContact,
+  } = props
 
   return (
     <div>
@@ -73,7 +84,7 @@ export function StepPricing(props: StepPricingProps) {
             Back
           </Button>
           {selectPlan === PlanEnum.ENTERPRISE && (
-            <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
+            <Button onClick={onClickContact} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
               Contact us
             </Button>
           )}

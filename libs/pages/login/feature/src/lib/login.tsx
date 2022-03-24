@@ -5,7 +5,7 @@ import { useOrganization } from '@console/domains/organization'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const { authLogin, isAuthenticated, createAuthCookies } = useAuth()
+  const { authLogin, createAuthCookies } = useAuth()
   const { getOrganization } = useOrganization()
 
   useDocumentTitle('Login - Qovery')
@@ -13,14 +13,14 @@ export function LoginPage() {
   const onClickAuthLogin = async (provider: string) => {
     await authLogin(provider)
     const organization = await getOrganization()
-
-    if (isAuthenticated) {
-      if (organization.payload.length > 0) {
-        await createAuthCookies()
-        window.location.replace('https://console-staging.qovery.com?redirectLoginV3')
-      } else {
-        navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
-      }
+    if (organization.payload.length > 0) {
+      await createAuthCookies()
+      setTimeout(
+        () => window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`),
+        500
+      )
+    } else {
+      navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
     }
   }
 

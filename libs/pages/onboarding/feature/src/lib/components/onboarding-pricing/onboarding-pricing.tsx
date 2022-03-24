@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
+import { useIntercom } from 'react-use-intercom'
 import { StepPricing } from '@console/pages/onboarding/ui'
 import { Value, Plan } from '@console/shared/interfaces'
 import { useOrganization } from '@console/domains/organization'
@@ -133,6 +134,7 @@ export function OnboardingPricing() {
   useDocumentTitle('Onboarding Pricing - Qovery')
 
   const navigate = useNavigate()
+  const { showNewMessages } = useIntercom()
   const { organization_name, project_name } = useContext(ContextOnboarding)
   const { createOrganization } = useOrganization()
   const { createProject } = useProjects()
@@ -176,8 +178,6 @@ export function OnboardingPricing() {
   const onSubmit = async () => {
     setLoading(true)
 
-    await createAuthCookies()
-
     const organization = await createOrganization({
       name: organization_name,
       plan: selectPlan,
@@ -189,12 +189,20 @@ export function OnboardingPricing() {
       })
 
       if (project) {
+        await createAuthCookies()
         setLoading(false)
-        const url = `https://console-staging.qovery.com/platform/${organization.id}/projects?redirectLoginV3`
-        window.location.replace(url)
+
+        setTimeout(() => {
+          const url = `${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`
+          window.location.replace(url)
+        }, 500)
       }
+    } else {
+      setLoading(false)
     }
   }
+
+  const onClickContact = () => showNewMessages()
 
   return (
     <StepPricing
@@ -207,6 +215,7 @@ export function OnboardingPricing() {
       currentDeploy={currentDeploy}
       onSubmit={onSubmit}
       loading={loading}
+      onClickContact={onClickContact}
     />
   )
 }
