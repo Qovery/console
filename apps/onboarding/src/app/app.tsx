@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import LogRocket from 'logrocket'
-import posthog from 'posthog-js'
+// import LogRocket from 'logrocket'
+// import posthog from 'posthog-js'
 import axios from 'axios'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import {
@@ -45,22 +45,20 @@ export function App() {
 
   useEffect(() => {
     async function fetchData() {
-      const user: any = await getCurrentUser()
+      await getCurrentUser()
 
-      if (user) {
-        // update user posthog
-        posthog.identify(user.sub, user)
+      // if (user && environment.production === 'production') {
+      //   // update user posthog
+      //   posthog.identify(user.sub, user)
 
-        // update user logrocket
-        LogRocket.identify(user.sub, {
-          name: user.name,
-          email: user.email,
-        })
-      }
+      //   // update user logrocket
+      //   LogRocket.identify(user.sub, {
+      //     name: user.name,
+      //     email: user.email,
+      //   })
+      // }
     }
-    if (environment.production === 'production') {
-      fetchData()
-    }
+    fetchData()
   }, [getCurrentUser])
 
   if (isLoading) {
