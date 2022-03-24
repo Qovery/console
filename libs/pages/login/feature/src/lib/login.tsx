@@ -13,7 +13,8 @@ export function LoginPage() {
   const onClickAuthLogin = async (provider: string) => {
     await authLogin(provider)
     const organization = await getOrganization()
-    if (organization.payload.length > 0) {
+
+    if (organization.payload && organization.payload.length > 0) {
       await createAuthCookies()
       setTimeout(
         () => window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`),
