@@ -78,7 +78,7 @@ export function OnboardingRightContent(props: OnboardingRightContentProps) {
         />
       ) : (
         <img
-          className="absolute top-[70px] right-[-100px] min-w-[80%] overflow-hidden pointer-events-none select-none"
+          className="absolute top-[70px] w-full overflow-hidden pointer-events-none select-none"
           src="/assets/onboarding.png"
           alt="Qovery onboarding screen"
         />

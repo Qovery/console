@@ -1,3 +1,6 @@
+import { useEffect } from 'react'
+import LogRocket from 'logrocket'
+import posthog from 'posthog-js'
 import axios from 'axios'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import {
@@ -35,10 +38,30 @@ export const ROUTER = [
 
 export function App() {
   useDocumentTitle('Loading...')
-  const { isLoading } = useAuth()
+  const { isLoading, getCurrentUser } = useAuth()
 
   // init axios interceptor
   SetupInterceptor(axios, environment.api)
+
+  useEffect(() => {
+    async function fetchData() {
+      const user: any = await getCurrentUser()
+
+      if (user) {
+        // update user posthog
+        posthog.identify(user.sub, user)
+
+        // update user logrocket
+        LogRocket.identify(user.sub, {
+          name: user.name,
+          email: user.email,
+        })
+      }
+    }
+    if (environment.production === 'production') {
+      fetchData()
+    }
+  }, [getCurrentUser])
 
   if (isLoading) {
     return <LoadingScreen />

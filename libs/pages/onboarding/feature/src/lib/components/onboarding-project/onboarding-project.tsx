@@ -2,13 +2,14 @@ import { useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { StepProject } from '@console/pages/onboarding/ui'
-import { ONBOARDING_PRICING_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import { ONBOARDING_PRICING_URL, ONBOARDING_URL, useAuth, useDocumentTitle } from '@console/shared/utils'
 import { ContextOnboarding } from '../container/container'
 
 export function OnboardingProject() {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
+  const { authLogout } = useAuth()
   const { handleSubmit, control, setValue } = useForm()
 
   const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
@@ -29,7 +30,7 @@ export function OnboardingProject() {
     }
   })
 
-  return <StepProject onSubmit={onSubmit} control={control} />
+  return <StepProject onSubmit={onSubmit} control={control} authLogout={authLogout} />
 }
 
 export default OnboardingProject

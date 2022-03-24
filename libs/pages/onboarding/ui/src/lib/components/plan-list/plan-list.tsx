@@ -11,7 +11,7 @@ export function PlanList(props: PlanListProps) {
   const { title, description, lists, infos } = props
 
   return (
-    <div className="mt-60 mx-20">
+    <div className="mt-60">
       <h3 className="text-text-700 mb-3">{title}</h3>
       <p className="text-sm text-text-500 w-96 mb-5">{description}</p>
       <ul className="mb-10">

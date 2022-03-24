@@ -4,10 +4,11 @@ import { InputText, Button, ButtonSize, ButtonStyle } from '@console/shared/ui'
 interface StepProjectProps {
   onSubmit: () => void
   control: Control<any, any>
+  authLogout: () => void
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control } = props
+  const { onSubmit, control, authLogout } = props
 
   return (
     <div>
@@ -52,7 +53,15 @@ export function StepProject(props: StepProjectProps) {
             />
           )}
         />
-        <div className="mt-10 pt-5 flex justify-end border-t border-element-light-lighter-400">
+        <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
+          <Button
+            onClick={() => authLogout()}
+            size={ButtonSize.BIG}
+            style={ButtonStyle.STROKED}
+            iconLeft="icon-solid-arrow-left"
+          >
+            Back
+          </Button>
           <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} type="submit">
             Continue
           </Button>
