@@ -191,9 +191,7 @@ export function OnboardingPricing() {
         setLoading(false)
 
         setTimeout(() => {
-          const url = `${process.env['NX_URL'] || 'https://console.qovery.com'}/organization/platform/${
-            organization.id
-          }/projects?redirectLoginV3`
+          const url = `${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`
           window.location.replace(url)
         }, 500)
       }
