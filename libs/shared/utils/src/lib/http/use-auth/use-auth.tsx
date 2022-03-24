@@ -49,9 +49,10 @@ export function useAuth() {
           token,
         }
         dispatch(userActions.add(userInfos))
+        return userInfos
       }
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      return error
     }
   }, [user, getAccessTokenSilently, dispatch, isLoading, isAuthenticated])
 

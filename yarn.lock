@@ -2212,6 +2212,11 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
+"@sentry/types@^6.11.0":
+  version "6.19.2"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-6.19.2.tgz#0219c9da21ed975951108b8541913b1966464435"
+  integrity sha512-XO5qmVBdTs+7PdCz7fAwn1afWxSnRE2KLBFg5/vOdKosPSSHsSHUURSkxiEZc2QsR+JpRB4AeQ26AkIRX38qTg==
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.npmjs.org/@sinonjs/commons/-/commons-1.8.3.tgz"
@@ -7871,6 +7876,11 @@ fd-slicer@~1.1.0:
   dependencies:
     pend "~1.2.0"
 
+fflate@^0.4.1:
+  version "0.4.8"
+  resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.4.8.tgz#f90b82aefbd8ac174213abb338bd7ef848f0f5ae"
+  integrity sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==
+
 figgy-pudding@^3.5.1:
   version "3.5.2"
   resolved "https://registry.npmjs.org/figgy-pudding/-/figgy-pudding-3.5.2.tgz"
@@ -10625,6 +10635,11 @@ log-update@^4.0.0:
     slice-ansi "^4.0.0"
     wrap-ansi "^6.2.0"
 
+logrocket@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/logrocket/-/logrocket-2.2.1.tgz#ebb7aebc291bb3b075b085dd545848a9b85b040e"
+  integrity sha512-yf+iaZNuB13RjNFHzEWvj76G5nVzpl1u6p0wOnWOyLbOJflJJEIMBO81VEOtDUawFYeus8Xprsdfofb+KRqoCQ==
+
 loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
@@ -12323,6 +12338,15 @@ postcss@^8.2.13, postcss@^8.2.15, postcss@^8.3.5, postcss@^8.4.6, postcss@^8.4.7
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
+posthog-js@^1.20.0:
+  version "1.20.0"
+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.20.0.tgz#312bf9c79ae66b462e8631f4bbe1811d8a6050d8"
+  integrity sha512-Vjyx6p3pJ+d8MOTDHDvEpGMmjMiYR+PSPs3y+LqS54XVxNnUgTppbj+HcF2inla7IBzIbIsip5pN/xC1O1QsTA==
+  dependencies:
+    "@sentry/types" "^6.11.0"
+    fflate "^0.4.1"
+    rrweb-snapshot "^1.1.7"
+
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz"
@@ -13325,6 +13349,11 @@ rollup@^2.56.2:
   integrity sha512-iEzYw+syFxQ0X9RefVwhr8BA2TNJsTaX8L8dhyeyMECDbmiba+8UQzcu+xZdji0+JQ+s7kouQnw+9Oz5M19XKA==
   optionalDependencies:
     fsevents "~2.3.2"
+
+rrweb-snapshot@^1.1.7:
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/rrweb-snapshot/-/rrweb-snapshot-1.1.13.tgz#fc15adb7eb6354c859c8d594f57b09e1f5bccdd8"
+  integrity sha512-lv4vBSJ5orBcRoJnjLvtly6cSsctC+TNm5orVzYRL9SH3LmtSpQ+wI4bw7eh4AcyKoUf0x4pe1Bn632GggmKWQ==
 
 rsvp@^4.8.4:
   version "4.8.5"

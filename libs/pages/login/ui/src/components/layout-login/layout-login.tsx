@@ -8,9 +8,9 @@ export function LayoutLogin(props: LayoutLoginProps) {
   const { children } = props
 
   return (
-    <main className="h-screen">
+    <main className="h-screen overflow-hidden">
       <Navbar className="absolute top-0 w-full" />
-      <div className="pt-16 h-full">{children}</div>
+      <div className="pt-16 h-full relative">{children}</div>
     </main>
   )
 }

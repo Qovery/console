@@ -1,7 +1,11 @@
+import { useEffect } from 'react'
+import LogRocket from 'logrocket'
+import posthog from 'posthog-js'
 import axios from 'axios'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import {
   LOGIN_URL,
+  OVERVIEW_URL,
   ONBOARDING_URL,
   ProtectedRoute,
   useAuth,
@@ -9,9 +13,10 @@ import {
   useDocumentTitle,
 } from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
+import { OverviewPage } from '@console/pages/overview/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
-import { LoadingScreen } from '@console/shared/ui'
 import { environment } from '../environments/environment'
+import { LoadingScreen } from '@console/shared/ui'
 
 export const ROUTER = [
   {
@@ -24,14 +29,39 @@ export const ROUTER = [
     component: <OnboardingPage />,
     protected: true,
   },
+  {
+    path: OVERVIEW_URL,
+    component: <OverviewPage />,
+    protected: true,
+  },
 ]
 
 export function App() {
   useDocumentTitle('Loading...')
-  const { isLoading } = useAuth()
+  const { isLoading, getCurrentUser } = useAuth()
 
   // init axios interceptor
   SetupInterceptor(axios, environment.api)
+
+  useEffect(() => {
+    async function fetchData() {
+      const user: any = await getCurrentUser()
+
+      if (user) {
+        // update user posthog
+        posthog.identify(user.sub, user)
+
+        // update user logrocket
+        LogRocket.identify(user.sub, {
+          name: user.name,
+          email: user.email,
+        })
+      }
+    }
+    if (environment.production === 'production') {
+      fetchData()
+    }
+  }, [getCurrentUser])
 
   if (isLoading) {
     return <LoadingScreen />

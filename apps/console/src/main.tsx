@@ -10,7 +10,9 @@ import { createBrowserHistory } from 'history'
 import { user, userSignUp } from '@console/domains/user'
 import { organization } from '@console/domains/organization'
 import { projects } from '@console/domains/projects'
-import { environment } from './environments/environment.prod'
+import posthog from 'posthog-js'
+import LogRocket from 'logrocket'
+import { environment } from './environments/environment'
 import App from './app/app'
 import './styles.scss'
 
@@ -34,8 +36,18 @@ export const store = configureStore({
   reducer: reducers,
 })
 
+if (environment.production === 'production') {
+  // init posthug
+  posthog.init(environment.posthog, {
+    api_host: environment.posthog_apihost,
+  })
+
+  // init logrocket
+  LogRocket.init(environment.logrocket)
+}
+
 ReactDOM.render(
-  <IntercomProvider appId={environment.intercom} autoBoot>
+  <IntercomProvider appId={environment.intercom} autoBoot={environment.production === 'production'}>
     <Auth0Provider
       domain={environment.oauth_domain}
       clientId={environment.oauth_key}
