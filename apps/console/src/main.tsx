@@ -35,7 +35,7 @@ export const store = configureStore({
 })
 
 ReactDOM.render(
-  <IntercomProvider appId={environment.intercom}>
+  <IntercomProvider appId={environment.intercom} autoBoot>
     <Auth0Provider
       domain={environment.oauth_domain}
       clientId={environment.oauth_key}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
+import { useIntercom } from 'react-use-intercom'
 import { StepPricing } from '@console/pages/onboarding/ui'
 import { Value, Plan } from '@console/shared/interfaces'
 import { useOrganization } from '@console/domains/organization'
@@ -133,6 +134,7 @@ export function OnboardingPricing() {
   useDocumentTitle('Onboarding Pricing - Qovery')
 
   const navigate = useNavigate()
+  const { showNewMessages } = useIntercom()
   const { organization_name, project_name } = useContext(ContextOnboarding)
   const { createOrganization } = useOrganization()
   const { createProject } = useProjects()
@@ -200,6 +202,8 @@ export function OnboardingPricing() {
     }
   }
 
+  const onClickContact = () => showNewMessages()
+
   return (
     <StepPricing
       selectPlan={selectPlan}
@@ -211,6 +215,7 @@ export function OnboardingPricing() {
       currentDeploy={currentDeploy}
       onSubmit={onSubmit}
       loading={loading}
+      onClickContact={onClickContact}
     />
   )
 }

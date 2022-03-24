@@ -1,13 +1,14 @@
 import { Button, ButtonSize, ButtonStyle, Icon } from '@console/shared/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 interface StepThanksProps {
   firstName: string
   email: string
+  isAuth: boolean
 }
 
 export function StepThanks(props: StepThanksProps) {
-  const { firstName, email } = props
+  const { firstName, email, isAuth } = props
 
   return (
     <div>
@@ -62,17 +63,23 @@ export function StepThanks(props: StepThanksProps) {
           >
             Back
           </Button>
-          <Button
-            external
-            link="https://www.youtube.com/watch?v=eX2qFMC8cFo"
-            size={ButtonSize.BIG}
-            style={ButtonStyle.BASIC}
-          >
-            Go to Youtube{' '}
-            <span role="img" aria-label="cat">
-              🐈
-            </span>
-          </Button>
+          {!isAuth ? (
+            <Button
+              external
+              link="https://www.youtube.com/watch?v=eX2qFMC8cFo"
+              size={ButtonSize.BIG}
+              style={ButtonStyle.BASIC}
+            >
+              Go to Youtube{' '}
+              <span role="img" aria-label="cat">
+                🐈
+              </span>
+            </Button>
+          ) : (
+            <Button link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
+              Continue
+            </Button>
+          )}
         </div>
       </form>
     </div>
