@@ -1,10 +1,10 @@
 FROM node:14-alpine AS builder
 
-ARG NODE_ENV
-ENV NODE_ENV $NODE_ENV
-
 # Add a work directory
 WORKDIR /app
+
+ARG NODE_ENV
+ENV NODE_ENV $NODE_ENV
 
 ARG NX_ONBOARDING
 ENV NX_ONBOARDING $NX_ONBOARDING
@@ -35,7 +35,7 @@ RUN if [ "$NX_ONBOARDING" = "true" ] ; then yarn build-onboarding; else yarn bui
 # Bundle static assets with nginx
 FROM nginx:latest
 # Copy built assets from builder
-COPY --from=builder /app/dist/apps/console /usr/share/nginx/html
+COPY --from=builder /app/dist/apps/* /usr/share/nginx/html
 # Add your nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port
