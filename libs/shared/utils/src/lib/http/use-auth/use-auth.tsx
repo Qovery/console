@@ -11,15 +11,14 @@ export function useAuth() {
    * Authentification login
    * Gitlab uppercase is needed
    */
-  const authLogin = useCallback(
-    async (provider: string) => {
-      return await loginWithPopup({
-        connection: provider,
-        login: 'login',
-      })
-    },
-    [loginWithPopup]
-  )
+  const authLogin = async (provider: string) => {
+    localStorage.clear()
+
+    return await loginWithPopup({
+      connection: provider,
+      login: 'login',
+    })
+  }
 
   /**
    * Authentification logout

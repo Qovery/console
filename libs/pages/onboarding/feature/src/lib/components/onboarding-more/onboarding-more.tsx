@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { StepMore } from '@console/pages/onboarding/ui'
-import { ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { ONBOARDING_THANKS_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
 import { useUser } from '@console/domains/user'
 import { Value } from '@console/shared/interfaces'
 
@@ -30,6 +30,7 @@ const dataQuestions: Value[] = [
 ]
 
 export function OnboardingMore() {
+  useDocumentTitle('Onboarding Tell us more - Qovery')
   const { handleSubmit, control, setValue, watch } = useForm()
   const { userSignUp, updateUserSignUp } = useUser()
   const navigate = useNavigate()

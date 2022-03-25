@@ -1,6 +1,12 @@
 import { useEffect, useState, createContext } from 'react'
 import { useNavigate, Params } from 'react-router'
-import { ONBOARDING_PRICING_FREE_URL, ONBOARDING_PRICING_URL, ONBOARDING_URL, Route } from '@console/shared/utils'
+import {
+  ONBOARDING_PRICING_FREE_URL,
+  ONBOARDING_PRICING_URL,
+  ONBOARDING_PROJECT_URL,
+  ONBOARDING_URL,
+  Route,
+} from '@console/shared/utils'
 import { LayoutOnboarding } from '@console/pages/onboarding/ui'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
 
@@ -62,6 +68,13 @@ export function Container(props: ContainerProps) {
         stepsNumber={stepsNumber}
         currentStepPosition={currentStepPosition(currentRoutes)}
         step={step}
+        catchline={
+          firstStep
+            ? 'Just a few questions'
+            : `/${step}` === ONBOARDING_PROJECT_URL
+            ? 'Organization and Project Creation'
+            : 'Select your plan'
+        }
       >
         {children}
       </LayoutOnboarding>
