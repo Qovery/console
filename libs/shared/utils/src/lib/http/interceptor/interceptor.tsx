@@ -12,6 +12,7 @@ export function SetupInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
       config.url = url
 
       const token = await getAccessTokenSilently()
+
       if (token) {
         config.headers = {
           Authorization: `Bearer ${token}`,
@@ -22,7 +23,9 @@ export function SetupInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
     })
     const responseInterceptor = axiosInstance.interceptors.response.use(
       async (response: AxiosResponse) => response,
-      (error: AxiosError) => toast.error(error.response?.data.message)
+      (error: AxiosError) => {
+        toast.error(error.response?.data.message || error)
+      }
     )
 
     return () => {

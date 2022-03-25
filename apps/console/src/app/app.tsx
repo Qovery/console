@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-// import LogRocket from 'logrocket'
-// import posthog from 'posthog-js'
+import LogRocket from 'logrocket'
+import posthog from 'posthog-js'
 import axios from 'axios'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import {
@@ -42,6 +42,19 @@ export function App() {
 
   // init axios interceptor
   SetupInterceptor(axios, environment.api)
+
+  useEffect(() => {
+    console.log(process.env['NODE_ENV'])
+    if (process.env['NODE_ENV'] === 'production') {
+      // init posthug
+      posthog.init(environment.posthog, {
+        api_host: environment.posthog_apihost,
+      })
+
+      // init logrocket
+      LogRocket.init(environment.logrocket)
+    }
+  }, [])
 
   useEffect(() => {
     async function fetchData() {
