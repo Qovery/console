@@ -30,7 +30,7 @@ RUN yarn install --production
 # Copy app files
 COPY . .
 # Build the app
-RUN yarn build
+RUN if [ "$NX_ONBOARDING" = "true" ] ; then yarn build-onboarding; else yarn build; fi
 
 # Bundle static assets with nginx
 FROM nginx:latest
