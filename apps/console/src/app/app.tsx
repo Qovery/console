@@ -44,8 +44,9 @@ export function App() {
   SetupInterceptor(axios, environment.api)
 
   useEffect(() => {
-    console.log(process.env['NODE_ENV'])
     if (process.env['NODE_ENV'] === 'production') {
+      console.log(process.env['NODE_ENV'])
+
       // init posthug
       posthog.init(environment.posthog, {
         api_host: environment.posthog_apihost,

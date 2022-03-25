@@ -1,8 +1,10 @@
 FROM node:14-alpine AS builder
-ENV NODE_ENV production
 
 # Add a work directory
 WORKDIR /app
+
+ARG NODE_ENV
+ENV NODE_ENV $NODE_ENV
 
 ARG NX_ONBOARDING
 ENV NX_ONBOARDING $NX_ONBOARDING
