@@ -25,7 +25,8 @@ export interface ButtonIconProps {
   className?: string
   onClick?: () => void
   loading?: boolean
-  notification?: boolean
+  notification?: boolean,
+  active?: boolean
 }
 
 export function ButtonIcon(props: ButtonIconProps) {
@@ -39,12 +40,12 @@ export function ButtonIcon(props: ButtonIconProps) {
     className,
     onClick,
     notification = false,
-    link
+    link,
+    active = false
    } = props
 
    const defineClass = `btn btn-icon ${size ? `btn--${size}` : ''} ${style ? `btn--${style}` : ''} ${
-    disabled || loading ? 'btn--disabled' : ''
-  }${className ? className : ''}`
+    disabled || loading ? 'btn--disabled' : ''} ${active ? 'btn--active' : ''} ${className ? className : ''}`
 
   if(!link) {
     return (

@@ -21,6 +21,9 @@ const FaIcons = [
   'icon-solid-clock-rotate-left',
   'icon-solid-rocket',
   'icon-solid-bell',
+  'icon-solid-wheel',
+  'icon-solid-circle-info',
+  'icon-solid-magnifying-glass',
   // schema: favicons name
 ]
 

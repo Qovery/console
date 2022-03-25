@@ -61,4 +61,14 @@ describe('ButtonIcon', () => {
 
     expect(link).toBeTruthy()
   })
+
+  it('should have an active class', () => {
+    props.active = true 
+
+    render(<ButtonIcon {...props}></ButtonIcon>)
+
+    const button = screen.getByRole('button')
+
+    expect(button.className).toBe('btn btn-icon btn--normal btn--basic btn--active')
+  })
 })
