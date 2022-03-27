@@ -23,7 +23,7 @@ const defaultContext = {
 
 export const ContextOnboarding = createContext<DefaultContextProps>(defaultContext)
 
-interface ContainerProps {
+export interface ContainerProps {
   children: React.ReactElement
   params: Readonly<Params<string>>
   firstStep: boolean

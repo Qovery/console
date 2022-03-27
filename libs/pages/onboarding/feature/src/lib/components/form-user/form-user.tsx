@@ -20,7 +20,7 @@ const dataTypes = [
   },
 ]
 
-interface FormUserProps {
+export interface FormUserProps {
   setStepCompany: Dispatch<SetStateAction<boolean>>
 }
 

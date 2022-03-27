@@ -1,10 +1,10 @@
-import { render } from '@testing-library/react'
+import { renderHook } from '@testing-library/react-hooks'
+import { useProjects } from './provider'
 
-import Provider from './provider'
-
-describe('Provider', () => {
+describe('Projects Provider', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Provider />)
-    expect(baseElement).toBeTruthy()
+    const { result } = renderHook(() => useProjects())
+
+    expect(result).toBeTruthy()
   })
 })

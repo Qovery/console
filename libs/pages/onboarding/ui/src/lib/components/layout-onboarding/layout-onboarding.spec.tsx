@@ -1,13 +1,23 @@
 import React from 'react'
 import { render } from '__tests__/utils/setup-jest'
 
-import LayoutOnboarding from './layout-onboarding'
+import LayoutOnboarding, { LayoutOnboardingProps } from './layout-onboarding'
 
 describe('LayoutOnboarding', () => {
-  it('should render successfully', () => {
-    const children = React.createElement('div')
+  let props: LayoutOnboardingProps
 
-    const { baseElement } = render(<LayoutOnboarding routes={[]} children={children} />)
+  beforeEach(() => {
+    props = {
+      children: React.createElement('div'),
+      currentStepPosition: 1,
+      stepsNumber: 5,
+      getProgressPercentValue: 20,
+      step: '1',
+      routes: [],
+    }
+  })
+  it('should render successfully', () => {
+    const { baseElement } = render(<LayoutOnboarding {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

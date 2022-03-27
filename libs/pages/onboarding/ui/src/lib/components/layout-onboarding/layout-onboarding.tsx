@@ -2,7 +2,7 @@ import { Route } from '@console/shared/utils'
 import { Navbar } from '@console/shared/ui'
 import OnboardingRightContent from '../onboarding-right-content/onboarding-right-content'
 
-interface LayoutOnboardingProps {
+export interface LayoutOnboardingProps {
   children: React.ReactElement
   currentStepPosition: number
   stepsNumber: number

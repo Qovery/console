@@ -60,7 +60,7 @@ const dataRole: Value[] = [
   },
 ]
 
-interface FormCompanyProps {
+export interface FormCompanyProps {
   setStepCompany: Dispatch<SetStateAction<boolean>>
 }
 

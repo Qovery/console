@@ -1,7 +1,7 @@
 import { Control, Controller } from 'react-hook-form'
 import { InputText, Button, ButtonSize, ButtonStyle } from '@console/shared/ui'
 
-interface StepProjectProps {
+export interface StepProjectProps {
   onSubmit: () => void
   control: Control<any, any>
   authLogout: () => void

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 
 import App from './app'
 
@@ -7,11 +7,5 @@ describe('App', () => {
     const { baseElement } = render(<App />)
 
     expect(baseElement).toBeTruthy()
-  })
-
-  it('should have a greeting as the title', () => {
-    const { getByText } = render(<App />)
-
-    expect(getByText(/Welcome onboarding/gi)).toBeTruthy()
   })
 })

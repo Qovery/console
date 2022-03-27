@@ -1,43 +1,39 @@
-import { fetchUserSignUp, userSignUpAdapter, userSignUpReducer } from './user.slice'
+import { postUserSignUp, userSignUp, initialUserSignUpState } from './user-sign-up.slice'
 
 describe('user reducer', () => {
   it('should handle initial state', () => {
-    const expected = userSignUpAdapter.getInitialState({
+    const expected = {
       loadingStatus: 'not loaded',
-      error: null,
-    })
-
-    expect(userSignUpReducer(undefined, { type: '' })).toEqual(expected)
+      error: null
+    }
+    expect(initialUserSignUpState).toEqual(expected)
   })
 
-  it('should handle fetchUserSignUps', () => {
-    let state = userSignUpReducer(undefined, fetchUserSignUp.pending(null, null))
+  it('should handle postUserSignUp', () => {
+    let state = userSignUp(undefined, postUserSignUp.pending(null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loading',
         error: null,
-        entities: {},
       })
     )
 
-    state = userSignUpReducer(state, fetchUserSignUp.fulfilled([{ id: 1 }], null, null))
+    state = userSignUp(state, postUserSignUp.fulfilled([{ id: 1 }], null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loaded',
         error: null,
-        entities: { 1: { id: 1 } },
       })
     )
 
-    state = userSignUpReducer(state, fetchUserSignUp.rejected(new Error('Uh oh'), null, null))
+    state = userSignUp(state, postUserSignUp.rejected(new Error('Uh oh'), null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'error',
         error: 'Uh oh',
-        entities: { 1: { id: 1 } },
       })
     )
   })

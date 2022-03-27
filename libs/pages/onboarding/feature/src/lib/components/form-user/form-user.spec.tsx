@@ -1,10 +1,18 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 
-import FormUser from './form-user'
+import FormUser, { FormUserProps } from './form-user'
 
 describe('FormUser', () => {
+  let props: FormUserProps
+
+  beforeEach(() => {
+    props = {
+      setStepCompany: jest.fn(),
+    }
+  })
+
   it('should render successfully', () => {
-    const { baseElement } = render(<FormUser />)
+    const { baseElement } = render(<FormUser {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

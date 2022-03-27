@@ -1,7 +1,7 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-export const USERSIGNUP_KEY = 'userSignUp'
+export const USER_SIGNUP_KEY = 'userSignUp'
 
 export interface UserSignUpInterface {
   first_name?: string
@@ -22,8 +22,6 @@ export interface UserSignUpState extends UserSignUpInterface {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
 }
-
-export const Adapter = createEntityAdapter<UserSignUpInterface>()
 
 export const fetchUserSignUp = createAsyncThunk('userSignUp/get', async () => {
   const response = await axios.get('/admin/userSignUp').then((response) => response.data)
@@ -57,7 +55,7 @@ export const initialUserSignUpState: UserSignUpState = {
 }
 
 export const userSignUpSlice = createSlice({
-  name: USERSIGNUP_KEY,
+  name: USER_SIGNUP_KEY,
   initialState: initialUserSignUpState,
   reducers: {
     add(state, action) {
@@ -97,6 +95,6 @@ export const userSignUp = userSignUpSlice.reducer
 
 export const userSignUpActions = userSignUpSlice.actions
 
-export const getUserSignUpState = (rootState: any): UserSignUpState => rootState[USERSIGNUP_KEY]
+export const getUserSignUpState = (rootState: any): UserSignUpState => rootState[USER_SIGNUP_KEY]
 
 export const selectUserSignUp = createSelector(getUserSignUpState, (state) => state)

@@ -2,8 +2,8 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
 import { useIntercom } from 'react-use-intercom'
 import { StepPricing } from '@console/pages/onboarding/ui'
-import { Value, Plan } from '@console/shared/interfaces'
-import { useOrganization } from '@console/domains/organization'
+import { Value } from '@console/shared/interfaces'
+import { OrganizationPlan, OrganizationPlanType, useOrganization } from '@console/domains/organization'
 import {
   ONBOARDING_PRICING_URL,
   ONBOARDING_PROJECT_URL,
@@ -11,7 +11,6 @@ import {
   useAuth,
   useDocumentTitle,
 } from '@console/shared/utils'
-import { PlanEnum } from '@console/shared/enums'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
 
@@ -40,16 +39,16 @@ const DEPLOYS: Value[] = [
   { label: '4000/month', value: '4000' },
 ]
 
-const PLANS: Plan[] = [
+const PLANS: OrganizationPlan[] = [
   {
-    name: PlanEnum.FREE,
+    name: OrganizationPlanType.FREE,
     title: 'Free',
     text: 'Adapted for personnal project',
     price: 0,
     listPrice: [],
   },
   {
-    name: PlanEnum.PROFESSIONAL,
+    name: OrganizationPlanType.PROFESSIONAL,
     title: 'Professional',
     text: 'For 5-20 members',
     price: 49,
@@ -79,7 +78,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: PlanEnum.BUSINESS,
+    name: OrganizationPlanType.BUSINESS,
     title: 'Business',
     text: 'For medium compagny',
     price: 399,
@@ -109,7 +108,7 @@ const PLANS: Plan[] = [
     ],
   },
   {
-    name: PlanEnum.ENTERPRISE,
+    name: OrganizationPlanType.ENTERPRISE,
     title: 'Enterprise',
     text: 'For large compagny',
     price: 0,
@@ -117,17 +116,20 @@ const PLANS: Plan[] = [
   },
 ]
 
-const PLAN_DEFAULT: PlanEnum = PlanEnum.FREE
+const PLAN_DEFAULT: OrganizationPlanType = OrganizationPlanType.FREE
 const DEPLOY_DEFAULT: Value = DEPLOYS[0]
 
 const DEFAULT_PRICE = {
-  [PlanEnum.FREE]: { disable: false },
-  [PlanEnum.PROFESSIONAL]: {
-    number: PLANS.find((p) => p.name === PlanEnum.PROFESSIONAL)?.listPrice[0].number,
+  [OrganizationPlanType.FREE]: { disable: false },
+  [OrganizationPlanType.PROFESSIONAL]: {
+    number: PLANS.find((p) => p.name === OrganizationPlanType.PROFESSIONAL)?.listPrice[0].number,
     disable: false,
   },
-  [PlanEnum.BUSINESS]: { number: PLANS.find((p) => p.name === PlanEnum.BUSINESS)?.listPrice[0].number, disable: false },
-  [PlanEnum.ENTERPRISE]: { disable: false },
+  [OrganizationPlanType.BUSINESS]: {
+    number: PLANS.find((p) => p.name === OrganizationPlanType.BUSINESS)?.listPrice[0].number,
+    disable: false,
+  },
+  [OrganizationPlanType.ENTERPRISE]: { disable: false },
 }
 
 export function OnboardingPricing() {
@@ -157,19 +159,19 @@ export function OnboardingPricing() {
       setCurrentDeploy(value)
 
       if (parseFloat(value.value) > 100) {
-        setSelectPlan(PlanEnum.PROFESSIONAL)
+        setSelectPlan(OrganizationPlanType.PROFESSIONAL)
         setCurrentValue({
-          [PlanEnum.FREE]: { disable: true },
-          [PlanEnum.PROFESSIONAL]: { number: value?.value, disable: false },
-          [PlanEnum.BUSINESS]: { number: value?.value, disable: false },
-          [PlanEnum.ENTERPRISE]: { disable: false },
+          [OrganizationPlanType.FREE]: { disable: true },
+          [OrganizationPlanType.PROFESSIONAL]: { number: value?.value, disable: false },
+          [OrganizationPlanType.BUSINESS]: { number: value?.value, disable: false },
+          [OrganizationPlanType.ENTERPRISE]: { disable: false },
         })
       } else {
         setCurrentValue({
-          [PlanEnum.FREE]: { disable: false },
-          [PlanEnum.PROFESSIONAL]: { number: value?.value, disable: false },
-          [PlanEnum.BUSINESS]: { number: value?.value, disable: false },
-          [PlanEnum.ENTERPRISE]: { disable: false },
+          [OrganizationPlanType.FREE]: { disable: false },
+          [OrganizationPlanType.PROFESSIONAL]: { number: value?.value, disable: false },
+          [OrganizationPlanType.BUSINESS]: { number: value?.value, disable: false },
+          [OrganizationPlanType.ENTERPRISE]: { disable: false },
         })
       }
     }

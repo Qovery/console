@@ -1,8 +1,8 @@
-import { PlanEnum } from '@console/shared/enums'
+import { OrganizationPlanType } from '../enums'
 
 export interface OrganizationInterface {
   name: string
-  plan: PlanEnum
+  plan: OrganizationPlanType
   id?: string
   created_at?: Date
   updated_at?: Date

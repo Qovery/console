@@ -1,16 +1,16 @@
 import { render } from '__tests__/utils/setup-jest'
 
 import Overview from './overview'
-import { OrganizationInterface, organizationsFactoryMock } from '@console/domains/organizations'
+import { OrganizationInterface, organizationFactoryMock } from '@console/domains/organization'
 
 describe('Overview', () => {
-  let organizations: OrganizationInterface[]
+  let organization: OrganizationInterface[]
   beforeEach(() => {
-    organizations = organizationsFactoryMock(3)
+    organization = organizationFactoryMock(3)
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Overview organizations={organizations} />)
+    const { baseElement } = render(<Overview organization={organization} />)
     expect(baseElement).toBeTruthy()
   })
 })
