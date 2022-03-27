@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from '__tests__/utils/setup-jest'
 import { screen } from '@testing-library/react'
 
-import Button, { ButtonType } from './button'
+import Button, { ButtonStyle } from './button'
 import { ButtonProps, ButtonSize } from './button'
 
 import { Chance } from 'chance'
@@ -25,14 +25,14 @@ describe('Button', () => {
 
   it('should apply the accurate classes', () => {
     props.size = ButtonSize.SMALL
-    props.type = ButtonType.BASIC
+    props.style = ButtonStyle.BASIC
     props.className = 'some-class-name'
 
     render(<Button {...props} />)
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--small btn--basic some-class-name')
+    expect(button.className).toBe('btn btn--small btn--button some-class-name')
   })
 
   it('should apply the disabled class', () => {
@@ -42,7 +42,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--normal btn--basic btn--disabled')
+    expect(button.className).toBe('btn btn--normal btn--button btn--disabled')
   })
 
   it('should return a link instead of a button', () => {

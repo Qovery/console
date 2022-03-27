@@ -27,11 +27,11 @@ describe('InputTextAreaArea', () => {
 
     fireEvent.focus(input)
 
-    expect(inputContainer.className).toBe('input input--text-area input--focused')
+    expect(inputContainer.className).toContain('input--focused')
 
     fireEvent.blur(input)
 
-    expect(inputContainer.className).toBe('input input--text-area ')
+    expect(inputContainer.className).not.toContain('input--focused')
   })
 
   it('should set the text value when the input event is emitted', async () => {
@@ -42,19 +42,5 @@ describe('InputTextAreaArea', () => {
     fireEvent.change(input, { target: { value: 'some new text value' } })
 
     expect((input as any).value).toBe('some new text value')
-  })
-
-  it('should call the getValue method when the input event is emitted', async () => {
-    const getValue = jest.fn()
-
-    props.getValue = getValue
-
-    render(<InputTextArea {...props} />)
-
-    const input = screen.getByRole('textbox')
-
-    fireEvent.change(input, { target: { value: 'some new text value' } })
-
-    expect(getValue).toHaveBeenCalledWith('some name', 'some new text value')
   })
 })

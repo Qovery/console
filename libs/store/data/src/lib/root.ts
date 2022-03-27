@@ -1,11 +1,20 @@
 import { initialOrganizationState, organization, OrganizationState } from '@console/domains/organization'
-import { initialProjectsState, ProjectsState } from '@console/domains/projects'
-import { initialUserSignUpState, initialUserState, user, UserInterface, UserSignUpState } from '@console/domains/user'
+import { initialProjectsState, ProjectsState, projects } from '@console/domains/projects'
+import {
+  initialUserSignUpState,
+  initialUserState,
+  user,
+  UserInterface,
+  UserSignUpState,
+  userSignUp,
+} from '@console/domains/user'
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 
 export const rootReducer = combineReducers({
   user: user,
   organization: organization,
+  userSignUp: userSignUp,
+  projects: projects,
 })
 
 export const store = configureStore({

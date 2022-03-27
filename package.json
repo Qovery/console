@@ -18,6 +18,7 @@
     "@nrwl/eslint-plugin-nx": "13.8.5",
     "@nrwl/linter": "13.8.5",
     "@nrwl/nx-cloud": "13.1.6",
+    "@nrwl/react": "^13.9.5",
     "@nrwl/storybook": "13.8.5",
     "@nrwl/tao": "13.8.5",
     "@nrwl/workspace": "13.8.5",
