@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { initialRootState, rootReducer, RootState } from '../../libs/store/data/src'
 import React from 'react'
+import { Auth0Provider } from '@auth0/auth0-react'
 
 type Params = {
   Component: ComponentType<any>
@@ -25,8 +26,10 @@ export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootSta
   })
 
   return (
-    <Provider store={store}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </Provider>
+    <Auth0Provider clientId="__test_client_id__" domain="__test_domain__">
+      <Provider store={store}>
+        <MemoryRouter>{children}</MemoryRouter>
+      </Provider>
+    </Auth0Provider>
   )
 }
