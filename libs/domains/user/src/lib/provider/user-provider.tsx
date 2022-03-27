@@ -3,10 +3,9 @@ import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectUser } from '../slices/user.slice'
 import { fetchUserSignUp, selectUserSignUp, postUserSignUp, UserSignUpState } from '../slices/user-sign-up.slice'
-import { AppDispatch } from '@console/store/data'
 
 export function useUser() {
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<any>()
   const user = useSelector(selectUser)
   const userSignUp = useSelector(selectUserSignUp)
 

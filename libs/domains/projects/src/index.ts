@@ -1,2 +1,2 @@
-export * from './lib/provider/provider'
-export * from './lib/slices/projects.slice'
+export * from './lib/provider'
+export * from './lib/slices'

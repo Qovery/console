@@ -16,6 +16,7 @@ export function useOrganization() {
   const loadingStatus = useSelector(selectOrganizationLoadingStatus)
 
   const getOrganization = useCallback(async () => dispatch(fetchOrganization()), [dispatch])
+
   const createOrganization = async (payload: OrganizationInterface) => {
     const result = await dispatch(postOrganization(payload))
     // refresh token needed after created an organization

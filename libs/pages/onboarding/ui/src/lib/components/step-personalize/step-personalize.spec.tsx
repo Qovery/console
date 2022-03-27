@@ -35,18 +35,4 @@ describe('StepPersonalize', () => {
     const { baseElement } = render(<StepPersonalize {...props} />)
     expect(baseElement).toBeTruthy()
   })
-
-  // it('should display required error ', async () => {
-  //   const { container } = render(<StepPersonalize {...props} />)
-
-  //   const button = container.querySelector('button[type="submit"]') as Element
-
-  //   console.log(button)
-
-  //   // screen.debug()
-
-  //   fireEvent.submit(button)
-
-  //   expect(await screen.findAllByRole('alert')).toHaveLength(2)
-  // })
 })
