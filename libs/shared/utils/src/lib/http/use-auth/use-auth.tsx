@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { userActions, UserInterface } from '@console/domains/user'
 
 export function useAuth() {
-  const { loginWithPopup, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
+  const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
   const dispatch = useDispatch()
 
   const checkIsAuthenticated = useCallback(() => {
@@ -16,7 +16,7 @@ export function useAuth() {
    * Gitlab uppercase is needed
    */
   const authLogin = async (provider: string) => {
-    await loginWithPopup({
+    await loginWithRedirect({
       connection: provider,
       login: 'login',
     })
