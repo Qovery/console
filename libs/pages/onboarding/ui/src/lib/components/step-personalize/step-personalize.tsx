@@ -2,7 +2,7 @@ import { Control, Controller } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
 
-interface StepPersonalizeProps {
+export interface StepPersonalizeProps {
   dataTypes: Array<Value>
   onSubmit: () => void
   control: Control<any, any>

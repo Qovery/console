@@ -12,6 +12,7 @@ function useDetectClickOutside(ref: RefObject<HTMLElement>, callback: () => void
   // Alert if clicked on outside of element
   function handleClickOutside(event: Event) {
     const target = event.target as HTMLElement
+
     if (ref.current && !ref.current.contains(target)) {
       callback()
     }
@@ -34,7 +35,7 @@ export function DetectClickOutside(props: UseDetectOutsideProps) {
   useDetectClickOutside(wrapperRef, callback, event)
 
   return (
-    <div className={className} ref={wrapperRef}>
+    <div aria-label="click-outside-container" className={className} ref={wrapperRef}>
       {children}
     </div>
   )

@@ -6,7 +6,7 @@ export interface InputRadioProps {
   value: string
   isChecked?: boolean
   className?: string
-  getValue?: (checked: boolean, value: string) => void,
+  getValue?: (checked: boolean, value: string) => void
   disable?: boolean
 }
 
@@ -21,6 +21,7 @@ export function InputRadio(props: InputRadioProps) {
 
   const inputChange = (check: boolean, value: string) => {
     setCheck(check)
+
     if (getValue) getValue(check, value)
   }
 

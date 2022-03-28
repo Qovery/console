@@ -1,14 +1,15 @@
 import { Icon } from '@console/shared/ui'
 import { AuthEnum } from '@console/shared/utils'
 import { IconEnum } from '@console/shared/enums'
-interface LoginProps {
+interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
+  authLogin: (provider: string) => void
   githubType: AuthEnum
   gitlabType: AuthEnum
   bitbucketType: AuthEnum
 }
 
-export function Login(props: LoginProps) {
+export function Login(props: ILoginProps) {
   const { onClickAuthLogin, githubType, gitlabType, bitbucketType } = props
 
   return (

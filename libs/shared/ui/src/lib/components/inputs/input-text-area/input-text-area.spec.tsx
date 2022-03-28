@@ -1,10 +1,46 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import { fireEvent, screen } from '@testing-library/react'
 
-import InputTextArea from './input-text-area'
+import InputTextArea, { InputTextAreaProps } from './input-text-area'
 
-describe('InputTextArea', () => {
+describe('InputTextAreaArea', () => {
+  let props: InputTextAreaProps
+
+  beforeEach(() => {
+    props = {
+      name: 'some name',
+      label: 'some label',
+    }
+  })
+
   it('should render successfully', () => {
-    const { baseElement } = render(<InputTextArea />)
+    const { baseElement } = render(<InputTextArea {...props} />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should apply the accurate classes on focus and blur', () => {
+    render(<InputTextArea {...props} />)
+
+    const inputContainer = screen.getByLabelText('textarea-container')
+
+    const input = screen.getByRole('textbox')
+
+    fireEvent.focus(input)
+
+    expect(inputContainer.className).toContain('input--focused')
+
+    fireEvent.blur(input)
+
+    expect(inputContainer.className).not.toContain('input--focused')
+  })
+
+  it('should set the text value when the input event is emitted', async () => {
+    render(<InputTextArea {...props} />)
+
+    const input = screen.getByRole('textbox')
+
+    fireEvent.change(input, { target: { value: 'some new text value' } })
+
+    expect((input as any).value).toBe('some new text value')
   })
 })

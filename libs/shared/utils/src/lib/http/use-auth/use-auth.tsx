@@ -27,6 +27,7 @@ export function useAuth() {
    */
   const authLogout = useCallback(async () => {
     dispatch(userActions.remove())
+
     return await logout({
       returnTo: window.location.origin,
     })
