@@ -1,6 +1,6 @@
+import posthog from 'posthog-js'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-// import toast from 'react-hot-toast'
 import { selectUser } from '../slices/user.slice'
 import { fetchUserSignUp, selectUserSignUp, postUserSignUp, UserSignUpState } from '../slices/user-sign-up.slice'
 
@@ -12,7 +12,14 @@ export function useUser() {
   const getUserSignUp = useCallback(() => dispatch(fetchUserSignUp()), [dispatch])
   const updateUserSignUp = async (payload: UserSignUpState) => {
     const result = await dispatch(postUserSignUp(payload)).unwrap()
-    // toast.success('Success !')
+
+    if (process.env['NODE_ENV'] === 'production') {
+      // update user posthog
+      posthog.identify(user.sub, {
+        ...result,
+      })
+    }
+
     return result
   }
 

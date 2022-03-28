@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { Route, Routes, useNavigate, useParams } from 'react-router'
 import { useUser } from '@console/domains/user'
+import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { LoadingScreen } from '@console/shared/ui'
 import { Container } from './components/container/container'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from './router/router'
-import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/utils'
 
 export function OnboardingPage() {
   const navigate = useNavigate()
@@ -27,8 +28,15 @@ export function OnboardingPage() {
       if (firstStep && userSignUp.dx_auth) {
         navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
       }
+      if (params['*'] === '') {
+        navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
+      }
     }
-  }, [userSignUp, firstStep, navigate])
+  }, [userSignUp, firstStep, navigate, params])
+
+  if (params['*'] === '') {
+    return <LoadingScreen />
+  }
 
   return (
     <Container firstStep={firstStep} params={params}>

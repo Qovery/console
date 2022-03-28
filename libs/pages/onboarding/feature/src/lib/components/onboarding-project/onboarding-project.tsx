@@ -16,7 +16,7 @@ export function OnboardingProject() {
 
   useEffect(() => {
     setValue('organization_name', organization_name)
-    setValue('project_name', project_name)
+    setValue('project_name', project_name || 'main')
   }, [organization_name, project_name, setValue])
 
   const onSubmit = handleSubmit((data) => {

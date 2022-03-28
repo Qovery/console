@@ -8,13 +8,13 @@ export interface IProtectedRoute {
 }
 
 export const ProtectedRoute = ({ children }: IProtectedRoute) => {
-  const { isAuthenticated, getCurrentUser } = useAuth()
+  const { checkIsAuthenticated, getCurrentUser } = useAuth()
 
   useEffect(() => {
     getCurrentUser()
   }, [getCurrentUser])
 
-  if (!isAuthenticated) {
+  if (!checkIsAuthenticated) {
     return <Navigate to={LOGIN_URL} replace />
   }
 

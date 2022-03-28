@@ -6,7 +6,6 @@ import { Navigate, Routes, Route } from 'react-router-dom'
 import {
   LOGIN_URL,
   OVERVIEW_URL,
-  ONBOARDING_URL,
   ProtectedRoute,
   useAuth,
   useDocumentTitle,
@@ -14,7 +13,6 @@ import {
 } from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
-import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { environment } from '../environments/environment'
 import { LoadingScreen } from '@console/shared/ui'
 
@@ -23,11 +21,6 @@ export const ROUTER = [
     path: LOGIN_URL,
     component: <LoginPage />,
     protected: false,
-  },
-  {
-    path: `${ONBOARDING_URL}/*`,
-    component: <OnboardingPage />,
-    protected: true,
   },
   {
     path: OVERVIEW_URL,
@@ -45,8 +38,6 @@ export function App() {
 
   useEffect(() => {
     if (process.env['NODE_ENV'] === 'production') {
-      console.log(process.env['NODE_ENV'])
-
       // init posthug
       posthog.init(environment.posthog, {
         api_host: environment.posthog_apihost,
@@ -60,17 +51,6 @@ export function App() {
   useEffect(() => {
     async function fetchData() {
       await getCurrentUser()
-
-      // if (user && environment.production === 'production') {
-      //   // update user posthog
-      //   posthog.identify(user.sub, user)
-
-      //   // update user logrocket
-      //   LogRocket.identify(user.sub, {
-      //     name: user.name,
-      //     email: user.email,
-      //   })
-      // }
     }
     fetchData()
   }, [getCurrentUser])

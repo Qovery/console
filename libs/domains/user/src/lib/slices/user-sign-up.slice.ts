@@ -39,6 +39,7 @@ export const postUserSignUp = createAsyncThunk<any, UserSignUpState>(
 
     try {
       const result = await axios.post('/admin/userSignUp', data).then((response) => response)
+
       if (typeof result === 'object') {
         return data
       } else {

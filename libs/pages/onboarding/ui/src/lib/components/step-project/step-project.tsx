@@ -60,7 +60,7 @@ export function StepProject(props: StepProjectProps) {
             style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
-            Back
+            Disconnect
           </Button>
           <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} type="submit">
             Continue

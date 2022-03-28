@@ -14,7 +14,7 @@ export function Login(props: ILoginProps) {
 
   return (
     <div className="flex h-full max-w-screen-2xl ml-auto mr-auto">
-      <div className="flex-[2_1_0%] px-20">
+      <div className="flex-[2_1_0%] px-4 md:px-20">
         <div className="max-w-lg mt-28 mx-auto">
           <h1 className="h3 text-text-700 mb-3">Welcome to Qovery</h1>
           <p className="text-sm mb-10 text-text-500">
@@ -39,7 +39,7 @@ export function Login(props: ILoginProps) {
           </button>
         </div>
       </div>
-      <div className="flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:-z-10 before:w-full before:h-full before:bg-element-light-lighter-300">
+      <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:-z-10 before:w-full before:h-full before:bg-element-light-lighter-300">
         <div className="max-w-md">
           <h2 className="h1 text-text-700 mt-44 mb-6">
             The Simplest Way To Deploy Your Apps on AWS and Kubernetes
