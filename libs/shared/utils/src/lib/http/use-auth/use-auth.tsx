@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { userActions, UserInterface } from '@console/domains/user'
 
 export function useAuth() {
-  const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
+  const { loginWithPopup, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
   const dispatch = useDispatch()
 
   const checkIsAuthenticated = useCallback(() => {
@@ -16,7 +16,7 @@ export function useAuth() {
    * Gitlab uppercase is needed
    */
   const authLogin = async (provider: string) => {
-    await loginWithRedirect({
+    await loginWithPopup({
       connection: provider,
       login: 'login',
     })
@@ -60,7 +60,7 @@ export function useAuth() {
   /**
    * Create authentification cookies
    */
-  const createAuthCookies = async () => {
+  const createAuthCookies = useCallback(async () => {
     const currentToken = localStorage.getItem(
       '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
     )
@@ -93,7 +93,7 @@ export function useAuth() {
       setCookie('idToken', data.body.id_token, 100000)
       setCookie('authExpiresAt', data.expiresAt, 100000)
     }
-  }
+  }, [])
 
   return {
     authLogin,

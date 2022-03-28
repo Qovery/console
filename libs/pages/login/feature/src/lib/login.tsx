@@ -25,18 +25,17 @@ export function LoginPage() {
       if (!isOnboarding && organization.payload.length > 0) {
         navigate(OVERVIEW_URL)
       }
-      if (isOnboarding && organization.payload.length > 0) {
-        window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
-      }
       if (isOnboarding && organization.payload.length === 0) {
         navigate(ONBOARDING_URL)
       }
+      if (isOnboarding && organization.payload.length > 0) {
+        window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
+      }
     }
-
     if (checkIsAuthenticated) {
       fetchData()
     }
-  }, [isOnboarding, navigate, getOrganization, checkIsAuthenticated, createAuthCookies])
+  }, [getOrganization, navigate, isOnboarding, checkIsAuthenticated, createAuthCookies])
 
   return (
     <LayoutLogin>
