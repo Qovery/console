@@ -4,17 +4,19 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { userActions, UserInterface } from '@console/domains/user'
 
 export function useAuth() {
-  const { loginWithPopup, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
+  const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
   const dispatch = useDispatch()
+
+  const checkIsAuthenticated = useCallback(() => {
+    return isAuthenticated
+  }, [isAuthenticated])()
 
   /**
    * Authentification login
    * Gitlab uppercase is needed
    */
   const authLogin = async (provider: string) => {
-    localStorage.clear()
-
-    return await loginWithPopup({
+    await loginWithRedirect({
       connection: provider,
       login: 'login',
     })
@@ -59,8 +61,6 @@ export function useAuth() {
    * Create authentification cookies
    */
   const createAuthCookies = async () => {
-    await getAccessTokenSilently({ ignoreCache: true })
-
     const currentToken = localStorage.getItem(
       '@@auth0spajs@@::S4fQF5rkTng8CqHsc1kw41fG09u4R7A0::https://core.qovery.com::openid profile email offline_access'
     )
@@ -88,19 +88,21 @@ export function useAuth() {
 
     const data = currentToken && JSON.parse(currentToken)
 
-    setCookie('jwtToken', data.body.access_token, 100000)
-    setCookie('idToken', data.body.id_token, 100000)
-    setCookie('authExpiresAt', data.expiresAt, 100000)
+    if (data && data.body) {
+      setCookie('jwtToken', data.body.access_token, 100000)
+      setCookie('idToken', data.body.id_token, 100000)
+      setCookie('authExpiresAt', data.expiresAt, 100000)
+    }
   }
 
   return {
     authLogin,
     authLogout,
     getCurrentUser,
-    isAuthenticated,
     isLoading,
     getAccessTokenSilently,
     createAuthCookies,
+    checkIsAuthenticated,
   }
 }
 

@@ -24,6 +24,7 @@ export function SetupInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
     const responseInterceptor = axiosInstance.interceptors.response.use(
       async (response: AxiosResponse) => response,
       (error: AxiosError) => {
+        console.log(error)
         toast.error(error.response?.data.message)
       }
     )
