@@ -1,7 +1,7 @@
 import { IconEnum } from '@console/shared/enums'
-import { render, screen } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import { screen } from '@testing-library/react'
 import { Chance } from 'chance'
-import { BrowserRouter } from 'react-router-dom'
 
 import { Avatar, AvatarProps, AvatarStyle } from './avatar'
 
@@ -51,11 +51,7 @@ describe('Avatar', () => {
   it('shoud have a link', () => {
     props.link = chance.url()
 
-    render(
-      <BrowserRouter>
-        <Avatar {...props} />
-      </BrowserRouter>
-    )
+    render(<Avatar {...props} />)
 
     const link = screen.getByRole('link')
 

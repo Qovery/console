@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import { screen } from '@testing-library/react'
 import { ButtonIcon, ButtonIconProps, ButtonIconSize, ButtonIconStyle } from './button-icon'
 import { Chance } from 'chance'
-import { BrowserRouter } from 'react-router-dom'
 
 const props: ButtonIconProps = {
   icon: 'icon-solid-star'
@@ -51,11 +51,7 @@ describe('ButtonIcon', () => {
   it('should return a link instead of a button', () => {
     props.link = chance.url()
 
-    render(
-      <BrowserRouter>
-        <ButtonIcon {...props} />
-      </BrowserRouter>
-    )
+    render(<ButtonIcon {...props} />)
 
     const link = screen.getByRole('link')
 
