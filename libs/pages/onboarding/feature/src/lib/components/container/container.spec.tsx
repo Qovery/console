@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { render } from '@testing-library/react'
 import Container from './container'
 
 describe('Container', () => {

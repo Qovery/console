@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../http/use-auth/use-auth'
 import { LOGIN_URL } from './router'
 
-export interface IProtectedRoute {
+interface IProtectedRoute {
   children: React.ReactElement
 }
 

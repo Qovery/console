@@ -27,8 +27,7 @@
       "@console/shared/enums": ["libs/shared/enums/src/index.ts"],
       "@console/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
       "@console/shared/ui": ["libs/shared/ui/src/index.ts"],
-      "@console/shared/utils": ["libs/shared/utils/src/index.ts"],
-      "@console/store/data": ["libs/store/data/src/index.ts"]
+      "@console/shared/utils": ["libs/shared/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -31,7 +31,7 @@ export function InputText(props: InputTextProps) {
 
   return (
     <div className={className} onClick={() => inputRef.current?.querySelector('input')?.focus()}>
-      <div aria-label="input-container" className={`input ${inputActions} ${hasError}`} ref={inputRef}>
+      <div className={`input ${inputActions} ${hasError}`} ref={inputRef}>
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
         </label>
