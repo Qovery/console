@@ -1,44 +1,10 @@
-import { render } from '__tests__/utils/setup-jest'
-import { fireEvent, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 
-import InputRadio, { InputRadioProps } from './input-radio'
+import InputRadio from './input-radio'
 
 describe('InputRadio', () => {
-  let props: InputRadioProps
-
-  beforeEach(() => {
-    props = {
-      name: 'some-name',
-      value: '1',
-    }
-  })
-
   it('should render successfully', () => {
-    const { baseElement } = render(<InputRadio {...props} />)
+    const { baseElement } = render(<InputRadio />)
     expect(baseElement).toBeTruthy()
-  })
-
-  it('should check the radio when the input event is emitted', async () => {
-    render(<InputRadio {...props} />)
-
-    const input = screen.getByRole('radio')
-
-    fireEvent.click(input)
-
-    expect(input).toBeChecked()
-  })
-
-  it('should call the getValue method when the input event is emitted', async () => {
-    const getValue = jest.fn()
-
-    props.getValue = getValue
-
-    render(<InputRadio {...props} />)
-
-    const input = screen.getByRole('radio')
-
-    fireEvent.click(input)
-
-    expect(getValue).toHaveBeenCalledWith(true, '1')
   })
 })

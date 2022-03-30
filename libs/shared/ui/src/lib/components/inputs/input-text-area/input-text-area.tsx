@@ -19,7 +19,7 @@ export function InputTextArea(props: InputTextAreaProps) {
 
   return (
     <div className={className} onClick={() => inputRef.current?.querySelector('textarea')?.focus()}>
-      <div aria-label="textarea-container" className={`input pb-0 pr-2 ${inputActions}`} ref={inputRef}>
+      <div className={`input pb-0 pr-2 ${inputActions}`} ref={inputRef}>
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
         </label>

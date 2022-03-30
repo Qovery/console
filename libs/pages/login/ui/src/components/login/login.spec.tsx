@@ -1,20 +1,10 @@
-import { AuthEnum } from '@console/shared/utils'
-import { render } from '__tests__/utils/setup-jest'
+import { render } from '@testing-library/react'
 
-import Login, { ILoginProps } from './login'
+import Login from './login'
 
 describe('Login', () => {
-  const props: ILoginProps = {
-    authLogin: (provider: string) => {
-      return
-    },
-    githubType: AuthEnum.GITHUB,
-    gitlabType: AuthEnum.GITLAB,
-    bitbucketType: AuthEnum.BITBUCKET,
-  }
-
   it('should render successfully', () => {
-    const { baseElement } = render(<Login authLogin={props.authLogin} />)
+    const { baseElement } = render(<Login />)
     expect(baseElement).toBeTruthy()
   })
 })

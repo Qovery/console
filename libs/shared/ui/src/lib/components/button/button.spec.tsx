@@ -1,57 +1,10 @@
-import React from 'react'
-import { render } from '__tests__/utils/setup-jest'
-import { screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 
-import Button, { ButtonStyle } from './button'
-import { ButtonProps, ButtonSize } from './button'
-
-import { Chance } from 'chance'
+import Button from './button'
 
 describe('Button', () => {
-  let props: ButtonProps
-
-  const chance = new Chance()
-
-  beforeEach(() => {
-    props = {
-      children: React.createElement('div'),
-    }
-  })
-
   it('should render successfully', () => {
-    const { baseElement } = render(<Button {...props} />)
+    const { baseElement } = render(<Button />)
     expect(baseElement).toBeTruthy()
-  })
-
-  it('should apply the accurate classes', () => {
-    props.size = ButtonSize.SMALL
-    props.style = ButtonStyle.BASIC
-    props.className = 'some-class-name'
-
-    render(<Button {...props} />)
-
-    const button = screen.getByRole('button')
-
-    expect(button.className).toBe('btn btn--small btn--button some-class-name')
-  })
-
-  it('should apply the disabled class', () => {
-    props.disabled = true
-
-    render(<Button {...props} />)
-
-    const button = screen.getByRole('button')
-
-    expect(button.className).toBe('btn btn--normal btn--button btn--disabled')
-  })
-
-  it('should return a link instead of a button', () => {
-    props.link = chance.url()
-
-    render(<Button {...props} />)
-
-    const link = screen.getByRole('link')
-
-    expect(link).toBeTruthy()
   })
 })

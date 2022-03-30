@@ -1,18 +1,10 @@
-import { render } from '__tests__/utils/setup-jest'
+import { render } from '@testing-library/react'
 
-import IconFa, { IconFaProps } from './icon-fa'
+import IconFa from './icon-fa'
 
 describe('IconFa', () => {
-  let props: IconFaProps
-
-  beforeEach(() => {
-    props = {
-      name: 'default',
-    }
-  })
-
   it('should render successfully', () => {
-    const { baseElement } = render(<IconFa {...props} />)
+    const { baseElement } = render(<IconFa />)
     expect(baseElement).toBeTruthy()
   })
 })

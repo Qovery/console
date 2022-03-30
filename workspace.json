@@ -17,7 +17,6 @@
     "shared-enums": "libs/shared/enums",
     "shared-interfaces": "libs/shared/interfaces",
     "shared-ui": "libs/shared/ui",
-    "shared-utils": "libs/shared/utils",
-    "store-data": "libs/store/data"
+    "shared-utils": "libs/shared/utils"
   }
 }

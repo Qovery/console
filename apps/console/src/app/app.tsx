@@ -8,8 +8,8 @@ import {
   OVERVIEW_URL,
   ProtectedRoute,
   useAuth,
+  SetupInterceptor,
   useDocumentTitle,
-  useAuthInterceptor,
 } from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
@@ -34,7 +34,7 @@ export function App() {
   const { isLoading, getCurrentUser } = useAuth()
 
   // init axios interceptor
-  useAuthInterceptor(axios, environment.api)
+  SetupInterceptor(axios, environment.api)
 
   useEffect(() => {
     if (process.env['NODE_ENV'] === 'production') {
