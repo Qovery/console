@@ -23,7 +23,7 @@ ___
 
 ### NX 
 
-- [ ] I have run the dep-graph locally and made sure the tree was clean i.e no circular depencies
+- [ ] I have run the dep-graph locally and made sure the tree was clean i.e no circular dependencies
 - [ ] I have followed the library pattern i.e `feature`, `ui`, `data`, `utils`
 
 ### Clean Code
