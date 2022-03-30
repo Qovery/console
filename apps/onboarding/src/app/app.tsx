@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import axios from 'axios'
+import ReactGA from 'react-ga'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import {
   LOGIN_URL,
@@ -42,6 +43,9 @@ export function App() {
       posthog.init(environment.posthog, {
         api_host: environment.posthog_apihost,
       })
+
+      // init google analytics
+      ReactGA.initialize(environment.ga)
 
       // init logrocket
       LogRocket.init(environment.logrocket)
