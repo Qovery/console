@@ -37,15 +37,15 @@ export function App() {
   SetupInterceptor(axios, environment.api)
 
   useEffect(() => {
-    if (process.env['NODE_ENV'] === 'production') {
-      // init posthug
-      posthog.init(environment.posthog, {
-        api_host: environment.posthog_apihost,
-      })
+    // if (process.env['NODE_ENV'] === 'production') {
+    // init posthug
+    posthog.init(environment.posthog, {
+      api_host: environment.posthog_apihost,
+    })
 
-      // init logrocket
-      LogRocket.init(environment.logrocket)
-    }
+    // init logrocket
+    LogRocket.init(environment.logrocket)
+    // }
   }, [])
 
   useEffect(() => {
