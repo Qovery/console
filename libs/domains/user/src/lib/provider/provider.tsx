@@ -13,12 +13,12 @@ export function useUser() {
   const updateUserSignUp = async (payload: UserSignUpState) => {
     const result = await dispatch(postUserSignUp(payload)).unwrap()
 
-    if (process.env['NODE_ENV'] === 'production') {
-      // update user posthog
-      posthog.identify(user.sub, {
-        ...result,
-      })
-    }
+    // if (process.env['NODE_ENV'] === 'production') {
+    // update user posthog
+    posthog.identify(user.sub, {
+      ...result,
+    })
+    // }
 
     return result
   }

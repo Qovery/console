@@ -20,7 +20,8 @@ const onRedirectCallback = (appState: AppState) => {
 }
 
 ReactDOM.render(
-  <IntercomProvider appId={environment.intercom} autoBoot={process.env['NODE_ENV'] === 'production'}>
+  // <IntercomProvider appId={environment.intercom} autoBoot={process.env['NODE_ENV'] === 'production'
+  <IntercomProvider appId={environment.intercom} autoBoot>
     <Auth0Provider
       domain={environment.oauth_domain}
       clientId={environment.oauth_key}
