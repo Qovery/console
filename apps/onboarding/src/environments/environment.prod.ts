@@ -8,4 +8,5 @@ export const environment = {
   posthog: process.env?.['NX_POSTHOG'] || '',
   posthog_apihost: process.env?.['NX_POSTHOG_APIHOST'] || '',
   logrocket: process.env?.['NX_LOGROCKET'] || '',
+  ga: process.env?.['NX_GA'] || '',
 }
