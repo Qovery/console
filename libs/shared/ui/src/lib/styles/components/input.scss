@@ -38,7 +38,8 @@
   }
 }
 
-.input--error {
+.input--error,
+.input--error .input__button {
   @apply border-error-500;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   &:hover {
@@ -60,6 +61,10 @@
 
   .input__value {
     @apply translate-y-0;
+  }
+
+  &.input--error {
+    box-shadow: inherit;
   }
 }
 

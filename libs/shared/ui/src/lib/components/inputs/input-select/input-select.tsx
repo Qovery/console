@@ -15,10 +15,11 @@ export function InputSelect(props: InputSelectProps) {
   const { label, value, items, className = '', onChange, error } = props
 
   const selectedLabel = value && items.find((item) => item.value === value)?.label
+  const hasError = error && error.length > 0 ? 'input--error' : ''
 
   return (
-    <div className={`input input--select ${className}`}>
-      <ListboxInput onChange={onChange} className="input__container">
+    <div className={`input input--select ${hasError} ${className}`}>
+      <ListboxInput onChange={onChange}>
         <ListboxButton
           className={`input__button ${value !== undefined ? 'input__button--focused' : ''}`}
           arrow={<Icon name="icon-solid-angle-down" className="input__arrow" />}
@@ -39,7 +40,7 @@ export function InputSelect(props: InputSelectProps) {
               <Icon
                 name="icon-solid-check"
                 className={`text-success-500 mr-3 ${value === currentItem.value ? 'opacity-100' : 'opacity-0'}`}
-              ></Icon>
+              />
               {currentItem.label}
             </ListboxOption>
           ))}
