@@ -1222,6 +1222,11 @@
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.6.tgz"
   integrity sha512-ws57AidsDvREKrZKYffXddNkyaF14iHNHm8VQnZH6t99E8gczjNN0GpvcGny0imC80yQ0tHz1xVUKk/KFQSUyA==
 
+"@elgorditosalsero/react-gtm-hook@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@elgorditosalsero/react-gtm-hook/-/react-gtm-hook-2.4.0.tgz#0a54d249dc2bc6c26c25b1452c150be022aea607"
+  integrity sha512-ysKEg79MVk5bnrR6ZlhXNvTcPydsdKTfxdSgji9JdH1GYYyJ+muilNFqKlr0AnWmXbZfN0gzQRSB6oP6V+zuyQ==
+
 "@emotion/cache@^10.0.27", "@emotion/cache@^10.0.9":
   version "10.0.29"
   resolved "https://registry.npmjs.org/@emotion/cache/-/cache-10.0.29.tgz"
