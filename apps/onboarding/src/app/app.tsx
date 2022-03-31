@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import axios from 'axios'
-import ReactGA from 'react-ga'
+import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import {
   LOGIN_URL,
@@ -38,18 +38,15 @@ export function App() {
   SetupInterceptor(axios, environment.api)
 
   useEffect(() => {
-    if (process.env['NODE_ENV'] === 'production') {
-      // init posthug
-      posthog.init(environment.posthog, {
-        api_host: environment.posthog_apihost,
-      })
+    // if (process.env['NODE_ENV'] === 'production') {
+    // init posthug
+    posthog.init(environment.posthog, {
+      api_host: environment.posthog_apihost,
+    })
 
-      // init google analytics
-      ReactGA.initialize(environment.ga)
-
-      // init logrocket
-      LogRocket.init(environment.logrocket)
-    }
+    // init logrocket
+    LogRocket.init(environment.logrocket)
+    // }
   }, [])
 
   useEffect(() => {
@@ -64,17 +61,19 @@ export function App() {
   }
 
   return (
-    <Routes>
-      <Route path={LOGIN_URL} element={<LoginPage />} />
-      {ROUTER.map((route) => (
-        <Route
-          key={route.path}
-          path={route.path}
-          element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
-        />
-      ))}
-      <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
-    </Routes>
+    <GTMProvider state={{ id: environment.gtm }}>
+      <Routes>
+        <Route path={LOGIN_URL} element={<LoginPage />} />
+        {ROUTER.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
+          />
+        ))}
+        <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
+      </Routes>
+    </GTMProvider>
   )
 }
 export default App
