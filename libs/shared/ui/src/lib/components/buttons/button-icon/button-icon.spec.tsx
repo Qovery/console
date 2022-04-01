@@ -1,16 +1,14 @@
-import { render } from '__tests__/utils/setup-jest'
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { ButtonIcon, ButtonIconProps, ButtonIconSize, ButtonIconStyle } from './button-icon'
 import { Chance } from 'chance'
 
 const props: ButtonIconProps = {
-  icon: 'icon-solid-star'
+  icon: 'icon-solid-star',
 }
 
 const chance = new Chance()
 
 describe('ButtonIcon', () => {
-
   it('should render successfully', () => {
     const { baseElement } = render(<ButtonIcon {...props} />)
     expect(baseElement).toBeTruthy()
@@ -35,7 +33,7 @@ describe('ButtonIcon', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn-icon btn--normal btn--basic btn--disabled')
+    expect(button.classList.contains('btn--disabled')).toBe(true)
   })
 
   it('should have a notification', () => {
@@ -56,15 +54,5 @@ describe('ButtonIcon', () => {
     const link = screen.getByRole('link')
 
     expect(link).toBeTruthy()
-  })
-
-  it('should have an active class', () => {
-    props.active = true 
-
-    render(<ButtonIcon {...props}></ButtonIcon>)
-
-    const button = screen.getByRole('button')
-
-    expect(button.className).toBe('btn btn-icon btn--normal btn--basic btn--active')
   })
 })

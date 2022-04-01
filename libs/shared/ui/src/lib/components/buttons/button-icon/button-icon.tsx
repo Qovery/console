@@ -1,6 +1,6 @@
-import { IconEnum } from "@console/shared/enums"
+import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
-import Icon from "../../icon/icon"
+import Icon from '../../icon/icon'
 
 export enum ButtonIconSize {
   BIG = 'big',
@@ -13,7 +13,7 @@ export enum ButtonIconStyle {
   STROKED = 'stroked',
   FLAT = 'flat',
   ALT = 'alt',
-  DARK = 'dark'
+  DARK = 'dark',
 }
 
 export interface ButtonIconProps {
@@ -25,44 +25,47 @@ export interface ButtonIconProps {
   className?: string
   onClick?: () => void
   loading?: boolean
-  notification?: boolean,
+  notification?: boolean
   active?: boolean
 }
 
 export function ButtonIcon(props: ButtonIconProps) {
-
-  const { 
+  const {
     icon,
     style = ButtonIconStyle.BASIC,
     size = ButtonIconSize.NORMAL,
     disabled = false,
     loading = false,
-    className,
+    className = '',
     onClick,
     notification = false,
     link,
-    active = false
-   } = props
+    active = false,
+  } = props
 
-   const defineClass = `btn btn-icon ${size ? `btn--${size}` : ''} ${style ? `btn--${style}` : ''} ${
-    disabled || loading ? 'btn--disabled' : ''} ${active ? 'btn--active' : ''} ${className ? className : ''}`
+  const defineClass = `btn btn-icon ${size ? `btn-icon--${size}` : ''} ${style ? `btn-icon--${style}` : ''} ${
+    disabled || loading ? 'btn--disabled' : ''
+  } ${active ? 'btn--active' : ''} ${className}`
 
-  if(!link) {
+  if (!link) {
     return (
       <button className={defineClass} onClick={onClick}>
-        {notification && <span className='btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5'></span>}
+        {notification && (
+          <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+        )}
         <Icon name={icon}></Icon>
       </button>
     )
   } else {
     return (
       <Link to={link} className={defineClass} onClick={onClick}>
-        {notification && <span className='btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5'></span>}
+        {notification && (
+          <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+        )}
         <Icon name={icon}></Icon>
       </Link>
     )
   }
-  
 }
 
 export default ButtonIcon

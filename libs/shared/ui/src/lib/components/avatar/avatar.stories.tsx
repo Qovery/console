@@ -8,12 +8,9 @@ export default {
   title: 'Avatar',
 } as Meta
 
-const Template: Story<AvatarProps> = (args) => (
-  <Avatar {...args}></Avatar>
-)
+const Template: Story<AvatarProps> = (args) => <Avatar {...args}></Avatar>
 
 export const Primary = Template.bind({})
 Primary.args = {
-  url: 'https://avatars.githubusercontent.com/u/33811490?v=4',
-  icon: IconEnum.GITLAB
+  icon: IconEnum.GITLAB,
 }

@@ -51,10 +51,6 @@
   @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;
 }
 
-.btn--active {
-  @apply cursor-default bg-element-light-lighter-400 text-brand-500
-}
-
 // login
 .btn-login {
   @apply relative h-11 w-full font-medium flex items-center justify-center px-5 rounded-md cursor-pointer text-sm;
@@ -69,15 +65,15 @@
   @apply bg-element-light-lighter-300 text-text-700 border border-element-light-lighter-600 hover:bg-element-light-lighter-400;
 }
 
-// icon 
+// icon
 .btn-icon {
   @apply w-8 h-8 p-0 min-w-0 relative;
 
-  &.btn--stroked {
+  &.btn-icon--stroked {
     @apply bg-white hover:bg-element-light-lighter-400;
   }
 
-  &.btn--big {
+  &.btn-icon--big {
     @apply w-9 h-9;
   }
 }
