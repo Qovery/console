@@ -1,9 +1,8 @@
 import { Icon } from '@console/shared/ui'
 import { AuthEnum } from '@console/shared/utils'
 import { IconEnum } from '@console/shared/enums'
-interface ILoginProps {
+export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
-  authLogin: (provider: string) => void
   githubType: AuthEnum
   gitlabType: AuthEnum
   bitbucketType: AuthEnum

@@ -1,4 +1,4 @@
-import { fetchProjects, projectsAdapter, projectsReducer } from './projects.slice'
+import { postProjects, projects, projectsAdapter } from './projects.slice'
 
 describe('projects reducer', () => {
   it('should handle initial state', () => {
@@ -7,11 +7,11 @@ describe('projects reducer', () => {
       error: null,
     })
 
-    expect(projectsReducer(undefined, { type: '' })).toEqual(expected)
+    expect(projects(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchProjectss', () => {
-    let state = projectsReducer(undefined, fetchProjects.pending(null, null))
+  it('should handle postProjects', () => {
+    let state = projects(undefined, postProjects.pending(null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -21,7 +21,7 @@ describe('projects reducer', () => {
       })
     )
 
-    state = projectsReducer(state, fetchProjects.fulfilled([{ id: 1 }], null, null))
+    state = projects(state, postProjects.fulfilled([{ id: 1 }], null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -31,7 +31,7 @@ describe('projects reducer', () => {
       })
     )
 
-    state = projectsReducer(state, fetchProjects.rejected(new Error('Uh oh'), null, null))
+    state = projects(state, postProjects.rejected(new Error('Uh oh'), null, null))
 
     expect(state).toEqual(
       expect.objectContaining({

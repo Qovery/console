@@ -3,14 +3,14 @@ import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@co
 import { ONBOARDING_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
 import { Value } from '@console/shared/interfaces'
 
-interface StepCompanyProps {
+export interface StepMoreProps {
   dataQuestions: Array<Value>
   onSubmit: () => void
   control: Control<any, any>
   displayQoveryUsageOther: boolean
 }
 
-export function StepMore(props: StepCompanyProps) {
+export function StepMore(props: StepMoreProps) {
   const { dataQuestions, onSubmit, control, displayQoveryUsageOther } = props
 
   return (

@@ -2021,7 +2021,7 @@
     strip-json-comments "^3.1.1"
     tar "6.1.11"
 
-"@nrwl/react@^13.9.5":
+"@nrwl/react@13.9.5":
   version "13.9.5"
   resolved "https://registry.yarnpkg.com/@nrwl/react/-/react-13.9.5.tgz#7240beeee2936b36f73c0d98fa41e7e734308756"
   integrity sha512-4TcSc2pIIU5uUYNt/GIePWtffGWQ7AFx5KqPEBsWUNyzQPvEMbbKlj1WQZZO+6xqk/rDdiyiS8/Tg0SJ9YFFDg==

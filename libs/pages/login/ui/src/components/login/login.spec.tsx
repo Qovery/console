@@ -5,7 +5,7 @@ import Login, { ILoginProps } from './login'
 
 describe('Login', () => {
   const props: ILoginProps = {
-    authLogin: (provider: string) => {
+    onClickAuthLogin: (provider: string) => {
       return
     },
     githubType: AuthEnum.GITHUB,
@@ -14,7 +14,7 @@ describe('Login', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Login authLogin={props.authLogin} />)
+    const { baseElement } = render(<Login {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

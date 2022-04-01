@@ -1,6 +1,5 @@
-import { Price } from '@console/shared/interfaces'
+import { OrganizationPlanType, OrganizationPrice } from '@console/domains/organization'
 import { InputRadio } from '@console/shared/ui'
-import { PlanEnum } from '@console/shared/enums'
 
 export interface PlanCardProps {
   name: string
@@ -8,7 +7,7 @@ export interface PlanCardProps {
   title: string
   text: string
   price?: number
-  listPrice?: Price[]
+  listPrice?: OrganizationPrice[]
   currentValue?: { [name: string]: { number?: string | undefined } }
   onClick: (plan: string) => void
   disable?: boolean | undefined
@@ -35,19 +34,19 @@ export function PlanCard(props: PlanCardProps) {
           <p className="text-sm text-text-500">{text}</p>
         </div>
       </div>
-      {name !== PlanEnum.ENTERPRISE && (
+      {name !== OrganizationPlanType.ENTERPRISE && (
         <p className="text-xl font-bold flex items-center gap-1">
           {'$'}
-          {name === PlanEnum.PROFESSIONAL}
-          {name === PlanEnum.FREE && price}
-          {name === PlanEnum.BUSINESS &&
-            listPrice.find((p) => p.number === currentValue[PlanEnum.BUSINESS].number)?.price}
-          {name === PlanEnum.PROFESSIONAL &&
-            listPrice.find((p) => p.number === currentValue[PlanEnum.PROFESSIONAL].number)?.price}
+          {name === OrganizationPlanType.PROFESSIONAL}
+          {name === OrganizationPlanType.FREE && price}
+          {name === OrganizationPlanType.BUSINESS &&
+            listPrice.find((p) => p.number === currentValue[OrganizationPlanType.BUSINESS].number)?.price}
+          {name === OrganizationPlanType.PROFESSIONAL &&
+            listPrice.find((p) => p.number === currentValue[OrganizationPlanType.PROFESSIONAL].number)?.price}
           <span className="text-sm font-normal text-text-500">/ Month</span>
         </p>
       )}
-      {name === PlanEnum.ENTERPRISE && <p className="text-xs font-bold uppercase">Contact us</p>}
+      {name === OrganizationPlanType.ENTERPRISE && <p className="text-xs font-bold uppercase">Contact us</p>}
     </div>
   )
 }

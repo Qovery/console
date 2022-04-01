@@ -1,4 +1,3 @@
-export * from './lib/provider/provider'
-export * from './lib/interfaces/user.interface'
-export * from './lib/slices/user.slice'
-export * from './lib/slices/user-sign-up.slice'
+export * from './lib/provider'
+export * from './lib/interfaces'
+export * from './lib/slices'

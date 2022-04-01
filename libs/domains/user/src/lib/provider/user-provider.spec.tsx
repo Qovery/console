@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react-hooks'
-import { useOrganization } from './provider'
+import { useUser } from './user-provider'
 
-describe('Provider', () => {
+describe('User Provider', () => {
   it('should render successfully', () => {
-    const { result } = renderHook(() => useOrganization())
+    const { result } = renderHook(() => useUser())
 
     expect(result).toBeTruthy()
   })

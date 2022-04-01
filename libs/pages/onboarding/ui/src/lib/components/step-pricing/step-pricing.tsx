@@ -1,13 +1,13 @@
-import { PlanEnum } from '@console/shared/enums'
-import { Plan, Value } from '@console/shared/interfaces'
+import { OrganizationPlan, OrganizationPlanType } from '@console/domains/organization'
+import { Value } from '@console/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, Icon, InputSelectSmall } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
 interface StepPricingProps {
   selectPlan: string
-  setSelectPlan: (value: PlanEnum) => void
-  plans: Plan[]
+  setSelectPlan: (value: OrganizationPlanType) => void
+  plans: OrganizationPlan[]
   chooseDeploy: (value: Value | null) => void
   currentValue: { [name: string]: { number?: string | undefined; disable: boolean | undefined } }
   currentDeploy: Value
@@ -59,7 +59,7 @@ export function StepPricing(props: StepPricingProps) {
           ></InputSelectSmall>
         </div>
 
-        {plans.map((plan: Plan, index: number) => (
+        {plans.map((plan: OrganizationPlan, index: number) => (
           <PlanCard
             key={index}
             name={plan.name}
@@ -83,12 +83,12 @@ export function StepPricing(props: StepPricingProps) {
           >
             Back
           </Button>
-          {selectPlan === PlanEnum.ENTERPRISE && (
+          {selectPlan === OrganizationPlanType.ENTERPRISE && (
             <Button onClick={onClickContact} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
               Contact us
             </Button>
           )}
-          {selectPlan !== PlanEnum.ENTERPRISE && (
+          {selectPlan !== OrganizationPlanType.ENTERPRISE && (
             <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} onClick={onSubmit} loading={loading}>
               Let’s go
               <span className="ml-1" role="img" aria-label="star">

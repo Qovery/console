@@ -1,19 +1,14 @@
-import { render } from '__tests__/utils/setup-jest'
 import React from 'react'
+import { render } from '__tests__/utils/setup-jest'
 import ProtectedRoute from './protected-route'
-import { LoginPage } from '@console/pages/login/feature'
-import { store } from '@console/store/data'
-import { Provider } from 'react-redux'
 
 describe('ProtectedRoute', () => {
-  const wrapper = () => (
-    <Provider store={store}>
-      <LoginPage></LoginPage>
-    </Provider>
-  )
+  const ProtectedComponent = () => {
+    return <div>Protected componnent</div>
+  }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<ProtectedRoute />, { wrapper })
+    const { baseElement } = render(<ProtectedRoute children={ProtectedComponent()} />)
     expect(baseElement).toBeTruthy()
   })
 })
