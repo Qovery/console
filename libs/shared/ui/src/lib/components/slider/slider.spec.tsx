@@ -1,4 +1,5 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import { fireEvent } from '@testing-library/react'
 import { Slider, SliderProps } from './slider'
 
 let props: SliderProps
@@ -39,5 +40,23 @@ describe('Slider', () => {
     const label = rendered.container.querySelector('.slider div p:first-child')
 
     expect(label?.textContent).toBe('my label')
+  })
+
+  it('should set the value when the input event is emitted', () => {
+    const rendered = render(<Slider {...props} />)
+
+    const input: any = rendered.container.querySelector('input')
+
+    fireEvent.change(input, { target: { value: '10' } })
+
+    expect(input.value).toBe('10')
+  })
+
+  it('shoud have callback and return value', () => {
+    const getValue = jest.fn()
+
+    props.getValue = getValue(10)
+
+    expect(getValue).toHaveBeenCalledWith(10)
   })
 })
