@@ -8,10 +8,11 @@ export interface SliderProps {
   label?: string
   valueLabel?: string
   className?: string
+  getValue?: (value: number) => void
 }
 
 export function Slider(props: SliderProps) {
-  const { min, max, step, defaultValue, label, valueLabel, className = '' } = props
+  const { min, max, step, defaultValue, label, valueLabel, className = '', getValue } = props
   const [value, setValue] = useState(defaultValue || min)
 
   const inputEl = useRef(null)
@@ -19,10 +20,11 @@ export function Slider(props: SliderProps) {
   const handleChange = (value: string) => {
     const valueInt = parseInt(value, 10)
     setValue(valueInt)
+    if (getValue) getValue(valueInt)
   }
 
   return (
-    <div className={`slider ${className}`}>
+    <div className={`slider w-full ${className}`}>
       {label && (
         <div className="flex justify-between items-center mb-2">
           {label && <p className="text-text-500 text-sm">{label}</p>}
