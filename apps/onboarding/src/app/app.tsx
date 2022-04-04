@@ -34,6 +34,8 @@ export function App() {
   useDocumentTitle('Loading...')
   const { isLoading, getCurrentUser } = useAuth()
 
+  const gtmParams = { id: environment.gtm }
+
   // init axios interceptor
   useAuthInterceptor(axios, environment.api)
 
@@ -61,7 +63,7 @@ export function App() {
   }
 
   return (
-    <GTMProvider state={{ id: environment.gtm }}>
+    <GTMProvider state={gtmParams}>
       <Routes>
         <Route path={LOGIN_URL} element={<LoginPage />} />
         {ROUTER.map((route) => (
