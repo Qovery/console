@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import axios from 'axios'
+import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import {
   LOGIN_URL,
@@ -33,6 +34,8 @@ export function App() {
   useDocumentTitle('Loading...')
   const { isLoading, getCurrentUser } = useAuth()
 
+  const gtmParams = { id: environment.gtm }
+
   // init axios interceptor
   useAuthInterceptor(axios, environment.api)
 
@@ -60,17 +63,19 @@ export function App() {
   }
 
   return (
-    <Routes>
-      <Route path={LOGIN_URL} element={<LoginPage />} />
-      {ROUTER.map((route) => (
-        <Route
-          key={route.path}
-          path={route.path}
-          element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
-        />
-      ))}
-      <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
-    </Routes>
+    <GTMProvider state={gtmParams}>
+      <Routes>
+        <Route path={LOGIN_URL} element={<LoginPage />} />
+        {ROUTER.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
+          />
+        ))}
+        <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
+      </Routes>
+    </GTMProvider>
   )
 }
 export default App
