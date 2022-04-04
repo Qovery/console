@@ -35,7 +35,6 @@ export function App() {
   const { isLoading, getCurrentUser } = useAuth()
 
   const gtmParams = { id: environment.gtm }
-  console.log(gtmParams)
 
   // init axios interceptor
   useAuthInterceptor(axios, environment.api)
