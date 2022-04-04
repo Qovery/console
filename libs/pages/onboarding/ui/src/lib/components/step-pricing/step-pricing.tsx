@@ -71,7 +71,7 @@ export function StepPricing(props: StepPricingProps) {
             disable={currentValue[plan.name].disable}
           />
         ))}
-
+        <p className="text-xs text-text-400 text-right mt-2">Base plan 49$ + 50$ * 300 deployments = 69$</p>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
