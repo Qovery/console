@@ -5184,7 +5184,7 @@ axe-core@^4.3.5:
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.4.1.tgz"
   integrity sha512-gd1kmb21kwNuWr6BQz8fv6GNECPBnUasepcoLbekws23NVBLODdsClRZ+bQ8+9Uomf3Sm3+Vwn0oYG9NvwnJCw==
 
-axios@^0.21.1:
+axios@^0.21.1, axios@^0.21.4:
   version "0.21.4"
   resolved "https://registry.npmjs.org/axios/-/axios-0.21.4.tgz"
   integrity sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==
@@ -13080,6 +13080,13 @@ q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.npmjs.org/q/-/q-1.5.1.tgz"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
+
+qovery-typescript-axios@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.0.3.tgz#4907f89c82883a1e182770cfbbb3c7fc4b3fe447"
+  integrity sha512-NAsBAj6EGhdBHLeVUrUmGQtF4M3IJq0MIk6Tzjzzutwm9wQjAs5vRpGRcCcp+1YmkAUDOw9VvU69UJgYE+Q/6A==
+  dependencies:
+    axios "^0.21.4"
 
 qs@6.9.7:
   version "6.9.7"
