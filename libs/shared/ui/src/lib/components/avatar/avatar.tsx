@@ -27,15 +27,29 @@ export function Avatar(props: AvatarProps) {
       ) : (
         <div className="w-full h-full rounded-full bg-element-light-lighter-400"></div>
       )}
-      {icon && <Icon name={icon} className="absolute -bottom-1 -right-1 w-4 h-4 drop-shadow-sm"></Icon>}
+      {icon && (
+        <Icon
+          data-testid="avatar-icon"
+          name={icon}
+          className="absolute -bottom-1 -right-1 w-4 h-4 drop-shadow-sm"
+        ></Icon>
+      )}
     </>
   )
 
   if (!link) {
-    return <div className={`w-8 h-8 block rounded-full relative ${defineClass} ${className}`}>{content()}</div>
+    return (
+      <div data-testid="avatar" className={`w-8 h-8 block rounded-full relative ${defineClass} ${className}`}>
+        {content()}
+      </div>
+    )
   } else {
     return (
-      <Link to={link} className={`w-8 h-8 block rounded-full relative ${defineClass} ${className}`}>
+      <Link
+        data-testid="avatar"
+        to={link}
+        className={`w-8 h-8 block rounded-full relative ${defineClass} ${className}`}
+      >
         {content()}
       </Link>
     )

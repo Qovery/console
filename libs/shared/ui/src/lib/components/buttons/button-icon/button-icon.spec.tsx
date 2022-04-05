@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import { ButtonIcon, ButtonIconProps, ButtonIconSize, ButtonIconStyle } from './button-icon'
 import { Chance } from 'chance'
 
@@ -23,7 +24,9 @@ describe('ButtonIcon', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn-icon btn--normal btn--basic some-class-name')
+    expect(button.classList.contains('btn-icon--normal')).toBe(true)
+    expect(button.classList.contains('btn-icon--basic')).toBe(true)
+    expect(button.classList.contains('some-class-name')).toBe(true)
   })
 
   it('should apply the disabled class', () => {

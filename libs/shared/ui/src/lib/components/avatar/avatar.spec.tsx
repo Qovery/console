@@ -1,5 +1,6 @@
 import { IconEnum } from '@console/shared/enums'
-import { render, screen } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import { screen } from '@testing-library/react'
 import { Chance } from 'chance'
 
 import { Avatar, AvatarProps } from './avatar'
@@ -11,6 +12,7 @@ const chance = new Chance()
 let container
 
 beforeEach(() => {
+  props = {}
   container = document.createElement('div')
   document.body.appendChild(container)
 })
@@ -24,9 +26,9 @@ describe('Avatar', () => {
   it('should apply the accurate classes', () => {
     props.className = 'some-class-name'
 
-    const rendered = render(<Avatar {...props} />)
+    render(<Avatar {...props} />)
 
-    const avatar = rendered.container.querySelector('div')
+    const avatar = screen.getByTestId('avatar')
 
     expect(avatar?.classList.contains('some-class-name')).toBe(true)
   })
@@ -34,9 +36,9 @@ describe('Avatar', () => {
   it('should have an icon', () => {
     props.icon = IconEnum.GITHUB
 
-    const rendered = render(<Avatar {...props} />)
+    render(<Avatar {...props} />)
 
-    const icon = rendered.container.querySelector('div svg')
+    const icon = screen.getByTestId('avatar-icon')
 
     expect(icon).toBeTruthy()
   })
