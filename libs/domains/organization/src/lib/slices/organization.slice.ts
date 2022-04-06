@@ -7,12 +7,13 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { OrganizationMainCallsApi } from 'qovery-typescript-axios'
 import { OrganizationInterface } from '../interfaces/organization.interface'
+import { OrganizationMainCallsApi } from "qovery-typescript-axios";
+
 
 export const ORGANIZATION_KEY = 'organization'
 
-const organizationMainCalls = new OrganizationMainCallsApi(undefined, '', axios as any)
+const organizationMainCalls = new OrganizationMainCallsApi(undefined, '', axios)
 
 export interface OrganizationState extends EntityState<OrganizationInterface> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined

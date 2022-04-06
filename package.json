@@ -38,7 +38,7 @@
     "msw": "^0.38.1",
     "postcss": "^8.4.6",
     "posthog-js": "^1.20.0",
-    "qovery-typescript-axios": "1.0.3",
+    "qovery-typescript-axios": "1.0.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "^7.28.0",
@@ -50,6 +50,9 @@
     "tailwindcss": "^3.0.18",
     "tslib": "^2.0.0",
     "msw": "^0.38.1"
+  },
+  "resolutions": {
+    "axios": "0.25.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
