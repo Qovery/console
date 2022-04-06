@@ -1,5 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { fireEvent, screen } from '@testing-library/react'
+import { Simulate } from 'react-dom/test-utils'
 import { Slider, SliderProps } from './slider'
 describe('Slider', () => {
   let props: SliderProps
@@ -46,8 +47,10 @@ describe('Slider', () => {
 
     const input = screen.queryByTestId('input-range') as HTMLInputElement
 
-    fireEvent.change(input, { target: { value: 10 } })
+    input.value = '100'
 
-    expect(getValue).toHaveBeenCalledWith(10)
+    Simulate.change(input)
+
+    expect(getValue).toHaveBeenCalledWith(100)
   })
 })
