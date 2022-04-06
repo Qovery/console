@@ -9,10 +9,23 @@ export interface SliderProps {
   valueLabel?: string
   className?: string
   getValue?: (value: number) => void
+  brandColor?: string
+  grayColor?: string
 }
 
 export function Slider(props: SliderProps) {
-  const { min, max, step, defaultValue, label, valueLabel, className = '', getValue } = props
+  const {
+    min,
+    max,
+    step,
+    defaultValue,
+    label,
+    valueLabel,
+    className = '',
+    getValue,
+    brandColor = '#5b50d6',
+    grayColor = '#C6D3E7',
+  } = props
   const [value, setValue] = useState(defaultValue || min)
 
   const inputEl = useRef(null)
@@ -27,7 +40,11 @@ export function Slider(props: SliderProps) {
     <div className={`slider w-full ${className}`}>
       {label && (
         <div className="flex justify-between items-center mb-2">
-          {label && <p className="text-text-500 text-sm">{label}</p>}
+          {label && (
+            <p data-testid="label" className="text-text-500 text-sm">
+              {label}
+            </p>
+          )}
           {valueLabel && (
             <p className="text-brand-500 font-medium">
               {value}
@@ -37,10 +54,11 @@ export function Slider(props: SliderProps) {
         </div>
       )}
       <input
+        data-testid="input-range"
         style={{
-          background: `linear-gradient(to right, #5b50d6 0%, #5b50d6 ${((value - min) / (max - min)) * 100}%, #C6D3E7 ${
+          background: `linear-gradient(to right, ${brandColor} 0%, ${brandColor} ${
             ((value - min) / (max - min)) * 100
-          }%, #C6D3E7 100%)`,
+          }%, ${grayColor} ${((value - min) / (max - min)) * 100}%, ${grayColor} 100%)`,
         }}
         ref={inputEl}
         type="range"
