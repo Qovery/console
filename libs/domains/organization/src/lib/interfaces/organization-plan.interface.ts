@@ -5,6 +5,6 @@ export interface OrganizationPlan {
   name: OrganizationPlanType
   title: string
   text: string
-  price?: number
+  price: number
   listPrice: OrganizationPrice[]
 }

@@ -2,7 +2,12 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
 import { useIntercom } from 'react-use-intercom'
 import { StepPricing } from '@console/pages/onboarding/ui'
-import { OrganizationPlan, OrganizationPlanType, useOrganization } from '@console/domains/organization'
+import {
+  OrganizationPlan,
+  OrganizationPlanType,
+  OrganizationPrice,
+  useOrganization,
+} from '@console/domains/organization'
 import {
   ONBOARDING_PRICING_URL,
   ONBOARDING_PROJECT_URL,
@@ -12,6 +17,25 @@ import {
 } from '@console/shared/utils'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
+
+function listPrice(base: number, isBusinessPlan?: boolean) {
+  const results: OrganizationPrice[] = []
+  let multiple = 0
+
+  for (let i = 100; i <= 4000; i = i + 100) {
+    const nbDeploy = isBusinessPlan ? 1000 : 300
+
+    if (i > nbDeploy) multiple += 1
+    const price = i > nbDeploy ? base + 50 * multiple : base
+    results.push({
+      number: i.toString(),
+      price: price.toString(),
+    })
+  }
+  return results
+}
+
+console.log(listPrice(49, false))
 
 const PLANS: OrganizationPlan[] = [
   {
@@ -26,96 +50,14 @@ const PLANS: OrganizationPlan[] = [
     title: 'Professional',
     text: 'For 5-20 members',
     price: 49,
-    listPrice: [
-      { number: '100', price: '49' },
-      { number: '200', price: '49' },
-      { number: '300', price: '49' },
-      { number: '400', price: '99' },
-      { number: '500', price: '149' },
-      { number: '600', price: '199' },
-      { number: '700', price: '249' },
-      { number: '800', price: '299' },
-      { number: '900', price: '349' },
-      { number: '1000', price: '399' },
-      { number: '1100', price: '449' },
-      { number: '1200', price: '499' },
-      { number: '1300', price: '549' },
-      { number: '1400', price: '599' },
-      { number: '1500', price: '649' },
-      { number: '1600', price: '699' },
-      { number: '1700', price: '749' },
-      { number: '1800', price: '799' },
-      { number: '1900', price: '849' },
-      { number: '2000', price: '899' },
-      { number: '2100', price: '1399' },
-      { number: '2200', price: '1399' },
-      { number: '2300', price: '1399' },
-      { number: '2400', price: '1399' },
-      { number: '2500', price: '1399' },
-      { number: '2600', price: '1399' },
-      { number: '2700', price: '1399' },
-      { number: '2800', price: '1399' },
-      { number: '2900', price: '1399' },
-      { number: '3000', price: '1399' },
-      { number: '3100', price: '1899' },
-      { number: '3200', price: '1899' },
-      { number: '3300', price: '1899' },
-      { number: '3400', price: '1899' },
-      { number: '3500', price: '1899' },
-      { number: '3600', price: '1899' },
-      { number: '3700', price: '1899' },
-      { number: '3800', price: '1899' },
-      { number: '3900', price: '1899' },
-      { number: '4000', price: '1899' },
-    ],
+    listPrice: listPrice(49, false),
   },
   {
     name: OrganizationPlanType.BUSINESS,
     title: 'Business',
     text: 'For medium compagny',
-    price: 399,
-    listPrice: [
-      { number: '100', price: '599' },
-      { number: '200', price: '599' },
-      { number: '300', price: '599' },
-      { number: '400', price: '599' },
-      { number: '500', price: '599' },
-      { number: '600', price: '599' },
-      { number: '700', price: '599' },
-      { number: '800', price: '599' },
-      { number: '900', price: '599' },
-      { number: '1000', price: '599' },
-      { number: '1100', price: '649' },
-      { number: '1200', price: '699' },
-      { number: '1300', price: '749' },
-      { number: '1400', price: '799' },
-      { number: '1500', price: '849' },
-      { number: '1600', price: '899' },
-      { number: '1700', price: '949' },
-      { number: '1800', price: '999' },
-      { number: '1900', price: '1049' },
-      { number: '2000', price: '1099' },
-      { number: '2100', price: '1599' },
-      { number: '2200', price: '1599' },
-      { number: '2300', price: '1599' },
-      { number: '2400', price: '1599' },
-      { number: '2500', price: '1599' },
-      { number: '2600', price: '1599' },
-      { number: '2700', price: '1599' },
-      { number: '2800', price: '1599' },
-      { number: '2900', price: '1599' },
-      { number: '3000', price: '1599' },
-      { number: '3100', price: '2099' },
-      { number: '3200', price: '2099' },
-      { number: '3300', price: '2099' },
-      { number: '3400', price: '2099' },
-      { number: '3500', price: '2099' },
-      { number: '3600', price: '2099' },
-      { number: '3700', price: '2099' },
-      { number: '3800', price: '2099' },
-      { number: '3900', price: '2099' },
-      { number: '4000', price: '2099' },
-    ],
+    price: 599,
+    listPrice: listPrice(599, true),
   },
   {
     name: OrganizationPlanType.ENTERPRISE,

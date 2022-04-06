@@ -4,7 +4,7 @@ import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
 interface StepPricingProps {
-  selectPlan: string
+  selectPlan: OrganizationPlanType
   setSelectPlan: (value: OrganizationPlanType) => void
   plans: OrganizationPlan[]
   chooseDeploy: (value: number | null) => void
@@ -27,6 +27,31 @@ export function StepPricing(props: StepPricingProps) {
     loading,
     onClickContact,
   } = props
+
+  const informativeSentence = () => {
+    const currentPlans = plans.find((plan) => plan.name === selectPlan)
+
+    if (currentPlans && currentPlans.price > 0) {
+      const nbDeploy = selectPlan === OrganizationPlanType.BUSINESS ? 1000 : 300
+      let deploymentPrice = 0
+
+      if (currentDeploy > nbDeploy) {
+        deploymentPrice = ((currentDeploy - nbDeploy) / 100) * 50
+      }
+
+      return (
+        <p className="text-xs text-text-400 text-right mt-2">
+          {`Price computed as: Base Plan (${
+            currentPlans?.price
+          }$) + Additional ${currentDeploy} Deployments (${deploymentPrice}$) = ${
+            currentPlans?.price + deploymentPrice
+          }$`}
+        </p>
+      )
+    } else {
+      return null
+    }
+  }
 
   return (
     <div>
@@ -71,7 +96,7 @@ export function StepPricing(props: StepPricingProps) {
             disable={currentValue[plan.name].disable}
           />
         ))}
-        <p className="text-xs text-text-400 text-right mt-2">Base plan 49$ + 50$ * 300 deployments = 69$</p>
+        {informativeSentence()}
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
