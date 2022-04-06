@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
 import { useIntercom } from 'react-use-intercom'
 import { StepPricing } from '@console/pages/onboarding/ui'
-import { Value } from '@console/shared/interfaces'
 import { OrganizationPlan, OrganizationPlanType, useOrganization } from '@console/domains/organization'
 import {
   ONBOARDING_PRICING_URL,
@@ -13,31 +12,6 @@ import {
 } from '@console/shared/utils'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
-
-const DEPLOYS: Value[] = [
-  { label: '100/month', value: '100' },
-  { label: '200/month', value: '200' },
-  { label: '300/month', value: '300' },
-  { label: '400/month', value: '400' },
-  { label: '500/month', value: '500' },
-  { label: '600/month', value: '600' },
-  { label: '700/month', value: '700' },
-  { label: '800/month', value: '800' },
-  { label: '900/month', value: '900' },
-  { label: '1000/month', value: '1000' },
-  { label: '1100/month', value: '1100' },
-  { label: '1200/month', value: '1200' },
-  { label: '1300/month', value: '1300' },
-  { label: '1400/month', value: '1400' },
-  { label: '1500/month', value: '1500' },
-  { label: '1600/month', value: '1600' },
-  { label: '1700/month', value: '1700' },
-  { label: '1800/month', value: '1800' },
-  { label: '1900/month', value: '1900' },
-  { label: '2000/month', value: '2000' },
-  { label: '3000/month', value: '3000' },
-  { label: '4000/month', value: '4000' },
-]
 
 const PLANS: OrganizationPlan[] = [
   {
@@ -73,7 +47,25 @@ const PLANS: OrganizationPlan[] = [
       { number: '1800', price: '799' },
       { number: '1900', price: '849' },
       { number: '2000', price: '899' },
+      { number: '2100', price: '1399' },
+      { number: '2200', price: '1399' },
+      { number: '2300', price: '1399' },
+      { number: '2400', price: '1399' },
+      { number: '2500', price: '1399' },
+      { number: '2600', price: '1399' },
+      { number: '2700', price: '1399' },
+      { number: '2800', price: '1399' },
+      { number: '2900', price: '1399' },
       { number: '3000', price: '1399' },
+      { number: '3100', price: '1899' },
+      { number: '3200', price: '1899' },
+      { number: '3300', price: '1899' },
+      { number: '3400', price: '1899' },
+      { number: '3500', price: '1899' },
+      { number: '3600', price: '1899' },
+      { number: '3700', price: '1899' },
+      { number: '3800', price: '1899' },
+      { number: '3900', price: '1899' },
       { number: '4000', price: '1899' },
     ],
   },
@@ -103,7 +95,25 @@ const PLANS: OrganizationPlan[] = [
       { number: '1800', price: '999' },
       { number: '1900', price: '1049' },
       { number: '2000', price: '1099' },
+      { number: '2100', price: '1599' },
+      { number: '2200', price: '1599' },
+      { number: '2300', price: '1599' },
+      { number: '2400', price: '1599' },
+      { number: '2500', price: '1599' },
+      { number: '2600', price: '1599' },
+      { number: '2700', price: '1599' },
+      { number: '2800', price: '1599' },
+      { number: '2900', price: '1599' },
       { number: '3000', price: '1599' },
+      { number: '3100', price: '2099' },
+      { number: '3200', price: '2099' },
+      { number: '3300', price: '2099' },
+      { number: '3400', price: '2099' },
+      { number: '3500', price: '2099' },
+      { number: '3600', price: '2099' },
+      { number: '3700', price: '2099' },
+      { number: '3800', price: '2099' },
+      { number: '3900', price: '2099' },
       { number: '4000', price: '2099' },
     ],
   },
@@ -117,7 +127,7 @@ const PLANS: OrganizationPlan[] = [
 ]
 
 const PLAN_DEFAULT: OrganizationPlanType = OrganizationPlanType.FREE
-const DEPLOY_DEFAULT: Value = DEPLOYS[0]
+const DEPLOY_DEFAULT = 100
 
 const DEFAULT_PRICE = {
   [OrganizationPlanType.FREE]: { disable: false },
@@ -154,23 +164,23 @@ export function OnboardingPricing() {
     }
   }, [selectPlan, navigate, organization_name, project_name])
 
-  const chooseDeploy = (value: Value | null) => {
+  const chooseDeploy = (value: number | null) => {
     if (value) {
       setCurrentDeploy(value)
 
-      if (parseFloat(value.value) > 100) {
+      if (value > 100) {
         setSelectPlan(OrganizationPlanType.PROFESSIONAL)
         setCurrentValue({
           [OrganizationPlanType.FREE]: { disable: true },
-          [OrganizationPlanType.PROFESSIONAL]: { number: value?.value, disable: false },
-          [OrganizationPlanType.BUSINESS]: { number: value?.value, disable: false },
+          [OrganizationPlanType.PROFESSIONAL]: { number: value.toString(), disable: false },
+          [OrganizationPlanType.BUSINESS]: { number: value.toString(), disable: false },
           [OrganizationPlanType.ENTERPRISE]: { disable: false },
         })
       } else {
         setCurrentValue({
           [OrganizationPlanType.FREE]: { disable: false },
-          [OrganizationPlanType.PROFESSIONAL]: { number: value?.value, disable: false },
-          [OrganizationPlanType.BUSINESS]: { number: value?.value, disable: false },
+          [OrganizationPlanType.PROFESSIONAL]: { number: value.toString(), disable: false },
+          [OrganizationPlanType.BUSINESS]: { number: value.toString(), disable: false },
           [OrganizationPlanType.ENTERPRISE]: { disable: false },
         })
       }
@@ -213,7 +223,6 @@ export function OnboardingPricing() {
       currentValue={currentValue}
       plans={PLANS}
       chooseDeploy={chooseDeploy}
-      deploys={DEPLOYS}
       currentDeploy={currentDeploy}
       onSubmit={onSubmit}
       loading={loading}

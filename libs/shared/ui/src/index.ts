@@ -1,4 +1,3 @@
-export * from './lib/components/loading-screen/loading-screen'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'
@@ -10,5 +9,7 @@ export * from './lib/components/inputs/input-radio/input-radio'
 export * from './lib/components/inputs/input-select-small/input-select-small'
 export * from './lib/components/navbar/navbar'
 export * from './lib/components/layouts/layout-page/layout-page'
+export * from './lib/components/slider/slider'
+export * from './lib/components/loading-screen/loading-screen'
 export * from './lib/components/buttons/button/button'
 export * from './lib/components/buttons/button-icon/button-icon'

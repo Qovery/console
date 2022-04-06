@@ -1,6 +1,5 @@
 import { OrganizationPlan, OrganizationPlanType } from '@console/domains/organization'
-import { Value } from '@console/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle, Icon, InputSelectSmall } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, Slider } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
@@ -8,10 +7,9 @@ interface StepPricingProps {
   selectPlan: string
   setSelectPlan: (value: OrganizationPlanType) => void
   plans: OrganizationPlan[]
-  chooseDeploy: (value: Value | null) => void
+  chooseDeploy: (value: number | null) => void
   currentValue: { [name: string]: { number?: string | undefined; disable: boolean | undefined } }
-  currentDeploy: Value
-  deploys: Value[]
+  currentDeploy: number
   onSubmit: () => void
   loading: boolean
   onClickContact: () => void
@@ -24,7 +22,6 @@ export function StepPricing(props: StepPricingProps) {
     plans,
     chooseDeploy,
     currentValue,
-    deploys,
     currentDeploy,
     onSubmit,
     loading,
@@ -48,15 +45,16 @@ export function StepPricing(props: StepPricingProps) {
         .
       </p>
       <form>
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-text-500 text-sm">Number of deployments needed</p>
-          <InputSelectSmall
-            name="pricing"
-            items={deploys}
-            defaultItem={currentDeploy}
-            getValue={(name, value: Value | null) => chooseDeploy(value)}
-            className="w-32"
-          ></InputSelectSmall>
+        <div className="flex mb-4">
+          <Slider
+            min={100}
+            max={4000}
+            step={100}
+            label="Number of deployments needed"
+            valueLabel="/month"
+            defaultValue={currentDeploy}
+            getValue={(value: number) => chooseDeploy(value)}
+          />
         </div>
 
         {plans.map((plan: OrganizationPlan, index: number) => (
@@ -73,7 +71,7 @@ export function StepPricing(props: StepPricingProps) {
             disable={currentValue[plan.name].disable}
           />
         ))}
-
+        <p className="text-xs text-text-400 text-right mt-2">Base plan 49$ + 50$ * 300 deployments = 69$</p>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
