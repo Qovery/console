@@ -1,4 +1,4 @@
-import Icon from '../icon/icon'
+import Icon from '../../icon/icon'
 import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
 
