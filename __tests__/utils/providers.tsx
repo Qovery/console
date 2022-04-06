@@ -1,13 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { ComponentType, ReactNode } from 'react'
+import React, { ComponentType, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { initialRootState, rootReducer, RootState } from '../../libs/store/data/src'
-import React from 'react'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { IntercomProvider } from 'react-use-intercom'
-import posthog from "posthog-js";
-import { environment } from "apps/console/src/environments/environment";
+import posthog from 'posthog-js'
 
 type Params = {
   Component: ComponentType<any>
@@ -22,7 +20,8 @@ type Props = {
 
 export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootState(), route = '/' }) => {
   window.history.pushState({}, 'Test page', route)
-  posthog.init(environment.posthog, {
+
+  posthog.init('__test__posthog__token', {
     api_host: '__test__environment__posthog__apihost',
   })
 

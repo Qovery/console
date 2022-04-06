@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import axios from 'axios'
@@ -31,6 +31,7 @@ export const ROUTER = [
   },
 ]
 
+
 export function App() {
   useDocumentTitle('Loading...')
   const { isLoading, getCurrentUser } = useAuth()
@@ -43,9 +44,6 @@ export function App() {
   useEffect(() => {
     // if (process.env['NODE_ENV'] === 'production') {
     // init posthog
-    posthog.init(environment.posthog, {
-      api_host: environment.posthog_apihost,
-    })
 
     // if onboarding feature flag activated we add onboarding routes to router
     if (posthog.isFeatureEnabled('v3-onboarding')) {
