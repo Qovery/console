@@ -43,7 +43,6 @@ export function App() {
 
   useEffect(() => {
     // if (process.env['NODE_ENV'] === 'production') {
-    // init posthog
 
     // if onboarding feature flag activated we add onboarding routes to router
     if (posthog.isFeatureEnabled('v3-onboarding')) {
