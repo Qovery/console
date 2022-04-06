@@ -13,7 +13,7 @@ concurrency:
 
 env:
   CI: true # Making sure
-  NX_BRANCH: ${{ github.event.number }}
+  NX_BRANCH: ${{ github.head_ref }}
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
 
 jobs:
