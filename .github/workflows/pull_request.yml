@@ -3,7 +3,7 @@ name: Pull Requests Pipeline
 on:
   pull_request:
     branches:
-      - develop
+      - staging
 
 # Define a concurrency group at the branch level for the current workflows.
 # Trigerred workflow will be queued and cancel the previous ones.
@@ -47,7 +47,7 @@ jobs:
       matrix:
         target: [test, build]
     steps:
-      - name: Checkout [develop]
+      - name: Checkout [staging]
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
@@ -76,7 +76,7 @@ jobs:
     if: always()
     needs: [nx]
     steps:
-      - name: Checkout [develop]
+      - name: Checkout [staging]
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
