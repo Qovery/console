@@ -2263,17 +2263,6 @@
     tiny-warning "^1.0.3"
     tslib "^2.3.0"
 
-"@reach/slider@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@reach/slider/-/slider-0.16.0.tgz#1887f9a0f399de4c16394260d56efbfeedbef715"
-  integrity sha512-RdJTndvn5TMJXrt9ut5xpFTXTaIllE9H+zyFT5awmNqC+0r6/kt7fFxMPAy4UI0CTFMcQXRfj6qA/TVe/vf5Tw==
-  dependencies:
-    "@reach/auto-id" "0.16.0"
-    "@reach/utils" "0.16.0"
-    prop-types "^15.7.2"
-    tiny-warning "^1.0.3"
-    tslib "^2.3.0"
-
 "@reach/utils@0.16.0":
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.16.0.tgz#5b0777cf16a7cab1ddd4728d5d02762df0ba84ce"
@@ -3640,6 +3629,14 @@
     "@swc/core-win32-arm64-msvc" "1.2.151"
     "@swc/core-win32-ia32-msvc" "1.2.151"
     "@swc/core-win32-x64-msvc" "1.2.151"
+
+"@szhsin/react-menu@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@szhsin/react-menu/-/react-menu-3.0.0.tgz#918ffda4d3583372715c60311950010f28afb2c2"
+  integrity sha512-KLyIp6mqOLzDNnLVtYYy7m3IfjwVpJImqFaPbNY0oT2cScD559E8dG6jl7dzk2FBav/zjqXd54vzjyHZAB83yQ==
+  dependencies:
+    prop-types "^15.7.2"
+    react-transition-state "^1.1.4"
 
 "@testing-library/dom@^8.0.0":
   version "8.11.3"
@@ -13409,6 +13406,11 @@ react-transition-group@^4.3.0:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-transition-state@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/react-transition-state/-/react-transition-state-1.1.4.tgz#113224eaa27e0ff81661305e44d5e0348cdf61ac"
+  integrity sha512-6nQLWWx95gYazCm6OdtD1zGbRiirvVXPrDtHAGsYb4xs9spMM7bA8Vx77KCpjL8PJ8qz1lXFGz2PTboCSvt7iw==
 
 react-use-intercom@^1.5.0:
   version "1.5.0"
