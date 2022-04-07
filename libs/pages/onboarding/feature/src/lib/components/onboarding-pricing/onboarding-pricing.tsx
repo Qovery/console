@@ -108,8 +108,6 @@ export function OnboardingPricing() {
     if (value) {
       setCurrentDeploy(value)
 
-      console.log(value)
-
       if (value > 100) {
         if (selectPlan === OrganizationPlanType.FREE) setSelectPlan(OrganizationPlanType.PROFESSIONAL)
 
