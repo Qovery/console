@@ -58,17 +58,15 @@ export function OnboardingRightContent(props: OnboardingRightContentProps) {
         <PlanList title="Free" description="Start to deploy your apps on your cloud account" lists={FreeList} />
       ) : detectCurrentStep(ONBOARDING_PRICING_PRO_URL) ? (
         <PlanList
-          title="Professional plan $49/month*"
+          title="Professional plan $49/month"
           description="Ideal for scaling apps and growing teams"
           lists={ProList}
-          infos="* Price plan does not include your AWS costs"
         />
       ) : detectCurrentStep(ONBOARDING_PRICING_BUSINESS_URL) ? (
         <PlanList
-          title="Business plan $599/month*"
+          title="Business plan $599/month"
           description="Ideal for better security and compliance"
           lists={BusinessList}
-          infos="* Price plan does not include your AWS costs"
         />
       ) : detectCurrentStep(ONBOARDING_PRICING_ENTERPRISE_URL) ? (
         <PlanList
