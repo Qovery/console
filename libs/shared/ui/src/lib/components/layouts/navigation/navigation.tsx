@@ -2,7 +2,6 @@ import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
 import { Avatar } from '../../avatar/avatar'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
-import ModalArrow from '../../modals/modal-arrow/modal-arrow'
 
 export function Navigation() {
   return (
