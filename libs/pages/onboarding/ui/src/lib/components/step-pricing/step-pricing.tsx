@@ -97,7 +97,7 @@ export function StepPricing(props: StepPricingProps) {
           />
         ))}
         {priceParagraph()}
-        <p className="text-xs text-text-400 text-right mt-1">* Price plan does not include your AWS costs</p>
+        <p className="text-xs text-text-400 text-right mt-1">Price plan does not include your AWS costs</p>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
