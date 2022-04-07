@@ -1,0 +1,19 @@
+.modal__content {
+  @apply py-5 px-4 bg-element-light-lighter-500 rounded shadow-lg w-max;
+}
+
+.modal--arrow {
+  @apply relative;
+
+  .modal__content {
+    @apply py-4 px-3 w-96 absolute;
+  }
+}
+
+.modal__trigger {
+  @apply w-max;
+}
+
+.modal__arrow {
+  @apply w-4 h-4 rounded-sm rotate-45 absolute -top-2 left-4 bg-element-light-lighter-500;
+}

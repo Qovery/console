@@ -2,8 +2,12 @@ import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router'
 import { useIntercom } from 'react-use-intercom'
 import { StepPricing } from '@console/pages/onboarding/ui'
-import { Value } from '@console/shared/interfaces'
-import { OrganizationPlan, OrganizationPlanType, useOrganization } from '@console/domains/organization'
+import {
+  OrganizationPlan,
+  OrganizationPlanType,
+  OrganizationPrice,
+  useOrganization,
+} from '@console/domains/organization'
 import {
   ONBOARDING_PRICING_URL,
   ONBOARDING_PROJECT_URL,
@@ -14,30 +18,22 @@ import {
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
 
-const DEPLOYS: Value[] = [
-  { label: '100/month', value: '100' },
-  { label: '200/month', value: '200' },
-  { label: '300/month', value: '300' },
-  { label: '400/month', value: '400' },
-  { label: '500/month', value: '500' },
-  { label: '600/month', value: '600' },
-  { label: '700/month', value: '700' },
-  { label: '800/month', value: '800' },
-  { label: '900/month', value: '900' },
-  { label: '1000/month', value: '1000' },
-  { label: '1100/month', value: '1100' },
-  { label: '1200/month', value: '1200' },
-  { label: '1300/month', value: '1300' },
-  { label: '1400/month', value: '1400' },
-  { label: '1500/month', value: '1500' },
-  { label: '1600/month', value: '1600' },
-  { label: '1700/month', value: '1700' },
-  { label: '1800/month', value: '1800' },
-  { label: '1900/month', value: '1900' },
-  { label: '2000/month', value: '2000' },
-  { label: '3000/month', value: '3000' },
-  { label: '4000/month', value: '4000' },
-]
+function listPrice(base: number, isBusinessPlan?: boolean) {
+  const results: OrganizationPrice[] = []
+  let multiple = 0
+
+  for (let i = 100; i <= 4000; i = i + 100) {
+    const nbDeploy = isBusinessPlan ? 1000 : 300
+
+    if (i > nbDeploy) multiple += 1
+    const price = i > nbDeploy ? base + 50 * multiple : base
+    results.push({
+      number: i.toString(),
+      price: price.toString(),
+    })
+  }
+  return results
+}
 
 const PLANS: OrganizationPlan[] = [
   {
@@ -52,72 +48,26 @@ const PLANS: OrganizationPlan[] = [
     title: 'Professional',
     text: 'For 5-20 members',
     price: 49,
-    listPrice: [
-      { number: '100', price: '49' },
-      { number: '200', price: '49' },
-      { number: '300', price: '49' },
-      { number: '400', price: '99' },
-      { number: '500', price: '149' },
-      { number: '600', price: '199' },
-      { number: '700', price: '249' },
-      { number: '800', price: '299' },
-      { number: '900', price: '349' },
-      { number: '1000', price: '399' },
-      { number: '1100', price: '449' },
-      { number: '1200', price: '499' },
-      { number: '1300', price: '549' },
-      { number: '1400', price: '599' },
-      { number: '1500', price: '649' },
-      { number: '1600', price: '699' },
-      { number: '1700', price: '749' },
-      { number: '1800', price: '799' },
-      { number: '1900', price: '849' },
-      { number: '2000', price: '899' },
-      { number: '3000', price: '1399' },
-      { number: '4000', price: '1899' },
-    ],
+    listPrice: listPrice(49, false),
   },
   {
     name: OrganizationPlanType.BUSINESS,
     title: 'Business',
-    text: 'For medium compagny',
-    price: 399,
-    listPrice: [
-      { number: '100', price: '599' },
-      { number: '200', price: '599' },
-      { number: '300', price: '599' },
-      { number: '400', price: '599' },
-      { number: '500', price: '599' },
-      { number: '600', price: '599' },
-      { number: '700', price: '599' },
-      { number: '800', price: '599' },
-      { number: '900', price: '599' },
-      { number: '1000', price: '599' },
-      { number: '1100', price: '649' },
-      { number: '1200', price: '699' },
-      { number: '1300', price: '749' },
-      { number: '1400', price: '799' },
-      { number: '1500', price: '849' },
-      { number: '1600', price: '899' },
-      { number: '1700', price: '949' },
-      { number: '1800', price: '999' },
-      { number: '1900', price: '1049' },
-      { number: '2000', price: '1099' },
-      { number: '3000', price: '1599' },
-      { number: '4000', price: '2099' },
-    ],
+    text: 'For medium company',
+    price: 599,
+    listPrice: listPrice(599, true),
   },
   {
     name: OrganizationPlanType.ENTERPRISE,
     title: 'Enterprise',
-    text: 'For large compagny',
+    text: 'For large company',
     price: 0,
     listPrice: [],
   },
 ]
 
 const PLAN_DEFAULT: OrganizationPlanType = OrganizationPlanType.FREE
-const DEPLOY_DEFAULT: Value = DEPLOYS[0]
+const DEPLOY_DEFAULT = 100
 
 const DEFAULT_PRICE = {
   [OrganizationPlanType.FREE]: { disable: false },
@@ -154,23 +104,24 @@ export function OnboardingPricing() {
     }
   }, [selectPlan, navigate, organization_name, project_name])
 
-  const chooseDeploy = (value: Value | null) => {
+  const chooseDeploy = (value: number | null) => {
     if (value) {
       setCurrentDeploy(value)
 
-      if (parseFloat(value.value) > 100) {
-        setSelectPlan(OrganizationPlanType.PROFESSIONAL)
+      if (value > 100) {
+        if (selectPlan === OrganizationPlanType.FREE) setSelectPlan(OrganizationPlanType.PROFESSIONAL)
+
         setCurrentValue({
           [OrganizationPlanType.FREE]: { disable: true },
-          [OrganizationPlanType.PROFESSIONAL]: { number: value?.value, disable: false },
-          [OrganizationPlanType.BUSINESS]: { number: value?.value, disable: false },
+          [OrganizationPlanType.PROFESSIONAL]: { number: value.toString(), disable: false },
+          [OrganizationPlanType.BUSINESS]: { number: value.toString(), disable: false },
           [OrganizationPlanType.ENTERPRISE]: { disable: false },
         })
       } else {
         setCurrentValue({
           [OrganizationPlanType.FREE]: { disable: false },
-          [OrganizationPlanType.PROFESSIONAL]: { number: value?.value, disable: false },
-          [OrganizationPlanType.BUSINESS]: { number: value?.value, disable: false },
+          [OrganizationPlanType.PROFESSIONAL]: { number: value.toString(), disable: false },
+          [OrganizationPlanType.BUSINESS]: { number: value.toString(), disable: false },
           [OrganizationPlanType.ENTERPRISE]: { disable: false },
         })
       }
@@ -213,7 +164,6 @@ export function OnboardingPricing() {
       currentValue={currentValue}
       plans={PLANS}
       chooseDeploy={chooseDeploy}
-      deploys={DEPLOYS}
       currentDeploy={currentDeploy}
       onSubmit={onSubmit}
       loading={loading}

@@ -38,6 +38,14 @@
   @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
 }
 
+.btn--alt {
+  @apply bg-transparent text-text-400 hover:bg-element-light-lighter-400 hover:text-brand-500;
+}
+
+.btn--dark {
+  @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
+}
+
 // state
 .btn--disabled {
   @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;
@@ -55,4 +63,33 @@
 
 .btn-login--default {
   @apply bg-element-light-lighter-300 text-text-700 border border-element-light-lighter-600 hover:bg-element-light-lighter-400;
+}
+
+// icon
+.btn-icon {
+  @apply w-8 h-8 p-0 min-w-0 relative;
+
+  &.btn-icon--big {
+    @apply w-9 h-9;
+  }
+}
+
+.btn-icon--raised {
+  @apply bg-brand-100 text-brand-300 hover:bg-brand-200;
+}
+
+.btn-icon--stroked {
+  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-text-500;
+}
+
+.btn-icon--flat {
+  @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
+}
+
+.btn-icon--alt {
+  @apply bg-transparent text-text-400 hover:bg-element-light-lighter-400 hover:text-brand-500;
+}
+
+.btn-icon--dark {
+  @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
 }

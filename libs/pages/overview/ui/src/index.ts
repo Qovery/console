@@ -1,1 +1,1 @@
-export * from './components/overview/overview'
+export * from './lib/components/overview/overview'

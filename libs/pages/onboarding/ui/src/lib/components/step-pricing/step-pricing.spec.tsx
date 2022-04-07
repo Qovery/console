@@ -1,3 +1,4 @@
+import { OrganizationPlanType } from '@console/domains/organization'
 import { render } from '__tests__/utils/setup-jest'
 
 import StepPricing from './step-pricing'
@@ -8,23 +9,23 @@ describe('StepPricing', () => {
 
   beforeEach(() => {
     props = {
-      select: '',
-      setSelect: jest.fn(),
-      displayDeploy: false,
+      selectPlan: OrganizationPlanType.BUSINESS,
+      setSelectPlan: jest.fn(),
       plans: [
         {
-          name: 'planName',
+          name: OrganizationPlanType.BUSINESS,
           title: 'some-title',
           text: 'bla bla',
+          price: 49,
           listPrice: [{ number: '1', price: '100' }],
-          listDeploy: [{ label: 'some-label', value: 'some-value' }],
         },
       ],
       chooseDeploy: jest.fn(),
-      currentValue: { planName: { disable: false, number: '1' } },
-      defaultValue: { planName: { label: 'some-label', value: 'some-valuelistPrice' } },
-      currentDeploy: { label: 'some-label', value: 'some-value' },
-      deploys: [{ label: 'some-label', value: 'some-value' }],
+      currentValue: { [OrganizationPlanType.BUSINESS]: { disable: false, number: '1' } },
+      currentDeploy: 100,
+      onSubmit: jest.fn(),
+      loading: false,
+      onClickContact: jest.fn(),
     }
   })
 
