@@ -35,8 +35,6 @@ function listPrice(base: number, isBusinessPlan?: boolean) {
   return results
 }
 
-console.log(listPrice(49, false))
-
 const PLANS: OrganizationPlan[] = [
   {
     name: OrganizationPlanType.FREE,
