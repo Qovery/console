@@ -53,14 +53,14 @@ const PLANS: OrganizationPlan[] = [
   {
     name: OrganizationPlanType.BUSINESS,
     title: 'Business',
-    text: 'For medium compagny',
+    text: 'For medium company',
     price: 599,
     listPrice: listPrice(599, true),
   },
   {
     name: OrganizationPlanType.ENTERPRISE,
     title: 'Enterprise',
-    text: 'For large compagny',
+    text: 'For large company',
     price: 0,
     listPrice: [],
   },
@@ -108,8 +108,11 @@ export function OnboardingPricing() {
     if (value) {
       setCurrentDeploy(value)
 
+      console.log(value)
+
       if (value > 100) {
-        setSelectPlan(OrganizationPlanType.PROFESSIONAL)
+        if (selectPlan === OrganizationPlanType.FREE) setSelectPlan(OrganizationPlanType.PROFESSIONAL)
+
         setCurrentValue({
           [OrganizationPlanType.FREE]: { disable: true },
           [OrganizationPlanType.PROFESSIONAL]: { number: value.toString(), disable: false },

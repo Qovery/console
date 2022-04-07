@@ -43,9 +43,7 @@ export function StepPricing(props: StepPricingProps) {
         <p className="text-xs text-text-400 text-right mt-2">
           {`Price computed as: Base Plan (${
             currentPlans?.price
-          }$) + Additional ${currentDeploy} Deployments (${deploymentPrice}$) = ${
-            currentPlans?.price + deploymentPrice
-          }$`}
+          }$) + ${currentDeploy} Deployments (${deploymentPrice}$) = ${currentPlans?.price + deploymentPrice}$`}
         </p>
       )
     } else {
