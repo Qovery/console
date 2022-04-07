@@ -43,9 +43,7 @@ export function StepPricing(props: StepPricingProps) {
         <p className="text-xs text-text-400 text-right mt-2">
           {`Price computed as: Base Plan (${
             currentPlans?.price
-          }$) + Additional ${currentDeploy} Deployments (${deploymentPrice}$) = ${
-            currentPlans?.price + deploymentPrice
-          }$`}
+          }$) + ${currentDeploy} Deployments (${deploymentPrice}$) = ${currentPlans?.price + deploymentPrice}$`}
         </p>
       )
     } else {
@@ -97,7 +95,7 @@ export function StepPricing(props: StepPricingProps) {
           />
         ))}
         {priceParagraph()}
-        <p className="text-xs text-text-400 text-right mt-1">* Price plan does not include your AWS costs</p>
+        <p className="text-xs text-text-400 text-right mt-1">Price plan does not include your AWS costs</p>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
