@@ -3,7 +3,7 @@ import { Button, ButtonSize, ButtonStyle, Icon, Slider } from '@console/shared/u
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
 
-interface StepPricingProps {
+export interface StepPricingProps {
   selectPlan: OrganizationPlanType
   setSelectPlan: (value: OrganizationPlanType) => void
   plans: OrganizationPlan[]
@@ -82,9 +82,9 @@ export function StepPricing(props: StepPricingProps) {
           />
         </div>
 
-        {plans.map((plan: OrganizationPlan, index: number) => (
+        {plans.map((plan: OrganizationPlan) => (
           <PlanCard
-            key={index}
+            key={plan.name}
             name={plan.name}
             selected={selectPlan}
             title={plan.title}
