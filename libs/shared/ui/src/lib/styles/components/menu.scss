@@ -1,0 +1,6 @@
+@import '@szhsin/react-menu/dist/index.css';
+@import '@szhsin/react-menu/dist/transitions/slide.css';
+
+.menu__container {
+  @apply w-[340px] rounded shadow-lg p-0;
+}
