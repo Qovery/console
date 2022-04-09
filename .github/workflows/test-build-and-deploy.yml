@@ -1,9 +1,32 @@
-name: Pull Requests Pipeline
+name: Test, Build And Deploy to Qovery
 
 on:
-  pull_request:
-    branches:
-      - staging
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      configuration:
+        required: true
+        type: string
+      organization-id:
+        required: true
+        type: string
+      project-name:
+        required: true
+        type: string
+      environment-name:
+        required: true
+        type: string
+      application-names:
+        required: true
+        type: string
+      application-commit-id:
+        required: true
+        type: string
+    secrets:
+      api-token:
+        required: true
 
 # Define a concurrency group at the branch level for the current workflows.
 # Trigerred workflow will be queued and cancel the previous ones.
@@ -12,7 +35,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  CI: true # Making sure
   NX_BRANCH: ${{ github.head_ref }}
   NX_CLOUD_DISTRIBUTED_EXECUTION: true
 
@@ -20,7 +42,7 @@ jobs:
   install-deps:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Cache node modules
         id: cache
         uses: actions/cache@v2
@@ -47,8 +69,8 @@ jobs:
       matrix:
         target: [test, build]
     steps:
-      - name: Checkout [staging]
-        uses: actions/checkout@v2
+      - name: Checkout [${{ inputs.branch }}]
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: szenius/set-timezone@v1.0
@@ -63,12 +85,29 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v2
         with:
-          main-branch-name: 'staging'
+          main-branch-name: ${{ inputs.branch }}
       - uses: actions/setup-node@v1
         with:
           node-version: 16
       - name: Nx Affected
-        run: yarn nx affected --target=${{ matrix.target }} --parallel --max-parallel=3 --configuration=staging
+        run: yarn nx affected --target=${{ matrix.target }} --parallel --max-parallel=3 --configuration=${{ inputs.configuration }}
+  deploy:
+    name: Deploy to Qovery
+    runs-on: ubuntu-latest
+    needs: [nx]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy on Qovery
+        uses: Qovery/qovery-action@v0.10
+        id: qovery
+        with:
+          qovery-organization-id: ${{ inputs.organization-id }}
+          qovery-environment-name: ${{ inputs.environment-name }}
+          qovery-project-name: ${{ inputs.project-name }}
+          qovery-application-names: ${{ inputs.application-name }}
+          qovery-application-commit-id: ${{ inputs.application-commit-id }}
+          qovery-api-token: ${{ secrets.api-token }}
 
   stop_agents:
     name: Stop Agents
@@ -76,7 +115,7 @@ jobs:
     if: always()
     needs: [nx]
     steps:
-      - name: Checkout [staging]
+      - name: Checkout [${{ inputs.branch }}]
         uses: actions/checkout@v2
         with:
           fetch-depth: 0

@@ -1,0 +1,19 @@
+name: Deploy staging
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  test-build-and-deploy:
+    uses: ./.github/workflows/test-build-and-deploy.yml
+    with:
+      branch: main
+      configuration: production
+      organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
+      project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
+      environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_PRODUCTION }}
+      application-names: ${{ secrets.QOVERY_APPLICATION_NAMES }}
+      application-commit-id: ${{ github.sha }}
+    secrets:
+      api-token: ${{ secrets.QOVERY_API_TOKEN }}
