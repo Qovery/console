@@ -9,6 +9,10 @@ on:
       configuration:
         required: true
         type: string
+      application-commit-id:
+        required: true
+        type: string
+    secrets:
       organization-id:
         required: true
         type: string
@@ -21,10 +25,6 @@ on:
       application-names:
         required: true
         type: string
-      application-commit-id:
-        required: true
-        type: string
-    secrets:
       api-token:
         required: true
 
