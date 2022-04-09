@@ -15,16 +15,12 @@ on:
     secrets:
       organization-id:
         required: true
-        type: string
       project-name:
         required: true
-        type: string
       environment-name:
         required: true
-        type: string
       application-names:
         required: true
-        type: string
       api-token:
         required: true
 
