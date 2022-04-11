@@ -73,7 +73,7 @@ describe('Menu', () => {
   it('should an item have an icon', () => {
     props.menus = [
       {
-        items: [{ name: 'Test 1', link: '/', iconLeft: <Icon name="icon-solid-layer-group" /> }],
+        items: [{ name: 'Test 1', link: '/', contentLeft: <Icon name="icon-solid-layer-group" /> }],
       },
     ]
 

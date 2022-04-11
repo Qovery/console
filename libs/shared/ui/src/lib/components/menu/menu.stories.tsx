@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react'
 import Button from '../buttons/button/button'
 import { select } from '@storybook/addon-knobs'
 import Icon from '../icon/icon'
+import { MenuItemProps } from './menu-item/menu-item'
 
 export default {
   component: Menu,
@@ -12,8 +13,8 @@ export default {
 const menus = [
   {
     items: [
-      { name: 'Test 1', link: '/', iconLeft: <Icon name="icon-solid-layer-group" className="text-brand-400" /> },
-      { name: 'Test 2', link: '/', iconRight: <Icon name="icon-solid-star" className="text-yellow-400 text-sm" /> },
+      { name: 'Test 1', link: '/', contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400" /> },
+      { name: 'Test 2', link: '/', contentRight: <Icon name="icon-solid-star" className="text-yellow-400 text-sm" /> },
       { name: 'Test 3', link: '/' },
     ],
     title: 'Test',
@@ -29,11 +30,11 @@ const menus = [
   },
 ]
 
-const Template: Story<MenuProps> = (args) => (
-  <Menu open={true} menus={menus} arrowAlign={MenuAlign.START} trigger={<Button>Trigger</Button>}></Menu>
-)
+const Template: Story<MenuProps> = (args) => <Menu open={false} menus={menus} trigger={<Button>Trigger</Button>}></Menu>
 
-export const Primary = Template.bind({
+export const Primary = Template.bind({})
+
+Primary.args = {
   direction: select('Size', MenuDirection, MenuDirection.RIGHT),
   arrowAlign: select('Type', MenuAlign, MenuAlign.CENTER),
-})
+}

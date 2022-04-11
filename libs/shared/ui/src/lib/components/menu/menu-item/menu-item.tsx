@@ -4,12 +4,12 @@ import Icon from '../../icon/icon'
 export interface MenuItemProps {
   name: string
   link: string
-  iconLeft?: React.ReactNode
-  iconRight?: React.ReactNode
+  contentLeft?: React.ReactNode
+  contentRight?: React.ReactNode
 }
 
 export function MenuItem(props: MenuItemProps) {
-  const { name, link, iconLeft, iconRight } = props
+  const { name, link, contentLeft, contentRight } = props
 
   return (
     <Item
@@ -18,10 +18,10 @@ export function MenuItem(props: MenuItemProps) {
       data-testid="menuItem"
     >
       <div>
-        {iconLeft && <span className="mr-2">{iconLeft}</span>}
+        {contentLeft && <span className="mr-2">{contentLeft}</span>}
         <span className="text-sm text-text-500 font-medium">{name}</span>
       </div>
-      <div>{iconRight && <span className="ml-2">{iconRight}</span>}</div>
+      <div>{contentRight && <span className="ml-2">{contentRight}</span>}</div>
     </Item>
   )
 }

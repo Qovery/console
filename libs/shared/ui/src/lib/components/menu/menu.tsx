@@ -24,6 +24,7 @@ export interface MenuProps {
   arrowAlign?: MenuAlign
   menus: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string }[]
   className?: string
+  header?: React.ReactNode
 }
 
 export function Menu(props: MenuProps) {
@@ -41,10 +42,8 @@ export function Menu(props: MenuProps) {
   const [isOpen, setOpen] = useState(false)
 
   useEffect(() => {
-    if (open) {
-      setOpen(true)
-    }
-  }, [])
+    setOpen(open)
+  }, [open])
 
   return (
     <>
@@ -59,14 +58,19 @@ export function Menu(props: MenuProps) {
         anchorRef={ref}
         align={arrowAlign}
         className="menu"
-        menuClassName={`${className} menu__container`}
+        menuClassName={`${className} menu__container menu__container--${direction} menu__container--${
+          isOpen ? 'open' : 'closed'
+        }`}
+        transition={true}
       >
         {children}
         {menus.map((menu, index) => (
           <MenuGroup key={index} menu={menu} isLast={index === menus.length - 1 ? true : false}></MenuGroup>
         ))}
       </ControlledMenu>
-      {isOpen && <div className="fixed w-full h-full top-0 left-0 bg-element-light-darker-500 opacity-20 z-50"></div>}
+      {isOpen && (
+        <div className="menu__overlay fixed w-full h-full top-0 left-0 bg-element-light-darker-500 opacity-20 z-50"></div>
+      )}
     </>
   )
 }

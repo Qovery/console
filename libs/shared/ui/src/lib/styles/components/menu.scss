@@ -1,6 +1,85 @@
 @import '@szhsin/react-menu/dist/index.css';
-@import '@szhsin/react-menu/dist/transitions/slide.css';
+
+$menuTiming: 0.15s;
 
 .menu__container {
   @apply w-[340px] rounded shadow-lg p-0;
+}
+
+// overlay
+.menu__overlay {
+  animation: menuShowOverlay $menuTiming ease-out;
+}
+
+// bottom
+.menu__container--bottom {
+  &.menu__container--open {
+    animation: menuOpenBottom $menuTiming ease-out;
+  }
+}
+
+// top
+.menu__container--top {
+  &.menu__container--open {
+    animation: menuOpenTop $menuTiming ease-out;
+  }
+}
+
+// left
+.menu__container--left {
+  &.menu__container--open {
+    animation: menuOpenLeft $menuTiming ease-out;
+  }
+}
+
+// right
+.menu__container--right {
+  &.menu__container--open {
+    animation: menuOpenRight $menuTiming ease-out;
+  }
+}
+
+// arrow
+.menu__container {
+  .szh-menu__arrow {
+    animation: menuShowArrow $menuTiming ease-in;
+  }
+}
+
+// animations
+
+@keyframes menuShowOverlay {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes menuOpenBottom {
+  from {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes menuOpenTop {
+  from {
+    transform: translateY(10px);
+  }
+}
+
+@keyframes menuOpenLeft {
+  from {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes menuOpenRight {
+  from {
+    transform: translateX(-10px);
+  }
+}
+
+@keyframes menuShowArrow {
+  from {
+    opacity: 0;
+  }
 }
