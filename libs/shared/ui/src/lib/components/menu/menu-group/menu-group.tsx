@@ -34,8 +34,8 @@ export function MenuGroup(props: MenuGroupProps) {
             key={index}
             name={item.name}
             link={item.link}
-            iconLeft={item?.iconLeft}
-            iconRight={item?.iconRight}
+            contentLeft={item?.contentLeft}
+            contentRight={item?.contentRight}
           />
         ))}
       </div>
