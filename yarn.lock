@@ -13074,10 +13074,10 @@ q@^1.1.2:
   resolved "https://registry.npmjs.org/q/-/q-1.5.1.tgz"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
-qovery-typescript-axios@1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.0.4.tgz#42a519cef08ebb9486b79090fd4faf7c434b12a6"
-  integrity sha512-dF9uy8npwF54OvByELrlJCOcEWl8DIZPeLaMhbrY6yRGiFSdvBQ0ixMvHOJamINlF6aoBP2ixx1eyCMcZPQIAQ==
+qovery-typescript-axios@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.0.6.tgz#6bf1035abac0edf7adf6be875771836096226858"
+  integrity sha512-a2EwQtRanPOAJh84mjQAiYOSMMt0ZjiNnmt+vHzTl1x01sdxueqi2ztvUCH3/vpfj2a+5Gx8I6NB7r+vknAZSg==
   dependencies:
     axios "^0.21.4"
 

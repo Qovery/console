@@ -7,29 +7,28 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { OrganizationInterface } from '../interfaces/organization.interface'
-import { OrganizationMainCallsApi } from "qovery-typescript-axios";
+import { Organization, OrganizationMainCallsApi, OrganizationRequest } from "qovery-typescript-axios";
 
 
 export const ORGANIZATION_KEY = 'organization'
 
 const organizationMainCalls = new OrganizationMainCallsApi(undefined, '', axios)
 
-export interface OrganizationState extends EntityState<OrganizationInterface> {
+export interface OrganizationState extends EntityState<Organization> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
 }
 
-export const organizationAdapter = createEntityAdapter<OrganizationInterface>()
+export const organizationAdapter = createEntityAdapter<Organization>()
 
 export const fetchOrganization = createAsyncThunk('organization/fetch', async () => {
   const response = await organizationMainCalls.listOrganization().then((response) => response.data)
-  return response.results as OrganizationInterface[]
+  return response.results as Organization[]
 })
 
-export const postOrganization = createAsyncThunk<any, OrganizationInterface>(
+export const postOrganization = createAsyncThunk<any, OrganizationRequest>(
   'organization/post',
-  async (data: OrganizationInterface, { rejectWithValue }) => {
+  async (data: OrganizationRequest, { rejectWithValue }) => {
     try {
       const result = await axios.post('/organization', data).then((response) => response.data)
       return result
@@ -58,7 +57,7 @@ export const organizationSlice = createSlice({
       })
       .addCase(
         fetchOrganization.fulfilled,
-        (state: OrganizationState, action: PayloadAction<OrganizationInterface[]>) => {
+        (state: OrganizationState, action: PayloadAction<Organization[]>) => {
           organizationAdapter.setAll(state, action.payload)
           state.loadingStatus = 'loaded'
         }
@@ -71,7 +70,7 @@ export const organizationSlice = createSlice({
       .addCase(postOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(postOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<OrganizationInterface>) => {
+      .addCase(postOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<Organization>) => {
         organizationAdapter.setOne(state, action.payload)
         state.loadingStatus = 'loaded'
       })
