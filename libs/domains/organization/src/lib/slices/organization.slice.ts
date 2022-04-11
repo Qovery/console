@@ -7,8 +7,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { Organization, OrganizationMainCallsApi, OrganizationRequest } from "qovery-typescript-axios";
-
+import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
 
 export const ORGANIZATION_KEY = 'organization'
 
@@ -30,7 +29,7 @@ export const postOrganization = createAsyncThunk<any, OrganizationRequest>(
   'organization/post',
   async (data: OrganizationRequest, { rejectWithValue }) => {
     try {
-      const result = await axios.post('/organization', data).then((response) => response.data)
+      const result = await organizationMainCalls.createOrganization(data).then((response) => response.data)
       return result
     } catch (err) {
       return rejectWithValue(err)
@@ -55,13 +54,10 @@ export const organizationSlice = createSlice({
       .addCase(fetchOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(
-        fetchOrganization.fulfilled,
-        (state: OrganizationState, action: PayloadAction<Organization[]>) => {
-          organizationAdapter.setAll(state, action.payload)
-          state.loadingStatus = 'loaded'
-        }
-      )
+      .addCase(fetchOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<Organization[]>) => {
+        organizationAdapter.setAll(state, action.payload)
+        state.loadingStatus = 'loaded'
+      })
       .addCase(fetchOrganization.rejected, (state: OrganizationState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message

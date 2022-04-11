@@ -7,11 +7,11 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { Project, ProjectRequest } from "qovery-typescript-axios";
+import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 
-
+const projectsApi = new ProjectsApi(undefined, '', axios)
 export interface ProjectsState extends EntityState<Project> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
@@ -19,13 +19,9 @@ export interface ProjectsState extends EntityState<Project> {
 
 export const projectsAdapter = createEntityAdapter<Project>()
 
-export const fetchProjects = createAsyncThunk('projects/fetchStatus', async (_, thunkAPI) => {
-  /**
-   * Replace this with your custom fetch call.
-   * For example, `return myApi.getProjectss()`;
-   * Right now we just return an empty array.
-   */
-  return Promise.resolve([])
+export const fetchProjects = createAsyncThunk<any, { organizationId: string }>('projects/fetchStatus', async (data) => {
+  const response = await projectsApi.listProject(data.organizationId).then((response) => response.data)
+  return response.results as Project[]
 })
 
 export const postProjects = createAsyncThunk<any, { organizationId: string } & ProjectRequest>(
@@ -33,9 +29,7 @@ export const postProjects = createAsyncThunk<any, { organizationId: string } & P
   async (data, { rejectWithValue }) => {
     const { organizationId, ...fields } = data
     try {
-      const result = await axios
-        .post(`/organization/${organizationId}/project`, fields)
-        .then((response) => response.data)
+      const result = await projectsApi.createProject(organizationId, fields).then((response) => response.data)
       return result
     } catch (error) {
       return rejectWithValue(error)
