@@ -2263,17 +2263,6 @@
     tiny-warning "^1.0.3"
     tslib "^2.3.0"
 
-"@reach/slider@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@reach/slider/-/slider-0.16.0.tgz#1887f9a0f399de4c16394260d56efbfeedbef715"
-  integrity sha512-RdJTndvn5TMJXrt9ut5xpFTXTaIllE9H+zyFT5awmNqC+0r6/kt7fFxMPAy4UI0CTFMcQXRfj6qA/TVe/vf5Tw==
-  dependencies:
-    "@reach/auto-id" "0.16.0"
-    "@reach/utils" "0.16.0"
-    prop-types "^15.7.2"
-    tiny-warning "^1.0.3"
-    tslib "^2.3.0"
-
 "@reach/utils@0.16.0":
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.16.0.tgz#5b0777cf16a7cab1ddd4728d5d02762df0ba84ce"

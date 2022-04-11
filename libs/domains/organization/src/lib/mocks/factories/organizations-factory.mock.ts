@@ -1,6 +1,5 @@
 import { Chance } from 'chance'
 import { Organization, PlanEnum } from "qovery-typescript-axios";
-// import { OrganizationPlanType } from '../../enums'
 
 const chance = new Chance()
 
