@@ -11,7 +11,7 @@ import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qov
 
 export const ORGANIZATION_KEY = 'organization'
 
-const organizationMainCalls = new OrganizationMainCallsApi(undefined, '', axios)
+const organizationMainCalls = new OrganizationMainCallsApi()
 
 export interface OrganizationState extends EntityState<Organization> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined

@@ -1,10 +1,9 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import axios from 'axios'
 import { SignUp, SignUpRequest, TypeOfUseEnum, UserSignUpApi } from 'qovery-typescript-axios'
 
 export const USER_SIGNUP_KEY = 'userSignUp'
 
-const userSignUpApi = new UserSignUpApi(undefined, '', axios)
+const userSignUpApi = new UserSignUpApi()
 
 export interface UserSignUpState {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined

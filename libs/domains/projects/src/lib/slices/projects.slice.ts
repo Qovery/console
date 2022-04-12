@@ -11,7 +11,7 @@ import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 
-const projectsApi = new ProjectsApi(undefined, '', axios)
+const projectsApi = new ProjectsApi()
 export interface ProjectsState extends EntityState<Project> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
