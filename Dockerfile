@@ -6,9 +6,6 @@ WORKDIR /app
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV
 
-ARG NX_ONBOARDING
-ENV NX_ONBOARDING $NX_ONBOARDING
-
 ARG NX_QOVERY_API
 ENV NX_QOVERY_API $NX_QOVERY_API
 
@@ -45,7 +42,7 @@ RUN yarn install --production
 # Copy app files
 COPY . .
 # Build the app
-RUN if [ "$NX_ONBOARDING" = "true" ] ; then yarn build-onboarding; else yarn build; fi
+RUN yarn build
 
 # Bundle static assets with nginx
 FROM nginx:latest

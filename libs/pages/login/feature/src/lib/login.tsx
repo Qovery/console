@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
 import { ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum, OVERVIEW_URL } from '@console/shared/utils'
 import { useOrganization } from '@console/domains/organization'
+import posthog from 'posthog-js'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -11,13 +12,13 @@ export function LoginPage() {
 
   useDocumentTitle('Login - Qovery')
 
-  const isOnboarding = process.env['NX_ONBOARDING'] === 'true'
-
   const onClickAuthLogin = async (provider: string) => {
     await authLogin(provider)
   }
 
   useEffect(() => {
+    const isOnboarding = posthog.isFeatureEnabled('v3-onboarding')
+
     async function fetchData() {
       const organization = await getOrganization()
       await createAuthCookies()
@@ -35,7 +36,7 @@ export function LoginPage() {
     if (checkIsAuthenticated) {
       fetchData()
     }
-  }, [getOrganization, navigate, isOnboarding, checkIsAuthenticated, createAuthCookies])
+  }, [getOrganization, navigate, checkIsAuthenticated, createAuthCookies])
 
   return (
     <LayoutLogin>
