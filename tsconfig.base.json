@@ -24,6 +24,8 @@
       "@console/pages/onboarding/ui": ["libs/pages/onboarding/ui/src/index.ts"],
       "@console/pages/overview/feature": ["libs/pages/overview/feature/src/index.ts"],
       "@console/pages/overview/ui": ["libs/pages/overview/ui/src/index.ts"],
+      "@console/pages/settings/feature": ["libs/pages/settings/feature/src/index.ts"],
+      "@console/pages/settings/ui": ["libs/pages/settings/ui/src/index.ts"],
       "@console/shared/enums": ["libs/shared/enums/src/index.ts"],
       "@console/shared/interfaces": ["libs/shared/interfaces/src/index.ts"],
       "@console/shared/ui": ["libs/shared/ui/src/index.ts"],
