@@ -44,7 +44,7 @@ export function FormUser(props: FormUserProps) {
   }, [user, setValue, userSignUp])
 
   const onSubmit = handleSubmit(async (data) => {
-    if (data) {
+    if (data && userSignUp) {
       const checkIfCompany = data['type_of_use'] === 'work'
       if (checkIfCompany) {
         setStepCompany(true)

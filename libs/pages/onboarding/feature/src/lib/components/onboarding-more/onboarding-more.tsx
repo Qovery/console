@@ -44,7 +44,7 @@ export function OnboardingMore() {
   }, [setValue, userSignUp])
 
   const onSubmit = handleSubmit((data) => {
-    if (data) {
+    if (data && userSignUp) {
       // reset qovery usage other
       if (data['qovery_usage'] !== 'other') {
         data['qovery_usage_other'] = null

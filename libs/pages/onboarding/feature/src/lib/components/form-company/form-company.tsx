@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { useUser } from '@console/domains/user'
+import { user, userSignUpSlice, useUser } from '@console/domains/user'
 import { StepCompany } from '@console/pages/onboarding/ui'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/utils'
 import { Value } from '@console/shared/interfaces'
@@ -77,8 +77,11 @@ export function FormCompany(props: FormCompanyProps) {
   }, [setValue, userSignUp])
 
   const onSubmit = handleSubmit((data) => {
-    if (data) {
-      updateUserSignUp({ ...userSignUp, ...data })
+    if (data && userSignUp) {
+      updateUserSignUp({
+        ...userSignUp,
+        ...data,
+      })
       navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
     }
   })

@@ -1,8 +1,7 @@
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { useAuth0 } from '@auth0/auth0-react'
-import { userActions } from '@console/domains/user'
-import { User } from 'qovery-typescript-axios'
+import { userActions, UserInterface } from '@console/domains/user'
 
 export function useAuth() {
   const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
@@ -42,7 +41,7 @@ export function useAuth() {
       const token = await getAccessTokenSilently()
 
       if (user) {
-        const userInfos: User = {
+        const userInfos: UserInterface = {
           name: user.name,
           email: user.email,
           sub: user.sub,

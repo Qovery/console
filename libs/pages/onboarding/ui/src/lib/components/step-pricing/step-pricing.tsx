@@ -1,11 +1,13 @@
-import { OrganizationPlan, OrganizationPlanType } from '@console/domains/organization'
+import { OrganizationPlanType } from '@console/domains/organization'
 import { Button, ButtonSize, ButtonStyle, Icon, Slider } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
+import { PlanEnum } from 'qovery-typescript-axios'
+import { OrganizationPlan } from 'libs/domains/organization/src/lib/interfaces/organization-plan.interface'
 
 export interface StepPricingProps {
-  selectPlan: OrganizationPlanType
-  setSelectPlan: (value: OrganizationPlanType) => void
+  selectPlan: PlanEnum
+  setSelectPlan: (value: PlanEnum) => void
   plans: OrganizationPlan[]
   chooseDeploy: (value: number | null) => void
   currentValue: { [name: string]: { number?: string | undefined; disable: boolean | undefined } }
@@ -32,7 +34,7 @@ export function StepPricing(props: StepPricingProps) {
     const currentPlans = plans.find((plan) => plan.name === selectPlan)
 
     if (currentPlans && currentPlans.price > 0) {
-      const nbDeploy = selectPlan === OrganizationPlanType.BUSINESS ? 1000 : 300
+      const nbDeploy = selectPlan === PlanEnum.BUSINESS ? 1000 : 300
       let deploymentPrice = 0
 
       if (currentDeploy > nbDeploy) {
@@ -105,12 +107,12 @@ export function StepPricing(props: StepPricingProps) {
           >
             Back
           </Button>
-          {selectPlan === OrganizationPlanType.ENTERPRISE && (
+          {selectPlan === PlanEnum.ENTERPRISE && (
             <Button onClick={onClickContact} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
               Contact us
             </Button>
           )}
-          {selectPlan !== OrganizationPlanType.ENTERPRISE && (
+          {selectPlan !== PlanEnum.ENTERPRISE && (
             <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} onClick={onSubmit} loading={loading}>
               Let’s go
               <span className="ml-1" role="img" aria-label="star">
