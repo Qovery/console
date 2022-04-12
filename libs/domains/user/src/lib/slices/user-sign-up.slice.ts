@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
-import { SignUp, SignUpRequest, UserSignUpApi } from 'qovery-typescript-axios'
+import { SignUp, SignUpRequest, TypeOfUseEnum, UserSignUpApi } from 'qovery-typescript-axios'
 
 export const USER_SIGNUP_KEY = 'userSignUp'
 
@@ -9,7 +9,7 @@ const userSignUpApi = new UserSignUpApi(undefined, '', axios)
 export interface UserSignUpState {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
-  signup?: SignUp
+  signup: SignUp
 }
 
 export const fetchUserSignUp = createAsyncThunk<SignUp>('userSignUp/get', async () => {
@@ -36,6 +36,15 @@ export const postUserSignUp = createAsyncThunk<any, SignUpRequest>(
 export const initialUserSignUpState: UserSignUpState = {
   loadingStatus: 'not loaded',
   error: null,
+  signup: {
+    first_name: '',
+    id: '',
+    created_at: '',
+    user_email: '',
+    last_name: '',
+    qovery_usage: '',
+    type_of_use: TypeOfUseEnum.PERSONAL,
+  },
 }
 
 export const userSignUpSlice = createSlice({
@@ -54,7 +63,7 @@ export const userSignUpSlice = createSlice({
       })
       .addCase(fetchUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<SignUp>) => {
         state.loadingStatus = 'loaded'
-        state = { ...state, signup: action.payload }
+        state.signup = action.payload
       })
       .addCase(fetchUserSignUp.rejected, (state: UserSignUpState, action) => {
         state.loadingStatus = 'error'
@@ -66,7 +75,7 @@ export const userSignUpSlice = createSlice({
       })
       .addCase(postUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<SignUp>) => {
         state.loadingStatus = 'loaded'
-        state = { ...state, signup: action.payload }
+        state.signup = action.payload
       })
       .addCase(postUserSignUp.rejected, (state: UserSignUpState, action) => {
         state.loadingStatus = 'error'

@@ -77,7 +77,7 @@ export function FormCompany(props: FormCompanyProps) {
   }, [setValue, userSignUp])
 
   const onSubmit = handleSubmit((data) => {
-    if (data && userSignUp) {
+    if (data) {
       updateUserSignUp({
         ...userSignUp,
         ...data,
