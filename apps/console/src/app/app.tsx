@@ -11,9 +11,11 @@ import {
   useAuth,
   useDocumentTitle,
   useAuthInterceptor,
+  SETTINGS_URL,
 } from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
+import { SettingsPage } from '@console/pages/settings/feature'
 import { environment } from '../environments/environment'
 import { LoadingScreen } from '@console/shared/ui'
 
@@ -24,8 +26,13 @@ export const ROUTER = [
     protected: false,
   },
   {
-    path: OVERVIEW_URL,
+    path: OVERVIEW_URL(),
     component: <OverviewPage />,
+    protected: true,
+  },
+  {
+    path: SETTINGS_URL(),
+    component: <SettingsPage />,
     protected: true,
   },
 ]

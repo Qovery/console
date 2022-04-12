@@ -23,7 +23,7 @@ export function LoginPage() {
       await createAuthCookies()
 
       if (!isOnboarding && organization.payload.length > 0) {
-        navigate(OVERVIEW_URL)
+        navigate(OVERVIEW_URL(organization.payload[0].id))
       }
       if (isOnboarding && organization.payload.length === 0) {
         navigate(ONBOARDING_URL)
