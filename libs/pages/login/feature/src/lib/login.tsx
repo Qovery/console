@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
 import { ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum, OVERVIEW_URL } from '@console/shared/utils'
 import { useOrganization } from '@console/domains/organization'
-import posthog from "posthog-js";
+import posthog from 'posthog-js'
 
 export function LoginPage() {
   const navigate = useNavigate()
