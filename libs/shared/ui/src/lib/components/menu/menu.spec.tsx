@@ -83,4 +83,6 @@ describe('Menu', () => {
 
     expect(item).toBeTruthy()
   })
+
+  it('shoud have a search input', () => {})
 })
