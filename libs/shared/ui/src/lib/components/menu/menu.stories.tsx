@@ -20,6 +20,7 @@ const menus = [
     title: 'Test',
     button: 'Link',
     buttonLink: '/',
+    search: true,
   },
   {
     items: [
@@ -30,7 +31,7 @@ const menus = [
   },
 ]
 
-const Template: Story<MenuProps> = (args) => <Menu open={false} menus={menus} trigger={<Button>Trigger</Button>}></Menu>
+const Template: Story<MenuProps> = (args) => <Menu open={true} menus={menus} trigger={<Button>Trigger</Button>}></Menu>
 
 export const Primary = Template.bind({})
 

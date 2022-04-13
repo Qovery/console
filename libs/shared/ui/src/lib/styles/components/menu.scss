@@ -3,7 +3,7 @@
 $menuTiming: 0.15s;
 
 .menu__container {
-  @apply w-[340px] rounded shadow-lg p-0;
+  @apply w-[340px] rounded-md shadow-lg p-0;
 }
 
 // overlay
@@ -13,6 +13,8 @@ $menuTiming: 0.15s;
 
 // bottom
 .menu__container--bottom {
+  transform: translateY(8px);
+
   &.menu__container--open {
     animation: menuOpenBottom $menuTiming ease-out;
   }
@@ -20,6 +22,8 @@ $menuTiming: 0.15s;
 
 // top
 .menu__container--top {
+  transform: translateY(-8px);
+
   &.menu__container--open {
     animation: menuOpenTop $menuTiming ease-out;
   }
@@ -27,6 +31,8 @@ $menuTiming: 0.15s;
 
 // left
 .menu__container--left {
+  transform: translateX(-8px);
+
   &.menu__container--open {
     animation: menuOpenLeft $menuTiming ease-out;
   }
@@ -34,6 +40,8 @@ $menuTiming: 0.15s;
 
 // right
 .menu__container--right {
+  transform: translateX(8px);
+
   &.menu__container--open {
     animation: menuOpenRight $menuTiming ease-out;
   }

@@ -41,23 +41,32 @@ export function Menu(props: MenuProps) {
   const ref = useRef(null)
   const [isOpen, setOpen] = useState(false)
 
+  const handleActive = () => {
+    if (ref.current) {
+      const el = ref.current as HTMLElement
+      const btn = el.querySelector('.btn, .btn-icon')
+      btn?.classList.toggle('is-active')
+    }
+    setOpen(!isOpen)
+  }
+
   useEffect(() => {
     setOpen(open)
   }, [open])
 
   return (
     <>
-      <div className="w-max" ref={ref} onClick={() => setOpen(true)}>
+      <div className="w-max menu__trigger" ref={ref} onClick={handleActive}>
         {trigger}
       </div>
       <ControlledMenu
         state={isOpen ? 'open' : 'closed'}
         arrow={true}
         direction={direction}
-        onClose={() => setOpen(false)}
+        onClose={handleActive}
         anchorRef={ref}
         align={arrowAlign}
-        className="menu"
+        className="menu z-[9999]"
         menuClassName={`${className} menu__container menu__container--${direction} menu__container--${
           isOpen ? 'open' : 'closed'
         }`}
@@ -68,9 +77,6 @@ export function Menu(props: MenuProps) {
           <MenuGroup key={index} menu={menu} isLast={index === menus.length - 1 ? true : false}></MenuGroup>
         ))}
       </ControlledMenu>
-      {isOpen && (
-        <div className="menu__overlay fixed w-full h-full top-0 left-0 bg-element-light-darker-500 opacity-20 z-50"></div>
-      )}
     </>
   )
 }
