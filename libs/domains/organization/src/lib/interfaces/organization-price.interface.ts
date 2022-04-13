@@ -1,4 +1,4 @@
 export interface OrganizationPrice {
-  number: string
-  price: string
+    number: string
+    price: string
 }

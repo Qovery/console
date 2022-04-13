@@ -1,13 +1,14 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuth } from '@console/shared/utils'
-import { OrganizationInterface } from '../interfaces/organization.interface'
+
 import {
   fetchOrganization,
   selectAllOrganization,
   selectOrganizationLoadingStatus,
   postOrganization,
 } from '../slices/organization.slice'
+import { OrganizationRequest } from "qovery-typescript-axios";
 
 export function useOrganization() {
   const { getAccessTokenSilently } = useAuth()
@@ -17,7 +18,7 @@ export function useOrganization() {
 
   const getOrganization = useCallback(async () => dispatch(fetchOrganization()), [dispatch])
 
-  const createOrganization = async (payload: OrganizationInterface) => {
+  const createOrganization = async (payload: OrganizationRequest) => {
     const result = await dispatch(postOrganization(payload))
     // refresh token needed after created an organization
     await getAccessTokenSilently({ ignoreCache: true })

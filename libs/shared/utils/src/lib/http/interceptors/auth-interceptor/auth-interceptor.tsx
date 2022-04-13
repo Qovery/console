@@ -8,13 +8,16 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
 
   useEffect(() => {
     const requestInterceptor = axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
-      const url = `${apiUrl}${config.url}`
-      config.url = url
+      // The auto generated api adds a base url by default
+      // we override here to have a better control over it
+      const urlWithoutBase = removeBaseUrl(config.url)
+      config.url = `${apiUrl}${urlWithoutBase}`
 
       const token = await getAccessTokenSilently()
 
       if (token) {
         config.headers = {
+          ...config.headers,
           Authorization: `Bearer ${token}`,
         }
       }
@@ -33,4 +36,12 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       axiosInstance.interceptors.response.eject(responseInterceptor)
     }
   }, [axiosInstance.interceptors.request, axiosInstance.interceptors.response, apiUrl, getAccessTokenSilently])
+
+  const removeBaseUrl = (url = '') => {
+    if (!url) return ''
+    const matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i)
+    console.log({ matches })
+    const domain = (matches && matches[0]) as string
+    return url.replace(domain, '/')
+  }
 }

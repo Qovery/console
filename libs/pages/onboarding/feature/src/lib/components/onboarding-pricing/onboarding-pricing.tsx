@@ -17,6 +17,7 @@ import {
 } from '@console/shared/utils'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
+import { PlanEnum } from 'qovery-typescript-axios'
 
 function listPrice(base: number, isBusinessPlan?: boolean) {
   const results: OrganizationPrice[] = []
@@ -37,28 +38,28 @@ function listPrice(base: number, isBusinessPlan?: boolean) {
 
 const PLANS: OrganizationPlan[] = [
   {
-    name: OrganizationPlanType.FREE,
+    name: PlanEnum.FREE,
     title: 'Free',
     text: 'Adapted for personnal project',
     price: 0,
     listPrice: [],
   },
   {
-    name: OrganizationPlanType.PROFESSIONAL,
+    name: PlanEnum.PROFESSIONAL,
     title: 'Professional',
     text: 'For 5-20 members',
     price: 49,
     listPrice: listPrice(49, false),
   },
   {
-    name: OrganizationPlanType.BUSINESS,
+    name: PlanEnum.BUSINESS,
     title: 'Business',
     text: 'For medium company',
     price: 599,
     listPrice: listPrice(599, true),
   },
   {
-    name: OrganizationPlanType.ENTERPRISE,
+    name: PlanEnum.ENTERPRISE,
     title: 'Enterprise',
     text: 'For large company',
     price: 0,
@@ -66,17 +67,17 @@ const PLANS: OrganizationPlan[] = [
   },
 ]
 
-const PLAN_DEFAULT: OrganizationPlanType = OrganizationPlanType.FREE
+const PLAN_DEFAULT: PlanEnum = PlanEnum.FREE
 const DEPLOY_DEFAULT = 100
 
 const DEFAULT_PRICE = {
   [OrganizationPlanType.FREE]: { disable: false },
   [OrganizationPlanType.PROFESSIONAL]: {
-    number: PLANS.find((p) => p.name === OrganizationPlanType.PROFESSIONAL)?.listPrice[0].number,
+    number: PLANS.find((p) => p.name === PlanEnum.PROFESSIONAL)?.listPrice[0].number,
     disable: false,
   },
   [OrganizationPlanType.BUSINESS]: {
-    number: PLANS.find((p) => p.name === OrganizationPlanType.BUSINESS)?.listPrice[0].number,
+    number: PLANS.find((p) => p.name === PlanEnum.BUSINESS)?.listPrice[0].number,
     disable: false,
   },
   [OrganizationPlanType.ENTERPRISE]: { disable: false },
@@ -109,7 +110,7 @@ export function OnboardingPricing() {
       setCurrentDeploy(value)
 
       if (value > 100) {
-        if (selectPlan === OrganizationPlanType.FREE) setSelectPlan(OrganizationPlanType.PROFESSIONAL)
+        if (selectPlan === PlanEnum.FREE) setSelectPlan(PlanEnum.PROFESSIONAL)
 
         setCurrentValue({
           [OrganizationPlanType.FREE]: { disable: true },

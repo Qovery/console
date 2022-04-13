@@ -1,8 +1,8 @@
-import { OrganizationPlanType } from '../enums'
 import { OrganizationPrice } from './organization-price.interface'
+import { PlanEnum } from 'qovery-typescript-axios'
 
 export interface OrganizationPlan {
-  name: OrganizationPlanType
+  name: PlanEnum
   title: string
   text: string
   price: number
