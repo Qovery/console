@@ -4,10 +4,8 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "start-onboarding": "nx run onboarding:serve",
     "storybook": "nx storybook shared-ui",
     "build": "npx nx build",
-    "build-onboarding": "npx nx build onboarding",
     "test": "nx test"
   },
   "private": true,
