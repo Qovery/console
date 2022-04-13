@@ -16,6 +16,7 @@ export function LayoutPage(props: LayoutPageProps) {
       <Navigation authLogout={authLogout} firstName={user?.first_name} lastName={user?.last_name} />
       <TopBar />
       <div className="p-2 mt-14 ml-14">{children}</div>
+      <TopBar />
     </main>
   )
 }

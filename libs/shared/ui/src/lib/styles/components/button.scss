@@ -98,7 +98,7 @@
 
 .btn,
 .btn-icon {
-  &.is-active {
+  &.is-active:not(.no-active) {
     @apply border-brand-400 bg-brand-400 text-white hover:text-white hover:bg-brand-400;
   }
 }
