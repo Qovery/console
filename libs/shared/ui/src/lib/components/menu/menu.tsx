@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ControlledMenu } from '@szhsin/react-menu'
+import { ControlledMenu, MenuCloseEvent } from '@szhsin/react-menu'
 import MenuGroup from './menu-group/menu-group'
 import { MenuItemProps } from './menu-item/menu-item'
 
@@ -17,7 +17,7 @@ export enum MenuAlign {
 }
 
 export interface MenuProps {
-  trigger: React.ReactNode
+  trigger: React.ReactElement
   children?: React.ReactNode
   direction?: MenuDirection
   open?: boolean
@@ -25,6 +25,7 @@ export interface MenuProps {
   menus: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string }[]
   className?: string
   header?: React.ReactNode
+  onClose?: (e: MenuCloseEvent) => void
 }
 
 export function Menu(props: MenuProps) {
@@ -36,40 +37,59 @@ export function Menu(props: MenuProps) {
     arrowAlign = MenuAlign.START,
     menus = [],
     className = '',
+    onClose,
   } = props
 
   const ref = useRef(null)
   const [isOpen, setOpen] = useState(false)
 
-  const handleActive = () => {
+  const handleActive = (e: MenuCloseEvent | null) => {
     if (ref.current) {
       const el = ref.current as HTMLElement
       const btn = el.querySelector('.btn, .btn-icon')
       btn?.classList.toggle('is-active')
     }
     setOpen(!isOpen)
+    if (isOpen && e && onClose) {
+      onClose(e)
+    }
   }
 
   useEffect(() => {
     setOpen(open)
   }, [open])
 
+  let offsetX = 0
+  let offsetY = 0
+
+  if (direction === MenuDirection.BOTTOM || direction === MenuDirection.TOP) {
+    if (arrowAlign === MenuAlign.START) offsetX = -16
+    if (arrowAlign === MenuAlign.END) offsetX = 16
+  }
+
+  if (direction === MenuDirection.LEFT || direction === MenuDirection.RIGHT) {
+    if (arrowAlign === MenuAlign.START) offsetY = -16
+    if (arrowAlign === MenuAlign.END) offsetY = 16
+  }
+
   return (
     <>
-      <div className="w-max menu__trigger" ref={ref} onClick={handleActive}>
+      <div className="w-max menu__trigger" ref={ref} onClick={(e) => handleActive(null)}>
         {trigger}
       </div>
       <ControlledMenu
         state={isOpen ? 'open' : 'closed'}
         arrow={true}
+        offsetX={offsetX}
+        offsetY={offsetY}
         direction={direction}
-        onClose={handleActive}
+        onClose={(e) => handleActive(e)}
         anchorRef={ref}
         align={arrowAlign}
-        className="menu z-[9999]"
-        menuClassName={`${className} menu__container menu__container--${direction} menu__container--${
+        className="menu z-20"
+        menuClassName={`w-[340px] rounded-md shadow-lg p-0 ${className} menu__container menu__container--${direction} menu__container--${
           isOpen ? 'open' : 'closed'
-        }`}
+        } menu__container--${arrowAlign}`}
         transition={true}
       >
         {children}

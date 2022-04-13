@@ -10,9 +10,9 @@ export function LayoutPage(props: LayoutPageProps) {
 
   return (
     <main className="h-screen bg-element-light-lighter-400">
+      <div className="p-2 mt-14 ml-14">{children}</div>
       <Navigation />
       <TopBar />
-      <div className="p-2 mt-14 ml-14">{children}</div>
     </main>
   )
 }
