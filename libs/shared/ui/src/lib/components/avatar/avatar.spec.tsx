@@ -12,7 +12,10 @@ const chance = new Chance()
 let container
 
 beforeEach(() => {
-  props = {}
+  props = {
+    firstName: 'Rémi',
+    lastName: 'Bonnet',
+  }
   container = document.createElement('div')
   document.body.appendChild(container)
 })
