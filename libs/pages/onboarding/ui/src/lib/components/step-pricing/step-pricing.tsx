@@ -1,9 +1,8 @@
-import { OrganizationPlanType } from '@console/domains/organization'
+import { PlanEnum } from 'qovery-typescript-axios'
+import { OrganizationPlan } from '@console/domains/organization'
 import { Button, ButtonSize, ButtonStyle, Icon, Slider } from '@console/shared/ui'
 import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/utils'
 import { PlanCard } from '../plan-card/plan-card'
-import { PlanEnum } from 'qovery-typescript-axios'
-import { OrganizationPlan } from 'libs/domains/organization/src/lib/interfaces/organization-plan.interface'
 
 export interface StepPricingProps {
   selectPlan: PlanEnum
