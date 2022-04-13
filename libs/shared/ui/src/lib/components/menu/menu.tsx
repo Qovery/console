@@ -61,6 +61,9 @@ export function Menu(props: MenuProps) {
     }
 
     setOpen(!isOpen)
+    if (isOpen && e && onClose) {
+      onClose(e)
+    }
   }
 
   const closeMenu = () => {
