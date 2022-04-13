@@ -24,6 +24,10 @@ const FaIcons = [
   'icon-solid-wheel',
   'icon-solid-circle-info',
   'icon-solid-magnifying-glass',
+  'icon-solid-xmark',
+  'icon-brands-discord',
+  'icon-solid-envelope',
+  'icon-solid-keyboard',
   // schema: favicons name
 ]
 

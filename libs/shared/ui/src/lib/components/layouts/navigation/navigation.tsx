@@ -2,6 +2,8 @@ import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
 import { Avatar } from '../../avatar/avatar'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
+import Icon from '../../icon/icon'
+import Menu, { MenuAlign, MenuDirection } from '../../menu/menu'
 
 export interface NavigationProps {
   authLogout: () => void
@@ -11,9 +13,37 @@ export interface NavigationProps {
 
 export function Navigation(props: NavigationProps) {
   const { authLogout, firstName, lastName } = props
+export function Navigation() {
+  const settingsMenu = [
+    {
+      title: 'Need help ?',
+      items: [
+        {
+          name: 'See documentations',
+          link: '/overview',
+          contentLeft: <Icon name="icon-solid-layer-group" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Join Discord',
+          link: '/overview',
+          contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Contact us',
+          link: '/overview',
+          contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Shortcuts',
+          link: '/overview',
+          contentLeft: <Icon name="icon-solid-keyboard" className="text-sm text-brand-400" />,
+        },
+      ],
+    },
+  ]
 
   return (
-    <div className="bg-white w-14 h-full fixed top-0 left-0">
+    <div className="bg-white w-14 h-full fixed top-0 left-0 z-10">
       <Link
         to={'/'}
         className="flex w-14 h-14 items-center justify-center border-b border-element-light-lighter-400 z-10"
@@ -29,7 +59,12 @@ export function Navigation(props: NavigationProps) {
         </div>
         <div>
           <div className="flex flex-col gap-3">
-            <ButtonIcon icon="icon-solid-wheel" style={ButtonIconStyle.ALT} />
+            <Menu
+              trigger={<ButtonIcon icon="icon-solid-wheel" style={ButtonIconStyle.ALT} />}
+              direction={MenuDirection.RIGHT}
+              arrowAlign={MenuAlign.END}
+              menus={settingsMenu}
+            />
             <ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} />
           </div>
         </div>

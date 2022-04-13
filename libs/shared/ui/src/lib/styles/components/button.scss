@@ -93,3 +93,12 @@
 .btn-icon--dark {
   @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
 }
+
+// active
+
+.btn,
+.btn-icon {
+  &.is-active {
+    @apply border-brand-400 bg-brand-400 text-white hover:text-white hover:bg-brand-400;
+  }
+}
