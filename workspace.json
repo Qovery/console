@@ -7,7 +7,6 @@
     "domains-organization": "libs/domains/organization",
     "domains-projects": "libs/domains/projects",
     "domains-user": "libs/domains/user",
-    "onboarding": "apps/onboarding",
     "pages-login-feature": "libs/pages/login/feature",
     "pages-login-ui": "libs/pages/login/ui",
     "pages-onboarding-feature": "libs/pages/onboarding/feature",

@@ -12,12 +12,14 @@ import {
   useDocumentTitle,
   useAuthInterceptor,
   SETTINGS_URL,
+  ONBOARDING_URL,
 } from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { environment } from '../environments/environment'
 import { LoadingScreen } from '@console/shared/ui'
+import { OnboardingPage } from '@console/pages/onboarding/feature'
 
 export const ROUTER = [
   {
@@ -48,10 +50,15 @@ export function App() {
 
   useEffect(() => {
     // if (process.env['NODE_ENV'] === 'production') {
-    // init posthug
-    posthog.init(environment.posthog, {
-      api_host: environment.posthog_apihost,
-    })
+
+    // if onboarding feature flag activated we add onboarding routes to router
+    if (posthog.isFeatureEnabled('v3-onboarding')) {
+      ROUTER.push({
+        path: `${ONBOARDING_URL}/*`,
+        component: <OnboardingPage />,
+        protected: true,
+      })
+    }
 
     // init logrocket
     LogRocket.init(environment.logrocket)
