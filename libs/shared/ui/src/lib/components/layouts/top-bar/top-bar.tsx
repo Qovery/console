@@ -1,8 +1,11 @@
 import { Menu, MenuAlign } from '../../menu/menu'
 import { ButtonIcon, ButtonIconSize, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
+import { useState } from 'react'
 
 export function TopBar() {
+  const [openProject, setOpenProject] = useState(false)
+
   const notificationsMenu = [
     {
       title: 'Steps to complete 28/35',
@@ -79,13 +82,22 @@ export function TopBar() {
   return (
     <div className="fixed top-0 left-14 border-l border-element-light-lighter-400 z-10 bg-white w-[calc(100%-3.5rem)] h-14">
       <div className="flex px-5 justify-between items-center h-full">
-        <div className="flex h-full gap-2 items-center">
+        <div className="flex h-full gap-2 items-center cursor-pointer" onClick={() => setOpenProject(true)}>
           <Icon name="icon-solid-layer-group" className="text-accent2-300" />
-          <p className="text-sm text-text-500 font-medium">TwitterClone</p>
+          <p className="text-sm text-text-500 font-medium -mr-3">TwitterClone</p>
           <Menu
             menus={projectMenu}
+            open={openProject}
             arrowAlign={MenuAlign.START}
-            trigger={<ButtonIcon icon="icon-solid-angle-down" style={ButtonIconStyle.FLAT} size={ButtonIconSize.BIG} />}
+            onClose={() => setOpenProject(false)}
+            trigger={
+              <ButtonIcon
+                className="no-active"
+                icon="icon-solid-angle-down"
+                style={ButtonIconStyle.FLAT}
+                size={ButtonIconSize.BIG}
+              />
+            }
           />
         </div>
         <div className="flex gap-3">
@@ -98,6 +110,7 @@ export function TopBar() {
           <Menu
             menus={notificationsMenu}
             arrowAlign={MenuAlign.END}
+            className="w-[374px]"
             trigger={
               <ButtonIcon
                 icon="icon-solid-bell"
@@ -107,7 +120,7 @@ export function TopBar() {
               />
             }
           >
-            <div className="px-3 py-4 border-b border-element-light-lighter-400">
+            <div className="p-5 border-b border-element-light-lighter-400">
               <h3 className="text-text-600 text-xl mb-2">
                 Hi, Romaric
                 <span role="img" aria-label="icon" className="ml-1">

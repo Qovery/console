@@ -32,7 +32,7 @@ export function InputSearch(props: InputSearchProps) {
     <div className="relative w-full">
       <Icon
         name="icon-solid-magnifying-glass"
-        className="absolute left-3 top-1/2 -translate-y-1/2 block text-sm text-text-400 leading-none"
+        className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-text-400 leading-none"
       />
       <input
         ref={ref}

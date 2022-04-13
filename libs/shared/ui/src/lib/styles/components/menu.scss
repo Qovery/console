@@ -2,10 +2,6 @@
 
 $menuTiming: 0.15s;
 
-.menu__container {
-  @apply w-[340px] rounded-md shadow-lg p-0;
-}
-
 // overlay
 .menu__overlay {
   animation: menuShowOverlay $menuTiming ease-out;
@@ -40,7 +36,7 @@ $menuTiming: 0.15s;
 
 // right
 .menu__container--right {
-  transform: translateX(8px);
+  transform: translateX(12px);
 
   &.menu__container--open {
     animation: menuOpenRight $menuTiming ease-out;
@@ -50,6 +46,7 @@ $menuTiming: 0.15s;
 // arrow
 .menu__container {
   .szh-menu__arrow {
+    @apply shadow-none border-0;
     animation: menuShowArrow $menuTiming ease-in;
   }
 }
