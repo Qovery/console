@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { useOrganization } from '@console/domains/organization'
 import { Overview } from '@console/pages/overview/ui'
 import { useAuth, useDocumentTitle } from '@console/shared/utils'
 import { useUser } from '@console/domains/user'

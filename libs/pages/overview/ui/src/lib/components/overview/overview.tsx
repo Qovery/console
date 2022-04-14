@@ -15,8 +15,8 @@ export function Overview(props: IOverviewProps) {
       <div>
         <h2 className="text-3xl font-extrabold text-brand-500">Overview</h2>
         <ul className="mt-8">
-          {organization.map((organization: Organization) => (
-            <li key={organization.id}>{organization.name}</li>
+          {projects.map((project: Project) => (
+            <li key={project.id}>{project.name}</li>
           ))}
         </ul>
       </div>

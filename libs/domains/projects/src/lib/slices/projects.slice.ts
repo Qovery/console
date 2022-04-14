@@ -6,7 +6,6 @@ import {
   EntityState,
   PayloadAction,
 } from '@reduxjs/toolkit'
-import axios from 'axios'
 import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
@@ -19,7 +18,7 @@ export interface ProjectsState extends EntityState<Project> {
 
 export const projectsAdapter = createEntityAdapter<Project>()
 
-export const fetchProjects = createAsyncThunk<any, { organizationId: string }>('projects/fetchStatus', async (data) => {
+export const fetchProjects = createAsyncThunk<any, { organizationId: string }>('projects/fetch', async (data) => {
   const response = await projectsApi.listProject(data.organizationId).then((response) => response.data)
   return response.results as Project[]
 })
@@ -51,6 +50,18 @@ export const projectsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchProjects.pending, (state: ProjectsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(fetchProjects.fulfilled, (state: ProjectsState, action: PayloadAction<Project[]>) => {
+        projectsAdapter.setAll(state, action.payload)
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(fetchProjects.rejected, (state: ProjectsState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // post
       .addCase(postProjects.pending, (state: ProjectsState) => {
         state.loadingStatus = 'loading'
       })
