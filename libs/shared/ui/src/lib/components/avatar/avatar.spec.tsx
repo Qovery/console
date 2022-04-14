@@ -45,14 +45,4 @@ describe('Avatar', () => {
 
     expect(icon).toBeTruthy()
   })
-
-  it('shoud have a link', () => {
-    props.link = chance.url()
-
-    render(<Avatar {...props} />)
-
-    const link = screen.getByRole('link')
-
-    expect(link).toBeTruthy()
-  })
 })

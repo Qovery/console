@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Avatar } from '../../avatar/avatar'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 
-interface NavigationProps {
+export interface NavigationProps {
   authLogout: () => void
   firstName: string
   lastName: string

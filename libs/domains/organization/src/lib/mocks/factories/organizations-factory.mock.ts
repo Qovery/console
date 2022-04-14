@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { Organization, PlanEnum } from "qovery-typescript-axios";
+import { Organization, PlanEnum } from 'qovery-typescript-axios'
 
 const chance = new Chance()
 
