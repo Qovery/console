@@ -6,7 +6,6 @@ import {
   EntityState,
   PayloadAction,
 } from '@reduxjs/toolkit'
-import axios from 'axios'
 import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
 
 export const ORGANIZATION_KEY = 'organization'
