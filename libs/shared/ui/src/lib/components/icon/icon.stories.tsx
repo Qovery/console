@@ -28,6 +28,7 @@ const FaIcons = [
   'icon-brands-discord',
   'icon-solid-envelope',
   'icon-solid-keyboard',
+  'icon-solid-wave-pulse',
   // schema: favicons name
 ]
 

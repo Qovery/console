@@ -1,14 +1,16 @@
-import { useState, useRef, MutableRefObject } from 'react'
+import { useState, useRef } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputSearchProps {
   placeholder?: string
   className?: string
   onChange?: (value: string) => void
+  isEmpty?: boolean
+  emptyContent?: React.ReactElement
 }
 
 export function InputSearch(props: InputSearchProps) {
-  const { placeholder = '', className = '', onChange } = props
+  const { placeholder = '', className = '', onChange, isEmpty = false, emptyContent } = props
 
   const ref = useRef<HTMLInputElement>(null)
   const [toggleDelete, setToggleDelete] = useState(false)
@@ -29,29 +31,40 @@ export function InputSearch(props: InputSearchProps) {
   }
 
   return (
-    <div className="relative w-full">
-      <Icon
-        name="icon-solid-magnifying-glass"
-        className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-text-400 leading-none"
-      />
-      <input
-        ref={ref}
-        className={`${className} w-full h-8 rounded border border-element-light-lighter-500 bg-element-light-lighter-300 text-text-600 placeholder:text-text-400 pl-8 pr-6 leading-none text-sm`}
-        type="text"
-        placeholder={placeholder}
-        disabled={false}
-        onChange={(e) => getValue(e.currentTarget.value)}
-        name="search"
-      />
-      {toggleDelete && (
-        <button
-          className="absolute w-3 h-3 rounded-full bg-text-700 flex justify-center items-center right-2 top-1/2 -translate-y-1/2"
-          onClick={deleteValue}
-        >
-          <Icon className="text-element-light-lighter-300 text-[10px]" name="icon-solid-xmark" />
-        </button>
+    <>
+      <div className="relative w-full">
+        <Icon
+          name="icon-solid-magnifying-glass"
+          className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-text-400 leading-none"
+        />
+        <input
+          ref={ref}
+          className={`${className} w-full h-8 rounded border border-element-light-lighter-500 bg-element-light-lighter-300 text-text-600 placeholder:text-text-400 pl-8 pr-6 leading-none text-sm focus:outline-none focus:border-brand-400 focus:transition-[border-color]`}
+          type="text"
+          placeholder={placeholder}
+          disabled={false}
+          onChange={(e) => getValue(e.currentTarget.value)}
+          name="search"
+        />
+        {toggleDelete && (
+          <button className="absolute right-2 top-1/2 -translate-y-1/2" onClick={deleteValue}>
+            <Icon className="text-text-400 text-sm" name="icon-solid-xmark" />
+          </button>
+        )}
+      </div>
+      {isEmpty && (
+        <div>
+          {emptyContent ? (
+            emptyContent
+          ) : (
+            <div className="text-center p-3">
+              <Icon name="icon-solid-wave-pulse" className="text-text-400 mb-2" />
+              <p className="text-text-400 font-medium text-sm">No result for this search</p>
+            </div>
+          )}
+        </div>
       )}
-    </div>
+    </>
   )
 }
 
