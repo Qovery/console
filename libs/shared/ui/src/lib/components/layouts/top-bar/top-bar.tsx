@@ -1,4 +1,4 @@
-import { Menu, MenuAlign } from '../../menu/menu'
+import { Menu, MenuAlign, MenuSize } from '../../menu/menu'
 import { ButtonIcon, ButtonIconSize, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
 import { useState } from 'react'
@@ -110,7 +110,7 @@ export function TopBar() {
           <Menu
             menus={notificationsMenu}
             arrowAlign={MenuAlign.END}
-            className="w-[374px]"
+            size={MenuSize.BIG}
             trigger={
               <ButtonIcon
                 icon="icon-solid-bell"

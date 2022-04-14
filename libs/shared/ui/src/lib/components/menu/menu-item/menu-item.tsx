@@ -1,6 +1,4 @@
 import { MenuItem as Item } from '@szhsin/react-menu'
-import Icon from '../../icon/icon'
-
 export interface MenuItemProps {
   name: string
   link: string
@@ -13,7 +11,7 @@ export function MenuItem(props: MenuItemProps) {
 
   return (
     <Item
-      className="w-full h-8 rounded-sm flex justify-between px-3 py-0 hover:bg-element-light-lighter-300 mb-1 last-of-type:mb-0"
+      className="w-full h-8 rounded-sm flex justify-between px-3 py-0 hover:bg-element-light-lighter-300 mb-1"
       href={link}
       data-testid="menuItem"
     >

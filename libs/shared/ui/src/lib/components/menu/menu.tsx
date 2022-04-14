@@ -16,6 +16,11 @@ export enum MenuAlign {
   END = 'end',
 }
 
+export enum MenuSize {
+  NORMAL = 'normal',
+  BIG = 'big',
+}
+
 export interface MenuProps {
   trigger: React.ReactElement
   children?: React.ReactNode
@@ -26,6 +31,7 @@ export interface MenuProps {
   className?: string
   header?: React.ReactNode
   onClose?: (e: MenuCloseEvent) => void
+  size?: MenuSize
 }
 
 export function Menu(props: MenuProps) {
@@ -38,25 +44,39 @@ export function Menu(props: MenuProps) {
     menus = [],
     className = '',
     onClose,
+    size = MenuSize.NORMAL,
   } = props
 
   const ref = useRef(null)
   const [isOpen, setOpen] = useState(false)
 
   const handleActive = (e: MenuCloseEvent | null) => {
+    setOpen(!isOpen)
+
     if (ref.current) {
       const el = ref.current as HTMLElement
       const btn = el.querySelector('.btn, .btn-icon')
       btn?.classList.toggle('is-active')
     }
-    setOpen(!isOpen)
+
     if (isOpen && e && onClose) {
       onClose(e)
     }
   }
 
+  const closeMenu = () => {
+    setOpen(false)
+    if (ref.current) {
+      const el = ref.current as HTMLElement
+      const btn = el.querySelector('.btn, .btn-icon')
+      btn?.classList.remove('is-active')
+    }
+  }
+
   useEffect(() => {
     setOpen(open)
+    window.addEventListener('resize', closeMenu)
+    return () => window.removeEventListener('resize', closeMenu)
   }, [open])
 
   let offsetX = 0
@@ -87,14 +107,17 @@ export function Menu(props: MenuProps) {
         anchorRef={ref}
         align={arrowAlign}
         className="menu z-20"
-        menuClassName={`w-[340px] rounded-md shadow-lg p-0 ${className} menu__container menu__container--${direction} menu__container--${
+        menuClassName={`${
+          size === MenuSize.BIG ? 'w-[374px]' : 'w-[340px]'
+        } rounded-md shadow-lg p-0 ${className} menu__container menu__container--${direction} menu__container--${
           isOpen ? 'open' : 'closed'
         } menu__container--${arrowAlign}`}
         transition={true}
+        portal={true}
       >
         {children}
         {menus.map((menu, index) => (
-          <MenuGroup key={index} menu={menu} isLast={index === menus.length - 1 ? true : false}></MenuGroup>
+          <MenuGroup key={index} menu={menu} isLast={index === menus.length - 1 ? true : false} size={size}></MenuGroup>
         ))}
       </ControlledMenu>
     </>
