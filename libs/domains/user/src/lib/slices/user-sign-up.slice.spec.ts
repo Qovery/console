@@ -1,10 +1,20 @@
 import { postUserSignUp, userSignUp, initialUserSignUpState } from './user-sign-up.slice'
+import { TypeOfUseEnum } from 'qovery-typescript-axios'
 
 describe('user reducer', () => {
   it('should handle initial state', () => {
     const expected = {
       loadingStatus: 'not loaded',
-      error: null
+      error: null,
+      signup: {
+        first_name: '',
+        id: '',
+        created_at: '',
+        user_email: '',
+        last_name: '',
+        qovery_usage: '',
+        type_of_use: TypeOfUseEnum.PERSONAL,
+      },
     }
     expect(initialUserSignUpState).toEqual(expected)
   })

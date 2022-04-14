@@ -1,8 +1,8 @@
-import { OrganizationInterface } from '@console/domains/organization'
 import { LayoutPage } from '@console/shared/ui'
+import { Organization } from "qovery-typescript-axios";
 
 interface IOverviewProps {
-  organization: OrganizationInterface[]
+  organization: Organization[]
 }
 
 export function Overview(props: IOverviewProps) {
@@ -13,7 +13,7 @@ export function Overview(props: IOverviewProps) {
       <div>
         <h2 className="text-3xl font-extrabold text-brand-500">Overview</h2>
         <ul className="mt-8">
-          {organization.map((organization: OrganizationInterface) => (
+          {organization.map((organization: Organization) => (
             <li key={organization.id}>{organization.name}</li>
           ))}
         </ul>

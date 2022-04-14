@@ -11,14 +11,14 @@ export function OnboardingThanks() {
     // if (process.env['NODE_ENV'] === 'production') {
     // update user intercom
     update({
-      email: userSignUp.user_email,
-      name: `${userSignUp.first_name} ${userSignUp.last_name}`,
+      email: userSignUp?.user_email,
+      name: `${userSignUp?.first_name} ${userSignUp?.last_name}`,
       userId: user.sub,
     })
     // }
   }, [user, userSignUp, update])
 
-  return <StepThanks firstName={userSignUp.first_name || ''} email={userSignUp.user_email || ''} />
+  return <StepThanks firstName={userSignUp?.first_name || ''} email={userSignUp?.user_email || ''} />
 }
 
 export default OnboardingThanks
