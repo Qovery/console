@@ -1,15 +1,18 @@
+import { SignUp } from 'qovery-typescript-axios'
 import { LayoutPage } from '@console/shared/ui'
 import { Project } from 'qovery-typescript-axios'
 
-interface OverviewInterface {
+export interface OverviewInterface {
   projects: Project[]
+  authLogout: () => void
+  user: SignUp
 }
 
 export function Overview(props: OverviewInterface) {
-  const { projects } = props
+  const { projects, authLogout, user } = props
 
   return (
-    <LayoutPage>
+    <LayoutPage authLogout={authLogout} user={user}>
       <div>
         <h2 className="text-3xl font-extrabold text-brand-500">Overview</h2>
         <ul className="mt-8">

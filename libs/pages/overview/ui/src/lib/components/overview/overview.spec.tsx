@@ -1,17 +1,18 @@
 import { render } from '__tests__/utils/setup-jest'
 
-import Overview from './overview'
+import Overview, { OverviewInterface } from './overview'
 import { projectsFactoryMock } from '@console/domains/projects'
-import { Project } from 'qovery-typescript-axios'
+import { userSignUpFactoryMock } from '@console/domains/user'
 
 describe('Overview', () => {
-  let projects: Project[]
-  beforeEach(() => {
-    projects = projectsFactoryMock(2)
-  })
+  const props: OverviewInterface = {
+    projects: projectsFactoryMock(3),
+    authLogout: Function,
+    user: userSignUpFactoryMock(),
+  }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Overview projects={projects} />)
+    const { baseElement } = render(<Overview {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

@@ -3,7 +3,15 @@ import { Link } from 'react-router-dom'
 import { Avatar } from '../../avatar/avatar'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 
-export function Navigation() {
+export interface NavigationProps {
+  authLogout: () => void
+  firstName: string
+  lastName: string
+}
+
+export function Navigation(props: NavigationProps) {
+  const { authLogout, firstName, lastName } = props
+
   return (
     <div className="bg-white w-14 h-full fixed top-0 left-0">
       <Link
@@ -28,7 +36,7 @@ export function Navigation() {
       </div>
 
       <div className="flex w-14 h-14 items-center justify-center border-t border-element-light-lighter-400">
-        <Avatar icon={IconEnum.GITLAB} link="/overview"></Avatar>
+        <Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB} onClick={authLogout}></Avatar>
       </div>
     </div>
   )
