@@ -1,14 +1,15 @@
-import { Organization, SignUp } from 'qovery-typescript-axios'
+import { SignUp } from 'qovery-typescript-axios'
 import { LayoutPage } from '@console/shared/ui'
+import { Project } from 'qovery-typescript-axios'
 
-interface IOverviewProps {
-  organization: Organization[]
+interface OverviewInterface {
+  projects: Project[]
   authLogout: () => void
   user: SignUp
 }
 
-export function Overview(props: IOverviewProps) {
-  const { organization, authLogout, user } = props
+export function Overview(props: OverviewInterface) {
+  const { projects, authLogout, user } = props
 
   return (
     <LayoutPage authLogout={authLogout} user={user}>
