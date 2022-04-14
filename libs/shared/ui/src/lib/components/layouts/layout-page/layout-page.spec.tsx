@@ -2,6 +2,7 @@ import { render } from '__tests__/utils/setup-jest'
 
 import LayoutPage, { LayoutPageProps } from './layout-page'
 import React from 'react'
+import { userSignUpFactoryMock } from '@console/domains/user'
 
 describe('LayoutPage', () => {
   let props: LayoutPageProps
@@ -9,6 +10,8 @@ describe('LayoutPage', () => {
   beforeEach(() => {
     props = {
       children: React.createElement('div'),
+      authLogout: Function,
+      user: userSignUpFactoryMock(),
     }
   })
 

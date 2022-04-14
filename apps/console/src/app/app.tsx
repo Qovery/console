@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import axios from 'axios'
@@ -10,13 +10,14 @@ import {
   ProtectedRoute,
   useAuth,
   useDocumentTitle,
-  useAuthInterceptor, ONBOARDING_URL,
+  useAuthInterceptor,
+  ONBOARDING_URL,
 } from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { environment } from '../environments/environment'
 import { LoadingScreen } from '@console/shared/ui'
-import { OnboardingPage } from "@console/pages/onboarding/feature";
+import { OnboardingPage } from '@console/pages/onboarding/feature'
 
 export const ROUTER = [
   {
@@ -30,7 +31,6 @@ export const ROUTER = [
     protected: true,
   },
 ]
-
 
 export function App() {
   useDocumentTitle('Loading...')
@@ -50,7 +50,7 @@ export function App() {
         path: `${ONBOARDING_URL}/*`,
         component: <OnboardingPage />,
         protected: true,
-      },)
+      })
     }
 
     // init logrocket
