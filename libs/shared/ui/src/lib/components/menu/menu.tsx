@@ -16,6 +16,11 @@ export enum MenuAlign {
   END = 'end',
 }
 
+export enum MenuSize {
+  NORMAL = 'normal',
+  BIG = 'big',
+}
+
 export interface MenuProps {
   trigger: React.ReactElement
   children?: React.ReactNode

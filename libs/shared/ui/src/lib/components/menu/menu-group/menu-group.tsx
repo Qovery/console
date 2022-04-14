@@ -2,6 +2,7 @@ import { MenuDivider } from '@szhsin/react-menu'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import InputSearch from '../../inputs/input-search/input-search'
+import { MenuSize } from '../menu'
 import { MenuItem, MenuItemProps } from '../menu-item/menu-item'
 
 export interface MenuGroupProps {
