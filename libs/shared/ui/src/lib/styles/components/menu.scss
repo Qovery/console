@@ -1,10 +1,13 @@
 @import '@szhsin/react-menu/dist/index.css';
 
-$menuTiming: 0.15s;
+$menuTiming: 0.6s;
 
-// overlay
-.menu__overlay {
-  animation: menuShowOverlay $menuTiming ease-out;
+// open
+
+.menu__container--open {
+  animation-duration: $menuTiming;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: forwards;
 }
 
 // bottom
@@ -12,7 +15,7 @@ $menuTiming: 0.15s;
   transform: translateY(8px);
 
   &.menu__container--open {
-    animation: menuOpenBottom $menuTiming ease-out;
+    animation-name: menuOpenBottom;
   }
 }
 
@@ -21,7 +24,7 @@ $menuTiming: 0.15s;
   transform: translateY(-8px);
 
   &.menu__container--open {
-    animation: menuOpenTop $menuTiming ease-out;
+    animation-name: menuOpenTop;
   }
 }
 
@@ -30,7 +33,7 @@ $menuTiming: 0.15s;
   transform: translateX(-8px);
 
   &.menu__container--open {
-    animation: menuOpenLeft $menuTiming ease-out;
+    animation-name: menuOpenLeft;
   }
 }
 
@@ -39,7 +42,7 @@ $menuTiming: 0.15s;
   transform: translateX(12px);
 
   &.menu__container--open {
-    animation: menuOpenRight $menuTiming ease-out;
+    animation-name: menuOpenRight;
   }
 }
 
@@ -47,44 +50,34 @@ $menuTiming: 0.15s;
 .menu__container {
   .szh-menu__arrow {
     @apply shadow-none border-0;
-    animation: menuShowArrow $menuTiming ease-in;
   }
 }
 
 // animations
-
-@keyframes menuShowOverlay {
-  from {
-    opacity: 0;
-  }
-}
-
 @keyframes menuOpenBottom {
   from {
-    transform: translateY(-10px);
+    opacity: 0;
+    transform: translateY(12px);
   }
 }
 
 @keyframes menuOpenTop {
   from {
-    transform: translateY(10px);
+    opacity: 0;
+    transform: translateY(-12px);
   }
 }
 
 @keyframes menuOpenLeft {
   from {
-    transform: translateX(10px);
+    opacity: 0;
+    transform: translateX(-16px);
   }
 }
 
 @keyframes menuOpenRight {
   from {
-    transform: translateX(-10px);
-  }
-}
-
-@keyframes menuShowArrow {
-  from {
     opacity: 0;
+    transform: translateX(16px);
   }
 }
