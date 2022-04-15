@@ -11,8 +11,6 @@ export interface OverviewInterface {
 export function Overview(props: OverviewInterface) {
   const { projects, authLogout, user } = props
 
-  console.log(user)
-
   return (
     <LayoutPage authLogout={authLogout} user={user}>
       <div>
