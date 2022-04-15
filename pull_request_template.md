@@ -15,7 +15,7 @@ Put screenshot following the template `before` => `after` here
 ### Global
 
 - [ ] This PR does not introduce any breaking change
-- [ ] This PR introduces breaking change(s) and has been labelled as such
+- [ ] This PR introduces breaking change(s) and has been labeled as such
 - [ ] I have found someone to review this PR and pinged him
 
 ### Store
