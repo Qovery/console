@@ -49,6 +49,9 @@
     "tailwindcss": "^3.0.18",
     "tslib": "^2.0.0"
   },
+  "resolutions": {
+    "axios": "0.25.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.17.0",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
