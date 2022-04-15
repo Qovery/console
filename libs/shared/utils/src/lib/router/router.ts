@@ -1,5 +1,5 @@
 export const INDEX_URL = '/'
-export const OVERVIEW_URL = '/overview'
+export const OVERVIEW_URL = (id = ':organizationId') => `/${id}/overview`
 export const LOGIN_URL = '/login'
 export const ONBOARDING_URL = '/onboarding'
 export const ONBOARDING_PERSONALIZE_URL = '/personalize'
@@ -11,6 +11,8 @@ export const ONBOARDING_PRICING_BUSINESS_URL = `${ONBOARDING_PRICING_URL}/busine
 export const ONBOARDING_PRICING_ENTERPRISE_URL = `${ONBOARDING_PRICING_URL}/enterprise`
 export const ONBOARDING_PROJECT_URL = '/project'
 export const ONBOARDING_THANKS_URL = '/thanks'
+export const SETTINGS_URL = (id = ':organizationId') => `/${id}/settings`
+export const SETTINGS_GENERAL_URL = '/general'
 
 export interface Route {
   component: React.ReactElement

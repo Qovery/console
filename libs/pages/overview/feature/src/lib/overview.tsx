@@ -1,21 +1,24 @@
 import { useEffect } from 'react'
-import { useOrganization } from '@console/domains/organization'
 import { Overview } from '@console/pages/overview/ui'
 import { useAuth, useDocumentTitle } from '@console/shared/utils'
 import { useUser } from '@console/domains/user'
+import { useProjects } from '@console/domains/projects'
+import { useParams } from 'react-router'
 
 export function OverviewPage() {
   useDocumentTitle('Overview - Qovery')
-  const { organization, getOrganization } = useOrganization()
+  const { projects, getProjects } = useProjects()
   const { authLogout } = useAuth()
   const { userSignUp, getUserSignUp } = useUser()
 
-  useEffect(() => {
-    getOrganization()
-    getUserSignUp()
-  }, [getOrganization, getUserSignUp])
+  const { organizationId } = useParams()
 
-  return <Overview organization={organization} authLogout={authLogout} user={userSignUp} />
+  useEffect(() => {
+    getUserSignUp()
+    organizationId && getProjects(organizationId)
+  }, [getProjects, organizationId, getUserSignUp])
+
+  return <Overview projects={projects} authLogout={authLogout} user={userSignUp} />
 }
 
 export default OverviewPage

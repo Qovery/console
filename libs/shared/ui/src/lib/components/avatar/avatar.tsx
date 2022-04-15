@@ -34,8 +34,8 @@ export function Avatar(props: AvatarProps) {
       ) : (
         <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center">
           <span className="text-xs text-text-500 font-medium relative top-[2px]">
-            {firstName.charAt(0)}
-            {lastName.charAt(0)}
+            {firstName && firstName.charAt(0)}
+            {lastName && lastName.charAt(0)}
           </span>
         </div>
       )}
