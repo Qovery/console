@@ -23,7 +23,7 @@ export interface ButtonIconProps {
   link?: string
   disabled?: boolean
   className?: string
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent) => void
   loading?: boolean
   notification?: boolean
   active?: boolean
@@ -49,7 +49,7 @@ export function ButtonIcon(props: ButtonIconProps) {
 
   if (!link) {
     return (
-      <button className={defineClass} onClick={onClick}>
+      <button className={defineClass} onClick={(e) => onClick && onClick(e)}>
         {notification && (
           <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
         )}

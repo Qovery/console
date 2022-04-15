@@ -29,6 +29,7 @@ const FaIcons = [
   'icon-solid-envelope',
   'icon-solid-keyboard',
   'icon-solid-wave-pulse',
+  'icon-solid-book',
   // schema: favicons name
 ]
 

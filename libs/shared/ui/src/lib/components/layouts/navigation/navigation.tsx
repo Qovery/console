@@ -13,29 +13,28 @@ export interface NavigationProps {
 
 export function Navigation(props: NavigationProps) {
   const { authLogout, firstName, lastName } = props
-export function Navigation() {
   const settingsMenu = [
     {
       title: 'Need help ?',
       items: [
         {
           name: 'See documentations',
-          link: '/overview',
-          contentLeft: <Icon name="icon-solid-layer-group" className="text-sm text-brand-400" />,
+          link: 'https://hub.qovery.com/',
+          contentLeft: <Icon name="icon-solid-book" className="text-sm text-brand-400" />,
         },
         {
           name: 'Join Discord',
-          link: '/overview',
+          link: 'https://discord.com/invite/Bed5FRa',
           contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
         },
         {
           name: 'Contact us',
-          link: '/overview',
+          link: 'https://discord.qovery.com/',
           contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
         },
         {
           name: 'Shortcuts',
-          link: '/overview',
+          link: '/',
           contentLeft: <Icon name="icon-solid-keyboard" className="text-sm text-brand-400" />,
         },
       ],
