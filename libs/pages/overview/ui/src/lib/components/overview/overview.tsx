@@ -10,6 +10,8 @@ interface IOverviewProps {
 export function Overview(props: IOverviewProps) {
   const { organization, authLogout, user } = props
 
+  console.log(user)
+
   return (
     <LayoutPage authLogout={authLogout} user={user}>
       <div>
