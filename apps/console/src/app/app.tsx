@@ -13,7 +13,6 @@ import {
   useAuthInterceptor,
   SETTINGS_URL,
   ONBOARDING_URL,
-  SETTINGS_URL,
 } from '@console/shared/utils'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'

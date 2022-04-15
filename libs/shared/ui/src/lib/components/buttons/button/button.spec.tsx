@@ -32,7 +32,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--small btn--button some-class-name')
+    expect(button.className).toBe('btn btn--small btn--basic some-class-name')
   })
 
   it('should apply the disabled class', () => {
@@ -42,7 +42,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--normal btn--button btn--disabled')
+    expect(button.className).toBe('btn btn--normal btn--basic btn--disabled')
   })
 
   it('should return a link instead of a button', () => {
