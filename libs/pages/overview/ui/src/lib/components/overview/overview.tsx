@@ -2,7 +2,7 @@ import { SignUp } from 'qovery-typescript-axios'
 import { LayoutPage } from '@console/shared/ui'
 import { Project } from 'qovery-typescript-axios'
 
-interface OverviewInterface {
+export interface OverviewInterface {
   projects: Project[]
   authLogout: () => void
   user: SignUp

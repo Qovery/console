@@ -11,6 +11,7 @@ import {
   useAuth,
   useDocumentTitle,
   useAuthInterceptor,
+  SETTINGS_URL,
   ONBOARDING_URL,
   SETTINGS_URL,
 } from '@console/shared/utils'
