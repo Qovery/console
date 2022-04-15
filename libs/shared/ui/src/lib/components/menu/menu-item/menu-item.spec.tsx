@@ -10,10 +10,3 @@ beforeEach(() => {
     link: '/',
   }
 })
-
-describe('MenuItem', () => {
-  it('should render successfully', () => {
-    const { baseElement } = render(<MenuItem {...props} />)
-    expect(baseElement).toBeTruthy()
-  })
-})
