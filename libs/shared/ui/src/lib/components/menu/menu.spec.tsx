@@ -84,5 +84,18 @@ describe('Menu', () => {
     expect(item).toBeTruthy()
   })
 
-  it('shoud have a search input', () => {})
+  it('should have a search input on menu', () => {
+    props.menus = [
+      {
+        items: [{ name: 'Test 1', link: '/', contentLeft: <Icon name="icon-solid-layer-group" /> }],
+        search: true,
+      },
+    ]
+
+    render(<Menu {...props} />)
+
+    const search = screen.getByRole('textbox')
+
+    expect(search).toBeTruthy()
+  })
 })

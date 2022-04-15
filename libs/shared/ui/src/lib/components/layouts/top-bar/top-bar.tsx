@@ -15,17 +15,17 @@ export function TopBar() {
         {
           name: 'Invite member to the team',
           link: '/overview',
-          contentLeft: <Icon name="icon-solid-layer-group" className="text-sm text-brand-400" />,
+          contentLeft: <Icon name="icon-solid-arrow-right" className="text-sm text-brand-400" />,
         },
         {
           name: 'Add a custom domain',
           link: '/overview',
-          contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
+          contentLeft: <Icon name="icon-solid-globe" className="text-sm text-brand-400" />,
         },
         {
           name: 'Deploy your application',
           link: '/overview',
-          contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
+          contentLeft: <Icon name="icon-solid-cloud" className="text-sm text-brand-400" />,
         },
       ],
     },

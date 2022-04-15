@@ -30,6 +30,9 @@ const FaIcons = [
   'icon-solid-keyboard',
   'icon-solid-wave-pulse',
   'icon-solid-book',
+  'icon-solid-arrow-right',
+  'icon-solid-globe',
+  'icon-solid-cloud',
   // schema: favicons name
 ]
 

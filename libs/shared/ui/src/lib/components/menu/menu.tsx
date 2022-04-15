@@ -27,7 +27,7 @@ export interface MenuProps {
   direction?: MenuDirection
   open?: boolean
   arrowAlign?: MenuAlign
-  menus: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string }[]
+  menus: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
   className?: string
   header?: React.ReactNode
   onClose?: (e: MenuCloseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>) => void
