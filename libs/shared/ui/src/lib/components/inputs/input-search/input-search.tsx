@@ -39,7 +39,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         <input
           ref={ref}
-          className={`${className} w-full h-8 rounded border border-element-light-lighter-500 bg-element-light-lighter-300 text-text-600 placeholder:text-text-400 pl-8 pr-6 leading-none text-sm focus:outline-none focus:border-brand-400 focus:transition-[border-color]`}
+          className={`${className} w-full h-8 rounded border border-element-light-lighter-500 bg-element-light-lighter-300 text-text-600 placeholder:text-text-400 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] text-xs`}
           type="text"
           placeholder={placeholder}
           disabled={false}
@@ -57,7 +57,7 @@ export function InputSearch(props: InputSearchProps) {
           {emptyContent ? (
             emptyContent
           ) : (
-            <div className="text-center p-3">
+            <div className="text-center px-3 py-6">
               <Icon name="icon-solid-wave-pulse" className="text-text-400 mb-2" />
               <p className="text-text-400 font-medium text-sm">No result for this search</p>
             </div>

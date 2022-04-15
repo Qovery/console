@@ -16,11 +16,6 @@ export enum MenuAlign {
   END = 'end',
 }
 
-export enum MenuSize {
-  NORMAL = 'normal',
-  BIG = 'big',
-}
-
 export interface MenuProps {
   trigger: React.ReactElement
   children?: React.ReactNode
@@ -30,8 +25,10 @@ export interface MenuProps {
   menus: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string }[]
   className?: string
   header?: React.ReactNode
-  onClose?: (e: MenuCloseEvent) => void
-  size?: MenuSize
+  onClose?: (e: MenuCloseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  width?: number
+  paddingMenuY?: number
+  paddingMenuX?: number
 }
 
 export function Menu(props: MenuProps) {
@@ -44,15 +41,15 @@ export function Menu(props: MenuProps) {
     menus = [],
     className = '',
     onClose,
-    size = MenuSize.NORMAL,
+    width = 340,
+    paddingMenuX = 12,
+    paddingMenuY = 12,
   } = props
 
   const ref = useRef(null)
   const [isOpen, setOpen] = useState(false)
 
-  const handleActive = (e: MenuCloseEvent | null) => {
-    setOpen(!isOpen)
-
+  const handleClick = (e: MenuCloseEvent | null) => {
     if (ref.current) {
       const el = ref.current as HTMLElement
       const btn = el.querySelector('.btn, .btn-icon')
@@ -62,6 +59,8 @@ export function Menu(props: MenuProps) {
     if (isOpen && e && onClose) {
       onClose(e)
     }
+
+    setOpen(!isOpen)
   }
 
   const closeMenu = () => {
@@ -76,7 +75,11 @@ export function Menu(props: MenuProps) {
   useEffect(() => {
     setOpen(open)
     window.addEventListener('resize', closeMenu)
-    return () => window.removeEventListener('resize', closeMenu)
+    window.addEventListener('scroll', closeMenu)
+    return () => {
+      window.removeEventListener('resize', closeMenu)
+      window.removeEventListener('scroll', closeMenu)
+    }
   }, [open])
 
   let offsetX = 0
@@ -94,30 +97,34 @@ export function Menu(props: MenuProps) {
 
   return (
     <>
-      <div className="w-max menu__trigger" ref={ref} onClick={(e) => handleActive(null)}>
+      <div className="w-max menu__trigger" ref={ref} onMouseDown={() => handleClick(null)}>
         {trigger}
       </div>
       <ControlledMenu
         state={isOpen ? 'open' : 'closed'}
-        arrow={true}
+        arrow
         offsetX={offsetX}
         offsetY={offsetY}
         direction={direction}
-        onClose={(e) => handleActive(e)}
+        onClose={(e) => handleClick(e)}
         anchorRef={ref}
         align={arrowAlign}
         className="menu z-20"
-        menuClassName={`${
-          size === MenuSize.BIG ? 'w-[374px]' : 'w-[340px]'
-        } rounded-md shadow-lg p-0 ${className} menu__container menu__container--${direction} menu__container--${
+        menuClassName={`rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] p-0 ${className} menu__container menu__container--${direction} menu__container--${
           isOpen ? 'open' : 'closed'
         } menu__container--${arrowAlign}`}
-        transition={true}
-        portal={true}
+        portal
       >
         {children}
         {menus.map((menu, index) => (
-          <MenuGroup key={index} menu={menu} isLast={index === menus.length - 1 ? true : false} size={size}></MenuGroup>
+          <MenuGroup
+            key={index}
+            menu={menu}
+            isLast={index === menus.length - 1 ? true : false}
+            paddingMenuX={paddingMenuX}
+            paddingMenuY={paddingMenuY}
+            style={{ width }}
+          ></MenuGroup>
         ))}
       </ControlledMenu>
     </>
