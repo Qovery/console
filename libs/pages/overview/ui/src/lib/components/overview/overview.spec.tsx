@@ -1,12 +1,12 @@
 import { render } from '__tests__/utils/setup-jest'
 
 import Overview, { OverviewInterface } from './overview'
-import { organizationFactoryMock } from '@console/domains/organization'
+import { projectsFactoryMock } from '@console/domains/projects'
 import { userSignUpFactoryMock } from '@console/domains/user'
 
 describe('Overview', () => {
   const props: OverviewInterface = {
-    organization: organizationFactoryMock(3),
+    projects: projectsFactoryMock(3),
     authLogout: Function,
     user: userSignUpFactoryMock(),
   }
