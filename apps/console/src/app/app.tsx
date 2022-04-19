@@ -73,7 +73,7 @@ export function App() {
     // if (process.env['NODE_ENV'] === 'production') {
 
     // if onboarding feature flag activated we add onboarding routes to router
-    if (posthog.isFeatureEnabled('v3-onboarding')) {
+    if (posthog && posthog.isFeatureEnabled('v3-onboarding')) {
       ROUTER.push({
         path: `${ONBOARDING_URL}/*`,
         component: <OnboardingPage />,

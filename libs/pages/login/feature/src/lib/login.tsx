@@ -17,7 +17,7 @@ export function LoginPage() {
   }
 
   useEffect(() => {
-    const isOnboarding = posthog.isFeatureEnabled('v3-onboarding')
+    const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
 
     async function fetchData() {
       const organization = await getOrganization()
