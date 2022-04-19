@@ -1,0 +1,23 @@
+{
+  "root": "libs/domains/application",
+  "sourceRoot": "libs/domains/application/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/domains/application/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/domains/application"],
+      "options": {
+        "jestConfig": "libs/domains/application/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

@@ -1,12 +1,18 @@
-/* eslint-disable-next-line */
-export interface SettingsPageProps {}
+import { useEffect } from 'react'
+import { useUser } from '@console/domains/user'
+import { Container } from '@console/pages/settings/ui'
+import { useAuth, useDocumentTitle } from '@console/shared/utils'
 
-export function SettingsPage(props: SettingsPageProps) {
-  return (
-    <div>
-      <h1>Welcome to SettingsPage!</h1>
-    </div>
-  )
+export function SettingsPage() {
+  useDocumentTitle('Settings - Qovery')
+  const { authLogout } = useAuth()
+  const { userSignUp, getUserSignUp } = useUser()
+
+  useEffect(() => {
+    getUserSignUp()
+  }, [getUserSignUp])
+
+  return <Container authLogout={authLogout} user={userSignUp} />
 }
 
 export default SettingsPage
