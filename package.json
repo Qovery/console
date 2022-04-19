@@ -25,6 +25,7 @@
     "@nrwl/cypress": "13.9.6",
     "@nrwl/jest": "13.9.6",
     "@nrwl/react": "13.9.6",
+    "@radix-ui/react-dialog": "^0.1.7",
     "@reach/listbox": "^0.16.2",
     "@reduxjs/toolkit": "^1.7.2",
     "@szhsin/react-menu": "^3.0.0",
