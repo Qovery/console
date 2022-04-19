@@ -1,0 +1,23 @@
+{
+  "root": "libs/domains/environment",
+  "sourceRoot": "libs/domains/environment/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/domains/environment/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/domains/environment"],
+      "options": {
+        "jestConfig": "libs/domains/environment/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

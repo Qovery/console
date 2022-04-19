@@ -12,7 +12,9 @@ export const ONBOARDING_PRICING_ENTERPRISE_URL = `${ONBOARDING_PRICING_URL}/ente
 export const ONBOARDING_PROJECT_URL = '/project'
 export const ONBOARDING_THANKS_URL = '/thanks'
 export const SETTINGS_URL = (id = ':organizationId') => `/${id}/settings`
-export const SETTINGS_GENERAL_URL = '/general'
+export const ENVIRONMENTS_URL = (projectId = ':projectId') => `/${projectId}/environments`
+export const APPLICATIONS_URL = (environmentId = ':environmentId') => `/${environmentId}/applications`
+export const APPLICATION_URL = (applicationId = ':applicationId') => `/${applicationId}/application/general`
 
 export interface Route {
   component: React.ReactElement

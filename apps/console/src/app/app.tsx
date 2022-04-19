@@ -13,13 +13,19 @@ import {
   useAuthInterceptor,
   SETTINGS_URL,
   ONBOARDING_URL,
+  ENVIRONMENTS_URL,
+  APPLICATIONS_URL,
+  APPLICATION_URL,
 } from '@console/shared/utils'
+import { LoadingScreen } from '@console/shared/ui'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
-import { environment } from '../environments/environment'
-import { LoadingScreen } from '@console/shared/ui'
+import { EnvironmentsPage } from '@console/pages/environments/feature'
+import { ApplicationsPage } from '@console/pages/applications/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
+import { ApplicationPage } from '@console/pages/application/feature'
+import { environment } from '../environments/environment'
 
 export const ROUTER = [
   {
@@ -35,6 +41,21 @@ export const ROUTER = [
   {
     path: SETTINGS_URL(),
     component: <SettingsPage />,
+    protected: true,
+  },
+  {
+    path: ENVIRONMENTS_URL(),
+    component: <EnvironmentsPage />,
+    protected: true,
+  },
+  {
+    path: APPLICATIONS_URL(),
+    component: <ApplicationsPage />,
+    protected: true,
+  },
+  {
+    path: APPLICATION_URL(),
+    component: <ApplicationPage />,
     protected: true,
   },
 ]
