@@ -1,6 +1,7 @@
 import { SignUp } from 'qovery-typescript-axios'
 import { LayoutPage } from '@console/shared/ui'
 import { Project } from 'qovery-typescript-axios'
+import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { ENVIRONMENTS_URL } from '@console/shared/utils'
 
@@ -12,6 +13,7 @@ export interface OverviewInterface {
 
 export function Overview(props: OverviewInterface) {
   const { projects, authLogout, user } = props
+  const { organizationId } = useParams()
 
   return (
     <LayoutPage authLogout={authLogout} user={user}>
@@ -20,7 +22,7 @@ export function Overview(props: OverviewInterface) {
         <ul className="mt-8">
           {projects.map((project: Project) => (
             <li key={project.id}>
-              <Link className="link text-accent2-500" to={ENVIRONMENTS_URL(project.id)}>
+              <Link className="link text-accent2-500" to={ENVIRONMENTS_URL(organizationId, project.id)}>
                 {project.name}
               </Link>
             </li>
