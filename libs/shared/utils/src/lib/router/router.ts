@@ -1,5 +1,5 @@
 export const INDEX_URL = '/'
-export const OVERVIEW_URL = (id = ':organizationId') => `/${id}/overview`
+export const OVERVIEW_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/overview`
 export const LOGIN_URL = '/login'
 export const ONBOARDING_URL = '/onboarding'
 export const ONBOARDING_PERSONALIZE_URL = '/personalize'
@@ -11,10 +11,21 @@ export const ONBOARDING_PRICING_BUSINESS_URL = `${ONBOARDING_PRICING_URL}/busine
 export const ONBOARDING_PRICING_ENTERPRISE_URL = `${ONBOARDING_PRICING_URL}/enterprise`
 export const ONBOARDING_PROJECT_URL = '/project'
 export const ONBOARDING_THANKS_URL = '/thanks'
-export const SETTINGS_URL = (id = ':organizationId') => `/${id}/settings`
-export const ENVIRONMENTS_URL = (projectId = ':projectId') => `/${projectId}/environments`
-export const APPLICATIONS_URL = (environmentId = ':environmentId') => `/${environmentId}/applications`
-export const APPLICATION_URL = (applicationId = ':applicationId') => `/${applicationId}/application/general`
+export const SETTINGS_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/settings`
+export const ENVIRONMENTS_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
+  `/organization/${organizationId}/project/${projectId}/environments`
+export const APPLICATIONS_URL = (
+  organizationId = ':organizationId',
+  projectId = ':projectId',
+  environmentId = ':environmentId'
+) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/applications`
+export const APPLICATION_URL = (
+  organizationId = ':organizationId',
+  projectId = ':projectId',
+  environmentId = ':environmentId',
+  applicationId = ':applicationId'
+) =>
+  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}/general`
 
 export interface Route {
   component: React.ReactElement
