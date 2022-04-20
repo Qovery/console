@@ -1,5 +1,4 @@
 import { Modal, ModalProps } from './modal'
-import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
 import Button from '../buttons/button/button'
 
@@ -11,8 +10,8 @@ export default {
 const ModalContent = () => {
   return (
     <div className="py-4 px-5 text-center">
-      <h3 className="font-medium text-base text-text-500">Titre de la modal</h3>
-      <p className="text-sm text-text-400">Contenu de la modal</p>
+      <h3 className="font-medium text-base text-text-500">Modal title</h3>
+      <p className="text-sm text-text-400">Modal content</p>
     </div>
   )
 }
