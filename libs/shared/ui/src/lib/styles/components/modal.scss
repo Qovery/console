@@ -1,17 +1,17 @@
 .modal__overlay[data-state='open'] {
-  animation: fadeIn 50ms ease-out forwards;
+  animation: fadeIn 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
 }
 
 .modal__content[data-state='open'] {
-  animation: modalDisplay 100ms ease-out forwards;
+  animation: modalDisplay 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
 }
 
 .modal__overlay[data-state='closed'] {
-  animation: fadeOut 50ms ease-in forwards;
+  animation: fadeOut 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
 }
 
 .modal__content[data-state='closed'] {
-  animation: modalHide 100ms ease-in forwards;
+  animation: modalHide 200ms 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
 }
 
 @keyframes fadeIn {

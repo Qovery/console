@@ -4,6 +4,8 @@ import { Avatar } from '../../avatar/avatar'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
 import Menu, { MenuAlign, MenuDirection } from '../../menu/menu'
+import Modal from '../../modal/modal'
+import ModalUser from '../../modals/modal-user/modal-user'
 
 export interface NavigationProps {
   authLogout: () => void
@@ -70,7 +72,9 @@ export function Navigation(props: NavigationProps) {
       </div>
 
       <div className="flex w-14 h-14 items-center justify-center border-t border-element-light-lighter-400">
-        <Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB} onClick={authLogout}></Avatar>
+        <Modal defaultOpen trigger={<Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB}></Avatar>}>
+          <ModalUser firstName={firstName} lastName={lastName} authLogout={authLogout} />
+        </Modal>
       </div>
     </div>
   )
