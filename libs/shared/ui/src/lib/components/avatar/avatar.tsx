@@ -14,10 +14,11 @@ export interface AvatarProps {
   className?: string
   alt?: string
   onClick?: () => void
+  size?: number
 }
 
 export function Avatar(props: AvatarProps) {
-  const { firstName, lastName, url, style, icon, className = '', alt, onClick } = props
+  const { firstName, lastName, url, style, icon, className = '', alt, onClick, size = 32 } = props
 
   const defineClass = `${style === AvatarStyle.STROKED ? 'border-2 border-element-light-lighter-400' : ''} ${
     onClick ? 'cursor-pointer' : ''
@@ -26,14 +27,15 @@ export function Avatar(props: AvatarProps) {
   return (
     <div
       data-testid="avatar"
-      className={`w-8 h-8 block rounded-full relative ${defineClass} ${className}`}
+      style={{ width: size, height: size }}
+      className={`block rounded-full relative ${defineClass} ${className}`}
       onClick={() => onClick && onClick()}
     >
       {url ? (
         <img src={url} alt={alt} className="w-full h-full rounded-full" />
       ) : (
-        <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center">
-          <span className="text-xs text-text-500 font-medium relative top-[2px]">
+        <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center flex justify-center items-center">
+          <span className="text-xs text-text-500 font-medium relative">
             {firstName && firstName.charAt(0)}
             {lastName && lastName.charAt(0)}
           </span>
