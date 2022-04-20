@@ -47,7 +47,7 @@ export function InputSearch(props: InputSearchProps) {
           name="search"
         />
         {toggleDelete && (
-          <button className="absolute right-2 top-1/2 -translate-y-1/2" onClick={deleteValue}>
+          <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
             <Icon className="text-text-400 text-sm" name="icon-solid-xmark" />
           </button>
         )}
@@ -58,8 +58,8 @@ export function InputSearch(props: InputSearchProps) {
             emptyContent
           ) : (
             <div className="text-center px-3 py-6">
-              <Icon name="icon-solid-wave-pulse" className="text-text-400 mb-2" />
-              <p className="text-text-400 font-medium text-sm">No result for this search</p>
+              <Icon name="icon-solid-wave-pulse" className="text-text-400" />
+              <p className="text-text-400 font-medium text-xs mt-1">No result for this search</p>
             </div>
           )}
         </div>
