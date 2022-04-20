@@ -50,7 +50,12 @@
     "react-use-intercom": "^1.5.0",
     "regenerator-runtime": "0.13.7",
     "tailwindcss": "^3.0.18",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "@storybook/addon-essentials": "^6.4.18",
+    "@storybook/addon-knobs": "^6.4.0",
+    "@storybook/builder-webpack5": "~6.4.12",
+    "@storybook/manager-webpack5": "~6.4.12",
+    "@storybook/react": "~6.4.12"
   },
   "resolutions": {
     "axios": "0.25.0"
@@ -62,11 +67,6 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.12.13",
-    "@storybook/addon-essentials": "^6.4.18",
-    "@storybook/addon-knobs": "^6.4.0",
-    "@storybook/builder-webpack5": "~6.4.12",
-    "@storybook/manager-webpack5": "~6.4.12",
-    "@storybook/react": "~6.4.12",
     "@svgr/webpack": "^5.4.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "12.1.2",
