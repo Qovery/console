@@ -1,5 +1,6 @@
 export const INDEX_URL = '/'
-export const OVERVIEW_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/overview`
+export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
+  `/organization/${organizationId}/project/${projectId}/overview`
 export const LOGIN_URL = '/login'
 export const ONBOARDING_URL = '/onboarding'
 export const ONBOARDING_PERSONALIZE_URL = '/personalize'

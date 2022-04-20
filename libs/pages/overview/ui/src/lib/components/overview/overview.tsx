@@ -16,7 +16,7 @@ export function Overview(props: OverviewInterface) {
   const { organizationId } = useParams()
 
   return (
-    <LayoutPage authLogout={authLogout} user={user}>
+    <LayoutPage authLogout={authLogout} user={user} projects={projects}>
       <div>
         <h2 className="text-3xl font-extrabold text-brand-500">Overview</h2>
         <ul className="mt-8">
