@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "storybook": "nx storybook shared-ui",
+    "build-storybook": "nx run shared-ui:build-storybook",
     "build": "npx nx build",
     "test": "nx test"
   },
