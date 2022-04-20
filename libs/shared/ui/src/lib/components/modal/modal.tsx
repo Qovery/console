@@ -11,6 +11,13 @@ export interface ModalProps {
   width?: number
 }
 
+const bodyStyle = (open: boolean) => {
+  const body = document.body
+  if (open) {
+    body.style.cssText = 'margin-right: 0!important; padding-right: 0!important'
+  }
+}
+
 export function Modal(props: ModalProps) {
   const { trigger, children, className = '', defaultOpen = false, open = false, onOpen, width = 474 } = props
 
