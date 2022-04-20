@@ -27,6 +27,7 @@ export interface ButtonIconProps {
   loading?: boolean
   notification?: boolean
   active?: boolean
+  iconClassName?: string
 }
 
 export function ButtonIcon(props: ButtonIconProps) {
@@ -41,6 +42,7 @@ export function ButtonIcon(props: ButtonIconProps) {
     notification = false,
     link,
     active = false,
+    iconClassName = '',
   } = props
 
   const defineClass = `btn btn-icon ${size ? `btn-icon--${size}` : ''} ${style ? `btn-icon--${style}` : ''} ${
@@ -53,7 +55,7 @@ export function ButtonIcon(props: ButtonIconProps) {
         {notification && (
           <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
         )}
-        <Icon name={icon}></Icon>
+        <Icon name={icon} className={iconClassName}></Icon>
       </button>
     )
   } else {
@@ -62,7 +64,7 @@ export function ButtonIcon(props: ButtonIconProps) {
         {notification && (
           <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
         )}
-        <Icon name={icon}></Icon>
+        <Icon name={icon} className={iconClassName}></Icon>
       </Link>
     )
   }
