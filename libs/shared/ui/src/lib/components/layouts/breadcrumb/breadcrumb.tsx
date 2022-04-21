@@ -1,34 +1,56 @@
-import { useState } from 'react'
-import { ButtonIcon, ButtonIconSize, ButtonIconStyle, Icon, Menu, MenuAlign } from '@console/shared/ui'
-import { Environment, Project, Application } from 'qovery-typescript-axios'
-import { OVERVIEW_URL } from '@console/shared/utils'
-import { useParams } from 'react-router'
+import { Environment, Project, Application, Organization } from 'qovery-typescript-axios'
+import { useLocation, useParams } from 'react-router'
+import { Link } from 'react-router-dom'
+import { Icon } from '@console/shared/ui'
+import { APPLICATIONS_URL, ENVIRONMENTS_URL, ORGANIZATION_URL, OVERVIEW_URL } from '@console/shared/utils'
+import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
+  organizations: Organization[]
   projects?: Project[]
   environments?: Environment[]
   applications?: Application[]
 }
 
 export function Breadcrumb(props: BreadcrumbProps) {
-  const { projects, environments, applications } = props
-  const [openProject, setOpenProject] = useState(false)
+  const { organizations, projects, environments, applications } = props
+  const { organizationId, projectId, environmentId, applicationId } = useParams()
+  const { pathname } = useLocation()
 
-  const { projectId, environmentId, applicationId } = useParams()
+  const currentApplicationName = applications?.find((application) => applicationId === application.id)?.name
+  const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
 
-  console.log(projectId)
-  const currentProjectName = projects?.find((project) => projectId === project.id)?.name
+  const organizationsMenu = [
+    {
+      title: 'Organizations',
+      search: true,
+      items: organizations
+        ? organizations?.map((organization: Organization) => ({
+            name: organization.name,
+            link: {
+              url: ORGANIZATION_URL(organization.id),
+            },
+            contentLeft:
+              organizationId === organization.id ? (
+                <Icon name="icon-solid-check" className="text-sm text-success-400" />
+              ) : (
+                ''
+              ),
+          }))
+        : [],
+    },
+  ]
 
   const projectMenu = [
     {
-      title: 'Project',
+      title: 'Projects',
       search: true,
-      button: 'Change organization',
-      buttonLink: '/',
       items: projects
         ? projects?.map((project: Project) => ({
             name: project.name,
-            link: OVERVIEW_URL(project.organization?.id, project.id),
+            link: {
+              url: OVERVIEW_URL(project.organization?.id, project.id),
+            },
             contentLeft:
               projectId === project.id ? <Icon name="icon-solid-check" className="text-sm text-success-400" /> : '',
           }))
@@ -36,30 +58,92 @@ export function Breadcrumb(props: BreadcrumbProps) {
     },
   ]
 
+  const environmentMenu = [
+    {
+      title: 'Environments',
+      search: true,
+      items: environments
+        ? environments?.map((environment: Environment) => ({
+            name: environment.name,
+            link: {
+              url: APPLICATIONS_URL(organizationId, projectId, environment.id),
+            },
+            contentLeft:
+              environmentId === environment.id ? (
+                <Icon name="icon-solid-check" className="text-sm text-success-400" />
+              ) : (
+                ''
+              ),
+          }))
+        : [],
+    },
+  ]
+
+  const squareContent = (text: string | undefined, margin = 'mr-2 mt-0.5') => (
+    <div
+      className={`w-4 h-4.5 flex items-center justify-center text-xs text-text-400 text-center bg-element-light-lighter-400 rounded-sm font-bold ${margin}`}
+    >
+      {text}
+    </div>
+  )
+
+  if (organizations?.length === 0) return <div />
+
   return (
-    <div className="flex h-full gap-2 items-center cursor-pointer" onClick={() => setOpenProject(true)}>
-      <img
-        src="https://console.qovery.com/assets/img/logos/logo.svg"
-        className="w-4 h-auto"
-        alt="Qovery Organization"
-      />
-      {projects && projects?.length > 0 && (
+    <div className="flex h-full items-center cursor-pointer">
+      {currentOrganization?.logo_url ? (
+        <img
+          src={currentOrganization?.logo_url}
+          className="w-4 h-auto mt-0.5 mr-0.5"
+          alt={`${currentOrganization?.name} organization`}
+        />
+      ) : (
+        squareContent(currentOrganization?.name.charAt(0), 'mt-0.5')
+      )}
+      {organizationId && (
+        <BreadcrumbItem
+          data={projects}
+          menuItems={organizationsMenu}
+          paramId={organizationId}
+          link={ORGANIZATION_URL(organizationId)}
+        />
+      )}
+      {projectId && (
         <>
-          <p className="text-sm text-text-500 font-medium -mr-3">{currentProjectName}</p>
-          <Menu
-            menus={projectMenu}
-            open={openProject}
-            arrowAlign={MenuAlign.START}
-            onClose={() => setOpenProject(false)}
-            trigger={
-              <ButtonIcon
-                className="no-active"
-                icon="icon-solid-angle-down"
-                style={ButtonIconStyle.FLAT}
-                size={ButtonIconSize.BIG}
-              />
-            }
+          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
+          <BreadcrumbItem
+            data={projects}
+            menuItems={projectMenu}
+            paramId={projectId}
+            link={OVERVIEW_URL(organizationId, projectId)}
           />
+        </>
+      )}
+      {(environmentId || projectId || applicationId) && pathname !== OVERVIEW_URL(organizationId, projectId) && (
+        <>
+          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
+          <div className="flex items-center">
+            <Link to={ENVIRONMENTS_URL(organizationId, projectId)}>{squareContent('E')}</Link>
+            {!environmentId ? (
+              <span className="text-sm text-text-500 font-medium">Environments</span>
+            ) : (
+              <BreadcrumbItem
+                data={environments}
+                menuItems={environmentMenu}
+                paramId={environmentId}
+                link={APPLICATIONS_URL(organizationId, projectId, environmentId)}
+              />
+            )}
+          </div>
+        </>
+      )}
+      {applicationId && (
+        <>
+          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
+          <div className="flex items-center">
+            {squareContent('S')}
+            <span className="text-sm text-text-500 font-medium">{currentApplicationName}</span>
+          </div>
         </>
       )}
     </div>

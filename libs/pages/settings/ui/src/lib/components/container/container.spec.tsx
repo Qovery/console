@@ -1,16 +1,10 @@
-import { userSignUpFactoryMock } from '@console/domains/user'
 import { render } from '@testing-library/react'
 
-import Container, { ContainerProps } from '../container/container'
+import Container from '../container/container'
 
 describe('Container', () => {
-  const props: ContainerProps = {
-    authLogout: Function,
-    user: userSignUpFactoryMock(),
-  }
-
   it('should render successfully', () => {
-    const { baseElement } = render(<Container {...props} />)
+    const { baseElement } = render(<Container />)
     expect(baseElement).toBeTruthy()
   })
 })

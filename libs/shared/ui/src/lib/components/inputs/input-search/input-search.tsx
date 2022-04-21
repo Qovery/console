@@ -7,6 +7,7 @@ export interface InputSearchProps {
   onChange?: (value: string) => void
   isEmpty?: boolean
   emptyContent?: React.ReactElement
+  autofocus?: boolean
 }
 
 export function InputSearch(props: InputSearchProps) {

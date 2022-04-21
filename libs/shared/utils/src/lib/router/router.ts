@@ -1,4 +1,5 @@
 export const INDEX_URL = '/'
+export const ORGANIZATION_URL = (organizationId = ':organizationId') => `/organization/${organizationId}`
 export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
   `/organization/${organizationId}/project/${projectId}/overview`
 export const LOGIN_URL = '/login'

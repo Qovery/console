@@ -124,7 +124,7 @@ export function Menu(props: MenuProps) {
             paddingMenuX={paddingMenuX}
             paddingMenuY={paddingMenuY}
             style={{ width }}
-          ></MenuGroup>
+          />
         ))}
       </ControlledMenu>
     </>

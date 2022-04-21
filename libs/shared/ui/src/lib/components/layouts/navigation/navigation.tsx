@@ -1,5 +1,7 @@
+import { Link, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
-import { Link } from 'react-router-dom'
+import { SETTINGS_URL } from '@console/shared/utils'
 import { Avatar } from '../../avatar/avatar'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
@@ -13,28 +15,42 @@ export interface NavigationProps {
 
 export function Navigation(props: NavigationProps) {
   const { authLogout, firstName, lastName } = props
-  const settingsMenu = [
+  const { organizationId } = useParams()
+  const navigate = useNavigate()
+
+  const infosMenu = [
     {
-      title: 'Need help ?',
+      title: 'Need help?',
       items: [
         {
           name: 'See documentations',
-          link: 'https://hub.qovery.com/',
+          link: {
+            url: 'https://hub.qovery.com/',
+            external: true,
+          },
           contentLeft: <Icon name="icon-solid-book" className="text-sm text-brand-400" />,
         },
         {
           name: 'Join Discord',
-          link: 'https://discord.com/invite/Bed5FRa',
+          link: {
+            url: 'https://discord.com/invite/Bed5FRa',
+            external: true,
+          },
           contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
         },
         {
           name: 'Contact us',
-          link: 'https://discord.qovery.com/',
+          link: {
+            url: 'https://discord.qovery.com/',
+            external: true,
+          },
           contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
         },
         {
           name: 'Shortcuts',
-          link: '/',
+          link: {
+            url: 'https://discord.qovery.com/',
+          },
           contentLeft: <Icon name="icon-solid-keyboard" className="text-sm text-brand-400" />,
         },
       ],
@@ -58,13 +74,17 @@ export function Navigation(props: NavigationProps) {
         </div>
         <div>
           <div className="flex flex-col gap-3">
+            <ButtonIcon
+              icon="icon-solid-wheel"
+              style={ButtonIconStyle.ALT}
+              onClick={() => navigate(SETTINGS_URL(organizationId))}
+            />
             <Menu
-              trigger={<ButtonIcon icon="icon-solid-wheel" style={ButtonIconStyle.ALT} />}
+              trigger={<ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} />}
               direction={MenuDirection.RIGHT}
               arrowAlign={MenuAlign.END}
-              menus={settingsMenu}
+              menus={infosMenu}
             />
-            <ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} />
           </div>
         </div>
       </div>

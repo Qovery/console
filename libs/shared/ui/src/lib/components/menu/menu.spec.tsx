@@ -13,9 +13,24 @@ beforeEach(() => {
     menus: [
       {
         items: [
-          { name: 'Test 1', link: '/' },
-          { name: 'Test 2', link: '/' },
-          { name: 'Test 3', link: '/' },
+          {
+            name: 'Test 1',
+            link: {
+              url: '/',
+            },
+          },
+          {
+            name: 'Test 2',
+            link: {
+              url: '/',
+            },
+          },
+          {
+            name: 'Test 3',
+            link: {
+              url: '/',
+            },
+          },
         ],
         title: 'Test',
         button: 'Link',
@@ -23,9 +38,24 @@ beforeEach(() => {
       },
       {
         items: [
-          { name: 'Test 4', link: '/' },
-          { name: 'Test 5', link: '/' },
-          { name: 'Test 6', link: '/' },
+          {
+            name: 'Test 4',
+            link: {
+              url: '/',
+            },
+          },
+          {
+            name: 'Test 5',
+            link: {
+              url: '/',
+            },
+          },
+          {
+            name: 'Test 6',
+            link: {
+              url: '/',
+            },
+          },
         ],
       },
     ],
@@ -38,7 +68,7 @@ describe('Menu', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('shold be open by default', () => {
+  it('should be open by default', () => {
     props.open = true
 
     render(<Menu {...props} />)
@@ -73,7 +103,15 @@ describe('Menu', () => {
   it('should an item have an icon', () => {
     props.menus = [
       {
-        items: [{ name: 'Test 1', link: '/', contentLeft: <Icon name="icon-solid-layer-group" /> }],
+        items: [
+          {
+            name: 'Test 1',
+            link: {
+              url: '/',
+            },
+            contentLeft: <Icon name="icon-solid-layer-group" />,
+          },
+        ],
       },
     ]
 
@@ -87,7 +125,15 @@ describe('Menu', () => {
   it('should have a search input on menu', () => {
     props.menus = [
       {
-        items: [{ name: 'Test 1', link: '/', contentLeft: <Icon name="icon-solid-layer-group" /> }],
+        items: [
+          {
+            name: 'Test 1',
+            link: {
+              url: '/',
+            },
+            contentLeft: <Icon name="icon-solid-layer-group" />,
+          },
+        ],
         search: true,
       },
     ]

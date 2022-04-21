@@ -80,10 +80,13 @@ export const organization = organizationSlice.reducer
 
 export const { addOrganization, removeOrganization } = organizationSlice.actions
 
-const { selectAll } = organizationAdapter.getSelectors()
+const { selectAll, selectById } = organizationAdapter.getSelectors()
 
 export const getOrganizationState = (rootState: any): OrganizationState => rootState[ORGANIZATION_KEY]
 
 export const selectAllOrganization = createSelector(getOrganizationState, selectAll)
+
+export const selectOrganizationById = (organizationId: string) =>
+  createSelector(getOrganizationState, (state) => selectById(state, organizationId))
 
 export const selectOrganizationLoadingStatus = createSelector(getOrganizationState, (state) => state.loadingStatus)

@@ -1,4 +1,4 @@
-import { Application, Environment, Project } from 'qovery-typescript-axios'
+import { Application, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { Menu, MenuAlign } from '../../menu/menu'
 import { ButtonIcon, ButtonIconSize, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
@@ -12,58 +12,76 @@ const notificationsMenu = [
     items: [
       {
         name: 'Invite member to the team',
-        link: '/overview',
+        link: {
+          url: '/overview',
+        },
         contentLeft: <Icon name="icon-solid-arrow-right" className="text-sm text-brand-400" />,
       },
       {
         name: 'Add a custom domain',
-        link: '/overview',
+        link: {
+          url: '/overview',
+        },
         contentLeft: <Icon name="icon-solid-globe" className="text-sm text-brand-400" />,
       },
       {
         name: 'Deploy your application',
-        link: '/overview',
+        link: {
+          url: '/overview',
+        },
         contentLeft: <Icon name="icon-solid-cloud" className="text-sm text-brand-400" />,
       },
     ],
   },
   {
-    title: 'Need help ?',
+    title: 'Need help?',
     items: [
       {
         name: 'See documentations',
-        link: 'https://hub.qovery.com/',
+        link: {
+          url: 'https://hub.qovery.com/',
+          external: true,
+        },
         contentLeft: <Icon name="icon-solid-book" className="text-sm text-brand-400" />,
-        external: true,
       },
       {
         name: 'Join Discord',
-        link: 'https://discord.com/invite/Bed5FRa',
+        link: {
+          url: 'https://discord.com/invite/Bed5FRa',
+          external: true,
+        },
         contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
-        external: true,
       },
       {
         name: 'Contact us',
-        link: 'https://discord.qovery.com/',
+        link: {
+          url: 'https://discord.qovery.com/',
+          external: true,
+        },
         contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
-        external: true,
       },
     ],
   },
 ]
 export interface TopBarProps {
+  organizations: Organization[]
   projects?: Project[]
   environments?: Environment[]
   applications?: Application[]
 }
 
 export function TopBar(props: TopBarProps) {
-  const { projects, environments, applications } = props
+  const { organizations, projects, environments, applications } = props
 
   return (
     <div className="fixed top-0 left-14 border-l border-element-light-lighter-400 z-10 bg-white w-[calc(100%-3.5rem)] h-14">
       <div className="flex px-5 justify-between items-center h-full">
-        <Breadcrumb projects={projects} environments={environments} applications={applications} />
+        <Breadcrumb
+          organizations={organizations}
+          projects={projects}
+          environments={environments}
+          applications={applications}
+        />
         <div className="flex gap-3">
           <ButtonIcon
             icon="icon-solid-rocket"

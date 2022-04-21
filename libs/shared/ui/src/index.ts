@@ -1,3 +1,4 @@
+export * from './lib/components/layouts/breadcrumb-item/breadcrumb-item'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'
