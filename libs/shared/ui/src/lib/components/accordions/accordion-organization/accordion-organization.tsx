@@ -1,6 +1,6 @@
-import { useProjects } from '@console/domains/projects'
+//import { useProjects } from '@console/domains/projects'
 import { Accordion, Icon } from '@console/shared/ui'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 export interface AccordionOrganizationProps {
@@ -14,15 +14,15 @@ export interface AccordionOrganizationProps {
 export function AccordionOrganization(props: AccordionOrganizationProps) {
   const { open = false, name, logo, className = '', organizationId } = props
 
-  const { projects, getProjects } = useProjects()
+  //const { projects, getProjects } = useProjects()
 
-  const getOrganizationProjects = (orgId: string) => {
+  /*const getOrganizationProjects = (orgId: string) => {
     getProjects(organizationId)
   }
 
   useEffect(() => {
     getProjects(organizationId)
-  }, [getProjects])
+  }, [getProjects])*/
 
   return (
     <Accordion
@@ -39,14 +39,14 @@ export function AccordionOrganization(props: AccordionOrganizationProps) {
               <h4 className="font-medium text-sm text-text-500">{name}</h4>
             </div>
             <span className="text-xs text-text-500">
-              {projects.length} project{projects.length <= 1 ? '' : 's'}
+              {/*projects.length} project{projects.length <= 1 ? '' : 's'*/}
             </span>
           </div>
         </>
       }
     >
       <div className="p-2">
-        {projects.map((project, index) => (
+        {/*projects.map((project, index) => (
           <Link
             key={index}
             to={'/'}
@@ -60,7 +60,7 @@ export function AccordionOrganization(props: AccordionOrganizationProps) {
             </div>
             {false && <span className="bg-error-500 w-1.5 h-1.5 rounded-full"></span>}
           </Link>
-        ))}
+        ))*/}
       </div>
     </Accordion>
   )

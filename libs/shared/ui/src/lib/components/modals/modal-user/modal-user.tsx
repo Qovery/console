@@ -1,4 +1,5 @@
 import { ButtonIcon, ButtonIconStyle } from '@console/shared/ui'
+import { SETTINGS_URL } from '@console/shared/utils'
 import { useParams } from 'react-router'
 import Avatar from '../../avatar/avatar'
 import { Button, ButtonStyle } from '../../buttons/button/button'
@@ -7,10 +8,11 @@ export interface ModalUserProps {
   authLogout: () => void
   firstName: string
   lastName: string
+  close: () => void
 }
 
 export function ModalUser(props: ModalUserProps) {
-  const { authLogout, firstName = 'William', lastName = 'Traoré' } = props
+  const { authLogout, firstName = 'William', lastName = 'Traoré', close } = props
 
   const { organizationId } = useParams()
 
@@ -35,8 +37,9 @@ export function ModalUser(props: ModalUserProps) {
           </h3>
           <Button
             style={ButtonStyle.STROKED}
-            link={`/organization/${organizationId}/settings`}
+            link={SETTINGS_URL(organizationId)}
             iconLeft="icon-solid-wheel"
+            onClick={close}
           >
             Settings
           </Button>
