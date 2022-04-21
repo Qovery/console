@@ -19,3 +19,7 @@
     @apply text-[10px];
   }
 }
+
+.link-transition {
+  transition: 0.25s color $timing-cubic;
+}

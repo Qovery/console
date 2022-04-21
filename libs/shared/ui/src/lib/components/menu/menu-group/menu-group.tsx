@@ -1,5 +1,5 @@
 import { MenuDivider } from '@szhsin/react-menu'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import InputSearch from '../../inputs/input-search/input-search'
 import { MenuItem, MenuItemProps } from '../menu-item/menu-item'
@@ -21,13 +21,16 @@ export interface MenuGroupProps {
 export function MenuGroup(props: MenuGroupProps) {
   const { menu = { items: [] }, isLast = true, paddingMenuX = 12, paddingMenuY = 12, style = {} } = props
 
-  const [filter, setFilter] = useState('')
-  const [empty, setEmpty] = useState(false)
+  const [currentItems, setCurrentItems] = useState(menu.items)
+
+  useEffect(() => {
+    setCurrentItems(menu.items)
+  }, [menu.items])
 
   const filterData = (value: string) => {
-    setFilter(value)
-    const items = menu.items.filter((item) => item.name.includes(value))
-    items.length === 0 ? setEmpty(true) : setEmpty(false)
+    value = value.toUpperCase()
+    const items = menu.items.filter((item) => item.name.toUpperCase().includes(value))
+    setCurrentItems(items)
   }
 
   const paddingStyle = {
@@ -46,7 +49,7 @@ export function MenuGroup(props: MenuGroupProps) {
   return (
     <div style={style}>
       {menu?.title && (
-        <div className={`flex justify-between items-center`} style={headPaddingStyle}>
+        <div className="flex justify-between items-center" style={headPaddingStyle}>
           {menu?.title && (
             <p data-testid="title" className="text-sm text-text-300">
               {menu?.title}
@@ -62,24 +65,26 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {menu?.search && (
-        <div className={`menu__search`} style={headPaddingStyle}>
-          <InputSearch placeholder="Search" onChange={(value: string) => filterData(value)} isEmpty={empty} />
+        <div className="menu__search" style={headPaddingStyle}>
+          <InputSearch
+            autofocus
+            placeholder="Search"
+            onChange={(value: string) => filterData(value)}
+            isEmpty={currentItems.length === 0}
+          />
         </div>
       )}
-      {!empty && (
+      {currentItems.length > 0 && (
         <div style={paddingStyle}>
-          {menu.items
-            .filter((item) => item.name.toUpperCase().includes(filter.trim().toUpperCase()))
-            .map((item, index) => (
-              <MenuItem
-                key={index}
-                name={item.name}
-                link={item.link}
-                contentLeft={item?.contentLeft}
-                contentRight={item?.contentRight}
-                external={item?.external}
-              />
-            ))}
+          {currentItems.map((item, index) => (
+            <MenuItem
+              key={index}
+              name={item.name}
+              link={item.link}
+              contentLeft={item?.contentLeft}
+              contentRight={item?.contentRight}
+            />
+          ))}
         </div>
       )}
       {!isLast && <MenuDivider className="bg-element-light-lighter-400 m-0" />}

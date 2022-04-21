@@ -72,6 +72,10 @@
   &.btn-icon--big {
     @apply w-9 h-9;
   }
+
+  &.btn.is-active {
+    @apply border-brand-400 bg-brand-400 text-white hover:text-white hover:bg-brand-400;
+  }
 }
 
 .btn-icon--raised {
@@ -94,11 +98,10 @@
   @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
 }
 
-// active
+.btn-icon--circle {
+  @apply w-4 h-4 rounded-full flex items-center justify-center text-text-400 hover:text-text-400 hover:bg-element-light-lighter-400;
 
-.btn,
-.btn-icon {
-  &.is-active:not(.no-active) {
-    @apply border-brand-400 bg-brand-400 text-white hover:text-white hover:bg-brand-400;
+  &.btn.is-active {
+    @apply text-text-400 bg-element-light-lighter-400 hover:text-text-400 hover:bg-element-light-lighter-500;
   }
 }

@@ -1,14 +1,14 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { OrganizationRequest } from 'qovery-typescript-axios'
 import { useAuth } from '@console/shared/utils'
-
 import {
   fetchOrganization,
   selectAllOrganization,
+  selectOrganizationById,
   selectOrganizationLoadingStatus,
   postOrganization,
 } from '../slices/organization.slice'
-import { OrganizationRequest } from "qovery-typescript-axios";
 
 export function useOrganization() {
   const { getAccessTokenSilently } = useAuth()
@@ -25,5 +25,5 @@ export function useOrganization() {
     return result.payload
   }
 
-  return { organization, loadingStatus, getOrganization, createOrganization }
+  return { organization, loadingStatus, getOrganization, createOrganization, selectOrganizationById }
 }
