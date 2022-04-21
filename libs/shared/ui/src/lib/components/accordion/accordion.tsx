@@ -27,7 +27,7 @@ export function Accordion(props: AccordionProps) {
             <Icon name="icon-solid-caret-down" className="accordion__arrow" />
           </AccordionComponent.Trigger>
         </AccordionComponent.Header>
-        <AccordionComponent.Content className="accordion__content">{children}</AccordionComponent.Content>
+        <AccordionComponent.Content className="accordion__content !block">{children}</AccordionComponent.Content>
       </AccordionComponent.Item>
     </AccordionComponent.Root>
   )

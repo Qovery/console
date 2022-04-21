@@ -1,5 +1,5 @@
 .accordion__content {
-  @apply overflow-hidden !block border-t border-element-light-lighter-400;
+  @apply overflow-hidden border-t border-element-light-lighter-400;
 
   &[data-state='open'] {
     animation: openAccordion 300ms cubic-bezier(0.87, 0, 0.13, 1) 0s 1 normal forwards running;
