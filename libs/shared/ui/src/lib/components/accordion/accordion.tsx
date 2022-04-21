@@ -21,15 +21,13 @@ export function Accordion(props: AccordionProps) {
       className={className}
     >
       <AccordionComponent.Item value="accordion" className="accordion rounded border border-element-light-lighter-400">
-        <AccordionComponent.Header className="accordion__header h-12">
+        <AccordionComponent.Header className="accordion__header">
           <AccordionComponent.Trigger className="w-full h-full flex justify-between items-center px-4 gap-4">
             {header}
-            <Icon name="icon-solid-caret-down" className="accordion__arrow text-sm text-text-400 shrink-0" />
+            <Icon name="icon-solid-caret-down" className="accordion__arrow" />
           </AccordionComponent.Trigger>
         </AccordionComponent.Header>
-        <AccordionComponent.Content className="accordion__content !block border-t border-element-light-lighter-400">
-          {children}
-        </AccordionComponent.Content>
+        <AccordionComponent.Content className="accordion__content">{children}</AccordionComponent.Content>
       </AccordionComponent.Item>
     </AccordionComponent.Root>
   )
