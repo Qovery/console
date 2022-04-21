@@ -45,6 +45,7 @@ describe('Modal', () => {
 
   it('should be default open', () => {
     props.defaultOpen = true
+    props.open = true
 
     render(<Modal {...props} />)
 
