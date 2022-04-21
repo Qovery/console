@@ -72,7 +72,7 @@ export function Navigation(props: NavigationProps) {
       </div>
 
       <div className="flex w-14 h-14 items-center justify-center border-t border-element-light-lighter-400">
-        <Modal defaultOpen trigger={<Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB}></Avatar>}>
+        <Modal trigger={<Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB}></Avatar>}>
           <ModalUser firstName={firstName} lastName={lastName} authLogout={authLogout} />
         </Modal>
       </div>

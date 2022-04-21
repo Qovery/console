@@ -1,4 +1,4 @@
-import { SignUp } from 'qovery-typescript-axios'
+import { Organization, SignUp } from 'qovery-typescript-axios'
 import { LayoutPage } from '@console/shared/ui'
 import { Project } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'

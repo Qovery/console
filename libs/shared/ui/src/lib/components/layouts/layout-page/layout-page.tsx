@@ -1,4 +1,4 @@
-import { SignUp } from 'qovery-typescript-axios'
+import { Organization, SignUp } from 'qovery-typescript-axios'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 

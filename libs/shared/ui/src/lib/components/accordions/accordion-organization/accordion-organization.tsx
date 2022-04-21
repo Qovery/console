@@ -1,23 +1,28 @@
+import { useProjects } from '@console/domains/projects'
 import { Accordion, Icon } from '@console/shared/ui'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-
-export interface AccordionOrganizationProjectProps {
-  isCheck?: boolean
-  name: string
-  error?: boolean
-  link: string
-}
 
 export interface AccordionOrganizationProps {
   open?: boolean
   name: string
-  logo?: string
-  projects: AccordionOrganizationProjectProps[]
+  logo?: string | null
   className?: string
+  organizationId: string
 }
 
 export function AccordionOrganization(props: AccordionOrganizationProps) {
-  const { open = false, name, logo, projects = [], className = '' } = props
+  const { open = false, name, logo, className = '', organizationId } = props
+
+  const { projects, getProjects } = useProjects()
+
+  const getOrganizationProjects = (orgId: string) => {
+    getProjects(organizationId)
+  }
+
+  useEffect(() => {
+    getProjects(organizationId)
+  }, [getProjects])
 
   return (
     <Accordion
@@ -27,7 +32,10 @@ export function AccordionOrganization(props: AccordionOrganizationProps) {
         <>
           <div className="flex justify-between items-center w-full">
             <div className="flex gap-3">
-              <img className="w-5 h-auto" src={logo} alt={name} />
+              <img
+                className="w-5 h-auto shrink-0"
+                src={logo ? logo : 'https://console.qovery.com/assets/img/logos/logo.svg'}
+              />
               <h4 className="font-medium text-sm text-text-500">{name}</h4>
             </div>
             <span className="text-xs text-text-500">
@@ -38,18 +46,19 @@ export function AccordionOrganization(props: AccordionOrganizationProps) {
       }
     >
       <div className="p-2">
-        {projects.map((project: AccordionOrganizationProjectProps) => (
+        {projects.map((project, index) => (
           <Link
-            to={project.link}
+            key={index}
+            to={'/'}
             className="flex justify-between h-8 items-center px-3 bg-white hover:bg-element-light-lighter-300 rounded"
           >
             <div className="flex items-center justify-between gap-3">
               <div className="w-4 h-4 flex justify-center items-center">
-                {project.isCheck && <Icon name="icon-solid-check" className="text-success-400 text-sm" />}
+                {false && <Icon name="icon-solid-check" className="text-success-400 text-sm" />}
               </div>
               <h5 className="text-xs text-text-500 font-medium">{project.name}</h5>
             </div>
-            {project.error && <span className="bg-error-500 w-1.5 h-1.5 rounded-full"></span>}
+            {false && <span className="bg-error-500 w-1.5 h-1.5 rounded-full"></span>}
           </Link>
         ))}
       </div>
