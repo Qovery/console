@@ -36,6 +36,14 @@ const FaIcons = [
   'icon-solid-arrow-right-from-bracket',
   'icon-solid-camera',
   'icon-solid-caret-down',
+  'icon-solid-terminal',
+  'icon-solid-scroll',
+  'icon-solid-copy',
+  'icon-solid-play',
+  'icon-solid-circle-stop',
+  'icon-solid-circle-exclamation',
+  'icon-solid-rotate-right',
+  'icon-solid-rotate',
   // schema: favicons name
 ]
 

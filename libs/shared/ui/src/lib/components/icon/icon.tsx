@@ -1,8 +1,12 @@
 import GithubIcon from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'
 import BitbucketIcon from './icons-git/bitbucket'
+import EnvironmentIcon from './icons/environment'
+import ApplicationsIcon from './icons/applications'
 import IconFa from '../icon-fa/icon-fa'
 import { IconEnum } from '@console/shared/enums'
+import AWSIcon from './icons/aws'
+import ApplicationIcon from './icons/application'
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -23,6 +27,14 @@ export function Icon(props: IconProps) {
       return <GitlabIcon {...formattedProps} />
     case IconEnum.BITBUCKET:
       return <BitbucketIcon {...formattedProps} />
+    case IconEnum.ENVIRONMENT:
+      return <EnvironmentIcon {...formattedProps} />
+    case IconEnum.APPLICATIONS:
+      return <ApplicationsIcon {...formattedProps} />
+    case IconEnum.AWS:
+      return <AWSIcon {...formattedProps} />
+    case IconEnum.APPLICATION:
+      return <ApplicationIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

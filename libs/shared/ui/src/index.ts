@@ -1,3 +1,5 @@
+export * from './lib/components/status-menu/status-menu'
+export * from './lib/components/header/header'
 export * from './lib/components/layouts/breadcrumb-item/breadcrumb-item'
 // components
 export * from './lib/components/icon/icon'
