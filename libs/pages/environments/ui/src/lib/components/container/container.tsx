@@ -2,7 +2,7 @@ import { Environment } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { APPLICATIONS_URL } from '@console/shared/utils'
-import { ButtonIcon, ButtonIconStyle, Header } from '@console/shared/ui'
+import { ButtonIcon, ButtonIconStyle, Header, Table } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 
 export interface ContainerProps {
@@ -34,6 +34,7 @@ export function Container(props: ContainerProps) {
             </li>
           ))}
       </ul>
+      <Table data={environments} />
     </div>
   )
 }
