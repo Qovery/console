@@ -1,5 +1,5 @@
 import { Environment } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { APPLICATIONS_URL } from '@console/shared/utils'
 import { ButtonIcon, ButtonIconStyle, Header } from '@console/shared/ui'
@@ -12,7 +12,6 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { environments } = props
   const { organizationId, projectId } = useParams()
-  const navigate = useNavigate()
 
   const headerButtons = (
     <>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Icon from '../icon/icon'
 import Menu from '../menu/menu'
 import { MenuItemProps } from '../menu/menu-item/menu-item'
