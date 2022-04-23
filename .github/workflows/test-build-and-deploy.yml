@@ -108,7 +108,7 @@ jobs:
           qovery-application-ids: ${{ secrets.application-ids }}
           # qovery-environment-name: ${{ inputs.environment-name }}
           # qovery-application-names: ${{ inputs.application-name }}
-          # qovery-application-commit-id: ${{ inputs.application-commit-id }}
+          qovery-application-commit-id: ${{ inputs.application-commit-id }}
           qovery-api-token: ${{ secrets.api-token }}
 
   stop_agents:
