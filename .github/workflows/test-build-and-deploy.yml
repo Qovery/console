@@ -103,7 +103,7 @@ jobs:
         id: qovery
         with:
           qovery-organization-id: ${{ secrets.organization-id }}
-          qovery-project-name: ${{ secret.project-name }}
+          qovery-project-name: ${{ secrets.project-name }}
           qovery-environment-id: ${{ secrets.environment-id }}
           qovery-application-ids: ${{ secrets.application-ids }}
           # qovery-environment-name: ${{ inputs.environment-name }}
