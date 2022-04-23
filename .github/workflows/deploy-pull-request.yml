@@ -10,6 +10,7 @@ jobs:
     with:
       branch: staging
       configuration: staging
+      application-names: console
       application-commit-id: ${{ github.sha }}
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
