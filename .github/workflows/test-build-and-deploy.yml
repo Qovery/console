@@ -102,9 +102,9 @@ jobs:
         uses: Qovery/qovery-action@v0.10
         id: qovery
         with:
-          qovery-organization-id: ${{ inputs.organization-id }}
-          qovery-environment-id: ${{ inputs.environment-id }}
-          qovery-application-ids: ${{ inputs.application-ids }}
+          qovery-organization-id: ${{ secrets.organization-id }}
+          qovery-environment-id: ${{ secrets.environment-id }}
+          qovery-application-ids: ${{ secrets.application-ids }}
           # qovery-environment-name: ${{ inputs.environment-name }}
           # qovery-project-name: ${{ inputs.project-name }}
           # qovery-application-names: ${{ inputs.application-name }}
