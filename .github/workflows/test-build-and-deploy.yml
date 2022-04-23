@@ -99,7 +99,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Deploy on Qovery
-        uses: Qovery/qovery-action@v0.12.4
+        uses: Qovery/qovery-action@v0.12.5
         id: qovery
         with:
           qovery-organization-id: ${{ secrets.organization-id }}
