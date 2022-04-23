@@ -13,8 +13,6 @@ jobs:
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
-      environment-id: ${{ secrets.QOVERY_ENVIRONMENT_ID_STAGING }}
-      application-ids: ${{ secrets.QOVERY_APPLICATION_IDS }}
-      # environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_STAGING }}
-      # application-names: ${{ secrets.QOVERY_APPLICATION_NAMES }}
+      environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_STAGING }}
+      application-names: ${{ secrets.QOVERY_APPLICATION_NAMES }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
