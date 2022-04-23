@@ -11,10 +11,11 @@ jobs:
       branch: main
       configuration: production
       application-names: console
+      environment-name: production
       application-commit-id: ${{ github.sha }}
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
-      environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_PRODUCTION }}
+      # environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_PRODUCTION }}
       # application-names: ${{ secrets.QOVERY_APPLICATION_NAMES }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
