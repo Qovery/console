@@ -9,6 +9,9 @@ on:
       configuration:
         required: true
         type: string
+      application-names:
+        required: true
+        type: string
       application-commit-id:
         required: true
         type: string
@@ -19,8 +22,8 @@ on:
         required: true
       environment-name:
         required: true
-      application-names:
-        required: true
+      # application-names:
+      #   required: true
       api-token:
         required: true
 
@@ -101,7 +104,7 @@ jobs:
           qovery-organization-id: ${{ secrets.organization-id }}
           qovery-project-name: ${{ secrets.project-name }}
           qovery-environment-name: ${{ secrets.environment-name }}
-          qovery-application-names: ${{ secrets.application-names }}
+          qovery-application-names: ${{ inputs.application-names }}
           qovery-application-commit-id: ${{ inputs.application-commit-id }}
           qovery-api-token: ${{ secrets.api-token }}
 
