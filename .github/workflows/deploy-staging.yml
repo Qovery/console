@@ -10,10 +10,11 @@ jobs:
       branch: staging
       configuration: staging
       application-names: console
+      environment-name: staging
       application-commit-id: ${{ github.sha }}
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
       project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
-      environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_STAGING }}
+      # environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_STAGING }}
       # application-names: ${{ secrets.QOVERY_APPLICATION_NAMES }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
