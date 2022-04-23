@@ -15,12 +15,16 @@ on:
     secrets:
       organization-id:
         required: true
-      project-name:
+      environment-id:
         required: true
-      environment-name:
+      application-ids:
         required: true
-      application-names:
-        required: true
+      # project-name:
+      #   required: true
+      # environment-name:
+      #   required: true
+      # application-names:
+      #   required: true
       api-token:
         required: true
 
@@ -99,10 +103,12 @@ jobs:
         id: qovery
         with:
           qovery-organization-id: ${{ inputs.organization-id }}
-          qovery-environment-name: ${{ inputs.environment-name }}
-          qovery-project-name: ${{ inputs.project-name }}
-          qovery-application-names: ${{ inputs.application-name }}
-          qovery-application-commit-id: ${{ inputs.application-commit-id }}
+          qovery-environment-id: ${{ inputs.environment-id }}
+          qovery-application-ids: ${{ inputs.application-ids }}
+          # qovery-environment-name: ${{ inputs.environment-name }}
+          # qovery-project-name: ${{ inputs.project-name }}
+          # qovery-application-names: ${{ inputs.application-name }}
+          # qovery-application-commit-id: ${{ inputs.application-commit-id }}
           qovery-api-token: ${{ secrets.api-token }}
 
   stop_agents:

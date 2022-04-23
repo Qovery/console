@@ -13,7 +13,9 @@ jobs:
       application-commit-id: ${{ github.sha }}
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
-      project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
-      environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_PRODUCTION }}
-      application-names: ${{ secrets.QOVERY_APPLICATION_NAMES }}
+      environment-id: ${{ secrets.QOVERY_ENVIRONMENT_ID_PRODUCTION }}
+      application-ids: ${{ secrets.QOVERY_APPLICATION_IDS }}
+      # project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
+      # environment-name: ${{ secrets.QOVERY_ENVIRONMENT_NAME_PRODUCTION }}
+      # application-names: ${{ secrets.QOVERY_APPLICATION_NAMES }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
