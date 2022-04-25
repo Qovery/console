@@ -3,16 +3,21 @@ name: Test, Build And Deploy to Qovery
 on:
   workflow_call:
     inputs:
+      flow:
+        required: true
+        type: string
       branch:
         required: true
         type: string
       configuration:
         required: true
         type: string
-      application-names:
+      project-name:
+        required: true
+      environment-name:
         required: true
         type: string
-      environment-name:
+      application-names:
         required: true
         type: string
       application-commit-id:
@@ -20,8 +25,6 @@ on:
         type: string
     secrets:
       organization-id:
-        required: true
-      project-name:
         required: true
       api-token:
         required: true
@@ -89,6 +92,7 @@ jobs:
           node-version: 16
       - name: Nx Affected
         run: yarn nx affected --target=${{ matrix.target }} --parallel --max-parallel=3 --configuration=${{ inputs.configuration }}
+  if: ${{ inputs.flow != 'pull-request' }}
   deploy:
     name: Deploy to Qovery
     runs-on: ubuntu-latest
@@ -101,7 +105,7 @@ jobs:
         id: qovery
         with:
           qovery-organization-id: ${{ secrets.organization-id }}
-          qovery-project-name: ${{ secrets.project-name }}
+          qovery-project-name: ${{ inputs.project-name }}
           qovery-environment-name: ${{ inputs.environment-name }}
           qovery-application-names: ${{ inputs.application-names }}
           qovery-application-commit-id: ${{ inputs.application-commit-id }}
