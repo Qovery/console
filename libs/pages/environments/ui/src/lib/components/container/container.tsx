@@ -34,7 +34,7 @@ export function Container(props: ContainerProps) {
             </li>
           ))}
       </ul>
-      <Table data={environments} />
+      <Table data={environments} columnsWidth="30% 10% 25% 10% 25%" />
     </div>
   )
 }

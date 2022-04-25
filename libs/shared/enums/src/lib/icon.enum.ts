@@ -6,4 +6,5 @@ export enum IconEnum {
   APPLICATIONS = 'APPLICATIONS',
   APPLICATION = 'APPLICATION',
   AWS = 'AWS',
+  SUCCESS = 'SUCCESS',
 }
