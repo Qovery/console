@@ -23,10 +23,6 @@ on:
         required: true
       project-name:
         required: true
-      # environment-name:
-      #   required: true
-      # application-names:
-      #   required: true
       api-token:
         required: true
 
