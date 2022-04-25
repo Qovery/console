@@ -13,7 +13,7 @@ import {
 } from '@console/shared/ui'
 import { ClickEvent } from '@szhsin/react-menu'
 import { Application } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 
 export interface ContainerProps {
   application: Application
@@ -21,7 +21,6 @@ export interface ContainerProps {
 
 export function Container(props: ContainerProps) {
   const { application } = props
-  const navigate = useNavigate()
   const { organizationId, projectId, environmentId, applicationId } = useParams()
 
   const clickAction = (e: ClickEvent, action: string) => {
