@@ -2,13 +2,7 @@ import { IconProps } from '../icon'
 
 export function SuccessIcon(props: IconProps) {
   return (
-    // <svg
-    //   {...props}
-    //   xmlns="http://www.w3.org/2000/svg"
-    //   className={`svg-icon ${props.className || ''}`}
-    //   xmlnsXlink="http://www.w3.org/1999/xlink"
-    // >
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 14 14">
+    <svg {...props} xmlns="http://www.w3.org/2000/svg">
       <path
         fill="#44C979"
         d="M5.908 2.16a4.958 4.958 0 013.11.308.875.875 0 10.713-1.599 6.708 6.708 0 103.978 6.132v-.538a.875.875 0 00-1.75 0V7a4.958 4.958 0 11-6.051-4.84z"
@@ -21,4 +15,4 @@ export function SuccessIcon(props: IconProps) {
   )
 }
 
-export default BitbucketIcon
+export default SuccessIcon
