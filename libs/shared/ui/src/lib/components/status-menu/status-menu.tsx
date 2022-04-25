@@ -89,7 +89,7 @@ export function StatusMenu(props: StatusMenuProps) {
   }
 
   return (
-    <div className={`h-6 inline-flex items-center pl-2 border rounded ${containerClass}`}>
+    <div className={`h-6 inline-flex items-center pl-2 border rounded ${containerClass}`} data-testid="statusmenu">
       <p className="text-xs font-semibold">{status}</p>
       <div
         className={`h-full inline-flex items-center border-l ml-2 hover:transition transition ease-in-out duration-300 ${containerClass} ${hoverClass} ${focusClass}`}
