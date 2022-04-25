@@ -25,11 +25,6 @@ export function Container(props: ContainerProps) {
   return (
     <div>
       <Header title="Environments" icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
-
-      <button className="mb-2" onClick={() => navigate(-1)}>
-        Back
-      </button>
-      <h1>Welcome to Environments!</h1>
       <ul className="mt-8">
         {environments &&
           environments.map((environment: Environment) => (

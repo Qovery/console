@@ -83,6 +83,7 @@ export function MenuGroup(props: MenuGroupProps) {
               link={item.link}
               contentLeft={item?.contentLeft}
               contentRight={item?.contentRight}
+              onClick={item.onClick}
             />
           ))}
         </div>

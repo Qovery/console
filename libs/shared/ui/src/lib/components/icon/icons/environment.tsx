@@ -132,8 +132,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="47.1734"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_32403_192066"
@@ -143,8 +143,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="45.0001"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_32403_192066"
@@ -154,8 +154,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="42.825"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_32403_192066"
@@ -165,8 +165,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="40.6474"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_32403_192066"
@@ -176,8 +176,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="38.7737"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint5_linear_32403_192066"
@@ -187,13 +187,13 @@ export function EnvironmentIcon(props: IconProps) {
           y2="3709.13"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5761D7" />
-          <stop offset="0.07" stop-color="#5472D8" />
-          <stop offset="0.28" stop-color="#4E9CDB" />
-          <stop offset="0.48" stop-color="#49BDDD" />
-          <stop offset="0.67" stop-color="#45D5DF" />
-          <stop offset="0.85" stop-color="#43E3E0" />
-          <stop offset="1" stop-color="#42E8E0" />
+          <stop stopColor="#5761D7" />
+          <stop offset="0.07" stopColor="#5472D8" />
+          <stop offset="0.28" stopColor="#4E9CDB" />
+          <stop offset="0.48" stopColor="#49BDDD" />
+          <stop offset="0.67" stopColor="#45D5DF" />
+          <stop offset="0.85" stopColor="#43E3E0" />
+          <stop offset="1" stopColor="#42E8E0" />
         </linearGradient>
         <linearGradient
           id="paint6_linear_32403_192066"
@@ -203,13 +203,13 @@ export function EnvironmentIcon(props: IconProps) {
           y2="3493.56"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5761D7" />
-          <stop offset="0.07" stop-color="#5472D8" />
-          <stop offset="0.28" stop-color="#4E9CDB" />
-          <stop offset="0.48" stop-color="#49BDDD" />
-          <stop offset="0.67" stop-color="#45D5DF" />
-          <stop offset="0.85" stop-color="#43E3E0" />
-          <stop offset="1" stop-color="#42E8E0" />
+          <stop stopColor="#5761D7" />
+          <stop offset="0.07" stopColor="#5472D8" />
+          <stop offset="0.28" stopColor="#4E9CDB" />
+          <stop offset="0.48" stopColor="#49BDDD" />
+          <stop offset="0.67" stopColor="#45D5DF" />
+          <stop offset="0.85" stopColor="#43E3E0" />
+          <stop offset="1" stopColor="#42E8E0" />
         </linearGradient>
         <linearGradient
           id="paint7_linear_32403_192066"
@@ -219,13 +219,13 @@ export function EnvironmentIcon(props: IconProps) {
           y2="3061.28"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5761D7" />
-          <stop offset="0.07" stop-color="#5472D8" />
-          <stop offset="0.28" stop-color="#4E9CDB" />
-          <stop offset="0.48" stop-color="#49BDDD" />
-          <stop offset="0.67" stop-color="#45D5DF" />
-          <stop offset="0.85" stop-color="#43E3E0" />
-          <stop offset="1" stop-color="#42E8E0" />
+          <stop stopColor="#5761D7" />
+          <stop offset="0.07" stopColor="#5472D8" />
+          <stop offset="0.28" stopColor="#4E9CDB" />
+          <stop offset="0.48" stopColor="#49BDDD" />
+          <stop offset="0.67" stopColor="#45D5DF" />
+          <stop offset="0.85" stopColor="#43E3E0" />
+          <stop offset="1" stopColor="#42E8E0" />
         </linearGradient>
         <linearGradient
           id="paint8_linear_32403_192066"
@@ -235,13 +235,13 @@ export function EnvironmentIcon(props: IconProps) {
           y2="3061.28"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#5761D7" />
-          <stop offset="0.07" stop-color="#5472D8" />
-          <stop offset="0.28" stop-color="#4E9CDB" />
-          <stop offset="0.48" stop-color="#49BDDD" />
-          <stop offset="0.67" stop-color="#45D5DF" />
-          <stop offset="0.85" stop-color="#43E3E0" />
-          <stop offset="1" stop-color="#42E8E0" />
+          <stop stopColor="#5761D7" />
+          <stop offset="0.07" stopColor="#5472D8" />
+          <stop offset="0.28" stopColor="#4E9CDB" />
+          <stop offset="0.48" stopColor="#49BDDD" />
+          <stop offset="0.67" stopColor="#45D5DF" />
+          <stop offset="0.85" stopColor="#43E3E0" />
+          <stop offset="1" stopColor="#42E8E0" />
         </linearGradient>
         <linearGradient
           id="paint9_linear_32403_192066"
@@ -251,8 +251,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="39.2911"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint10_linear_32403_192066"
@@ -262,8 +262,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="34.0492"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint11_linear_32403_192066"
@@ -273,8 +273,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="31.8717"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint12_linear_32403_192066"
@@ -284,8 +284,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="29.7048"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint13_linear_32403_192066"
@@ -295,8 +295,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="27.5328"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint14_linear_32403_192066"
@@ -306,8 +306,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="30.7274"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint15_linear_32403_192066"
@@ -317,8 +317,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="27.8445"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint16_linear_32403_192066"
@@ -328,8 +328,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="31.6806"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint17_linear_32403_192066"
@@ -339,8 +339,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="25.9288"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint18_linear_32403_192066"
@@ -350,8 +350,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="23.0512"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
         <linearGradient
           id="paint19_linear_32403_192066"
@@ -361,8 +361,8 @@ export function EnvironmentIcon(props: IconProps) {
           y2="24.0044"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#42E8E0" />
-          <stop offset="1" stop-color="#5761D7" />
+          <stop stopColor="#42E8E0" />
+          <stop offset="1" stopColor="#5761D7" />
         </linearGradient>
       </defs>
     </svg>
