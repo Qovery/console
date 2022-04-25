@@ -29,6 +29,7 @@ export interface MenuProps {
   width?: number
   paddingMenuY?: number
   paddingMenuX?: number
+  onOpen?: (e: boolean) => void
 }
 
 export function Menu(props: MenuProps) {
@@ -44,6 +45,7 @@ export function Menu(props: MenuProps) {
     width = 340,
     paddingMenuX = 12,
     paddingMenuY = 12,
+    onOpen,
   } = props
 
   const ref = useRef(null)
@@ -58,6 +60,12 @@ export function Menu(props: MenuProps) {
 
     if (isOpen && e && onClose) {
       onClose(e)
+    }
+
+    if (!e && !isOpen) {
+      onOpen && onOpen(true)
+    } else {
+      onOpen && onOpen(false)
     }
 
     setOpen(!isOpen)
@@ -97,7 +105,11 @@ export function Menu(props: MenuProps) {
 
   return (
     <>
-      <div className="w-max menu__trigger" ref={ref} onMouseDown={() => handleClick(null)}>
+      <div
+        className={`w-max menu__trigger menu__trigger--${isOpen ? 'open' : 'closed'}`}
+        ref={ref}
+        onMouseDown={() => handleClick(null)}
+      >
         {trigger}
       </div>
       <ControlledMenu

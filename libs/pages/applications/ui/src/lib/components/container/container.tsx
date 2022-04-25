@@ -2,8 +2,18 @@ import { Application } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { APPLICATION_URL } from '@console/shared/utils'
-import { ButtonIcon, ButtonIconStyle, Header, Icon, StatusMenu, StatusMenuState } from '@console/shared/ui'
+import {
+  ButtonIcon,
+  ButtonIconStyle,
+  Header,
+  Icon,
+  StatusMenu,
+  StatusMenuState,
+  Tag,
+  TagStyle,
+} from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
+import { ClickEvent } from '@szhsin/react-menu'
 
 export interface ContainerProps {
   applications: Application[]
@@ -22,18 +32,58 @@ export function Container(props: ContainerProps) {
     </>
   )
 
+  const clickAction = (e: ClickEvent, action: string) => {
+    console.log(e)
+  }
+
+  const actionsMenu = [
+    {
+      items: [
+        {
+          name: 'Deploy',
+          onClick: (e: ClickEvent) => clickAction(e, 'Deploy'),
+          contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Stop',
+          onClick: (e: ClickEvent) => clickAction(e, 'Stop'),
+          contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+        },
+      ],
+    },
+    {
+      items: [
+        {
+          name: 'Redeploy',
+          onClick: (e: ClickEvent) => clickAction(e, 'Redeploy'),
+          contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Update applications',
+          onClick: (e: ClickEvent) => clickAction(e, 'Update'),
+          contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Rollback',
+          onClick: (e: ClickEvent) => clickAction(e, 'Rollblack'),
+          contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
+        },
+      ],
+    },
+  ]
+
   const headerActions = (
     <>
-      <StatusMenu status={StatusMenuState.RUNNING} />
-      <div className="h-6 px-2 rounded bg-brand-50 text-brand-500 text-xs font-bold items-center inline-flex">PROD</div>
-      <div className="h-6 px-2 rounded bg-white text-text-500 text-xs font-medium items-center inline-flex gap-2 border border-element-light-lighter-400">
+      <StatusMenu menus={actionsMenu} status={StatusMenuState.RUNNING} />
+      <Tag style={TagStyle.NORMAL}>PROD</Tag>
+      <Tag style={TagStyle.STROKED}>
         <Icon name={IconEnum.AWS} width="16" />
         <p className="max-w-[54px] truncate">community-test</p>
-      </div>
-      <div className="h-6 px-2 rounded bg-element-light-lighter-300 items-center inline-flex gap-2">
+      </Tag>
+      <Tag style={TagStyle.FLAT}>
         <span className="w-2 h-2 rounded-lg bg-progressing-300"></span>
         <span className="w-2 h-2 rounded-lg bg-accent3-500"></span>
-      </div>
+      </Tag>
     </>
   )
 
@@ -46,11 +96,6 @@ export function Container(props: ContainerProps) {
         copyTitle
         actions={headerActions}
       />
-
-      <button className="mb-2" onClick={() => navigate(-1)}>
-        Back
-      </button>
-      <h1>Welcome to Applications!</h1>
       <ul className="mt-8">
         {applications &&
           applications.map((application: Application) => (

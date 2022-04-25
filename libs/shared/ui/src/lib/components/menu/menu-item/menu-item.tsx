@@ -1,14 +1,15 @@
-import { MenuItem as Item } from '@szhsin/react-menu'
+import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import { Link, useNavigate } from 'react-router-dom'
 export interface MenuItemProps {
   name: string
-  link: { url: string; external?: boolean }
+  link?: { url: string; external?: boolean }
   contentLeft?: React.ReactNode
   contentRight?: React.ReactNode
+  onClick?: (e: ClickEvent) => void
 }
 
 export function MenuItem(props: MenuItemProps) {
-  const { name, link, contentLeft, contentRight } = props
+  const { name, link, contentLeft, contentRight, onClick } = props
   const navigate = useNavigate()
 
   const itemContent = (
@@ -21,24 +22,28 @@ export function MenuItem(props: MenuItemProps) {
     </>
   )
 
-  if (link.external) {
+  if (link?.external) {
     return (
       <Item
         className="w-full h-8 rounded-sm flex justify-between px-3 py-0 hover:bg-element-light-lighter-300 mb-1"
         href={link.url}
         data-testid="menuItem"
         target="_blank"
+        onClick={onClick}
       >
         {itemContent}
       </Item>
     )
   } else {
     return (
-      <Link to={link.url}>
+      <Link to={link?.url ? link?.url : ''}>
         <Item
           className="w-full h-8 rounded-sm flex justify-between px-3 py-0 hover:bg-element-light-lighter-300 mb-1"
           data-testid="menuItem"
-          onClick={() => navigate(link.url)}
+          onClick={(e) => {
+            navigate(link?.url ? link?.url : '')
+            onClick && onClick(e)
+          }}
         >
           {itemContent}
         </Item>
