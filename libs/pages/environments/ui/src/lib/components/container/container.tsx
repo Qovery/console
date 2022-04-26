@@ -1,13 +1,33 @@
 import { Environment } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
-import { Link } from 'react-router-dom'
 import { APPLICATIONS_URL } from '@console/shared/utils'
 import { ButtonIcon, ButtonIconStyle, Header, Table } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
+import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface ContainerProps {
   environments: Environment[]
 }
+
+const tableHead = [
+  {
+    title: 'Services',
+    className: 'px-4 py-2',
+  },
+  {
+    title: 'Update',
+  },
+  {
+    title: 'Running Schedule',
+    className: 'px-4 py-2 border-b-element-light-lighter-400 border-l',
+  },
+  {
+    title: 'Type',
+  },
+  {
+    title: 'Tags',
+  },
+]
 
 export function Container(props: ContainerProps) {
   const { environments } = props
@@ -24,17 +44,18 @@ export function Container(props: ContainerProps) {
   return (
     <div>
       <Header title="Environments" icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
-      <ul className="mt-8">
-        {environments &&
-          environments.map((environment: Environment) => (
-            <li key={environment.id}>
-              <Link className="link text-accent2-500" to={APPLICATIONS_URL(organizationId, projectId, environment.id)}>
-                {environment.name}
-              </Link>
-            </li>
+      <Table dataHead={tableHead} columnsWidth="30% 10% 25% 10% 25%">
+        <>
+          {environments.map((currentData, index) => (
+            <TableRowEnvironments
+              key={index}
+              data={currentData}
+              dataHead={tableHead}
+              link={APPLICATIONS_URL(organizationId, projectId, currentData.id)}
+            />
           ))}
-      </ul>
-      <Table data={environments} columnsWidth="30% 10% 25% 10% 25%" />
+        </>
+      </Table>
     </div>
   )
 }

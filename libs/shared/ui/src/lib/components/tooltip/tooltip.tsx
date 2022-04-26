@@ -12,16 +12,16 @@ export interface TooltipProps {
 }
 
 export function Tooltip(props: TooltipProps) {
-  const { children, content, open = true, defaultOpen, onOpenChange, side = 'top', align = 'center' } = props
+  const { children, content, open, defaultOpen, onOpenChange, side = 'top', align = 'center' } = props
 
   return (
-    <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+    <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={300}>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
       <TooltipPrimitive.Content
-        className="bg-element-dark-400 text-text-100 rounded-sm px-2 py-1 text-xs"
+        className="bg-element-dark-400 text-text-100 rounded-sm px-2 py-1 text-xs font-medium"
         side={side}
+        sideOffset={6}
         align={align}
-        {...props}
       >
         {content}
         <TooltipPrimitive.Arrow className="fill-element-dark-400" offset={10} width={11} height={5} />
