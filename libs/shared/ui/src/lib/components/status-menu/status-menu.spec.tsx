@@ -61,6 +61,6 @@ describe('StatusMenu', () => {
     props.status = StatusMenuState.ERROR
     render(<StatusMenu {...props} />)
     const statusMenu = screen.getByTestId('statusmenu')
-    expect(statusMenu.classList.contains('bg-error-50')).toBeTruthy()
+    expect(statusMenu.classList.contains('status-menu--error')).toBeTruthy()
   })
 })
