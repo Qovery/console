@@ -22,4 +22,8 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  main:not(.h-screen) {
+    height: calc(100vh - 56px);
+  }
 }

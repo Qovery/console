@@ -17,7 +17,7 @@ export function LayoutPage(props: LayoutPageProps) {
   const { children, authLogout, user, organizations, projects, environments, applications } = props
 
   return (
-    <main className="h-screen bg-element-light-lighter-400">
+    <main className="bg-element-light-lighter-400">
       <Navigation authLogout={authLogout} firstName={user?.first_name} lastName={user?.last_name} />
       <TopBar
         organizations={organizations}
