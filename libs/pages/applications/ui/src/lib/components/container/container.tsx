@@ -2,16 +2,7 @@ import { Application } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { APPLICATION_URL } from '@console/shared/utils'
-import {
-  ButtonIcon,
-  ButtonIconStyle,
-  Header,
-  Icon,
-  StatusMenu,
-  StatusMenuState,
-  Tag,
-  TagStyle,
-} from '@console/shared/ui'
+import { ButtonIcon, ButtonIconStyle, Header, Icon, StatusMenu, StatusMenuState, Tag } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
 
@@ -23,6 +14,8 @@ export function Container(props: ContainerProps) {
   const { applications } = props
   const { organizationId, projectId, environmentId } = useParams()
   const navigate = useNavigate()
+
+  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
 
   const headerButtons = (
     <>
@@ -75,12 +68,12 @@ export function Container(props: ContainerProps) {
   const headerActions = (
     <>
       <StatusMenu menus={actionsMenu} status={StatusMenuState.RUNNING} />
-      <Tag style={TagStyle.NORMAL}>PROD</Tag>
-      <Tag style={TagStyle.STROKED}>
+      <Tag className="bg-brand-50 text-brand-500">PROD</Tag>
+      <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
         <Icon name={IconEnum.AWS} width="16" />
         <p className="max-w-[54px] truncate">community-test</p>
-      </Tag>
-      <Tag style={TagStyle.FLAT}>
+      </div>
+      <Tag className="bg-element-light-lighter-300 gap-2">
         <span className="w-2 h-2 rounded-lg bg-progressing-300"></span>
         <span className="w-2 h-2 rounded-lg bg-accent3-500"></span>
       </Tag>
@@ -94,6 +87,7 @@ export function Container(props: ContainerProps) {
         icon={IconEnum.APPLICATIONS}
         buttons={headerButtons}
         copyTitle
+        copyContent={copyContent}
         actions={headerActions}
       />
       <ul className="mt-8">

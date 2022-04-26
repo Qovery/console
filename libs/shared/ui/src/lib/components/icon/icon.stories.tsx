@@ -44,6 +44,7 @@ const FaIcons = [
   'icon-solid-circle-exclamation',
   'icon-solid-rotate-right',
   'icon-solid-rotate',
+  'icon-solid-link',
   // schema: favicons name
 ]
 

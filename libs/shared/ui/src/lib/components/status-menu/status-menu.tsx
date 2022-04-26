@@ -4,11 +4,11 @@ import Menu from '../menu/menu'
 import { MenuItemProps } from '../menu/menu-item/menu-item'
 
 export enum StatusMenuState {
-  RUNNING = 'Running',
-  STOPPED = 'Stopped',
-  ERROR = 'Error',
-  STARTING = 'Starting',
-  STOPPING = 'Stopping',
+  RUNNING = 'running',
+  STOPPED = 'stopped',
+  ERROR = 'error',
+  STARTING = 'starting',
+  STOPPING = 'stopping',
 }
 
 export interface StatusMenuProps {
@@ -18,60 +18,8 @@ export interface StatusMenuProps {
 
 export function StatusMenu(props: StatusMenuProps) {
   const { status = StatusMenuState.RUNNING, menus = [] } = props
-  const [containerClass, setContainerClass] = useState('')
-  const [hoverClass, setHoverClass] = useState('')
-  const [focusClass, setFocusClass] = useState('')
 
-  useEffect(() => {
-    containerClassName()
-  }, [])
-
-  const containerClassName = () => {
-    switch (status) {
-      case StatusMenuState.RUNNING:
-        setContainerClass('bg-success-50 border-success-500 text-success-500')
-        setHoverClass('hover:bg-success-100')
-        break
-      case StatusMenuState.STOPPED:
-        setContainerClass('bg-element-light-lighter-300 border-element-light-lighter-700 text-text-400')
-        setHoverClass('hover:bg-element-light-lighter-400')
-        break
-      case StatusMenuState.ERROR:
-        setContainerClass('bg-error-50 border-error-400 text-error-500')
-        setHoverClass('hover:bg-error-100')
-        break
-      case StatusMenuState.STARTING || StatusMenuState.STOPPING:
-        setContainerClass('bg-progressing-50 border-progressing-400 text-progressing-500')
-        setHoverClass('hover:bg-progressing-100')
-        break
-      default:
-        setContainerClass('bg-success-50 border-success-500 text-success-500')
-        setHoverClass('hover:bg-success-100')
-    }
-  }
-
-  const focusStatus = (open: boolean) => {
-    if (open) {
-      switch (status) {
-        case StatusMenuState.RUNNING:
-          setFocusClass('bg-success-100')
-          break
-        case StatusMenuState.STOPPED:
-          setFocusClass('bg-element-light-lighter-400')
-          break
-        case StatusMenuState.ERROR:
-          setFocusClass('bg-error-100')
-          break
-        case StatusMenuState.STARTING || StatusMenuState.STOPPING:
-          setFocusClass('bg-progressing-100')
-          break
-        default:
-          setFocusClass('bg-success-100')
-      }
-    } else {
-      setFocusClass('')
-    }
-  }
+  const [open, setOpen] = useState(false)
 
   const iconStatus = () => {
     switch (status) {
@@ -88,16 +36,18 @@ export function StatusMenu(props: StatusMenuProps) {
     }
   }
 
+  const statusClassName = `status-menu status-menu--${
+    open ? 'open' : 'closed'
+  } status-menu--${status} h-6 inline-flex items-center pl-2 border rounded overflow-hidden`
+
   return (
-    <div className={`h-6 inline-flex items-center pl-2 border rounded ${containerClass}`} data-testid="statusmenu">
-      <p className="text-xs font-semibold">{status}</p>
-      <div
-        className={`h-full inline-flex items-center border-l ml-2 hover:transition transition ease-in-out duration-300 ${containerClass} ${hoverClass} ${focusClass}`}
-      >
+    <div className={statusClassName} data-testid="statusmenu">
+      <p className="text-xs font-semibold capitalize">{status}</p>
+      <div className="status-menu__trigger h-full inline-flex items-center border-l ml-2 hover:transition transition ease-in-out duration-300">
         <Menu
           menus={menus}
           width={248}
-          onOpen={focusStatus}
+          onOpen={(e) => setOpen(e)}
           trigger={
             <div className="flex items-center gap-1.5 px-2 cursor-pointer">
               {iconStatus()} <Icon name="icon-solid-angle-down" className="text-xs" />

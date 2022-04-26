@@ -7,14 +7,15 @@ export interface HeaderProps {
   icon?: IconEnum | string
   buttons?: React.ReactNode
   copyTitle?: boolean
+  copyContent?: string
   actions?: React.ReactNode
 }
 
 export function Header(props: HeaderProps) {
-  const { title, icon, buttons, copyTitle = false, actions } = props
+  const { title, icon, buttons, copyTitle = false, copyContent = '', actions } = props
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(title)
+    navigator.clipboard.writeText(copyContent)
   }
 
   return (
