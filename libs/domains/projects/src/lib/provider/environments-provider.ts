@@ -11,5 +11,10 @@ export function useEnviroments() {
     [dispatch]
   )
 
+  const getEnvironmentsStatus = useCallback(
+    async (projectId: string) => dispatch(fetchEnvironments({ projectId })),
+    [dispatch]
+  )
+
   return { environments, getEnvironments }
 }
