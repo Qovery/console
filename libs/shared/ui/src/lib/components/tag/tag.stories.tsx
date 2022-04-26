@@ -1,16 +1,16 @@
-import { Tag, TagProps, TagStyle } from './tag'
+import { Tag, TagProps } from './tag'
 import { Meta, Story } from '@storybook/react'
-import { select } from '@storybook/addon-knobs'
 
 export default {
   component: Tag,
   title: 'Tag',
 } as Meta
 
-const Template: Story<TagProps> = (args) => <Tag {...args}>PROD</Tag>
+const Template: Story<TagProps> = (args) => <Tag className={args.className}>{args.children}</Tag>
 
 export const Primary = Template.bind({})
 
 Primary.args = {
-  style: select('Style', TagStyle, TagStyle.NORMAL),
+  className: 'bg-brand-50 text-brand-500',
+  children: 'PROD',
 }
