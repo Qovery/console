@@ -49,7 +49,7 @@ export function StatusMenu(props: StatusMenuProps) {
           width={248}
           onOpen={(e) => setOpen(e)}
           trigger={
-            <div className="flex items-center gap-1.5 px-2 cursor-pointer">
+            <div className="h-full flex items-center gap-1.5 px-2 cursor-pointer">
               {iconStatus()} <Icon name="icon-solid-angle-down" className="text-xs" />
             </div>
           }

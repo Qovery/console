@@ -1,3 +1,9 @@
+.status-menu__trigger {
+  .menu__trigger {
+    @apply h-full;
+  }
+}
+
 // status
 .status-menu--running {
   @apply bg-success-50 border-success-500 text-success-500;
