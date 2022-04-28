@@ -19,7 +19,7 @@ export function Header(props: HeaderProps) {
   }
 
   return (
-    <div className="flex h-32 b-bottom border-element-light-lighter-400 items-center justify-between bg-white rounded-t p-5">
+    <div className="flex h-32 border-b border-element-light-lighter-400 items-center justify-between bg-white rounded-t p-5">
       <div className="flex gap-4 ml-2 items-center">
         {icon && <Icon name={icon} width="64" />}
         <div className="flex flex-col gap-3">

@@ -1,8 +1,18 @@
 import { Application } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { APPLICATION_URL } from '@console/shared/utils'
-import { ButtonIcon, ButtonIconStyle, Header, Icon, StatusMenu, StatusMenuState, Tag } from '@console/shared/ui'
+import { APPLICATIONS_URL, APPLICATION_URL } from '@console/shared/utils'
+import {
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonMenu,
+  Header,
+  Icon,
+  StatusMenu,
+  StatusMenuState,
+  Tabs,
+  Tag,
+} from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
 
@@ -80,6 +90,71 @@ export function Container(props: ContainerProps) {
     </>
   )
 
+  const tabsItems = [
+    {
+      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
+      name: 'Environments',
+      active: window.location.pathname === APPLICATIONS_URL(organizationId, projectId, environmentId),
+      link: APPLICATIONS_URL(organizationId, projectId, environmentId),
+    },
+    {
+      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
+      name: 'Deployments',
+      active: window.location.pathname === `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/deployments`,
+      link: `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/deployments`,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" className="text-sm" />,
+      name: 'Settings',
+      active: window.location.pathname === `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/settings`,
+      link: `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/settings`,
+    },
+  ]
+
+  const menusButton = [
+    {
+      items: [
+        {
+          name: 'Deploy',
+          onClick: (e: ClickEvent) => clickAction(e, 'Deploy'),
+          contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Stop',
+          onClick: (e: ClickEvent) => clickAction(e, 'Stop'),
+          contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+        },
+      ],
+    },
+    {
+      items: [
+        {
+          name: 'Redeploy',
+          onClick: (e: ClickEvent) => clickAction(e, 'Redeploy'),
+          contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Update applications',
+          onClick: (e: ClickEvent) => clickAction(e, 'Update'),
+          contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Rollback',
+          onClick: (e: ClickEvent) => clickAction(e, 'Rollblack'),
+          contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
+        },
+      ],
+    },
+  ]
+
+  const contentTabs = (
+    <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
+      <ButtonMenu menus={menusButton} iconRight="icon-solid-plus">
+        New service
+      </ButtonMenu>
+    </div>
+  )
+
   return (
     <div>
       <Header
@@ -90,6 +165,7 @@ export function Container(props: ContainerProps) {
         copyContent={copyContent}
         actions={headerActions}
       />
+      <Tabs items={tabsItems} contentRight={contentTabs} />
       <ul className="mt-8">
         {applications &&
           applications.map((application: Application) => (

@@ -10,7 +10,9 @@ import {
   Button,
   ButtonStyle,
   ButtonSize,
+  Tabs,
 } from '@console/shared/ui'
+import { APPLICATION_URL } from '@console/shared/utils'
 import { ClickEvent } from '@szhsin/react-menu'
 import { Application } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
@@ -91,6 +93,47 @@ export function Container(props: ContainerProps) {
     </>
   )
 
+  const tabsItems = [
+    {
+      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
+      name: 'Overview',
+      active: window.location.pathname === APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
+    },
+    {
+      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
+      name: 'Deployments',
+      active:
+        window.location.pathname ===
+        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/deployments`,
+      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/deployments`,
+    },
+    {
+      icon: <Icon name="icon-solid-chart-area" className="text-sm" />,
+      name: 'Metrics',
+      active:
+        window.location.pathname ===
+        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/metrics`,
+      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/metrics`,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" className="text-sm" />,
+      name: 'Variables',
+      active:
+        window.location.pathname ===
+        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/variables`,
+      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/variables`,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" className="text-sm" />,
+      name: 'Settings',
+      active:
+        window.location.pathname ===
+        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/settings`,
+      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/settings`,
+    },
+  ]
+
   return (
     <div>
       <Header
@@ -101,6 +144,7 @@ export function Container(props: ContainerProps) {
         copyContent={copyContent}
         actions={headerActions}
       />
+      <Tabs items={tabsItems} />
     </div>
   )
 }

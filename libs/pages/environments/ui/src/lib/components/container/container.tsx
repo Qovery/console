@@ -42,9 +42,73 @@ export function Container(props: ContainerProps) {
     </>
   )
 
+  const tabsItems = [
+    {
+      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
+      name: 'Environments',
+      active: window.location.pathname === ENVIRONMENTS_URL(organizationId, projectId),
+      link: ENVIRONMENTS_URL(organizationId, projectId),
+    },
+    {
+      icon: <Icon name="icon-solid-browser" className="text-sm text-inherit" />,
+      name: 'Deployment Rules',
+      active: window.location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/deployment-rules`,
+      link: `${ENVIRONMENTS_URL(organizationId, projectId)}/deployment-rules`,
+    },
+  ]
+
+  const clickAction = (e: ClickEvent, status: string) => {
+    console.log(e, status)
+  }
+
+  const menusButton = [
+    {
+      items: [
+        {
+          name: 'Deploy',
+          onClick: (e: ClickEvent) => clickAction(e, 'Deploy'),
+          contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Stop',
+          onClick: (e: ClickEvent) => clickAction(e, 'Stop'),
+          contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+        },
+      ],
+    },
+    {
+      items: [
+        {
+          name: 'Redeploy',
+          onClick: (e: ClickEvent) => clickAction(e, 'Redeploy'),
+          contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Update applications',
+          onClick: (e: ClickEvent) => clickAction(e, 'Update'),
+          contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Rollback',
+          onClick: (e: ClickEvent) => clickAction(e, 'Rollblack'),
+          contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
+        },
+      ],
+    },
+  ]
+
+  const contentTabs = (
+    <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
+      <ButtonMenu menus={menusButton} iconRight="icon-solid-plus">
+        New environment
+      </ButtonMenu>
+    </div>
+  )
+
   return (
     <div>
       <Header title="Environments" icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
+      <Tabs items={tabsItems} contentRight={contentTabs} />
       <Table className="mt-2 bg-white rounded-sm" dataHead={tableHead} columnsWidth="30% 15% 25% 10% 20%">
         <>
           {environments.map((currentData, index) => (
@@ -55,6 +119,14 @@ export function Container(props: ContainerProps) {
               link={APPLICATIONS_URL(organizationId, projectId, currentData.id)}
               columnsWidth="25% 20% 25% 10% 15%"
             />
+      <ul className="mt-8">
+        {environments &&
+          environments.map((environment: Environment) => (
+            <li key={environment.id}>
+              <Link className="link text-accent2-500" to={APPLICATIONS_URL(organizationId, projectId, environment.id)}>
+                {environment.name}
+              </Link>
+            </li>
           ))}
         </>
       </Table>
