@@ -13,10 +13,14 @@ export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
 
-export interface EnvironmentsState extends EntityState<Environment> {
+export interface EnvironmentsState
+  extends EntityState<
+    Environment & {
+      status?: Status
+    }
+  > {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
-  status?: Status
 }
 
 export const environmentsAdapter = createEntityAdapter<Environment>()
@@ -67,15 +71,15 @@ export const environmentsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchEnvironmentsStatus.fulfilled, (state: EnvironmentsState, action: PayloadAction<Status[]>) => {
-        console.log(action.payload)
-        console.log(state)
-        const update: any = action.payload.map((id) => ({
-          id,
-          changes: {
-            status: action.payload,
-          },
-        }))
-        environmentsAdapter.updateMany(state, update)
+        const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
+          (status: Status) => ({
+            id: status.id,
+            changes: {
+              status: status,
+            },
+          })
+        )
+        environmentsAdapter.updateMany(state, update as Update<Environment>[])
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchEnvironmentsStatus.rejected, (state: EnvironmentsState, action) => {

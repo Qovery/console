@@ -11,11 +11,12 @@ export interface ContainerProps {
 
 const tableHead = [
   {
-    title: 'Services',
+    title: 'Environment',
     className: 'px-4 py-2',
   },
   {
     title: 'Update',
+    className: 'px-4',
   },
   {
     title: 'Running Schedule',
@@ -44,7 +45,7 @@ export function Container(props: ContainerProps) {
   return (
     <div>
       <Header title="Environments" icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
-      <Table dataHead={tableHead} columnsWidth="30% 10% 25% 10% 25%">
+      <Table className="mt-2 bg-white rounded-sm" dataHead={tableHead} columnsWidth="30% 10% 25% 10% 25%">
         <>
           {environments.map((currentData, index) => (
             <TableRowEnvironments
@@ -52,6 +53,7 @@ export function Container(props: ContainerProps) {
               data={currentData}
               dataHead={tableHead}
               link={APPLICATIONS_URL(organizationId, projectId, currentData.id)}
+              columnsWidth="25% 15% 25% 10% 20%"
             />
           ))}
         </>

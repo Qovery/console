@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react'
 
 export default {
   component: Tag,
-  title: 'Tag',
+  title: 'Tag/Default',
 } as Meta
 
 const Template: Story<TagProps> = (args) => <Tag className={args.className}>{args.children}</Tag>

@@ -8,11 +8,15 @@ import ApplicationsIcon from './icons/applications'
 import AWSIcon from './icons/aws'
 import ApplicationIcon from './icons/application'
 import SuccessIcon from './icons-status/success'
+import ErrorIcon from './icons-status/error'
+import PauseIcon from './icons-status/pause'
+import DeleteIcon from './icons-status/delete'
 export interface IconProps {
   name: IconEnum | string
   width?: string
   viewBox?: string
   className?: string
+  pathColor?: string
 }
 
 export function Icon(props: IconProps) {
@@ -38,6 +42,12 @@ export function Icon(props: IconProps) {
       return <ApplicationIcon {...formattedProps} />
     case IconEnum.SUCCESS:
       return <SuccessIcon {...formattedProps} />
+    case IconEnum.ERROR:
+      return <ErrorIcon {...formattedProps} />
+    case IconEnum.PAUSE:
+      return <PauseIcon {...formattedProps} />
+    case IconEnum.DELETE:
+      return <DeleteIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
