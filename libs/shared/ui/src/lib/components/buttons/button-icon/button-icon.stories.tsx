@@ -1,18 +1,14 @@
-import { ButtonIcon, ButtonIconProps } from '@console/shared/ui'
-import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
-import { IconEnum } from '@console/shared/enums'
+import { ButtonIcon, ButtonIconProps } from '../button-icon/button-icon'
 
 export default {
   component: ButtonIcon,
-  title: 'ButtonIcon',
+  title: 'Buttons/ButtonIcon',
 } as Meta
 
-const Template: Story<ButtonIconProps> = (args) => (
-  <ButtonIcon {...args}></ButtonIcon>
-)
+const Template: Story<ButtonIconProps> = (args) => <ButtonIcon {...args}></ButtonIcon>
 
 export const Primary = Template.bind({})
 Primary.args = {
-  icon: 'icon-solid-rocket'
+  icon: 'icon-solid-rocket',
 }

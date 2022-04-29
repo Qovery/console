@@ -2,9 +2,9 @@ import React from 'react'
 
 export interface TableProps {
   dataHead: Array<any>
+  children: React.ReactElement
   className?: string
   columnsWidth?: string
-  children: React.ReactElement
 }
 
 export function Table(props: TableProps) {

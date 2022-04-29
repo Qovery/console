@@ -72,7 +72,6 @@
   &.btn-icon--big {
     @apply w-9 h-9;
   }
-
   &.btn.is-active {
     @apply border-brand-400 bg-brand-400 text-white hover:text-white hover:bg-brand-400;
   }
@@ -103,5 +102,19 @@
 
   &.btn.is-active {
     @apply text-text-400 bg-element-light-lighter-400 hover:text-text-400 hover:bg-element-light-lighter-500;
+  }
+}
+
+// icon actions
+.btn-icon-action {
+  @apply inline-flex h-7 border border-element-light-lighter-500 rounded overflow-hidden;
+}
+
+.btn-icon-action__element {
+  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-element-light-lighter-100 border-r border-r-element-light-lighter-500 last:border-r-0 h-full min-w-[28px] text-xxs text-text-400 transition ease-in-out duration-150;
+
+  &.is-active,
+  &:hover {
+    @apply bg-element-light-lighter-300 text-brand-400;
   }
 }

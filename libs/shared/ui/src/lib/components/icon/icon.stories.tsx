@@ -45,6 +45,8 @@ const FaIcons = [
   'icon-solid-rotate-right',
   'icon-solid-rotate',
   'icon-solid-link',
+  'icon-solid-ellipsis-v',
+  'icon-solid-clock',
   // schema: favicons name
 ]
 

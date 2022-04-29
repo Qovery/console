@@ -1,41 +1,99 @@
-import { IconEnum } from '@console/shared/enums'
-import { Icon, IconFa, TableRow, Tooltip } from '@console/shared/ui'
+import { Environment, Status } from 'qovery-typescript-axios'
+import { ButtonIconAction, Icon, IconFa, Skeleton, StatusChip, TableRow, TagMode, Tooltip } from '@console/shared/ui'
+import { timeAgo } from '@console/shared/utils'
 
 export interface TableRowEnvironmentsProps {
-  data: any
+  data: Environment & { status?: Status }
   dataHead: Array<any>
   link: string
   columnsWidth?: string
 }
 
+const buttonActionsDefault = [
+  {
+    iconLeft: <Icon name="icon-solid-play" />,
+    iconRight: <Icon name="icon-solid-angle-down" />,
+    menus: [
+      {
+        items: [
+          {
+            name: 'Deploy',
+            onClick: () => console.log('Deploy'),
+            contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+          },
+          {
+            name: 'Stop',
+            onClick: () => console.log('Stop'),
+            contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+          },
+        ],
+      },
+    ],
+    menusClassName: 'border-r border-r-element-light-lighter-500',
+  },
+  {
+    iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+  },
+]
+
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { data, dataHead, columnsWidth, link } = props
+  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link } = props
+
+  const isLoading = !data.status?.id
 
   return (
-    <TableRow dataHead={dataHead} columnsWidth={columnsWidth} link={link}>
+    <TableRow columnsWidth={columnsWidth} link={link}>
       <>
         <div className="flex items-center px-4">
-          <Icon className="mr-3 min-w-[14px]" width="0.875rem" viewBox="0 0 14 14" name={IconEnum.SUCCESS} />
+          <Skeleton show={isLoading} width={16} height={16}>
+            <StatusChip status={data.status && data.status.state} />
+          </Skeleton>
           <Tooltip
             content={
-              <p>
-                {data.cloud_provider.provider} ({data.cloud_provider.cluster})
+              <p className="flex">
+                {data.cloud_provider.provider && (
+                  <Icon className="mr-3" name={data.cloud_provider.provider} width="16" />
+                )}
+                ({data.cloud_provider.cluster})
               </p>
             }
           >
-            <div className="w-4 h-4.5 min-w-[16px] mr-3 flex items-center justify-center text-xs text-text-400 text-center bg-element-light-lighter-400 rounded-sm font-bold cursor-pointer">
-              {data.cloud_provider.provider.charAt(0)}
+            <div className="ml-3 mr-3">
+              <Skeleton show={isLoading} width={16} height={16}>
+                <div className="w-4 h-4.5 min-w-[16px] flex items-center justify-center text-xs text-text-400 text-center bg-element-light-lighter-400 rounded-sm font-bold cursor-pointer">
+                  {data.cloud_provider.provider && data.cloud_provider.provider.charAt(0)}
+                </div>
+              </Skeleton>
             </div>
           </Tooltip>
-          <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
+          <Skeleton show={isLoading} width={400} height={16} truncate>
+            <span className="text-sm text-text-500 font-medium">{data.name}</span>
+          </Skeleton>
         </div>
-        <div className="text-right px-3">
-          <span className="text-text-400 text-sm">1h ago</span>
-        </div>
+        <Skeleton show={isLoading} width={200} height={16}>
+          <div className="flex justify-end justify-items-center px-3">
+            <p className="leading-7 text-text-400 text-sm mr-3">
+              {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))}
+              <IconFa name="icon-solid-clock" className="ml-1 text-xxs" />
+            </p>
+            <ButtonIconAction actions={buttonActionsDefault} />
+          </div>
+        </Skeleton>
+
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          <IconFa name="icon-solid-infinity" className="text-success-500 mr-1 text-xs" />
-          <span className="f text-text-500 text-xs font-medium">Continuous running</span>
+          <Skeleton show={isLoading} width={160} height={16}>
+            <>
+              <IconFa name="icon-solid-infinity" className="text-success-500 mr-2 text-xs" />
+              <span className="f text-text-500 text-sm font-medium">Continuous running</span>
+            </>
+          </Skeleton>
         </div>
+        <div className="flex items-center px-4">
+          <Skeleton show={isLoading} width={30} height={16}>
+            <TagMode status={data.mode} />
+          </Skeleton>
+        </div>
+        <div></div>
       </>
     </TableRow>
   )
