@@ -15,8 +15,8 @@ import { application, ApplicationState, initialApplicationState } from '@console
 
 export const rootReducer = combineReducers({
   user: user,
-  organization: organization,
   userSignUp: userSignUp,
+  organization: organization,
   projects: projects,
   environments: environments,
   applications: applications,
@@ -27,14 +27,37 @@ export const store = configureStore({
   reducer: rootReducer,
 })
 
+// todo implement this
+// export const entitiesReducer = combineReducers({
+//   organization: organization,
+//   projects: projects,
+//   environments: environments,
+//   applications: applications,
+//   application: application,
+// })
+//
+// export const uiReducer = combineReducers({
+//   userSignUp: userSignUp,
+//   user: user,
+// })
+//
+// export const store = configureStore({
+//   reducer: {
+//     entities: entitiesReducer,
+//     ui: uiReducer,
+//   },
+// })
+
 export type RootState = {
   user: User
   userSignUp: UserSignUpState
-  organization: OrganizationState
-  projects: ProjectsState
-  environments: EnvironmentsState
-  applications: ApplicationsState
-  application: ApplicationState
+  entities: {
+    organization: OrganizationState
+    projects: ProjectsState
+    environments: EnvironmentsState
+    applications: ApplicationsState
+    application: ApplicationState
+  }
 }
 
 export type AppDispatch = typeof store.dispatch
@@ -42,9 +65,11 @@ export type AppDispatch = typeof store.dispatch
 export const initialRootState = (): RootState => ({
   user: initialUserState,
   userSignUp: initialUserSignUpState,
-  organization: initialOrganizationState,
-  projects: initialProjectsState,
-  environments: initialEnvironmentsState,
-  applications: initialApplicationsState,
-  application: initialApplicationState,
+  entities: {
+    organization: initialOrganizationState,
+    projects: initialProjectsState,
+    environments: initialEnvironmentsState,
+    applications: initialApplicationsState,
+    application: initialApplicationState,
+  },
 })
