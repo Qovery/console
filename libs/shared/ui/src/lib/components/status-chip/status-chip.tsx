@@ -36,6 +36,12 @@ export function StatusChip(props: StatusChipProps) {
         return true
       case GlobalDeploymentStatus.DELETING:
         return true
+      case GlobalDeploymentStatus.STOP_QUEUED:
+        return true
+      case GlobalDeploymentStatus.QUEUED:
+        return true
+      case GlobalDeploymentStatus.DELETE_QUEUED:
+        return true
       default:
         return false
     }

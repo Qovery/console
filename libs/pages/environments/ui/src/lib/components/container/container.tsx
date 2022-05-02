@@ -16,7 +16,7 @@ const tableHead = [
   },
   {
     title: 'Update',
-    className: 'px-4',
+    className: 'px-4 text-center',
   },
   {
     title: 'Running Schedule',

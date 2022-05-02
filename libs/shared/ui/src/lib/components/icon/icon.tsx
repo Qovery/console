@@ -12,6 +12,8 @@ import ErrorIcon from './icons-status/error'
 import PauseIcon from './icons-status/pause'
 import DeleteIcon from './icons-status/delete'
 import ProgressIcon from './icons-status/progress'
+import ScalewayIcon from './icons/scaleway'
+import DOIcon from './icons/do'
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -39,6 +41,10 @@ export function Icon(props: IconProps) {
       return <ApplicationsIcon {...formattedProps} />
     case IconEnum.AWS:
       return <AWSIcon {...formattedProps} />
+    case IconEnum.SCALEWAY:
+      return <ScalewayIcon {...formattedProps} />
+    case IconEnum.DO:
+      return <DOIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
     case IconEnum.SUCCESS:
