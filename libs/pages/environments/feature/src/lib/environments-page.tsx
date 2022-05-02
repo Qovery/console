@@ -12,7 +12,7 @@ export function EnvironmentsPage() {
   useEffect(() => {
     setTimeout(() => {
       projectId && getEnvironmentsStatus(projectId)
-    }, 2000)
+    }, 1000)
   }, [projectId, getEnvironmentsStatus])
 
   return <Container environments={environments} />

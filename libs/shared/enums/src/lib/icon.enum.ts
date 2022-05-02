@@ -10,4 +10,5 @@ export enum IconEnum {
   ERROR = 'ERROR',
   PAUSE = 'PAUSE',
   DELETE = 'DELETE',
+  PROGRESS = 'PROGRESS',
 }
