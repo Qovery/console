@@ -1,11 +1,16 @@
 import { Application } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router'
+import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { APPLICATIONS_URL, APPLICATION_URL } from '@console/shared/utils'
+import {
+  APPLICATIONS_DEPLOYMENTS_URL,
+  APPLICATIONS_SETTINGS_URL,
+  APPLICATIONS_URL,
+  APPLICATION_URL,
+} from '@console/shared/utils'
 import {
   ButtonIcon,
   ButtonIconStyle,
-  ButtonMenu,
+  ButtonAction,
   Header,
   Icon,
   StatusMenu,
@@ -23,7 +28,7 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { applications } = props
   const { organizationId, projectId, environmentId } = useParams()
-  const navigate = useNavigate()
+  const location = useLocation()
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
 
@@ -94,20 +99,20 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Environments',
-      active: window.location.pathname === APPLICATIONS_URL(organizationId, projectId, environmentId),
+      active: location.pathname === APPLICATIONS_URL(organizationId, projectId, environmentId),
       link: APPLICATIONS_URL(organizationId, projectId, environmentId),
     },
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Deployments',
-      active: window.location.pathname === `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/deployments`,
-      link: `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/deployments`,
+      active: location.pathname === APPLICATIONS_DEPLOYMENTS_URL(organizationId, projectId, environmentId),
+      link: APPLICATIONS_DEPLOYMENTS_URL(organizationId, projectId, environmentId),
     },
     {
       icon: <Icon name="icon-solid-wheel" className="text-sm" />,
       name: 'Settings',
-      active: window.location.pathname === `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/settings`,
-      link: `${APPLICATIONS_URL(organizationId, projectId, environmentId)}/settings`,
+      active: location.pathname === APPLICATIONS_SETTINGS_URL(organizationId, projectId, environmentId),
+      link: APPLICATIONS_SETTINGS_URL(organizationId, projectId, environmentId),
     },
   ]
 
@@ -149,9 +154,9 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <ButtonMenu menus={menusButton} iconRight="icon-solid-plus">
+      <ButtonAction menus={menusButton} iconRight="icon-solid-plus">
         New service
-      </ButtonMenu>
+      </ButtonAction>
     </div>
   )
 

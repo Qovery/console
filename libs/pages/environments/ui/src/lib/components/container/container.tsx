@@ -1,12 +1,13 @@
 import { Environment } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
 import { APPLICATIONS_URL } from '@console/shared/utils'
-import { ButtonIcon, ButtonIconStyle, Header, Table } from '@console/shared/ui'
+import { ButtonIcon, ButtonIconStyle, Header, Table, ButtonAction, Icon, Tabs } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface ContainerProps {
   environments: Environment[]
+  children: React.ReactNode
 }
 
 const tableHead = [
@@ -31,8 +32,9 @@ const tableHead = [
 ]
 
 export function Container(props: ContainerProps) {
-  const { environments } = props
+  const { environments, children } = props
   const { organizationId, projectId } = useParams()
+  const location = useLocation()
 
   const headerButtons = (
     <>
@@ -46,14 +48,14 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Environments',
-      active: window.location.pathname === ENVIRONMENTS_URL(organizationId, projectId),
+      active: location.pathname === ENVIRONMENTS_URL(organizationId, projectId),
       link: ENVIRONMENTS_URL(organizationId, projectId),
     },
     {
       icon: <Icon name="icon-solid-browser" className="text-sm text-inherit" />,
       name: 'Deployment Rules',
-      active: window.location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/deployment-rules`,
-      link: `${ENVIRONMENTS_URL(organizationId, projectId)}/deployment-rules`,
+      active: location.pathname === ENVIRONMENTS_DEPLOYMENT_RULES_URL(organizationId, projectId),
+      link: ENVIRONMENTS_DEPLOYMENT_RULES_URL(organizationId, projectId),
     },
   ]
 
@@ -99,9 +101,9 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <ButtonMenu menus={menusButton} iconRight="icon-solid-plus">
+      <ButtonAction menus={menusButton} iconRight="icon-solid-plus">
         New environment
-      </ButtonMenu>
+      </ButtonAction>
     </div>
   )
 

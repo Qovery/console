@@ -12,10 +12,16 @@ import {
   ButtonSize,
   Tabs,
 } from '@console/shared/ui'
-import { APPLICATION_URL } from '@console/shared/utils'
+import {
+  APPLICATION_DEPLOYMENTS_URL,
+  APPLICATION_METRICS_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+  APPLICATION_VARIABLES_URL,
+} from '@console/shared/utils'
 import { ClickEvent } from '@szhsin/react-menu'
 import { Application } from 'qovery-typescript-axios'
-import { useParams } from 'react-router'
+import { useLocation, useParams } from 'react-router'
 
 export interface ContainerProps {
   application: Application
@@ -24,6 +30,7 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { application } = props
   const { organizationId, projectId, environmentId, applicationId } = useParams()
+  const location = useLocation()
 
   const clickAction = (e: ClickEvent, action: string) => {
     console.log(e)
@@ -97,40 +104,33 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Overview',
-      active: window.location.pathname === APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
+      active: location.pathname === APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
     },
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Deployments',
       active:
-        window.location.pathname ===
-        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/deployments`,
-      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/deployments`,
+        location.pathname === APPLICATION_DEPLOYMENTS_URL(organizationId, projectId, environmentId, applicationId),
+      link: APPLICATION_DEPLOYMENTS_URL(organizationId, projectId, environmentId, applicationId),
     },
     {
       icon: <Icon name="icon-solid-chart-area" className="text-sm" />,
       name: 'Metrics',
-      active:
-        window.location.pathname ===
-        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/metrics`,
-      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/metrics`,
+      active: location.pathname === APPLICATION_METRICS_URL(organizationId, projectId, environmentId, applicationId),
+      link: APPLICATION_METRICS_URL(organizationId, projectId, environmentId, applicationId),
     },
     {
       icon: <Icon name="icon-solid-wheel" className="text-sm" />,
       name: 'Variables',
-      active:
-        window.location.pathname ===
-        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/variables`,
-      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/variables`,
+      active: location.pathname === APPLICATION_VARIABLES_URL(organizationId, projectId, environmentId, applicationId),
+      link: APPLICATION_VARIABLES_URL(organizationId, projectId, environmentId, applicationId),
     },
     {
       icon: <Icon name="icon-solid-wheel" className="text-sm" />,
       name: 'Settings',
-      active:
-        window.location.pathname ===
-        `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/settings`,
-      link: `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}/settings`,
+      active: location.pathname === APPLICATION_SETTINGS_URL(organizationId, projectId, environmentId, applicationId),
+      link: APPLICATION_SETTINGS_URL(organizationId, projectId, environmentId, applicationId),
     },
   ]
 

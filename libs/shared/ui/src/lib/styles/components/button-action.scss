@@ -1,0 +1,67 @@
+//menu
+.btn-menu {
+  @apply h-8 overflow-hidden rounded text-xs inline-flex;
+
+  .menu__trigger {
+    @apply h-full;
+  }
+}
+
+.btn-menu__trigger {
+  @apply h-full flex justify-center items-center px-4 bg-brand-500 hover:bg-brand-600 border-r border-brand-400 text-white transition ease-in-out duration-150 cursor-pointer;
+}
+
+.btn-menu__btn {
+  @apply h-full flex justify-center items-center px-4 gap-3 bg-brand-500 hover:bg-brand-600 transition ease-in-out duration-150 text-white font-medium whitespace-nowrap;
+}
+
+.btn-menu__trigger--open {
+  @apply bg-brand-600;
+}
+
+.btn-menu--raised {
+  .btn-menu__trigger,
+  .btn-menu__btn {
+    @apply bg-brand-100 text-brand-300 hover:bg-brand-200;
+  }
+
+  .btn-menu__trigger {
+    @apply border-brand-200;
+
+    &.btn-menu__trigger--open {
+      @apply bg-brand-200;
+    }
+  }
+}
+
+.btn-menu--stroked {
+  @apply border border-element-light-lighter-500 text-text-500;
+
+  .btn-menu__trigger,
+  .btn-menu__btn {
+    @apply bg-element-light-lighter-300 hover:bg-element-light-lighter-400 text-text-500;
+  }
+
+  .btn-menu__trigger {
+    @apply border-element-light-lighter-500;
+
+    &.btn-menu__trigger--open {
+      @apply bg-element-light-lighter-400;
+    }
+  }
+}
+
+.btn-menu--flat {
+  .btn-menu__trigger,
+  .btn-menu__btn {
+    @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
+  }
+
+  .btn-menu__trigger {
+    @apply border-transparent;
+
+    &.btn-menu__trigger--open {
+      @apply bg-transparent;
+    }
+  }
+}
