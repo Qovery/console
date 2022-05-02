@@ -76,21 +76,6 @@ export function StatusChip(props: StatusChipProps) {
     }
   }
 
-  // function showSpinnerIcon(): boolean {
-  //   switch (status) {
-  //     case GlobalDeploymentStatus.DEPLOYMENT_QUEUED:
-  //       return true
-  //     case GlobalDeploymentStatus.STOP_QUEUED:
-  //       return true
-  //     case GlobalDeploymentStatus.QUEUED:
-  //       return true
-  //     case GlobalDeploymentStatus.DELETE_QUEUED:
-  //       return true
-  //     default:
-  //       return false
-  //   }
-  // }
-
   return (
     <Tooltip content={<span>{upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}</span>}>
       <div data-testid="status-chip" className={className}>

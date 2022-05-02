@@ -1,5 +1,15 @@
-import { Environment, Status } from 'qovery-typescript-axios'
-import { ButtonIconAction, Icon, IconFa, Skeleton, StatusChip, TableRow, TagMode, Tooltip } from '@console/shared/ui'
+import { Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
+import {
+  ButtonIconAction,
+  Icon,
+  IconFa,
+  Skeleton,
+  StatusChip,
+  StatusLabel,
+  TableRow,
+  TagMode,
+  Tooltip,
+} from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
 
 export interface TableRowEnvironmentsProps {
@@ -70,22 +80,30 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             <span className="text-sm text-text-500 font-medium">{data.name}</span>
           </Skeleton>
         </div>
-        <Skeleton show={isLoading} width={200} height={16}>
-          <div className="flex justify-end justify-items-center px-3">
-            <p className="leading-7 text-text-400 text-sm mr-3">
-              {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))}
-              <IconFa name="icon-solid-clock" className="ml-1 text-xxs" />
-            </p>
-            <ButtonIconAction actions={buttonActionsDefault} />
-          </div>
-        </Skeleton>
+        <div className="flex justify-end justify-items-center px-3">
+          <Skeleton show={isLoading} width={200} height={16}>
+            <div className="flex">
+              <p className="leading-7 text-text-400 text-sm mr-3">
+                {data.status && data.status.state === GlobalDeploymentStatus.RUNNING ? (
+                  <>
+                    {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))}
+                    <IconFa name="icon-solid-clock" className="ml-1 text-xxs" />
+                  </>
+                ) : (
+                  <StatusLabel status={data.status && data.status.state} />
+                )}
+              </p>
+              <ButtonIconAction actions={buttonActionsDefault} />
+            </div>
+          </Skeleton>
+        </div>
 
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
           <Skeleton show={isLoading} width={160} height={16}>
-            <>
-              <IconFa name="icon-solid-infinity" className="text-success-500 mr-2 text-xs" />
-              <span className="f text-text-500 text-sm font-medium">Continuous running</span>
-            </>
+            <div className="text-text-500">
+              -{/* <IconFa name="icon-solid-infinity" className="text-success-500 mr-2 text-xs" /> */}
+              {/* <span className="f text-text-500 text-sm font-medium">Continuous running</span> */}
+            </div>
           </Skeleton>
         </div>
         <div className="flex items-center px-4">
@@ -93,7 +111,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             <TagMode status={data.mode} />
           </Skeleton>
         </div>
-        <div></div>
+        <div className="text-text-500">-</div>
       </>
     </TableRow>
   )

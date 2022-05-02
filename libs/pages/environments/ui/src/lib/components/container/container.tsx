@@ -45,7 +45,7 @@ export function Container(props: ContainerProps) {
   return (
     <div>
       <Header title="Environments" icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
-      <Table className="mt-2 bg-white rounded-sm" dataHead={tableHead} columnsWidth="30% 10% 25% 10% 25%">
+      <Table className="mt-2 bg-white rounded-sm" dataHead={tableHead} columnsWidth="30% 15% 25% 10% 20%">
         <>
           {environments.map((currentData, index) => (
             <TableRowEnvironments
@@ -53,7 +53,7 @@ export function Container(props: ContainerProps) {
               data={currentData}
               dataHead={tableHead}
               link={APPLICATIONS_URL(organizationId, projectId, currentData.id)}
-              columnsWidth="25% 15% 25% 10% 20%"
+              columnsWidth="25% 20% 25% 10% 15%"
             />
           ))}
         </>

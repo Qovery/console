@@ -11,6 +11,7 @@ import SuccessIcon from './icons-status/success'
 import ErrorIcon from './icons-status/error'
 import PauseIcon from './icons-status/pause'
 import DeleteIcon from './icons-status/delete'
+import ProgressIcon from './icons-status/progress'
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -48,6 +49,8 @@ export function Icon(props: IconProps) {
       return <PauseIcon {...formattedProps} />
     case IconEnum.DELETE:
       return <DeleteIcon {...formattedProps} />
+    case IconEnum.PROGRESS:
+      return <ProgressIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
