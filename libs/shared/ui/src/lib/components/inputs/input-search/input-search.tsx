@@ -49,7 +49,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         {toggleDelete && (
           <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
-            <Icon className="text-text-400 text-sm" name="icon-solid-xmark" />
+            <Icon className="text-text-400 text-sm" name="icon-solid-circle-xmark" />
           </button>
         )}
       </div>
