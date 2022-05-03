@@ -12,13 +12,7 @@ import {
   ButtonSize,
   Tabs,
 } from '@console/shared/ui'
-import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_METRICS_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-  APPLICATION_VARIABLES_URL,
-} from '@console/shared/utils'
+import { APPLICATION_URL } from '@console/shared/utils'
 import { ClickEvent } from '@szhsin/react-menu'
 import { Application } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
@@ -100,7 +94,7 @@ export function Container(props: ContainerProps) {
     </>
   )
 
-  const tabsItems = [
+  /*const tabsItems = [
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Overview',
@@ -132,7 +126,7 @@ export function Container(props: ContainerProps) {
       active: location.pathname === APPLICATION_SETTINGS_URL(organizationId, projectId, environmentId, applicationId),
       link: APPLICATION_SETTINGS_URL(organizationId, projectId, environmentId, applicationId),
     },
-  ]
+  ]*/
 
   return (
     <div>
@@ -144,7 +138,7 @@ export function Container(props: ContainerProps) {
         copyContent={copyContent}
         actions={headerActions}
       />
-      <Tabs items={tabsItems} />
+      <Tabs items={[]} />
     </div>
   )
 }

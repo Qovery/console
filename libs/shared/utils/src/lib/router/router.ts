@@ -16,23 +16,12 @@ export const ONBOARDING_THANKS_URL = '/thanks'
 export const SETTINGS_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/settings`
 export const ENVIRONMENTS_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
   `/organization/${organizationId}/project/${projectId}/environments`
-export const ENVIRONMENTS_DEPLOYMENT_RULES_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
-  `/organization/${organizationId}/project/${projectId}/environments/deployment-rules`
+export const ENVIRONMENTS_DEPLOYMENT_RULES_URL = `/deployment-rules`
 export const APPLICATIONS_URL = (
   organizationId = ':organizationId',
   projectId = ':projectId',
   environmentId = ':environmentId'
 ) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/applications`
-export const APPLICATIONS_DEPLOYMENTS_URL = (
-  organizationId = ':organizationId',
-  projectId = ':projectId',
-  environmentId = ':environmentId'
-) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/applications/deployments`
-export const APPLICATIONS_SETTINGS_URL = (
-  organizationId = ':organizationId',
-  projectId = ':projectId',
-  environmentId = ':environmentId'
-) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/applications/settings`
 export const APPLICATION_URL = (
   organizationId = ':organizationId',
   projectId = ':projectId',
@@ -40,41 +29,7 @@ export const APPLICATION_URL = (
   applicationId = ':applicationId'
 ) =>
   `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}/general`
-export const APPLICATION_DEPLOYMENTS_URL = (
-  organizationId = ':organizationId',
-  projectId = ':projectId',
-  environmentId = ':environmentId',
-  applicationId = ':applicationId'
-) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}/deployments`
-export const APPLICATION_METRICS_URL = (
-  organizationId = ':organizationId',
-  projectId = ':projectId',
-  environmentId = ':environmentId',
-  applicationId = ':applicationId'
-) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}/metrics`
-export const APPLICATION_VARIABLES_URL = (
-  organizationId = ':organizationId',
-  projectId = ':projectId',
-  environmentId = ':environmentId',
-  applicationId = ':applicationId'
-) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}/variables`
-export const APPLICATION_SETTINGS_URL = (
-  organizationId = ':organizationId',
-  projectId = ':projectId',
-  environmentId = ':environmentId',
-  applicationId = ':applicationId'
-) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}/settings`
 
-type ElementRoute = (
-  organizationId?: string,
-  projectId?: string,
-  environmentId?: string,
-  applicationId?: string
-) => string
 export interface Route {
   component: React.ReactElement
   path: string

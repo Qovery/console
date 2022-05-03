@@ -2,11 +2,7 @@
 export interface DeploymentRulesProps {}
 
 export function DeploymentRulesPage(props: DeploymentRulesProps) {
-  return (
-    <div>
-      <h1>Welcome to DeploymentRules!</h1>
-    </div>
-  )
+  return <h1>Welcome to DeploymentRules!</h1>
 }
 
 export default DeploymentRulesPage

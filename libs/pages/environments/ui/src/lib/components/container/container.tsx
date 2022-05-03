@@ -48,14 +48,15 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Environments',
-      active: location.pathname === ENVIRONMENTS_URL(organizationId, projectId),
-      link: ENVIRONMENTS_URL(organizationId, projectId),
+      active: location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
+      link: `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
     },
     {
       icon: <Icon name="icon-solid-browser" className="text-sm text-inherit" />,
       name: 'Deployment Rules',
-      active: location.pathname === ENVIRONMENTS_DEPLOYMENT_RULES_URL(organizationId, projectId),
-      link: ENVIRONMENTS_DEPLOYMENT_RULES_URL(organizationId, projectId),
+      active:
+        location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
+      link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },
   ]
 

@@ -1,12 +1,7 @@
 import { Application } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import {
-  APPLICATIONS_DEPLOYMENTS_URL,
-  APPLICATIONS_SETTINGS_URL,
-  APPLICATIONS_URL,
-  APPLICATION_URL,
-} from '@console/shared/utils'
+import { APPLICATIONS_URL, APPLICATION_URL } from '@console/shared/utils'
 import {
   ButtonIcon,
   ButtonIconStyle,
@@ -95,7 +90,7 @@ export function Container(props: ContainerProps) {
     </>
   )
 
-  const tabsItems = [
+  /*const tabsItems = [
     {
       icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
       name: 'Environments',
@@ -114,7 +109,7 @@ export function Container(props: ContainerProps) {
       active: location.pathname === APPLICATIONS_SETTINGS_URL(organizationId, projectId, environmentId),
       link: APPLICATIONS_SETTINGS_URL(organizationId, projectId, environmentId),
     },
-  ]
+  ]*/
 
   const menusButton = [
     {
@@ -170,7 +165,7 @@ export function Container(props: ContainerProps) {
         copyContent={copyContent}
         actions={headerActions}
       />
-      <Tabs items={tabsItems} contentRight={contentTabs} />
+      <Tabs items={[]} contentRight={contentTabs} />
       <ul className="mt-8">
         {applications &&
           applications.map((application: Application) => (

@@ -72,7 +72,7 @@ export const ROUTER = [
     layout: true,
   },
   {
-    path: ENVIRONMENTS_URL(),
+    path: `${ENVIRONMENTS_URL()}/*`,
     component: <EnvironmentsPage />,
     protected: true,
     layout: true,

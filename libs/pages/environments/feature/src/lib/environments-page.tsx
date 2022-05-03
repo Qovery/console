@@ -3,7 +3,7 @@ import { useDocumentTitle } from '@console/shared/utils'
 import { useEnviroments } from '@console/domains/projects'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import { ROUTER_ENVIRONMENTS } from './router/router'
 
 export function EnvironmentsPage() {
@@ -20,8 +20,8 @@ export function EnvironmentsPage() {
   return (
     <Container environments={environments}>
       <Routes>
-        {ROUTER_ENVIRONMENTS.map((route, index) => (
-          <Route key={index} path={route.path.toString()} element={route.component} />
+        {ROUTER_ENVIRONMENTS.map((route) => (
+          <Route key={route.path} path={route.path} element={route.component} />
         ))}
       </Routes>
     </Container>
