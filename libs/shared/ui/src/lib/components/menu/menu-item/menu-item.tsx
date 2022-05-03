@@ -24,13 +24,7 @@ export function MenuItem(props: MenuItemProps) {
 
   if (link?.external) {
     return (
-      <Item
-        className="w-full h-8 rounded-sm flex justify-between px-3 py-0 hover:bg-element-light-lighter-300 mb-1"
-        href={link.url}
-        data-testid="menuItem"
-        target="_blank"
-        onClick={onClick}
-      >
+      <Item className="menu-item" href={link.url} data-testid="menuItem" target="_blank" onClick={onClick}>
         {itemContent}
       </Item>
     )
@@ -38,7 +32,7 @@ export function MenuItem(props: MenuItemProps) {
     return (
       <Link to={link?.url ? link?.url : ''}>
         <Item
-          className="w-full h-8 rounded-sm flex justify-between px-3 py-0 hover:bg-element-light-lighter-300 mb-1"
+          className="menu-item"
           data-testid="menuItem"
           onClick={(e) => {
             navigate(link?.url ? link?.url : '')

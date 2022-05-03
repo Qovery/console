@@ -16,10 +16,11 @@ export interface MenuGroupProps {
   paddingMenuY?: number
   paddingMenuX?: number
   style?: object
+  isFilter?: boolean
 }
 
 export function MenuGroup(props: MenuGroupProps) {
-  const { menu = { items: [] }, isLast = true, paddingMenuX = 12, paddingMenuY = 12, style = {} } = props
+  const { menu = { items: [] }, isLast = true, paddingMenuX = 12, paddingMenuY = 12, style = {}, isFilter } = props
 
   const [currentItems, setCurrentItems] = useState(menu.items)
 
@@ -48,7 +49,7 @@ export function MenuGroup(props: MenuGroupProps) {
 
   return (
     <div style={style}>
-      {menu?.title && (
+      {!isFilter && menu?.title && (
         <div className="flex justify-between items-center" style={headPaddingStyle}>
           {menu?.title && (
             <p data-testid="title" className="text-sm text-text-300">
@@ -74,6 +75,11 @@ export function MenuGroup(props: MenuGroupProps) {
           />
         </div>
       )}
+      {isFilter && menu?.title && currentItems.length !== 0 && (
+        <p className="text-sm text-text-400 ml-2" style={headPaddingStyle}>
+          {menu?.title}
+        </p>
+      )}
       {currentItems.length > 0 && (
         <div style={paddingStyle}>
           {currentItems.map((item, index) => (
@@ -88,7 +94,7 @@ export function MenuGroup(props: MenuGroupProps) {
           ))}
         </div>
       )}
-      {!isLast && <MenuDivider className="bg-element-light-lighter-400 m-0" />}
+      {!isFilter && !isLast && <MenuDivider className="bg-element-light-lighter-400 m-0" />}
     </div>
   )
 }

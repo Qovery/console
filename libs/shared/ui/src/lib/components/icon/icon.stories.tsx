@@ -50,6 +50,7 @@ const FaIcons = [
   'icon-solid-browser',
   'icon-solid-ellipsis-vertical',
   'icon-solid-chart-area',
+  'icon-solid-circle-xmark',
   // schema: favicons name
 ]
 

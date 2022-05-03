@@ -22,7 +22,13 @@ export interface MenuProps {
   direction?: MenuDirection
   open?: boolean
   arrowAlign?: MenuAlign
-  menus: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
+  menus: {
+    items: MenuItemProps[]
+    title?: string
+    button?: string
+    buttonLink?: string
+    search?: boolean
+  }[]
   className?: string
   header?: React.ReactNode
   onClose?: (e: MenuCloseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>) => void
@@ -30,6 +36,7 @@ export interface MenuProps {
   paddingMenuY?: number
   paddingMenuX?: number
   onOpen?: (e: boolean) => void
+  isFilter?: boolean
 }
 
 export function Menu(props: MenuProps) {
@@ -46,6 +53,7 @@ export function Menu(props: MenuProps) {
     paddingMenuX = 12,
     paddingMenuY = 12,
     onOpen,
+    isFilter,
   } = props
 
   const ref = useRef(null)
@@ -136,6 +144,7 @@ export function Menu(props: MenuProps) {
             paddingMenuX={paddingMenuX}
             paddingMenuY={paddingMenuY}
             style={{ width }}
+            isFilter={isFilter}
           />
         ))}
       </ControlledMenu>
