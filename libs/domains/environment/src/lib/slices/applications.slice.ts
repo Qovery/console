@@ -6,7 +6,8 @@ import {
   EntityState,
   PayloadAction,
 } from '@reduxjs/toolkit'
-import { ApplicationsApi, Application } from 'qovery-typescript-axios'
+import { ApplicationsApi, Application, ApplicationMainCallsApi } from 'qovery-typescript-axios'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
@@ -19,14 +20,26 @@ export interface ApplicationsState extends EntityState<Application> {
 export const applicationsAdapter = createEntityAdapter<Application>()
 
 const applicationsApi = new ApplicationsApi()
+const applicationMainCallsApi = new ApplicationMainCallsApi()
 
 export const fetchApplications = createAsyncThunk<any, { environmentId: string }>(
   'applications/fetch',
-  async (data, thunkApi) => {
+  async (data) => {
     const response = await applicationsApi.listApplication(data.environmentId).then((response) => {
       return response.data
     })
     return response.results as Application[]
+  }
+)
+
+export const removeOneApplication = createAsyncThunk<any, { applicationId: string }>(
+  'applications/remove',
+  async (data, thunkApi) => {
+    // const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => {
+    //   return response.data
+    // })
+
+    return data.applicationId
   }
 )
 
@@ -50,17 +63,17 @@ export const applicationsSlice = createSlice({
       })
       .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<Application[]>) => {
         applicationsAdapter.upsertMany(state, action.payload)
-        action.payload.map((app) => {
-          if (app.environment) {
-            if (state.joinEnvApp[app.environment?.id]) state.joinEnvApp[app.environment?.id].push(app.id)
-            else state.joinEnvApp[app.environment?.id] = [app.id]
-          }
+        action.payload.forEach((app) => {
+          state.joinEnvApp = addOneToManyRelation(app.environment?.id, app.id, { ...state.joinEnvApp })
         })
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchApplications.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+      })
+      .addCase(removeOneApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<string>) => {
+        state.joinEnvApp = removeOneToManyRelation(action.payload, state.joinEnvApp)
       })
   },
 })
@@ -80,13 +93,5 @@ export const selectApplicationsEntities = createSelector(getApplicationsState, s
 
 export const selectApplicationsEntitiesByEnvId = (environmentId: string) =>
   createSelector(getApplicationsState, (state): Application[] => {
-    const applications: Application[] = []
-
-    if (state?.joinEnvApp[environmentId]) {
-      state.joinEnvApp[environmentId].forEach((id) => {
-        applications.push(state.entities[id] as Application)
-      })
-    }
-
-    return applications
+    return getEntitiesByIds<Application>(state.entities, state?.joinEnvApp[environmentId])
   })
