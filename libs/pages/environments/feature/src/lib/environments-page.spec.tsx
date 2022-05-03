@@ -1,5 +1,4 @@
 import { render } from '__tests__/utils/setup-jest'
-
 import EnvironmentsPage from './environments-page'
 
 describe('EnvironmentsPage', () => {

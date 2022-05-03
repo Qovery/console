@@ -8,7 +8,7 @@ import { ROUTER_ENVIRONMENTS } from './router/router'
 
 export function EnvironmentsPage() {
   useDocumentTitle('Environments - Qovery')
-  const { environments, getEnvironmentsStatus } = useEnviroments()
+  const { getEnvironmentsStatus } = useEnviroments()
   const { projectId } = useParams()
 
   useEffect(() => {
