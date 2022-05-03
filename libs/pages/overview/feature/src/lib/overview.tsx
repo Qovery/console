@@ -1,5 +1,5 @@
 import { Overview } from '@console/pages/overview/ui'
-import { ENVIRONMENTS_URL } from '@console/shared/utils'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@console/shared/utils'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 
@@ -8,7 +8,7 @@ export function OverviewPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    navigate(ENVIRONMENTS_URL(organizationId, projectId))
+    navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`)
   }, [navigate, organizationId, projectId])
 
   return <Overview />

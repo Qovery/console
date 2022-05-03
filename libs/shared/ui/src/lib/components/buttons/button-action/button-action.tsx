@@ -47,13 +47,13 @@ export function ButtonAction(props: ButtonActionProps) {
         {!link && (
           <button className="btn-menu__btn" onClick={onClick}>
             <span>{children}</span>
-            {iconRight && <Icon name={iconRight} className="text-sm" />}
+            {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
           </button>
         )}
         {link && (
           <Link className="btn-menu__btn" to={link} onClick={onClick}>
             <span>{children}</span>
-            {iconRight && <Icon name={iconRight} className="text-sm" />}
+            {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
           </Link>
         )}
       </>

@@ -2,7 +2,13 @@ import { Environment, Project, Application, Organization } from 'qovery-typescri
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Icon } from '@console/shared/ui'
-import { APPLICATIONS_URL, ENVIRONMENTS_URL, ORGANIZATION_URL, OVERVIEW_URL } from '@console/shared/utils'
+import {
+  APPLICATIONS_URL,
+  ENVIRONMENTS_GENERAL_URL,
+  ENVIRONMENTS_URL,
+  ORGANIZATION_URL,
+  OVERVIEW_URL,
+} from '@console/shared/utils'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
@@ -123,7 +129,9 @@ export function Breadcrumb(props: BreadcrumbProps) {
         <>
           <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
           <div className="flex items-center">
-            <Link to={ENVIRONMENTS_URL(organizationId, projectId)}>{squareContent('E')}</Link>
+            <Link to={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}>
+              {squareContent('E')}
+            </Link>
             {!environmentId ? (
               <span className="text-sm text-text-500 font-medium">Environments</span>
             ) : (

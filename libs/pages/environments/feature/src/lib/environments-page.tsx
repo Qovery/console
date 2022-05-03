@@ -18,7 +18,7 @@ export function EnvironmentsPage() {
   }, [projectId, getEnvironmentsStatus])
 
   return (
-    <Container environments={environments}>
+    <Container>
       <Routes>
         {ROUTER_ENVIRONMENTS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
