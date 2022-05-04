@@ -37,21 +37,21 @@ export function ButtonAction(props: ButtonActionProps) {
 
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const defineClass = `btn-menu ${style ? `btn-menu--${style}` : ''} ${
-    disabled ? 'btn-menu--disabled' : ''
+  const defineClass = `btn-action ${style ? `btn-action--${style}` : ''} ${
+    disabled ? 'btn-action--disabled' : ''
   } ${className}`
 
   function contentBtn() {
     return (
       <>
         {!link && (
-          <button className="btn-menu__btn" onClick={onClick}>
+          <button className="btn-action__content" onClick={onClick}>
             <span>{children}</span>
             {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
           </button>
         )}
         {link && (
-          <Link className="btn-menu__btn" to={link} onClick={onClick}>
+          <Link className="btn-action__content" to={link} onClick={onClick}>
             <span>{children}</span>
             {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
           </Link>
@@ -68,7 +68,7 @@ export function ButtonAction(props: ButtonActionProps) {
           arrowAlign={MenuAlign.END}
           onOpen={(e) => setMenuOpen(e)}
           trigger={
-            <div className={`btn-menu__trigger btn-menu__trigger--${menuOpen ? 'open' : 'closed'}`}>
+            <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
               <Icon name="icon-solid-ellipsis-vertical" />
             </div>
           }

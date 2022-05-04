@@ -22,9 +22,7 @@ export function Tabs(props: TabsProps) {
           <Link
             to={item.link}
             key={index}
-            className={`tab__item--${
-              item?.active ? 'active' : 'noactive'
-            } h-14 border-b-2 px-4 flex gap-4 items-center hover:border-brand-500 hover:text-brand-500 group transition ease-in-out duration-200  ${
+            className={`h-14 border-b-2 px-4 flex gap-4 items-center hover:border-brand-500 hover:text-brand-500 group transition ease-in-out duration-200  ${
               item?.active ? 'text-brand-500 border-brand-500' : 'text-text-400 border-element-light-lighter-500'
             }`}
           >

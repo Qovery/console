@@ -1,5 +1,5 @@
 //menu
-.btn-menu {
+.btn-action {
   @apply h-8 overflow-hidden rounded text-xs inline-flex;
 
   .menu__trigger {
@@ -7,60 +7,60 @@
   }
 }
 
-.btn-menu__trigger {
+.btn-action__trigger {
   @apply h-full flex justify-center items-center px-4 bg-brand-500 hover:bg-brand-600 border-r border-brand-400 text-white transition ease-in-out duration-150 cursor-pointer;
 }
 
-.btn-menu__btn {
+.btn-action__content {
   @apply h-full flex justify-center items-center px-4 gap-3 bg-brand-500 hover:bg-brand-600 transition ease-in-out duration-150 text-white font-medium whitespace-nowrap;
 }
 
-.btn-menu__trigger--open {
+.btn-action__trigger--open {
   @apply bg-brand-600;
 }
 
-.btn-menu--raised {
-  .btn-menu__trigger,
-  .btn-menu__btn {
+.btn-action--raised {
+  .btn-action__trigger,
+  .btn-action__content {
     @apply bg-brand-100 text-brand-300 hover:bg-brand-200;
   }
 
-  .btn-menu__trigger {
+  .btn-action__trigger {
     @apply border-brand-200;
 
-    &.btn-menu__trigger--open {
+    &.btn-action__trigger--open {
       @apply bg-brand-200;
     }
   }
 }
 
-.btn-menu--stroked {
+.btn-action--stroked {
   @apply border border-element-light-lighter-500 text-text-500;
 
-  .btn-menu__trigger,
-  .btn-menu__btn {
+  .btn-action__trigger,
+  .btn-action__content {
     @apply bg-element-light-lighter-300 hover:bg-element-light-lighter-400 text-text-500;
   }
 
-  .btn-menu__trigger {
+  .btn-action__trigger {
     @apply border-element-light-lighter-500;
 
-    &.btn-menu__trigger--open {
+    &.btn-action__trigger--open {
       @apply bg-element-light-lighter-400;
     }
   }
 }
 
-.btn-menu--flat {
-  .btn-menu__trigger,
-  .btn-menu__btn {
+.btn-action--flat {
+  .btn-action__trigger,
+  .btn-action__content {
     @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
   }
 
-  .btn-menu__trigger {
+  .btn-action__trigger {
     @apply border-transparent;
 
-    &.btn-menu__trigger--open {
+    &.btn-action__trigger--open {
       @apply bg-transparent;
     }
   }
