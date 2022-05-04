@@ -13,6 +13,7 @@ export function TableRow(props: TableRowProps) {
 
   return (
     <Link
+      data-testid="row"
       to={link}
       className={`grid items-center h-14 border-b-element-light-lighter-400 border-b last:border-0 hover:bg-element-light-lighter-200 ${className}`}
       style={{ gridTemplateColumns: columnsWidth }}

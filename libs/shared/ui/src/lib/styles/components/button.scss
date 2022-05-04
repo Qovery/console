@@ -49,6 +49,18 @@
   @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
 }
 
+.btn--tab {
+  @apply bg-element-light-lighter-300 text-text-500 text-xs font-medium px-2;
+
+  &:hover:not(.is-active) {
+    @apply bg-element-light-lighter-400 text-text-600;
+  }
+
+  &.is-active {
+    @apply bg-brand-500 text-text-100;
+  }
+}
+
 // state
 .btn--disabled {
   @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;
@@ -105,19 +117,5 @@
 
   &.btn.is-active {
     @apply text-text-400 bg-element-light-lighter-400 hover:text-text-400 hover:bg-element-light-lighter-500;
-  }
-}
-
-// icon actions
-.btn-icon-action {
-  @apply inline-flex h-7 border border-element-light-lighter-500 rounded overflow-hidden;
-}
-
-.btn-icon-action__element {
-  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-element-light-lighter-100 border-r border-r-element-light-lighter-500 last:border-r-0 h-full min-w-[28px] text-xxs text-text-400 transition ease-in-out duration-150;
-
-  &.is-active,
-  &:hover {
-    @apply bg-element-light-lighter-300 text-brand-400;
   }
 }

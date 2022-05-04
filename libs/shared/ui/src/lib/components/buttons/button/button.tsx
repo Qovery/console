@@ -14,6 +14,7 @@ export enum ButtonStyle {
   RAISED = 'raised',
   STROKED = 'stroked',
   FLAT = 'flat',
+  TAB = 'tab',
 }
 
 export interface ButtonProps {
