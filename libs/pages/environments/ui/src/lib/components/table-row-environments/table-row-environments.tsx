@@ -14,7 +14,15 @@ import { timeAgo } from '@console/shared/utils'
 
 export interface TableRowEnvironmentsProps {
   data: Environment & { status?: Status }
-  dataHead: Array<any>
+  dataHead: {
+    title: string
+    className?: string
+    filter?: {
+      key: string
+      search?: boolean
+      title?: string
+    }[]
+  }[]
   link: string
   columnsWidth?: string
 }
