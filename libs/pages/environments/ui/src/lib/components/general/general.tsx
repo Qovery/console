@@ -1,7 +1,8 @@
+import { Environment } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 import { Table } from '@console/shared/ui'
 import { APPLICATIONS_URL } from '@console/shared/utils'
-import { Environment } from 'qovery-typescript-axios'
-import { useParams } from 'react-router'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface GeneralProps {
@@ -12,10 +13,27 @@ export function GeneralPage(props: GeneralProps) {
   const { environments } = props
   const { organizationId, projectId } = useParams()
 
+  const [data, setData] = useState(environments)
+
+  useEffect(() => {
+    setData(environments)
+  }, [environments])
+
   const tableHead = [
     {
-      title: 'Environment',
+      title: `${data.length} environment${data.length > 1 ? 's' : ''}`,
       className: 'px-4 py-2',
+      filter: [
+        {
+          search: true,
+          title: 'Sort by status',
+          key: 'status.state',
+        },
+        {
+          title: 'Sort by provider',
+          key: 'cloud_provider.provider',
+        },
+      ],
     },
     {
       title: 'Update',
@@ -23,10 +41,17 @@ export function GeneralPage(props: GeneralProps) {
     },
     {
       title: 'Running Schedule',
-      className: 'px-4 py-2 border-b-element-light-lighter-400 border-l',
+      className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full',
     },
     {
       title: 'Type',
+      filter: [
+        {
+          search: true,
+          title: 'Sort by environment type',
+          key: 'mode',
+        },
+      ],
     },
     {
       title: 'Tags',
@@ -34,9 +59,15 @@ export function GeneralPage(props: GeneralProps) {
   ]
 
   return (
-    <Table className="mt-2 bg-white rounded-sm" dataHead={tableHead} columnsWidth="30% 15% 25% 10% 20%">
+    <Table
+      dataHead={tableHead}
+      defaultData={environments}
+      setFilterData={setData}
+      className="mt-2 bg-white rounded-sm"
+      columnsWidth="30% 15% 25% 10% 20%"
+    >
       <>
-        {environments.map((currentData, index) => (
+        {data.map((currentData, index) => (
           <TableRowEnvironments
             key={index}
             data={currentData}
