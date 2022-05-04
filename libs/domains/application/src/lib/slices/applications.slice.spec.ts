@@ -5,6 +5,7 @@ describe('applications reducer', () => {
     const expected = applicationsAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
+      joinEnvApp: {},
     })
 
     expect(applications(undefined, { type: '' })).toEqual(expected)

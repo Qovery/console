@@ -2,7 +2,7 @@ import { Dictionary } from '@reduxjs/toolkit'
 
 export const addOneToManyRelation = (
   parentId: string | undefined,
-  childId: string,
+  childId: string | undefined,
   relations: Record<string, string[]>
 ): Record<string, string[]> => {
   if (!parentId || !childId) return relations
@@ -29,8 +29,6 @@ export const removeOneToManyRelation = (
   childId: string,
   relations: Record<string, string[]>
 ): Record<string, string[]> => {
-  if (!childId) return relations
-
   // we look for the child id in all the parents' children and we remove it
   for (const key in relations) {
     const indexOfChild = relations[key].indexOf(childId)
