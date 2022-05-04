@@ -10,7 +10,7 @@ import {
   initialEnvironmentsState,
 } from '@console/domains/projects'
 import { initialUserSignUpState, initialUserState, user, UserSignUpState, userSignUp } from '@console/domains/user'
-import { applications, ApplicationsState, initialApplicationsState } from '@console/domains/environment'
+import { applications, ApplicationsState, initialApplicationsState } from '@console/domains/application'
 
 export const rootReducer = combineReducers({
   user: user,

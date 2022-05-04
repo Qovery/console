@@ -15,8 +15,8 @@ import {
 } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
-import { fetchApplications, useApplications } from '@console/domains/environment'
 import { useDispatch } from 'react-redux'
+import { useApplications } from '@console/domains/application'
 
 export interface ContainerProps {
   applications: Application[]
