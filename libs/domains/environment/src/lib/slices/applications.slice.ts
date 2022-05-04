@@ -32,6 +32,11 @@ export const fetchApplications = createAsyncThunk<any, { environmentId: string }
   }
 )
 
+export const fetchApplication = createAsyncThunk<any, { applicationId: string }>('application/fetch', async (data) => {
+  const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => response.data)
+  return response as Application
+})
+
 export const removeOneApplication = createAsyncThunk<any, { applicationId: string }>(
   'applications/remove',
   async (data, thunkApi) => {
@@ -72,6 +77,18 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      .addCase(fetchApplication.pending, (state: ApplicationsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(fetchApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<Application>) => {
+        applicationsAdapter.upsertOne(state, action.payload)
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(fetchApplication.rejected, (state: ApplicationsState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // remove application
       .addCase(removeOneApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<string>) => {
         state.joinEnvApp = removeOneToManyRelation(action.payload, state.joinEnvApp)
       })
@@ -95,3 +112,6 @@ export const selectApplicationsEntitiesByEnvId = (environmentId: string) =>
   createSelector(getApplicationsState, (state): Application[] => {
     return getEntitiesByIds<Application>(state.entities, state?.joinEnvApp[environmentId])
   })
+
+export const selectApplicationById = (applicationId: string) =>
+  createSelector(getApplicationsState, (state) => selectById(state, applicationId))

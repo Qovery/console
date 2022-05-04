@@ -11,7 +11,6 @@ import {
 } from '@console/domains/projects'
 import { initialUserSignUpState, initialUserState, user, UserSignUpState, userSignUp } from '@console/domains/user'
 import { applications, ApplicationsState, initialApplicationsState } from '@console/domains/environment'
-import { application, ApplicationState, initialApplicationState } from '@console/domains/application'
 
 export const rootReducer = combineReducers({
   user: user,
@@ -20,7 +19,6 @@ export const rootReducer = combineReducers({
   projects: projects,
   environments: environments,
   applications: applications,
-  application: application,
 })
 
 export const store = configureStore({
@@ -56,7 +54,6 @@ export type RootState = {
     projects: ProjectsState
     environments: EnvironmentsState
     applications: ApplicationsState
-    application: ApplicationState
   }
 }
 
@@ -70,6 +67,5 @@ export const initialRootState = (): RootState => ({
     projects: initialProjectsState,
     environments: initialEnvironmentsState,
     applications: initialApplicationsState,
-    application: initialApplicationState,
   },
 })

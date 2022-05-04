@@ -51,7 +51,7 @@ export function Layout(props: LayoutProps) {
       projects={projects}
       environments={environments}
       applications={applications}
-      application={application}
+      application={application(applicationId || '')}
     >
       {children}
     </LayoutPage>
