@@ -18,7 +18,7 @@ import { Application } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 
 export interface ContainerProps {
-  application: Application
+  application?: Application
 }
 
 export function Container(props: ContainerProps) {
@@ -131,7 +131,7 @@ export function Container(props: ContainerProps) {
   return (
     <div>
       <Header
-        title={application.name ? application.name : 'Application'}
+        title={application?.name ? application.name : 'Application'}
         icon={IconEnum.APPLICATION}
         buttons={headerButtons}
         copyTitle
