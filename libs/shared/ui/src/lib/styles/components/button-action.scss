@@ -1,4 +1,4 @@
-//menu
+//btn menu action
 .btn-action {
   @apply h-8 overflow-hidden rounded text-xs inline-flex;
 
@@ -63,5 +63,19 @@
     &.btn-action__trigger--open {
       @apply bg-transparent;
     }
+  }
+}
+
+// btn icon actions
+.btn-icon-action {
+  @apply inline-flex h-7 border border-element-light-lighter-500 rounded overflow-hidden;
+}
+
+.btn-icon-action__element {
+  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-element-light-lighter-100 border-r border-r-element-light-lighter-500 last:border-r-0 h-full min-w-[28px] text-xxs text-text-400 transition ease-in-out duration-150;
+
+  &.is-active,
+  &:hover {
+    @apply bg-element-light-lighter-300 text-brand-400;
   }
 }
