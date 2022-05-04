@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchApplication, selectApplicationById } from '@console/domains/environment'
+import { fetchApplication, selectApplicationById } from '../slices/applications.slice'
 
 export function useApplication() {
   const dispatch = useDispatch<any>()
