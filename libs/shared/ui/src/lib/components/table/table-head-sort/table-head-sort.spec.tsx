@@ -10,6 +10,7 @@ describe('TableHeadSort', () => {
     props = {
       title: 'Update',
       data: environmentFactoryMock(2),
+      currentKey: '',
       setFilterData: jest.fn(),
     }
   })
@@ -29,6 +30,8 @@ describe('TableHeadSort', () => {
   })
 
   it('should have a rotate icon', () => {
+    props.currentKey = 'updated_at'
+
     render(<TableHeadSort {...props} />)
 
     const sort = screen.queryByTestId('table-head-sort') as HTMLDivElement
@@ -40,6 +43,7 @@ describe('TableHeadSort', () => {
   })
 
   it('should have a sort function', () => {
+    props.currentKey = 'updated_at'
     props.data = [
       {
         updated_at: new Date('2021-10-03'),
@@ -52,7 +56,7 @@ describe('TableHeadSort', () => {
       },
     ]
 
-    const sortFunction = sortTable(props.data)
+    const sortFunction = sortTable(props.data, props.currentKey)
 
     expect(sortFunction[0].updated_at.toString()).toBe(new Date('2022-04-14').toString())
   })

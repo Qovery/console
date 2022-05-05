@@ -14,12 +14,14 @@ export interface TableProps {
 export interface TableHeadProps {
   title: string
   className?: string
-  sort?: boolean
   filter?: {
     key: string
     search?: boolean
     title?: string
   }[]
+  sort?: {
+    key: string
+  }
 }
 
 export function Table(props: TableProps) {
@@ -60,7 +62,7 @@ export function Table(props: TableProps) {
               />
             )}
             {sort && defaultData && setFilterData && (
-              <TableHeadSort title={title} data={defaultData} setFilterData={setFilterData} />
+              <TableHeadSort title={title} currentKey={sort.key} data={defaultData} setFilterData={setFilterData} />
             )}
           </div>
         ))}
