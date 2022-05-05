@@ -6,6 +6,7 @@ import {
   Skeleton,
   StatusChip,
   StatusLabel,
+  TableHeadProps,
   TableRow,
   TagMode,
   Tooltip,
@@ -14,15 +15,7 @@ import { timeAgo } from '@console/shared/utils'
 
 export interface TableRowEnvironmentsProps {
   data: Environment & { status?: Status }
-  dataHead: {
-    title: string
-    className?: string
-    filter?: {
-      key: string
-      search?: boolean
-      title?: string
-    }[]
-  }[]
+  dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string
 }

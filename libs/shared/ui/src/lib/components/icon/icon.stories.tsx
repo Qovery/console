@@ -51,6 +51,7 @@ const FaIcons = [
   'icon-solid-ellipsis-vertical',
   'icon-solid-chart-area',
   'icon-solid-circle-xmark',
+  'icon-solid-arrow-down',
   // schema: favicons name
 ]
 

@@ -38,6 +38,7 @@ export function GeneralPage(props: GeneralProps) {
     {
       title: 'Update',
       className: 'px-4 text-center',
+      sort: true,
     },
     {
       title: 'Running Schedule',

@@ -1,3 +1,4 @@
+export * from './lib/components/table/table-head-sort/table-head-sort'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'
