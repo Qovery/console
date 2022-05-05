@@ -48,7 +48,9 @@ const dataHead = [
   {
     title: 'Update',
     className: 'px-4 text-center',
-    sort: true,
+    sort: {
+      key: 'updated_at',
+    },
   },
   {
     title: 'Type',

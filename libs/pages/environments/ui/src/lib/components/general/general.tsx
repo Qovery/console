@@ -38,7 +38,9 @@ export function GeneralPage(props: GeneralProps) {
     {
       title: 'Update',
       className: 'px-4 text-center',
-      sort: true,
+      sort: {
+        key: 'updated_at',
+      },
     },
     {
       title: 'Running Schedule',
