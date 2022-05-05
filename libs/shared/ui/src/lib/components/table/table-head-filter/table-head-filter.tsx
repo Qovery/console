@@ -142,12 +142,9 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
 
   const [localFilter, setLocalFilter] = useState('')
   const [dataFilterNumber, setDataFilterNumber] = useState(0)
-  // this state is necessary to remove glitch when we click on the cross
-  const [menuOpen, setMenuOpen] = useState(false)
 
   function cleanFilter(event: MouseEvent) {
     event.preventDefault()
-    setMenuOpen(false)
     setCurrentFilter(ALL)
     setDataFilterNumber(0)
     // set global data by default
@@ -155,43 +152,47 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
   }
 
   return (
-    <Menu
-      menus={createFilter(
-        dataHead,
-        defaultData,
-        ALL,
-        currentFilter,
-        setCurrentFilter,
-        setLocalFilter,
-        setDataFilterNumber,
-        setFilterData
-      )}
-      open={menuOpen}
-      onOpen={() => setMenuOpen(true)}
-      width={280}
-      isFilter
-      trigger={
-        <div>
-          {localFilter === currentFilter && localFilter !== ALL ? (
-            <Button className="inline-block is-active" size={ButtonSize.VERY_SMALL} style={ButtonStyle.TAB}>
-              {title} ({dataFilterNumber})
-              <span onClick={(event) => cleanFilter(event)}>
-                <Icon className="ml-1.5" name="icon-solid-circle-xmark" />
-              </span>
-            </Button>
-          ) : (
-            <Button
-              className="inline-block"
-              size={ButtonSize.VERY_SMALL}
-              style={ButtonStyle.TAB}
-              iconRight="icon-solid-angle-down"
-            >
-              {title}
-            </Button>
-          )}
+    <div className="flex">
+      <Menu
+        menus={createFilter(
+          dataHead,
+          defaultData,
+          ALL,
+          currentFilter,
+          setCurrentFilter,
+          setLocalFilter,
+          setDataFilterNumber,
+          setFilterData
+        )}
+        width={280}
+        isFilter
+        trigger={
+          <div>
+            {localFilter === currentFilter && localFilter !== ALL ? (
+              <Button className="inline-block is-active" size={ButtonSize.VERY_SMALL} style={ButtonStyle.TAB}>
+                {title} ({dataFilterNumber})
+              </Button>
+            ) : (
+              <Button
+                className="inline-block"
+                size={ButtonSize.VERY_SMALL}
+                style={ButtonStyle.TAB}
+                iconRight="icon-solid-angle-down"
+              >
+                {title}
+              </Button>
+            )}
+          </div>
+        }
+      />
+      {localFilter === currentFilter && localFilter !== ALL && (
+        <div className="btn btn--very-small btn--tab is-active relative left-[-9px]">
+          <span onClick={(event) => cleanFilter(event)}>
+            <Icon name="icon-solid-circle-xmark" />
+          </span>
         </div>
-      }
-    />
+      )}
+    </div>
   )
 }
 
