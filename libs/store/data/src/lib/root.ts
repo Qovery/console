@@ -25,27 +25,6 @@ export const store = configureStore({
   reducer: rootReducer,
 })
 
-// todo implement this
-// export const entitiesReducer = combineReducers({
-//   organization: organization,
-//   projects: projects,
-//   environments: environments,
-//   applications: applications,
-//   application: application,
-// })
-//
-// export const uiReducer = combineReducers({
-//   userSignUp: userSignUp,
-//   user: user,
-// })
-//
-// export const store = configureStore({
-//   reducer: {
-//     entities: entitiesReducer,
-//     ui: uiReducer,
-//   },
-// })
-
 export type RootState = {
   user: User
   userSignUp: UserSignUpState
