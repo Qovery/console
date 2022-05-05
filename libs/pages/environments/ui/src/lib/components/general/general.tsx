@@ -67,9 +67,9 @@ export function GeneralPage(props: GeneralProps) {
       columnsWidth="30% 15% 25% 10% 20%"
     >
       <>
-        {data.map((currentData, index) => (
+        {data.map((currentData) => (
           <TableRowEnvironments
-            key={index}
+            key={currentData.id}
             data={currentData}
             dataHead={tableHead}
             link={APPLICATIONS_URL(organizationId, projectId, currentData.id)}
