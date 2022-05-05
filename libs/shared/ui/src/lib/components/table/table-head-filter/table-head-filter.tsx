@@ -169,7 +169,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         trigger={
           <div>
             {localFilter === currentFilter && localFilter !== ALL ? (
-              <Button className="inline-block is-active" size={ButtonSize.VERY_SMALL} style={ButtonStyle.TAB}>
+              <Button className="inline-block btn--active" size={ButtonSize.VERY_SMALL} style={ButtonStyle.TAB}>
                 {title} ({dataFilterNumber})
               </Button>
             ) : (
@@ -186,7 +186,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         }
       />
       {localFilter === currentFilter && localFilter !== ALL && (
-        <div className="btn btn--very-small btn--tab is-active relative left-[-9px]">
+        <div className="btn btn--very-small btn--tab btn--active relative left-[-9px]">
           <span onClick={(event) => cleanFilter(event)}>
             <Icon name="icon-solid-circle-xmark" />
           </span>
