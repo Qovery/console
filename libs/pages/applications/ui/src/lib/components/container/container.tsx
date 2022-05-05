@@ -27,9 +27,6 @@ export function Container(props: ContainerProps) {
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
 
-  // todo to remove
-  const { removeApplication } = useApplications()
-
   const dispatch = useDispatch<any>()
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
@@ -183,13 +180,6 @@ export function Container(props: ContainerProps) {
               >
                 {application.name}
               </Link>
-              <button
-                onClick={async () => {
-                  await removeApplication(application.id)
-                }}
-              >
-                test deletion
-              </button>
             </li>
           ))}
       </ul>
