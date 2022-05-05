@@ -65,6 +65,7 @@ export function GeneralPage(props: GeneralProps) {
     <Table
       dataHead={tableHead}
       defaultData={environments}
+      filterData={data}
       setFilterData={setData}
       className="mt-2 bg-white rounded-sm"
       columnsWidth="30% 15% 25% 10% 20%"

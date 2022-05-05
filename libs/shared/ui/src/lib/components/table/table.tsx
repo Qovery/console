@@ -8,6 +8,7 @@ export interface TableProps {
   className?: string
   columnsWidth?: string
   defaultData?: any[]
+  filterData?: any[]
   setFilterData?: Dispatch<SetStateAction<any[]>>
 }
 
@@ -31,6 +32,7 @@ export function Table(props: TableProps) {
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     children,
     defaultData,
+    filterData,
     setFilterData,
   } = props
 
@@ -61,8 +63,8 @@ export function Table(props: TableProps) {
                 setCurrentFilter={setCurrentFilter}
               />
             )}
-            {sort && defaultData && setFilterData && (
-              <TableHeadSort title={title} currentKey={sort.key} data={defaultData} setFilterData={setFilterData} />
+            {sort && filterData && setFilterData && (
+              <TableHeadSort title={title} currentKey={sort.key} data={filterData} setFilterData={setFilterData} />
             )}
           </div>
         ))}
