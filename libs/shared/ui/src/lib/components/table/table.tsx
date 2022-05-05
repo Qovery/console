@@ -1,3 +1,4 @@
+import { TableHeadSort } from '@console/shared/ui'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 
@@ -13,6 +14,7 @@ export interface TableProps {
 export interface TableHeadProps {
   title: string
   className?: string
+  sort?: boolean
   filter?: {
     key: string
     search?: boolean
@@ -40,9 +42,9 @@ export function Table(props: TableProps) {
         className="grid items-center border-b-element-light-lighter-400 border-b"
         style={{ gridTemplateColumns: columnsWidth }}
       >
-        {dataHead.map(({ title, className = 'px-4 py-2', filter }, index) => (
+        {dataHead.map(({ title, className = 'px-4 py-2', filter, sort }, index) => (
           <div key={index} className={className}>
-            {!filter && (
+            {!sort && !filter && (
               <span data-testid="table-head-title" className="text-text-400 text-xs font-medium">
                 {title}
               </span>
@@ -56,6 +58,9 @@ export function Table(props: TableProps) {
                 currentFilter={currentFilter}
                 setCurrentFilter={setCurrentFilter}
               />
+            )}
+            {sort && defaultData && setFilterData && (
+              <TableHeadSort title={title} data={defaultData} setFilterData={setFilterData} />
             )}
           </div>
         ))}
