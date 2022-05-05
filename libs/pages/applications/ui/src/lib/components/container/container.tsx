@@ -15,8 +15,6 @@ import {
 } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
-import { useDispatch } from 'react-redux'
-import { useApplications } from '@console/domains/application'
 
 export interface ContainerProps {
   applications: Application[]
@@ -26,8 +24,6 @@ export function Container(props: ContainerProps) {
   const { applications } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
-
-  const dispatch = useDispatch<any>()
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
 
