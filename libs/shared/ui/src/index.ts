@@ -1,4 +1,3 @@
-export * from './lib/components/table/table-head-sort/table-head-sort'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'
@@ -34,3 +33,5 @@ export * from './lib/components/status-chip/status-chip'
 export * from './lib/components/status-label/status-label'
 export * from './lib/components/skeleton/skeleton'
 export * from './lib/components/tabs/tabs'
+export * from './lib/components/status-menu-action/status-menu-action'
+export * from './lib/components/table/table-head-sort/table-head-sort'

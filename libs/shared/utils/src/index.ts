@@ -11,3 +11,4 @@ export * from './lib/hooks/use-detect-click-outside/use-detect-click-outside'
 // tools
 export * from './lib/tools/uppercase-first-letter'
 export * from './lib/tools/date'
+export * from './lib/tools/status-actions-available'
