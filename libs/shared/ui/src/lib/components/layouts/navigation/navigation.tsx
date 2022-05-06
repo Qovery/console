@@ -8,7 +8,6 @@ import Icon from '../../icon/icon'
 import Menu, { MenuAlign, MenuDirection } from '../../menu/menu'
 import Modal from '../../modal/modal'
 import ModalUser from '../../modals/modal-user/modal-user'
-import { useState } from 'react'
 
 export interface NavigationProps {
   authLogout: () => void
@@ -20,7 +19,6 @@ export function Navigation(props: NavigationProps) {
   const { authLogout, firstName, lastName } = props
   const { organizationId } = useParams()
   const navigate = useNavigate()
-  const [modalUserOpen, setModalUserOpen] = useState(false)
 
   const infosMenu = [
     {
@@ -95,16 +93,14 @@ export function Navigation(props: NavigationProps) {
 
       <div className="flex w-14 h-14 items-center justify-center border-t border-element-light-lighter-400">
         <Modal
-          onOpen={() => setModalUserOpen(true)}
-          open={modalUserOpen}
-          trigger={<Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB} />}
+          buttonClose={false}
+          trigger={
+            <div className="cursor-pointer">
+              <Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB} />
+            </div>
+          }
         >
-          <ModalUser
-            firstName={firstName}
-            lastName={lastName}
-            authLogout={authLogout}
-            close={() => setModalUserOpen(false)}
-          />
+          <ModalUser firstName={firstName} lastName={lastName} authLogout={authLogout} />
         </Modal>
       </div>
     </div>

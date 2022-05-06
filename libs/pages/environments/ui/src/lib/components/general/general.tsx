@@ -26,11 +26,11 @@ export function GeneralPage(props: GeneralProps) {
       filter: [
         {
           search: true,
-          title: 'Sort by status',
+          title: 'Filter by status',
           key: 'status.state',
         },
         {
-          title: 'Sort by provider',
+          title: 'Filter by provider',
           key: 'cloud_provider.provider',
         },
       ],
@@ -51,7 +51,7 @@ export function GeneralPage(props: GeneralProps) {
       filter: [
         {
           search: true,
-          title: 'Sort by environment type',
+          title: 'Filter by environment type',
           key: 'mode',
         },
       ],

@@ -40,7 +40,7 @@ const dataHead = [
     filter: [
       {
         search: true,
-        title: 'Sort by status',
+        title: 'Filter by status',
         key: 'status.state',
       },
     ],
@@ -57,7 +57,7 @@ const dataHead = [
     filter: [
       {
         search: true,
-        title: 'Sort by environment type',
+        title: 'Filter by environment type',
         key: 'mode',
       },
     ],
