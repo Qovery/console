@@ -2,7 +2,7 @@
   @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm gap-2;
   transition: 0.25s all $timing-cubic;
 
-  &:not(.btn--very-small, .btn-icon) {
+  &:not(.btn--very-small, .btn-icon, .btn--no-min-w) {
     min-width: 6rem;
   }
 
