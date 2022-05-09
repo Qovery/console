@@ -3,9 +3,10 @@ import { useParams } from 'react-router'
 import { useOrganization } from '@console/domains/organization'
 import { useEnviroments, useProjects } from '@console/domains/projects'
 import { useUser } from '@console/domains/user'
-import { useApplication, useApplications } from '@console/domains/application'
+import { selectApplicationById, useApplication, useApplications } from '@console/domains/application'
 import { LayoutPage } from '@console/shared/ui'
 import { useAuth } from '@console/shared/utils'
+import { useSelector } from 'react-redux'
 
 export interface LayoutProps {
   children: React.ReactElement
@@ -19,8 +20,10 @@ export function Layout(props: LayoutProps) {
   const { userSignUp, getUserSignUp } = useUser()
   const { environments, getEnvironments } = useEnviroments()
   const { applications, getApplications } = useApplications()
-  const { application, getApplication } = useApplication()
-  const { organizationId, projectId, environmentId, applicationId } = useParams()
+  const { getApplication } = useApplication()
+  const { organizationId, projectId, environmentId, applicationId = '' } = useParams()
+
+  const application = useSelector((state) => selectApplicationById(state, applicationId))
 
   useEffect(() => {
     getUserSignUp()
@@ -50,7 +53,7 @@ export function Layout(props: LayoutProps) {
       projects={projects}
       environments={environments}
       applications={applications}
-      application={application(applicationId || '')}
+      application={application}
     >
       {children}
     </LayoutPage>
