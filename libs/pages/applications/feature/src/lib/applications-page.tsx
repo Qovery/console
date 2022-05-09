@@ -1,14 +1,15 @@
 import { useDocumentTitle } from '@console/shared/utils'
 import { Container } from '@console/pages/applications/ui'
 import { useParams } from 'react-router'
-import { useApplications } from '@console/domains/application'
+import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
+import { useSelector } from 'react-redux'
 
 export function ApplicationsPage() {
   useDocumentTitle('Applications - Qovery')
-  const { applications, applicationsByEnv } = useApplications()
-  const { environmentId } = useParams()
+  const { environmentId = '' } = useParams()
+  const applicationsByEnv = useSelector((state) => selectApplicationsEntitiesByEnvId(state, environmentId))
 
-  return <Container applications={applicationsByEnv(environmentId || '')} />
+  return <Container applications={applicationsByEnv} />
 }
 
 export default ApplicationsPage

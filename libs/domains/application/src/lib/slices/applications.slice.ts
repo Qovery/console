@@ -99,7 +99,7 @@ export const applications = applicationsSlice.reducer
 
 export const applicationsActions = applicationsSlice.actions
 
-const { selectAll, selectEntities, selectById } = applicationsAdapter.getSelectors()
+const { selectAll, selectEntities } = applicationsAdapter.getSelectors()
 
 export const getApplicationsState = (rootState: any): ApplicationsState => rootState[APPLICATIONS_FEATURE_KEY]
 
@@ -108,10 +108,10 @@ export const selectAllApplicationsByEnv = (environmentId: string) => createSelec
 
 export const selectApplicationsEntities = createSelector(getApplicationsState, selectEntities)
 
-export const selectApplicationsEntitiesByEnvId = (environmentId: string) =>
-  createSelector(getApplicationsState, (state): Application[] => {
-    return getEntitiesByIds<Application>(state.entities, state?.joinEnvApp[environmentId])
-  })
+export const selectApplicationsEntitiesByEnvId = (state: any, environmentId: string): Application[] => {
+  state = getApplicationsState(state)
+  return getEntitiesByIds<Application>(state.entities, state?.joinEnvApp[environmentId])
+}
 
-export const selectApplicationById = (applicationId: string) =>
-  createSelector(getApplicationsState, (state) => selectById(state, applicationId))
+export const selectApplicationById = (state: any, applicationId: string) =>
+  getApplicationsState(state).entities[applicationId]

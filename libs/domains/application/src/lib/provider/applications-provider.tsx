@@ -10,7 +10,6 @@ import {
 export function useApplications() {
   const dispatch = useDispatch<any>()
   const applications = useSelector(selectAllApplications)
-  const applicationsByEnv = (environmentId: string) => useSelector(selectApplicationsEntitiesByEnvId(environmentId))
 
   const removeApplication = useCallback(
     async (applicationId: string) => dispatch(removeOneApplication({ applicationId })),
@@ -22,5 +21,5 @@ export function useApplications() {
     [dispatch]
   )
 
-  return { applications, getApplications, applicationsByEnv, removeApplication }
+  return { applications, getApplications, removeApplication }
 }
