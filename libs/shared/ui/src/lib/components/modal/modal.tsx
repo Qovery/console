@@ -30,8 +30,8 @@ const Modal = (props: ModalProps) => {
         >
           {cloneElement(children, { setOpen: setOpen })}
           {buttonClose && (
-            <Dialog.Close>
-              <span className="absolute top-4 right-4 flex w-7 h-7 items-center justify-center bg-element-light-lighter-400 text-text-400 hover:text-brand-500 hover:bg-element-light-lighter-500 ease-out duration-300 rounded-full">
+            <Dialog.Close className="absolute top-4 right-4">
+              <span className="flex w-7 h-7 items-center justify-center bg-element-light-lighter-400 text-text-400 hover:text-text-500 hover:bg-element-light-lighter-500 ease-out duration-300 rounded-full">
                 <Icon name="icon-solid-xmark" />
               </span>
             </Dialog.Close>

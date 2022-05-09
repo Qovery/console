@@ -7,7 +7,6 @@ describe('InputSelect', () => {
 
   beforeEach(() => {
     props = {
-      name: 'some-name',
       label: 'some-label',
       items: [{ label: 'some-label', value: 'some-value' }],
     }
