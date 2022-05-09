@@ -19,6 +19,10 @@
   }
 }
 
+.input--small {
+  @apply relative h-9 min-h-[36px];
+}
+
 .input__value {
   @apply absolute left-0 bottom-[7px] w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
 }

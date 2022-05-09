@@ -4,7 +4,7 @@ import Button from '../buttons/button/button'
 
 export default {
   component: Modal,
-  title: 'Modal',
+  title: 'Modals/Default',
 } as Meta
 
 const Content = (props: ModalContentProps) => {
