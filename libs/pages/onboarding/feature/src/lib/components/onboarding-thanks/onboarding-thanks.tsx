@@ -18,7 +18,13 @@ export function OnboardingThanks() {
     // }
   }, [user, userSignUp, update])
 
-  return <StepThanks firstName={userSignUp?.first_name || ''} email={userSignUp?.user_email || ''} />
+  return (
+    <StepThanks
+      firstName={userSignUp?.first_name || ''}
+      email={userSignUp?.user_email || ''}
+      dxAuth={userSignUp?.dx_auth || false}
+    />
+  )
 }
 
 export default OnboardingThanks

@@ -4,7 +4,7 @@ import { LayoutLogin, Login } from '@console/pages/login/ui'
 import { ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum, OVERVIEW_URL } from '@console/shared/utils'
 import { useOrganization } from '@console/domains/organization'
 import { useProjects } from '@console/domains/projects'
-import posthog from 'posthog-js'
+// import posthog from 'posthog-js'
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -19,7 +19,8 @@ export function LoginPage() {
   }
 
   useEffect(() => {
-    const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
+    // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
+    const isOnboarding = process.env?.['NX_ONBOARDING'] || false
 
     async function fetchData() {
       const organization = await getOrganization()

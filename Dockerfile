@@ -33,6 +33,9 @@ ENV NX_LOGROCKET $NX_LOGROCKET
 ARG NX_GTM
 ENV NX_GTM $NX_GTM
 
+ARG NX_ONBOARDING
+ENV NX_ONBOARDING $NX_ONBOARDING
+
 # Cache and Install dependencies
 COPY package.json .
 COPY yarn.lock .

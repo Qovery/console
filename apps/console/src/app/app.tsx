@@ -27,7 +27,7 @@ import { ApplicationsPage } from '@console/pages/applications/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { ApplicationPage } from '@console/pages/application/feature'
 import { Layout } from '@console/shared/layout'
-import { useProjects } from '@console/domains/projects'
+import { environments, useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
 
 function RedirectOverview() {
@@ -104,7 +104,9 @@ export function App() {
     // if (process.env['NODE_ENV'] === 'production') {
 
     // if onboarding feature flag activated we add onboarding routes to router
-    if (posthog && posthog.isFeatureEnabled('v3-onboarding')) {
+    // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
+    const isOnboarding = environment.onboarding
+    if (isOnboarding) {
       ROUTER.push({
         path: `${ONBOARDING_URL}/*`,
         component: <OnboardingPage />,
