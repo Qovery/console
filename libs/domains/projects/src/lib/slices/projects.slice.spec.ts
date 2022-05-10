@@ -5,6 +5,7 @@ describe('projects reducer', () => {
     const expected = projectsAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
+      joinOrganizationProject: {},
     })
 
     expect(projects(undefined, { type: '' })).toEqual(expected)

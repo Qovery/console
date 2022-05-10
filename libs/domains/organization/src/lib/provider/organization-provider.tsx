@@ -4,10 +4,9 @@ import { OrganizationRequest } from 'qovery-typescript-axios'
 import { useAuth } from '@console/shared/utils'
 import {
   fetchOrganization,
-  selectAllOrganization,
-  selectOrganizationById,
-  selectOrganizationLoadingStatus,
   postOrganization,
+  selectAllOrganization,
+  selectOrganizationLoadingStatus,
 } from '../slices/organization.slice'
 
 export function useOrganization() {
@@ -25,5 +24,5 @@ export function useOrganization() {
     return result.payload
   }
 
-  return { organization, loadingStatus, getOrganization, createOrganization, selectOrganizationById }
+  return { organization, loadingStatus, getOrganization, createOrganization }
 }

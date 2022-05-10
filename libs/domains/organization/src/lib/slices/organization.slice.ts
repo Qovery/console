@@ -86,7 +86,7 @@ export const getOrganizationState = (rootState: any): OrganizationState => rootS
 
 export const selectAllOrganization = createSelector(getOrganizationState, selectAll)
 
-export const selectOrganizationById = (organizationId: string) =>
-  createSelector(getOrganizationState, (state) => selectById(state, organizationId))
+export const selectOrganizationById = (state: any, organizationId: string) =>
+  getOrganizationState(state).entities[organizationId]
 
 export const selectOrganizationLoadingStatus = createSelector(getOrganizationState, (state) => state.loadingStatus)
