@@ -47,7 +47,7 @@
     "core-js": "^3.6.5",
     "date-fns": "^2.28.0",
     "logrocket": "^2.2.1",
-    "msw": "^0.38.1",
+    "msw": "^0.39.2",
     "postcss": "^8.4.6",
     "posthog-js": "^1.20.0",
     "qovery-typescript-axios": "1.0.8",
