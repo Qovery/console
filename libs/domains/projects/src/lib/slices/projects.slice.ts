@@ -7,6 +7,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
+import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 
@@ -14,6 +15,7 @@ const projectsApi = new ProjectsApi()
 export interface ProjectsState extends EntityState<Project> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
+  joinOrganizationProject: Record<string, string[]>
 }
 
 export const projectsAdapter = createEntityAdapter<Project>()
@@ -39,6 +41,7 @@ export const postProjects = createAsyncThunk<any, { organizationId: string } & P
 export const initialProjectsState: ProjectsState = projectsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
+  joinOrganizationProject: {},
 })
 
 export const projectsSlice = createSlice({
@@ -54,7 +57,12 @@ export const projectsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchProjects.fulfilled, (state: ProjectsState, action: PayloadAction<Project[]>) => {
-        projectsAdapter.setAll(state, action.payload)
+        projectsAdapter.upsertMany(state, action.payload)
+        action.payload.forEach((project) => {
+          state.joinOrganizationProject = addOneToManyRelation(project.organization?.id, project.id, {
+            ...state.joinOrganizationProject,
+          })
+        })
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchProjects.rejected, (state: ProjectsState, action) => {
@@ -87,3 +95,8 @@ export const getProjectsState = (rootState: any): ProjectsState => rootState[PRO
 export const selectAllProjects = createSelector(getProjectsState, selectAll)
 
 export const selectProjectsEntities = createSelector(getProjectsState, selectEntities)
+
+export const selectProjectsEntitiesByOrgId = (state: any, organizationId: string): Project[] => {
+  state = getProjectsState(state)
+  return getEntitiesByIds<Project>(state.entities, state?.joinOrganizationProject[organizationId])
+}

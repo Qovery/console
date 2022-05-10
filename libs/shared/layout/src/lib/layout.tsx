@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useOrganization } from '@console/domains/organization'
-import { useEnvironments, useProjects } from '@console/domains/projects'
+import { selectProjectsEntitiesByOrgId, useEnvironments, useProjects } from '@console/domains/projects'
 import { useUser } from '@console/domains/user'
 import { selectApplicationById, useApplication, useApplications } from '@console/domains/application'
 import { LayoutPage } from '@console/shared/ui'
@@ -16,12 +16,13 @@ export function Layout(props: LayoutProps) {
   const { children } = props
   const { authLogout } = useAuth()
   const { organization, getOrganization } = useOrganization()
-  const { projects, getProjects } = useProjects()
+  const { getProjects } = useProjects()
   const { userSignUp, getUserSignUp } = useUser()
   const { environments, getEnvironments } = useEnvironments()
   const { applications, getApplications } = useApplications()
   const { getApplication } = useApplication()
-  const { organizationId, projectId, environmentId, applicationId = '' } = useParams()
+  const { organizationId = '', projectId, environmentId, applicationId = '' } = useParams()
+  const projects = useSelector((state) => selectProjectsEntitiesByOrgId(state, organizationId))
 
   const application = useSelector((state) => selectApplicationById(state, applicationId))
 
