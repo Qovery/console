@@ -2,6 +2,7 @@ import { Controller, useForm } from 'react-hook-form'
 import Button, { ButtonStyle } from '../../buttons/button/button'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import { Icon } from '../../icon/icon'
+import { Tooltip } from '../../tooltip/tooltip'
 
 export interface ModalConfirmationProps {
   title: string
@@ -39,16 +40,18 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-text-600 mb-2 max-w-sm">{title}</h2>
-      <p className="flex items-center text-text-400 text-sm mb-6">
+      <h2 className="h4 text-text-600 mb-2 max-w-sm truncate">{title}</h2>
+      <p className="text-text-400 text-sm mb-6">
         {description}
-        <span
-          data-testid="copy-cta"
-          onClick={copyToClipboard}
-          className="link cursor-pointer text-accent2-500 text-sm ml-1"
-        >
-          {name} <Icon name="icon-solid-copy" />
-        </span>
+        <Tooltip content="Copy">
+          <span
+            data-testid="copy-cta"
+            onClick={copyToClipboard}
+            className="link inline cursor-pointer text-accent2-500 text-sm ml-1 truncate max-w-[200px]"
+          >
+            {name} <Icon name="icon-solid-copy" />
+          </span>
+        </Tooltip>
       </p>
       <form onSubmit={onSubmit}>
         <Controller
