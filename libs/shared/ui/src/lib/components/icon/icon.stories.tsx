@@ -24,6 +24,35 @@ const FaIcons = [
   'icon-solid-wheel',
   'icon-solid-circle-info',
   'icon-solid-magnifying-glass',
+  'icon-solid-xmark',
+  'icon-brands-discord',
+  'icon-solid-envelope',
+  'icon-solid-keyboard',
+  'icon-solid-wave-pulse',
+  'icon-solid-book',
+  'icon-solid-arrow-right',
+  'icon-solid-globe',
+  'icon-solid-cloud',
+  'icon-solid-arrow-right-from-bracket',
+  'icon-solid-camera',
+  'icon-solid-caret-down',
+  'icon-solid-terminal',
+  'icon-solid-scroll',
+  'icon-solid-copy',
+  'icon-solid-play',
+  'icon-solid-circle-stop',
+  'icon-solid-circle-exclamation',
+  'icon-solid-rotate-right',
+  'icon-solid-rotate',
+  'icon-solid-link',
+  'icon-solid-ellipsis-v',
+  'icon-solid-clock',
+  'icon-solid-browser',
+  'icon-solid-ellipsis-vertical',
+  'icon-solid-chart-area',
+  'icon-solid-circle-xmark',
+  'icon-solid-arrow-down',
+  'icon-solid-trash',
   // schema: favicons name
 ]
 
@@ -35,14 +64,47 @@ const Template: Story<IconProps> = (args) => (
   <div className="storybook-icons text-center">
     <div className="storybook-icons__container max-w-sm w-full p-3 rounded bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
       <h2 className="w-full mb-2">SVG Icons</h2>
-      <button onClick={() => copyName('GITHUB')}>
+      <button onClick={() => copyName(IconEnum.GITHUB)}>
         <Icon name={IconEnum.GITHUB} />
       </button>
-      <button onClick={() => copyName('GITLAB')}>
+      <button onClick={() => copyName(IconEnum.GITLAB)}>
         <Icon name={IconEnum.GITLAB} />
       </button>
-      <button onClick={() => copyName('BITBUCKET')}>
+      <button onClick={() => copyName(IconEnum.BITBUCKET)}>
         <Icon name={IconEnum.BITBUCKET} />
+      </button>
+      <button onClick={() => copyName(IconEnum.ENVIRONMENT)}>
+        <Icon name={IconEnum.ENVIRONMENT} />
+      </button>
+      <button onClick={() => copyName(IconEnum.APPLICATIONS)}>
+        <Icon name={IconEnum.APPLICATIONS} />
+      </button>
+      <button onClick={() => copyName(IconEnum.APPLICATION)}>
+        <Icon name={IconEnum.APPLICATION} />
+      </button>
+      <button onClick={() => copyName(IconEnum.AWS)}>
+        <Icon name={IconEnum.AWS} />
+      </button>
+      <button onClick={() => copyName(IconEnum.SCALEWAY)}>
+        <Icon name={IconEnum.SCALEWAY} />
+      </button>
+      <button onClick={() => copyName(IconEnum.DO)}>
+        <Icon name={IconEnum.DO} />
+      </button>
+      <button onClick={() => copyName(IconEnum.SUCCESS)}>
+        <Icon name={IconEnum.SUCCESS} />
+      </button>
+      <button onClick={() => copyName(IconEnum.ERROR)}>
+        <Icon name={IconEnum.ERROR} />
+      </button>
+      <button onClick={() => copyName(IconEnum.PAUSE)}>
+        <Icon name={IconEnum.PAUSE} />
+      </button>
+      <button onClick={() => copyName(IconEnum.DELETE)}>
+        <Icon name={IconEnum.DELETE} />
+      </button>
+      <button onClick={() => copyName(IconEnum.PROGRESS)}>
+        <Icon name={IconEnum.PROGRESS} />
       </button>
     </div>
     <div className="storybook-icons__container max-w-sm w-full p-3 rounded bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">

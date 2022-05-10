@@ -1,0 +1,93 @@
+@import '@szhsin/react-menu/dist/index.css';
+
+$menuTiming: 0.6s;
+
+// open
+
+.menu__container--open {
+  animation-duration: $menuTiming;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: forwards;
+}
+
+// bottom
+.menu__container--bottom {
+  transform: translateY(8px);
+
+  &.menu__container--open {
+    animation-name: menuOpenBottom;
+  }
+}
+
+// top
+.menu__container--top {
+  transform: translateY(-8px);
+
+  &.menu__container--open {
+    animation-name: menuOpenTop;
+  }
+}
+
+// left
+.menu__container--left {
+  transform: translateX(-8px);
+
+  &.menu__container--open {
+    animation-name: menuOpenLeft;
+  }
+}
+
+// right
+.menu__container--right {
+  transform: translateX(12px);
+
+  &.menu__container--open {
+    animation-name: menuOpenRight;
+  }
+}
+
+// arrow
+.menu__container {
+  .szh-menu__arrow {
+    @apply shadow-none border-0;
+  }
+}
+
+// item
+.menu-item {
+  @apply w-full h-8 rounded-sm flex justify-between px-3 py-0 mb-1;
+
+  &.szh-menu__item--hover,
+  &:hover {
+    @apply bg-element-light-lighter-300;
+  }
+}
+
+// animations
+@keyframes menuOpenBottom {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes menuOpenTop {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes menuOpenLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+
+@keyframes menuOpenRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}

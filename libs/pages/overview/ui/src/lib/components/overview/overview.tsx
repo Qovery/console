@@ -1,24 +1,19 @@
-import { OrganizationInterface } from '@console/domains/organization'
-import { LayoutPage } from '@console/shared/ui'
+import { useParams } from 'react-router'
+import { Link } from 'react-router-dom'
+import { ENVIRONMENTS_URL } from '@console/shared/utils'
 
-interface IOverviewProps {
-  organization: OrganizationInterface[]
-}
-
-export function Overview(props: IOverviewProps) {
-  const { organization } = props
+export function Overview() {
+  const { organizationId, projectId } = useParams()
 
   return (
-    <LayoutPage>
-      <div>
-        <h2 className="text-3xl font-extrabold text-brand-500">Overview</h2>
-        <ul className="mt-8">
-          {organization.map((organization: OrganizationInterface) => (
-            <li key={organization.id}>{organization.name}</li>
-          ))}
-        </ul>
-      </div>
-    </LayoutPage>
+    <div>
+      <h2 className="text-3xl font-extrabold text-brand-500">Overview</h2>
+      <ul className="mt-8">
+        <Link className="link text-accent2-500" to={`${ENVIRONMENTS_URL(organizationId, projectId)}/general`}>
+          Go to environments
+        </Link>
+      </ul>
+    </div>
   )
 }
 

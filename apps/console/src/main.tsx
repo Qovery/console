@@ -9,10 +9,16 @@ import { IntercomProvider } from 'react-use-intercom'
 import App from './app/app'
 import { environment } from './environments/environment'
 import './styles.scss'
+import posthog from 'posthog-js'
 
 const OAUTH_CALLBACK = '/login/auth0-callback'
 
 export const history = createBrowserHistory()
+
+// posthog init
+posthog.init(environment.posthog, {
+  api_host: environment.posthog_apihost,
+})
 
 const onRedirectCallback = (appState: AppState) => {
   // use the router's history module to replace the url

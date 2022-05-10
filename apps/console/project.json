@@ -43,6 +43,20 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false
+        }, 
+        "staging": {
+          "fileReplacements": [
+            {
+              "replace": "apps/console/src/environments/environment.ts",
+              "with": "apps/console/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
         }
       }
     },
@@ -56,6 +70,10 @@
         "production": {
           "buildTarget": "console:build:production",
           "hmr": false
+        },
+        "staging": {
+          "buildTarget": "console:build:staging",
+          "hmr": true
         }
       }
     },

@@ -6,28 +6,29 @@ import {
   EntityState,
   PayloadAction,
 } from '@reduxjs/toolkit'
-import axios from 'axios'
-import { OrganizationInterface } from '../interfaces/organization.interface'
+import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
 
 export const ORGANIZATION_KEY = 'organization'
 
-export interface OrganizationState extends EntityState<OrganizationInterface> {
+const organizationMainCalls = new OrganizationMainCallsApi()
+
+export interface OrganizationState extends EntityState<Organization> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
 }
 
-export const organizationAdapter = createEntityAdapter<OrganizationInterface>()
+export const organizationAdapter = createEntityAdapter<Organization>()
 
 export const fetchOrganization = createAsyncThunk('organization/fetch', async () => {
-  const response = await axios.get('/organization').then((response) => response.data)
-  return response.results
+  const response = await organizationMainCalls.listOrganization().then((response) => response.data)
+  return response.results as Organization[]
 })
 
-export const postOrganization = createAsyncThunk<any, OrganizationInterface>(
+export const postOrganization = createAsyncThunk<any, OrganizationRequest>(
   'organization/post',
-  async (data: OrganizationInterface, { rejectWithValue }) => {
+  async (data: OrganizationRequest, { rejectWithValue }) => {
     try {
-      const result = await axios.post('/organization', data).then((response) => response.data)
+      const result = await organizationMainCalls.createOrganization(data).then((response) => response.data)
       return result
     } catch (err) {
       return rejectWithValue(err)
@@ -52,13 +53,10 @@ export const organizationSlice = createSlice({
       .addCase(fetchOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(
-        fetchOrganization.fulfilled,
-        (state: OrganizationState, action: PayloadAction<OrganizationInterface[]>) => {
-          organizationAdapter.setAll(state, action.payload)
-          state.loadingStatus = 'loaded'
-        }
-      )
+      .addCase(fetchOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<Organization[]>) => {
+        organizationAdapter.setAll(state, action.payload)
+        state.loadingStatus = 'loaded'
+      })
       .addCase(fetchOrganization.rejected, (state: OrganizationState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
@@ -67,7 +65,7 @@ export const organizationSlice = createSlice({
       .addCase(postOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(postOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<OrganizationInterface>) => {
+      .addCase(postOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<Organization>) => {
         organizationAdapter.setOne(state, action.payload)
         state.loadingStatus = 'loaded'
       })
@@ -82,10 +80,13 @@ export const organization = organizationSlice.reducer
 
 export const { addOrganization, removeOrganization } = organizationSlice.actions
 
-const { selectAll } = organizationAdapter.getSelectors()
+const { selectAll, selectById } = organizationAdapter.getSelectors()
 
 export const getOrganizationState = (rootState: any): OrganizationState => rootState[ORGANIZATION_KEY]
 
 export const selectAllOrganization = createSelector(getOrganizationState, selectAll)
+
+export const selectOrganizationById = (organizationId: string) =>
+  createSelector(getOrganizationState, (state) => selectById(state, organizationId))
 
 export const selectOrganizationLoadingStatus = createSelector(getOrganizationState, (state) => state.loadingStatus)

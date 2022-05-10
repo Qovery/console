@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import Icon from '../icon/icon'
 
 export enum AvatarStyle {
@@ -7,25 +6,40 @@ export enum AvatarStyle {
 }
 
 export interface AvatarProps {
+  firstName: string
+  lastName: string
   url?: string
   style?: AvatarStyle
   icon?: string
   className?: string
   alt?: string
-  link?: string
+  onClick?: () => void
+  size?: number
 }
 
 export function Avatar(props: AvatarProps) {
-  const { url, style, icon, className = '', alt, link } = props
+  const { firstName, lastName, url, style, icon, className = '', alt, onClick, size = 32 } = props
 
-  const defineClass = `${style === AvatarStyle.STROKED ? 'border-2 border-element-light-lighter-400' : ''}`
+  const defineClass = `${style === AvatarStyle.STROKED ? 'border-2 border-element-light-lighter-400' : ''} ${
+    onClick ? 'cursor-pointer' : ''
+  }`
 
-  const content = () => (
-    <>
+  return (
+    <div
+      data-testid="avatar"
+      style={{ width: size, height: size }}
+      className={`block rounded-full relative ${defineClass} ${className}`}
+      onClick={() => onClick && onClick()}
+    >
       {url ? (
         <img src={url} alt={alt} className="w-full h-full rounded-full" />
       ) : (
-        <div className="w-full h-full rounded-full bg-element-light-lighter-400"></div>
+        <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center flex justify-center items-center">
+          <span className="text-xs text-text-500 font-medium relative">
+            {firstName && firstName.charAt(0)}
+            {lastName && lastName.charAt(0)}
+          </span>
+        </div>
       )}
       {icon && (
         <Icon
@@ -34,26 +48,8 @@ export function Avatar(props: AvatarProps) {
           className="absolute -bottom-1 -right-1 w-4 h-4 drop-shadow-sm"
         ></Icon>
       )}
-    </>
+    </div>
   )
-
-  if (!link) {
-    return (
-      <div data-testid="avatar" className={`w-8 h-8 block rounded-full relative ${defineClass} ${className}`}>
-        {content()}
-      </div>
-    )
-  } else {
-    return (
-      <Link
-        data-testid="avatar"
-        to={link}
-        className={`w-8 h-8 block rounded-full relative ${defineClass} ${className}`}
-      >
-        {content()}
-      </Link>
-    )
-  }
 }
 
 export default Avatar

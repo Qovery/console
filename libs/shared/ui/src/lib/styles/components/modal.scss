@@ -1,19 +1,55 @@
-.modal__content {
-  @apply py-5 px-4 bg-element-light-lighter-500 rounded shadow-lg w-max;
+.modal__overlay[data-state='open'] {
+  animation: fadeIn 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
 }
 
-.modal--arrow {
-  @apply relative;
+.modal__content[data-state='open'] {
+  animation: modalDisplay 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
+}
 
-  .modal__content {
-    @apply py-4 px-3 w-96 absolute;
+.modal__overlay[data-state='closed'] {
+  animation: fadeOut 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
+}
+
+.modal__content[data-state='closed'] {
+  animation: modalHide 200ms 150ms cubic-bezier(0.16, 1, 0.3, 1) 0s 1 normal forwards running;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
-.modal__trigger {
-  @apply w-max;
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
-.modal__arrow {
-  @apply w-4 h-4 rounded-sm rotate-45 absolute -top-2 left-4 bg-element-light-lighter-500;
+@keyframes modalDisplay {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes modalHide {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
 }

@@ -1,42 +1,25 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import axios from 'axios'
+import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { SignUp, SignUpRequest, TypeOfUseEnum, UserSignUpApi } from 'qovery-typescript-axios'
 
 export const USER_SIGNUP_KEY = 'userSignUp'
 
-export interface UserSignUpInterface {
-  first_name?: string
-  last_name?: string
-  company_name?: string
-  company_size?: string
-  current_step?: string
-  dx_auth?: boolean
-  qovery_usage?: string
-  qovery_usage_other?: string
-  type_of_use?: string
-  user_email?: string
-  user_questions?: string
-  user_role?: string
-}
+const userSignUpApi = new UserSignUpApi()
 
-export interface UserSignUpState extends UserSignUpInterface {
+export interface UserSignUpState {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
+  signup: SignUp
 }
 
-export const fetchUserSignUp = createAsyncThunk('userSignUp/get', async () => {
-  const response = await axios.get('/admin/userSignUp').then((response) => response.data)
-  return response
+export const fetchUserSignUp = createAsyncThunk<SignUp>('userSignUp/get', async () => {
+  return await userSignUpApi.getUserSignUp().then((response) => response.data)
 })
 
-export const postUserSignUp = createAsyncThunk<any, UserSignUpState>(
+export const postUserSignUp = createAsyncThunk<any, SignUpRequest>(
   'userSignUp/post',
-  async (data: UserSignUpState, { rejectWithValue }) => {
-    // remove useless field for post request
-    delete data['error']
-    delete data['loadingStatus']
-
+  async (data: SignUpRequest, { rejectWithValue }) => {
     try {
-      const result = await axios.post('/admin/userSignUp', data).then((response) => response)
+      const result = await userSignUpApi.createUserSignUp(data).then((response) => response)
 
       if (typeof result === 'object') {
         return data
@@ -52,6 +35,15 @@ export const postUserSignUp = createAsyncThunk<any, UserSignUpState>(
 export const initialUserSignUpState: UserSignUpState = {
   loadingStatus: 'not loaded',
   error: null,
+  signup: {
+    first_name: '',
+    id: '',
+    created_at: '',
+    user_email: '',
+    last_name: '',
+    qovery_usage: '',
+    type_of_use: TypeOfUseEnum.PERSONAL,
+  },
 }
 
 export const userSignUpSlice = createSlice({
@@ -68,9 +60,9 @@ export const userSignUpSlice = createSlice({
       .addCase(fetchUserSignUp.pending, (state: UserSignUpState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(fetchUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<UserSignUpInterface>) => {
+      .addCase(fetchUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<SignUp>) => {
         state.loadingStatus = 'loaded'
-        state = Object.assign(state, action.payload)
+        state.signup = action.payload
       })
       .addCase(fetchUserSignUp.rejected, (state: UserSignUpState, action) => {
         state.loadingStatus = 'error'
@@ -80,9 +72,9 @@ export const userSignUpSlice = createSlice({
       .addCase(postUserSignUp.pending, (state: UserSignUpState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(postUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<UserSignUpInterface>) => {
+      .addCase(postUserSignUp.fulfilled, (state: UserSignUpState, action: PayloadAction<SignUp>) => {
         state.loadingStatus = 'loaded'
-        state = Object.assign(state, action.payload)
+        state.signup = action.payload
       })
       .addCase(postUserSignUp.rejected, (state: UserSignUpState, action) => {
         state.loadingStatus = 'error'
@@ -95,6 +87,9 @@ export const userSignUp = userSignUpSlice.reducer
 
 export const userSignUpActions = userSignUpSlice.actions
 
-export const getUserSignUpState = (rootState: any): UserSignUpState => rootState[USER_SIGNUP_KEY]
+export const getUserSignUpState = (rootState: any): UserSignUpState => {
+  return rootState[USER_SIGNUP_KEY]
+}
 
-export const selectUserSignUp = createSelector(getUserSignUpState, (state) => state)
+export const selectUserSignUp = createSelector(getUserSignUpState, (state) => state.signup)
+export const selectUserLoadingStatus = createSelector(getUserSignUpState, (state) => state.loadingStatus)

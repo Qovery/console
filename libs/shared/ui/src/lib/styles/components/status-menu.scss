@@ -1,0 +1,76 @@
+.status-menu__trigger {
+  .menu__trigger {
+    @apply h-full;
+  }
+}
+
+// status
+.status-menu--running {
+  @apply bg-success-50 border-success-500 text-success-500;
+
+  .status-menu__trigger {
+    @apply border-success-500;
+  }
+
+  &.status-menu--open {
+    .status-menu__trigger {
+      @apply bg-success-100;
+    }
+  }
+}
+
+.status-menu--stopped {
+  @apply bg-element-light-lighter-300 border-element-light-lighter-700 text-text-400;
+
+  .status-menu__trigger {
+    @apply border-element-light-lighter-700;
+  }
+
+  &.status-menu--open {
+    .status-menu__trigger {
+      @apply bg-element-light-lighter-400;
+    }
+  }
+}
+
+.status-menu--error {
+  @apply bg-error-50 border-error-500 text-error-500;
+
+  .status-menu__trigger {
+    @apply border-error-500;
+  }
+
+  &.status-menu--open {
+    .status-menu__trigger {
+      @apply bg-error-100;
+    }
+  }
+}
+
+.status-menu--stopping {
+  @apply bg-progressing-50 border-progressing-400 text-progressing-500;
+
+  .status-menu__trigger {
+    @apply border-progressing-400;
+  }
+
+  &.status-menu--open {
+    .status-menu__trigger {
+      @apply bg-progressing-100;
+    }
+  }
+}
+
+.status-menu--starting {
+  @apply bg-progressing-50 border-progressing-400 text-progressing-500;
+
+  .status-menu__trigger {
+    @apply border-progressing-400;
+  }
+
+  &.status-menu--open {
+    .status-menu__trigger {
+      @apply bg-progressing-100;
+    }
+  }
+}

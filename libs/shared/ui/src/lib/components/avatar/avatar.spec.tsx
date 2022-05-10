@@ -12,7 +12,10 @@ const chance = new Chance()
 let container
 
 beforeEach(() => {
-  props = {}
+  props = {
+    firstName: 'Rémi',
+    lastName: 'Bonnet',
+  }
   container = document.createElement('div')
   document.body.appendChild(container)
 })
@@ -41,15 +44,5 @@ describe('Avatar', () => {
     const icon = screen.getByTestId('avatar-icon')
 
     expect(icon).toBeTruthy()
-  })
-
-  it('shoud have a link', () => {
-    props.link = chance.url()
-
-    render(<Avatar {...props} />)
-
-    const link = screen.getByRole('link')
-
-    expect(link).toBeTruthy()
   })
 })

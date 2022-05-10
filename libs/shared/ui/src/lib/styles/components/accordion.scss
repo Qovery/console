@@ -1,0 +1,51 @@
+.accordion__content {
+  @apply overflow-hidden border-t border-element-light-lighter-400;
+
+  &[data-state='open'] {
+    animation: openAccordion 300ms cubic-bezier(0.87, 0, 0.13, 1) 0s 1 normal forwards running;
+  }
+
+  &[data-state='closed'] {
+    animation: closeAccordion 300ms cubic-bezier(0.87, 0, 0.13, 1) 0s 1 normal forwards running;
+  }
+}
+
+.accordion__arrow {
+  @apply transition-transform ease-out duration-300 text-sm text-text-400 shrink-0;
+}
+
+.accordion__header {
+  @apply h-12;
+
+  &[data-state='open'] {
+    @apply bg-white;
+  }
+
+  &[data-state='closed'] {
+    @apply bg-element-light-lighter-200;
+
+    .accordion__arrow {
+      @apply -rotate-180;
+    }
+  }
+}
+
+@keyframes openAccordion {
+  from {
+    height: 0;
+    border-color: transparent;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes closeAccordion {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+    border-color: transparent;
+  }
+}

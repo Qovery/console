@@ -1,0 +1,20 @@
+name: Deploy staging
+
+on:
+  push:
+    branches:
+      - staging
+jobs:
+  test-build-and-deploy:
+    uses: ./.github/workflows/test-build-and-deploy.yml
+    with:
+      flow: deploy-staging
+      branch: staging
+      configuration: staging
+      project-name: Console V3
+      environment-name: staging
+      application-names: console
+      application-commit-id: ${{ github.sha }}
+    secrets:
+      organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
+      api-token: ${{ secrets.QOVERY_API_TOKEN }}

@@ -1,7 +1,7 @@
 {
   "npmScope": "console",
   "affected": {
-    "defaultBase": "main"
+    "defaultBase": "staging"
   },
   "cli": {
     "defaultCollection": "@nrwl/react"

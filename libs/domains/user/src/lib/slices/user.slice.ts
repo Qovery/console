@@ -1,5 +1,5 @@
 import { createSlice, createSelector } from '@reduxjs/toolkit'
-import { UserInterface } from '../interfaces/user.interface'
+import { UserInterface } from '../interfaces'
 
 export const USER_KEY = 'user'
 

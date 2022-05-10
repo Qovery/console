@@ -1,0 +1,21 @@
+name: Deploy production
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  test-build-and-deploy:
+    uses: ./.github/workflows/test-build-and-deploy.yml
+    with:
+      flow: deploy-production
+      branch: main
+      configuration: production
+      project-name: Console V3
+      environment-name: production
+      application-names: console
+      application-commit-id: ${{ github.sha }}
+    secrets:
+      organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
+      project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
+      api-token: ${{ secrets.QOVERY_API_TOKEN }}

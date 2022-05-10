@@ -1,20 +1,24 @@
-import { initialOrganizationState, organization, OrganizationState } from '@console/domains/organization'
-import { initialProjectsState, ProjectsState, projects } from '@console/domains/projects'
-import {
-  initialUserSignUpState,
-  initialUserState,
-  user,
-  UserInterface,
-  UserSignUpState,
-  userSignUp,
-} from '@console/domains/user'
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { User } from 'qovery-typescript-axios'
+import { initialOrganizationState, organization, OrganizationState } from '@console/domains/organization'
+import {
+  initialProjectsState,
+  ProjectsState,
+  projects,
+  EnvironmentsState,
+  environments,
+  initialEnvironmentsState,
+} from '@console/domains/projects'
+import { initialUserSignUpState, initialUserState, user, UserSignUpState, userSignUp } from '@console/domains/user'
+import { applications, ApplicationsState, initialApplicationsState } from '@console/domains/application'
 
 export const rootReducer = combineReducers({
   user: user,
-  organization: organization,
   userSignUp: userSignUp,
+  organization: organization,
   projects: projects,
+  environments: environments,
+  applications: applications,
 })
 
 export const store = configureStore({
@@ -22,10 +26,14 @@ export const store = configureStore({
 })
 
 export type RootState = {
-  user: UserInterface
+  user: User
   userSignUp: UserSignUpState
-  organization: OrganizationState
-  projects: ProjectsState
+  entities: {
+    organization: OrganizationState
+    projects: ProjectsState
+    environments: EnvironmentsState
+    applications: ApplicationsState
+  }
 }
 
 export type AppDispatch = typeof store.dispatch
@@ -33,6 +41,10 @@ export type AppDispatch = typeof store.dispatch
 export const initialRootState = (): RootState => ({
   user: initialUserState,
   userSignUp: initialUserSignUpState,
-  organization: initialOrganizationState,
-  projects: initialProjectsState,
+  entities: {
+    organization: initialOrganizationState,
+    projects: initialProjectsState,
+    environments: initialEnvironmentsState,
+    applications: initialApplicationsState,
+  },
 })

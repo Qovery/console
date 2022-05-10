@@ -1,7 +1,10 @@
 .btn {
   @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm gap-2;
-  min-width: 6rem;
   transition: 0.25s all $timing-cubic;
+
+  &:not(.btn--very-small, .btn-icon) {
+    min-width: 6rem;
+  }
 
   svg {
     @apply w-4 h-auto;
@@ -46,6 +49,19 @@
   @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
 }
 
+.btn--tab {
+  @apply bg-element-light-lighter-300 text-text-500 text-xs font-medium px-2;
+
+  &:hover:not(.is-active, .btn--active) {
+    @apply bg-element-light-lighter-400 text-text-600;
+  }
+
+  &.is-active,
+  &.btn--active {
+    @apply bg-brand-500 text-text-100;
+  }
+}
+
 // state
 .btn--disabled {
   @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;
@@ -72,6 +88,9 @@
   &.btn-icon--big {
     @apply w-9 h-9;
   }
+  &.btn.is-active {
+    @apply border-brand-400 bg-brand-400 text-white hover:text-white hover:bg-brand-400;
+  }
 }
 
 .btn-icon--raised {
@@ -92,4 +111,12 @@
 
 .btn-icon--dark {
   @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
+}
+
+.btn-icon--circle {
+  @apply w-4 h-4 rounded-full flex items-center justify-center text-text-400 hover:text-text-400 hover:bg-element-light-lighter-400;
+
+  &.btn.is-active {
+    @apply text-text-400 bg-element-light-lighter-400 hover:text-text-400 hover:bg-element-light-lighter-500;
+  }
 }

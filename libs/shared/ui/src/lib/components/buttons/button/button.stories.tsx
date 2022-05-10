@@ -5,7 +5,7 @@ import { IconEnum } from '@console/shared/enums'
 
 export default {
   component: Button,
-  title: 'Button',
+  title: 'Buttons/ButtonDefault',
 } as Meta
 
 const ButtonContent = () => {

@@ -8,7 +8,7 @@ import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from './router/rou
 
 export function OnboardingPage() {
   const navigate = useNavigate()
-  const { userSignUp, getUserSignUp } = useUser()
+  const { userSignUp, getUserSignUp, loadingStatus } = useUser()
   const params = useParams()
 
   const firstStep = !!ROUTER_ONBOARDING_STEP_1.find((currentRoute) => currentRoute.path === `/${params['*']}`)
@@ -21,11 +21,11 @@ export function OnboardingPage() {
   }, [getUserSignUp])
 
   useEffect(() => {
-    if (userSignUp.loadingStatus === 'loaded') {
-      if (!firstStep && !userSignUp.dx_auth) {
+    if (loadingStatus === 'loaded') {
+      if (!firstStep && !userSignUp?.dx_auth) {
         navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
       }
-      if (firstStep && userSignUp.dx_auth) {
+      if (firstStep && userSignUp?.dx_auth) {
         navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
       }
       if (params['*'] === '') {

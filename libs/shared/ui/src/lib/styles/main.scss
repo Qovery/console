@@ -13,10 +13,19 @@
 @import 'components/button';
 @import 'components/input';
 @import 'components/slider';
+@import 'components/menu';
 @import 'components/modal';
+@import 'components/accordion';
+@import 'components/status-menu';
+@import 'components/skeleton';
+@import 'components/button-action';
 
 body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  main:not(.h-screen) {
+    height: calc(100vh - 56px);
+  }
 }
