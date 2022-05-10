@@ -40,14 +40,14 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-text-600 mb-2 max-w-sm truncate">{title}</h2>
+      <h2 className="h4 text-text-600 mb-2 max-w-sm">{title}</h2>
       <p className="text-text-400 text-sm mb-6">
         {description}
         <Tooltip content="Copy">
           <span
             data-testid="copy-cta"
             onClick={copyToClipboard}
-            className="link inline cursor-pointer text-accent2-500 text-sm ml-1 truncate max-w-[200px]"
+            className="link inline cursor-pointer text-accent2-500 text-sm ml-1 truncate max-w-[250px]"
           >
             {name} <Icon name="icon-solid-copy" />
           </span>
