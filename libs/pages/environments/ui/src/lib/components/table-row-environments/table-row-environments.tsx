@@ -24,22 +24,6 @@ const buttonActionsDefault = [
   {
     iconLeft: <Icon name="icon-solid-play" />,
     iconRight: <Icon name="icon-solid-angle-down" />,
-    menus: [
-      {
-        items: [
-          {
-            name: 'Deploy',
-            onClick: () => console.log('Deploy'),
-            contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-          },
-          {
-            name: 'Stop',
-            onClick: () => console.log('Stop'),
-            contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-          },
-        ],
-      },
-    ],
     menusClassName: 'border-r border-r-element-light-lighter-500',
   },
   {
@@ -94,7 +78,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
                   <StatusLabel status={data.status && data.status.state} />
                 )}
               </p>
-              <ButtonIconAction actions={buttonActionsDefault} />
+              <ButtonIconAction actions={buttonActionsDefault} status={data.status && data.status.state} />
             </div>
           </Skeleton>
         </div>

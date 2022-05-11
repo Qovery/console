@@ -1,4 +1,4 @@
-import { Application } from 'qovery-typescript-axios'
+import { Application, Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { APPLICATIONS_URL, APPLICATION_URL } from '@console/shared/utils'
@@ -9,19 +9,21 @@ import {
   Header,
   Icon,
   StatusMenu,
-  StatusMenuState,
   Tabs,
   Tag,
+  StatusChip,
+  Skeleton,
 } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
 
 export interface ContainerProps {
   applications: Application[]
+  environment?: Environment & { status?: Status }
 }
 
 export function Container(props: ContainerProps) {
-  const { applications } = props
+  const { applications, environment } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
 
@@ -39,50 +41,20 @@ export function Container(props: ContainerProps) {
     console.log(e)
   }
 
-  const actionsMenu = [
-    {
-      items: [
-        {
-          name: 'Deploy',
-          onClick: (e: ClickEvent) => clickAction(e, 'Deploy'),
-          contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Stop',
-          onClick: (e: ClickEvent) => clickAction(e, 'Stop'),
-          contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-    {
-      items: [
-        {
-          name: 'Redeploy',
-          onClick: (e: ClickEvent) => clickAction(e, 'Redeploy'),
-          contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Update applications',
-          onClick: (e: ClickEvent) => clickAction(e, 'Update'),
-          contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Rollback',
-          onClick: (e: ClickEvent) => clickAction(e, 'Rollblack'),
-          contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-  ]
-
   const headerActions = (
     <>
-      <StatusMenu menus={actionsMenu} status={StatusMenuState.RUNNING} />
-      <Tag className="bg-brand-50 text-brand-500">PROD</Tag>
-      <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
-        <Icon name={IconEnum.AWS} width="16" />
-        <p className="max-w-[54px] truncate">community-test</p>
-      </div>
+      <Skeleton width={150} height={24} show={environment?.status ? false : true}>
+        <StatusMenu status={environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING} />
+      </Skeleton>
+      <Skeleton width={80} height={24} show={environment?.mode ? false : true}>
+        <Tag className="bg-brand-50 text-brand-500">{environment?.mode}</Tag>
+      </Skeleton>
+      <Skeleton width={100} height={24} show={environment?.cloud_provider ? false : true}>
+        <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
+          <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
+          <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>
+        </div>
+      </Skeleton>
       <Tag className="bg-element-light-lighter-300 gap-2">
         <span className="w-2 h-2 rounded-lg bg-progressing-300"></span>
         <span className="w-2 h-2 rounded-lg bg-accent3-500"></span>
@@ -90,82 +62,40 @@ export function Container(props: ContainerProps) {
     </>
   )
 
-  /*const tabsItems = [
+  const tabsItems = [
     {
-      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
+      icon: (
+        <Skeleton width={16} height={16} rounded show={environment?.status ? false : true}>
+          <StatusChip status={environment?.status && environment?.status.state} />
+        </Skeleton>
+      ),
       name: 'Environments',
       active: location.pathname === APPLICATIONS_URL(organizationId, projectId, environmentId),
       link: APPLICATIONS_URL(organizationId, projectId, environmentId),
-    },
-    {
-      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
-      name: 'Deployments',
-      active: location.pathname === APPLICATIONS_DEPLOYMENTS_URL(organizationId, projectId, environmentId),
-      link: APPLICATIONS_DEPLOYMENTS_URL(organizationId, projectId, environmentId),
-    },
-    {
-      icon: <Icon name="icon-solid-wheel" className="text-sm" />,
-      name: 'Settings',
-      active: location.pathname === APPLICATIONS_SETTINGS_URL(organizationId, projectId, environmentId),
-      link: APPLICATIONS_SETTINGS_URL(organizationId, projectId, environmentId),
-    },
-  ]*/
-
-  const menusButton = [
-    {
-      items: [
-        {
-          name: 'Deploy',
-          onClick: (e: ClickEvent) => clickAction(e, 'Deploy'),
-          contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Stop',
-          onClick: (e: ClickEvent) => clickAction(e, 'Stop'),
-          contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-    {
-      items: [
-        {
-          name: 'Redeploy',
-          onClick: (e: ClickEvent) => clickAction(e, 'Redeploy'),
-          contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Update applications',
-          onClick: (e: ClickEvent) => clickAction(e, 'Update'),
-          contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Rollback',
-          onClick: (e: ClickEvent) => clickAction(e, 'Rollblack'),
-          contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
-        },
-      ],
     },
   ]
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <ButtonAction menus={menusButton} iconRight="icon-solid-plus">
-        New service
-      </ButtonAction>
+      <Skeleton width={154} height={32} show={environment?.status ? false : true}>
+        <ButtonAction status={environment?.status && environment?.status.state} iconRight="icon-solid-plus">
+          New service
+        </ButtonAction>
+      </Skeleton>
     </div>
   )
 
   return (
     <div>
       <Header
-        title="Applications"
+        title={environment?.name}
         icon={IconEnum.APPLICATIONS}
         buttons={headerButtons}
         copyTitle
         copyContent={copyContent}
         actions={headerActions}
       />
-      <Tabs items={[]} contentRight={contentTabs} />
+      <Tabs items={tabsItems} contentRight={contentTabs} />
       <ul className="mt-8">
         {applications &&
           applications.map((application: Application) => (

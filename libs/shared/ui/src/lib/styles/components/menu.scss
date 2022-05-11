@@ -57,6 +57,10 @@ $menuTiming: 0.6s;
 .menu-item {
   @apply w-full h-8 rounded-sm flex justify-between px-3 py-0 mb-1;
 
+  &:last-of-type {
+    @apply mb-0;
+  }
+
   &.szh-menu__item--hover,
   &:hover {
     @apply bg-element-light-lighter-300;

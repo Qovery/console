@@ -22,6 +22,7 @@ export interface StatusMenuActionProps {
   className?: string
   paddingMenuY?: number
   paddingMenuX?: number
+  setOpen?: (isOpen: boolean) => void
 }
 
 export type StatusMenuActionItem = {
@@ -40,6 +41,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     className = '',
     direction = MenuDirection.BOTTOM,
     arrowAlign = MenuAlign.START,
+    setOpen,
   } = props
   const [topMenu, setTopMenu] = useState<StatusMenuActionItem[]>([])
   const [bottomMenu, setBottomMenu] = useState<StatusMenuActionItem[]>([])
@@ -122,6 +124,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
       className={className}
       direction={direction}
       arrowAlign={arrowAlign}
+      onOpen={(isOpen) => setOpen && setOpen(isOpen)}
     />
   )
 }

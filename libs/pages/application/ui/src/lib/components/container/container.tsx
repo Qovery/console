@@ -3,7 +3,6 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   StatusMenu,
-  StatusMenuState,
   Icon,
   Header,
   Tag,
@@ -11,62 +10,25 @@ import {
   ButtonStyle,
   ButtonSize,
   Tabs,
+  Skeleton,
+  StatusChip,
 } from '@console/shared/ui'
 import { APPLICATION_URL } from '@console/shared/utils'
 import { ClickEvent } from '@szhsin/react-menu'
-import { Application } from 'qovery-typescript-axios'
+import { Application, Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 
 export interface ContainerProps {
-  application?: Application
+  application?: Application & { status?: Status }
+  environment?: Environment
 }
 
 export function Container(props: ContainerProps) {
-  const { application } = props
+  const { application, environment } = props
   const { organizationId, projectId, environmentId, applicationId } = useParams()
   const location = useLocation()
 
-  const clickAction = (e: ClickEvent, action: string) => {
-    console.log(e)
-  }
-
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${applicationId}`
-
-  const actionsMenu = [
-    {
-      items: [
-        {
-          name: 'Deploy',
-          onClick: (e: ClickEvent) => clickAction(e, 'Deploy'),
-          contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Stop',
-          onClick: (e: ClickEvent) => clickAction(e, 'Stop'),
-          contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-    {
-      items: [
-        {
-          name: 'Redeploy',
-          onClick: (e: ClickEvent) => clickAction(e, 'Redeploy'),
-          contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Update applications',
-          onClick: (e: ClickEvent) => clickAction(e, 'Update'),
-          contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Rollback',
-          onClick: (e: ClickEvent) => clickAction(e, 'Rollblack'),
-          contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-  ]
 
   const headerButtons = (
     <>
@@ -81,12 +43,18 @@ export function Container(props: ContainerProps) {
 
   const headerActions = (
     <>
-      <StatusMenu menus={actionsMenu} status={StatusMenuState.RUNNING} />
-      <Tag className="bg-brand-50 text-brand-500">PROD</Tag>
-      <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
-        <Icon name={IconEnum.AWS} width="16" />
-        <p className="max-w-[54px] truncate">community-test</p>
-      </div>
+      <Skeleton width={150} height={24} show={application?.status ? false : true}>
+        <StatusMenu status={application?.status ? application?.status.state : GlobalDeploymentStatus.RUNNING} />
+      </Skeleton>
+      <Skeleton width={80} height={24} show={environment?.mode ? false : true}>
+        <Tag className="bg-brand-50 text-brand-500">{environment?.mode}</Tag>
+      </Skeleton>
+      <Skeleton width={100} height={24} show={environment?.cloud_provider ? false : true}>
+        <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
+          <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
+          <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>
+        </div>
+      </Skeleton>
       <Tag className="bg-element-light-lighter-300 gap-2">
         <span className="w-2 h-2 rounded-lg bg-progressing-300"></span>
         <span className="w-2 h-2 rounded-lg bg-accent3-500"></span>
@@ -94,51 +62,30 @@ export function Container(props: ContainerProps) {
     </>
   )
 
-  /*const tabsItems = [
+  const tabsItems = [
     {
-      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
+      icon: (
+        <Skeleton width={16} height={16} rounded show={application?.status ? false : true}>
+          <StatusChip status={application?.status && application?.status.state} />
+        </Skeleton>
+      ),
       name: 'Overview',
       active: location.pathname === APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
     },
-    {
-      icon: <Icon name={IconEnum.CHECKCIRCLE} width="14" />,
-      name: 'Deployments',
-      active:
-        location.pathname === APPLICATION_DEPLOYMENTS_URL(organizationId, projectId, environmentId, applicationId),
-      link: APPLICATION_DEPLOYMENTS_URL(organizationId, projectId, environmentId, applicationId),
-    },
-    {
-      icon: <Icon name="icon-solid-chart-area" className="text-sm" />,
-      name: 'Metrics',
-      active: location.pathname === APPLICATION_METRICS_URL(organizationId, projectId, environmentId, applicationId),
-      link: APPLICATION_METRICS_URL(organizationId, projectId, environmentId, applicationId),
-    },
-    {
-      icon: <Icon name="icon-solid-wheel" className="text-sm" />,
-      name: 'Variables',
-      active: location.pathname === APPLICATION_VARIABLES_URL(organizationId, projectId, environmentId, applicationId),
-      link: APPLICATION_VARIABLES_URL(organizationId, projectId, environmentId, applicationId),
-    },
-    {
-      icon: <Icon name="icon-solid-wheel" className="text-sm" />,
-      name: 'Settings',
-      active: location.pathname === APPLICATION_SETTINGS_URL(organizationId, projectId, environmentId, applicationId),
-      link: APPLICATION_SETTINGS_URL(organizationId, projectId, environmentId, applicationId),
-    },
-  ]*/
+  ]
 
   return (
     <div>
       <Header
-        title={application?.name ? application.name : 'Application'}
+        title={application?.name}
         icon={IconEnum.APPLICATION}
         buttons={headerButtons}
         copyTitle
         copyContent={copyContent}
         actions={headerActions}
       />
-      <Tabs items={[]} />
+      <Tabs items={tabsItems} />
     </div>
   )
 }

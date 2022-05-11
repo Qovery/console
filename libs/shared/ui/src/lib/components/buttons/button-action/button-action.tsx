@@ -1,9 +1,11 @@
 import { IconEnum } from '@console/shared/enums'
 import { Icon } from '@console/shared/ui'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Menu, { MenuAlign } from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
+import StatusMenuAction from '../../status-menu-action/status-menu-action'
 
 export enum ButtonActionStyle {
   BASIC = 'basic',
@@ -20,7 +22,8 @@ export interface ButtonActionProps {
   disabled?: boolean
   className?: string
   onClick?: () => void
-  menus: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
+  menus?: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
+  status?: GlobalDeploymentStatus
 }
 
 export function ButtonAction(props: ButtonActionProps) {
@@ -33,6 +36,7 @@ export function ButtonAction(props: ButtonActionProps) {
     className = '',
     onClick,
     menus = [],
+    status,
   } = props
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -60,7 +64,7 @@ export function ButtonAction(props: ButtonActionProps) {
     )
   }
 
-  function content() {
+  if (!status) {
     return (
       <div data-testid="button-action" className={defineClass}>
         <Menu
@@ -76,9 +80,23 @@ export function ButtonAction(props: ButtonActionProps) {
         {contentBtn()}
       </div>
     )
+  } else {
+    return (
+      <div data-testid="button-action" className={defineClass}>
+        <StatusMenuAction
+          arrowAlign={MenuAlign.END}
+          setOpen={(e) => setMenuOpen(e)}
+          trigger={
+            <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
+              <Icon name="icon-solid-ellipsis-vertical" />
+            </div>
+          }
+          status={status}
+        />
+        {contentBtn()}
+      </div>
+    )
   }
-
-  return content()
 }
 
 export default ButtonAction
