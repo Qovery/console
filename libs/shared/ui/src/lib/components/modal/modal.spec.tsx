@@ -3,16 +3,15 @@ import { screen, fireEvent } from '@testing-library/react'
 import Modal, { ModalProps } from './modal'
 import Button from '../buttons/button/button'
 
-let props: ModalProps
-
-beforeEach(() => {
-  props = {
-    trigger: <Button data-testid="trigger-btn">Trigger</Button>,
-    children: <p>contenu</p>,
-  }
-})
-
 describe('Modal', () => {
+  let props: ModalProps
+
+  beforeEach(() => {
+    props = {
+      trigger: <Button data-testid="trigger-btn">Trigger</Button>,
+      children: <p>contenu</p>,
+    }
+  })
   it('should render successfully', () => {
     const { baseElement } = render(<Modal {...props} />)
     expect(baseElement).toBeTruthy()
@@ -45,7 +44,6 @@ describe('Modal', () => {
 
   it('should be default open', () => {
     props.defaultOpen = true
-    props.open = true
 
     render(<Modal {...props} />)
 
