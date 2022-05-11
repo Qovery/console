@@ -2,7 +2,6 @@ import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import { store } from '@console/store/data'
 import { createBrowserHistory } from 'history'
 import * as ReactDOM from 'react-dom'
-import { Toaster } from 'react-hot-toast'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
@@ -40,7 +39,6 @@ ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter>
           <App />
-          <Toaster position="bottom-right" />
         </BrowserRouter>
       </Provider>
     </Auth0Provider>
