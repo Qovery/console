@@ -20,8 +20,6 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
 
   const [open, setOpen] = useState(false)
 
-  console.log(status)
-
   if (menus) {
     return (
       <Menu
