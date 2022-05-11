@@ -2,11 +2,11 @@ import {
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
-  createSlice, EntityState,
+  createSlice,
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { EnvironmentsState } from '@console/shared/interfaces'
+import { EnvironmentsState, RootState } from '@console/shared/interfaces'
 import { Environment, EnvironmentsApi, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
@@ -14,25 +14,17 @@ export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
 
-export interface EnvironmentsState
-  extends EntityState<
-    Environment & {
-      status?: Status
-    }
-  > {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
-  error: string | null | undefined
-  joinProjectEnvironments: Record<string, string[]>
-}
-
 export const environmentsAdapter = createEntityAdapter<Environment>()
 
-export const fetchEnvironments = createAsyncThunk<any, { projectId: string }>('environments/fetch', async (data) => {
-  const response = await environmentsApi.listEnvironment(data.projectId).then((response) => response.data)
-  return response.results as Environment[]
-})
+export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string }>(
+  'environments/fetch',
+  async (data) => {
+    const response = await environmentsApi.listEnvironment(data.projectId).then((response) => response.data)
+    return response.results as Environment[]
+  }
+)
 
-export const fetchEnvironmentsStatus = createAsyncThunk<any, { projectId: string }>(
+export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: string }>(
   'environments-status/fetch',
   async (data) => {
     const response = await environmentsApi
@@ -103,16 +95,16 @@ export const environmentsActions = environmentsSlice.actions
 
 const { selectAll, selectEntities } = environmentsAdapter.getSelectors()
 
-export const getEnvironmentsState = (rootState: any): EnvironmentsState => rootState[ENVIRONMENTS_FEATURE_KEY]
+export const getEnvironmentsState = (rootState: RootState): EnvironmentsState => rootState[ENVIRONMENTS_FEATURE_KEY]
 
 export const selectAllEnvironments = createSelector(getEnvironmentsState, selectAll)
 
 export const selectEnvironmentsEntities = createSelector(getEnvironmentsState, selectEntities)
 
-export const selectEnvironmentsEntitiesByProjectId = (state: any, projectId: string): Environment[] => {
-  state = getEnvironmentsState(state)
-  return getEntitiesByIds<Environment>(state.entities, state?.joinProjectEnvironments[projectId])
+export const selectEnvironmentsEntitiesByProjectId = (state: RootState, projectId: string): Environment[] => {
+  const environmentState = getEnvironmentsState(state)
+  return getEntitiesByIds<Environment>(environmentState.entities, environmentState?.joinProjectEnvironments[projectId])
 }
 
-export const selectEnvironmentById = (state: any, environmentId: string) =>
+export const selectEnvironmentById = (state: RootState, environmentId: string) =>
   getEnvironmentsState(state).entities[environmentId]

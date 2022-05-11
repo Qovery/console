@@ -1,35 +1,24 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSelector,
-  createSlice,
-  EntityState,
-  PayloadAction
-} from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
-import { ProjectsState } from '@console/shared/interfaces'
+import { ProjectsState, RootState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 
 const projectsApi = new ProjectsApi()
-export interface ProjectsState extends EntityState<Project> {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
-  error: string | null | undefined
-  joinOrganizationProject: Record<string, string[]>
-}
 
 export const projectsAdapter = createEntityAdapter<Project>()
 
-export const fetchProjects = createAsyncThunk<any, { organizationId: string }>('projects/fetch', async (data) => {
+export const fetchProjects = createAsyncThunk<Project[], { organizationId: string }>('projects/fetch', async (data) => {
   const response = await projectsApi.listProject(data.organizationId).then((response) => response.data)
   return response.results as Project[]
 })
 
-export const postProjects = createAsyncThunk<any, { organizationId: string } & ProjectRequest>(
+export const postProjects = createAsyncThunk<Project, { organizationId: string } & ProjectRequest>(
   'projects/post',
   async (data, { rejectWithValue }) => {
     const { organizationId, ...fields } = data
+
     try {
       const result = await projectsApi.createProject(organizationId, fields).then((response) => response.data)
       return result
@@ -74,8 +63,8 @@ export const projectsSlice = createSlice({
       .addCase(postProjects.pending, (state: ProjectsState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(postProjects.fulfilled, (state: ProjectsState, action: PayloadAction<Project[]>) => {
-        projectsAdapter.setAll(state, action.payload)
+      .addCase(postProjects.fulfilled, (state: ProjectsState, action: PayloadAction<Project>) => {
+        projectsAdapter.upsertOne(state, action.payload)
         state.loadingStatus = 'loaded'
       })
       .addCase(postProjects.rejected, (state: ProjectsState, action) => {
@@ -91,13 +80,13 @@ export const projectsActions = projectsSlice.actions
 
 const { selectAll, selectEntities } = projectsAdapter.getSelectors()
 
-export const getProjectsState = (rootState: any): ProjectsState => rootState[PROJECTS_FEATURE_KEY]
+export const getProjectsState = (rootState: RootState): ProjectsState => rootState[PROJECTS_FEATURE_KEY]
 
 export const selectAllProjects = createSelector(getProjectsState, selectAll)
 
 export const selectProjectsEntities = createSelector(getProjectsState, selectEntities)
 
-export const selectProjectsEntitiesByOrgId = (state: any, organizationId: string): Project[] => {
-  state = getProjectsState(state)
-  return getEntitiesByIds<Project>(state.entities, state?.joinOrganizationProject[organizationId])
+export const selectProjectsEntitiesByOrgId = (state: RootState, organizationId: string): Project[] => {
+  const projectState = getProjectsState(state)
+  return getEntitiesByIds<Project>(projectState.entities, projectState?.joinOrganizationProject[organizationId])
 }
