@@ -11,7 +11,7 @@ export function StepProject(props: StepProjectProps) {
   const { onSubmit, control, authLogout } = props
 
   return (
-    <div>
+    <div className="pb-10">
       <h1 className="h3 text-text-700 mb-3">
         Create your Organization
         <span className="ml-2" role="img" aria-label="star">

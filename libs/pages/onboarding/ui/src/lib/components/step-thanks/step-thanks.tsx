@@ -11,7 +11,7 @@ export function StepThanks(props: StepThanksProps) {
   const { firstName, email, dxAuth } = props
 
   return (
-    <div>
+    <div className="pb-10">
       <h1 className="h3 text-text-700 mb-3">Almost there..</h1>
       <p className="text-sm mb-5 text-text-500">Hey {firstName}, thanks for signing up!</p>
       <p className="text-sm mb-5 text-text-500">

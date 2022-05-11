@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { StepMore } from '@console/pages/onboarding/ui'
-import { ONBOARDING_THANKS_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL, useDocumentTitle } from '@console/shared/utils'
 import { useUser } from '@console/domains/user'
 import { Value } from '@console/shared/interfaces'
 
@@ -32,7 +32,8 @@ const dataQuestions: Value[] = [
 export function OnboardingMore() {
   useDocumentTitle('Onboarding Tell us more - Qovery')
   const { handleSubmit, control, setValue, watch } = useForm()
-  const { userSignUp, updateUserSignUp } = useUser()
+  const { userSignUp, updateUserSignUp, getUserSignUp } = useUser()
+
   const navigate = useNavigate()
 
   const displayQoveryUsageOther = watch('qovery_usage') === 'other'
@@ -43,7 +44,7 @@ export function OnboardingMore() {
     setValue('qovery_usage_other', userSignUp?.qovery_usage_other || undefined)
   }, [setValue, userSignUp])
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data) {
       // reset qovery usage other
       if (data['qovery_usage'] !== 'other') {
@@ -51,7 +52,14 @@ export function OnboardingMore() {
       }
 
       updateUserSignUp({ ...userSignUp, ...data })
-      navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)
+
+      const user = await getUserSignUp()
+
+      if (user.payload.dx_auth) {
+        navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
+      } else if (!user.payload.dx_auth) {
+        navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)
+      }
     }
   })
 

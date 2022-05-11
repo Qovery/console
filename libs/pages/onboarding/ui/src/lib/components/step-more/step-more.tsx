@@ -14,7 +14,7 @@ export function StepMore(props: StepMoreProps) {
   const { dataQuestions, onSubmit, control, displayQoveryUsageOther } = props
 
   return (
-    <div>
+    <div className="pb-10">
       <h1 className="h3 text-text-700 mb-3">Tell us more</h1>
       <p className="text-sm mb-10 text-text-500">We need some information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>

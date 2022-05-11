@@ -35,7 +35,7 @@ export function FormUser(props: FormUserProps) {
     const { email, name } = user
 
     // adding default values by oAuth
-    if (name && email && userSignUp) {
+    if (name && email) {
       setValue('first_name', userSignUp.first_name ? userSignUp.first_name : name?.split(' ')[0])
       setValue('last_name', userSignUp.last_name ? userSignUp.last_name : name?.split(' ')[1])
       setValue('user_email', userSignUp.user_email ? userSignUp.user_email : email)
