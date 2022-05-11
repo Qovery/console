@@ -3,8 +3,9 @@ import { Container } from '@console/pages/applications/ui'
 import { useParams } from 'react-router'
 import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
 import { useSelector } from 'react-redux'
-import { selectEnvironmentById, useEnvironments } from '@console/domains/projects'
+import { useEnvironments } from '@console/domains/projects'
 import { useEffect } from 'react'
+import { selectEnvironmentById } from '@console/domains/environment'
 
 export function ApplicationsPage() {
   useDocumentTitle('Applications - Qovery')

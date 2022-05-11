@@ -4,7 +4,7 @@ import { selectApplicationById, useApplications } from '@console/domains/applica
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { selectEnvironmentById } from '@console/domains/projects'
+import { selectEnvironmentById } from '@console/domains/environment'
 
 export function ApplicationPage() {
   useDocumentTitle('Application - Qovery')
