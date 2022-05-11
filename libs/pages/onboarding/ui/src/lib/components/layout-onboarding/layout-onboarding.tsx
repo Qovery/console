@@ -16,7 +16,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
   const { children, currentStepPosition, stepsNumber, getProgressPercentValue, step, catchline } = props
 
   return (
-    <main className="h-screen overflow-hidden">
+    <main className="h-screen">
       <Navbar
         className="absolute top-0 w-full"
         progress={getProgressPercentValue}
