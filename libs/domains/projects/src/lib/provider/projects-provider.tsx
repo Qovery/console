@@ -13,7 +13,7 @@ export function useProjects() {
   )
 
   const createProject = async (organizationId: string, payload: ProjectRequest) => {
-    const result = await dispatch(postProjects({ organizationId: organizationId, ...payload }))
+    const result = await dispatch(postProject({ organizationId: organizationId, ...payload }))
     return result.payload
   }
 
