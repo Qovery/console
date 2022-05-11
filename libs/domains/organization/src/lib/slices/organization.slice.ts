@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
-import { OrganizationState } from '@console/shared/interfaces'
+import { OrganizationState, RootState } from '@console/shared/interfaces'
 
 export const ORGANIZATION_KEY = 'organization'
 
@@ -13,7 +13,7 @@ export const fetchOrganization = createAsyncThunk('organization/fetch', async ()
   return response.results as Organization[]
 })
 
-export const postOrganization = createAsyncThunk<any, OrganizationRequest>(
+export const postOrganization = createAsyncThunk<Organization, OrganizationRequest>(
   'organization/post',
   async (data: OrganizationRequest, { rejectWithValue }) => {
     try {
@@ -71,11 +71,11 @@ export const { addOrganization, removeOrganization } = organizationSlice.actions
 
 const { selectAll, selectById } = organizationAdapter.getSelectors()
 
-export const getOrganizationState = (rootState: any): OrganizationState => rootState[ORGANIZATION_KEY]
+export const getOrganizationState = (rootState: RootState): OrganizationState => rootState[ORGANIZATION_KEY]
 
 export const selectAllOrganization = createSelector(getOrganizationState, selectAll)
 
-export const selectOrganizationById = (state: any, organizationId: string) =>
+export const selectOrganizationById = (state: RootState, organizationId: string) =>
   getOrganizationState(state).entities[organizationId]
 
 export const selectOrganizationLoadingStatus = createSelector(getOrganizationState, (state) => state.loadingStatus)

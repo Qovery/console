@@ -9,6 +9,7 @@ import { useAuth } from '@console/shared/utils'
 import { useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
 import { RootState } from '@console/shared/interfaces'
+import { Application, Environment, Project } from 'qovery-typescript-axios'
 
 export interface LayoutProps {
   children: React.ReactElement
@@ -22,12 +23,15 @@ export function Layout(props: LayoutProps) {
   const { getProjects } = useProjects()
   const { userSignUp, getUserSignUp } = useUser()
   const { getEnvironments } = useEnvironments()
-  const environments = useSelector((state) => selectEnvironmentsEntitiesByProjectId(state, projectId))
+  const environments = useSelector<RootState, Environment[]>((state) =>
+    selectEnvironmentsEntitiesByProjectId(state, projectId)
+  )
   const { applications, getApplications } = useApplications()
   const { getApplication } = useApplication()
-  const projects = useSelector((state) => selectProjectsEntitiesByOrgId(state, organizationId))
-
-  const application = useSelector((state: RootState) => selectApplicationById(state, applicationId))
+  const projects = useSelector<RootState, Project[]>((state) => selectProjectsEntitiesByOrgId(state, organizationId))
+  const application = useSelector<RootState, Application | undefined>((state) =>
+    selectApplicationById(state, applicationId)
+  )
 
   useEffect(() => {
     getUserSignUp()

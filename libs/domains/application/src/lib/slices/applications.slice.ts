@@ -3,7 +3,6 @@ import {
   createEntityAdapter,
   createSelector,
   createSlice,
-  EntityState,
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
@@ -13,18 +12,12 @@ import { ApplicationsState, RootState } from '@console/shared/interfaces'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
-export interface ApplicationsState extends EntityState<Application & { status?: Status }> {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
-  error: string | null | undefined
-  joinEnvApp: Record<string, string[]>
-}
-
 export const applicationsAdapter = createEntityAdapter<Application>()
 
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 
-export const fetchApplications = createAsyncThunk<any, { environmentId: string }>(
+export const fetchApplications = createAsyncThunk<Application[], { environmentId: string }>(
   'applications/fetch',
   async (data) => {
     const response = await applicationsApi.listApplication(data.environmentId).then((response) => {
@@ -34,7 +27,7 @@ export const fetchApplications = createAsyncThunk<any, { environmentId: string }
   }
 )
 
-export const fetchApplicationsStatus = createAsyncThunk<any, { environmentId: string }>(
+export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
     const response = await applicationsApi
@@ -44,12 +37,15 @@ export const fetchApplicationsStatus = createAsyncThunk<any, { environmentId: st
   }
 )
 
-export const fetchApplication = createAsyncThunk<any, { applicationId: string }>('application/fetch', async (data) => {
-  const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => response.data)
-  return response as Application
-})
+export const fetchApplication = createAsyncThunk<Application, { applicationId: string }>(
+  'application/fetch',
+  async (data) => {
+    const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => response.data)
+    return response as Application
+  }
+)
 
-export const removeOneApplication = createAsyncThunk<any, { applicationId: string }>(
+export const removeOneApplication = createAsyncThunk<string, { applicationId: string }>(
   'applications/remove',
   async (data, thunkApi) => {
     // const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => {

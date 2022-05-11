@@ -7,13 +7,18 @@ import { useEnvironments } from '@console/domains/projects'
 import { useEffect } from 'react'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { RootState } from '@console/shared/interfaces'
+import { Application, Environment } from 'qovery-typescript-axios'
 
 export function ApplicationsPage() {
   useDocumentTitle('Applications - Qovery')
   const { environmentId = '', projectId } = useParams()
   const { getEnvironmentsStatus } = useEnvironments()
-  const environment = useSelector((state) => selectEnvironmentById(state, environmentId))
-  const applicationsByEnv = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
+  const environment = useSelector<RootState, Environment | undefined>((state) =>
+    selectEnvironmentById(state, environmentId)
+  )
+  const applicationsByEnv = useSelector<RootState, Application[]>((state: RootState) =>
+    selectApplicationsEntitiesByEnvId(state, environmentId)
+  )
 
   useEffect(() => {
     setTimeout(() => {
