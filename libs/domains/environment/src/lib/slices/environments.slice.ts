@@ -2,11 +2,11 @@ import {
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
-  createSlice,
-  EntityState,
+  createSlice, EntityState,
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
+import { EnvironmentsState } from '@console/shared/interfaces'
 import { Environment, EnvironmentsApi, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 

@@ -4,9 +4,10 @@ import {
   createSelector,
   createSlice,
   EntityState,
-  PayloadAction,
+  PayloadAction
 } from '@reduxjs/toolkit'
 import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
+import { ProjectsState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
 export const PROJECTS_FEATURE_KEY = 'projects'

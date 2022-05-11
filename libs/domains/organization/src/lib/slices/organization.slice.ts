@@ -1,21 +1,10 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSelector,
-  createSlice,
-  EntityState,
-  PayloadAction,
-} from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
+import { OrganizationState } from '@console/shared/interfaces'
 
 export const ORGANIZATION_KEY = 'organization'
 
 const organizationMainCalls = new OrganizationMainCallsApi()
-
-export interface OrganizationState extends EntityState<Organization> {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
-  error: string | null | undefined
-}
 
 export const organizationAdapter = createEntityAdapter<Organization>()
 
