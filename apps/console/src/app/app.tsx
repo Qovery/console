@@ -1,22 +1,21 @@
 import { useEffect } from 'react'
 import LogRocket from 'logrocket'
-import posthog from 'posthog-js'
 import axios from 'axios'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
-import { Navigate, Routes, Route, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
+  APPLICATION_URL,
+  APPLICATIONS_URL,
+  ENVIRONMENTS_URL,
   LOGIN_URL,
+  ONBOARDING_URL,
+  ORGANIZATION_URL,
   OVERVIEW_URL,
   ProtectedRoute,
-  useAuth,
-  useDocumentTitle,
-  useAuthInterceptor,
   SETTINGS_URL,
-  ONBOARDING_URL,
-  ENVIRONMENTS_URL,
-  APPLICATIONS_URL,
-  APPLICATION_URL,
-  ORGANIZATION_URL,
+  useAuth,
+  useAuthInterceptor,
+  useDocumentTitle,
 } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
 import { LoginPage } from '@console/pages/login/feature'
@@ -27,7 +26,7 @@ import { ApplicationsPage } from '@console/pages/applications/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { ApplicationPage } from '@console/pages/application/feature'
 import { Layout } from '@console/shared/layout'
-import { environments, useProjects } from '@console/domains/projects'
+import { useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
 
 function RedirectOverview() {

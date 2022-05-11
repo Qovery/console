@@ -1,16 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { User } from 'qovery-typescript-axios'
 import { initialOrganizationState, organization, OrganizationState } from '@console/domains/organization'
-import {
-  initialProjectsState,
-  ProjectsState,
-  projects,
-  EnvironmentsState,
-  environments,
-  initialEnvironmentsState,
-} from '@console/domains/projects'
-import { initialUserSignUpState, initialUserState, user, UserSignUpState, userSignUp } from '@console/domains/user'
+import { initialProjectsState, projects, ProjectsState } from '@console/domains/projects'
+import { initialUserSignUpState, initialUserState, user, userSignUp, UserSignUpState } from '@console/domains/user'
 import { applications, ApplicationsState, initialApplicationsState } from '@console/domains/application'
+import { environments, EnvironmentsState, initialEnvironmentsState } from '@console/domains/environment'
 
 export const rootReducer = combineReducers({
   user: user,
