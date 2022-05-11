@@ -14,7 +14,7 @@ export const fetchProjects = createAsyncThunk<Project[], { organizationId: strin
   return response.results as Project[]
 })
 
-export const postProjects = createAsyncThunk<Project, { organizationId: string } & ProjectRequest>(
+export const postProject = createAsyncThunk<Project, { organizationId: string } & ProjectRequest>(
   'projects/post',
   async (data, { rejectWithValue }) => {
     const { organizationId, ...fields } = data
@@ -60,14 +60,14 @@ export const projectsSlice = createSlice({
         state.error = action.error.message
       })
       // post
-      .addCase(postProjects.pending, (state: ProjectsState) => {
+      .addCase(postProject.pending, (state: ProjectsState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(postProjects.fulfilled, (state: ProjectsState, action: PayloadAction<Project>) => {
+      .addCase(postProject.fulfilled, (state: ProjectsState, action: PayloadAction<Project>) => {
         projectsAdapter.upsertOne(state, action.payload)
         state.loadingStatus = 'loaded'
       })
-      .addCase(postProjects.rejected, (state: ProjectsState, action) => {
+      .addCase(postProject.rejected, (state: ProjectsState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
