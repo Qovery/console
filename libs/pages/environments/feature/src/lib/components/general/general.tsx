@@ -6,8 +6,6 @@ import { useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
 
 export function General() {
-  const { environments, getEnvironmentsStatus } = useEnvironments()
-  const { projectId } = useParams()
   const { getEnvironmentsStatus } = useEnvironments()
   const { projectId = '' } = useParams()
   const environments = useSelector((state) => selectEnvironmentsEntitiesByProjectId(state, projectId))
