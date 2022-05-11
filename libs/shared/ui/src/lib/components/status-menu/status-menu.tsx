@@ -1,58 +1,83 @@
+import { StatusMenuAction } from '@console/shared/ui'
+import { upperCaseFirstLetter } from '@console/shared/utils'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import Icon from '../icon/icon'
-import Menu from '../menu/menu'
-import { MenuItemProps } from '../menu/menu-item/menu-item'
 
-export enum StatusMenuState {
+export enum StatusMenuType {
+  AVAILABLE = 'available',
+  STOP = 'stop',
+  WARNING = 'warning',
   RUNNING = 'running',
-  STOPPED = 'stopped',
-  ERROR = 'error',
-  STARTING = 'starting',
-  STOPPING = 'stopping',
 }
-
 export interface StatusMenuProps {
-  status: StatusMenuState
-  menus?: { items: MenuItemProps[] }[]
+  status: GlobalDeploymentStatus
 }
 
 export function StatusMenu(props: StatusMenuProps) {
-  const { status = StatusMenuState.RUNNING, menus = [] } = props
+  const { status = GlobalDeploymentStatus.RUNNING } = props
 
   const [open, setOpen] = useState(false)
 
+  const getType = (currentStatus: GlobalDeploymentStatus) => {
+    switch (currentStatus) {
+      case GlobalDeploymentStatus.RUNNING ||
+        GlobalDeploymentStatus.READY ||
+        GlobalDeploymentStatus.QUEUED ||
+        GlobalDeploymentStatus.BUILDING ||
+        GlobalDeploymentStatus.BUILT ||
+        GlobalDeploymentStatus.DEPLOYED:
+        return StatusMenuType.AVAILABLE
+      case GlobalDeploymentStatus.STOPPED || GlobalDeploymentStatus.STOP_QUEUED:
+        return StatusMenuType.STOP
+      case GlobalDeploymentStatus.DEPLOYMENT_ERROR ||
+        GlobalDeploymentStatus.DELETE_QUEUED ||
+        GlobalDeploymentStatus.BUILD_ERROR ||
+        GlobalDeploymentStatus.STOP_ERROR ||
+        GlobalDeploymentStatus.DELETING ||
+        GlobalDeploymentStatus.DELETE_ERROR ||
+        GlobalDeploymentStatus.DELETED ||
+        GlobalDeploymentStatus.RUNNING_ERROR:
+        return StatusMenuType.WARNING
+      case GlobalDeploymentStatus.DEPLOYING || GlobalDeploymentStatus.STOPPING:
+        return StatusMenuType.RUNNING
+      default:
+        return StatusMenuType.AVAILABLE
+    }
+  }
+
   const iconStatus = () => {
-    switch (status) {
-      case StatusMenuState.RUNNING:
+    switch (getType(status)) {
+      case StatusMenuType.AVAILABLE:
         return <Icon name="icon-solid-play" className="text-xs" />
-      case StatusMenuState.STOPPED:
+      case StatusMenuType.STOP:
         return <Icon name="icon-solid-circle-stop" className="text-xs" />
-      case StatusMenuState.ERROR:
+      case StatusMenuType.WARNING:
         return <Icon name="icon-solid-circle-exclamation" className="text-xs" />
-      case StatusMenuState.STARTING || StatusMenuState.STOPPING:
+      case StatusMenuType.RUNNING:
         return <Icon name="icon-solid-play" className="text-xs" />
       default:
         return <Icon name="icon-solid-play" className="text-xs" />
     }
   }
 
-  const statusClassName = `status-menu status-menu--${
-    open ? 'open' : 'closed'
-  } status-menu--${status} h-6 inline-flex items-center pl-2 border rounded overflow-hidden`
+  const statusClassName = `status-menu status-menu--${open ? 'open' : 'closed'} status-menu--${getType(
+    status
+  )} h-6 inline-flex items-center pl-2 border rounded overflow-hidden`
 
   return (
     <div className={statusClassName} data-testid="statusmenu">
-      <p className="text-xs font-semibold capitalize">{status}</p>
+      <p className="text-xs font-semibold">{upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}</p>
       <div className="status-menu__trigger h-full inline-flex items-center border-l ml-2 hover:transition transition ease-in-out duration-300">
-        <Menu
-          menus={menus}
-          width={248}
-          onOpen={(e) => setOpen(e)}
+        <StatusMenuAction
           trigger={
             <div className="h-full flex items-center gap-1.5 px-2 cursor-pointer">
               {iconStatus()} <Icon name="icon-solid-angle-down" className="text-xs" />
             </div>
           }
+          status={status}
+          onOpen={(e) => setOpen(e)}
+          width={248}
         />
       </div>
     </div>

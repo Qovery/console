@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   fetchApplications,
+  fetchApplicationsStatus,
   removeOneApplication,
   selectAllApplications,
   selectApplicationsEntitiesByEnvId,
@@ -21,5 +22,10 @@ export function useApplications() {
     [dispatch]
   )
 
-  return { applications, getApplications, removeApplication }
+  const getApplicationsStatus = useCallback(
+    async (environmentId: string) => dispatch(fetchApplicationsStatus({ environmentId })),
+    [dispatch]
+  )
+
+  return { applications, getApplications, removeApplication, getApplicationsStatus }
 }

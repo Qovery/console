@@ -100,3 +100,6 @@ export const getEnvironmentsState = (rootState: any): EnvironmentsState => rootS
 export const selectAllEnvironments = createSelector(getEnvironmentsState, selectAll)
 
 export const selectEnvironmentsEntities = createSelector(getEnvironmentsState, selectEntities)
+
+export const selectEnvironmentById = (state: any, environmentId: string) =>
+  getEnvironmentsState(state).entities[environmentId]

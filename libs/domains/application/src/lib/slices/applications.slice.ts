@@ -5,13 +5,14 @@ import {
   createSlice,
   EntityState,
   PayloadAction,
+  Update,
 } from '@reduxjs/toolkit'
-import { ApplicationsApi, Application, ApplicationMainCallsApi } from 'qovery-typescript-axios'
+import { ApplicationsApi, Application, ApplicationMainCallsApi, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
-export interface ApplicationsState extends EntityState<Application> {
+export interface ApplicationsState extends EntityState<Application & { status?: Status }> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
   joinEnvApp: Record<string, string[]>
@@ -29,6 +30,16 @@ export const fetchApplications = createAsyncThunk<any, { environmentId: string }
       return response.data
     })
     return response.results as Application[]
+  }
+)
+
+export const fetchApplicationsStatus = createAsyncThunk<any, { environmentId: string }>(
+  'applications-status/fetch',
+  async (data) => {
+    const response = await applicationsApi
+      .getEnvironmentApplicationStatus(data.environmentId)
+      .then((response: any) => response.data)
+    return response.results as Status[]
   }
 )
 
@@ -85,6 +96,26 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchApplication.rejected, (state: ApplicationsState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // get environments status
+      .addCase(fetchApplicationsStatus.pending, (state: ApplicationsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(fetchApplicationsStatus.fulfilled, (state: ApplicationsState, action: PayloadAction<Status[]>) => {
+        const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
+          (status: Status) => ({
+            id: status.id,
+            changes: {
+              status: status,
+            },
+          })
+        )
+        applicationsAdapter.updateMany(state, update as Update<Application>[])
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(fetchApplicationsStatus.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
       })

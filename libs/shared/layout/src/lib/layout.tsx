@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useOrganization } from '@console/domains/organization'
-import { useEnviroments, useProjects } from '@console/domains/projects'
+import { useEnvironments, useProjects } from '@console/domains/projects'
 import { useUser } from '@console/domains/user'
 import { selectApplicationById, useApplication, useApplications } from '@console/domains/application'
 import { LayoutPage } from '@console/shared/ui'
@@ -18,7 +18,7 @@ export function Layout(props: LayoutProps) {
   const { organization, getOrganization } = useOrganization()
   const { projects, getProjects } = useProjects()
   const { userSignUp, getUserSignUp } = useUser()
-  const { environments, getEnvironments } = useEnviroments()
+  const { environments, getEnvironments } = useEnvironments()
   const { applications, getApplications } = useApplications()
   const { getApplication } = useApplication()
   const { organizationId, projectId, environmentId, applicationId = '' } = useParams()
