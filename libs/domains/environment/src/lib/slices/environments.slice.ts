@@ -7,7 +7,8 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { EnvironmentsApi, Environment, Status } from 'qovery-typescript-axios'
+import { Environment, EnvironmentsApi, Status } from 'qovery-typescript-axios'
+import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
@@ -21,6 +22,7 @@ export interface EnvironmentsState
   > {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
+  joinProjectEnvironments: Record<string, string[]>
 }
 
 export const environmentsAdapter = createEntityAdapter<Environment>()
@@ -43,6 +45,7 @@ export const fetchEnvironmentsStatus = createAsyncThunk<any, { projectId: string
 export const initialEnvironmentsState: EnvironmentsState = environmentsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
+  joinProjectEnvironments: {},
 })
 
 export const environmentsSlice = createSlice({
@@ -59,7 +62,12 @@ export const environmentsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchEnvironments.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment[]>) => {
-        environmentsAdapter.setAll(state, action.payload)
+        environmentsAdapter.upsertMany(state, action.payload)
+        action.payload.forEach((environment) => {
+          state.joinProjectEnvironments = addOneToManyRelation(environment.project?.id, environment.id, {
+            ...state.joinProjectEnvironments,
+          })
+        })
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchEnvironments.rejected, (state: EnvironmentsState, action) => {
@@ -100,6 +108,11 @@ export const getEnvironmentsState = (rootState: any): EnvironmentsState => rootS
 export const selectAllEnvironments = createSelector(getEnvironmentsState, selectAll)
 
 export const selectEnvironmentsEntities = createSelector(getEnvironmentsState, selectEntities)
+
+export const selectEnvironmentsEntitiesByProjectId = (state: any, projectId: string): Environment[] => {
+  state = getEnvironmentsState(state)
+  return getEntitiesByIds<Environment>(state.entities, state?.joinProjectEnvironments[projectId])
+}
 
 export const selectEnvironmentById = (state: any, environmentId: string) =>
   getEnvironmentsState(state).entities[environmentId]

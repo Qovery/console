@@ -7,6 +7,7 @@ import { selectApplicationById, useApplication, useApplications } from '@console
 import { LayoutPage } from '@console/shared/ui'
 import { useAuth } from '@console/shared/utils'
 import { useSelector } from 'react-redux'
+import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
 
 export interface LayoutProps {
   children: React.ReactElement
@@ -15,13 +16,14 @@ export interface LayoutProps {
 export function Layout(props: LayoutProps) {
   const { children } = props
   const { authLogout } = useAuth()
+  const { organizationId = '', projectId = '', environmentId, applicationId = '' } = useParams()
   const { organization, getOrganization } = useOrganization()
   const { getProjects } = useProjects()
   const { userSignUp, getUserSignUp } = useUser()
-  const { environments, getEnvironments } = useEnvironments()
+  const { getEnvironments } = useEnvironments()
+  const environments = useSelector((state) => selectEnvironmentsEntitiesByProjectId(state, projectId))
   const { applications, getApplications } = useApplications()
   const { getApplication } = useApplication()
-  const { organizationId = '', projectId, environmentId, applicationId = '' } = useParams()
   const projects = useSelector((state) => selectProjectsEntitiesByOrgId(state, organizationId))
 
   const application = useSelector((state) => selectApplicationById(state, applicationId))

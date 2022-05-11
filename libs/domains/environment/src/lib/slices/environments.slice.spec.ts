@@ -1,10 +1,11 @@
-import { fetchEnvironments, environmentsAdapter, environments } from './environments.slice'
+import { environments, environmentsAdapter, fetchEnvironments } from './environments.slice'
 
 describe('environments reducer', () => {
   it('should handle initial state', () => {
     const expected = environmentsAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
+      joinProjectEnvironments: {},
     })
 
     expect(environments(undefined, { type: '' })).toEqual(expected)
