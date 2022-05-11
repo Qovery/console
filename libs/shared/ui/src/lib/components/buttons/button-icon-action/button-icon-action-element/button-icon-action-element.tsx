@@ -41,7 +41,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         className={menusClassName}
         width={248}
         status={status}
-        onOpen={(e) => setOpen(e)}
+        setOpen={(e) => setOpen(e)}
         paddingMenuX={8}
         paddingMenuY={8}
         trigger={

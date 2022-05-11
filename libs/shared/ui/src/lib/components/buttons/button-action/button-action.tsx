@@ -85,7 +85,7 @@ export function ButtonAction(props: ButtonActionProps) {
       <div data-testid="button-action" className={defineClass}>
         <StatusMenuAction
           arrowAlign={MenuAlign.END}
-          onOpen={(e) => setMenuOpen(e)}
+          setOpen={(e) => setMenuOpen(e)}
           trigger={
             <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
               <Icon name="icon-solid-ellipsis-vertical" />

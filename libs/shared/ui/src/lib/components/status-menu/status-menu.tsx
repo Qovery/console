@@ -76,7 +76,7 @@ export function StatusMenu(props: StatusMenuProps) {
             </div>
           }
           status={status}
-          onOpen={(e) => setOpen(e)}
+          setOpen={(e) => setOpen(e)}
           width={248}
         />
       </div>
