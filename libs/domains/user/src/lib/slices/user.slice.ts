@@ -1,5 +1,6 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { UserInterface } from '../interfaces'
+import { RootState } from '@console/shared/interfaces'
 
 export const USER_KEY = 'user'
 
@@ -26,6 +27,6 @@ export const user = userSlice.reducer
 
 export const userActions = userSlice.actions
 
-export const getUserState = (rootState: any): UserInterface => rootState[USER_KEY]
+export const getUserState = (rootState: RootState): UserInterface => rootState[USER_KEY]
 
 export const selectUser = createSelector(getUserState, (state) => state)

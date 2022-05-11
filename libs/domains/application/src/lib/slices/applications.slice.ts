@@ -7,8 +7,9 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { ApplicationsApi, Application, ApplicationMainCallsApi, Status } from 'qovery-typescript-axios'
+import { Application, ApplicationMainCallsApi, ApplicationsApi, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
+import { ApplicationsState, RootState } from '@console/shared/interfaces'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
@@ -132,17 +133,17 @@ export const applicationsActions = applicationsSlice.actions
 
 const { selectAll, selectEntities } = applicationsAdapter.getSelectors()
 
-export const getApplicationsState = (rootState: any): ApplicationsState => rootState[APPLICATIONS_FEATURE_KEY]
+export const getApplicationsState = (rootState: RootState): ApplicationsState => rootState[APPLICATIONS_FEATURE_KEY]
 
 export const selectAllApplications = createSelector(getApplicationsState, selectAll)
 export const selectAllApplicationsByEnv = (environmentId: string) => createSelector(getApplicationsState, selectAll)
 
 export const selectApplicationsEntities = createSelector(getApplicationsState, selectEntities)
 
-export const selectApplicationsEntitiesByEnvId = (state: any, environmentId: string): Application[] => {
-  state = getApplicationsState(state)
-  return getEntitiesByIds<Application>(state.entities, state?.joinEnvApp[environmentId])
+export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): Application[] => {
+  const appState = getApplicationsState(state)
+  return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApp[environmentId])
 }
 
-export const selectApplicationById = (state: any, applicationId: string) =>
+export const selectApplicationById = (state: RootState, applicationId: string): Application | undefined =>
   getApplicationsState(state).entities[applicationId]

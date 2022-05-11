@@ -1,22 +1,21 @@
 import { IconEnum } from '@console/shared/enums'
 import {
+  Button,
   ButtonIcon,
   ButtonIconStyle,
-  StatusMenu,
-  Icon,
-  Header,
-  Tag,
-  Button,
-  ButtonStyle,
   ButtonSize,
+  ButtonStyle,
+  Header,
+  Icon,
+  StatusMenu,
   Tabs,
+  Tag,
   Skeleton,
   StatusChip,
 } from '@console/shared/ui'
-import { APPLICATION_URL } from '@console/shared/utils'
-import { ClickEvent } from '@szhsin/react-menu'
 import { Application, Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
+import { APPLICATION_URL } from "@console/shared/utils";
 
 export interface ContainerProps {
   application?: Application & { status?: Status }

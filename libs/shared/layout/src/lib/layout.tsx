@@ -8,6 +8,7 @@ import { LayoutPage } from '@console/shared/ui'
 import { useAuth } from '@console/shared/utils'
 import { useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
+import { RootState } from '@console/shared/interfaces'
 
 export interface LayoutProps {
   children: React.ReactElement
@@ -26,7 +27,7 @@ export function Layout(props: LayoutProps) {
   const { getApplication } = useApplication()
   const projects = useSelector((state) => selectProjectsEntitiesByOrgId(state, organizationId))
 
-  const application = useSelector((state) => selectApplicationById(state, applicationId))
+  const application = useSelector((state: RootState) => selectApplicationById(state, applicationId))
 
   useEffect(() => {
     getUserSignUp()

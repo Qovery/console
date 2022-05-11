@@ -6,13 +6,14 @@ import { useSelector } from 'react-redux'
 import { useEnvironments } from '@console/domains/projects'
 import { useEffect } from 'react'
 import { selectEnvironmentById } from '@console/domains/environment'
+import { RootState } from '@console/shared/interfaces'
 
 export function ApplicationsPage() {
   useDocumentTitle('Applications - Qovery')
   const { environmentId = '', projectId } = useParams()
   const { getEnvironmentsStatus } = useEnvironments()
-  const applicationsByEnv = useSelector((state) => selectApplicationsEntitiesByEnvId(state, environmentId))
   const environment = useSelector((state) => selectEnvironmentById(state, environmentId))
+  const applicationsByEnv = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
 
   useEffect(() => {
     setTimeout(() => {
