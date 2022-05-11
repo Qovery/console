@@ -17,6 +17,7 @@ export function OnboardingPage() {
     async function fetchData() {
       if (params['*'] === '') {
         const user = await getUserSignUp()
+        // check if user request work before redirect
         if (user) {
           navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
         }
