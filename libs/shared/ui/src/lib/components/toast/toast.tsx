@@ -34,7 +34,7 @@ export const ToastContent = (
     </div>
     <div className="toast__content">
       {title && (
-        <p data-testid="toast-title" className="text-sm text-white">
+        <p data-testid="toast-title" className="text-sm text-white mb-1">
           {title}
         </p>
       )}
