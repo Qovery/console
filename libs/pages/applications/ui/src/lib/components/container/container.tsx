@@ -41,15 +41,15 @@ export function Container(props: ContainerProps) {
 
   const headerActions = (
     <>
-      <Skeleton width={150} height={24} show={!environment?.status} className={`${!environment?.status && 'mt-[1px]'}`}>
+      <Skeleton width={150} height={24} show={!environment?.status}>
         <StatusMenu status={environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING} />
       </Skeleton>
       {environment && (
-        <Skeleton width={80} height={24} show={environment?.mode ? false : true}>
+        <Skeleton width={80} height={24} show={!environment?.mode}>
           <TagMode status={environment?.mode} />
         </Skeleton>
       )}
-      <Skeleton width={100} height={24} show={environment?.cloud_provider ? false : true}>
+      <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
         <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium mt-[1px] gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>

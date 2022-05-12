@@ -15,8 +15,7 @@ import {
   TagMode,
 } from '@console/shared/ui'
 import { APPLICATION_URL } from '@console/shared/utils'
-import { ClickEvent } from '@szhsin/react-menu'
-import { Application, Environment, EnvironmentModeEnum, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
+import { Environment, GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
 
@@ -45,12 +44,7 @@ export function Container(props: ContainerProps) {
 
   const headerActions = (
     <>
-      <Skeleton
-        width={150}
-        height={24}
-        show={application?.status ? false : true}
-        className={`${!application?.status && 'mt-[1px]'}`}
-      >
+      <Skeleton width={150} height={24} show={!application?.status} className={`${!application?.status && 'mt-[1px]'}`}>
         <StatusMenu status={application?.status ? application?.status.state : GlobalDeploymentStatus.RUNNING} />
       </Skeleton>
       {environment && (
@@ -58,8 +52,8 @@ export function Container(props: ContainerProps) {
           <TagMode status={environment?.mode} />
         </Skeleton>
       )}
-      <Skeleton width={100} height={24} show={environment?.cloud_provider ? false : true}>
-        <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium mt-[1px] gap-2">
+      <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
+        <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>
         </div>
