@@ -44,7 +44,7 @@ export function Container(props: ContainerProps) {
 
   const headerActions = (
     <>
-      <Skeleton width={150} height={24} show={!application?.status} className={`${!application?.status && 'mt-[1px]'}`}>
+      <Skeleton width={150} height={24} show={!application?.status}>
         <StatusMenu status={application?.status ? application?.status.state : GlobalDeploymentStatus.RUNNING} />
       </Skeleton>
       {environment && (
