@@ -14,11 +14,11 @@ export function Container(props: ContainerProps) {
   const location = useLocation()
 
   const headerButtons = (
-    <>
+    <div className="hidden">
       <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />
       <ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />
       <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />
-    </>
+    </div>
   )
 
   const tabsItems = [
