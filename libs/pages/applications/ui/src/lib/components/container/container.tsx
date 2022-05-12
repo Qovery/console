@@ -1,25 +1,26 @@
-import { Application, Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
+import { Application, GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { APPLICATIONS_URL, APPLICATION_URL } from '@console/shared/utils'
+import { APPLICATION_URL, APPLICATIONS_URL } from '@console/shared/utils'
 import {
+  ButtonAction,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonAction,
   Header,
   Icon,
+  Skeleton,
+  StatusChip,
   StatusMenu,
   Tabs,
   Tag,
-  StatusChip,
-  Skeleton,
 } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
+import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
 
 export interface ContainerProps {
-  applications: Application[]
-  environment?: Environment & { status?: Status }
+  applications: ApplicationEntity[]
+  environment?: EnvironmentEntity
 }
 
 export function Container(props: ContainerProps) {
@@ -65,7 +66,7 @@ export function Container(props: ContainerProps) {
   const tabsItems = [
     {
       icon: (
-        <Skeleton width={16} height={16} rounded show={environment?.status ? false : true}>
+        <Skeleton width={16} height={16} rounded show={!environment?.status}>
           <StatusChip status={environment?.status && environment?.status.state} />
         </Skeleton>
       ),
@@ -77,7 +78,7 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <Skeleton width={154} height={32} show={environment?.status ? false : true}>
+      <Skeleton width={154} height={32} show={!environment?.status}>
         <ButtonAction status={environment?.status && environment?.status.state} iconRight="icon-solid-plus">
           New service
         </ButtonAction>

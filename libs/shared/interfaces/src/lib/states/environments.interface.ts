@@ -1,12 +1,7 @@
 import { EntityState } from '@reduxjs/toolkit'
-import { Environment, Status } from 'qovery-typescript-axios'
+import { EnvironmentEntity } from '../domain/environment.entity'
 
-export interface EnvironmentsState
-  extends EntityState<
-    Environment & {
-      status?: Status
-    }
-  > {
+export interface EnvironmentsState extends EntityState<EnvironmentEntity> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
   joinProjectEnvironments: Record<string, string[]>

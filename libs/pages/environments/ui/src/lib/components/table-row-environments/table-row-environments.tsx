@@ -1,4 +1,4 @@
-import { Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import {
   ButtonIconAction,
   Icon,
@@ -12,9 +12,10 @@ import {
   Tooltip,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 
 export interface TableRowEnvironmentsProps {
-  data: Environment & { status?: Status }
+  data: EnvironmentEntity
   dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string

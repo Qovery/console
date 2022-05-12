@@ -7,18 +7,19 @@ import {
   ButtonStyle,
   Header,
   Icon,
+  Skeleton,
+  StatusChip,
   StatusMenu,
   Tabs,
   Tag,
-  Skeleton,
-  StatusChip,
 } from '@console/shared/ui'
-import { Application, Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
+import { Environment, GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { APPLICATION_URL } from "@console/shared/utils";
+import { APPLICATION_URL } from '@console/shared/utils'
+import { ApplicationEntity } from '@console/shared/interfaces'
 
 export interface ContainerProps {
-  application?: Application & { status?: Status }
+  application?: ApplicationEntity
   environment?: Environment
 }
 
