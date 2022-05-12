@@ -4,7 +4,6 @@ import { useParams } from 'react-router'
 import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
 import { useSelector } from 'react-redux'
 import { useEnvironments } from '@console/domains/projects'
-import { useEffect } from 'react'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { RootState } from '@console/shared/interfaces'
 import { Application, Environment } from 'qovery-typescript-axios'
@@ -20,11 +19,11 @@ export function ApplicationsPage() {
     selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
-  useEffect(() => {
-    setTimeout(() => {
-      projectId && getEnvironmentsStatus(projectId)
-    }, 1000)
-  }, [projectId, environmentId, getEnvironmentsStatus])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     projectId && getEnvironmentsStatus(projectId)
+  //   })
+  // }, [projectId, environmentId, getEnvironmentsStatus])
 
   return <Container applications={applicationsByEnv} environment={environment} />
 }

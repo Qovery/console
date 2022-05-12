@@ -18,8 +18,9 @@ export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
 export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string }>(
   'environments/fetch',
-  async (data) => {
+  async (data, thunkApi) => {
     const response = await environmentsApi.listEnvironment(data.projectId).then((response) => response.data)
+    thunkApi.dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
     return response.results as Environment[]
   }
 )
@@ -60,6 +61,7 @@ export const environmentsSlice = createSlice({
             ...state.joinProjectEnvironments,
           })
         })
+
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchEnvironments.rejected, (state: EnvironmentsState, action) => {

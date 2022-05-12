@@ -19,10 +19,11 @@ const applicationMainCallsApi = new ApplicationMainCallsApi()
 
 export const fetchApplications = createAsyncThunk<Application[], { environmentId: string }>(
   'applications/fetch',
-  async (data) => {
+  async (data, thunkApi) => {
     const response = await applicationsApi.listApplication(data.environmentId).then((response) => {
       return response.data
     })
+    thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
     return response.results as Application[]
   }
 )
