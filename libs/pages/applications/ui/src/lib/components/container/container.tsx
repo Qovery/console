@@ -44,9 +44,11 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={24} show={!environment?.status} className={`${!environment?.status && 'mt-[1px]'}`}>
         <StatusMenu status={environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING} />
       </Skeleton>
-      <Skeleton width={80} height={24} show={environment?.mode ? false : true}>
-        <TagMode status={environment?.mode ? environment?.mode : EnvironmentModeEnum.PRODUCTION} />
-      </Skeleton>
+      {environment && (
+        <Skeleton width={80} height={24} show={environment?.mode ? false : true}>
+          <TagMode status={environment?.mode} />
+        </Skeleton>
+      )}
       <Skeleton width={100} height={24} show={environment?.cloud_provider ? false : true}>
         <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium mt-[1px] gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
