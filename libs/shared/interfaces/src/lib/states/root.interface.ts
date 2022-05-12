@@ -6,10 +6,14 @@ import { EnvironmentsState } from './environments.interface'
 import { ApplicationsState } from './applications.interface'
 
 export type RootState = {
-  user: UserInterface
-  userSignUp: UserSignUpState
-  organization: OrganizationState
-  projects: ProjectsState
-  environments: EnvironmentsState
-  applications: ApplicationsState
+  ui: {
+    user: UserInterface
+    userSignUp: UserSignUpState
+  }
+  entities: {
+    organization: OrganizationState
+    projects: ProjectsState
+    environments: EnvironmentsState
+    applications: ApplicationsState
+  }
 }

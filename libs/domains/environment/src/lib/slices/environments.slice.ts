@@ -95,7 +95,8 @@ export const environmentsActions = environmentsSlice.actions
 
 const { selectAll, selectEntities } = environmentsAdapter.getSelectors()
 
-export const getEnvironmentsState = (rootState: RootState): EnvironmentsState => rootState[ENVIRONMENTS_FEATURE_KEY]
+export const getEnvironmentsState = (rootState: RootState): EnvironmentsState =>
+  rootState.entities[ENVIRONMENTS_FEATURE_KEY]
 
 export const selectAllEnvironments = createSelector(getEnvironmentsState, selectAll)
 

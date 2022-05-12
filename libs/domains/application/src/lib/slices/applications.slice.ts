@@ -129,7 +129,8 @@ export const applicationsActions = applicationsSlice.actions
 
 const { selectAll, selectEntities } = applicationsAdapter.getSelectors()
 
-export const getApplicationsState = (rootState: RootState): ApplicationsState => rootState[APPLICATIONS_FEATURE_KEY]
+export const getApplicationsState = (rootState: RootState): ApplicationsState =>
+  rootState['entities'][APPLICATIONS_FEATURE_KEY]
 
 export const selectAllApplications = createSelector(getApplicationsState, selectAll)
 export const selectAllApplicationsByEnv = (environmentId: string) => createSelector(getApplicationsState, selectAll)

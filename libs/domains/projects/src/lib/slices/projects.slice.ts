@@ -80,7 +80,7 @@ export const projectsActions = projectsSlice.actions
 
 const { selectAll, selectEntities } = projectsAdapter.getSelectors()
 
-export const getProjectsState = (rootState: RootState): ProjectsState => rootState[PROJECTS_FEATURE_KEY]
+export const getProjectsState = (rootState: RootState): ProjectsState => rootState.entities[PROJECTS_FEATURE_KEY]
 
 export const selectAllProjects = createSelector(getProjectsState, selectAll)
 
