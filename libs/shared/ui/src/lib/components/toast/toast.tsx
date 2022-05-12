@@ -4,7 +4,6 @@ import { toast as toastAction, Toast, Toaster } from 'react-hot-toast'
 export enum ToastEnum {
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
-  WARNING = 'WARNING',
 }
 
 export interface ToastProps {

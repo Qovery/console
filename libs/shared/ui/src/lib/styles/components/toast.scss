@@ -16,12 +16,6 @@
   }
 }
 
-.toast--warning {
-  .toast__icon {
-    @apply bg-warning-500;
-  }
-}
-
 .toast--error {
   .toast__icon {
     @apply bg-error-500;
