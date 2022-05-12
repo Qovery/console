@@ -17,13 +17,17 @@ export const applicationsAdapter = createEntityAdapter<ApplicationEntity>()
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 
-export const fetchApplications = createAsyncThunk<Application[], { environmentId: string }>(
+export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
   'applications/fetch',
   async (data, thunkApi) => {
     const response = await applicationsApi.listApplication(data.environmentId).then((response) => {
       return response.data
     })
-    thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+
+    if (!data.withoutStatus) {
+      thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+    }
+
     return response.results as Application[]
   }
 )
