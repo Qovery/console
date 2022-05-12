@@ -1,8 +1,6 @@
-import { EntityState } from '@reduxjs/toolkit'
 import { ApplicationEntity } from '../domain/application.entity'
+import { DefaultEntityState } from './default-entity-state.interface'
 
-export interface ApplicationsState extends EntityState<ApplicationEntity> {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
-  error: string | null | undefined
+export interface ApplicationsState extends DefaultEntityState<ApplicationEntity> {
   joinEnvApp: Record<string, string[]>
 }

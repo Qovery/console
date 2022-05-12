@@ -1,7 +1,6 @@
 import { SignUp } from 'qovery-typescript-axios'
+import { DefaultUiState } from './default-ui-state.interface'
 
-export interface UserSignUpState {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
-  error: string | null | undefined
+export interface UserSignUpState extends DefaultUiState {
   signup: SignUp
 }
