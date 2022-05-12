@@ -71,7 +71,7 @@ export const { addOrganization, removeOrganization } = organizationSlice.actions
 
 const { selectAll, selectById } = organizationAdapter.getSelectors()
 
-export const getOrganizationState = (rootState: RootState): OrganizationState => rootState[ORGANIZATION_KEY]
+export const getOrganizationState = (rootState: RootState): OrganizationState => rootState.entities[ORGANIZATION_KEY]
 
 export const selectAllOrganization = createSelector(getOrganizationState, selectAll)
 

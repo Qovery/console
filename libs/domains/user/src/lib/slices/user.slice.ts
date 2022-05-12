@@ -27,6 +27,6 @@ export const user = userSlice.reducer
 
 export const userActions = userSlice.actions
 
-export const getUserState = (rootState: RootState): UserInterface => rootState[USER_KEY]
+export const getUserState = (rootState: RootState): UserInterface => rootState.ui[USER_KEY]
 
 export const selectUser = createSelector(getUserState, (state) => state)

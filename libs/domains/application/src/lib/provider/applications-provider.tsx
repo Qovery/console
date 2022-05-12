@@ -5,7 +5,6 @@ import {
   fetchApplicationsStatus,
   removeOneApplication,
   selectAllApplications,
-  selectApplicationsEntitiesByEnvId,
 } from '../slices/applications.slice'
 
 export function useApplications() {

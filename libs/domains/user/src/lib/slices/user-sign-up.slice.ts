@@ -83,7 +83,7 @@ export const userSignUp = userSignUpSlice.reducer
 export const userSignUpActions = userSignUpSlice.actions
 
 export const getUserSignUpState = (rootState: any): UserSignUpState => {
-  return rootState[USER_SIGNUP_KEY]
+  return rootState.ui[USER_SIGNUP_KEY]
 }
 
 export const selectUserSignUp = createSelector(getUserSignUpState, (state) => state.signup)
