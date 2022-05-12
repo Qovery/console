@@ -16,11 +16,15 @@ const environmentsApi = new EnvironmentsApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
-export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string }>(
+export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string; withoutStatus?: boolean }>(
   'environments/fetch',
   async (data, thunkApi) => {
     const response = await environmentsApi.listEnvironment(data.projectId).then((response) => response.data)
-    thunkApi.dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+
+    if (!data.withoutStatus) {
+      thunkApi.dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+    }
+
     return response.results as Environment[]
   }
 )

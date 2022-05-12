@@ -13,12 +13,6 @@ export function General() {
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     projectId && getEnvironmentsStatus(projectId)
-  //   })
-  // }, [projectId, getEnvironmentsStatus])
-
   return <GeneralPage environments={environments} />
 }
 

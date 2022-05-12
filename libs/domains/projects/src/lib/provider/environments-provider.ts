@@ -11,7 +11,7 @@ export function useEnvironments() {
   const environments = useSelector(selectAllEnvironments)
 
   const getEnvironments = useCallback(
-    async (projectId: string) => dispatch(fetchEnvironments({ projectId })),
+    async (projectId: string, withoutStatus = false) => dispatch(fetchEnvironments({ projectId, withoutStatus })),
     [dispatch]
   )
 

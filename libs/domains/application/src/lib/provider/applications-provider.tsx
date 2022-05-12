@@ -17,7 +17,8 @@ export function useApplications() {
   )
 
   const getApplications = useCallback(
-    async (environmentId: string) => dispatch(fetchApplications({ environmentId })),
+    async (environmentId: string, withoutStatus = false) =>
+      dispatch(fetchApplications({ environmentId, withoutStatus })),
     [dispatch]
   )
 
