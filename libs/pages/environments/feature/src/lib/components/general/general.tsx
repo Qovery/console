@@ -1,6 +1,5 @@
 import { useEnvironments } from '@console/domains/projects'
 import { GeneralPage } from '@console/pages/environments/ui'
-import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
@@ -14,11 +13,11 @@ export function General() {
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
 
-  useEffect(() => {
-    setTimeout(() => {
-      projectId && getEnvironmentsStatus(projectId)
-    }, 1000)
-  }, [projectId, getEnvironmentsStatus])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     projectId && getEnvironmentsStatus(projectId)
+  //   })
+  // }, [projectId, getEnvironmentsStatus])
 
   return <GeneralPage environments={environments} />
 }

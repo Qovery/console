@@ -22,7 +22,7 @@ export function ApplicationPage() {
   useEffect(() => {
     setTimeout(() => {
       environmentId && getApplicationsStatus(environmentId)
-    }, 1000)
+    })
   }, [environmentId, getApplicationsStatus])
 
   return <Container application={application} environment={environment} />
