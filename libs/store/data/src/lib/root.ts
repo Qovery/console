@@ -18,11 +18,9 @@ export const entitiesReducer = combineReducers({
   applications: applications,
 })
 
+export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
 export const store = configureStore({
-  reducer: {
-    ui: uiReducer,
-    entities: entitiesReducer,
-  },
+  reducer: rootReducer,
 })
 
 export type AppDispatch = typeof store.dispatch

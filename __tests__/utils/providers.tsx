@@ -2,10 +2,11 @@ import { configureStore } from '@reduxjs/toolkit'
 import React, { ComponentType, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
-import { initialRootState, rootReducer, RootState } from '../../libs/store/data/src'
+import { initialRootState, rootReducer } from '../../libs/store/data/src'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { IntercomProvider } from 'react-use-intercom'
 import posthog from 'posthog-js'
+import { RootState } from '@console/shared/interfaces'
 
 type Params = {
   Component: ComponentType<any>
