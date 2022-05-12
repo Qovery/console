@@ -1,3 +1,7 @@
+.skeleton {
+  display: flex;
+}
+
 .skeleton:not(.skeleton--loaded) {
   display: block;
   background-image: linear-gradient(270deg, #f8f9fc, #e2e9f3, #e2e9f3, #f8f9fc);

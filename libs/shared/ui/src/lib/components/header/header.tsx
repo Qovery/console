@@ -42,7 +42,7 @@ export function Header(props: HeaderProps) {
               </Tooltip>
             )}
           </div>
-          {actions && <div className="flex gap-3">{actions}</div>}
+          {actions && <div className="flex gap-3 items-start">{actions}</div>}
         </div>
       </div>
       {buttons && <div className="flex self-end gap-2">{buttons}</div>}
