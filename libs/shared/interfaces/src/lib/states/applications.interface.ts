@@ -1,7 +1,7 @@
 import { EntityState } from '@reduxjs/toolkit'
-import { Application, Status } from 'qovery-typescript-axios'
+import { ApplicationEntity } from '../domain/application.entity'
 
-export interface ApplicationsState extends EntityState<Application & { status?: Status }> {
+export interface ApplicationsState extends EntityState<ApplicationEntity> {
   loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
   error: string | null | undefined
   joinEnvApp: Record<string, string[]>

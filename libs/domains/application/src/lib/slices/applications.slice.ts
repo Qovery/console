@@ -8,11 +8,11 @@ import {
 } from '@reduxjs/toolkit'
 import { Application, ApplicationMainCallsApi, ApplicationsApi, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
-import { ApplicationsState, RootState } from '@console/shared/interfaces'
+import { ApplicationEntity, ApplicationsState, RootState } from '@console/shared/interfaces'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
-export const applicationsAdapter = createEntityAdapter<Application>()
+export const applicationsAdapter = createEntityAdapter<ApplicationEntity>()
 
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
@@ -136,10 +136,10 @@ export const selectAllApplicationsByEnv = (environmentId: string) => createSelec
 
 export const selectApplicationsEntities = createSelector(getApplicationsState, selectEntities)
 
-export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): Application[] => {
+export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): ApplicationEntity[] => {
   const appState = getApplicationsState(state)
   return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApp[environmentId])
 }
 
-export const selectApplicationById = (state: RootState, applicationId: string): Application | undefined =>
+export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>
   getApplicationsState(state).entities[applicationId]

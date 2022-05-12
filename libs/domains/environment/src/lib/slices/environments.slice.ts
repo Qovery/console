@@ -6,7 +6,7 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { EnvironmentsState, RootState } from '@console/shared/interfaces'
+import { EnvironmentEntity, EnvironmentsState, RootState } from '@console/shared/interfaces'
 import { Environment, EnvironmentsApi, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
@@ -14,7 +14,7 @@ export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
 
-export const environmentsAdapter = createEntityAdapter<Environment>()
+export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
 export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string }>(
   'environments/fetch',
@@ -101,7 +101,7 @@ export const selectAllEnvironments = createSelector(getEnvironmentsState, select
 
 export const selectEnvironmentsEntities = createSelector(getEnvironmentsState, selectEntities)
 
-export const selectEnvironmentsEntitiesByProjectId = (state: RootState, projectId: string): Environment[] => {
+export const selectEnvironmentsEntitiesByProjectId = (state: RootState, projectId: string): EnvironmentEntity[] => {
   const environmentState = getEnvironmentsState(state)
   return getEntitiesByIds<Environment>(environmentState.entities, environmentState?.joinProjectEnvironments[projectId])
 }

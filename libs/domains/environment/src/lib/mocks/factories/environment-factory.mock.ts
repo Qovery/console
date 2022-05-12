@@ -1,15 +1,10 @@
 import { Chance } from 'chance'
-import {
-  Environment,
-  Status,
-  EnvironmentModeEnum,
-  GlobalDeploymentStatus,
-  ServiceDeploymentStatusEnum,
-} from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, GlobalDeploymentStatus, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 
 const chance = new Chance()
 
-type Environments = Environment & { status?: Status }
+type Environments = EnvironmentEntity
 
 export const environmentFactoryMock = (howMany: number): Environments[] =>
   Array.from({ length: howMany }).map((_, index) => ({
