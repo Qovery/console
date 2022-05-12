@@ -1,0 +1,29 @@
+.toast {
+  @apply relative flex w-80 bg-element-dark-600 rounded overflow-hidden cursor-pointer;
+}
+
+.toast__icon {
+  @apply w-14 h-full flex justify-center;
+}
+
+.toast__content {
+  @apply pl-5 pr-3 py-4 w-3/4;
+}
+
+.toast--success {
+  .toast__icon {
+    @apply bg-success-500;
+  }
+}
+
+.toast--warning {
+  .toast__icon {
+    @apply bg-warning-500;
+  }
+}
+
+.toast--error {
+  .toast__icon {
+    @apply bg-error-500;
+  }
+}
