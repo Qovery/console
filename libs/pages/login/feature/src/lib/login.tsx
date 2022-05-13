@@ -26,17 +26,17 @@ export function LoginPage() {
       const organization = await getOrganization()
       await createAuthCookies()
 
-      if (!isOnboarding && organization.payload.length > 0) {
+      if (organization.payload.length > 0) {
         const organizationId = organization.payload[0].id
         const projects = await getProjects(organizationId)
         if (projects.payload.length > 0) navigate(OVERVIEW_URL(organizationId, projects.payload[0].id))
       }
-      if (isOnboarding && organization.payload.length === 0) {
-        navigate(ONBOARDING_URL)
-      }
-      if (isOnboarding && organization.payload.length > 0) {
-        window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
-      }
+      // if (isOnboarding && organization.payload.length === 0) {
+      //  navigate(ONBOARDING_URL)
+      // }
+      // if (isOnboarding && organization.payload.length > 0) {
+      //  window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
+      // }
     }
     if (checkIsAuthenticated) {
       fetchData()
