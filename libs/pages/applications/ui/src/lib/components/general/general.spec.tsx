@@ -1,10 +1,18 @@
-import { render } from '@testing-library/react'
+import { applicationFactoryMock } from '@console/domains/application'
+import { render } from '__tests__/utils/setup-jest'
+import GeneralPage, { GeneralPageProps } from './general'
 
-import GeneralPage from './general'
+let props: GeneralPageProps
+
+beforeEach(() => {
+  props = {
+    applications: applicationFactoryMock(2),
+  }
+})
 
 describe('GeneralPage', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<GeneralPage />)
+    const { baseElement } = render(<GeneralPage {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })
