@@ -13,4 +13,5 @@ export enum IconEnum {
   PAUSE = 'PAUSE',
   DELETE = 'DELETE',
   PROGRESS = 'PROGRESS',
+  DOCKER = 'DOCKER',
 }

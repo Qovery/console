@@ -14,6 +14,7 @@ import DeleteIcon from './icons-status/delete'
 import ProgressIcon from './icons-status/progress'
 import ScalewayIcon from './icons/scaleway'
 import DOIcon from './icons/do'
+import DockerIcon from './icons/docker'
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -57,6 +58,8 @@ export function Icon(props: IconProps) {
       return <DeleteIcon {...formattedProps} />
     case IconEnum.PROGRESS:
       return <ProgressIcon {...formattedProps} />
+    case IconEnum.DOCKER:
+      return <DockerIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

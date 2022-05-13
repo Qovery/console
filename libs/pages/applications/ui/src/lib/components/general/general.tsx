@@ -1,37 +1,33 @@
-import { Environment } from 'qovery-typescript-axios'
+import { ApplicationEntity } from '@console/shared/interfaces'
+import { Table } from '@console/shared/ui'
+import { APPLICATION_URL } from '@console/shared/utils'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { Table } from '@console/shared/ui'
-import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
-import TableRowEnvironments from '../table-row-environments/table-row-environments'
+import TableRowApplications from '../table-row-applications/table-row-applications'
 
-export interface GeneralProps {
-  environments: Environment[]
+export interface GeneralPageProps {
+  applications: ApplicationEntity[]
 }
 
-export function GeneralPage(props: GeneralProps) {
-  const { environments } = props
-  const { organizationId, projectId } = useParams()
+export function GeneralPage(props: GeneralPageProps) {
+  const { applications } = props
+  const { organizationId, projectId, environmentId } = useParams()
 
-  const [data, setData] = useState(environments)
+  const [data, setData] = useState(applications)
 
   useEffect(() => {
-    setData(environments)
-  }, [environments])
+    setData(applications)
+  }, [applications])
 
   const tableHead = [
     {
-      title: `Environment${data.length > 1 ? 's' : ''}`,
+      title: `${data.length} service${data.length > 1 ? 's' : ''}`,
       className: 'px-4 py-2',
       filter: [
         {
           search: true,
           title: 'Filter by status',
           key: 'status.state',
-        },
-        {
-          title: 'Filter by provider',
-          key: 'cloud_provider.provider',
         },
       ],
     },
@@ -43,18 +39,11 @@ export function GeneralPage(props: GeneralProps) {
       },
     },
     {
-      title: 'Running Schedule',
+      title: 'Commit',
       className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full',
     },
     {
       title: 'Type',
-      filter: [
-        {
-          search: true,
-          title: 'Filter by environment type',
-          key: 'mode',
-        },
-      ],
     },
     {
       title: 'Tags',
@@ -64,7 +53,7 @@ export function GeneralPage(props: GeneralProps) {
   return (
     <Table
       dataHead={tableHead}
-      defaultData={environments}
+      defaultData={applications}
       filterData={data}
       setFilterData={setData}
       className="mt-2 bg-white rounded-sm"
@@ -72,11 +61,11 @@ export function GeneralPage(props: GeneralProps) {
     >
       <>
         {data.map((currentData) => (
-          <TableRowEnvironments
+          <TableRowApplications
             key={currentData.id}
             data={currentData}
             dataHead={tableHead}
-            link={`${APPLICATIONS_URL(organizationId, projectId, currentData.id)}${APPLICATIONS_GENERAL_URL}`}
+            link={APPLICATION_URL(organizationId, projectId, environmentId, currentData.id)}
             columnsWidth="25% 20% 25% 10% 15%"
           />
         ))}

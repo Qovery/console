@@ -1,4 +1,5 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { IconEnum } from '@console/shared/enums'
+import { ApplicationEntity } from '@console/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
@@ -8,35 +9,39 @@ import {
   StatusLabel,
   TableHeadProps,
   TableRow,
-  TagMode,
-  Tooltip,
+  Avatar,
+  AvatarStyle,
+  TagCommit,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
-import { EnvironmentEntity } from '@console/shared/interfaces'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 
-export interface TableRowEnvironmentsProps {
-  data: EnvironmentEntity
+export interface TableRowApplicationsProps {
+  data: ApplicationEntity
   dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string
 }
 
-export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
+export function TableRowApplications(props: TableRowApplicationsProps) {
   const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link } = props
+
+  const isLoading = !data.status?.id
 
   const buttonActionsDefault = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
-      status: data.status && data.status.state,
+      status: data.status?.state,
+    },
+    {
+      iconLeft: <Icon name="icon-solid-scroll" />,
     },
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
     },
   ]
-
-  const isLoading = !data.status?.id
 
   return (
     <TableRow columnsWidth={columnsWidth} link={link}>
@@ -45,24 +50,9 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
           <Skeleton show={isLoading} width={16} height={16}>
             <StatusChip status={data.status && data.status.state} />
           </Skeleton>
-          <Tooltip
-            content={
-              <p className="flex">
-                {data.cloud_provider.provider && (
-                  <Icon className="mr-3" name={data.cloud_provider.provider} width="16" />
-                )}
-                ({data.cloud_provider.cluster})
-              </p>
-            }
-          >
-            <div className="ml-3 mr-3">
-              <Skeleton show={isLoading} width={16} height={16}>
-                <div className="w-4 h-4.5 min-w-[16px] flex items-center justify-center text-xs text-text-400 text-center bg-element-light-lighter-400 rounded-sm font-bold cursor-pointer">
-                  {data.cloud_provider.provider && data.cloud_provider.provider.charAt(0)}
-                </div>
-              </Skeleton>
-            </div>
-          </Tooltip>
+          <Skeleton show={isLoading} width={16} height={16}>
+            <Icon name={IconEnum.APPLICATION} width="28" className="mx-1" />
+          </Skeleton>
           <Skeleton show={isLoading} width={400} height={16} truncate>
             <span className="text-sm text-text-500 font-medium">{data.name}</span>
           </Skeleton>
@@ -87,15 +77,15 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
 
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
           <Skeleton show={isLoading} width={160} height={16}>
-            <div className="text-text-500">
-              -{/* <IconFa name="icon-solid-infinity" className="text-success-500 mr-2 text-xs" /> */}
-              {/* <span className="f text-text-500 text-sm font-medium">Continuous running</span> */}
+            <div className="flex gap-2 items-center">
+              <Avatar firstName="" lastName="" style={AvatarStyle.STROKED} size={28} />
+              <TagCommit commitId={data.git_repository?.deployed_commit_id} />
             </div>
           </Skeleton>
         </div>
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
-            <TagMode status={data.mode} />
+            <Icon name={IconEnum.DOCKER} />
           </Skeleton>
         </div>
         <div className="text-text-500">-</div>
@@ -104,4 +94,4 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
   )
 }
 
-export default TableRowEnvironments
+export default TableRowApplications

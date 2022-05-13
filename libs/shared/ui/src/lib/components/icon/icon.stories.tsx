@@ -53,6 +53,7 @@ const FaIcons = [
   'icon-solid-circle-xmark',
   'icon-solid-arrow-down',
   'icon-solid-trash',
+  'icon-solid-code-commit',
   // schema: favicons name
 ]
 
