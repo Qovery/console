@@ -20,7 +20,7 @@ export function LoginPage() {
 
   useEffect(() => {
     // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
-    const isOnboarding = process.env?.['NX_ONBOARDING'] || false
+    const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
 
     async function fetchData() {
       const organization = await getOrganization()

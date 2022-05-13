@@ -104,7 +104,7 @@ export function App() {
 
     // if onboarding feature flag activated we add onboarding routes to router
     // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
-    const isOnboarding = environment.onboarding
+    const isOnboarding = environment.onboarding === 'true'
     if (isOnboarding) {
       ROUTER.push({
         path: `${ONBOARDING_URL}/*`,
