@@ -1,7 +1,6 @@
-import { Application, Environment, EnvironmentModeEnum, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { Link } from 'react-router-dom'
-import { APPLICATION_URL, APPLICATIONS_URL } from '@console/shared/utils'
+import { APPLICATIONS_URL, APPLICATIONS_GENERAL_URL } from '@console/shared/utils'
 import {
   ButtonAction,
   ButtonIcon,
@@ -16,16 +15,16 @@ import {
   TagMode,
 } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
-import { ClickEvent } from '@szhsin/react-menu'
 import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
 
 export interface ContainerProps {
   applications: ApplicationEntity[]
   environment?: EnvironmentEntity
+  children?: React.ReactNode
 }
 
 export function Container(props: ContainerProps) {
-  const { applications, environment } = props
+  const { environment, children } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
 
@@ -70,8 +69,10 @@ export function Container(props: ContainerProps) {
         </Skeleton>
       ),
       name: 'Environments',
-      active: location.pathname === APPLICATIONS_URL(organizationId, projectId, environmentId),
-      link: APPLICATIONS_URL(organizationId, projectId, environmentId),
+      active:
+        location.pathname ===
+        `${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATIONS_GENERAL_URL}`,
+      link: `${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATIONS_GENERAL_URL}`,
     },
   ]
 
@@ -96,19 +97,7 @@ export function Container(props: ContainerProps) {
         actions={headerActions}
       />
       <Tabs items={tabsItems} contentRight={contentTabs} />
-      <ul className="mt-8">
-        {applications &&
-          applications.map((application: Application) => (
-            <li key={application.id}>
-              <Link
-                className="link text-accent2-500"
-                to={APPLICATION_URL(organizationId, projectId, environmentId, application.id)}
-              >
-                {application.name}
-              </Link>
-            </li>
-          ))}
-      </ul>
+      {children}
     </div>
   )
 }
