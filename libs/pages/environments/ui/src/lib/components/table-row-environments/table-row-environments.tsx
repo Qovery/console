@@ -21,21 +21,23 @@ export interface TableRowEnvironmentsProps {
   columnsWidth?: string
 }
 
-const buttonActionsDefault = [
-  {
-    iconLeft: <Icon name="icon-solid-play" />,
-    iconRight: <Icon name="icon-solid-angle-down" />,
-    menusClassName: 'border-r border-r-element-light-lighter-500',
-  },
-  {
-    iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-  },
-]
-
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
   const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link } = props
 
   const isLoading = !data.status?.id
+
+  const buttonActionsDefault = [
+    {
+      iconLeft: <Icon name="icon-solid-play" />,
+      iconRight: <Icon name="icon-solid-angle-down" />,
+      menusClassName: 'border-r border-r-element-light-lighter-500',
+      status: data.status && data.status.state,
+    },
+    {
+      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+      status: data.status && data.status.state,
+    },
+  ]
 
   return (
     <TableRow columnsWidth={columnsWidth} link={link}>
@@ -79,7 +81,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
                   <StatusLabel status={data.status && data.status.state} />
                 )}
               </p>
-              <ButtonIconAction actions={buttonActionsDefault} status={data.status && data.status.state} />
+              <ButtonIconAction actions={buttonActionsDefault} />
             </div>
           </Skeleton>
         </div>

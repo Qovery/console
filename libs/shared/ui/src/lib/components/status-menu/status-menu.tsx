@@ -15,7 +15,7 @@ export interface StatusMenuProps {
 }
 
 export function StatusMenu(props: StatusMenuProps) {
-  const { status = GlobalDeploymentStatus.RUNNING } = props
+  const { status } = props
 
   const [open, setOpen] = useState(false)
 
@@ -76,7 +76,7 @@ export function StatusMenu(props: StatusMenuProps) {
             </div>
           }
           status={status}
-          setOpen={(e) => setOpen(e)}
+          setOpen={(isOpen) => setOpen(isOpen)}
           width={248}
         />
       </div>

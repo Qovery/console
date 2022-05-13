@@ -1,5 +1,6 @@
 import { Icon } from '@console/shared/ui'
 import { Meta, Story } from '@storybook/react'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { ButtonIconAction, ButtonIconActionProps } from './button-icon-action'
 
 export default {
@@ -39,22 +40,7 @@ Primary.args = {
     },
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-      menus: [
-        {
-          items: [
-            {
-              name: 'Deploy',
-              onClick: () => console.log('Deploy'),
-              contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-            },
-            {
-              name: 'Stop',
-              onClick: () => console.log('Stop'),
-              contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-            },
-          ],
-        },
-      ],
+      status: GlobalDeploymentStatus.STOPPED,
     },
   ],
 }

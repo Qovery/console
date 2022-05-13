@@ -50,42 +50,49 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     name: 'Deploy',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+    className: 'mb-1',
   }
 
   const stopButton = {
     name: 'Stop',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+    className: 'mb-1',
   }
 
   const redeployButton = {
     name: 'Redeploy',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
+    className: 'mb-1',
   }
 
   const updateButton = {
     name: 'Update applications',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
+    className: 'mb-1',
   }
 
   const rollbackButton = {
     name: 'Rollback',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
+    className: 'mb-1',
   }
 
   const cancelBuildButton = {
     name: 'Cancel Build',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
+    className: 'mb-1',
   }
 
   const removeButton = {
     name: 'Remove',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+    className: 'mb-1',
   }
 
   useEffect(() => {
@@ -113,6 +120,8 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
   }, [])
 
   const menus = bottomMenu.length === 0 ? [{ items: topMenu }] : [{ items: topMenu }, { items: bottomMenu }]
+
+  console.log(menus)
 
   return (
     <Menu

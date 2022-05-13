@@ -26,7 +26,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         className={menusClassName}
         menus={menus}
         width={248}
-        onOpen={(e) => setOpen(e)}
+        onOpen={(isOpen) => setOpen(isOpen)}
         trigger={
           <div data-testid="element" className={`btn-icon-action__element ${open ? 'is-active' : ''}`}>
             {iconLeft}
@@ -41,7 +41,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         className={menusClassName}
         width={248}
         status={status}
-        setOpen={(e) => setOpen(e)}
+        setOpen={(isOpen) => setOpen(isOpen)}
         paddingMenuX={8}
         paddingMenuY={8}
         trigger={
