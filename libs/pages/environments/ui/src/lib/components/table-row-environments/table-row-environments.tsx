@@ -31,11 +31,13 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
-      status: data.status && data.status.state,
+      action: {
+        name: data.name,
+        status: data.status ? data.status.state : GlobalDeploymentStatus.RUNNING,
+      },
     },
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-      status: data.status && data.status.state,
     },
   ]
 

@@ -75,7 +75,10 @@ export function StatusMenu(props: StatusMenuProps) {
               {iconStatus()} <Icon name="icon-solid-angle-down" className="text-xs" />
             </div>
           }
-          status={status}
+          action={{
+            name: 'my-name',
+            status: status,
+          }}
           setOpen={(isOpen) => setOpen(isOpen)}
           width={248}
         />

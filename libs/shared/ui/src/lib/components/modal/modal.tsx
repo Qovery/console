@@ -14,7 +14,7 @@ export interface ModalContentProps {
   setOpen?: (open: boolean) => void
 }
 
-const Modal = (props: ModalProps) => {
+export const Modal = (props: ModalProps) => {
   const { children, trigger, width = '474', className = '', defaultOpen = false, buttonClose = true } = props
 
   const [open, setOpen] = useState(defaultOpen)

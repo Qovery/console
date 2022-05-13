@@ -1,3 +1,6 @@
+import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { useState, useEffect } from 'react'
 import { Icon } from '@console/shared/ui'
 import {
   isCancelBuildAvailable,
@@ -8,14 +11,22 @@ import {
   isStopAvailable,
   isUpdateAvailable,
 } from '@console/shared/utils'
-import { ClickEvent } from '@szhsin/react-menu'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
-import { useState, useEffect } from 'react'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
+import { MenuItemProps } from '../menu/menu-item/menu-item'
+import Modal from '../modal/modal'
+import { ModalConfirmation } from '../modals/modal-confirmation/modal-confirmation'
+
+export interface StatusMenuActionParamsProps {
+  name: string
+  status: GlobalDeploymentStatus
+  mode?: string
+  environmentId?: string
+  applicationId?: string
+}
 
 export interface StatusMenuActionProps {
-  status: GlobalDeploymentStatus
   trigger: React.ReactElement
+  action: StatusMenuActionParamsProps
   width?: number
   direction?: MenuDirection
   arrowAlign?: MenuAlign
@@ -25,16 +36,10 @@ export interface StatusMenuActionProps {
   setOpen?: (isOpen: boolean) => void
 }
 
-export type StatusMenuActionItem = {
-  name: string
-  onClick: (e: ClickEvent) => void
-  contentLeft: React.ReactNode
-}
-
 export function StatusMenuAction(props: StatusMenuActionProps) {
   const {
-    status,
     trigger,
+    action,
     width = 340,
     paddingMenuX = 12,
     paddingMenuY = 12,
@@ -43,56 +48,78 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     arrowAlign = MenuAlign.START,
     setOpen,
   } = props
-  const [topMenu, setTopMenu] = useState<StatusMenuActionItem[]>([])
-  const [bottomMenu, setBottomMenu] = useState<StatusMenuActionItem[]>([])
+  const [topMenu, setTopMenu] = useState<MenuItemProps[]>([])
+  const [bottomMenu, setBottomMenu] = useState<MenuItemProps[]>([])
+
+  const { status, name } = action
+
+  const customContentModal = (title: string, description: string) => (
+    <Modal
+      width={488}
+      trigger={
+        <Item className="menu-item">
+          <div>
+            <Icon name="icon-solid-play" className="text-sm text-brand-400 mr-3" />
+            <span className="text-sm text-text-500 font-medium">{title}</span>
+          </div>
+        </Item>
+      }
+    >
+      <ModalConfirmation
+        title={title}
+        description={description}
+        name={name}
+        callback={() => {
+          console.log('callback')
+        }}
+      />
+    </Modal>
+  )
 
   const deployButton = {
     name: 'Deploy',
-    onClick: (e: ClickEvent) => console.log(e),
-    contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-    className: 'mb-1',
+    customContent: customContentModal(
+      'Deploy',
+      'To confirm the deploy of your environment, please type the name of the environment:'
+    ),
+  }
+
+  const redeployButton = {
+    name: 'Redeploy',
+    customContent: customContentModal(
+      'Redeploy',
+      'To confirm the redeploy of your environment, please type the name of the environment:'
+    ),
   }
 
   const stopButton = {
     name: 'Stop',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-    className: 'mb-1',
-  }
-
-  const redeployButton = {
-    name: 'Redeploy',
-    onClick: (e: ClickEvent) => console.log(e),
-    contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
-    className: 'mb-1',
   }
 
   const updateButton = {
     name: 'Update applications',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
-    className: 'mb-1',
   }
 
   const rollbackButton = {
     name: 'Rollback',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
-    className: 'mb-1',
   }
 
   const cancelBuildButton = {
     name: 'Cancel Build',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
-    className: 'mb-1',
   }
 
   const removeButton = {
     name: 'Remove',
     onClick: (e: ClickEvent) => console.log(e),
     contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-    className: 'mb-1',
   }
 
   useEffect(() => {
@@ -120,8 +147,6 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
   }, [])
 
   const menus = bottomMenu.length === 0 ? [{ items: topMenu }] : [{ items: topMenu }, { items: bottomMenu }]
-
-  console.log(menus)
 
   return (
     <Menu

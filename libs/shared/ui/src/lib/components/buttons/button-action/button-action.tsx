@@ -91,7 +91,10 @@ export function ButtonAction(props: ButtonActionProps) {
               <Icon name="icon-solid-ellipsis-vertical" />
             </div>
           }
-          status={status}
+          action={{
+            name: 'my-name',
+            status: status,
+          }}
         />
         {contentBtn()}
       </div>

@@ -6,21 +6,26 @@ export interface MenuItemProps {
   contentLeft?: React.ReactNode
   contentRight?: React.ReactNode
   onClick?: (e: ClickEvent) => void
+  customContent?: React.ReactNode
 }
 
 export function MenuItem(props: MenuItemProps) {
-  const { name, link, contentLeft, contentRight, onClick } = props
+  const { name, link, contentLeft, contentRight, onClick, customContent } = props
   const navigate = useNavigate()
 
   const itemContent = (
     <>
       <div>
         {contentLeft && <span className="mr-3">{contentLeft}</span>}
-        <span className="text-sm text-text-500 font-medium">{name}</span>
+        <span className="text-sm text-text-500 font-medium">{name || 'name undefined'}</span>
       </div>
       <div>{contentRight && <span className="ml-3">{contentRight}</span>}</div>
     </>
   )
+
+  if (customContent) {
+    return <div>{customContent}</div>
+  }
 
   if (link?.external) {
     return (

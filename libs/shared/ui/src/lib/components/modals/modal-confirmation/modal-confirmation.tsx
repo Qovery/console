@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Button, { ButtonStyle } from '../../buttons/button/button'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
@@ -27,6 +28,8 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
 
   const { handleSubmit, control } = useForm()
 
+  const [o, setO] = useState(false)
+
   const onSubmit = handleSubmit((data) => {
     if (data) {
       setOpen && setOpen(false)
@@ -40,6 +43,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
 
   return (
     <div className="p-6">
+      <button onClick={() => setO(!o)}>{`${o}`}</button>
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{title}</h2>
       <p className="text-text-400 text-sm mb-6">
         {description}
@@ -55,7 +59,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
       </p>
       <form onSubmit={onSubmit}>
         <Controller
-          name="name"
+          name={name}
           control={control}
           rules={{
             required: 'Please enter a name.',

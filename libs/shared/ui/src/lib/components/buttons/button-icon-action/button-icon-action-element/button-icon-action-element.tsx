@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { Menu } from '@console/shared/ui'
+import { Menu } from '../../../menu/menu'
 import { MenuItemProps } from '../../../menu/menu-item/menu-item'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
-import StatusMenuAction from '../../../status-menu-action/status-menu-action'
+import StatusMenuAction, { StatusMenuActionParamsProps } from '../../../status-menu-action/status-menu-action'
 
 export interface ButtonIconActionElementProps {
   iconLeft: React.ReactNode
@@ -12,11 +11,11 @@ export interface ButtonIconActionElementProps {
     items: MenuItemProps[]
   }[]
   menusClassName?: string
-  status?: GlobalDeploymentStatus
+  action?: StatusMenuActionParamsProps
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
-  const { iconLeft, iconRight, onClick, menus, menusClassName = '', status } = props
+  const { iconLeft, iconRight, onClick, menus, menusClassName = '', action } = props
 
   const [open, setOpen] = useState(false)
 
@@ -35,12 +34,12 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         }
       />
     )
-  } else if (status) {
+  } else if (action) {
     return (
       <StatusMenuAction
         className={menusClassName}
         width={248}
-        status={status}
+        action={action}
         setOpen={(isOpen) => setOpen(isOpen)}
         paddingMenuX={8}
         paddingMenuY={8}

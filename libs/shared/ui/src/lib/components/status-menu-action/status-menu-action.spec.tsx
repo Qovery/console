@@ -7,7 +7,10 @@ let props: StatusMenuActionProps
 
 beforeEach(() => {
   props = {
-    status: GlobalDeploymentStatus.DEPLOYED,
+    action: {
+      name: 'my-name',
+      status: GlobalDeploymentStatus.DEPLOYED,
+    },
     trigger: <Button>Button action</Button>,
   }
 })

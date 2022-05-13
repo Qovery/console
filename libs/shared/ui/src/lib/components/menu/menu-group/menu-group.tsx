@@ -84,12 +84,13 @@ export function MenuGroup(props: MenuGroupProps) {
         <div style={paddingStyle}>
           {currentItems.map((item, index) => (
             <MenuItem
-              key={index}
+              key={`${item.name}-${index}`}
               name={item.name}
               link={item.link}
               contentLeft={item?.contentLeft}
               contentRight={item?.contentRight}
               onClick={item.onClick}
+              customContent={item.customContent}
             />
           ))}
         </div>
