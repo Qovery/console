@@ -14,4 +14,9 @@ export enum IconEnum {
   DELETE = 'DELETE',
   PROGRESS = 'PROGRESS',
   DOCKER = 'DOCKER',
+  POSTGRE = 'POSTGRE',
+  REDIS = 'REDIS',
+  BUILDPACKS = 'BUILDPACKS',
+  MONGODB = 'MONGODB',
+  MYSQL = 'MYSQL',
 }
