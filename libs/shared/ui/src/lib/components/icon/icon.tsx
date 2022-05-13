@@ -15,6 +15,11 @@ import ProgressIcon from './icons-status/progress'
 import ScalewayIcon from './icons/scaleway'
 import DOIcon from './icons/do'
 import DockerIcon from './icons/docker'
+import PostgreIcon from './icons/postgre'
+import RedisIcon from './icons/redis'
+import BuildpacksIcon from './icons/buildpacks'
+import MongoDBIcon from './icons/mongodb'
+import MysqlIcon from './icons/mysql'
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -60,6 +65,16 @@ export function Icon(props: IconProps) {
       return <ProgressIcon {...formattedProps} />
     case IconEnum.DOCKER:
       return <DockerIcon {...formattedProps} />
+    case IconEnum.POSTGRE:
+      return <PostgreIcon {...formattedProps} />
+    case IconEnum.REDIS:
+      return <RedisIcon {...formattedProps} />
+    case IconEnum.BUILDPACKS:
+      return <BuildpacksIcon {...formattedProps} />
+    case IconEnum.MONGODB:
+      return <MongoDBIcon {...formattedProps} />
+    case IconEnum.MYSQL:
+      return <MysqlIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

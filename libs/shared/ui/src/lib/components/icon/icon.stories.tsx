@@ -107,6 +107,24 @@ const Template: Story<IconProps> = (args) => (
       <button onClick={() => copyName(IconEnum.PROGRESS)}>
         <Icon name={IconEnum.PROGRESS} />
       </button>
+      <button onClick={() => copyName(IconEnum.DOCKER)}>
+        <Icon name={IconEnum.DOCKER} width="24" />
+      </button>
+      <button onClick={() => copyName(IconEnum.POSTGRE)}>
+        <Icon name={IconEnum.POSTGRE} width="24" />
+      </button>
+      <button onClick={() => copyName(IconEnum.REDIS)}>
+        <Icon name={IconEnum.REDIS} width="24" />
+      </button>
+      <button onClick={() => copyName(IconEnum.BUILDPACKS)}>
+        <Icon name={IconEnum.BUILDPACKS} width="24" />
+      </button>
+      <button onClick={() => copyName(IconEnum.MONGODB)}>
+        <Icon name={IconEnum.MONGODB} width="16" />
+      </button>
+      <button onClick={() => copyName(IconEnum.MYSQL)}>
+        <Icon name={IconEnum.MYSQL} width="20" />
+      </button>
     </div>
     <div className="storybook-icons__container max-w-sm w-full p-3 rounded bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
       <h2 className="w-full mb-2">FontAwesome Icons</h2>
