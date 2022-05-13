@@ -1,5 +1,4 @@
 import { render } from '__tests__/utils/setup-jest'
-
 import ApplicationsPage from './applications-page'
 
 describe('ApplicationsPage', () => {
