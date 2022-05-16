@@ -46,12 +46,12 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
   return (
     <TableRow columnsWidth={columnsWidth} link={link}>
       <>
-        <div className="flex items-center px-4">
+        <div className="flex items-center px-4 gap-1">
           <Skeleton show={isLoading} width={16} height={16}>
             <StatusChip status={data.status && data.status.state} />
           </Skeleton>
           <Skeleton show={isLoading} width={16} height={16}>
-            <Icon name={IconEnum.APPLICATION} width="28" className="mx-1" />
+            <Icon name={IconEnum.APPLICATION} width="28" />
           </Skeleton>
           <Skeleton show={isLoading} width={400} height={16} truncate>
             <span className="text-sm text-text-500 font-medium">{data.name}</span>

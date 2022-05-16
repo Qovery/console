@@ -149,3 +149,6 @@ export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentI
 
 export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>
   getApplicationsState(state).entities[applicationId]
+
+export const applicationsLoadingStatus = (state: RootState): string | undefined =>
+  getApplicationsState(state).loadingStatus
