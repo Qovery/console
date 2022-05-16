@@ -9,3 +9,5 @@ export * from './lib/states/applications.interface'
 
 export * from './lib/domain/application.entity'
 export * from './lib/domain/environment.entity'
+
+export * from './lib/types/loading-status.type'
