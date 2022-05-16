@@ -30,9 +30,13 @@ export function TagCommit(props: TagCommitProps) {
   const contentTag = (
     <Tag className="border border-element-light-lighter-500 text-text-400 font-medium hover:bg-element-light-lighter-400 w-[70px] flex items-center justify-center">
       {!hover ? (
-        <Icon name="icon-solid-code-commit" className="mr-1 w-4" />
+        <div className="w-4 mr-1">
+          <Icon name="icon-solid-code-commit" className="mr-1" />
+        </div>
       ) : (
-        <Icon name="icon-solid-copy" className="mr-1 w-4" />
+        <div className="w-4 mr-1">
+          <Icon name="icon-solid-copy" className="mr-1" />
+        </div>
       )}
       {commitId.substring(0, 5)}
     </Tag>

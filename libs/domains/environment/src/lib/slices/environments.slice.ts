@@ -115,3 +115,6 @@ export const selectEnvironmentsEntitiesByProjectId = (state: RootState, projectI
 
 export const selectEnvironmentById = (state: RootState, environmentId: string) =>
   getEnvironmentsState(state).entities[environmentId]
+
+export const environmentsLoadingStatus = (state: RootState): string | undefined =>
+  getEnvironmentsState(state).loadingStatus
