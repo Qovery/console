@@ -15,7 +15,14 @@ import {
   Tag,
   TagMode,
 } from '@console/shared/ui'
-import { APPLICATION_URL } from '@console/shared/utils'
+import {
+  APPLICATION_URL,
+  APPLICATIONS_DEPLOYMENTS_URL,
+  APPLICATIONS_GENERAL_URL,
+  APPLICATIONS_METRICS_URL,
+  APPLICATIONS_SETTINGS_URL,
+  APPLICATIONS_VARIABLES_URL,
+} from '@console/shared/utils'
 import { Environment, GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
@@ -110,8 +117,46 @@ export function Container(props: ContainerProps) {
         </Skeleton>
       ),
       name: 'Overview',
-      active: location.pathname === APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId),
+      active:
+        location.pathname ===
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_GENERAL_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_GENERAL_URL,
+    },
+    {
+      icon: (
+        <Skeleton width={16} height={16} rounded show={!application?.status}>
+          <StatusChip status={application?.status && application?.status.state} />
+        </Skeleton>
+      ),
+      name: 'Deployments',
+      active:
+        location.pathname ===
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_DEPLOYMENTS_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_DEPLOYMENTS_URL,
+    },
+    {
+      icon: <Icon name="icon-solid-chart-area" />,
+      name: 'Metrics',
+      active:
+        location.pathname ===
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_METRICS_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_METRICS_URL,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" />,
+      name: 'Variables',
+      active:
+        location.pathname ===
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_VARIABLES_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_VARIABLES_URL,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" />,
+      name: 'Settings',
+      active:
+        location.pathname ===
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_SETTINGS_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_SETTINGS_URL,
     },
   ]
 

@@ -83,7 +83,7 @@ export const ROUTER = [
     layout: true,
   },
   {
-    path: APPLICATION_URL(),
+    path: `${APPLICATION_URL()}/*`,
     component: <ApplicationPage />,
     protected: true,
     layout: true,
