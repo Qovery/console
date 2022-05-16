@@ -64,7 +64,6 @@ export const removeOneApplication = createAsyncThunk<string, { applicationId: st
 export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string }>(
   'application/links',
   async (data) => {
-    console.log(data.applicationId)
     const response = await applicationMainCallsApi
       .listApplicationLinks(data.applicationId)
       .then((response) => response.data)
@@ -160,7 +159,6 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        console.log(update)
         applicationsAdapter.updateOne(state, update)
       })
   },
