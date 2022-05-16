@@ -1,6 +1,6 @@
 import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { APPLICATIONS_URL, APPLICATIONS_GENERAL_URL } from '@console/shared/utils'
+import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
 import {
   ButtonAction,
   ButtonIcon,
@@ -45,7 +45,7 @@ export function Container(props: ContainerProps) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
-          <TagMode status={environment?.mode} />
+          <TagMode status={environment?.mode} withBorder={true} />
         </Skeleton>
       )}
       <Skeleton width={100} height={24} show={!environment?.cloud_provider}>

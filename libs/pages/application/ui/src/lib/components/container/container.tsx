@@ -93,7 +93,7 @@ export function Container(props: ContainerProps) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
-          <TagMode status={environment?.mode} />
+          <TagMode status={environment?.mode} withBorder={true} />
         </Skeleton>
       )}
       <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
@@ -111,11 +111,7 @@ export function Container(props: ContainerProps) {
 
   const tabsItems = [
     {
-      icon: (
-        <Skeleton width={16} height={16} rounded show={!application?.status}>
-          <StatusChip status={application?.status && application?.status.state} />
-        </Skeleton>
-      ),
+      icon: <StatusChip status={GlobalDeploymentStatus.READY} />,
       name: 'Overview',
       active:
         location.pathname ===
