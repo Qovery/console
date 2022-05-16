@@ -6,9 +6,9 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { Application, ApplicationMainCallsApi, ApplicationsApi, Status } from 'qovery-typescript-axios'
+import { Application, ApplicationMainCallsApi, ApplicationsApi, Link, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
-import { ApplicationEntity, ApplicationsState, RootState } from '@console/shared/interfaces'
+import { ApplicationEntity, ApplicationsState, LoadingStatus, RootState } from '@console/shared/interfaces'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
@@ -58,6 +58,17 @@ export const removeOneApplication = createAsyncThunk<string, { applicationId: st
     // })
 
     return data.applicationId
+  }
+)
+
+export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string }>(
+  'application/links',
+  async (data) => {
+    console.log(data.applicationId)
+    const response = await applicationMainCallsApi
+      .listApplicationLinks(data.applicationId)
+      .then((response) => response.data)
+    return response.results as Link[]
   }
 )
 
@@ -125,6 +136,33 @@ export const applicationsSlice = createSlice({
       .addCase(removeOneApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<string>) => {
         state.joinEnvApp = removeOneToManyRelation(action.payload, state.joinEnvApp)
       })
+      .addCase(fetchApplicationLinks.pending, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            links: {
+              ...state.entities[applicationId]?.links,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationLinks.fulfilled, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            links: {
+              items: action.payload,
+              loadingStatus: 'loaded',
+            },
+          },
+        }
+        console.log(update)
+        applicationsAdapter.updateOne(state, update)
+      })
   },
 })
 
@@ -150,5 +188,4 @@ export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentI
 export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>
   getApplicationsState(state).entities[applicationId]
 
-export const applicationsLoadingStatus = (state: RootState): string | undefined =>
-  getApplicationsState(state).loadingStatus
+export const applicationsLoadingStatus = (state: RootState): LoadingStatus => getApplicationsState(state).loadingStatus

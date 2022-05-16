@@ -1,4 +1,6 @@
+import { LoadingStatus } from '../types/loading-status.type'
+
 export interface DefaultUiState {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
+  loadingStatus: LoadingStatus
   error: string | null | undefined
 }

@@ -16,19 +16,21 @@ export enum MenuAlign {
   END = 'end',
 }
 
+export type MenuData = {
+  items: MenuItemProps[]
+  title?: string
+  button?: string
+  buttonLink?: string
+  search?: boolean
+}[]
+
 export interface MenuProps {
   trigger: React.ReactElement
   children?: React.ReactNode
   direction?: MenuDirection
   open?: boolean
   arrowAlign?: MenuAlign
-  menus: {
-    items: MenuItemProps[]
-    title?: string
-    button?: string
-    buttonLink?: string
-    search?: boolean
-  }[]
+  menus: MenuData
   className?: string
   header?: React.ReactNode
   onClose?: (e: MenuCloseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>) => void

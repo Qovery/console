@@ -1,12 +1,13 @@
 import { IconEnum } from '@console/shared/enums'
 import {
   Button,
-  ButtonIcon,
-  ButtonIconStyle,
   ButtonSize,
   ButtonStyle,
   Header,
   Icon,
+  Menu,
+  MenuData,
+  MenuItemProps,
   Skeleton,
   StatusChip,
   StatusMenu,
@@ -31,14 +32,50 @@ export function Container(props: ContainerProps) {
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${applicationId}`
 
+  const menuLink: MenuData = []
+
+  if (application && application.links && application.links.items) {
+    const items: MenuItemProps[] = application.links.items.map((link) => {
+      return {
+        name: link.url || '',
+        link: {
+          url: link.url || '',
+          external: true,
+        },
+      }
+    })
+
+    menuLink.push({
+      title: 'Links',
+      items,
+    })
+  }
+
   const headerButtons = (
-    <div className="hidden">
-      <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />
-      <ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />
-      <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />
-      <Button iconRight="icon-solid-link" style={ButtonStyle.STROKED} size={ButtonSize.SMALL}>
-        Open links
-      </Button>
+    <div>
+      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
+      {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
+      {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
+      {application?.links && application.links.items && application.links.items.length === 1 ? (
+        <Button
+          iconRight="icon-solid-link"
+          external={true}
+          link={application.links.items[0].url}
+          style={ButtonStyle.STROKED}
+          size={ButtonSize.SMALL}
+        >
+          Open link
+        </Button>
+      ) : (
+        <Menu
+          menus={menuLink}
+          trigger={
+            <Button iconRight="icon-solid-link" style={ButtonStyle.STROKED} size={ButtonSize.SMALL}>
+              Open links
+            </Button>
+          }
+        ></Menu>
+      )}
     </div>
   )
 
@@ -68,7 +105,7 @@ export function Container(props: ContainerProps) {
   const tabsItems = [
     {
       icon: (
-        <Skeleton width={16} height={16} rounded show={application?.status ? false : true}>
+        <Skeleton width={16} height={16} rounded show={!application?.status}>
           <StatusChip status={application?.status && application?.status.state} />
         </Skeleton>
       ),
