@@ -39,7 +39,6 @@ export function Layout(props: LayoutProps) {
     organizationId && getProjects(organizationId)
     projectId && getEnvironments(projectId)
     environmentId && getApplications(environmentId)
-    applicationId && getApplication(applicationId)
   }, [
     getProjects,
     getOrganization,

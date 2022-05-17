@@ -1,6 +1,11 @@
 import { useDocumentTitle } from '@console/shared/utils'
 import { Container } from '@console/pages/application/ui'
-import { applicationsLoadingStatus, fetchApplicationLinks, selectApplicationById } from '@console/domains/application'
+import {
+  applicationsLoadingStatus,
+  fetchApplicationInstances,
+  fetchApplicationLinks,
+  selectApplicationById,
+} from '@console/domains/application'
 import { Route, Routes, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEnvironmentById } from '@console/domains/environment'
@@ -24,7 +29,11 @@ export function ApplicationPage() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    applicationId && loadingStatus === 'loaded' && dispatch(fetchApplicationLinks({ applicationId }))
+    console.log('hey', applicationId, loadingStatus)
+    applicationId &&
+      loadingStatus === 'loaded' &&
+      dispatch(fetchApplicationLinks({ applicationId })) &&
+      dispatch(fetchApplicationInstances({ applicationId }))
   }, [applicationId, loadingStatus])
 
   return (

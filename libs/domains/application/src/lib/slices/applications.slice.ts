@@ -6,7 +6,15 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { Application, ApplicationMainCallsApi, ApplicationsApi, Link, Status } from 'qovery-typescript-axios'
+import {
+  Application,
+  ApplicationMainCallsApi,
+  ApplicationMetricsApi,
+  ApplicationsApi,
+  Instance,
+  Link,
+  Status,
+} from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
 import { ApplicationEntity, ApplicationsState, LoadingStatus, RootState } from '@console/shared/interfaces'
 
@@ -16,6 +24,7 @@ export const applicationsAdapter = createEntityAdapter<ApplicationEntity>()
 
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
+const applicationMetricsApi = new ApplicationMetricsApi()
 
 export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
   'applications/fetch',
@@ -68,6 +77,17 @@ export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: s
       .listApplicationLinks(data.applicationId)
       .then((response) => response.data)
     return response.results as Link[]
+  }
+)
+
+export const fetchApplicationInstances = createAsyncThunk<Instance[], { applicationId: string }>(
+  'application/instances',
+  async (data) => {
+    const response = await applicationMetricsApi
+      .getApplicationCurrentInstance(data.applicationId)
+      .then((response) => response.data)
+
+    return response.results as Instance[]
   }
 )
 
@@ -156,6 +176,44 @@ export const applicationsSlice = createSlice({
             links: {
               items: action.payload,
               loadingStatus: 'loaded',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationInstances.pending, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            instances: {
+              ...state.entities[applicationId]?.instances,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationInstances.fulfilled, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            instances: {
+              items: action.payload,
+              loadingStatus: 'loaded',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationInstances.rejected, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            instances: {
+              loadingStatus: 'error',
             },
           },
         }
