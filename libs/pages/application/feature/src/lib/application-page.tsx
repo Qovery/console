@@ -1,12 +1,13 @@
 import { useDocumentTitle } from '@console/shared/utils'
 import { Container } from '@console/pages/application/ui'
 import { applicationsLoadingStatus, fetchApplicationLinks, selectApplicationById } from '@console/domains/application'
-import { useParams } from 'react-router'
+import { Route, Routes, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { LoadingStatus, RootState } from '@console/shared/interfaces'
 import { Application, Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
+import { ROUTER_APPLICATION } from './router/router'
 
 export function ApplicationPage() {
   useDocumentTitle('Application - Qovery')
@@ -26,7 +27,15 @@ export function ApplicationPage() {
     applicationId && loadingStatus === 'loaded' && dispatch(fetchApplicationLinks({ applicationId }))
   }, [applicationId, loadingStatus])
 
-  return <Container application={application} environment={environment} />
+  return (
+    <Container application={application} environment={environment}>
+      <Routes>
+        {ROUTER_APPLICATION.map((route) => (
+          <Route key={route.path} path={route.path} element={route.component} />
+        ))}
+      </Routes>
+    </Container>
+  )
 }
 
 export default ApplicationPage

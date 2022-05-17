@@ -1,4 +1,4 @@
-import { Environment, Project, Application, Organization } from 'qovery-typescript-axios'
+import { Application, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Icon } from '@console/shared/ui'
@@ -140,7 +140,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                 data={environments}
                 menuItems={environmentMenu}
                 paramId={environmentId}
-                link={APPLICATIONS_URL(organizationId, projectId, environmentId)}
+                link={APPLICATIONS_URL(organizationId, projectId, environmentId) + APPLICATIONS_GENERAL_URL}
               />
             )}
           </div>

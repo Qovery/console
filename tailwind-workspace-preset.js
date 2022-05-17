@@ -179,7 +179,7 @@ module.exports = {
   },
   safelist: [
     {
-      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter-500)(-\w+\d+)*/,
+      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter-500|accent)(-\w+\d+)*/,
       variants: ['focus', 'hover'],
     },
     {

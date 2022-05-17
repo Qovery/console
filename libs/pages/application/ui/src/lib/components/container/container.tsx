@@ -16,12 +16,12 @@ import {
   TagMode,
 } from '@console/shared/ui'
 import {
+  APPLICATION_DEPLOYMENTS_URL,
+  APPLICATION_GENERAL_URL,
+  APPLICATION_METRICS_URL,
+  APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
-  APPLICATIONS_DEPLOYMENTS_URL,
-  APPLICATIONS_GENERAL_URL,
-  APPLICATIONS_METRICS_URL,
-  APPLICATIONS_SETTINGS_URL,
-  APPLICATIONS_VARIABLES_URL,
+  APPLICATION_VARIABLES_URL,
 } from '@console/shared/utils'
 import { Environment, GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
@@ -30,10 +30,11 @@ import { ApplicationEntity } from '@console/shared/interfaces'
 export interface ContainerProps {
   application?: ApplicationEntity
   environment?: Environment
+  children?: React.ReactNode
 }
 
 export function Container(props: ContainerProps) {
-  const { application, environment } = props
+  const { application, environment, children } = props
   const { organizationId, projectId, environmentId, applicationId } = useParams()
   const location = useLocation()
 
@@ -115,8 +116,8 @@ export function Container(props: ContainerProps) {
       name: 'Overview',
       active:
         location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_GENERAL_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_GENERAL_URL,
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
     },
     {
       icon: (
@@ -127,37 +128,37 @@ export function Container(props: ContainerProps) {
       name: 'Deployments',
       active:
         location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_DEPLOYMENTS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_DEPLOYMENTS_URL,
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
     },
     {
       icon: <Icon name="icon-solid-chart-area" />,
       name: 'Metrics',
       active:
         location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_METRICS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_METRICS_URL,
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_METRICS_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_METRICS_URL,
     },
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Variables',
       active:
         location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_VARIABLES_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_VARIABLES_URL,
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
     },
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
       active:
         location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_SETTINGS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATIONS_SETTINGS_URL,
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
     },
   ]
 
   return (
-    <div>
+    <>
       <Header
         title={application?.name}
         icon={IconEnum.APPLICATION}
@@ -167,7 +168,8 @@ export function Container(props: ContainerProps) {
         actions={headerActions}
       />
       <Tabs items={tabsItems} />
-    </div>
+      {children}
+    </>
   )
 }
 

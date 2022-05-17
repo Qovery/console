@@ -25,7 +25,7 @@ export function LayoutPage(props: LayoutPageProps) {
         environments={environments}
         applications={applications}
       />
-      <div className="p-2 mt-14 ml-14">{children}</div>
+      <div className="p-2 mt-14 ml-14 h-full flex flex-col">{children}</div>
     </main>
   )
 }
