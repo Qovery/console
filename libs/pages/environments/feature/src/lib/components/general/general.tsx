@@ -21,7 +21,11 @@ export function General() {
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
 
-  return <GeneralPage environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments} />
+  return (
+    <GeneralPage
+      environments={loadingStatus !== 'loaded' && environments.length === 0 ? loadingEnvironments : environments}
+    />
+  )
 }
 
 export default General

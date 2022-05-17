@@ -1,5 +1,6 @@
 import {
   applicationFactoryMock,
+  applications,
   applicationsLoadingStatus,
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
@@ -18,7 +19,13 @@ export function General() {
     selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
-  return <GeneralPage applications={loadingStatus !== 'loaded' ? loadingApplications : applicationsByEnv} />
+  return (
+    <GeneralPage
+      applications={
+        loadingStatus !== 'loaded' && applicationsByEnv.length === 0 ? loadingApplications : applicationsByEnv
+      }
+    />
+  )
 }
 
 export default General
