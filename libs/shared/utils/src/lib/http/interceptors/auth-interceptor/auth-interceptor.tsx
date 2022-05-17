@@ -1,7 +1,8 @@
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
-import { toast, ToastEnum } from '@console/shared/ui'
+
+// import { toast, ToastEnum } from '@console/shared/ui'
 
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
@@ -27,7 +28,8 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
     const responseInterceptor = axiosInstance.interceptors.response.use(
       async (response: AxiosResponse) => response,
       (error: AxiosError) => {
-        toast(ToastEnum.ERROR, error.response?.data.error, error.response?.data.message)
+        // todo uncomment this and fix the cycling dependency by moving router folder in a dedicated library
+        // toast(ToastEnum.ERROR, error.response?.data.error, error.response?.data.message)
       }
     )
 
