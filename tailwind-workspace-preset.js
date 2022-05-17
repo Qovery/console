@@ -3,6 +3,9 @@
 module.exports = {
   theme: {
     extend: {
+      spacing: {
+        'left-help-sidebar': '22.5rem',
+      },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
         icons: ['FontAwesome'],
