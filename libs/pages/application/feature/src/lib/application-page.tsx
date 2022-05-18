@@ -29,7 +29,6 @@ export function ApplicationPage() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    console.log('hey', applicationId, loadingStatus)
     applicationId &&
       loadingStatus === 'loaded' &&
       dispatch(fetchApplicationLinks({ applicationId })) &&
