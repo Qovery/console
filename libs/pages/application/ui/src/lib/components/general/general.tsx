@@ -35,7 +35,7 @@ export function GeneralPage(props: GeneralProps) {
         </div>
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
       </div>
-      <div className="w-left-help-sidebar py-10 border-l border-element-light-lighter-400">
+      <div className="w-right-help-sidebar py-10 border-l border-element-light-lighter-400">
         <About
           description={application?.description || ''}
           link={{
