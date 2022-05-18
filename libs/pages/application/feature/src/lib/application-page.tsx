@@ -2,6 +2,7 @@ import { useDocumentTitle } from '@console/shared/utils'
 import { Container } from '@console/pages/application/ui'
 import {
   applicationsLoadingStatus,
+  fetchApplicationCommits,
   fetchApplicationInstances,
   fetchApplicationLinks,
   selectApplicationById,
@@ -9,8 +10,8 @@ import {
 import { Route, Routes, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEnvironmentById } from '@console/domains/environment'
-import { LoadingStatus, RootState } from '@console/shared/interfaces'
-import { Application, Environment } from 'qovery-typescript-axios'
+import { ApplicationEntity, LoadingStatus, RootState } from '@console/shared/interfaces'
+import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { ROUTER_APPLICATION } from './router/router'
 
@@ -20,7 +21,7 @@ export function ApplicationPage() {
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
-  const application = useSelector<RootState, Application | undefined>((state) =>
+  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
   )
 
@@ -29,10 +30,11 @@ export function ApplicationPage() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    applicationId &&
-      loadingStatus === 'loaded' &&
-      dispatch(fetchApplicationLinks({ applicationId })) &&
-      dispatch(fetchApplicationInstances({ applicationId }))
+    if (applicationId && loadingStatus === 'loaded') {
+      application?.links?.loadingStatus !== 'loaded' && dispatch(fetchApplicationLinks({ applicationId }))
+      application?.instances?.loadingStatus !== 'loaded' && dispatch(fetchApplicationInstances({ applicationId }))
+      application?.commits?.loadingStatus !== 'loaded' && dispatch(fetchApplicationCommits({ applicationId }))
+    }
   }, [applicationId, loadingStatus])
 
   return (

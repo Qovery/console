@@ -1,4 +1,4 @@
-import { Application, Instance, Link, Status } from 'qovery-typescript-axios'
+import { Application, Commit, Instance, Link, Status } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
 
 export interface ApplicationEntity extends Application {
@@ -10,5 +10,9 @@ export interface ApplicationEntity extends Application {
   instances?: {
     loadingStatus: LoadingStatus
     items?: Instance[]
+  }
+  commits?: {
+    loadingStatus: LoadingStatus
+    items?: Commit[]
   }
 }
