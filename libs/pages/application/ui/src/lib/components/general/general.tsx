@@ -2,6 +2,7 @@
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Skeleton } from '@console/shared/ui'
 import About from '../about/about'
+import InstancesTable from '../instances-table/instances-table'
 
 export interface GeneralProps {
   application?: ApplicationEntity
@@ -19,7 +20,7 @@ export function GeneralPage(props: GeneralProps) {
             <div className="flex-1 border-r border-element-light-lighter-400 px-6 py-3">
               <strong className="text-sm mb-1 text-text-400">Running Instances</strong>
               <Skeleton height={16} width={48} show={application?.instances?.loadingStatus === 'loading'}>
-                <div className="h4 text-black">–</div>
+                <div className="h4 text-black">{application?.instances?.items?.length || '–'}</div>
               </Skeleton>
             </div>
             <div className="flex-1  px-6 py-3">
@@ -29,32 +30,7 @@ export function GeneralPage(props: GeneralProps) {
           </div>
 
           {application?.instances && application?.instances.items?.length && (
-            <table className="w-full border border-element-light-lighter-400">
-              <thead>
-                <tr className="text-xs text-text-400 font-medium">
-                  <td className="border border-element-light-lighter-400 px-6 py-4">Instance name</td>
-                  <td className="border border-element-light-lighter-400 px-6 py-4">RAM usage</td>
-                  <td className="border border-element-light-lighter-400 px-6 py-4">vCPU</td>
-                  <td className="border border-element-light-lighter-400 px-6 py-4">Storage</td>
-                </tr>
-              </thead>
-              <tbody>
-                {application.instances.items?.map((instance) => {
-                  return (
-                    <tr className="text-xs text-text-500 font-medium" key={instance.name}>
-                      <td className="border border-element-light-lighter-400 px-6 py-4">{instance.name}</td>
-                      <td className="border border-element-light-lighter-400 px-6 py-4">
-                        {instance.memory?.consumed_in_percent}%
-                      </td>
-                      <td className="border border-element-light-lighter-400 px-6 py-4">
-                        {instance.cpu?.consumed_in_percent}%
-                      </td>
-                      <td className="border border-element-light-lighter-400 px-6 py-4">–</td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            <InstancesTable instances={application?.instances.items} />
           )}
         </div>
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
