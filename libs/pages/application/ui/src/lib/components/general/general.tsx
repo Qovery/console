@@ -1,16 +1,19 @@
 /* eslint-disable-next-line */
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Skeleton } from '@console/shared/ui'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
+import LastCommit from '../last-commit/last-commit'
 
 export interface GeneralProps {
   application?: ApplicationEntity
   listHelpfulLinks: BaseLink[]
+  loadingStatus?: LoadingStatus
+  commitDeltaCount?: number
 }
 
 export function GeneralPage(props: GeneralProps) {
-  const { application, listHelpfulLinks } = props
+  const { application, listHelpfulLinks, loadingStatus, commitDeltaCount } = props
 
   return (
     <div className="mt-2 bg-white rounded flex flex-grow">
@@ -45,6 +48,12 @@ export function GeneralPage(props: GeneralProps) {
           }}
           buildMode={application?.build_mode}
           gitProvider={application?.git_repository?.provider}
+          loadingStatus={loadingStatus}
+        />
+        <LastCommit
+          commit={application?.commits?.items && application?.commits?.items[0]}
+          loadingStatus={application?.commits?.loadingStatus}
+          commitDeltaCount={commitDeltaCount}
         />
       </div>
     </div>

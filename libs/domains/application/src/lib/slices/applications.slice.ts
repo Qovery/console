@@ -11,6 +11,7 @@ import {
   ApplicationMainCallsApi,
   ApplicationMetricsApi,
   ApplicationsApi,
+  Commit,
   Instance,
   Link,
   Status,
@@ -88,6 +89,17 @@ export const fetchApplicationInstances = createAsyncThunk<Instance[], { applicat
       .then((response) => response.data)
 
     return response.results as Instance[]
+  }
+)
+
+export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationId: string }>(
+  'application/commits',
+  async (data) => {
+    const response = await applicationMainCallsApi
+      .listApplicationCommit(data.applicationId)
+      .then((response) => response.data)
+
+    return response.results as Commit[]
   }
 )
 
@@ -219,6 +231,44 @@ export const applicationsSlice = createSlice({
         }
         applicationsAdapter.updateOne(state, update)
       })
+      .addCase(fetchApplicationCommits.pending, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            commits: {
+              ...state.entities[applicationId]?.commits,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationCommits.fulfilled, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            commits: {
+              items: action.payload,
+              loadingStatus: 'loaded',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationCommits.rejected, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            commits: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
   },
 })
 
@@ -226,7 +276,7 @@ export const applications = applicationsSlice.reducer
 
 export const applicationsActions = applicationsSlice.actions
 
-const { selectAll, selectEntities } = applicationsAdapter.getSelectors()
+const { selectAll, selectEntities, selectById } = applicationsAdapter.getSelectors()
 
 export const getApplicationsState = (rootState: RootState): ApplicationsState =>
   rootState['entities'][APPLICATIONS_FEATURE_KEY]
@@ -245,3 +295,38 @@ export const selectApplicationById = (state: RootState, applicationId: string): 
   getApplicationsState(state).entities[applicationId]
 
 export const applicationsLoadingStatus = (state: RootState): LoadingStatus => getApplicationsState(state).loadingStatus
+
+// export const getCountNewCommitsToDeploy = (state: RootState, applicationId: string) => {
+//   const application = getApplicationsState(state).entities[applicationId]
+//   const deployedCommit = application?.git_repository?.deployed_commit_id
+//   let delta = 0
+//
+//   if (!deployedCommit) return delta
+//   if (!application.commits?.items) return delta
+//
+//   for (const commit of application.commits.items) {
+//     if (commit.git_commit_id === deployedCommit) break
+//     delta++
+//   }
+//
+//   return delta
+// }
+
+export const getCountNewCommitsToDeploy = (applicationId: string) =>
+  createSelector(
+    [getApplicationsState, (state: ApplicationsState) => selectById(state, applicationId)],
+    (state, application): number => {
+      const deployedCommit = application?.git_repository?.deployed_commit_id
+      let delta = 0
+
+      if (!deployedCommit) return delta
+      if (!application.commits?.items) return delta
+
+      for (const commit of application.commits.items) {
+        if (commit.git_commit_id === deployedCommit) break
+        delta++
+      }
+
+      return delta
+    }
+  )

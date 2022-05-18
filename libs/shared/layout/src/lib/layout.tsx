@@ -48,7 +48,6 @@ export function Layout(props: LayoutProps) {
     projectId,
     environmentId,
     getApplications,
-    applicationId,
     getApplication,
   ])
 

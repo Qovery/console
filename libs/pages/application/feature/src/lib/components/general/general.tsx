@@ -3,8 +3,12 @@ import { GeneralPage } from '@console/pages/application/ui'
 import { BaseLink } from '@console/shared/ui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { getApplicationsState } from '@console/domains/application'
-import { ApplicationEntity, RootState } from '@console/shared/interfaces'
+import {
+  applicationsLoadingStatus,
+  getApplicationsState,
+  getCountNewCommitsToDeploy,
+} from '@console/domains/application'
+import { ApplicationEntity, LoadingStatus, RootState } from '@console/shared/interfaces'
 
 export function General() {
   const { applicationId = '' } = useParams()
@@ -12,8 +16,18 @@ export function General() {
     (state) => getApplicationsState(state).entities[applicationId]
   )
   const listHelpfulLinks: BaseLink[] = [{ link: '#', linkLabel: 'How to configure my application', external: true }]
+  const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 
-  return <GeneralPage application={application} listHelpfulLinks={listHelpfulLinks} />
+  const commitDeltaCount = useSelector(getCountNewCommitsToDeploy(applicationId))
+
+  return (
+    <GeneralPage
+      application={application}
+      listHelpfulLinks={listHelpfulLinks}
+      loadingStatus={loadingStatus}
+      commitDeltaCount={commitDeltaCount}
+    />
+  )
 }
 
 export default General
