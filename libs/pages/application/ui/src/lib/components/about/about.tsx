@@ -14,7 +14,7 @@ export function About(props: AboutProps) {
   return (
     <div className="pt-2 pb-8 px-8 flex flex-col items-start border-b border-element-light-lighter-400">
       <div className="text-subtitle mb-3 text-text-600">About</div>
-      <p className="text-text-500 mb-5">{description ? description : <em>No description provided yet</em>}</p>
+      <p className="text-text-500 mb-5">{description ? description : 'No description provided yet'}</p>
       {buildMode && (
         <div className="flex gap-2 items-center px-2 h-6 mb-5 capitalize border leading-0 rounded border-element-light-lighter-500 text-text-500 text-sm font-medium">
           <Icon name={buildMode} className="w-4" />
