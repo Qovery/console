@@ -43,7 +43,7 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false
-        }, 
+        },
         "staging": {
           "fileReplacements": [
             {
@@ -63,7 +63,7 @@
     "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
-        "buildTarget": "console:build",
+        "buildTarget": "console:build:development",
         "hmr": true
       },
       "configurations": {
