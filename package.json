@@ -12,7 +12,7 @@
   },
   "private": true,
   "dependencies": {
-    "@auth0/auth0-react": "^1.9.0",
+    "@auth0/auth0-react": "^1.10.1",
     "@elgorditosalsero/react-gtm-hook": "^2.4.0",
     "@nrwl/cli": "14.1.4",
     "@nrwl/cypress": "13.9.6",
