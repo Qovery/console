@@ -21,8 +21,10 @@ const menus: MenuData = [
         name: 'Test 2',
         link: { url: '/', external: false },
         contentRight: <Icon name="icon-solid-star" className="text-yellow-400 text-sm" />,
+        copy: 'Whatever you want',
+        copyTooltip: 'Copy the name',
       },
-      { name: 'Test 3', link: { url: '/', external: false } },
+      { name: 'Test 3', link: { url: '/', external: false }, copy: 'Test 3' },
     ],
     title: 'Test',
     button: 'Link',
@@ -38,7 +40,9 @@ const menus: MenuData = [
   },
 ]
 
-const Template: Story<MenuProps> = (args) => <Menu open={true} menus={menus} trigger={<Button>Trigger</Button>}></Menu>
+const Template: Story<MenuProps> = (args) => (
+  <Menu {...args} open={true} menus={menus} trigger={<Button>Trigger</Button>}></Menu>
+)
 
 export const Primary = Template.bind({})
 
