@@ -50,6 +50,8 @@ export function Container(props: ContainerProps) {
           url: link.url || '',
           external: true,
         },
+        copy: link.url || '',
+        copyTooltip: 'Copy the link',
       }
     })
 
