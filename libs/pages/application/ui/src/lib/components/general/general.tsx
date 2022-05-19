@@ -16,9 +16,9 @@ export function GeneralPage(props: GeneralProps) {
   const { application, listHelpfulLinks, loadingStatus, commitDeltaCount } = props
 
   return (
-    <div className="mt-2 bg-white rounded flex flex-grow">
+    <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
       <div className="flex h-full flex-col flex-grow">
-        <div className="py-7 px-10 flex-grow">
+        <div className="py-7 px-10 flex-grow overflow-auto">
           <div className="flex border border-element-light-lighter-400 mb-4">
             <div className="flex-1 border-r border-element-light-lighter-400 px-6 py-3">
               <strong className="text-sm mb-1 text-text-400">Running Instances</strong>

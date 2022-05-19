@@ -28,7 +28,7 @@ export function TagCommit(props: TagCommitProps) {
   }, [])
 
   const contentTag = (
-    <Tag className="border border-element-light-lighter-500 text-text-400 font-medium hover:bg-element-light-lighter-400 w-[70px] flex items-center justify-center">
+    <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 hover:bg-element-light-lighter-400 w-[70px] flex items-center justify-center">
       {!hover ? (
         <div className="w-4 mr-1">
           <Icon name="icon-solid-code-commit" className="mr-1" />
@@ -43,7 +43,7 @@ export function TagCommit(props: TagCommitProps) {
   )
 
   const copyTag = (
-    <Tag className="bg-success-500 text-white font-medium w-[70px] flex items-center justify-center">
+    <Tag className="bg-success-500 text-white font-medium h-7 w-[70px] flex items-center justify-center">
       <Icon name="icon-solid-check" className="mr-1 w-4" />
       Copied
     </Tag>

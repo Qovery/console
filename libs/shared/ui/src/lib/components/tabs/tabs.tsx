@@ -16,7 +16,7 @@ export function Tabs(props: TabsProps) {
   const { items = [], contentRight } = props
 
   return (
-    <div className="w-full h-14 bg-white flex justify-between items-center rounded-b">
+    <div className="w-full h-14 bg-white flex shrink-0 justify-between items-center rounded-b">
       <div className="flex gap-1 h-14 pl-4">
         {items.map((item: TabsItem, index: number) => (
           <Link
