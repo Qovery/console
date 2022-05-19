@@ -296,29 +296,14 @@ export const selectApplicationById = (state: RootState, applicationId: string): 
 
 export const applicationsLoadingStatus = (state: RootState): LoadingStatus => getApplicationsState(state).loadingStatus
 
-// export const getCountNewCommitsToDeploy = (state: RootState, applicationId: string) => {
-//   const application = getApplicationsState(state).entities[applicationId]
-//   const deployedCommit = application?.git_repository?.deployed_commit_id
-//   let delta = 0
-//
-//   if (!deployedCommit) return delta
-//   if (!application.commits?.items) return delta
-//
-//   for (const commit of application.commits.items) {
-//     if (commit.git_commit_id === deployedCommit) break
-//     delta++
-//   }
-//
-//   return delta
-// }
-
 export const getCountNewCommitsToDeploy = (applicationId: string) =>
   createSelector(
-    [getApplicationsState, (state: ApplicationsState) => selectById(state, applicationId)],
-    (state, application): number => {
+    (state: RootState) => {
+      return selectById(getApplicationsState(state), applicationId)
+    },
+    (application): number => {
       const deployedCommit = application?.git_repository?.deployed_commit_id
       let delta = 0
-
       if (!deployedCommit) return delta
       if (!application.commits?.items) return delta
 
