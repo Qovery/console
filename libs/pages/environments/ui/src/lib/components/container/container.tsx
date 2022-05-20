@@ -1,6 +1,6 @@
 import { useLocation, useParams } from 'react-router'
 import { ENVIRONMENTS_URL, ENVIRONMENTS_DEPLOYMENT_RULES_URL } from '@console/shared/utils'
-import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs } from '@console/shared/ui'
+import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs, Button, ButtonSize } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
 
@@ -73,11 +73,21 @@ export function Container(props: ContainerProps) {
     },
   ]
 
+  const isDeploymentRulesTab =
+    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`
+
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <ButtonAction menus={menusButton} iconRight="icon-solid-plus">
-        New environment
-      </ButtonAction>
+      {!isDeploymentRulesTab ? (
+        <ButtonAction menus={menusButton} iconRight="icon-solid-plus">
+          New environment
+        </ButtonAction>
+      ) : (
+        <Button size={ButtonSize.SMALL} className="leading-none">
+          New rule
+          <Icon name="icon-solid-plus" className="ml-2 !text-base inline-block -mt-1" />
+        </Button>
+      )}
     </div>
   )
 

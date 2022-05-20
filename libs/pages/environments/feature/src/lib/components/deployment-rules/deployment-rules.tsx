@@ -1,10 +1,10 @@
 import { DeploymentRulesPage } from '@console/pages/environments/ui'
+import { BaseLink } from '@console/shared/ui'
 
-/* eslint-disable-next-line */
-export interface DeploymentRulesProps {}
+export function DeploymentRules() {
+  const listHelpfulLinks: BaseLink[] = [{ link: '#', linkLabel: 'How to configure my application', external: true }]
 
-export function DeploymentRules(props: DeploymentRulesProps) {
-  return <DeploymentRulesPage />
+  return <DeploymentRulesPage listHelpfulLinks={listHelpfulLinks} />
 }
 
 export default DeploymentRules

@@ -11,10 +11,22 @@ export interface MenuItemProps {
   onClick?: (e: ClickEvent) => void
   copy?: string
   copyTooltip?: string
+  className?: string
+  textClassName?: string
 }
 
 export function MenuItem(props: MenuItemProps) {
-  const { name, link, contentLeft, contentRight, onClick, copy, copyTooltip } = props
+  const {
+    name,
+    link,
+    contentLeft,
+    contentRight,
+    onClick,
+    copy,
+    copyTooltip,
+    textClassName = 'text-text-500',
+    className = '',
+  } = props
   const navigate = useNavigate()
 
   const copyName = (e: React.MouseEvent) => {
@@ -40,7 +52,7 @@ export function MenuItem(props: MenuItemProps) {
         )}
 
         {contentLeft && <span className="mr-3">{contentLeft}</span>}
-        <span className="text-sm text-text-500 font-medium">{name}</span>
+        <span className={`text-sm text-text-500 font-medium ${textClassName}`}>{name}</span>
       </div>
       <div>{contentRight && <span className="ml-3">{contentRight}</span>}</div>
     </>

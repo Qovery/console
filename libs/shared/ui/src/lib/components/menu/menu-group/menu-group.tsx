@@ -92,6 +92,8 @@ export function MenuGroup(props: MenuGroupProps) {
               onClick={item.onClick}
               copy={item.copy}
               copyTooltip={item.copyTooltip}
+              className={item.className}
+              textClassName={item.textClassName}
             />
           ))}
         </div>
