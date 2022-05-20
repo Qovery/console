@@ -2,11 +2,15 @@
   "fileServerFolder": ".",
   "fixturesFolder": "./src/fixtures",
   "integrationFolder": "./src/integration",
-  "modifyObstructiveCode": false,
+  "pluginsFile": "./src/plugins/index.js",
   "supportFile": "./src/support/index.ts",
-  "pluginsFile": false,
-  "video": true,
-  "videosFolder": "../../dist/cypress/apps/console-e2e/videos",
-  "screenshotsFolder": "../../dist/cypress/apps/console-e2e/screenshots",
-  "chromeWebSecurity": false
+  "video": false,
+  "videosFolder": "../../dist/cypress/apps/wm-front-e2e/videos",
+  "screenshotsFolder": "../../dist/cypress/apps/wm-front-e2e/screenshots",
+  "chromeWebSecurity": false,
+  "viewportHeight": 900,
+  "viewportWidth": 1440,
+  "testFiles": "**/*.{feature,features}",
+  "ignoreTestFiles": ["*.js", "*.ts", "*.md"],
+  "defaultCommandTimeout": 7000
 }

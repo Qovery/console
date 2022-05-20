@@ -19,12 +19,16 @@ export function Login(props: ILoginProps) {
           <p className="text-sm mb-10 text-text-500">
             By registering and using Qovery, you agree to the processing of your personal data by Qovery as described in
             the
-            <a href="/" className="link text-accent2-500 ml-1">
+            <a href="/" className="link text-accent2-500 ml-1" data-cy="privacy-policy-link">
               Privacy Policy
             </a>
             .
           </p>
-          <button className="btn-login btn-login--github mb-3" onClick={() => onClickAuthLogin(githubType)}>
+          <button
+            className="btn-login btn-login--github mb-3"
+            onClick={() => onClickAuthLogin(githubType)}
+            data-cy="github-btn"
+          >
             <Icon className="absolute left-3" width="20" name={IconEnum.GITHUB} />
             Sign in with Github
           </button>
@@ -38,7 +42,10 @@ export function Login(props: ILoginProps) {
           </button>
         </div>
       </div>
-      <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:-z-10 before:w-full before:h-full before:bg-element-light-lighter-300">
+      <div
+        className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:-z-10 before:w-full before:h-full before:bg-element-light-lighter-300"
+        data-cy="right-section"
+      >
         <div className="max-w-md">
           <h2 className="h1 text-text-700 mt-44 mb-6">
             The Simplest Way To Deploy Your Apps on AWS and Kubernetes
@@ -49,25 +56,25 @@ export function Login(props: ILoginProps) {
           <p className="text-text-500 mb-6 text-sm">Push your code, Qovery handles the rest</p>
           <ul className="list-disc pl-4 text-sm">
             <li className="font-bold text-text-500 mb-2">
-              <a href="/" className="link text-brand-500 mr-1">
+              <a href="/" className="link text-brand-500 mr-1" data-cy="deploy-app-link">
                 Deploy your apps
               </a>
               on AWS in seconds
             </li>
             <li className="font-bold text-text-500 mb-2">
-              <a href="/" className="link text-brand-500 mr-1">
+              <a href="/" className="link text-brand-500 mr-1" data-cy="instant-preview-link">
                 Get instant preview
               </a>
               environments
             </li>
             <li className="font-bold text-text-500 mb-2">
-              <a href="/" className="link text-brand-500 mr-1">
+              <a href="/" className="link text-brand-500 mr-1" data-cy="reduce-cloud-cost-link">
                 Reduce your Cloud
               </a>
               cost by 60%
             </li>
             <li className="font-bold text-text-500">
-              <a href="/" className="link text-brand-500 mr-1">
+              <a href="/" className="link text-brand-500 mr-1" data-cy="boost-team-experience-link">
                 Boost your team
               </a>
               experience

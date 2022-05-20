@@ -10,3 +10,4 @@ dist
 tmp
 .tool-versions
 /.nx-cache
+cyreport
