@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { initialOrganizationState, organization } from '@console/domains/organization'
-import { initialProjectsState, projects } from '@console/domains/projects'
+import { initialDeploymentRulesState, initialProjectsState, projects } from '@console/domains/projects'
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
 import { applications, initialApplicationsState } from '@console/domains/application'
 import { environments, initialEnvironmentsState } from '@console/domains/environment'
@@ -34,6 +34,9 @@ export const initialRootState = (): RootState => ({
   entities: {
     organization: initialOrganizationState,
     projects: initialProjectsState,
+    project: {
+      deploymentRules: initialDeploymentRulesState,
+    },
     environments: initialEnvironmentsState,
     applications: initialApplicationsState,
   },

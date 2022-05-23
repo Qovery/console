@@ -5,6 +5,7 @@ export * from './lib/states/projects.interface'
 export * from './lib/states/organizations.interface'
 export * from './lib/states/user.interface'
 export * from './lib/states/applications.interface'
+export * from './lib/states/deployment-rules.interface'
 
 export * from './lib/domain/application.entity'
 export * from './lib/domain/environment.entity'
