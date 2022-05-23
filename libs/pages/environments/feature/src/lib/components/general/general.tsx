@@ -6,9 +6,8 @@ import {
   environmentsLoadingStatus,
   selectEnvironmentsEntitiesByProjectId,
 } from '@console/domains/environment'
-import { RootState } from '@console/shared/interfaces'
 import { Environment } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { RootState } from '@console/store/data'
 
 export function General() {
   const { projectId = '' } = useParams()
@@ -16,7 +15,7 @@ export function General() {
     delete env.status
     return env
   })
-  const loadingStatus = useSelector<RootState>((state) => environmentsLoadingStatus(state))
+  const loadingStatus = useSelector(environmentsLoadingStatus)
   const environments = useSelector<RootState, Environment[]>((state) =>
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )

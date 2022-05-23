@@ -4,7 +4,6 @@ import { initialProjectsState, projects } from '@console/domains/projects'
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
 import { applications, initialApplicationsState } from '@console/domains/application'
 import { environments, initialEnvironmentsState } from '@console/domains/environment'
-import { RootState } from '@console/shared/interfaces'
 
 export const uiReducer = combineReducers({
   user: user,
@@ -23,6 +22,8 @@ export const store = configureStore({
   reducer: rootReducer,
 })
 
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 export const initialRootState = (): RootState => ({

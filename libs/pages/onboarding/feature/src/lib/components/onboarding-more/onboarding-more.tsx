@@ -53,7 +53,7 @@ export function OnboardingMore() {
 
       updateUserSignUp({ ...userSignUp, ...data })
 
-      const user = await getUserSignUp()
+      const user: any = await getUserSignUp()
 
       if (user.payload.dx_auth) {
         navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)

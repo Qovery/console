@@ -17,7 +17,8 @@ import {
   Status,
 } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
-import { ApplicationEntity, ApplicationsState, LoadingStatus, RootState } from '@console/shared/interfaces'
+import { ApplicationEntity, ApplicationsState, LoadingStatus } from '@console/shared/interfaces'
+import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 

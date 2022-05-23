@@ -4,9 +4,9 @@ import { Route, Routes, useParams } from 'react-router'
 import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
 import { useSelector } from 'react-redux'
 import { selectEnvironmentById } from '@console/domains/environment'
-import { RootState } from '@console/shared/interfaces'
 import { Application, Environment } from 'qovery-typescript-axios'
 import { ROUTER_APPLICATIONS } from './router/router'
+import { RootState } from '@console/store/data'
 
 export function ApplicationsPage() {
   useDocumentTitle('Applications - Qovery')

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
-import { OrganizationState, RootState } from '@console/shared/interfaces'
+import { OrganizationState } from '@console/shared/interfaces'
+import { RootState } from '@console/store/data'
 
 export const ORGANIZATION_KEY = 'organization'
 

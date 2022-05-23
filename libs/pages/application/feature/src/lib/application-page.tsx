@@ -10,10 +10,11 @@ import {
 import { Route, Routes, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEnvironmentById } from '@console/domains/environment'
-import { ApplicationEntity, LoadingStatus, RootState } from '@console/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { ROUTER_APPLICATION } from './router/router'
+import { AppDispatch, RootState } from '@console/store/data'
 
 export function ApplicationPage() {
   useDocumentTitle('Application - Qovery')
@@ -27,7 +28,7 @@ export function ApplicationPage() {
 
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     if (applicationId && loadingStatus === 'loaded') {

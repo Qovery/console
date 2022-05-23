@@ -20,7 +20,7 @@ posthog.init(environment.posthog, {
   api_host: environment.posthog_apihost,
 })
 
-const onRedirectCallback = (appState: AppState) => {
+const onRedirectCallback = (appState: AppState | undefined) => {
   // use the router's history module to replace the url
   history.replace(appState?.returnTo || window.location.pathname)
 }

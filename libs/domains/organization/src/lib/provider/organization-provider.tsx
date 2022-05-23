@@ -8,10 +8,11 @@ import {
   selectAllOrganization,
   selectOrganizationLoadingStatus,
 } from '../slices/organization.slice'
+import { AppDispatch } from '@console/store/data'
 
 export function useOrganization() {
   const { getAccessTokenSilently } = useAuth()
-  const dispatch = useDispatch<any>()
+  const dispatch = useDispatch<AppDispatch>()
   const organization = useSelector(selectAllOrganization)
   const loadingStatus = useSelector(selectOrganizationLoadingStatus)
 

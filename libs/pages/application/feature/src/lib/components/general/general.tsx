@@ -8,7 +8,8 @@ import {
   getApplicationsState,
   getCountNewCommitsToDeploy,
 } from '@console/domains/application'
-import { ApplicationEntity, LoadingStatus, RootState } from '@console/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { RootState } from '@console/store/data'
 
 export function General() {
   const { applicationId = '' } = useParams()

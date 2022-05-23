@@ -1,6 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { UserInterface } from '../interfaces'
-import { RootState } from '@console/shared/interfaces'
+import { RootState } from '@console/store/data'
 
 export const USER_KEY = 'user'
 
