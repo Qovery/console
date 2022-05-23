@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
-import { ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum, OVERVIEW_URL } from '@console/shared/utils'
+import { AuthEnum, OVERVIEW_URL, useAuth, useDocumentTitle } from '@console/shared/utils'
 import { useOrganization } from '@console/domains/organization'
 import { useProjects } from '@console/domains/projects'
+
 // import posthog from 'posthog-js'
 
 export function LoginPage() {
@@ -23,12 +24,12 @@ export function LoginPage() {
     const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
 
     async function fetchData() {
-      const organization = await getOrganization()
+      const organization: any = await getOrganization()
       await createAuthCookies()
 
       if (organization.payload.length > 0) {
         const organizationId = organization.payload[0].id
-        const projects = await getProjects(organizationId)
+        const projects: any = await getProjects(organizationId)
         if (projects.payload.length > 0) navigate(OVERVIEW_URL(organizationId, projects.payload[0].id))
       }
       // if (isOnboarding && organization.payload.length === 0) {

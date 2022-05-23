@@ -6,9 +6,10 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { EnvironmentEntity, EnvironmentsState, RootState } from '@console/shared/interfaces'
+import { EnvironmentEntity, EnvironmentsState } from '@console/shared/interfaces'
 import { Environment, EnvironmentsApi, Status } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
+import { RootState } from '@console/store/data'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 

@@ -8,8 +8,8 @@ import { LayoutPage } from '@console/shared/ui'
 import { useAuth } from '@console/shared/utils'
 import { useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
-import { RootState } from '@console/shared/interfaces'
 import { Application, Environment, Project } from 'qovery-typescript-axios'
+import { RootState } from '@console/store/data'
 
 export interface LayoutProps {
   children: React.ReactElement

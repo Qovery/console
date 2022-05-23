@@ -35,8 +35,8 @@ function RedirectOverview() {
 
   useEffect(() => {
     async function fetchProjects() {
-      const projects = organizationId && (await getProjects(organizationId))
-      if (projects.payload.length > 0) {
+      const projects: any = organizationId && (await getProjects(organizationId))
+      if (projects?.payload.length > 0) {
         window.location.href = OVERVIEW_URL(organizationId, projects.payload[0].id)
       }
     }

@@ -5,9 +5,10 @@ import {
   fetchEnvironmentsStatus,
   selectAllEnvironments,
 } from 'libs/domains/environment/src/lib/slices/environments.slice'
+import { AppDispatch } from '@console/store/data'
 
 export function useEnvironments() {
-  const dispatch = useDispatch<any>()
+  const dispatch = useDispatch<AppDispatch>()
   const environments = useSelector(selectAllEnvironments)
 
   const getEnvironments = useCallback(

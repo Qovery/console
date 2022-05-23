@@ -6,9 +6,10 @@ import {
   removeOneApplication,
   selectAllApplications,
 } from '../slices/applications.slice'
+import { AppDispatch } from '@console/store/data'
 
 export function useApplications() {
-  const dispatch = useDispatch<any>()
+  const dispatch = useDispatch<AppDispatch>()
   const applications = useSelector(selectAllApplications)
 
   const removeApplication = useCallback(

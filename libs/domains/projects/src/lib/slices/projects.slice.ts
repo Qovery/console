@@ -1,7 +1,8 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
-import { ProjectsState, RootState } from '@console/shared/interfaces'
+import { ProjectsState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
+import { RootState } from '@console/store/data'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 

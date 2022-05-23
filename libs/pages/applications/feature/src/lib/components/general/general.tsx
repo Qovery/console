@@ -1,14 +1,13 @@
 import {
   applicationFactoryMock,
-  applications,
   applicationsLoadingStatus,
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
 import { GeneralPage } from '@console/pages/applications/ui'
-import { RootState } from '@console/shared/interfaces'
 import { Application } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
+import { RootState } from '@console/store/data'
 
 export function General() {
   const { environmentId = '' } = useParams()
