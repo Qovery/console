@@ -1,6 +1,6 @@
 import { DeploymentRuleState, RootState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { ProjectDeploymentRule, ProjectDeploymentRuleApi } from 'qovery-typescript-axios'
 
 export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
@@ -10,7 +10,7 @@ const deploymentRulesApi = new ProjectDeploymentRuleApi()
 export const deploymentRulesAdapter = createEntityAdapter<ProjectDeploymentRule>()
 
 export const fetchDeploymentRules = createAsyncThunk<ProjectDeploymentRule[], { projectId: string }>(
-  'deploymentRules/fetchStatus',
+  'project/deploymentRules/fetch',
   async (data) => {
     const response = await deploymentRulesApi
       .listProjectDeploymentRules(data.projectId)
@@ -37,19 +37,16 @@ export const deploymentRulesSlice = createSlice({
       .addCase(fetchDeploymentRules.pending, (state: DeploymentRuleState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(
-        fetchDeploymentRules.fulfilled,
-        (state: DeploymentRuleState, action: PayloadAction<ProjectDeploymentRule[]>) => {
-          deploymentRulesAdapter.upsertMany(state, action.payload)
-          action.payload.forEach((deploymentRule) => {
-            state.joinProjectDeploymentRules = addOneToManyRelation(deploymentRule.id, deploymentRule.id, {
-              ...state.joinProjectDeploymentRules,
-            })
+      .addCase(fetchDeploymentRules.fulfilled, (state: DeploymentRuleState, action) => {
+        deploymentRulesAdapter.upsertMany(state, action.payload)
+        action.payload.forEach((deploymentRule) => {
+          state.joinProjectDeploymentRules = addOneToManyRelation(action.meta.arg.projectId, deploymentRule.id, {
+            ...state.joinProjectDeploymentRules,
           })
+        })
 
-          state.loadingStatus = 'loaded'
-        }
-      )
+        state.loadingStatus = 'loaded'
+      })
       .addCase(fetchDeploymentRules.rejected, (state: DeploymentRuleState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message

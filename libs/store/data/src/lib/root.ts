@@ -1,6 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { initialOrganizationState, organization } from '@console/domains/organization'
-import { initialDeploymentRulesState, initialProjectsState, projects } from '@console/domains/projects'
+import {
+  deploymentRulesReducer,
+  initialDeploymentRulesState,
+  initialProjectsState,
+  projects,
+} from '@console/domains/projects'
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
 import { applications, initialApplicationsState } from '@console/domains/application'
 import { environments, initialEnvironmentsState } from '@console/domains/environment'
@@ -10,9 +15,14 @@ export const uiReducer = combineReducers({
   userSignUp: userSignUp,
 })
 
+export const projectReducer = combineReducers({
+  deploymentRules: deploymentRulesReducer,
+})
+
 export const entitiesReducer = combineReducers({
   organization: organization,
   projects: projects,
+  project: projectReducer,
   environments: environments,
   applications: applications,
 })

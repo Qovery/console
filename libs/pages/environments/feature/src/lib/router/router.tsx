@@ -1,5 +1,5 @@
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_GENERAL_URL, Route } from '@console/shared/utils'
-import DeploymentRules from '../components/deployment-rules/deployment-rules'
+import { DeploymentRules } from '../components/deployment-rules/deployment-rules'
 import General from '../components/general/general'
 
 export const ROUTER_ENVIRONMENTS: Route[] = [
