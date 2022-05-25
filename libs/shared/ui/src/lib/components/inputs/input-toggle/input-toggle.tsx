@@ -2,22 +2,25 @@ import { useState } from 'react'
 
 export interface InputToggleProps {
   small?: boolean
+  value?: boolean
+  onChange?: (e: boolean) => void
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const { small } = props
+  const { small, value = false, onChange } = props
 
-  const [toggleActive, setToggleActive] = useState(false)
+  const [toggleActive, setToggleActive] = useState(value)
 
   const toggleSizeBg = small ? 'w-6 h-3.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-2.5 h-2.5' : 'w-5 h-5'
 
+  const changeToggle = () => {
+    onChange && onChange(!toggleActive)
+    setToggleActive(!toggleActive)
+  }
+
   return (
-    <div
-      aria-label="toggle-btn"
-      className="inline-flex justify-between items-center"
-      onClick={() => setToggleActive(!toggleActive)}
-    >
+    <div aria-label="toggle-btn" className="inline-flex justify-between items-center" onClick={changeToggle}>
       <div
         aria-label="bg"
         className={`${toggleSizeBg} flex items-center rounded-full p-0.5 duration-300 ease-in-out ${

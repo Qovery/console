@@ -1,5 +1,9 @@
 import { useLocation, useParams } from 'react-router'
-import { ENVIRONMENTS_URL, ENVIRONMENTS_DEPLOYMENT_RULES_URL } from '@console/shared/utils'
+import {
+  ENVIRONMENTS_URL,
+  ENVIRONMENTS_DEPLOYMENT_RULES_URL,
+  ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE,
+} from '@console/shared/utils'
 import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs, Button, ButtonSize } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 import { ClickEvent } from '@szhsin/react-menu'
@@ -32,7 +36,9 @@ export function Container(props: ContainerProps) {
       icon: <Icon name="icon-solid-browser" className="text-sm text-inherit" />,
       name: 'Deployment Rules',
       active:
-        location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
+        location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
+        location.pathname ===
+          `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE}`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },
   ]
@@ -74,7 +80,8 @@ export function Container(props: ContainerProps) {
   ]
 
   const isDeploymentRulesTab =
-    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`
+    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
+    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE}`
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
@@ -83,7 +90,11 @@ export function Container(props: ContainerProps) {
           New environment
         </ButtonAction>
       ) : (
-        <Button size={ButtonSize.SMALL} className="leading-none">
+        <Button
+          size={ButtonSize.SMALL}
+          className="leading-none"
+          link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE}`}
+        >
           New rule
           <Icon name="icon-solid-plus" className="ml-2 !text-base inline-block -mt-1" />
         </Button>

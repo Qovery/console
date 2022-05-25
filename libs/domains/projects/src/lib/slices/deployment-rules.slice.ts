@@ -1,7 +1,8 @@
-import { DeploymentRuleState, RootState } from '@console/shared/interfaces'
+import { DeploymentRuleState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { ProjectDeploymentRule, ProjectDeploymentRuleApi } from 'qovery-typescript-axios'
+import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
+import { RootState } from '@console/store/data'
 
 export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
 
@@ -18,6 +19,20 @@ export const fetchDeploymentRules = createAsyncThunk<ProjectDeploymentRule[], { 
     return response.results as ProjectDeploymentRule[]
   }
 )
+
+export const postDeploymentRules = createAsyncThunk<
+  ProjectDeploymentRule,
+  { projectId: string } & ProjectDeploymentRuleRequest
+>('project/deploymentRules/post', async (data, { rejectWithValue }) => {
+  const { projectId, ...fields } = data
+
+  try {
+    const result = await deploymentRulesApi.createDeploymentRule(projectId, fields).then((response) => response.data)
+    return result
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
 
 export const initialDeploymentRulesState: DeploymentRuleState = deploymentRulesAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -51,6 +66,18 @@ export const deploymentRulesSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      // post
+      .addCase(postDeploymentRules.pending, (state: DeploymentRuleState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(postDeploymentRules.fulfilled, (state: DeploymentRuleState, action) => {
+        deploymentRulesAdapter.upsertOne(state, action.payload)
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(postDeploymentRules.rejected, (state: DeploymentRuleState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
   },
 })
 
@@ -69,10 +96,10 @@ export const selectDeploymentRulesEntitiesByProjectId = (
   state: RootState,
   projectId: string
 ): ProjectDeploymentRule[] => {
-  const deploymentRulesState = getDeploymentRulesState(state)
+  const deploymentRuleState = getDeploymentRulesState(state)
   return getEntitiesByIds<ProjectDeploymentRule>(
-    deploymentRulesState.entities,
-    deploymentRulesState?.joinProjectDeploymentRules[projectId]
+    deploymentRuleState.entities,
+    deploymentRuleState?.joinProjectDeploymentRules[projectId]
   )
 }
 
