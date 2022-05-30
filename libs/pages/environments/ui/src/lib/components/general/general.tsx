@@ -1,12 +1,12 @@
-import { Environment } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useParams } from 'react-router'
 import { Table } from '@console/shared/ui'
 import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface GeneralProps {
-  environments: Environment[]
+  environments: EnvironmentEntity[]
 }
 
 export function GeneralPage(props: GeneralProps) {
@@ -14,10 +14,6 @@ export function GeneralPage(props: GeneralProps) {
   const { organizationId, projectId } = useParams()
 
   const [data, setData] = useState(environments)
-
-  useEffect(() => {
-    setData(environments)
-  }, [environments])
 
   const tableHead = [
     {

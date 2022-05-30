@@ -6,23 +6,22 @@ import {
   environmentsLoadingStatus,
   selectEnvironmentsEntitiesByProjectId,
 } from '@console/domains/environment'
-import { Environment } from 'qovery-typescript-axios'
 import { RootState } from '@console/store/data'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 
 export function General() {
   const { projectId = '' } = useParams()
-  const loadingEnvironments = environmentFactoryMock(3).map((env) => {
-    delete env.status
-    return env
-  })
+  const loadingEnvironments = environmentFactoryMock(3, true)
+
   const loadingStatus = useSelector(environmentsLoadingStatus)
-  const environments = useSelector<RootState, Environment[]>((state) =>
+  const environments = useSelector<RootState, EnvironmentEntity[]>((state) =>
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
 
   return (
     <GeneralPage
-      environments={loadingStatus !== 'loaded' && environments.length === 0 ? loadingEnvironments : environments}
+      key={environments[0] ? environments[0].status?.id : ''}
+      environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
     />
   )
 }
