@@ -1,3 +1,4 @@
+export * from './lib/components/inputs/input-select-multiple/input-select-multiple'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'

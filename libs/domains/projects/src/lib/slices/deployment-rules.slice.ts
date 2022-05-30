@@ -1,7 +1,12 @@
-import { DeploymentRuleState } from '@console/shared/interfaces'
+import { DeploymentRuleState, LoadingStatus } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
+import {
+  ProjectDeploymentRule,
+  ProjectDeploymentRuleApi,
+  ProjectDeploymentRuleRequest,
+  ProjectDeploymentRulesPriorityOrderRequest,
+} from 'qovery-typescript-axios'
 import { RootState } from '@console/store/data'
 
 export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
@@ -27,12 +32,43 @@ export const postDeploymentRules = createAsyncThunk<
   const { projectId, ...fields } = data
 
   try {
-    const result = await deploymentRulesApi.createDeploymentRule(projectId, fields).then((response) => response.data)
+    const result = await deploymentRulesApi
+      .createDeploymentRule(projectId, { ...fields })
+      .then((response) => response.data)
     return result
   } catch (error) {
     return rejectWithValue(error)
   }
 })
+
+export const updateDeploymentRuleOrder = createAsyncThunk<
+  null,
+  { projectId: string; deploymentRulesIds: string[] } & ProjectDeploymentRulesPriorityOrderRequest
+>('project/deploymentRules/update-order', async (data) => {
+  const response = await deploymentRulesApi
+    .updateDeploymentRulesPriorityOrder(data.projectId, {
+      project_deployment_rule_ids_in_order: data.deploymentRulesIds,
+    })
+    .then((response) => fetchDeploymentRules({ projectId: data.projectId }))
+
+  return null
+})
+
+export const deleteDeploymentRule = createAsyncThunk<string, { projectId: string; deploymentRuleId: string }>(
+  'project/deploymentRules/delete',
+  async (data, { rejectWithValue }) => {
+    const { projectId, deploymentRuleId } = data
+
+    try {
+      await deploymentRulesApi
+        .deleteProjectDeploymentRule(projectId, deploymentRuleId)
+        .then((response) => response.data)
+      return deploymentRuleId
+    } catch (error) {
+      return rejectWithValue(error)
+    }
+  }
+)
 
 export const initialDeploymentRulesState: DeploymentRuleState = deploymentRulesAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -78,6 +114,30 @@ export const deploymentRulesSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      // update order
+      .addCase(updateDeploymentRuleOrder.pending, (state: DeploymentRuleState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(updateDeploymentRuleOrder.fulfilled, (state: DeploymentRuleState, action) => {
+        fetchDeploymentRules({ projectId: action.meta.arg.projectId })
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(updateDeploymentRuleOrder.rejected, (state: DeploymentRuleState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // delete
+      .addCase(deleteDeploymentRule.pending, (state: DeploymentRuleState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(deleteDeploymentRule.fulfilled, (state: DeploymentRuleState, action) => {
+        deploymentRulesAdapter.removeOne(state, action.meta.arg.deploymentRuleId)
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(deleteDeploymentRule.rejected, (state: DeploymentRuleState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
   },
 })
 
@@ -89,6 +149,9 @@ const { selectAll, selectEntities } = deploymentRulesAdapter.getSelectors()
 
 export const getDeploymentRulesState = (rootState: RootState): DeploymentRuleState =>
   rootState.entities.project[DEPLOYMENTRULES_FEATURE_KEY]
+
+export const deploymentRulesLoadingStatus = (state: RootState): LoadingStatus =>
+  getDeploymentRulesState(state).loadingStatus
 
 export const selectAllDeploymentRules = createSelector(getDeploymentRulesState, selectAll)
 

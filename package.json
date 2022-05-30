@@ -54,6 +54,7 @@
     "react-dom": "17.0.2",
     "react-hook-form": "^7.31.0",
     "react-hot-toast": "^2.2.0",
+    "react-multi-select-component": "^4.2.7",
     "react-redux": "^8.0.1",
     "react-router-dom": "^6.2.1",
     "react-use-intercom": "^1.5.1",

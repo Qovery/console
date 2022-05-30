@@ -36,6 +36,10 @@ export const entitiesReducer = combineReducers({
 export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
 export const store = configureStore({
   reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

@@ -1,10 +1,14 @@
 import {
   BaseLink,
+  Button,
   ButtonIcon,
   ButtonIconStyle,
+  ButtonSize,
+  ButtonStyle,
   HelpSection,
   Icon,
   InputSelect,
+  InputSelectMultiple,
   InputText,
   InputTextArea,
   InputToggle,
@@ -31,22 +35,53 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
   const modeSelection = [
     {
       label: 'Development',
-      value: 'development',
+      value: 'DEVELOPMENT',
     },
     {
       label: 'Production',
-      value: 'production',
+      value: 'PRODUCTION',
     },
     {
       label: 'Staging',
-      value: 'staging',
+      value: 'STAGING',
     },
   ]
 
   const timezoneSelection = [
     {
       label: 'UTC',
-      value: 'utc',
+      value: 'UTC',
+    },
+  ]
+
+  const weekdaysSelection = [
+    {
+      label: 'MONDAY',
+      value: 'MONDAY',
+    },
+    {
+      label: 'TUESDAY',
+      value: 'TUESDAY',
+    },
+    {
+      label: 'WEDNESDAY',
+      value: 'WEDNESDAY',
+    },
+    {
+      label: 'THURSDAY',
+      value: 'THURSDAY',
+    },
+    {
+      label: 'FRIDAY',
+      value: 'FRIDAY',
+    },
+    {
+      label: 'SATURDAY',
+      value: 'SATURDAY',
+    },
+    {
+      label: 'SUNDAY',
+      value: 'SUNDAY',
     },
   ]
 
@@ -253,6 +288,21 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
                     field empty if you want the rule to be applied to all new environments.
                   </p>
                   <Controller
+                    name="weekdays"
+                    control={control}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputSelectMultiple
+                        label="Which days"
+                        value={field.value}
+                        options={weekdaysSelection}
+                        error={error?.message}
+                        onChange={field.onChange}
+                        className="mb-3"
+                        disabled={!autoStop}
+                      />
+                    )}
+                  />
+                  <Controller
                     name="timezone"
                     control={control}
                     render={({ field, fieldState: { error } }) => (
@@ -271,7 +321,7 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
                     <Controller
                       name="start_time"
                       control={control}
-                      rules={{ required: 'Please enter a start time.', value: '08:00' }}
+                      rules={{ required: 'Please enter a start time.' }}
                       render={({ field, fieldState: { error } }) => (
                         <InputText
                           name={field.name}
@@ -288,7 +338,7 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
                     <Controller
                       name="stop_time"
                       control={control}
-                      rules={{ required: 'Please enter a stop time.', value: '19:00' }}
+                      rules={{ required: 'Please enter a stop time.' }}
                       render={({ field, fieldState: { error } }) => (
                         <InputText
                           name={field.name}
@@ -305,6 +355,9 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
                   </div>
                 </div>
               </div>
+              <Button size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
+                Continue
+              </Button>
             </form>
           </div>
         </div>
