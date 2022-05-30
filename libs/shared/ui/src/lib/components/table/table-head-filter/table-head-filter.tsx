@@ -115,7 +115,8 @@ export function groupBy(
       </span>
     ),
     onClick: () => {
-      const currentFilterData = dataByKeys[key]
+      const currentFilterData = [...dataByKeys[key]]
+
       if (currentFilter !== key) {
         // set filter when is different of current filter
         setCurrentFilter(key)
@@ -169,7 +170,11 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         trigger={
           <div>
             {localFilter === currentFilter && localFilter !== ALL ? (
-              <Button className="inline-block btn--active" size={ButtonSize.VERY_SMALL} style={ButtonStyle.TAB}>
+              <Button
+                className="whitespace-nowrap inline-block btn--active"
+                size={ButtonSize.VERY_SMALL}
+                style={ButtonStyle.TAB}
+              >
                 {title} ({dataFilterNumber})
               </Button>
             ) : (
