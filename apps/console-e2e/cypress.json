@@ -12,5 +12,10 @@
   "viewportWidth": 1440,
   "testFiles": "**/*.{feature,features}",
   "ignoreTestFiles": ["*.js", "*.ts", "*.md"],
-  "defaultCommandTimeout": 7000
+  "defaultCommandTimeout": 7000,
+  "env": {
+    "mediumScreenViewportWidthBreakpoint": 1200,
+    "smallScreenViewportWidthBreakpoint": 800,
+    "mobileViewportWidthBreakpoint": 414
+  }
 }

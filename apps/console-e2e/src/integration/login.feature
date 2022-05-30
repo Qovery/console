@@ -20,9 +20,9 @@ Feature: Login
         When I click on the boost team experience link
         Then I should be to the boost team experience
 
-    Scenario: It should redirect to the dashboard
-        When I click on the github button
-        Then I should be logged in with auth0
+    Scenario: It should display the onboarding
+        Given I am logged with auth0
+        Then I should see the onboarding
 
     Scenario: Responsive medium screen
         Given The screen size is medium

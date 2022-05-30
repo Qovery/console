@@ -30,6 +30,7 @@ import { Layout } from '@console/pages/layout'
 import { PageServices } from '@console/pages/services'
 import { PageApplication } from '@console/pages/application'
 import { PageEnvironments } from '@console/pages/environments'
+import { withAuthenticationRequired } from '@auth0/auth0-react'
 
 function RedirectOverview() {
   const { organizationId } = useParams()
@@ -101,7 +102,7 @@ export const ROUTER = [
 
 export function App() {
   useDocumentTitle('Loading...')
-  const { isLoading, getCurrentUser } = useAuth()
+  const { isLoading, checkIsAuthenticated, getCurrentUser } = useAuth()
 
   const gtmParams = { id: environment.gtm }
 
@@ -127,12 +128,24 @@ export function App() {
     // }
   }, [])
 
-  useEffect(() => {
-    async function fetchData() {
-      await getCurrentUser()
-    }
-    fetchData()
-  }, [getCurrentUser])
+  if (window['Cypress']) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      const auth0 = JSON.parse(localStorage.getItem('auth0Cypress')!)
+
+      if (auth0) {
+        localStorage.setItem(process.env['NX_OAUTH_TOKEN_NAME'] as string, auth0.token)
+      }
+    }, [])
+  } else {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      async function fetchData() {
+        await getCurrentUser()
+      }
+      fetchData()
+    }, [getCurrentUser])
+  }
 
   if (isLoading) {
     return <LoadingScreen />
@@ -175,4 +188,7 @@ export function App() {
     </GTMProvider>
   )
 }
-export default App
+
+const app = window['Cypress'] ? App : withAuthenticationRequired(App)
+
+export default app

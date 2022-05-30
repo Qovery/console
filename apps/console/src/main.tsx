@@ -11,8 +11,6 @@ import './styles.scss'
 import posthog from 'posthog-js'
 import { createRoot } from 'react-dom/client'
 
-const OAUTH_CALLBACK = '/login/auth0-callback'
-
 export const history = createBrowserHistory()
 
 // posthog init
@@ -34,11 +32,12 @@ root.render(
     <Auth0Provider
       domain={environment.oauth_domain}
       clientId={environment.oauth_key}
-      redirectUri={`${window.location.origin}${OAUTH_CALLBACK}`}
+      redirectUri={`${window.location.origin}${process.env['OAUTH_CALLBACK']}`}
       audience={environment.oauth_audience}
       useRefreshTokens={true}
       onRedirectCallback={onRedirectCallback}
       cacheLocation={'localstorage'}
+      OAUTH_CALLBACK
     >
       <Provider store={store}>
         <BrowserRouter>

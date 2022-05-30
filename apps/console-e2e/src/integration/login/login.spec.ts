@@ -48,9 +48,13 @@ When('I click on the github button', () => {
   cy.get('[data-cy=github-btn]').click()
 })
 
-// Then('I should be logged in with auth0', () => {
-//   cy.loginByAuth0Api(Cypress.env('auth0_email'), Cypress.env('auth0_password'))
-// })
+Given('I am logged with auth0', () => {
+  cy.loginByAuth0Api(Cypress.env('auth0_email'), Cypress.env('auth0_password'))
+})
+
+Then('I should see the onboarding', () => {
+  cy.get('[data-cy=right-section]').should('be.visible')
+})
 
 Given('The screen size is medium', () => {
   cy.viewport(1200, 900)

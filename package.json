@@ -117,6 +117,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "27.5.1",
     "jest-scss-transform": "^1.0.1",
+    "jwt-decode": "^3.1.2",
     "lint-staged": "^12.3.8",
     "prettier": "2.7.0",
     "pretty-quick": "^3.1.3",

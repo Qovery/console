@@ -1,6 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "module": "es6",
+    "target": "es5",
+    "lib": ["es5", "dom"],
     "sourceMap": false,
     "outDir": "../../dist/out-tsc",
     "allowJs": true,
