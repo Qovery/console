@@ -20,6 +20,7 @@ export function General() {
 
   return (
     <GeneralPage
+      key={Math.random().toString()}
       applications={
         loadingStatus !== 'loaded' && applicationsByEnv.length === 0 ? loadingApplications : applicationsByEnv
       }

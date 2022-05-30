@@ -39,7 +39,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
   const isLoading = !data.status?.id
 
   return (
-    <TableRow columnsWidth={columnsWidth} link={link}>
+    <TableRow columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={16} height={16}>
