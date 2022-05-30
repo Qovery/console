@@ -42,6 +42,8 @@ export function Container(props: ContainerProps) {
 
   const menuLink: MenuData = []
 
+  console.log(application)
+
   if (application && application.links && application.links.items) {
     const items: MenuItemProps[] = application.links.items.map((link) => {
       return {
@@ -50,7 +52,7 @@ export function Container(props: ContainerProps) {
           url: link.url || '',
           external: true,
         },
-        copy: link.url || '',
+        copy: link.url || undefined,
         copyTooltip: 'Copy the link',
       }
     })
@@ -61,12 +63,9 @@ export function Container(props: ContainerProps) {
     })
   }
 
-  const headerButtons = (
-    <div>
-      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
-      {application?.links && application.links.items && application.links.items.length === 1 ? (
+  const linkButtons = () => {
+    if (application?.links && application.links.items && application.links.items.length === 1) {
+      return (
         <Button
           iconRight="icon-solid-link"
           external={true}
@@ -76,7 +75,9 @@ export function Container(props: ContainerProps) {
         >
           Open link
         </Button>
-      ) : (
+      )
+    } else {
+      return (
         <Menu
           menus={menuLink}
           trigger={
@@ -84,8 +85,17 @@ export function Container(props: ContainerProps) {
               Open links
             </Button>
           }
-        ></Menu>
-      )}
+        />
+      )
+    }
+  }
+
+  const headerButtons = (
+    <div>
+      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
+      {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
+      {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
+      {application?.links && application.links.items && application.links.items.length !== 0 && linkButtons()}
     </div>
   )
 
