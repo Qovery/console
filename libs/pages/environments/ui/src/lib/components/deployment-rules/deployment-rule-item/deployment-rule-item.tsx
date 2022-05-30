@@ -1,6 +1,7 @@
 import { Icon, Menu, MenuData, Skeleton } from '@console/shared/ui'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL, upperCaseFirstLetter } from '@console/shared/utils'
 import { useState } from 'react'
+import { useParams } from 'react-router'
 
 export interface DeploymentRuleItemProps {
   id: string
@@ -16,6 +17,7 @@ export interface DeploymentRuleItemProps {
 export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
   const { id, name, startTime, stopTime, weekDays, isLast = false, isLoading = false, removeDeploymentRule } = props
   const [menuOpen, setMenuOpen] = useState(false)
+  const { organizationId, projectId } = useParams()
 
   const getTime = (date: string) => {
     const converted = new Date(date)
@@ -44,6 +46,9 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
         {
           name: 'Edit',
           contentLeft: <Icon name="icon-solid-pen" className="text-brand-400 text-sm" />,
+          link: {
+            url: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}/edit/${id}`,
+          },
         },
       ],
     },

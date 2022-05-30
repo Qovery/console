@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export interface InputToggleProps {
   small?: boolean
@@ -10,6 +10,10 @@ export function InputToggle(props: InputToggleProps) {
   const { small, value = false, onChange } = props
 
   const [toggleActive, setToggleActive] = useState(value)
+
+  useEffect(() => {
+    value && setToggleActive(value)
+  }, [value])
 
   const toggleSizeBg = small ? 'w-6 h-3.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-2.5 h-2.5' : 'w-5 h-5'

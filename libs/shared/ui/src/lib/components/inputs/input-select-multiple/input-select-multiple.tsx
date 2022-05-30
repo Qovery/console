@@ -1,5 +1,5 @@
 import { Value } from '@console/shared/interfaces'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MultiSelect } from 'react-multi-select-component'
 import Icon from '../../icon/icon'
 
@@ -10,7 +10,7 @@ export interface InputSelectMultipleProps {
   options: Value[]
   disabled?: boolean
   error?: string
-  onChange?: (values: string[]) => void
+  onChange?: (values: Value[]) => void
 }
 
 export function InputSelectMultiple(props: InputSelectMultipleProps) {
@@ -29,12 +29,14 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
 
   const handleChange = (values: Value[]) => {
     setSelected(values)
-    const items: string[] = []
-    values.forEach((value) => {
-      items.push(value.value)
-    })
-    onChange && onChange(items)
+    onChange && onChange(values)
   }
+
+  useEffect(() => {
+    value && setSelected(value)
+
+    console.log(value, selected)
+  }, [value])
 
   return (
     <div

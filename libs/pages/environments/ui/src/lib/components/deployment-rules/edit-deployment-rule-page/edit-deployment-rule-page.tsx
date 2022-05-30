@@ -20,17 +20,17 @@ import { useState } from 'react'
 import { Cluster } from 'qovery-typescript-axios'
 import { Value } from '@console/shared/interfaces'
 
-export interface CreateDeploymentRulePageProps {
+export interface EditDeploymentRulePageProps {
   listHelpfulLinks: BaseLink[]
   control: Control<any, any>
   onSubmit: () => void
   clusters?: Cluster[]
 }
 
-export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
+export function EditDeploymentRulePage(props: EditDeploymentRulePageProps) {
   const { listHelpfulLinks, control, onSubmit, clusters } = props
 
-  const [autoStop, setAutoStop] = useState(false)
+  const [autoStop, setAutoStop] = useState(control._getWatch().auto_stop)
 
   const modeSelection = [
     {
@@ -116,7 +116,7 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
                 className="!bg-element-light-lighter-300"
                 onClick={() => navigate(-1)}
               />
-              <h1 className="font-bold text-base text-text-600">Create rule</h1>
+              <h1 className="font-bold text-base text-text-600">Edit rule</h1>
             </div>
 
             <div className="mb-3">
@@ -169,7 +169,7 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
                   <Controller
                     name="wildcard"
                     control={control}
-                    rules={{ required: true }}
+                    rules={{ required: 'Please enter a matching condition.' }}
                     render={({ field, fieldState: { error } }) => (
                       <InputTextArea
                         name={field.name}
@@ -356,7 +356,7 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
                 </div>
               </div>
               <Button size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
-                Create
+                Edit
               </Button>
             </form>
           </div>
@@ -404,4 +404,4 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
   )
 }
 
-export default CreateDeploymentRulePage
+export default EditDeploymentRulePage
