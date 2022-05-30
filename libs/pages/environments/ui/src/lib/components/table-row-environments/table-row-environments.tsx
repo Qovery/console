@@ -64,7 +64,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             </div>
           </Tooltip>
           <Skeleton show={isLoading} width={400} height={16} truncate>
-            <span className="text-sm text-text-500 font-medium">{data.name}</span>
+            <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
           </Skeleton>
         </div>
         <div className="flex justify-end justify-items-center px-3">
