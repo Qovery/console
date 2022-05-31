@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { Menu } from '@console/shared/ui'
 import { MenuItemProps } from '../../../menu/menu-item/menu-item'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import StatusMenuAction from '../../../status-menu-action/status-menu-action'
 
 export interface ButtonIconActionElementProps {
@@ -13,10 +13,11 @@ export interface ButtonIconActionElementProps {
   }[]
   menusClassName?: string
   status?: GlobalDeploymentStatus
+  name?: string
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
-  const { iconLeft, iconRight, onClick, menus, menusClassName = '', status } = props
+  const { iconLeft, iconRight, onClick, menus, menusClassName = '', status, name } = props
 
   const [open, setOpen] = useState(false)
 
@@ -26,7 +27,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         className={menusClassName}
         menus={menus}
         width={248}
-        onOpen={(e) => setOpen(e)}
+        onOpen={(isOpen) => setOpen(isOpen)}
         trigger={
           <div data-testid="element" className={`btn-icon-action__element ${open ? 'is-active' : ''}`}>
             {iconLeft}
@@ -41,7 +42,8 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         className={menusClassName}
         width={248}
         status={status}
-        setOpen={(e) => setOpen(e)}
+        name={name}
+        setOpen={(isOpen) => setOpen(isOpen)}
         paddingMenuX={8}
         paddingMenuY={8}
         trigger={

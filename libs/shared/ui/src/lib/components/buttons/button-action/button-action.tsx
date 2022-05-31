@@ -84,6 +84,7 @@ export function ButtonAction(props: ButtonActionProps) {
     return (
       <div data-testid="button-action" className={defineClass}>
         <StatusMenuAction
+          name={'hello'}
           arrowAlign={MenuAlign.END}
           setOpen={(e) => setMenuOpen(e)}
           trigger={

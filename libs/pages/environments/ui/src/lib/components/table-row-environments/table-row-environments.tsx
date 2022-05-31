@@ -80,7 +80,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
                   <StatusLabel status={data.status && data.status.state} />
                 )}
               </p>
-              <ButtonIconAction actions={buttonActionsDefault} />
+              <ButtonIconAction actions={buttonActionsDefault} name={data.name} />
             </div>
           </Skeleton>
         </div>
