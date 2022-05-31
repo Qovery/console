@@ -42,8 +42,6 @@ export function Container(props: ContainerProps) {
 
   const menuLink: MenuData = []
 
-  console.log(application)
-
   if (application && application.links && application.links.items) {
     const items: MenuItemProps[] = application.links.items.map((link) => {
       return {
@@ -95,7 +93,7 @@ export function Container(props: ContainerProps) {
       {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
       {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
       {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
-      {application?.links && application.links.items && application.links.items.length !== 0 && linkButtons()}
+      {application?.links && application.links.items && application.links.items.length > 0 && linkButtons()}
     </div>
   )
 
