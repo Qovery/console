@@ -1,4 +1,4 @@
-import { Icon } from '@console/shared/ui'
+import { Icon, Modal, ModalConfirmation } from '@console/shared/ui'
 import {
   isCancelBuildAvailable,
   isDeleteAvailable,
@@ -7,15 +7,17 @@ import {
   isRollbackAvailable,
   isStopAvailable,
   isUpdateAvailable,
+  ModalContext,
 } from '@console/shared/utils'
 import { ClickEvent } from '@szhsin/react-menu'
 import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
 
 export interface StatusMenuActionProps {
-  status: GlobalDeploymentStatus
   trigger: React.ReactElement
+  status: GlobalDeploymentStatus
+  name?: string
   width?: number
   direction?: MenuDirection
   arrowAlign?: MenuAlign
@@ -34,6 +36,7 @@ export type StatusMenuActionItem = {
 export function StatusMenuAction(props: StatusMenuActionProps) {
   const {
     status,
+    name,
     trigger,
     width = 340,
     paddingMenuX = 12,
@@ -45,6 +48,8 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
   } = props
   const [topMenu, setTopMenu] = useState<StatusMenuActionItem[]>([])
   const [bottomMenu, setBottomMenu] = useState<StatusMenuActionItem[]>([])
+
+  const { setOpenModal, setContentModal } = useContext(ModalContext)
 
   const deployButton = {
     name: 'Deploy',
@@ -60,7 +65,20 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
 
   const redeployButton = {
     name: 'Redeploy',
-    onClick: (e: ClickEvent) => console.log(e),
+    onClick: (e: ClickEvent) => {
+      e.syntheticEvent.preventDefault()
+      setOpenModal(true)
+      setContentModal(
+        <ModalConfirmation
+          title="Confirm redeploy"
+          description="To confirm the redeploy of your environment, please type the name of the environment:"
+          name={name || ''}
+          callback={() => {
+            console.log('callback')
+          }}
+        />
+      )
+    },
     contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
   }
 

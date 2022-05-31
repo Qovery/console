@@ -1,6 +1,7 @@
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import { store } from '@console/store/data'
 import { ToastBehavior } from '@console/shared/ui'
+import { ModalProvider } from '@console/shared/utils'
 import { createBrowserHistory } from 'history'
 import * as ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -39,8 +40,10 @@ ReactDOM.render(
     >
       <Provider store={store}>
         <BrowserRouter>
-          <App />
-          <ToastBehavior />
+          <ModalProvider>
+            <App />
+            <ToastBehavior />
+          </ModalProvider>
         </BrowserRouter>
       </Provider>
     </Auth0Provider>
