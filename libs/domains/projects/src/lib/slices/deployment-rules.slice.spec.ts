@@ -5,12 +5,13 @@ describe('deploymentRules reducer', () => {
     const expected = deploymentRulesAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
+      joinProjectDeploymentRules: {},
     })
 
     expect(deploymentRulesReducer(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchDeploymentRuless', () => {
+  it('should handle fetchDeploymentRules', () => {
     let state = deploymentRulesReducer(undefined, fetchDeploymentRules.pending(null, null))
 
     expect(state).toEqual(
@@ -21,13 +22,14 @@ describe('deploymentRules reducer', () => {
       })
     )
 
-    state = deploymentRulesReducer(state, fetchDeploymentRules.fulfilled([{ id: 1 }], null, null))
+    state = deploymentRulesReducer(state, fetchDeploymentRules.fulfilled([{ id: 1 }], null, { projectId: '1' }))
 
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loaded',
         error: null,
         entities: { 1: { id: 1 } },
+        ids: [1],
       })
     )
 

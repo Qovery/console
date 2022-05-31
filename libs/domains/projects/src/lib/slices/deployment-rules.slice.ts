@@ -8,7 +8,6 @@ import {
   ProjectDeploymentRulesPriorityOrderRequest,
 } from 'qovery-typescript-axios'
 import { RootState } from '@console/store/data'
-import { response } from 'msw'
 
 export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
 

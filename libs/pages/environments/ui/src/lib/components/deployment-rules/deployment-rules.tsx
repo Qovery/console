@@ -55,7 +55,7 @@ export function DeploymentRulesPage(props: DeploymentRulesProps) {
             Configure your default deployment rules. Drag & drop rules to prioritize them.
           </p>
 
-          <div className={`max-w-2xl ${listRules.length === 0 ? 'hidden' : ''}`}>
+          <div className={`max-w-2xl ${listRules?.length === 0 ? 'hidden' : ''}`}>
             <div className="border-t border-l border-r rounded-t border-element-light-lighter-400">
               <h2 className="text-sm text-text-500 font-medium py-2 px-4">Deployment Rules</h2>
             </div>
@@ -63,7 +63,7 @@ export function DeploymentRulesPage(props: DeploymentRulesProps) {
               <Droppable droppableId="rules-list">
                 {(provided: any) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {listRules.map((rule: ProjectDeploymentRule, index) => (
+                    {listRules?.map((rule: ProjectDeploymentRule, index) => (
                       <Draggable draggableId={index.toString()} key={index} index={index}>
                         {(providedDraggble: any) => (
                           <div

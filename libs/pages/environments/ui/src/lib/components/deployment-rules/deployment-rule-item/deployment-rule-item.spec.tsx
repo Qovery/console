@@ -11,6 +11,10 @@ beforeEach(() => {
     stopTime: '1970-01-01T19:00:00.000Z',
     weekDays: ['MONDAY', 'TUESDAY'],
     isLast: false,
+    id: '1',
+    removeDeploymentRule: () => {
+      console.log('ok')
+    },
   }
 })
 

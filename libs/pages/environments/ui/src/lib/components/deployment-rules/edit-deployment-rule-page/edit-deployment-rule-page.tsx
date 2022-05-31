@@ -16,7 +16,7 @@ import {
 } from '@console/shared/ui'
 import { useNavigate } from 'react-router-dom'
 import { Control, Controller } from 'react-hook-form'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Cluster } from 'qovery-typescript-axios'
 import { Value } from '@console/shared/interfaces'
 
@@ -30,7 +30,11 @@ export interface EditDeploymentRulePageProps {
 export function EditDeploymentRulePage(props: EditDeploymentRulePageProps) {
   const { listHelpfulLinks, control, onSubmit, clusters } = props
 
-  const [autoStop, setAutoStop] = useState(control._getWatch().auto_stop)
+  const [autoStop, setAutoStop] = useState(false)
+
+  /*useEffect(() => {
+    control && setAutoStop(control?._defaultValues['auto_stop'])
+  }, [control])*/
 
   const modeSelection = [
     {
