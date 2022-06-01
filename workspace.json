@@ -24,6 +24,7 @@
     "shared-enums": "libs/shared/enums",
     "shared-interfaces": "libs/shared/interfaces",
     "shared-layout": "libs/shared/layout",
+    "shared-toast": "libs/shared/toast",
     "shared-ui": "libs/shared/ui",
     "shared-utils": "libs/shared/utils",
     "store-data": "libs/store/data"

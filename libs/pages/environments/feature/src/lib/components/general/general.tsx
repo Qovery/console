@@ -1,13 +1,16 @@
 import { GeneralPage } from '@console/pages/environments/ui'
 import { useParams } from 'react-router'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   environmentFactoryMock,
   environmentsLoadingStatus,
+  postEnvironmentActionsDeploy,
+  postEnvironmentActionsRestart,
+  postEnvironmentActionsStop,
   selectEnvironmentsEntitiesByProjectId,
 } from '@console/domains/environment'
-import { RootState } from '@console/store/data'
 import { EnvironmentEntity } from '@console/shared/interfaces'
+import { AppDispatch, RootState } from '@console/store/data'
 
 export function General() {
   const { projectId = '' } = useParams()
@@ -18,10 +21,28 @@ export function General() {
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
 
+  const dispatch = useDispatch<AppDispatch>()
+
+  const actions = [
+    {
+      name: 'redeploy',
+      action: (environmentId: string) => dispatch(postEnvironmentActionsRestart({ projectId, environmentId })),
+    },
+    {
+      name: 'deploy',
+      action: (environmentId: string) => dispatch(postEnvironmentActionsDeploy({ projectId, environmentId })),
+    },
+    {
+      name: 'stop',
+      action: (environmentId: string) => dispatch(postEnvironmentActionsStop({ projectId, environmentId })),
+    },
+  ]
+
   return (
     <GeneralPage
       key={environments[0] ? environments[0].status?.id : ''}
       environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
+      buttonActions={actions}
     />
   )
 }

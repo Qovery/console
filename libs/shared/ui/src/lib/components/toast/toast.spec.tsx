@@ -1,4 +1,4 @@
-import { ToastEnum } from '@console/shared/ui'
+import { ToastEnum } from '@console/shared/toast'
 import { screen, render } from '__tests__/utils/setup-jest'
 import ToastBehavior, { ToastContent, ToastProps } from './toast'
 

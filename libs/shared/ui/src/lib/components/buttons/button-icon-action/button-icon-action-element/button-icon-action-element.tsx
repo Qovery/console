@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
-import { Menu } from '@console/shared/ui'
+import { Menu, StatusMenuRowInformation, StatusMenuActions } from '@console/shared/ui'
 import { MenuItemProps } from '../../../menu/menu-item/menu-item'
 import StatusMenuAction from '../../../status-menu-action/status-menu-action'
 
@@ -12,12 +12,15 @@ export interface ButtonIconActionElementProps {
     items: MenuItemProps[]
   }[]
   menusClassName?: string
-  status?: GlobalDeploymentStatus
-  name?: string
+  statusActions?: {
+    status: GlobalDeploymentStatus | undefined
+    actions: StatusMenuActions
+  }
+  rowInformation?: StatusMenuRowInformation
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
-  const { iconLeft, iconRight, onClick, menus, menusClassName = '', status, name } = props
+  const { iconLeft, iconRight, onClick, menus, menusClassName = '', statusActions, rowInformation } = props
 
   const [open, setOpen] = useState(false)
 
@@ -36,13 +39,13 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         }
       />
     )
-  } else if (status) {
+  } else if (statusActions && statusActions.status) {
     return (
       <StatusMenuAction
         className={menusClassName}
         width={248}
-        status={status}
-        name={name}
+        statusActions={statusActions}
+        rowInformation={rowInformation}
         setOpen={(isOpen) => setOpen(isOpen)}
         paddingMenuX={8}
         paddingMenuY={8}

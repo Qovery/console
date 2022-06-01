@@ -10,7 +10,7 @@ interface DefaultContextProps {
 const defaultContext = {
   openModal: false,
   setOpenModal: () => true,
-  setContentModal: () => <p>my-modal</p>,
+  setContentModal: () => <></>,
 }
 
 export const ModalContext = createContext<DefaultContextProps>(defaultContext)
@@ -21,7 +21,7 @@ interface ModalProviderProps {
 
 export const ModalProvider = (props: ModalProviderProps) => {
   const [openModal, setOpenModal] = useState(false)
-  const [contentModal, setContentModal] = useState(<p>my-modal</p>)
+  const [contentModal, setContentModal] = useState(<></>)
 
   return (
     <ModalContext.Provider value={{ openModal, setOpenModal, setContentModal }}>

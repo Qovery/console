@@ -1,116 +1,94 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSelector,
-  createSlice,
-  EntityState,
-  PayloadAction,
-} from '@reduxjs/toolkit'
+import { createAsyncThunk } from '@reduxjs/toolkit'
 import { EnvironmentActionsApi } from 'qovery-typescript-axios'
-// import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
-// import { RootState } from '@console/store/data'
+import { fetchEnvironmentsStatus } from './environments.slice'
+import { toast, ToastEnum } from '@console/shared/toast'
 
 export const ENVIRONMENT_ACTIONS_FEATURE_KEY = 'environmentActions'
 
 const environmentActionApi = new EnvironmentActionsApi()
 
-export interface EnvironmentActionsEntity {
-  id: number
-}
-
-export interface EnvironmentActionsState extends EntityState<EnvironmentActionsEntity> {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error'
-  error: string | undefined | null
-}
-
-export const environmentActionsAdapter = createEntityAdapter<EnvironmentActionsEntity>()
-
-export const postEnvironmentActionsRestart = createAsyncThunk<any, { environmentId: string }>(
+export const postEnvironmentActionsRestart = createAsyncThunk<any, { projectId: string; environmentId: string }>(
   'environmentActions/restart',
-  async (data, thunkAPI) => {
-    const response = await environmentActionApi.restartEnvironment(data.environmentId).then((response) => response.data)
-    console.log(response)
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await environmentActionApi.restartEnvironment(data.environmentId).then(async (response) => {
+        if (response.status === 200) {
+          // refetch status after update
+          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+          // success message
+          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is redeploying')
+        }
+        return response.data
+      })
 
-    // return Promise.resolve([])
+      return response
+    } catch (err) {
+      return rejectWithValue(err)
+    }
   }
 )
 
-export const initialEnvironmentActionsState: EnvironmentActionsState = environmentActionsAdapter.getInitialState({
-  loadingStatus: 'not loaded',
-  error: null,
-})
-
-export const environmentActionsSlice = createSlice({
-  name: ENVIRONMENT_ACTIONS_FEATURE_KEY,
-  initialState: initialEnvironmentActionsState,
-  reducers: {
-    add: environmentActionsAdapter.addOne,
-    remove: environmentActionsAdapter.removeOne,
-    // ...
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(postEnvironmentActionsRestart.pending, (state: EnvironmentActionsState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(
-        postEnvironmentActionsRestart.fulfilled,
-        (state: EnvironmentActionsState, action: PayloadAction<EnvironmentActionsEntity[]>) => {
-          environmentActionsAdapter.setAll(state, action.payload)
-          state.loadingStatus = 'loaded'
+export const postEnvironmentActionsDeploy = createAsyncThunk<any, { projectId: string; environmentId: string }>(
+  'environmentActions/deploy',
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await environmentActionApi.deployEnvironment(data.environmentId).then(async (response) => {
+        if (response.status === 200) {
+          // refetch status after update
+          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+          // success message
+          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is deploying')
         }
-      )
-      .addCase(postEnvironmentActionsRestart.rejected, (state: EnvironmentActionsState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
+        return response.data
       })
-  },
+
+      return response
+    } catch (err) {
+      return rejectWithValue(err)
+    }
+  }
+)
+
+export const postEnvironmentActionsStop = createAsyncThunk<any, { projectId: string; environmentId: string }>(
+  'environmentActions/stop',
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await environmentActionApi.stopEnvironment(data.environmentId).then(async (response) => {
+        if (response.status === 200) {
+          // refetch status after update
+          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+          // success message
+          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is stopping')
+        }
+        return response.data
+      })
+
+      return response
+    } catch (err) {
+      return rejectWithValue(err)
+    }
+  }
+)
+
+export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
+  any,
+  { projectId: string; environmentId: string }
+>('environmentActions/cancel-deployment', async (data, { rejectWithValue, dispatch }) => {
+  try {
+    const response = await environmentActionApi
+      .cancelEnvironmentDeployment(data.environmentId)
+      .then(async (response) => {
+        if (response.status === 200) {
+          // refetch status after update
+          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+          // success message
+          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment deployment is cancelling')
+        }
+        return response.data
+      })
+
+    return response
+  } catch (err) {
+    return rejectWithValue(err)
+  }
 })
-
-/*
- * Export reducer for store configuration.
- */
-export const environmentActionsReducer = environmentActionsSlice.reducer
-
-/*
- * Export action creators to be dispatched. For use with the `useDispatch` hook.
- *
- * e.g.
- * ```
- * import React, { useEffect } from 'react';
- * import { useDispatch } from 'react-redux';
- *
- * // ...
- *
- * const dispatch = useDispatch();
- * useEffect(() => {
- *   dispatch(environmentActionsActions.add({ id: 1 }))
- * }, [dispatch]);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#usedispatch
- */
-export const environmentActionsActions = environmentActionsSlice.actions
-
-/*
- * Export selectors to query state. For use with the `useSelector` hook.
- *
- * e.g.
- * ```
- * import { useSelector } from 'react-redux';
- *
- * // ...
- *
- * const entities = useSelector(selectAllEnvironmentActions);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#useselector
- */
-const { selectAll, selectEntities } = environmentActionsAdapter.getSelectors()
-
-// export const getEnvironmentActionsState = (rootState: RootState): EnvironmentActionsState =>
-//   rootState[ENVIRONMENT_ACTIONS_FEATURE_KEY]
-
-// export const selectAllEnvironmentActions = createSelector(getEnvironmentActionsState, selectAll)
-
-// export const selectEnvironmentActionsEntities = createSelector(getEnvironmentActionsState, selectEntities)

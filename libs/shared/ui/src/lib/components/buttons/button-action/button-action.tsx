@@ -23,7 +23,10 @@ export interface ButtonActionProps {
   className?: string
   onClick?: () => void
   menus?: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
-  status?: GlobalDeploymentStatus
+  statusActions?: {
+    status: GlobalDeploymentStatus
+    actions: any
+  }
 }
 
 export function ButtonAction(props: ButtonActionProps) {
@@ -36,7 +39,7 @@ export function ButtonAction(props: ButtonActionProps) {
     className = '',
     onClick,
     menus = [],
-    status,
+    statusActions,
   } = props
 
   const [menuOpen, setMenuOpen] = useState(false)
@@ -64,7 +67,7 @@ export function ButtonAction(props: ButtonActionProps) {
     )
   }
 
-  if (!status) {
+  if (!statusActions) {
     return (
       <div data-testid="button-action" className={defineClass}>
         <Menu
@@ -84,7 +87,11 @@ export function ButtonAction(props: ButtonActionProps) {
     return (
       <div data-testid="button-action" className={defineClass}>
         <StatusMenuAction
-          name={'hello'}
+          rowInformation={{
+            id: '232',
+            name: 'hello',
+            mode: 't',
+          }}
           arrowAlign={MenuAlign.END}
           setOpen={(e) => setMenuOpen(e)}
           trigger={
@@ -92,7 +99,7 @@ export function ButtonAction(props: ButtonActionProps) {
               <Icon name="icon-solid-ellipsis-vertical" />
             </div>
           }
-          status={status}
+          statusActions={statusActions}
         />
         {contentBtn()}
       </div>

@@ -6,6 +6,7 @@ import {
   Skeleton,
   StatusChip,
   StatusLabel,
+  StatusMenuActions,
   TableHeadProps,
   TableRow,
   TagMode,
@@ -19,17 +20,21 @@ export interface TableRowEnvironmentsProps {
   dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string
+  buttonActions: StatusMenuActions
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link } = props
+  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, buttonActions } = props
 
   const buttonActionsDefault = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
-      status: data.status && data.status.state,
+      statusActions: {
+        status: data.status && data.status.state,
+        actions: buttonActions,
+      },
     },
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
@@ -80,7 +85,14 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
                   <StatusLabel status={data.status && data.status.state} />
                 )}
               </p>
-              <ButtonIconAction actions={buttonActionsDefault} name={data.name} />
+              <ButtonIconAction
+                actions={buttonActionsDefault}
+                rowInformation={{
+                  id: data.id,
+                  name: data.name,
+                  mode: data.mode,
+                }}
+              />
             </div>
           </Skeleton>
         </div>

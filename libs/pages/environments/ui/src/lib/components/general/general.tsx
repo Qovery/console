@@ -7,10 +7,11 @@ import TableRowEnvironments from '../table-row-environments/table-row-environmen
 
 export interface GeneralProps {
   environments: EnvironmentEntity[]
+  buttonActions: any
 }
 
 export function GeneralPage(props: GeneralProps) {
-  const { environments } = props
+  const { environments, buttonActions } = props
   const { organizationId, projectId } = useParams()
 
   const [data, setData] = useState(environments)
@@ -74,6 +75,7 @@ export function GeneralPage(props: GeneralProps) {
             dataHead={tableHead}
             link={`${APPLICATIONS_URL(organizationId, projectId, currentData.id)}${APPLICATIONS_GENERAL_URL}`}
             columnsWidth="25% 20% 25% 10% 15%"
+            buttonActions={buttonActions}
           />
         ))}
       </>

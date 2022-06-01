@@ -41,7 +41,12 @@ export function Container(props: ContainerProps) {
   const headerActions = (
     <>
       <Skeleton width={150} height={24} show={!environment?.status}>
-        <StatusMenu status={environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING} />
+        <StatusMenu
+          statusActions={{
+            status: environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING,
+            actions: [],
+          }}
+        />
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
@@ -79,7 +84,13 @@ export function Container(props: ContainerProps) {
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
       <Skeleton width={154} height={32} show={!environment?.status}>
-        <ButtonAction status={environment?.status && environment?.status.state} iconRight="icon-solid-plus">
+        <ButtonAction
+          statusActions={{
+            status: environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING,
+            actions: [],
+          }}
+          iconRight="icon-solid-plus"
+        >
           New service
         </ButtonAction>
       </Skeleton>

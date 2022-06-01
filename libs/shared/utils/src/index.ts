@@ -8,7 +8,6 @@ export * from './lib/http/use-auth/auth.enum'
 // hooks
 export * from './lib/hooks/use-document-title/use-document-title'
 export * from './lib/hooks/use-detect-click-outside/use-detect-click-outside'
-export * from './lib/hooks/modals/modal-root'
 // tools
 export * from './lib/tools/uppercase-first-letter'
 export * from './lib/tools/date'

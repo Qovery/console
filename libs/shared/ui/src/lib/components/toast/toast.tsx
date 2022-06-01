@@ -1,11 +1,6 @@
 import { Icon } from '../icon/icon'
 import { toast as toastAction, Toast, Toaster } from 'react-hot-toast'
-
-export enum ToastEnum {
-  SUCCESS = 'SUCCESS',
-  ERROR = 'ERROR',
-  WARNING = 'WARNING',
-}
+import { ToastEnum } from '@console/shared/toast'
 
 export interface ToastProps {
   options?: Toast
@@ -63,16 +58,6 @@ export const ToastContent = (
   )
 }
 
-export const toast = (
-  status: ToastEnum,
-  title: string,
-  description?: string,
-  linkLabel?: string,
-  callback?: () => void
-) => {
-  return toastAction.success((options: Toast) => ToastContent(status, options, title, description, linkLabel, callback))
-}
-
 export function ToastBehavior() {
   return (
     <Toaster
@@ -80,8 +65,7 @@ export function ToastBehavior() {
       reverseOrder={false}
       gutter={4}
       toastOptions={{
-        duration: 10000000,
-        // duration: 3000,
+        duration: 3000,
         style: { background: 'transparent', boxShadow: 'initial', padding: 0 },
         icon: null,
       }}

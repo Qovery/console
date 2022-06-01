@@ -1,23 +1,23 @@
-import { Icon, Modal, ModalConfirmation } from '@console/shared/ui'
+import { Icon, ModalContext, ModalConfirmation } from '@console/shared/ui'
 import {
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
   isRestartAvailable,
-  isRollbackAvailable,
   isStopAvailable,
-  isUpdateAvailable,
-  ModalContext,
 } from '@console/shared/utils'
 import { ClickEvent } from '@szhsin/react-menu'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useState, useEffect, useContext } from 'react'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
 
 export interface StatusMenuActionProps {
   trigger: React.ReactElement
-  status: GlobalDeploymentStatus
-  name?: string
+  statusActions: {
+    status: GlobalDeploymentStatus | undefined
+    actions: any
+  }
+  rowInformation?: StatusMenuRowInformation
   width?: number
   direction?: MenuDirection
   arrowAlign?: MenuAlign
@@ -33,10 +33,21 @@ export type StatusMenuActionItem = {
   contentLeft: React.ReactNode
 }
 
+export type StatusMenuRowInformation = {
+  id: string | undefined
+  name: string | undefined
+  mode: string | undefined
+}
+
+export type StatusMenuActions = {
+  name: string
+  action: () => void
+}
+
 export function StatusMenuAction(props: StatusMenuActionProps) {
   const {
-    status,
-    name,
+    statusActions,
+    rowInformation,
     trigger,
     width = 340,
     paddingMenuX = 12,
@@ -51,15 +62,40 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
 
   const { setOpenModal, setContentModal } = useContext(ModalContext)
 
+  const onClickAction = (name: string, titleModal: string, descriptionModal: string) => {
+    const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === name)
+    const actionDeploy = () => rowInformation && currentAction.action(rowInformation.id)
+
+    if (currentAction.mode === EnvironmentModeEnum.PRODUCTION) {
+      setOpenModal(true)
+      setContentModal(
+        <ModalConfirmation
+          title={titleModal}
+          description={descriptionModal}
+          name={rowInformation?.name}
+          callback={() => actionDeploy()}
+        />
+      )
+    } else {
+      actionDeploy()
+    }
+  }
+
   const deployButton = {
     name: 'Deploy',
-    onClick: (e: ClickEvent) => console.log(e),
+    onClick: (e: ClickEvent) => {
+      e.syntheticEvent.preventDefault()
+      onClickAction('deploy', 'Confirm deploy', 'To confirm the deploy of your environment, please type the name:')
+    },
     contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
   }
 
   const stopButton = {
     name: 'Stop',
-    onClick: (e: ClickEvent) => console.log(e),
+    onClick: (e: ClickEvent) => {
+      e.syntheticEvent.preventDefault()
+      onClickAction('deploy', 'Confirm stop', 'To confirm the stop of your environment, please type the name:')
+    },
     contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
   }
 
@@ -67,36 +103,25 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     name: 'Redeploy',
     onClick: (e: ClickEvent) => {
       e.syntheticEvent.preventDefault()
-      setOpenModal(true)
-      setContentModal(
-        <ModalConfirmation
-          title="Confirm redeploy"
-          description="To confirm the redeploy of your environment, please type the name of the environment:"
-          name={name || ''}
-          callback={() => {
-            console.log('callback')
-          }}
-        />
+      onClickAction(
+        'redeploy',
+        'Confirm redeploy',
+        'To confirm the redeploy of your environment, please type the name:'
       )
     },
     contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
   }
 
-  const updateButton = {
-    name: 'Update applications',
-    onClick: (e: ClickEvent) => console.log(e),
-    contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
-  }
-
-  const rollbackButton = {
-    name: 'Rollback',
-    onClick: (e: ClickEvent) => console.log(e),
-    contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
-  }
-
   const cancelBuildButton = {
     name: 'Cancel Build',
-    onClick: (e: ClickEvent) => console.log(e),
+    onClick: (e: ClickEvent) => {
+      e.syntheticEvent.preventDefault()
+      onClickAction(
+        'cancel-build',
+        'Confirm cancel deployment',
+        'To confirm the cancel deployment of your environment, please type the name:'
+      )
+    },
     contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
   }
 
@@ -107,28 +132,24 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
   }
 
   useEffect(() => {
-    if (isDeployAvailable(status)) {
-      setTopMenu((topMenu) => [...topMenu, deployButton])
+    if (statusActions.status) {
+      if (isDeployAvailable(statusActions.status)) {
+        setTopMenu((topMenu) => [...topMenu, deployButton])
+      }
+      if (isRestartAvailable(statusActions.status)) {
+        setTopMenu((topMenu) => [...topMenu, redeployButton])
+      }
+      if (isStopAvailable(statusActions.status)) {
+        setTopMenu((topMenu) => [...topMenu, stopButton])
+      }
+      if (isCancelBuildAvailable(statusActions.status)) {
+        setBottomMenu((bottomMenu) => [...bottomMenu, cancelBuildButton])
+      }
+      if (isDeleteAvailable(statusActions.status)) {
+        setBottomMenu((bottomMenu) => [...bottomMenu, removeButton])
+      }
     }
-    if (isRestartAvailable(status)) {
-      setTopMenu((topMenu) => [...topMenu, redeployButton])
-    }
-    if (isStopAvailable(status)) {
-      setTopMenu((topMenu) => [...topMenu, stopButton])
-    }
-    if (isUpdateAvailable(status)) {
-      setBottomMenu((bottomMenu) => [...bottomMenu, updateButton])
-    }
-    if (isRollbackAvailable(status)) {
-      setBottomMenu((bottomMenu) => [...bottomMenu, rollbackButton])
-    }
-    if (isCancelBuildAvailable(status)) {
-      setBottomMenu((bottomMenu) => [...bottomMenu, cancelBuildButton])
-    }
-    if (isDeleteAvailable(status)) {
-      setBottomMenu((bottomMenu) => [...bottomMenu, removeButton])
-    }
-  }, [])
+  }, [statusActions.status])
 
   const menus = bottomMenu.length === 0 ? [{ items: topMenu }] : [{ items: topMenu }, { items: bottomMenu }]
 

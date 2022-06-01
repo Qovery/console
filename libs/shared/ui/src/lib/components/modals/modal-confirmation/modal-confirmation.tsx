@@ -7,7 +7,7 @@ import { Tooltip } from '../../tooltip/tooltip'
 export interface ModalConfirmationProps {
   title: string
   description: string
-  name: string
+  name: string | undefined
   callback: () => void
   setOpen?: (open: boolean) => void
   placeholder?: string
@@ -35,7 +35,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
   })
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(name)
+    name && navigator.clipboard.writeText(name)
   }
 
   return (
