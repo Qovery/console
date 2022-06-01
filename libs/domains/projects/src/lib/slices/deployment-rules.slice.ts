@@ -8,6 +8,7 @@ import {
   ProjectDeploymentRulesPriorityOrderRequest,
 } from 'qovery-typescript-axios'
 import { RootState } from '@console/store/data'
+import { deploymentRulesFactoryMock } from '../mocks/factories/deployment-rules-factory.mock'
 
 export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
 
@@ -52,16 +53,16 @@ export const postDeploymentRules = createAsyncThunk<
 })
 
 export const updateDeploymentRuleOrder = createAsyncThunk<
-  null,
-  { projectId: string; deploymentRulesIds: string[] } & ProjectDeploymentRulesPriorityOrderRequest
+  any,
+  { projectId: string; deploymentRules: ProjectDeploymentRule[] }
 >('project/deploymentRules/update-order', async (data) => {
+  const ids: string[] = data.deploymentRules.map((rule) => rule.id)
   const response = await deploymentRulesApi
     .updateDeploymentRulesPriorityOrder(data.projectId, {
-      project_deployment_rule_ids_in_order: data.deploymentRulesIds,
+      project_deployment_rule_ids_in_order: ids,
     })
-    .then((response) => fetchDeploymentRules({ projectId: data.projectId }))
-
-  return null
+    .then((res) => res.data)
+  return data.deploymentRules
 })
 
 export const deleteDeploymentRule = createAsyncThunk<string, { projectId: string; deploymentRuleId: string }>(
@@ -166,7 +167,16 @@ export const deploymentRulesSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(updateDeploymentRuleOrder.fulfilled, (state: DeploymentRuleState, action) => {
-        fetchDeploymentRules({ projectId: action.meta.arg.projectId })
+        state.joinProjectDeploymentRules = {}
+        deploymentRulesAdapter.upsertMany(state, action.payload)
+        action.payload.forEach((deploymentRule: ProjectDeploymentRule) => {
+          state.joinProjectDeploymentRules = addOneToManyRelation(action.meta.arg.projectId, deploymentRule.id, {
+            ...state.joinProjectDeploymentRules,
+          })
+        })
+
+        console.log(state.entities)
+
         state.loadingStatus = 'loaded'
       })
       .addCase(updateDeploymentRuleOrder.rejected, (state: DeploymentRuleState, action) => {

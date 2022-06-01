@@ -7,7 +7,7 @@ import { ProjectDeploymentRule } from 'qovery-typescript-axios'
 export interface DeploymentRulesProps {
   listHelpfulLinks: BaseLink[]
   deploymentRules: ProjectDeploymentRule[]
-  updateDeploymentRulesOrder: (list: string[]) => void
+  updateDeploymentRulesOrder: (list: ProjectDeploymentRule[]) => void
   deleteDeploymentRule: (rule: string) => void
   isLoading?: boolean
 }
@@ -35,12 +35,7 @@ export function DeploymentRulesPage(props: DeploymentRulesProps) {
     currentList.splice(destination.index, 0, ruleToMove)
     setListRules(currentList)
 
-    const ids: string[] = []
-    currentList.forEach((rule) => {
-      ids.push(rule.id)
-    })
-
-    updateDeploymentRulesOrder(ids)
+    updateDeploymentRulesOrder(currentList)
   }
 
   useEffect(() => {

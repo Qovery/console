@@ -3,6 +3,7 @@ import {
   deploymentRulesFactoryMock,
   deploymentRulesLoadingStatus,
   fetchDeploymentRules,
+  selectAllDeploymentRules,
   selectDeploymentRulesEntitiesByProjectId,
   updateDeploymentRuleOrder,
 } from '@console/domains/projects'
@@ -25,8 +26,8 @@ export function DeploymentRules() {
     selectDeploymentRulesEntitiesByProjectId(state, projectId)
   )
 
-  const updateDeploymentRulesOrder = async (deploymentRulesIds: string[]) => {
-    await dispatch(updateDeploymentRuleOrder({ projectId, deploymentRulesIds }))
+  const updateDeploymentRulesOrder = async (deploymentRules: ProjectDeploymentRule[]) => {
+    await dispatch(updateDeploymentRuleOrder({ projectId, deploymentRules }))
   }
 
   const removeDeploymentRule = async (deploymentRuleId: string) => {

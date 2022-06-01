@@ -1,111 +1,16 @@
-.input--select-multiple {
-  @apply relative min-h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white cursor-pointer;
-  transition: 120ms all $timing-cubic;
-
-  & > label {
-    @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none z-40;
-  }
-
-  &:hover:not(.input--error),
-  &.input--select-multiple--focused:not(.input--select-multiple--error) {
-    @apply border-brand-500;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-  }
-
-  .rmsc {
-    .dropdown-container {
-      border: none !important;
-      outline: none !important;
-      background: transparent !important;
-      height: 100%;
-
-      &:focus-within {
-        box-shadow: none !important;
-      }
-    }
-
-    .dropdown-heading {
-      height: 100% !important;
-      padding: 0 !important;
-      cursor: pointer;
-    }
-
-    .dropdown-heading-value {
-      @apply mt-3 px-4;
-
-      .gray {
-        display: none !important;
-      }
-    }
-
-    .dropdown-content {
-      @apply bg-white p-2 mt-2 w-full rounded;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-
-      .panel-content {
-        box-shadow: none;
-      }
-
-      .select-item {
-        @apply bg-white;
-
-        .item-renderer {
-          align-items: center !important;
-
-          input {
-            @apply relative w-0 h-0;
-
-            &:before {
-              content: '';
-              @apply absolute w-3 h-3 border border-element-light-lighter-500 rounded-sm block -top-1.5;
-            }
-
-            &:checked {
-              &:before {
-                content: '\f00c';
-                font-family: 'FontAwesome';
-                font-weight: 900;
-                @apply bg-brand-500 text-white flex items-center justify-center border-brand-500 text-xs;
-              }
-            }
-          }
-
-          span {
-            @apply text-text-400 font-medium text-sm ml-4;
-          }
-        }
-
-        &.selected {
-          @apply bg-white;
-
-          .item-renderer {
-            align-items: center !important;
-
-            span {
-              @apply text-text-500 font-medium text-sm;
-            }
-          }
-        }
-      }
-
-      .options {
-        max-height: 100% !important;
-      }
-    }
-  }
-
-  .input__value {
-    cursor: pointer;
-    height: 100%;
-    top: 0;
-    padding: 0 !important;
-  }
-
-  .clear-selected-button {
-    display: none !important;
-  }
+.input--select-multiple__control {
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
 }
 
+.input--select-multiple__value-container {
+  padding: 0 !important;
+  cursor: pointer;
+  @apply mt-3;
+}
+
+// state
 .input--select-multiple--error {
   @apply border-error-500;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
@@ -125,5 +30,53 @@
 
   & > label {
     @apply text-text-400;
+  }
+}
+
+// buttons
+.input--select-multiple__indicators {
+  display: none !important;
+}
+
+// menu
+.input--select-multiple__menu {
+  width: calc(100% + 2rem) !important;
+  left: -1rem;
+  margin-top: 1rem !important;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.12) !important;
+  @apply p-2;
+}
+
+.input--select-multiple__menu-list {
+  padding: 0 !important;
+}
+
+// option
+.input--select-multiple__option {
+  display: flex !important;
+  @apply items-center gap-2;
+
+  label {
+    @apply static translate-y-0 font-medium text-xs text-text-400;
+  }
+
+  .input--select-multiple__checkbox {
+    @apply bg-white border border-element-light-lighter-500 rounded-sm w-3 h-3 flex items-center justify-center;
+  }
+
+  &:hover {
+    background: #fff !important;
+  }
+}
+
+.input--select-multiple__option--is-selected {
+  background: #fff !important;
+
+  label {
+    @apply text-text-600;
+  }
+
+  .input--select-multiple__checkbox {
+    @apply bg-brand-500;
   }
 }

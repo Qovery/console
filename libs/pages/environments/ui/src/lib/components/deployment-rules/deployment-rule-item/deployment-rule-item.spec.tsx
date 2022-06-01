@@ -12,9 +12,7 @@ beforeEach(() => {
     weekDays: ['MONDAY', 'TUESDAY'],
     isLast: false,
     id: '1',
-    removeDeploymentRule: () => {
-      console.log('ok')
-    },
+    removeDeploymentRule: jest.fn(),
   }
 })
 
