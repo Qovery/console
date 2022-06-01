@@ -11,11 +11,14 @@ export enum StatusMenuType {
   RUNNING = 'running',
 }
 export interface StatusMenuProps {
-  status: GlobalDeploymentStatus
+  statusActions: {
+    status: GlobalDeploymentStatus
+    actions: any
+  }
 }
 
 export function StatusMenu(props: StatusMenuProps) {
-  const { status = GlobalDeploymentStatus.RUNNING } = props
+  const { statusActions } = props
 
   const [open, setOpen] = useState(false)
 
@@ -47,7 +50,7 @@ export function StatusMenu(props: StatusMenuProps) {
   }
 
   const iconStatus = () => {
-    switch (getType(status)) {
+    switch (getType(statusActions.status)) {
       case StatusMenuType.AVAILABLE:
         return <Icon name="icon-solid-play" className="text-xs" />
       case StatusMenuType.STOP:
@@ -62,12 +65,14 @@ export function StatusMenu(props: StatusMenuProps) {
   }
 
   const statusClassName = `status-menu status-menu--${open ? 'open' : 'closed'} status-menu--${getType(
-    status
+    statusActions.status
   )} h-6 inline-flex items-center pl-2 border rounded overflow-hidden`
 
   return (
     <div className={statusClassName} data-testid="statusmenu">
-      <p className="text-xs font-semibold">{upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}</p>
+      <p className="text-xs font-semibold">
+        {upperCaseFirstLetter(statusActions.status?.replace('_', ' ').toLowerCase())}
+      </p>
       <div className="status-menu__trigger h-full inline-flex items-center border-l ml-2 hover:transition transition ease-in-out duration-300">
         <StatusMenuAction
           trigger={
@@ -75,8 +80,12 @@ export function StatusMenu(props: StatusMenuProps) {
               {iconStatus()} <Icon name="icon-solid-angle-down" className="text-xs" />
             </div>
           }
-          name={'hello'}
-          status={status}
+          rowInformation={{
+            id: '232',
+            name: 'hello',
+            mode: 't',
+          }}
+          statusActions={statusActions}
           setOpen={(isOpen) => setOpen(isOpen)}
           width={248}
         />

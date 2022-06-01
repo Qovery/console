@@ -1,5 +1,6 @@
 import { Meta, Story } from '@storybook/react'
-import { toast, ToastBehavior, ToastEnum, ToastProps } from './toast'
+import { toast, ToastEnum } from '@console/shared/toast'
+import { ToastBehavior, ToastProps } from './toast'
 import { Button } from '../buttons/button/button'
 
 export default {

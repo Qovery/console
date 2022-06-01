@@ -100,7 +100,12 @@ export function Container(props: ContainerProps) {
   const headerActions = (
     <>
       <Skeleton width={150} height={24} show={!application?.status}>
-        <StatusMenu status={application?.status ? application?.status.state : GlobalDeploymentStatus.RUNNING} />
+        <StatusMenu
+          statusActions={{
+            status: application?.status ? application?.status.state : GlobalDeploymentStatus.RUNNING,
+            actions: [],
+          }}
+        />
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
