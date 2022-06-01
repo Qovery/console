@@ -122,7 +122,8 @@ export function Breadcrumb(props: BreadcrumbProps) {
             data={projects}
             menuItems={projectMenu}
             paramId={projectId}
-            link={OVERVIEW_URL(organizationId, projectId)}
+            link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}
+            // link={OVERVIEW_URL(organizationId, projectId)}
           />
         </>
       )}
