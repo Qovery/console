@@ -17,7 +17,7 @@ export const postEnvironmentActionsRestart = createAsyncThunk<any, { projectId: 
           // refetch status after update
           await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
           // success message
-          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is redeploying')
+          toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
         }
         return response.data
       })
@@ -38,7 +38,7 @@ export const postEnvironmentActionsDeploy = createAsyncThunk<any, { projectId: s
           // refetch status after update
           await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
           // success message
-          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is deploying')
+          toast(ToastEnum.SUCCESS, 'Your environment is deploying')
         }
         return response.data
       })
@@ -59,7 +59,7 @@ export const postEnvironmentActionsStop = createAsyncThunk<any, { projectId: str
           // refetch status after update
           await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
           // success message
-          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is stopping')
+          toast(ToastEnum.SUCCESS, 'Your environment is stopping')
         }
         return response.data
       })
@@ -83,7 +83,7 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
           // refetch status after update
           await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
           // success message
-          toast(ToastEnum.SUCCESS, 'Success!', 'Your environment deployment is cancelling')
+          toast(ToastEnum.SUCCESS, 'Your environment deployment is cancelling')
         }
         return response.data
       })
@@ -104,7 +104,7 @@ export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
         // refetch environments after update
         await dispatch(fetchEnvironments({ projectId: data.projectId }))
         // success message
-        toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is being deleted')
+        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
       }
       return response.data
     })
