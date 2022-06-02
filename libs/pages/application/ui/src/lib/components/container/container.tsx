@@ -104,6 +104,11 @@ export function Container(props: ContainerProps) {
           statusActions={{
             status: application?.status ? application?.status.state : StateEnum.RUNNING,
             actions: [],
+            information: {
+              id: '',
+              name: '',
+              mode: '',
+            },
           }}
         />
       </Skeleton>

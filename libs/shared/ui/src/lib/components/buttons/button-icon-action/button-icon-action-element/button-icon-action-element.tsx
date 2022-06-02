@@ -14,8 +14,8 @@ export interface ButtonIconActionElementProps {
   menusClassName?: string
   statusActions?: {
     status: StateEnum | undefined
-    // @todo remove "any" after connected all status update
-    actions: StatusMenuActions | any
+    actions: StatusMenuActions[]
+    information?: StatusMenuInformation
   }
   statusInformation?: StatusMenuInformation
 }
@@ -45,8 +45,11 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
       <StatusMenuAction
         className={menusClassName}
         width={248}
-        statusActions={statusActions}
-        statusInformation={statusInformation}
+        statusActions={{
+          status: statusActions.status,
+          actions: statusActions.actions,
+          information: statusInformation,
+        }}
         setOpen={(isOpen) => setOpen(isOpen)}
         paddingMenuX={8}
         paddingMenuY={8}

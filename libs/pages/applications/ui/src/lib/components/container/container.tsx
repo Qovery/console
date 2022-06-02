@@ -10,6 +10,8 @@ import {
   Skeleton,
   StatusChip,
   StatusMenu,
+  StatusMenuActions,
+  StatusMenuInformation,
   Tabs,
   Tag,
   TagMode,
@@ -19,12 +21,13 @@ import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces
 
 export interface ContainerProps {
   applications: ApplicationEntity[]
+  statusActions: StatusMenuActions[]
   environment?: EnvironmentEntity
   children?: React.ReactNode
 }
 
 export function Container(props: ContainerProps) {
-  const { environment, children } = props
+  const { environment, children, statusActions } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
 
@@ -41,12 +44,21 @@ export function Container(props: ContainerProps) {
   const headerActions = (
     <>
       <Skeleton width={150} height={24} show={!environment?.status}>
-        <StatusMenu
-          statusActions={{
-            status: environment?.status ? environment?.status.state : StateEnum.RUNNING,
-            actions: [],
-          }}
-        />
+        {environment?.status ? (
+          <StatusMenu
+            statusActions={{
+              status: environment?.status ? environment?.status.state : StateEnum.RUNNING,
+              actions: statusActions,
+              information: {
+                id: environment?.id,
+                name: environment?.name,
+                mode: environment?.mode,
+              },
+            }}
+          />
+        ) : (
+          <div />
+        )}
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
@@ -84,15 +96,7 @@ export function Container(props: ContainerProps) {
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
       <Skeleton width={154} height={32} show={!environment?.status}>
-        <ButtonAction
-          statusActions={{
-            status: environment?.status ? environment?.status.state : StateEnum.RUNNING,
-            actions: [],
-          }}
-          iconRight="icon-solid-plus"
-        >
-          New service
-        </ButtonAction>
+        {environment?.status ? <ButtonAction iconRight="icon-solid-plus">New service</ButtonAction> : <div />}
       </Skeleton>
     </div>
   )
