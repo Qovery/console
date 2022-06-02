@@ -20,6 +20,11 @@ beforeEach(() => {
           action: jest.fn(),
         },
       ],
+      information: {
+        id: '',
+        name: '',
+        mode: '',
+      },
     },
   }
 })

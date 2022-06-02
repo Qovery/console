@@ -1,3 +1,6 @@
+import { ClickEvent } from '@szhsin/react-menu'
+import { EnvironmentModeEnum, StateEnum } from 'qovery-typescript-axios'
+import { useState, useEffect, useContext } from 'react'
 import { Icon, ModalContext, ModalConfirmation } from '@console/shared/ui'
 import {
   isCancelBuildAvailable,
@@ -6,19 +9,15 @@ import {
   isRestartAvailable,
   isStopAvailable,
 } from '@console/shared/utils'
-import { ClickEvent } from '@szhsin/react-menu'
-import { EnvironmentModeEnum, StateEnum } from 'qovery-typescript-axios'
-import { useState, useEffect, useContext } from 'react'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
 
 export interface StatusMenuActionProps {
   trigger: React.ReactElement
   statusActions: {
-    status: StateEnum | undefined
-    // @todo remove "any" after connected all status update
-    actions: StatusMenuActions | any
+    status: StateEnum
+    actions: StatusMenuActions[]
+    information?: StatusMenuInformation
   }
-  statusInformation?: StatusMenuInformation
   width?: number
   direction?: MenuDirection
   arrowAlign?: MenuAlign
@@ -35,20 +34,19 @@ export type StatusMenuActionItem = {
 }
 
 export type StatusMenuInformation = {
-  id: string | undefined
-  name: string | undefined
-  mode: string | undefined
+  id: string
+  name: string
+  mode: string
 }
 
 export type StatusMenuActions = {
   name: string
-  action: () => void
+  action: (id?: string) => void
 }
 
 export function StatusMenuAction(props: StatusMenuActionProps) {
   const {
     statusActions,
-    statusInformation,
     trigger,
     width = 340,
     paddingMenuX = 12,
@@ -65,15 +63,15 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
 
   const onClickAction = (name: string, titleModal: string, descriptionModal: string) => {
     const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === name)
-    const actionDeploy = () => statusInformation && currentAction.action(statusInformation.id)
+    const actionDeploy = () => currentAction && currentAction.action(statusActions.information?.id)
 
-    if (statusInformation && statusInformation.mode === EnvironmentModeEnum.PRODUCTION) {
+    if (statusActions.information && statusActions.information.mode === EnvironmentModeEnum.PRODUCTION) {
       setOpenModal(true)
       setContentModal(
         <ModalConfirmation
           title={titleModal}
           description={descriptionModal}
-          name={statusInformation?.name}
+          name={statusActions.information?.name}
           callback={() => actionDeploy()}
         />
       )

@@ -74,3 +74,33 @@ export const isUpdateAvailable = (status: StateEnum): boolean => {
 export const isCancelBuildAvailable = (status: StateEnum): boolean => {
   return status === StateEnum.BUILDING || status === StateEnum.DEPLOYING
 }
+
+export const isAvailable = (status: StateEnum): boolean => {
+  return (
+    status === StateEnum.RUNNING ||
+    status === StateEnum.READY ||
+    status === StateEnum.QUEUED ||
+    status === StateEnum.BUILDING ||
+    status === StateEnum.DEPLOYED
+  )
+}
+
+export const isStop = (status: StateEnum): boolean => {
+  return status === StateEnum.STOPPED || status === StateEnum.STOP_QUEUED
+}
+
+export const isWarning = (status: StateEnum): boolean => {
+  return (
+    status === StateEnum.DELETE_QUEUED ||
+    status === StateEnum.STOP_ERROR ||
+    status === StateEnum.DELETING ||
+    status === StateEnum.DELETE_ERROR ||
+    status === StateEnum.DELETED ||
+    status === StateEnum.DEPLOYMENT_QUEUED ||
+    status === StateEnum.DEPLOYMENT_ERROR
+  )
+}
+
+export const isRunning = (status: StateEnum): boolean => {
+  return status === StateEnum.DEPLOYING || status === StateEnum.STOPPING
+}

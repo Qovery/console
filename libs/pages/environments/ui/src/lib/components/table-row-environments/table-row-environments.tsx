@@ -20,8 +20,7 @@ export interface TableRowEnvironmentsProps {
   dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string
-  // @todo remove "any" after connected all status update
-  buttonActions: StatusMenuActions | any
+  buttonActions: StatusMenuActions[]
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {

@@ -1,5 +1,5 @@
 import { IconEnum } from '@console/shared/enums'
-import { Icon, StatusMenuAction, StatusMenuActions } from '@console/shared/ui'
+import { Icon, StatusMenuAction, StatusMenuActions, StatusMenuInformation } from '@console/shared/ui'
 import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -24,8 +24,8 @@ export interface ButtonActionProps {
   menus?: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
   statusActions?: {
     status: StateEnum
-    // @todo remove "any" after connected all status update
-    actions: StatusMenuActions | any
+    actions: StatusMenuActions[]
+    information: StatusMenuInformation
   }
 }
 
@@ -87,11 +87,6 @@ export function ButtonAction(props: ButtonActionProps) {
     return (
       <div data-testid="button-action" className={defineClass}>
         <StatusMenuAction
-          statusInformation={{
-            id: '232',
-            name: 'hello',
-            mode: 't',
-          }}
           arrowAlign={MenuAlign.END}
           setOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
           trigger={
