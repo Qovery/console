@@ -1,4 +1,4 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import {
   ButtonIconAction,
   Icon,
@@ -77,7 +77,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex">
               <p className="leading-7 text-text-400 text-sm mr-3">
-                {data.status && data.status.state === GlobalDeploymentStatus.RUNNING ? (
+                {data.status && data.status.state === StateEnum.RUNNING ? (
                   <>
                     {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))}
                     <IconFa name="icon-solid-clock" className="ml-1 text-xxs" />

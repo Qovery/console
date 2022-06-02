@@ -1,4 +1,4 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
 import {
@@ -43,7 +43,7 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={24} show={!environment?.status}>
         <StatusMenu
           statusActions={{
-            status: environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING,
+            status: environment?.status ? environment?.status.state : StateEnum.RUNNING,
             actions: [],
           }}
         />
@@ -86,7 +86,7 @@ export function Container(props: ContainerProps) {
       <Skeleton width={154} height={32} show={!environment?.status}>
         <ButtonAction
           statusActions={{
-            status: environment?.status ? environment?.status.state : GlobalDeploymentStatus.RUNNING,
+            status: environment?.status ? environment?.status.state : StateEnum.RUNNING,
             actions: [],
           }}
           iconRight="icon-solid-plus"

@@ -1,6 +1,6 @@
 import { IconEnum } from '@console/shared/enums'
 import { Icon, StatusMenuAction, StatusMenuActions } from '@console/shared/ui'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Menu, { MenuAlign } from '../../menu/menu'
@@ -23,7 +23,7 @@ export interface ButtonActionProps {
   onClick?: () => void
   menus?: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
   statusActions?: {
-    status: GlobalDeploymentStatus
+    status: StateEnum
     // @todo remove "any" after connected all status update
     actions: StatusMenuActions | any
   }

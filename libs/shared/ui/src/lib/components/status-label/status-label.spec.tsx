@@ -1,4 +1,4 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { screen, render } from '__tests__/utils/setup-jest'
 
 import StatusLabel, { StatusLabelProps } from './status-label'
@@ -8,7 +8,7 @@ describe('StatusLabel', () => {
 
   beforeEach(() => {
     props = {
-      status: GlobalDeploymentStatus.DEPLOYED,
+      status: StateEnum.DEPLOYED,
     }
   })
 
@@ -18,7 +18,7 @@ describe('StatusLabel', () => {
   })
 
   it('should have an error icon', () => {
-    props.status = GlobalDeploymentStatus.BUILD_ERROR
+    props.status = StateEnum.DEPLOYMENT_ERROR
 
     render(<StatusLabel {...props} />)
 

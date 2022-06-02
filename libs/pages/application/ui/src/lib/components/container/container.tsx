@@ -23,7 +23,7 @@ import {
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
 } from '@console/shared/utils'
-import { Environment, GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { Environment, StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
 
@@ -102,7 +102,7 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={24} show={!application?.status}>
         <StatusMenu
           statusActions={{
-            status: application?.status ? application?.status.state : GlobalDeploymentStatus.RUNNING,
+            status: application?.status ? application?.status.state : StateEnum.RUNNING,
             actions: [],
           }}
         />
@@ -127,7 +127,7 @@ export function Container(props: ContainerProps) {
 
   const tabsItems = [
     {
-      icon: <StatusChip status={GlobalDeploymentStatus.READY} />,
+      icon: <StatusChip status={StateEnum.READY} />,
       name: 'Overview',
       active:
         location.pathname ===

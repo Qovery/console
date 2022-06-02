@@ -1,6 +1,6 @@
 import { StatusMenuAction, StatusMenuActions } from '@console/shared/ui'
 import { upperCaseFirstLetter } from '@console/shared/utils'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import Icon from '../icon/icon'
 
@@ -12,7 +12,7 @@ export enum StatusMenuType {
 }
 export interface StatusMenuProps {
   statusActions: {
-    status: GlobalDeploymentStatus
+    status: StateEnum
     // @todo remove "any" after connected all status update
     actions: StatusMenuActions | any
   }
@@ -23,27 +23,21 @@ export function StatusMenu(props: StatusMenuProps) {
 
   const [open, setOpen] = useState(false)
 
-  const getType = (currentStatus: GlobalDeploymentStatus) => {
+  const getType = (currentStatus: StateEnum) => {
     switch (currentStatus) {
-      case GlobalDeploymentStatus.RUNNING ||
-        GlobalDeploymentStatus.READY ||
-        GlobalDeploymentStatus.QUEUED ||
-        GlobalDeploymentStatus.BUILDING ||
-        GlobalDeploymentStatus.BUILT ||
-        GlobalDeploymentStatus.DEPLOYED:
+      case StateEnum.RUNNING || StateEnum.READY || StateEnum.QUEUED || StateEnum.BUILDING || StateEnum.DEPLOYED:
         return StatusMenuType.AVAILABLE
-      case GlobalDeploymentStatus.STOPPED || GlobalDeploymentStatus.STOP_QUEUED:
+      case StateEnum.STOPPED || StateEnum.STOP_QUEUED:
         return StatusMenuType.STOP
-      case GlobalDeploymentStatus.DEPLOYMENT_ERROR ||
-        GlobalDeploymentStatus.DELETE_QUEUED ||
-        GlobalDeploymentStatus.BUILD_ERROR ||
-        GlobalDeploymentStatus.STOP_ERROR ||
-        GlobalDeploymentStatus.DELETING ||
-        GlobalDeploymentStatus.DELETE_ERROR ||
-        GlobalDeploymentStatus.DELETED ||
-        GlobalDeploymentStatus.RUNNING_ERROR:
+      case StateEnum.DEPLOYMENT_ERROR ||
+        StateEnum.DELETE_QUEUED ||
+        StateEnum.STOP_ERROR ||
+        StateEnum.DELETING ||
+        StateEnum.DELETE_ERROR ||
+        StateEnum.DELETED ||
+        StateEnum.DEPLOYMENT_QUEUED:
         return StatusMenuType.WARNING
-      case GlobalDeploymentStatus.DEPLOYING || GlobalDeploymentStatus.STOPPING:
+      case StateEnum.DEPLOYING || StateEnum.STOPPING:
         return StatusMenuType.RUNNING
       default:
         return StatusMenuType.AVAILABLE

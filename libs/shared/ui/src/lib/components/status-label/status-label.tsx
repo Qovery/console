@@ -1,10 +1,10 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 import { IconEnum } from '@console/shared/enums'
 import { Icon } from '@console/shared/ui'
 
 export interface StatusLabelProps {
-  status: GlobalDeploymentStatus | undefined
+  status: StateEnum | undefined
   className?: string
 }
 
@@ -13,13 +13,13 @@ export function StatusLabel(props: StatusLabelProps) {
 
   function showProgressIcon(): boolean {
     switch (status) {
-      case GlobalDeploymentStatus.BUILDING:
+      case StateEnum.BUILDING:
         return true
-      case GlobalDeploymentStatus.STOPPING:
+      case StateEnum.STOPPING:
         return true
-      case GlobalDeploymentStatus.DEPLOYING:
+      case StateEnum.DEPLOYING:
         return true
-      case GlobalDeploymentStatus.DELETING:
+      case StateEnum.DELETING:
         return true
       default:
         return false
@@ -28,11 +28,11 @@ export function StatusLabel(props: StatusLabelProps) {
 
   // function showSpinnerIcon(): boolean {
   //   switch (status) {
-  //     case GlobalDeploymentStatus.STOP_QUEUED:
+  //     case StateEnum.STOP_QUEUED:
   //       return true
-  //     case GlobalDeploymentStatus.QUEUED:
+  //     case StateEnum.QUEUED:
   //       return true
-  //     case GlobalDeploymentStatus.DELETE_QUEUED:
+  //     case StateEnum.DELETE_QUEUED:
   //       return true
   //     default:
   //       return false
@@ -41,15 +41,11 @@ export function StatusLabel(props: StatusLabelProps) {
 
   function showErrorIcon(): boolean {
     switch (status) {
-      case GlobalDeploymentStatus.BUILD_ERROR:
+      case StateEnum.DEPLOYMENT_ERROR:
         return true
-      case GlobalDeploymentStatus.DEPLOYMENT_ERROR:
+      case StateEnum.STOP_ERROR:
         return true
-      case GlobalDeploymentStatus.STOP_ERROR:
-        return true
-      case GlobalDeploymentStatus.DELETE_ERROR:
-        return true
-      case GlobalDeploymentStatus.RUNNING_ERROR:
+      case StateEnum.DELETE_ERROR:
         return true
       default:
         return false

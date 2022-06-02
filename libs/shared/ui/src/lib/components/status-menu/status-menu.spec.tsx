@@ -2,7 +2,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { screen } from '@testing-library/react'
 import StatusMenu, { StatusMenuProps } from './status-menu'
 import { ClickEvent } from '@szhsin/react-menu'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 
 let props: StatusMenuProps
 
@@ -13,7 +13,7 @@ const clickAction = (e: ClickEvent, status: string) => {
 beforeEach(() => {
   props = {
     statusActions: {
-      status: GlobalDeploymentStatus.RUNNING,
+      status: StateEnum.RUNNING,
       actions: [
         {
           name: 'deploy',
@@ -31,7 +31,7 @@ describe('StatusMenu', () => {
   })
 
   it('should have accurate status', () => {
-    props.statusActions.status = GlobalDeploymentStatus.BUILD_ERROR
+    props.statusActions.status = StateEnum.DEPLOYMENT_ERROR
     render(<StatusMenu {...props} />)
     setTimeout(() => {
       const statusMenu = screen.getByTestId('statusmenu')

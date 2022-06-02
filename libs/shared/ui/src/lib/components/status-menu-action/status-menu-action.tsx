@@ -7,14 +7,14 @@ import {
   isStopAvailable,
 } from '@console/shared/utils'
 import { ClickEvent } from '@szhsin/react-menu'
-import { EnvironmentModeEnum, GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, StateEnum } from 'qovery-typescript-axios'
 import { useState, useEffect, useContext } from 'react'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
 
 export interface StatusMenuActionProps {
   trigger: React.ReactElement
   statusActions: {
-    status: GlobalDeploymentStatus | undefined
+    status: StateEnum | undefined
     // @todo remove "any" after connected all status update
     actions: StatusMenuActions | any
   }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { Menu, StatusMenuInformation, StatusMenuActions } from '@console/shared/ui'
 import { MenuItemProps } from '../../../menu/menu-item/menu-item'
 import StatusMenuAction from '../../../status-menu-action/status-menu-action'
@@ -13,7 +13,7 @@ export interface ButtonIconActionElementProps {
   }[]
   menusClassName?: string
   statusActions?: {
-    status: GlobalDeploymentStatus | undefined
+    status: StateEnum | undefined
     // @todo remove "any" after connected all status update
     actions: StatusMenuActions | any
   }
