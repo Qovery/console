@@ -95,7 +95,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     name: 'Stop',
     onClick: (e: ClickEvent) => {
       e.syntheticEvent.preventDefault()
-      onClickAction('deploy', 'Confirm stop', 'To confirm the stop of your environment, please type the name:')
+      onClickAction('stop', 'Confirm stop', 'To confirm the stop of your environment, please type the name:')
     },
     contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
   }
