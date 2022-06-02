@@ -82,6 +82,8 @@ export function StatusChip(props: StatusChipProps) {
     }
   }
 
+  console.log
+
   return (
     <Tooltip content={<span>{upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}</span>}>
       <div data-testid="status-chip" className={className}>

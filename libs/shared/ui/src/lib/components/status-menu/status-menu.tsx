@@ -1,4 +1,4 @@
-import { StatusMenuAction } from '@console/shared/ui'
+import { StatusMenuAction, StatusMenuActions } from '@console/shared/ui'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useState } from 'react'
@@ -13,7 +13,8 @@ export enum StatusMenuType {
 export interface StatusMenuProps {
   statusActions: {
     status: GlobalDeploymentStatus
-    actions: any
+    // @todo remove "any" after connected all status update
+    actions: StatusMenuActions | any
   }
 }
 
@@ -80,7 +81,7 @@ export function StatusMenu(props: StatusMenuProps) {
               {iconStatus()} <Icon name="icon-solid-angle-down" className="text-xs" />
             </div>
           }
-          rowInformation={{
+          statusInformation={{
             id: '232',
             name: 'hello',
             mode: 't',

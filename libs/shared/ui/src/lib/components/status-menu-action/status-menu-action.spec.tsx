@@ -9,7 +9,12 @@ beforeEach(() => {
   props = {
     statusActions: {
       status: GlobalDeploymentStatus.DEPLOYED,
-      actions: [],
+      actions: [
+        {
+          name: 'deploy',
+          action: jest.fn(),
+        },
+      ],
     },
     trigger: <Button>Button action</Button>,
   }

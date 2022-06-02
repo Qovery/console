@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useParams } from 'react-router'
-import { Table } from '@console/shared/ui'
+import { StatusMenuActions, Table } from '@console/shared/ui'
 import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface GeneralProps {
   environments: EnvironmentEntity[]
-  buttonActions: any
+  // @todo remove "any" after connected all status update
+  buttonActions: StatusMenuActions | any
 }
 
 export function GeneralPage(props: GeneralProps) {

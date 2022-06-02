@@ -20,7 +20,8 @@ export interface TableRowEnvironmentsProps {
   dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string
-  buttonActions: StatusMenuActions
+  // @todo remove "any" after connected all status update
+  buttonActions: StatusMenuActions | any
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
@@ -87,7 +88,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
               </p>
               <ButtonIconAction
                 actions={buttonActionsDefault}
-                rowInformation={{
+                statusInformation={{
                   id: data.id,
                   name: data.name,
                   mode: data.mode,

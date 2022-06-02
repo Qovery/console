@@ -1,11 +1,10 @@
 import { IconEnum } from '@console/shared/enums'
-import { Icon } from '@console/shared/ui'
+import { Icon, StatusMenuAction, StatusMenuActions } from '@console/shared/ui'
 import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Menu, { MenuAlign } from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
-import StatusMenuAction from '../../status-menu-action/status-menu-action'
 
 export enum ButtonActionStyle {
   BASIC = 'basic',
@@ -25,7 +24,8 @@ export interface ButtonActionProps {
   menus?: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
   statusActions?: {
     status: GlobalDeploymentStatus
-    actions: any
+    // @todo remove "any" after connected all status update
+    actions: StatusMenuActions | any
   }
 }
 
@@ -73,7 +73,7 @@ export function ButtonAction(props: ButtonActionProps) {
         <Menu
           menus={menus}
           arrowAlign={MenuAlign.END}
-          onOpen={(e) => setMenuOpen(e)}
+          onOpen={(isOpen) => setMenuOpen(isOpen)}
           trigger={
             <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
               <Icon name="icon-solid-ellipsis-vertical" />
@@ -87,13 +87,13 @@ export function ButtonAction(props: ButtonActionProps) {
     return (
       <div data-testid="button-action" className={defineClass}>
         <StatusMenuAction
-          rowInformation={{
+          statusInformation={{
             id: '232',
             name: 'hello',
             mode: 't',
           }}
           arrowAlign={MenuAlign.END}
-          setOpen={(e) => setMenuOpen(e)}
+          setOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
           trigger={
             <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
               <Icon name="icon-solid-ellipsis-vertical" />
