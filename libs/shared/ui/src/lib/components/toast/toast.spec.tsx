@@ -19,13 +19,13 @@ describe('Toast', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have a className toast error', () => {
+  it('should have a error icon', () => {
     props.status = ToastEnum.ERROR
     render(ToastContent(props.status))
 
     const toast = screen.queryByTestId('toast') as HTMLDivElement
 
-    expect(toast.classList).toContain('toast--error')
+    expect(toast.querySelector('.toast__icon span')?.classList).toContain('icon-solid-circle-exclamation')
   })
 
   it('should have a title', () => {
