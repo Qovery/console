@@ -6,7 +6,6 @@ import {
 } from '@console/shared/utils'
 import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs, Button, ButtonSize } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
-import { ClickEvent } from '@szhsin/react-menu'
 
 export interface ContainerProps {
   children: React.ReactNode
@@ -43,42 +42,6 @@ export function Container(props: ContainerProps) {
     },
   ]
 
-  const menusButton = [
-    {
-      items: [
-        {
-          name: 'Deploy',
-          onClick: (e: ClickEvent) => console.log(e),
-          contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Stop',
-          onClick: (e: ClickEvent) => console.log(e),
-          contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-    {
-      items: [
-        {
-          name: 'Redeploy',
-          onClick: (e: ClickEvent) => console.log(e),
-          contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Update applications',
-          onClick: (e: ClickEvent) => console.log(e),
-          contentLeft: <Icon name="icon-solid-rotate" className="text-sm text-brand-400" />,
-        },
-        {
-          name: 'Rollback',
-          onClick: (e: ClickEvent) => console.log(e),
-          contentLeft: <Icon name="icon-solid-clock-rotate-left" className="text-sm text-brand-400" />,
-        },
-      ],
-    },
-  ]
-
   const isDeploymentRulesTab =
     location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
     location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE}`
@@ -86,9 +49,7 @@ export function Container(props: ContainerProps) {
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
       {!isDeploymentRulesTab ? (
-        <ButtonAction menus={menusButton} iconRight="icon-solid-plus">
-          New environment
-        </ButtonAction>
+        <ButtonAction iconRight="icon-solid-plus">New environment</ButtonAction>
       ) : (
         <Button
           size={ButtonSize.SMALL}

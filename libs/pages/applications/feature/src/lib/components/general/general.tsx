@@ -8,6 +8,7 @@ import {
 } from '@console/domains/application'
 import { RootState } from '@console/store/data'
 import { GeneralPage } from '@console/pages/applications/ui'
+import { BaseLink } from '@console/shared/ui'
 
 export function General() {
   const { environmentId = '' } = useParams()
@@ -18,11 +19,20 @@ export function General() {
     selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
+  const listHelpfulLinks: BaseLink[] = [
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
+      linkLabel: 'How to configure my application',
+      external: true,
+    },
+  ]
+
   return (
     <GeneralPage
       applications={
         loadingStatus !== 'loaded' && applicationsByEnv.length === 0 ? loadingApplications : applicationsByEnv
       }
+      listHelpfulLinks={listHelpfulLinks}
     />
   )
 }

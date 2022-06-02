@@ -70,16 +70,18 @@ export function ButtonAction(props: ButtonActionProps) {
   if (!statusActions) {
     return (
       <div data-testid="button-action" className={defineClass}>
-        <Menu
-          menus={menus}
-          arrowAlign={MenuAlign.END}
-          onOpen={(isOpen) => setMenuOpen(isOpen)}
-          trigger={
-            <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
-              <Icon name="icon-solid-ellipsis-vertical" />
-            </div>
-          }
-        />
+        {menus.length > 0 && (
+          <Menu
+            menus={menus}
+            arrowAlign={MenuAlign.END}
+            onOpen={(isOpen) => setMenuOpen(isOpen)}
+            trigger={
+              <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
+                <Icon name="icon-solid-ellipsis-vertical" />
+              </div>
+            }
+          />
+        )}
         {contentBtn()}
       </div>
     )

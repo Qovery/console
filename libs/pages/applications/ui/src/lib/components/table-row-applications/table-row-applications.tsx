@@ -60,15 +60,11 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex">
-              <p className="leading-7 text-text-400 text-sm mr-3">
-                {data.status && data.status.state === StateEnum.RUNNING ? (
-                  <>
-                    {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))}
-                    <IconFa name="icon-solid-clock" className="ml-1 text-xxs" />
-                  </>
-                ) : (
-                  <StatusLabel status={data.status && data.status.state} />
-                )}
+              <p className="flex items-center leading-7 text-text-400 text-sm">
+                <StatusLabel status={data.status && data.status.state} />
+                <span className="text-xs text-text-300 mx-3 font-medium">
+                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
+                </span>
               </p>
               <ButtonIconAction actions={buttonActionsDefault} />
             </div>
@@ -78,7 +74,9 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
           <Skeleton show={isLoading} width={160} height={16}>
             <div className="flex gap-2 items-center">
-              <Avatar firstName="" lastName="" style={AvatarStyle.STROKED} size={28} />
+              {data.git_repository?.owner && (
+                <Avatar firstName={data.git_repository?.owner} style={AvatarStyle.STROKED} size={28} />
+              )}
               <TagCommit commitId={data.git_repository?.deployed_commit_id} />
             </div>
           </Skeleton>

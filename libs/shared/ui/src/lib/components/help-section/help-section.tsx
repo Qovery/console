@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { BaseLink, Link } from '../link/link'
 
 export interface HelpSectionProps {
@@ -15,7 +14,7 @@ export function HelpSection(props: HelpSectionProps) {
         links.map((link, i, row) => (
           <Link
             key={link.link}
-            className={i + 1 === row.length ? '' : 'mb-2'}
+            className={`font-medium ${i + 1 === row.length ? '' : 'mb-2'}`}
             link={link.link}
             linkLabel={link.linkLabel || link.link}
             external={link.external}

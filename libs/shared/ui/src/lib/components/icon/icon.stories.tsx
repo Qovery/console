@@ -64,7 +64,7 @@ function copyName(name: string) {
   navigator.clipboard.writeText(name)
 }
 
-const Template: Story<IconProps> = (args) => (
+const Template: Story<IconProps> = () => (
   <div className="storybook-icons text-center">
     <div className="storybook-icons__container max-w-sm w-full p-3 rounded bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
       <h2 className="w-full mb-2">SVG Icons</h2>
@@ -89,11 +89,20 @@ const Template: Story<IconProps> = (args) => (
       <button onClick={() => copyName(IconEnum.AWS)}>
         <Icon name={IconEnum.AWS} />
       </button>
+      <button onClick={() => copyName(IconEnum.AWS_GRAY)}>
+        <Icon name={IconEnum.AWS_GRAY} />
+      </button>
       <button onClick={() => copyName(IconEnum.SCALEWAY)}>
         <Icon name={IconEnum.SCALEWAY} />
       </button>
+      <button onClick={() => copyName(IconEnum.SCALEWAY_GRAY)}>
+        <Icon name={IconEnum.SCALEWAY_GRAY} />
+      </button>
       <button onClick={() => copyName(IconEnum.DO)}>
         <Icon name={IconEnum.DO} />
+      </button>
+      <button onClick={() => copyName(IconEnum.DO_GRAY)}>
+        <Icon name={IconEnum.DO_GRAY} />
       </button>
       <button onClick={() => copyName(IconEnum.SUCCESS)}>
         <Icon name={IconEnum.SUCCESS} />

@@ -1,5 +1,5 @@
 import { ApplicationEntity } from '@console/shared/interfaces'
-import { Table } from '@console/shared/ui'
+import { BaseLink, HelpSection, Table } from '@console/shared/ui'
 import { APPLICATION_URL, APPLICATIONS_GENERAL_URL } from '@console/shared/utils'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
@@ -7,10 +7,11 @@ import TableRowApplications from '../table-row-applications/table-row-applicatio
 
 export interface GeneralPageProps {
   applications: ApplicationEntity[]
+  listHelpfulLinks: BaseLink[]
 }
 
 export function GeneralPage(props: GeneralPageProps) {
-  const { applications } = props
+  const { applications, listHelpfulLinks } = props
   const { organizationId, projectId, environmentId } = useParams()
 
   const [data, setData] = useState(applications)
@@ -51,26 +52,33 @@ export function GeneralPage(props: GeneralPageProps) {
   ]
 
   return (
-    <Table
-      dataHead={tableHead}
-      defaultData={applications}
-      filterData={data}
-      setFilterData={setData}
-      className="mt-2 bg-white rounded-sm"
-      columnsWidth="30% 15% 25% 10% 20%"
-    >
-      <>
-        {data.map((currentData) => (
-          <TableRowApplications
-            key={currentData.id}
-            data={currentData}
-            dataHead={tableHead}
-            link={APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + APPLICATIONS_GENERAL_URL}
-            columnsWidth="25% 20% 25% 10% 15%"
-          />
-        ))}
-      </>
-    </Table>
+    <>
+      <Table
+        dataHead={tableHead}
+        defaultData={applications}
+        filterData={data}
+        setFilterData={setData}
+        className="mt-2 bg-white rounded-sm"
+        columnsWidth="30% 15% 25% 10% 20%"
+      >
+        <>
+          {data.map((currentData) => (
+            <TableRowApplications
+              key={currentData.id}
+              data={currentData}
+              dataHead={tableHead}
+              link={
+                APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + APPLICATIONS_GENERAL_URL
+              }
+              columnsWidth="25% 20% 25% 10% 15%"
+            />
+          ))}
+        </>
+      </Table>
+      <div className="bg-white rounded-b">
+        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
+      </div>
+    </>
   )
 }
 

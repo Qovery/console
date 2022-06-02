@@ -54,7 +54,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             content={
               <p className="flex">
                 {data.cloud_provider.provider && (
-                  <Icon className="mr-3" name={data.cloud_provider.provider} width="16" />
+                  <Icon className="mr-3" name={`${data.cloud_provider.provider}_GRAY`} width="16" />
                 )}
                 ({data.cloud_provider.cluster})
               </p>
@@ -62,8 +62,8 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
           >
             <div className="ml-3 mr-3">
               <Skeleton show={isLoading} width={16} height={16}>
-                <div className="w-4 h-4.5 min-w-[16px] flex items-center justify-center text-xs text-text-400 text-center bg-element-light-lighter-400 rounded-sm font-bold cursor-pointer">
-                  {data.cloud_provider.provider && data.cloud_provider.provider.charAt(0)}
+                <div className="cursor-pointer mt-0.5">
+                  {data.cloud_provider.provider && <Icon name={`${data.cloud_provider.provider}_GRAY`} />}
                 </div>
               </Skeleton>
             </div>
@@ -74,16 +74,12 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
         </div>
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
-            <div className="flex">
-              <p className="leading-7 text-text-400 text-sm mr-3">
-                {data.status && data.status.state === StateEnum.RUNNING ? (
-                  <>
-                    {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))}
-                    <IconFa name="icon-solid-clock" className="ml-1 text-xxs" />
-                  </>
-                ) : (
-                  <StatusLabel status={data.status && data.status.state} />
-                )}
+            <div className="flex items-center">
+              <p className="flex items-center leading-7 text-text-400 text-sm">
+                <StatusLabel status={data.status && data.status.state} />
+                <span className="text-xs text-text-300 mx-3 font-medium">
+                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
+                </span>
               </p>
               <ButtonIconAction
                 actions={buttonActionsDefault}
@@ -96,16 +92,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             </div>
           </Skeleton>
         </div>
-
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          <Skeleton show={isLoading} width={160} height={16}>
-            <div className="text-text-500">
-              -{/* <IconFa name="icon-solid-infinity" className="text-success-500 mr-2 text-xs" /> */}
-              {/* <span className="f text-text-500 text-sm font-medium">Continuous running</span> */}
-            </div>
-          </Skeleton>
-        </div>
-        <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
             <TagMode status={data.mode} />
           </Skeleton>
