@@ -1,10 +1,10 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { IconEnum } from '@console/shared/enums'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 import { Icon, Tooltip } from '@console/shared/ui'
 
 export interface StatusChipProps {
-  status: GlobalDeploymentStatus | undefined
+  status: StateEnum | undefined
   className?: string
 }
 
@@ -13,13 +13,11 @@ export function StatusChip(props: StatusChipProps) {
 
   function showReadyIcon(): boolean {
     switch (status) {
-      case GlobalDeploymentStatus.READY:
+      case StateEnum.READY:
         return true
-      case GlobalDeploymentStatus.BUILT:
+      case StateEnum.DEPLOYED:
         return true
-      case GlobalDeploymentStatus.DEPLOYED:
-        return true
-      case GlobalDeploymentStatus.RUNNING:
+      case StateEnum.RUNNING:
         return true
       default:
         return false
@@ -28,19 +26,21 @@ export function StatusChip(props: StatusChipProps) {
 
   function showProgressIcon(): boolean {
     switch (status) {
-      case GlobalDeploymentStatus.BUILDING:
+      case StateEnum.BUILDING:
         return true
-      case GlobalDeploymentStatus.STOPPING:
+      case StateEnum.STOPPING:
         return true
-      case GlobalDeploymentStatus.DEPLOYING:
+      case StateEnum.DEPLOYING:
         return true
-      case GlobalDeploymentStatus.DELETING:
+      case StateEnum.DELETING:
         return true
-      case GlobalDeploymentStatus.STOP_QUEUED:
+      case StateEnum.STOP_QUEUED:
         return true
-      case GlobalDeploymentStatus.QUEUED:
+      case StateEnum.QUEUED:
         return true
-      case GlobalDeploymentStatus.DELETE_QUEUED:
+      case StateEnum.DELETE_QUEUED:
+        return true
+      case StateEnum.DEPLOYMENT_QUEUED:
         return true
       default:
         return false
@@ -49,15 +49,11 @@ export function StatusChip(props: StatusChipProps) {
 
   function showErrorIcon(): boolean {
     switch (status) {
-      case GlobalDeploymentStatus.BUILD_ERROR:
+      case StateEnum.DEPLOYMENT_ERROR:
         return true
-      case GlobalDeploymentStatus.DEPLOYMENT_ERROR:
+      case StateEnum.STOP_ERROR:
         return true
-      case GlobalDeploymentStatus.STOP_ERROR:
-        return true
-      case GlobalDeploymentStatus.DELETE_ERROR:
-        return true
-      case GlobalDeploymentStatus.RUNNING_ERROR:
+      case StateEnum.DELETE_ERROR:
         return true
       default:
         return false
@@ -66,7 +62,7 @@ export function StatusChip(props: StatusChipProps) {
 
   function showStoppedIcon(): boolean {
     switch (status) {
-      case GlobalDeploymentStatus.STOPPED:
+      case StateEnum.STOPPED:
         return true
       default:
         return false
@@ -75,7 +71,7 @@ export function StatusChip(props: StatusChipProps) {
 
   function showDeletedIcon(): boolean {
     switch (status) {
-      case GlobalDeploymentStatus.DELETED:
+      case StateEnum.DELETED:
         return true
       default:
         return false

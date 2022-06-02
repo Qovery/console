@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react'
 import { select } from '@storybook/addon-knobs'
 import { ClickEvent } from '@szhsin/react-menu'
 import Icon from '../icon/icon'
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 
 export default {
   component: StatusMenu,
@@ -55,5 +55,5 @@ const Template: Story<StatusMenuProps> = (args) => <StatusMenu {...args} />
 export const Primary = Template.bind({})
 
 Primary.args = {
-  status: select('Status', GlobalDeploymentStatus, GlobalDeploymentStatus.RUNNING),
+  status: select('Status', StateEnum, StateEnum.RUNNING),
 }
