@@ -1,11 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { EnvironmentActionsApi } from 'qovery-typescript-axios'
-import { fetchEnvironmentsStatus } from './environments.slice'
+import { EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
+import { fetchEnvironments, fetchEnvironmentsStatus } from './environments.slice'
 import { toast, ToastEnum } from '@console/shared/toast'
 
 export const ENVIRONMENT_ACTIONS_FEATURE_KEY = 'environmentActions'
 
 const environmentActionApi = new EnvironmentActionsApi()
+const environmentMainCallsApi = new EnvironmentMainCallsApi()
 
 export const postEnvironmentActionsRestart = createAsyncThunk<any, { projectId: string; environmentId: string }>(
   'environmentActions/restart',
@@ -86,6 +87,27 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
         }
         return response.data
       })
+
+    return response
+  } catch (err) {
+    return rejectWithValue(err)
+  }
+})
+
+export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
+  any,
+  { projectId: string; environmentId: string }
+>('environmentActions/cancel-deployment', async (data, { rejectWithValue, dispatch }) => {
+  try {
+    const response = await environmentMainCallsApi.deleteEnvironment(data.environmentId).then(async (response) => {
+      if (response.status === 204) {
+        // refetch environments after update
+        await dispatch(fetchEnvironments({ projectId: data.projectId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Success!', 'Your environment is being deleted')
+      }
+      return response.data
+    })
 
     return response
   } catch (err) {

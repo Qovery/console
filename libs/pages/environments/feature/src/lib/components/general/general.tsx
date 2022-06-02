@@ -2,8 +2,10 @@ import { GeneralPage } from '@console/pages/environments/ui'
 import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  deleteEnvironmentActionsCancelDeployment,
   environmentFactoryMock,
   environmentsLoadingStatus,
+  postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
   postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
@@ -35,6 +37,15 @@ export function General() {
     {
       name: 'stop',
       action: (environmentId: string) => dispatch(postEnvironmentActionsStop({ projectId, environmentId })),
+    },
+    {
+      name: 'cancel-deployment',
+      action: (environmentId: string) => dispatch(postEnvironmentActionsCancelDeployment({ projectId, environmentId })),
+    },
+    {
+      name: 'delete',
+      action: (environmentId: string) =>
+        dispatch(deleteEnvironmentActionsCancelDeployment({ projectId, environmentId })),
     },
   ]
 

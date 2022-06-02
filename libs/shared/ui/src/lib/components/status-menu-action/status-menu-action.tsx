@@ -15,9 +15,10 @@ export interface StatusMenuActionProps {
   trigger: React.ReactElement
   statusActions: {
     status: GlobalDeploymentStatus | undefined
-    actions: any
+    // @todo remove "any" after connected all status update
+    actions: StatusMenuActions | any
   }
-  rowInformation?: StatusMenuRowInformation
+  statusInformation?: StatusMenuInformation
   width?: number
   direction?: MenuDirection
   arrowAlign?: MenuAlign
@@ -33,7 +34,7 @@ export type StatusMenuActionItem = {
   contentLeft: React.ReactNode
 }
 
-export type StatusMenuRowInformation = {
+export type StatusMenuInformation = {
   id: string | undefined
   name: string | undefined
   mode: string | undefined
@@ -47,7 +48,7 @@ export type StatusMenuActions = {
 export function StatusMenuAction(props: StatusMenuActionProps) {
   const {
     statusActions,
-    rowInformation,
+    statusInformation,
     trigger,
     width = 340,
     paddingMenuX = 12,
@@ -64,15 +65,15 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
 
   const onClickAction = (name: string, titleModal: string, descriptionModal: string) => {
     const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === name)
-    const actionDeploy = () => rowInformation && currentAction.action(rowInformation.id)
+    const actionDeploy = () => statusInformation && currentAction.action(statusInformation.id)
 
-    if (currentAction.mode === EnvironmentModeEnum.PRODUCTION) {
+    if (statusInformation && statusInformation.mode === EnvironmentModeEnum.PRODUCTION) {
       setOpenModal(true)
       setContentModal(
         <ModalConfirmation
           title={titleModal}
           description={descriptionModal}
-          name={rowInformation?.name}
+          name={statusInformation?.name}
           callback={() => actionDeploy()}
         />
       )
@@ -113,11 +114,11 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
   }
 
   const cancelBuildButton = {
-    name: 'Cancel Build',
+    name: 'Cancel Deployment',
     onClick: (e: ClickEvent) => {
       e.syntheticEvent.preventDefault()
       onClickAction(
-        'cancel-build',
+        'cancel-deployment',
         'Confirm cancel deployment',
         'To confirm the cancel deployment of your environment, please type the name:'
       )
@@ -127,7 +128,10 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
 
   const removeButton = {
     name: 'Remove',
-    onClick: (e: ClickEvent) => console.log(e),
+    onClick: (e: ClickEvent) => {
+      e.syntheticEvent.preventDefault()
+      onClickAction('delete', 'Confirm delete', 'To confirm the delete of your environment, please type the name:')
+    },
     contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
   }
 
