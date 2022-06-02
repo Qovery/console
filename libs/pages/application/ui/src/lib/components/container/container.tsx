@@ -104,7 +104,7 @@ export function Container(props: ContainerProps) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
-          <TagMode status={environment?.mode} withBorder={true} />
+          <TagMode status={environment?.mode} />
         </Skeleton>
       )}
       <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
