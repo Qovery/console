@@ -7,7 +7,7 @@ export enum AvatarStyle {
 
 export interface AvatarProps {
   firstName: string
-  lastName: string
+  lastName?: string
   url?: string
   style?: AvatarStyle
   icon?: string
@@ -36,8 +36,8 @@ export function Avatar(props: AvatarProps) {
       ) : (
         <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center flex justify-center items-center">
           <span className="text-xs text-text-500 font-medium relative">
-            {firstName && firstName.charAt(0)}
-            {lastName && lastName.charAt(0)}
+            {firstName && firstName.charAt(0).toUpperCase()}
+            {lastName && lastName.charAt(0).toUpperCase()}
           </span>
         </div>
       )}

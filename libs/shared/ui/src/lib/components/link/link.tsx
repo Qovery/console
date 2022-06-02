@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import Icon from '../icon/icon'
 import { IconEnum } from '@console/shared/enums'
 
@@ -21,10 +20,11 @@ export function Link(props: LinkProps) {
       className={`${className} text-accent2-500 text-sm flex flex-center gap-1 hover:underline`}
       href={link}
       target={external ? '_blank' : '_self'}
+      rel="noreferrer"
     >
       {iconLeft && <Icon name={iconLeft} className="text-xs leading-5" />}
       {linkLabel}
-      {iconRight && <Icon name={iconRight} className="text-xs leading-5" />}
+      {iconRight && <Icon name={iconRight} className="ml-0.5 text-xs leading-5" />}
     </a>
   )
 }

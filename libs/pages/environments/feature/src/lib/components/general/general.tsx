@@ -13,6 +13,7 @@ import {
 } from '@console/domains/environment'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
+import { BaseLink } from '@console/shared/ui'
 
 export function General() {
   const { projectId = '' } = useParams()
@@ -49,11 +50,20 @@ export function General() {
     },
   ]
 
+  const listHelpfulLinks: BaseLink[] = [
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment',
+      linkLabel: 'How to configure my environment',
+      external: true,
+    },
+  ]
+
   return (
     <GeneralPage
       key={environments[0] ? environments[0].status?.id : ''}
       environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
       buttonActions={actions}
+      listHelpfulLinks={listHelpfulLinks}
     />
   )
 }

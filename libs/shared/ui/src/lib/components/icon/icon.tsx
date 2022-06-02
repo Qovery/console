@@ -20,6 +20,9 @@ import RedisIcon from './icons/redis'
 import BuildpacksIcon from './icons/buildpacks'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
+import AWSGrayIcon from './icons/aws-gray'
+import ScalewayGrayIcon from './icons/scaleway-gray'
+import DOGrayIcon from './icons/do-gray'
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -47,10 +50,16 @@ export function Icon(props: IconProps) {
       return <ApplicationsIcon {...formattedProps} />
     case IconEnum.AWS:
       return <AWSIcon {...formattedProps} />
+    case IconEnum.AWS_GRAY:
+      return <AWSGrayIcon {...formattedProps} />
     case IconEnum.SCALEWAY:
       return <ScalewayIcon {...formattedProps} />
+    case IconEnum.SCALEWAY_GRAY:
+      return <ScalewayGrayIcon {...formattedProps} />
     case IconEnum.DO:
       return <DOIcon {...formattedProps} />
+    case IconEnum.DO_GRAY:
+      return <DOGrayIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
     case IconEnum.SUCCESS:

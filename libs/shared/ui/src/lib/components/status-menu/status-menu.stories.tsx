@@ -55,5 +55,18 @@ const Template: Story<StatusMenuProps> = (args) => <StatusMenu {...args} />
 export const Primary = Template.bind({})
 
 Primary.args = {
-  status: select('Status', StateEnum, StateEnum.RUNNING),
+  statusActions: {
+    status: select('Status', StateEnum, StateEnum.RUNNING),
+    actions: [
+      {
+        name: 'redeploy',
+        action: () => console.log('action'),
+      },
+    ],
+    information: {
+      id: '',
+      name: '',
+      mode: 'PRODUCTION',
+    },
+  },
 }
