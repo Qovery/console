@@ -28,23 +28,23 @@ export function CreateDeploymentRule() {
 
     const weekdaysSelection = [
       {
-        label: 'MONDAY',
+        label: 'Monday',
         value: 'MONDAY',
       },
       {
-        label: 'TUESDAY',
+        label: 'Tuesday',
         value: 'TUESDAY',
       },
       {
-        label: 'WEDNESDAY',
+        label: 'Wednesday',
         value: 'WEDNESDAY',
       },
       {
-        label: 'THURSDAY',
+        label: 'Thursday',
         value: 'THURSDAY',
       },
       {
-        label: 'FRIDAY',
+        label: 'Friday',
         value: 'FRIDAY',
       },
     ]
@@ -60,7 +60,7 @@ export function CreateDeploymentRule() {
     setValue('weekdays', weekdaysSelection)
   }, [setValue, dispatch, organizationId])
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit((data) => {
     if (data) {
       const fields = data as ProjectDeploymentRuleRequest
       fields.start_time = `1970-01-01T${fields.start_time}:00.000Z`
@@ -73,7 +73,7 @@ export function CreateDeploymentRule() {
 
       fields.weekdays = weekdaysList
 
-      await dispatch(postDeploymentRules({ projectId, ...fields })).then(() => {
+      dispatch(postDeploymentRules({ projectId, ...fields })).then(() => {
         navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
       })
     }

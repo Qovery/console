@@ -1,6 +1,13 @@
 import { BaseLink, HelpSection } from '@console/shared/ui'
 import DeploymentRuleItem from './deployment-rule-item/deployment-rule-item'
-import { Draggable, DragDropContext, Droppable } from 'react-beautiful-dnd'
+import {
+  Draggable,
+  DragDropContext,
+  Droppable,
+  DroppableProvidedProps,
+  DroppableProvided,
+  DraggableProvided,
+} from 'react-beautiful-dnd'
 import { useEffect, useState } from 'react'
 import { ProjectDeploymentRule } from 'qovery-typescript-axios'
 
@@ -56,11 +63,11 @@ export function DeploymentRulesPage(props: DeploymentRulesProps) {
             </div>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="rules-list">
-                {(provided: any) => (
+                {(provided: DroppableProvided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
                     {listRules?.map((rule: ProjectDeploymentRule, index) => (
                       <Draggable draggableId={index.toString()} key={index} index={index}>
-                        {(providedDraggble: any) => (
+                        {(providedDraggble: DraggableProvided) => (
                           <div
                             {...providedDraggble.draggableProps}
                             {...providedDraggble.dragHandleProps}

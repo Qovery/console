@@ -3,7 +3,6 @@ import {
   deploymentRulesFactoryMock,
   deploymentRulesLoadingStatus,
   fetchDeploymentRules,
-  selectAllDeploymentRules,
   selectDeploymentRulesEntitiesByProjectId,
   updateDeploymentRuleOrder,
 } from '@console/domains/projects'
@@ -44,7 +43,7 @@ export function DeploymentRules() {
   return (
     <DeploymentRulesPage
       listHelpfulLinks={listHelpfulLinks}
-      deploymentRules={loadingStatus !== 'loaded' ? deploymentRulesLoading : deploymentRulesList}
+      deploymentRules={deploymentRulesList}
       updateDeploymentRulesOrder={updateDeploymentRulesOrder}
       isLoading={loadingStatus !== 'loaded'}
       deleteDeploymentRule={removeDeploymentRule}

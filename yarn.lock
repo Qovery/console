@@ -15678,11 +15678,6 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-multi-select-component@^4.2.7:
-  version "4.2.7"
-  resolved "https://registry.yarnpkg.com/react-multi-select-component/-/react-multi-select-component-4.2.7.tgz#fb14a05ad5bb354f530c6b996824a4528f116394"
-  integrity sha512-RIIyKvBvFOgyBqmVnAGcIPYePg0dBc48nzUhOtVuYp1MLQ7UfiarXPTvkm4PD2J8IvOMSPjI1+YIWK95iE4Cvw==
-
 react-popper-tooltip@^3.1.1:
   version "3.1.1"
   resolved "https://registry.npmjs.org/react-popper-tooltip/-/react-popper-tooltip-3.1.1.tgz"

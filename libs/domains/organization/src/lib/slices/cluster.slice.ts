@@ -27,7 +27,6 @@ export const clusterSlice = createSlice({
   reducers: {
     add: clusterAdapter.addOne,
     remove: clusterAdapter.removeOne,
-    // ...
   },
   extraReducers: (builder) => {
     builder

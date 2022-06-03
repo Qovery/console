@@ -1,14 +1,8 @@
 import { DeploymentRuleState, LoadingStatus } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, Update } from '@reduxjs/toolkit'
-import {
-  ProjectDeploymentRule,
-  ProjectDeploymentRuleApi,
-  ProjectDeploymentRuleRequest,
-  ProjectDeploymentRulesPriorityOrderRequest,
-} from 'qovery-typescript-axios'
+import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
 import { RootState } from '@console/store/data'
-import { deploymentRulesFactoryMock } from '../mocks/factories/deployment-rules-factory.mock'
 
 export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
 
@@ -57,7 +51,7 @@ export const updateDeploymentRuleOrder = createAsyncThunk<
   { projectId: string; deploymentRules: ProjectDeploymentRule[] }
 >('project/deploymentRules/update-order', async (data) => {
   const ids: string[] = data.deploymentRules.map((rule) => rule.id)
-  const response = await deploymentRulesApi
+  await deploymentRulesApi
     .updateDeploymentRulesPriorityOrder(data.projectId, {
       project_deployment_rule_ids_in_order: ids,
     })
@@ -129,7 +123,7 @@ export const deploymentRulesSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
-      // fetch one
+      // fetch one deployment rule
       .addCase(fetchDeploymentRule.pending, (state: DeploymentRuleState) => {
         state.loadingStatus = 'loading'
       })

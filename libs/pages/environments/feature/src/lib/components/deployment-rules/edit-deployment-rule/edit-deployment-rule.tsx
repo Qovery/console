@@ -10,10 +10,7 @@ import { useEffect } from 'react'
 import { BaseLink } from '@console/shared/ui'
 import { dateToHours, ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/utils'
 
-/* eslint-disable-next-line */
-export interface EditDeploymentRuleProps {}
-
-export function EditDeploymentRule(props: EditDeploymentRuleProps) {
+export function EditDeploymentRule() {
   const { deploymentRuleId = '', organizationId = '', projectId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
@@ -37,8 +34,8 @@ export function EditDeploymentRule(props: EditDeploymentRuleProps) {
       fields.stop_time = `1970-01-01T${fields.stop_time}:00.000Z`
 
       await dispatch(updateDeploymentRule({ projectId, deploymentRuleId, ...fields }))
-        .then(() => {
-          navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
+        .then((res) => {
+          if (res) navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
         })
         .catch((err) => err)
     }

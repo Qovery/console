@@ -36,10 +36,6 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
     return checkIfWeekdays
   }
 
-  const removeRule = (id: string) => {
-    removeDeploymentRule(id)
-  }
-
   const menu: MenuData = [
     {
       items: [
@@ -56,9 +52,9 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       items: [
         {
           name: 'Delete rule',
-          textClassName: '!text-error-500',
+          textClassName: 'text-error-500',
           contentLeft: <Icon name="icon-solid-trash" className="text-error-500 text-sm" />,
-          onClick: () => removeRule(id),
+          onClick: () => removeDeploymentRule(id),
         },
       ],
     },
@@ -104,7 +100,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
             <Menu
               menus={menu}
               width={248}
-              onOpen={(e) => setMenuOpen(e)}
+              onOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
               trigger={
                 <span
                   className={`w-7 h-7 flex items-center justify-center text-text-400 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${

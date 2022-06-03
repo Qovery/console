@@ -1,6 +1,5 @@
 import { Value } from '@console/shared/interfaces'
 import { useEffect, useState } from 'react'
-import { MultiSelect } from 'react-multi-select-component'
 import Icon from '../../icon/icon'
 import Select, { components } from 'react-select'
 
@@ -66,6 +65,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
       className={`input input--select-multiple ${inputActions} ${className} ${
         disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
       }`}
+      data-testid="select-multiple"
     >
       <label htmlFor={label} className={`${hasFocus ? '!text-xs !translate-y-0' : 'text-sm translate-y-2'}`}>
         {label}

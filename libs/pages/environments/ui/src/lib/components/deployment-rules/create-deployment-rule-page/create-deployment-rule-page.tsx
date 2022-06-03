@@ -56,31 +56,31 @@ export function CreateDeploymentRulePage(props: CreateDeploymentRulePageProps) {
 
   const weekdaysSelection = [
     {
-      label: 'MONDAY',
+      label: 'Monday',
       value: 'MONDAY',
     },
     {
-      label: 'TUESDAY',
+      label: 'Tuesday',
       value: 'TUESDAY',
     },
     {
-      label: 'WEDNESDAY',
+      label: 'Wednesday',
       value: 'WEDNESDAY',
     },
     {
-      label: 'THURSDAY',
+      label: 'Thursday',
       value: 'THURSDAY',
     },
     {
-      label: 'FRIDAY',
+      label: 'Friday',
       value: 'FRIDAY',
     },
     {
-      label: 'SATURDAY',
+      label: 'Saturday',
       value: 'SATURDAY',
     },
     {
-      label: 'SUNDAY',
+      label: 'Sunday',
       value: 'SUNDAY',
     },
   ]
