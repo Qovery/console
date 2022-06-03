@@ -1,8 +1,9 @@
-import { Environment, Project, Application, Organization } from 'qovery-typescript-axios'
+import { Application, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Icon } from '@console/shared/ui'
 import {
+  APPLICATIONS_GENERAL_URL,
   APPLICATIONS_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
@@ -72,7 +73,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         ? environments?.map((environment: Environment) => ({
             name: environment.name,
             link: {
-              url: APPLICATIONS_URL(organizationId, projectId, environment.id),
+              url: `${APPLICATIONS_URL(organizationId, projectId, environment.id)}${APPLICATIONS_GENERAL_URL}`,
             },
             contentLeft:
               environmentId === environment.id ? (
@@ -121,7 +122,8 @@ export function Breadcrumb(props: BreadcrumbProps) {
             data={projects}
             menuItems={projectMenu}
             paramId={projectId}
-            link={OVERVIEW_URL(organizationId, projectId)}
+            link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}
+            // link={OVERVIEW_URL(organizationId, projectId)}
           />
         </>
       )}
@@ -139,7 +141,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                 data={environments}
                 menuItems={environmentMenu}
                 paramId={environmentId}
-                link={APPLICATIONS_URL(organizationId, projectId, environmentId)}
+                link={APPLICATIONS_URL(organizationId, projectId, environmentId) + APPLICATIONS_GENERAL_URL}
               />
             )}
           </div>

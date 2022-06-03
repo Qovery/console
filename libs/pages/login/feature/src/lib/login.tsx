@@ -1,9 +1,10 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { LayoutLogin, Login } from '@console/pages/login/ui'
-import { ONBOARDING_URL, useAuth, useDocumentTitle, AuthEnum, OVERVIEW_URL } from '@console/shared/utils'
+import { AuthEnum, OVERVIEW_URL, useAuth, useDocumentTitle } from '@console/shared/utils'
 import { useOrganization } from '@console/domains/organization'
 import { useProjects } from '@console/domains/projects'
+
 // import posthog from 'posthog-js'
 
 export function LoginPage() {
@@ -20,23 +21,23 @@ export function LoginPage() {
 
   useEffect(() => {
     // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
-    const isOnboarding = process.env?.['NX_ONBOARDING'] || false
+    const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
 
     async function fetchData() {
-      const organization = await getOrganization()
+      const organization: any = await getOrganization()
       await createAuthCookies()
 
-      if (!isOnboarding && organization.payload.length > 0) {
+      if (organization.payload.length > 0) {
         const organizationId = organization.payload[0].id
-        const projects = await getProjects(organizationId)
+        const projects: any = await getProjects(organizationId)
         if (projects.payload.length > 0) navigate(OVERVIEW_URL(organizationId, projects.payload[0].id))
       }
-      if (isOnboarding && organization.payload.length === 0) {
-        navigate(ONBOARDING_URL)
-      }
-      if (isOnboarding && organization.payload.length > 0) {
-        window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
-      }
+      // if (isOnboarding && organization.payload.length === 0) {
+      //  navigate(ONBOARDING_URL)
+      // }
+      // if (isOnboarding && organization.payload.length > 0) {
+      //  window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
+      // }
     }
     if (checkIsAuthenticated) {
       fetchData()

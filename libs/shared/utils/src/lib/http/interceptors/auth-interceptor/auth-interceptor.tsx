@@ -1,7 +1,7 @@
-import toast from 'react-hot-toast'
-import { AxiosRequestConfig, AxiosInstance, AxiosResponse, AxiosError } from 'axios'
+import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
+import { toast, ToastEnum } from '@console/shared/toast'
 
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
@@ -26,9 +26,12 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
     })
     const responseInterceptor = axiosInstance.interceptors.response.use(
       async (response: AxiosResponse) => response,
-      (error: AxiosError) => {
-        toast.error(error.response?.data.message)
-      }
+      (error) =>
+        toast(
+          ToastEnum.ERROR,
+          error.response.data.error || error.code || 'Error',
+          error.response.data.message || error.message
+        )
     )
 
     return () => {

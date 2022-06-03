@@ -115,7 +115,8 @@ export function groupBy(
       </span>
     ),
     onClick: () => {
-      const currentFilterData = dataByKeys[key]
+      const currentFilterData = [...dataByKeys[key]]
+
       if (currentFilter !== key) {
         // set filter when is different of current filter
         setCurrentFilter(key)
@@ -151,9 +152,27 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
     defaultData && setFilterData && setFilterData(defaultData)
   }
 
+  // return (
+  //   <div className="flex">
+  //     {createFilter(
+  //       dataHead,
+  //       defaultData,
+  //       ALL,
+  //       currentFilter,
+  //       setCurrentFilter,
+  //       setLocalFilter,
+  //       setDataFilterNumber,
+  //       setFilterData
+  //     ).map((current) => {
+  //       return <div onClick={(e: any) => current.items[1].onClick && current.items[1].onClick(e)}>filter</div>
+  //     })}
+  //   </div>
+  // )
+
   return (
-    <div className="flex">
+    <div className="flex" key={Math.random()}>
       <Menu
+        key={Math.random()}
         menus={createFilter(
           dataHead,
           defaultData,
@@ -169,7 +188,11 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         trigger={
           <div>
             {localFilter === currentFilter && localFilter !== ALL ? (
-              <Button className="inline-block btn--active" size={ButtonSize.VERY_SMALL} style={ButtonStyle.TAB}>
+              <Button
+                className="whitespace-nowrap inline-block btn--active"
+                size={ButtonSize.VERY_SMALL}
+                style={ButtonStyle.TAB}
+              >
                 {title} ({dataFilterNumber})
               </Button>
             ) : (

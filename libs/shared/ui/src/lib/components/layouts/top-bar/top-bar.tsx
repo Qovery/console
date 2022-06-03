@@ -74,7 +74,7 @@ export function TopBar(props: TopBarProps) {
   const { organizations, projects, environments, applications } = props
 
   return (
-    <div className="fixed top-0 left-14 border-l border-element-light-lighter-400 z-10 bg-white w-[calc(100%-3.5rem)] h-14">
+    <div className="fixed top-0 left-14 border-l border-b border-element-light-lighter-400 z-10 bg-white w-[calc(100%-3.5rem)] h-14">
       <div className="flex px-5 justify-between items-center h-full">
         <Breadcrumb
           organizations={organizations}

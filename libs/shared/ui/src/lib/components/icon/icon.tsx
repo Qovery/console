@@ -14,6 +14,15 @@ import DeleteIcon from './icons-status/delete'
 import ProgressIcon from './icons-status/progress'
 import ScalewayIcon from './icons/scaleway'
 import DOIcon from './icons/do'
+import DockerIcon from './icons/docker'
+import PostgreIcon from './icons/postgre'
+import RedisIcon from './icons/redis'
+import BuildpacksIcon from './icons/buildpacks'
+import MongoDBIcon from './icons/mongodb'
+import MysqlIcon from './icons/mysql'
+import AWSGrayIcon from './icons/aws-gray'
+import ScalewayGrayIcon from './icons/scaleway-gray'
+import DOGrayIcon from './icons/do-gray'
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -41,10 +50,16 @@ export function Icon(props: IconProps) {
       return <ApplicationsIcon {...formattedProps} />
     case IconEnum.AWS:
       return <AWSIcon {...formattedProps} />
+    case IconEnum.AWS_GRAY:
+      return <AWSGrayIcon {...formattedProps} />
     case IconEnum.SCALEWAY:
       return <ScalewayIcon {...formattedProps} />
+    case IconEnum.SCALEWAY_GRAY:
+      return <ScalewayGrayIcon {...formattedProps} />
     case IconEnum.DO:
       return <DOIcon {...formattedProps} />
+    case IconEnum.DO_GRAY:
+      return <DOGrayIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
     case IconEnum.SUCCESS:
@@ -57,6 +72,18 @@ export function Icon(props: IconProps) {
       return <DeleteIcon {...formattedProps} />
     case IconEnum.PROGRESS:
       return <ProgressIcon {...formattedProps} />
+    case IconEnum.DOCKER:
+      return <DockerIcon {...formattedProps} />
+    case IconEnum.POSTGRE:
+      return <PostgreIcon {...formattedProps} />
+    case IconEnum.REDIS:
+      return <RedisIcon {...formattedProps} />
+    case IconEnum.BUILDPACKS:
+      return <BuildpacksIcon {...formattedProps} />
+    case IconEnum.MONGODB:
+      return <MongoDBIcon {...formattedProps} />
+    case IconEnum.MYSQL:
+      return <MysqlIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

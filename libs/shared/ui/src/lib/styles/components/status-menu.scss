@@ -5,7 +5,7 @@
 }
 
 // status
-.status-menu--running {
+.status-menu--available {
   @apply bg-success-50 border-success-500 text-success-500;
 
   .status-menu__trigger {
@@ -19,7 +19,7 @@
   }
 }
 
-.status-menu--stopped {
+.status-menu--stop {
   @apply bg-element-light-lighter-300 border-element-light-lighter-700 text-text-400;
 
   .status-menu__trigger {
@@ -33,7 +33,7 @@
   }
 }
 
-.status-menu--error {
+.status-menu--warning {
   @apply bg-error-50 border-error-500 text-error-500;
 
   .status-menu__trigger {
@@ -47,7 +47,7 @@
   }
 }
 
-.status-menu--stopping {
+.status-menu--running {
   @apply bg-progressing-50 border-progressing-400 text-progressing-500;
 
   .status-menu__trigger {

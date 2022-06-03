@@ -9,19 +9,22 @@ export interface InputSelectProps {
   className?: string
   onChange?: () => void
   error?: string
+  disabled?: boolean
 }
 
 export function InputSelect(props: InputSelectProps) {
-  const { label, value, items, className = '', onChange, error } = props
+  const { label, value, items, className = '', onChange, error, disabled = false } = props
 
   const selectedLabel = value && items.find((item) => item.value === value)?.label
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
   return (
-    <div className={`input input--select ${hasError} ${className}`}>
-      <ListboxInput onChange={onChange}>
+    <div className={`input input--select ${hasError} ${disabled ? '!bg-element-light-lighter-200' : ''} ${className}`}>
+      <ListboxInput onChange={onChange} disabled={disabled}>
         <ListboxButton
-          className={`input__button ${value !== undefined ? 'input__button--focused' : ''}`}
+          className={`input__button ${value !== undefined ? 'input__button--focused' : ''} ${
+            disabled ? '!border-element-light-lighter-500' : ''
+          }`}
           arrow={<Icon name="icon-solid-angle-down" className="input__arrow" />}
         >
           <div className="input__label">

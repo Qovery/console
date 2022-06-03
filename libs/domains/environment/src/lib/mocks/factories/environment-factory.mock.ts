@@ -1,17 +1,12 @@
 import { Chance } from 'chance'
-import {
-  Environment,
-  Status,
-  EnvironmentModeEnum,
-  GlobalDeploymentStatus,
-  ServiceDeploymentStatusEnum,
-} from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, StateEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 
 const chance = new Chance()
 
-type Environments = Environment & { status?: Status }
+type Environments = EnvironmentEntity
 
-export const environmentFactoryMock = (howMany: number): Environments[] =>
+export const environmentFactoryMock = (howMany: number, noStatus = false): Environments[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: chance.date().toString(),
@@ -26,16 +21,12 @@ export const environmentFactoryMock = (howMany: number): Environments[] =>
       Object.values([EnvironmentModeEnum.DEVELOPMENT, EnvironmentModeEnum.PRODUCTION, EnvironmentModeEnum.STAGING])
     ),
     cluster_id: chance.guid(),
-    status: {
-      id: `${index}`,
-      state: chance.pickone(
-        Object.values([
-          GlobalDeploymentStatus.DEPLOYED,
-          GlobalDeploymentStatus.RUNNING,
-          GlobalDeploymentStatus.STOP_ERROR,
-        ])
-      ),
-      message: chance.word({ length: 10 }),
-      service_deployment_status: chance.pickone(Object.values([ServiceDeploymentStatusEnum.UP_TO_DATE])),
-    },
+    status: !noStatus
+      ? {
+          id: `${index}`,
+          state: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+          message: chance.word({ length: 10 }),
+          service_deployment_status: chance.pickone(Object.values([ServiceDeploymentStatusEnum.UP_TO_DATE])),
+        }
+      : undefined,
   }))

@@ -1,13 +1,18 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAllEnvironments, fetchEnvironments, fetchEnvironmentsStatus } from './../slices/environments.slice'
+import {
+  fetchEnvironments,
+  fetchEnvironmentsStatus,
+  selectAllEnvironments,
+} from 'libs/domains/environment/src/lib/slices/environments.slice'
+import { AppDispatch } from '@console/store/data'
 
-export function useEnviroments() {
-  const dispatch = useDispatch<any>()
+export function useEnvironments() {
+  const dispatch = useDispatch<AppDispatch>()
   const environments = useSelector(selectAllEnvironments)
 
   const getEnvironments = useCallback(
-    async (projectId: string) => dispatch(fetchEnvironments({ projectId })),
+    async (projectId: string, withoutStatus = false) => dispatch(fetchEnvironments({ projectId, withoutStatus })),
     [dispatch]
   )
 

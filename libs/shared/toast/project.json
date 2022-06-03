@@ -1,0 +1,23 @@
+{
+  "root": "libs/store/toast",
+  "sourceRoot": "libs/shared/toast/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/shared/toast/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/shared/toast"],
+      "options": {
+        "jestConfig": "libs/shared/toast/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

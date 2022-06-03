@@ -1,16 +1,18 @@
-import { Environment } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { Table } from '@console/shared/ui'
-import { APPLICATIONS_URL } from '@console/shared/utils'
+import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
+import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface GeneralProps {
-  environments: Environment[]
+  environments: EnvironmentEntity[]
+  buttonActions: StatusMenuActions[]
+  listHelpfulLinks: BaseLink[]
 }
 
 export function GeneralPage(props: GeneralProps) {
-  const { environments } = props
+  const { environments, buttonActions, listHelpfulLinks } = props
   const { organizationId, projectId } = useParams()
 
   const [data, setData] = useState(environments)
@@ -43,11 +45,8 @@ export function GeneralPage(props: GeneralProps) {
       },
     },
     {
-      title: 'Running Schedule',
-      className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full',
-    },
-    {
       title: 'Type',
+      className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full',
       filter: [
         {
           search: true,
@@ -62,26 +61,32 @@ export function GeneralPage(props: GeneralProps) {
   ]
 
   return (
-    <Table
-      dataHead={tableHead}
-      defaultData={environments}
-      filterData={data}
-      setFilterData={setData}
-      className="mt-2 bg-white rounded-sm"
-      columnsWidth="30% 15% 25% 10% 20%"
-    >
-      <>
-        {data.map((currentData) => (
-          <TableRowEnvironments
-            key={currentData.id}
-            data={currentData}
-            dataHead={tableHead}
-            link={APPLICATIONS_URL(organizationId, projectId, currentData.id)}
-            columnsWidth="25% 20% 25% 10% 15%"
-          />
-        ))}
-      </>
-    </Table>
+    <>
+      <Table
+        dataHead={tableHead}
+        defaultData={environments}
+        filterData={data}
+        setFilterData={setData}
+        className="mt-2 bg-white rounded-sm"
+        columnsWidth="30% 20% 25% 25%"
+      >
+        <>
+          {data.map((currentData) => (
+            <TableRowEnvironments
+              key={currentData.id}
+              data={currentData}
+              dataHead={tableHead}
+              link={`${APPLICATIONS_URL(organizationId, projectId, currentData.id)}${APPLICATIONS_GENERAL_URL}`}
+              columnsWidth="25% 25% 25% 20%"
+              buttonActions={buttonActions}
+            />
+          ))}
+        </>
+      </Table>
+      <div className="bg-white rounded-b">
+        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
+      </div>
+    </>
   )
 }
 

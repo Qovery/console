@@ -1,10 +1,11 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ProjectRequest } from 'qovery-typescript-axios'
-import { postProjects, fetchProjects, selectAllProjects } from '../slices/projects.slice'
+import { fetchProjects, postProject, selectAllProjects } from '../slices/projects.slice'
+import { AppDispatch } from '@console/store/data'
 
 export function useProjects() {
-  const dispatch = useDispatch<any>()
+  const dispatch = useDispatch<AppDispatch>()
   const projects = useSelector(selectAllProjects)
 
   const getProjects = useCallback(
@@ -13,7 +14,7 @@ export function useProjects() {
   )
 
   const createProject = async (organizationId: string, payload: ProjectRequest) => {
-    const result = await dispatch(postProjects({ organizationId: organizationId, ...payload }))
+    const result = await dispatch(postProject({ organizationId: organizationId, ...payload }))
     return result.payload
   }
 

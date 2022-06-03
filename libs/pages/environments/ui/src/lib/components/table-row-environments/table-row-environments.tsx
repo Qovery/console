@@ -1,59 +1,48 @@
-import { Environment, GlobalDeploymentStatus, Status } from 'qovery-typescript-axios'
 import {
   ButtonIconAction,
   Icon,
-  IconFa,
   Skeleton,
   StatusChip,
   StatusLabel,
+  StatusMenuActions,
   TableHeadProps,
   TableRow,
   TagMode,
   Tooltip,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 
 export interface TableRowEnvironmentsProps {
-  data: Environment & { status?: Status }
+  data: EnvironmentEntity
   dataHead: TableHeadProps[]
   link: string
+  buttonActions: StatusMenuActions[]
   columnsWidth?: string
 }
 
-const buttonActionsDefault = [
-  {
-    iconLeft: <Icon name="icon-solid-play" />,
-    iconRight: <Icon name="icon-solid-angle-down" />,
-    menus: [
-      {
-        items: [
-          {
-            name: 'Deploy',
-            onClick: () => console.log('Deploy'),
-            contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
-          },
-          {
-            name: 'Stop',
-            onClick: () => console.log('Stop'),
-            contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
-          },
-        ],
-      },
-    ],
-    menusClassName: 'border-r border-r-element-light-lighter-500',
-  },
-  {
-    iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-  },
-]
-
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link } = props
+  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, buttonActions } = props
+
+  const buttonActionsDefault = [
+    {
+      iconLeft: <Icon name="icon-solid-play" />,
+      iconRight: <Icon name="icon-solid-angle-down" />,
+      menusClassName: 'border-r border-r-element-light-lighter-500',
+      statusActions: {
+        status: data.status && data.status.state,
+        actions: buttonActions,
+      },
+    },
+    {
+      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+    },
+  ]
 
   const isLoading = !data.status?.id
 
   return (
-    <TableRow columnsWidth={columnsWidth} link={link}>
+    <TableRow columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={16} height={16}>
@@ -63,7 +52,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             content={
               <p className="flex">
                 {data.cloud_provider.provider && (
-                  <Icon className="mr-3" name={data.cloud_provider.provider} width="16" />
+                  <Icon className="mr-3" name={`${data.cloud_provider.provider}_GRAY`} width="16" />
                 )}
                 ({data.cloud_provider.cluster})
               </p>
@@ -71,43 +60,37 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
           >
             <div className="ml-3 mr-3">
               <Skeleton show={isLoading} width={16} height={16}>
-                <div className="w-4 h-4.5 min-w-[16px] flex items-center justify-center text-xs text-text-400 text-center bg-element-light-lighter-400 rounded-sm font-bold cursor-pointer">
-                  {data.cloud_provider.provider && data.cloud_provider.provider.charAt(0)}
+                <div className="cursor-pointer mt-0.5">
+                  {data.cloud_provider.provider && <Icon name={`${data.cloud_provider.provider}_GRAY`} />}
                 </div>
               </Skeleton>
             </div>
           </Tooltip>
           <Skeleton show={isLoading} width={400} height={16} truncate>
-            <span className="text-sm text-text-500 font-medium">{data.name}</span>
+            <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
           </Skeleton>
         </div>
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
-            <div className="flex">
-              <p className="leading-7 text-text-400 text-sm mr-3">
-                {data.status && data.status.state === GlobalDeploymentStatus.RUNNING ? (
-                  <>
-                    {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))}
-                    <IconFa name="icon-solid-clock" className="ml-1 text-xxs" />
-                  </>
-                ) : (
-                  <StatusLabel status={data.status && data.status.state} />
-                )}
+            <div className="flex items-center">
+              <p className="flex items-center leading-7 text-text-400 text-sm">
+                <StatusLabel status={data.status && data.status.state} />
+                <span className="text-xs text-text-300 mx-3 font-medium">
+                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
+                </span>
               </p>
-              <ButtonIconAction actions={buttonActionsDefault} />
+              <ButtonIconAction
+                actions={buttonActionsDefault}
+                statusInformation={{
+                  id: data.id,
+                  name: data.name,
+                  mode: data.mode,
+                }}
+              />
             </div>
           </Skeleton>
         </div>
-
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          <Skeleton show={isLoading} width={160} height={16}>
-            <div className="text-text-500">
-              -{/* <IconFa name="icon-solid-infinity" className="text-success-500 mr-2 text-xs" /> */}
-              {/* <span className="f text-text-500 text-sm font-medium">Continuous running</span> */}
-            </div>
-          </Skeleton>
-        </div>
-        <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
             <TagMode status={data.mode} />
           </Skeleton>

@@ -1,4 +1,4 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { screen, render } from '__tests__/utils/setup-jest'
 
 import StatusChip, { StatusChipProps } from './status-chip'
@@ -8,7 +8,7 @@ describe('StatusChip', () => {
 
   beforeEach(() => {
     props = {
-      status: GlobalDeploymentStatus.DEPLOYED,
+      status: StateEnum.DEPLOYED,
     }
   })
 
@@ -18,7 +18,7 @@ describe('StatusChip', () => {
   })
 
   it('should have an error icon', () => {
-    props.status = GlobalDeploymentStatus.STOP_ERROR
+    props.status = StateEnum.STOP_ERROR
 
     render(<StatusChip {...props} />)
 

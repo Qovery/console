@@ -4,15 +4,15 @@ import { OrganizationRequest } from 'qovery-typescript-axios'
 import { useAuth } from '@console/shared/utils'
 import {
   fetchOrganization,
-  selectAllOrganization,
-  selectOrganizationById,
-  selectOrganizationLoadingStatus,
   postOrganization,
+  selectAllOrganization,
+  selectOrganizationLoadingStatus,
 } from '../slices/organization.slice'
+import { AppDispatch } from '@console/store/data'
 
 export function useOrganization() {
   const { getAccessTokenSilently } = useAuth()
-  const dispatch = useDispatch<any>()
+  const dispatch = useDispatch<AppDispatch>()
   const organization = useSelector(selectAllOrganization)
   const loadingStatus = useSelector(selectOrganizationLoadingStatus)
 
@@ -25,5 +25,5 @@ export function useOrganization() {
     return result.payload
   }
 
-  return { organization, loadingStatus, getOrganization, createOrganization, selectOrganizationById }
+  return { organization, loadingStatus, getOrganization, createOrganization }
 }

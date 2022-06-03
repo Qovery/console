@@ -1,0 +1,22 @@
+.toast {
+  @apply relative flex bg-element-light-darker-700 rounded cursor-pointer;
+  box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12);
+
+  &:hover {
+    .toast__close {
+      @apply opacity-100;
+    }
+  }
+}
+
+.toast__icon {
+  @apply mt-[1px] pl-4 pt-2 h-full flex justify-center;
+}
+
+.toast__content {
+  @apply pl-3 pr-4 py-2;
+}
+
+.toast__close {
+  @apply opacity-0 w-6 h-6 flex justify-center items-center absolute top-[-8px] left-[-8px] hover:bg-element-light-darker-500 text-white ease-out duration-150 bg-element-light-darker-300 border border-element-light-lighter-800 rounded-full;
+}

@@ -1,8 +1,8 @@
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import { store } from '@console/store/data'
+import { ModalProvider, ToastBehavior } from '@console/shared/ui'
 import { createBrowserHistory } from 'history'
 import * as ReactDOM from 'react-dom'
-import { Toaster } from 'react-hot-toast'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
@@ -20,7 +20,7 @@ posthog.init(environment.posthog, {
   api_host: environment.posthog_apihost,
 })
 
-const onRedirectCallback = (appState: AppState) => {
+const onRedirectCallback = (appState: AppState | undefined) => {
   // use the router's history module to replace the url
   history.replace(appState?.returnTo || window.location.pathname)
 }
@@ -39,8 +39,10 @@ ReactDOM.render(
     >
       <Provider store={store}>
         <BrowserRouter>
-          <App />
-          <Toaster position="bottom-right" />
+          <ModalProvider>
+            <App />
+            <ToastBehavior />
+          </ModalProvider>
         </BrowserRouter>
       </Provider>
     </Auth0Provider>

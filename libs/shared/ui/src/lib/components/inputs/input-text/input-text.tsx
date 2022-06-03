@@ -29,9 +29,11 @@ export function InputText(props: InputTextProps) {
     ? 'input--disabled'
     : ''
 
+  const isDisabled = disabled ? 'input--disabled !border-element-light-lighter-500' : ''
+
   return (
     <div className={className} onClick={() => inputRef.current?.querySelector('input')?.focus()}>
-      <div aria-label="input-container" className={`input ${inputActions} ${hasError}`} ref={inputRef}>
+      <div aria-label="input-container" className={`input ${inputActions} ${isDisabled} ${hasError}`} ref={inputRef}>
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
         </label>
@@ -42,6 +44,7 @@ export function InputText(props: InputTextProps) {
           defaultValue={value}
           type={type}
           onChange={onChange}
+          disabled={disabled}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />

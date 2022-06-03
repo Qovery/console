@@ -2,13 +2,14 @@ import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   fetchApplications,
+  fetchApplicationsStatus,
   removeOneApplication,
   selectAllApplications,
-  selectApplicationsEntitiesByEnvId,
 } from '../slices/applications.slice'
+import { AppDispatch } from '@console/store/data'
 
 export function useApplications() {
-  const dispatch = useDispatch<any>()
+  const dispatch = useDispatch<AppDispatch>()
   const applications = useSelector(selectAllApplications)
 
   const removeApplication = useCallback(
@@ -17,9 +18,15 @@ export function useApplications() {
   )
 
   const getApplications = useCallback(
-    async (environmentId: string) => dispatch(fetchApplications({ environmentId })),
+    async (environmentId: string, withoutStatus = false) =>
+      dispatch(fetchApplications({ environmentId, withoutStatus })),
     [dispatch]
   )
 
-  return { applications, getApplications, removeApplication }
+  const getApplicationsStatus = useCallback(
+    async (environmentId: string) => dispatch(fetchApplicationsStatus({ environmentId })),
+    [dispatch]
+  )
+
+  return { applications, getApplications, removeApplication, getApplicationsStatus }
 }

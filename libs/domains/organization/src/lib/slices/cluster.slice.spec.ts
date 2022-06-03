@@ -1,17 +1,18 @@
-import { fetchEnvironments, environmentsAdapter, environments } from './environments.slice'
+import { fetchClusters, clusterAdapter, clusterReducer } from './cluster.slice'
 
-describe('environments reducer', () => {
+describe('cluster reducer', () => {
   it('should handle initial state', () => {
-    const expected = environmentsAdapter.getInitialState({
+    const expected = clusterAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
+      joinOrganizationClusters: {},
     })
 
-    expect(environments(undefined, { type: '' })).toEqual(expected)
+    expect(clusterReducer(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchEnvironments', () => {
-    let state = environments(undefined, fetchEnvironments.pending(null, null))
+  it('should handle fetchClusters', () => {
+    let state = clusterReducer(undefined, fetchClusters.pending(null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -21,7 +22,7 @@ describe('environments reducer', () => {
       })
     )
 
-    state = environments(state, fetchEnvironments.fulfilled([{ id: 1 }], null, null))
+    state = clusterReducer(state, fetchClusters.fulfilled([{ id: 1 }], null, { organizationId: '1' }))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -31,7 +32,7 @@ describe('environments reducer', () => {
       })
     )
 
-    state = environments(state, fetchEnvironments.rejected(new Error('Uh oh'), null, null))
+    state = clusterReducer(state, fetchClusters.rejected(new Error('Uh oh'), null, null))
 
     expect(state).toEqual(
       expect.objectContaining({

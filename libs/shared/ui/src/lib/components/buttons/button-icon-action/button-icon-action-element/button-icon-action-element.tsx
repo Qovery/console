@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { Menu } from '@console/shared/ui'
+import { StateEnum } from 'qovery-typescript-axios'
+import { Menu, StatusMenuInformation, StatusMenuActions } from '@console/shared/ui'
 import { MenuItemProps } from '../../../menu/menu-item/menu-item'
+import StatusMenuAction from '../../../status-menu-action/status-menu-action'
 
 export interface ButtonIconActionElementProps {
   iconLeft: React.ReactNode
@@ -10,10 +12,16 @@ export interface ButtonIconActionElementProps {
     items: MenuItemProps[]
   }[]
   menusClassName?: string
+  statusActions?: {
+    status: StateEnum | undefined
+    actions: StatusMenuActions[]
+    information?: StatusMenuInformation
+  }
+  statusInformation?: StatusMenuInformation
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
-  const { iconLeft, iconRight, onClick, menus, menusClassName = '' } = props
+  const { iconLeft, iconRight, onClick, menus, menusClassName = '', statusActions, statusInformation } = props
 
   const [open, setOpen] = useState(false)
 
@@ -23,7 +31,28 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         className={menusClassName}
         menus={menus}
         width={248}
-        onOpen={(e) => setOpen(e)}
+        onOpen={(isOpen) => setOpen(isOpen)}
+        trigger={
+          <div data-testid="element" className={`btn-icon-action__element ${open ? 'is-active' : ''}`}>
+            {iconLeft}
+            {iconRight}
+          </div>
+        }
+      />
+    )
+  } else if (statusActions && statusActions.status) {
+    return (
+      <StatusMenuAction
+        className={menusClassName}
+        width={248}
+        statusActions={{
+          status: statusActions.status,
+          actions: statusActions.actions,
+          information: statusInformation,
+        }}
+        setOpen={(isOpen) => setOpen(isOpen)}
+        paddingMenuX={8}
+        paddingMenuY={8}
         trigger={
           <div data-testid="element" className={`btn-icon-action__element ${open ? 'is-active' : ''}`}>
             {iconLeft}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useIntercom } from 'react-use-intercom'
 import { StepPricing } from '@console/pages/onboarding/ui'
@@ -17,7 +17,7 @@ import {
 } from '@console/shared/utils'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
-import { PlanEnum } from 'qovery-typescript-axios'
+import { Organization, PlanEnum } from 'qovery-typescript-axios'
 
 function listPrice(base: number, isBusinessPlan?: boolean) {
   const results: OrganizationPrice[] = []
@@ -132,10 +132,10 @@ export function OnboardingPricing() {
   const onSubmit = async () => {
     setLoading(true)
 
-    const organization = await createOrganization({
+    const organization: Organization = (await createOrganization({
       name: organization_name,
       plan: selectPlan,
-    })
+    })) as Organization
 
     if (organization) {
       const project = await createProject(organization.id, {

@@ -17,7 +17,7 @@ export const applicationFactoryMock = (howMany: number): Application[] =>
     storage: [
       {
         id: chance.guid(),
-        type: chance.pickone(Object.values([StorageTypeEnum.AWS])),
+        type: chance.pickone(Object.values([StorageTypeEnum.FAST_SSD])),
         size: 10,
         mount_point: '',
       },

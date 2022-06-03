@@ -1,89 +1,106 @@
-import { GlobalDeploymentStatus } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 
-export const isDeployAvailable = (status: GlobalDeploymentStatus): boolean => {
+export const isDeployAvailable = (status: StateEnum): boolean => {
+  return status === StateEnum.READY || status === StateEnum.STOPPED || status === StateEnum.DELETED
+}
+
+export const isRestartAvailable = (status: StateEnum): boolean => {
   return (
-    status === GlobalDeploymentStatus.READY ||
-    status === GlobalDeploymentStatus.STOPPED ||
-    status === GlobalDeploymentStatus.DELETED
+    status === StateEnum.BUILDING ||
+    status === StateEnum.QUEUED ||
+    status === StateEnum.STOP_QUEUED ||
+    status === StateEnum.DELETE_QUEUED ||
+    status === StateEnum.DEPLOYING ||
+    status === StateEnum.DEPLOYMENT_ERROR ||
+    status === StateEnum.DEPLOYED ||
+    status === StateEnum.STOPPING ||
+    status === StateEnum.STOP_ERROR ||
+    status === StateEnum.DELETING ||
+    status === StateEnum.DELETE_ERROR ||
+    status === StateEnum.RUNNING ||
+    status === StateEnum.DEPLOYMENT_QUEUED
   )
 }
 
-export const isRestartAvailable = (status: GlobalDeploymentStatus): boolean => {
+export const isStopAvailable = (status: StateEnum): boolean => {
   return (
-    status === GlobalDeploymentStatus.BUILDING ||
-    status === GlobalDeploymentStatus.QUEUED ||
-    status === GlobalDeploymentStatus.STOP_QUEUED ||
-    status === GlobalDeploymentStatus.DELETE_QUEUED ||
-    status === GlobalDeploymentStatus.BUILD_ERROR ||
-    status === GlobalDeploymentStatus.BUILT ||
-    status === GlobalDeploymentStatus.DEPLOYING ||
-    status === GlobalDeploymentStatus.DEPLOYMENT_ERROR ||
-    status === GlobalDeploymentStatus.DEPLOYED ||
-    status === GlobalDeploymentStatus.STOPPING ||
-    status === GlobalDeploymentStatus.STOP_ERROR ||
-    status === GlobalDeploymentStatus.DELETING ||
-    status === GlobalDeploymentStatus.DELETE_ERROR ||
-    status === GlobalDeploymentStatus.RUNNING ||
-    status === GlobalDeploymentStatus.RUNNING_ERROR
+    status === StateEnum.BUILDING ||
+    status === StateEnum.QUEUED ||
+    status === StateEnum.STOP_QUEUED ||
+    status === StateEnum.DELETE_QUEUED ||
+    status === StateEnum.DEPLOYING ||
+    status === StateEnum.DEPLOYED ||
+    status === StateEnum.DELETING ||
+    status === StateEnum.RUNNING ||
+    status === StateEnum.DEPLOYMENT_ERROR ||
+    status === StateEnum.DEPLOYMENT_QUEUED
   )
 }
 
-export const isStopAvailable = (status: GlobalDeploymentStatus): boolean => {
+export const isRollbackAvailable = (status: StateEnum): boolean => {
   return (
-    status === GlobalDeploymentStatus.BUILDING ||
-    status === GlobalDeploymentStatus.QUEUED ||
-    status === GlobalDeploymentStatus.STOP_QUEUED ||
-    status === GlobalDeploymentStatus.DELETE_QUEUED ||
-    status === GlobalDeploymentStatus.BUILT ||
-    status === GlobalDeploymentStatus.DEPLOYING ||
-    status === GlobalDeploymentStatus.DEPLOYED ||
-    status === GlobalDeploymentStatus.DELETING ||
-    status === GlobalDeploymentStatus.RUNNING ||
-    status === GlobalDeploymentStatus.DEPLOYMENT_ERROR ||
-    status === GlobalDeploymentStatus.RUNNING_ERROR
+    status === StateEnum.DEPLOYMENT_ERROR ||
+    status === StateEnum.STOP_ERROR ||
+    status === StateEnum.STOPPED ||
+    status === StateEnum.DELETE_ERROR ||
+    status === StateEnum.DELETED ||
+    status === StateEnum.RUNNING
   )
 }
 
-export const isRollbackAvailable = (status: GlobalDeploymentStatus): boolean => {
+export const isDeleteAvailable = (status: StateEnum): boolean => {
   return (
-    status === GlobalDeploymentStatus.BUILD_ERROR ||
-    status === GlobalDeploymentStatus.DEPLOYMENT_ERROR ||
-    status === GlobalDeploymentStatus.STOP_ERROR ||
-    status === GlobalDeploymentStatus.STOPPED ||
-    status === GlobalDeploymentStatus.DELETE_ERROR ||
-    status === GlobalDeploymentStatus.DELETED ||
-    status === GlobalDeploymentStatus.RUNNING ||
-    status === GlobalDeploymentStatus.RUNNING_ERROR
+    status === StateEnum.READY ||
+    status === StateEnum.DEPLOYMENT_ERROR ||
+    status === StateEnum.STOPPING ||
+    status === StateEnum.STOP_ERROR ||
+    status === StateEnum.STOPPED ||
+    status === StateEnum.DELETE_ERROR ||
+    status === StateEnum.RUNNING
   )
 }
 
-export const isDeleteAvailable = (status: GlobalDeploymentStatus): boolean => {
+export const isUpdateAvailable = (status: StateEnum): boolean => {
   return (
-    status === GlobalDeploymentStatus.READY ||
-    status === GlobalDeploymentStatus.BUILD_ERROR ||
-    status === GlobalDeploymentStatus.DEPLOYMENT_ERROR ||
-    status === GlobalDeploymentStatus.STOPPING ||
-    status === GlobalDeploymentStatus.STOP_ERROR ||
-    status === GlobalDeploymentStatus.STOPPED ||
-    status === GlobalDeploymentStatus.DELETE_ERROR ||
-    status === GlobalDeploymentStatus.RUNNING ||
-    status === GlobalDeploymentStatus.RUNNING_ERROR
+    status === StateEnum.DEPLOYMENT_ERROR ||
+    status === StateEnum.STOP_ERROR ||
+    status === StateEnum.STOPPED ||
+    status === StateEnum.DELETE_ERROR ||
+    status === StateEnum.DELETED ||
+    status === StateEnum.RUNNING
   )
 }
 
-export const isUpdateAvailable = (status: GlobalDeploymentStatus): boolean => {
+export const isCancelBuildAvailable = (status: StateEnum): boolean => {
+  return status === StateEnum.BUILDING || status === StateEnum.DEPLOYING
+}
+
+export const isAvailable = (status: StateEnum): boolean => {
   return (
-    status === GlobalDeploymentStatus.BUILD_ERROR ||
-    status === GlobalDeploymentStatus.DEPLOYMENT_ERROR ||
-    status === GlobalDeploymentStatus.STOP_ERROR ||
-    status === GlobalDeploymentStatus.STOPPED ||
-    status === GlobalDeploymentStatus.DELETE_ERROR ||
-    status === GlobalDeploymentStatus.DELETED ||
-    status === GlobalDeploymentStatus.RUNNING ||
-    status === GlobalDeploymentStatus.RUNNING_ERROR
+    status === StateEnum.RUNNING ||
+    status === StateEnum.READY ||
+    status === StateEnum.QUEUED ||
+    status === StateEnum.BUILDING ||
+    status === StateEnum.DEPLOYED
   )
 }
 
-export const isCancelBuildAvailable = (status: GlobalDeploymentStatus): boolean => {
-  return status === GlobalDeploymentStatus.BUILDING || status === GlobalDeploymentStatus.DEPLOYING
+export const isStop = (status: StateEnum): boolean => {
+  return status === StateEnum.STOPPED || status === StateEnum.STOP_QUEUED
+}
+
+export const isWarning = (status: StateEnum): boolean => {
+  return (
+    status === StateEnum.DELETE_QUEUED ||
+    status === StateEnum.STOP_ERROR ||
+    status === StateEnum.DELETING ||
+    status === StateEnum.DELETE_ERROR ||
+    status === StateEnum.DELETED ||
+    status === StateEnum.DEPLOYMENT_QUEUED ||
+    status === StateEnum.DEPLOYMENT_ERROR
+  )
+}
+
+export const isRunning = (status: StateEnum): boolean => {
+  return status === StateEnum.DEPLOYING || status === StateEnum.STOPPING
 }

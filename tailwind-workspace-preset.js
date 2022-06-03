@@ -3,6 +3,9 @@
 module.exports = {
   theme: {
     extend: {
+      spacing: {
+        'right-help-sidebar': '22.5rem',
+      },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
         icons: ['FontAwesome'],
@@ -179,7 +182,7 @@ module.exports = {
   },
   safelist: [
     {
-      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter-500)(-\w+\d+)*/,
+      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter-500|accent)(-\w+\d+)*/,
       variants: ['focus', 'hover'],
     },
     {

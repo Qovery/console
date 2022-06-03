@@ -1,49 +1,63 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { User } from 'qovery-typescript-axios'
-import { initialOrganizationState, organization, OrganizationState } from '@console/domains/organization'
 import {
+  initialOrganizationState,
+  organization,
+  clusterReducer,
+  initialClusterState,
+} from '@console/domains/organization'
+import {
+  deploymentRulesReducer,
+  initialDeploymentRulesState,
   initialProjectsState,
-  ProjectsState,
   projects,
-  EnvironmentsState,
-  environments,
-  initialEnvironmentsState,
 } from '@console/domains/projects'
-import { initialUserSignUpState, initialUserState, user, UserSignUpState, userSignUp } from '@console/domains/user'
-import { applications, ApplicationsState, initialApplicationsState } from '@console/domains/application'
+import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
+import { applications, initialApplicationsState } from '@console/domains/application'
+import { environments, initialEnvironmentsState } from '@console/domains/environment'
 
-export const rootReducer = combineReducers({
+export const uiReducer = combineReducers({
   user: user,
   userSignUp: userSignUp,
+})
+
+export const projectReducer = combineReducers({
+  deploymentRules: deploymentRulesReducer,
+})
+
+export const entitiesReducer = combineReducers({
   organization: organization,
+  cluster: clusterReducer,
   projects: projects,
+  project: projectReducer,
   environments: environments,
   applications: applications,
 })
 
+export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
 export const store = configureStore({
   reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 })
 
-export type RootState = {
-  user: User
-  userSignUp: UserSignUpState
-  entities: {
-    organization: OrganizationState
-    projects: ProjectsState
-    environments: EnvironmentsState
-    applications: ApplicationsState
-  }
-}
-
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 export const initialRootState = (): RootState => ({
-  user: initialUserState,
-  userSignUp: initialUserSignUpState,
+  ui: {
+    user: initialUserState,
+    userSignUp: initialUserSignUpState,
+  },
   entities: {
     organization: initialOrganizationState,
+    cluster: initialClusterState,
     projects: initialProjectsState,
+    project: {
+      deploymentRules: initialDeploymentRulesState,
+    },
     environments: initialEnvironmentsState,
     applications: initialApplicationsState,
   },

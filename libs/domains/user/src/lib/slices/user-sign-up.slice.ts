@@ -1,15 +1,10 @@
 import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { SignUp, SignUpRequest, TypeOfUseEnum, UserSignUpApi } from 'qovery-typescript-axios'
+import { UserSignUpState } from '@console/shared/interfaces'
 
 export const USER_SIGNUP_KEY = 'userSignUp'
 
 const userSignUpApi = new UserSignUpApi()
-
-export interface UserSignUpState {
-  loadingStatus: 'not loaded' | 'loading' | 'loaded' | 'error' | undefined
-  error: string | null | undefined
-  signup: SignUp
-}
 
 export const fetchUserSignUp = createAsyncThunk<SignUp>('userSignUp/get', async () => {
   return await userSignUpApi.getUserSignUp().then((response) => response.data)
@@ -88,7 +83,7 @@ export const userSignUp = userSignUpSlice.reducer
 export const userSignUpActions = userSignUpSlice.actions
 
 export const getUserSignUpState = (rootState: any): UserSignUpState => {
-  return rootState[USER_SIGNUP_KEY]
+  return rootState.ui[USER_SIGNUP_KEY]
 }
 
 export const selectUserSignUp = createSelector(getUserSignUpState, (state) => state.signup)
