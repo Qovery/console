@@ -11,6 +11,7 @@ import {
   Skeleton,
   StatusChip,
   StatusMenu,
+  StatusMenuActions,
   Tabs,
   Tag,
   TagMode,
@@ -28,13 +29,14 @@ import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
 
 export interface ContainerProps {
+  statusActions: StatusMenuActions[]
   application?: ApplicationEntity
   environment?: Environment
   children?: React.ReactNode
 }
 
 export function Container(props: ContainerProps) {
-  const { application, environment, children } = props
+  const { application, environment, children, statusActions } = props
   const { organizationId, projectId, environmentId, applicationId } = useParams()
   const location = useLocation()
 
@@ -100,17 +102,21 @@ export function Container(props: ContainerProps) {
   const headerActions = (
     <>
       <Skeleton width={150} height={24} show={!application?.status}>
-        <StatusMenu
-          statusActions={{
-            status: application?.status ? application?.status.state : StateEnum.RUNNING,
-            actions: [],
-            information: {
-              id: '',
-              name: '',
-              mode: '',
-            },
-          }}
-        />
+        <div>
+          {environment && application && application?.status && (
+            <StatusMenu
+              statusActions={{
+                status: application?.status.state,
+                actions: statusActions,
+                information: {
+                  id: application?.id,
+                  name: application?.name,
+                  mode: environment?.mode,
+                },
+              }}
+            />
+          )}
+        </div>
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>

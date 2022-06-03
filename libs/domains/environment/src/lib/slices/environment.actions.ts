@@ -1,16 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
-import { fetchEnvironments, fetchEnvironmentsStatus } from './environments.slice'
+import { fetchEnvironmentsStatus } from './environments.slice'
 import { toast, ToastEnum } from '@console/shared/toast'
-
-export const ENVIRONMENT_ACTIONS_FEATURE_KEY = 'environmentActions'
 
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 
 export const postEnvironmentActionsRestart = createAsyncThunk<any, { projectId: string; environmentId: string }>(
   'environmentActions/restart',
-  async (data, { rejectWithValue, dispatch }) => {
+  async (data, { dispatch }) => {
     try {
       const response = await environmentActionApi.restartEnvironment(data.environmentId).then(async (response) => {
         if (response.status === 200) {
@@ -24,14 +22,15 @@ export const postEnvironmentActionsRestart = createAsyncThunk<any, { projectId: 
 
       return response
     } catch (err) {
-      return rejectWithValue(err)
+      // error message
+      return toast(ToastEnum.ERROR, 'Redeploying error')
     }
   }
 )
 
 export const postEnvironmentActionsDeploy = createAsyncThunk<any, { projectId: string; environmentId: string }>(
   'environmentActions/deploy',
-  async (data, { rejectWithValue, dispatch }) => {
+  async (data, { dispatch }) => {
     try {
       const response = await environmentActionApi.deployEnvironment(data.environmentId).then(async (response) => {
         if (response.status === 200) {
@@ -45,14 +44,15 @@ export const postEnvironmentActionsDeploy = createAsyncThunk<any, { projectId: s
 
       return response
     } catch (err) {
-      return rejectWithValue(err)
+      // error message
+      return toast(ToastEnum.ERROR, 'Deploying error')
     }
   }
 )
 
 export const postEnvironmentActionsStop = createAsyncThunk<any, { projectId: string; environmentId: string }>(
   'environmentActions/stop',
-  async (data, { rejectWithValue, dispatch }) => {
+  async (data, { dispatch }) => {
     try {
       const response = await environmentActionApi.stopEnvironment(data.environmentId).then(async (response) => {
         if (response.status === 200) {
@@ -66,7 +66,8 @@ export const postEnvironmentActionsStop = createAsyncThunk<any, { projectId: str
 
       return response
     } catch (err) {
-      return rejectWithValue(err)
+      // error message
+      return toast(ToastEnum.ERROR, 'Stopping error')
     }
   }
 )
@@ -74,7 +75,7 @@ export const postEnvironmentActionsStop = createAsyncThunk<any, { projectId: str
 export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
   any,
   { projectId: string; environmentId: string }
->('environmentActions/cancel-deployment', async (data, { rejectWithValue, dispatch }) => {
+>('environmentActions/cancel-deployment', async (data, { dispatch }) => {
   try {
     const response = await environmentActionApi
       .cancelEnvironmentDeployment(data.environmentId)
@@ -90,19 +91,20 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
 
     return response
   } catch (err) {
-    return rejectWithValue(err)
+    // error message
+    return toast(ToastEnum.ERROR, 'Cancelling error')
   }
 })
 
 export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
   any,
   { projectId: string; environmentId: string }
->('environmentActions/cancel-deployment', async (data, { rejectWithValue, dispatch }) => {
+>('environmentActions/delete', async (data, { dispatch }) => {
   try {
     const response = await environmentMainCallsApi.deleteEnvironment(data.environmentId).then(async (response) => {
       if (response.status === 204) {
-        // refetch environments after update
-        await dispatch(fetchEnvironments({ projectId: data.projectId }))
+        // refetch status after update
+        await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
       }
@@ -111,6 +113,7 @@ export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
 
     return response
   } catch (err) {
-    return rejectWithValue(err)
+    // error message
+    return toast(ToastEnum.ERROR, 'Deleting error')
   }
 })

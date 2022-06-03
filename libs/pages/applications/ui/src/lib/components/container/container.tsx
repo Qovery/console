@@ -11,7 +11,6 @@ import {
   StatusChip,
   StatusMenu,
   StatusMenuActions,
-  StatusMenuInformation,
   Tabs,
   Tag,
   TagMode,
@@ -85,7 +84,7 @@ export function Container(props: ContainerProps) {
           <StatusChip status={environment?.status && environment?.status.state} />
         </Skeleton>
       ),
-      name: 'Environments',
+      name: 'Overview',
       active:
         location.pathname ===
         `${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATIONS_GENERAL_URL}`,
