@@ -3,8 +3,8 @@ import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   deleteEnvironmentActionsCancelDeployment,
-  environmentFactoryMock,
   environmentsLoadingStatus,
+  environmentFactoryMock,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
   postEnvironmentActionsRestart,
@@ -20,6 +20,7 @@ export function General() {
   const loadingEnvironments = environmentFactoryMock(3, true)
 
   const loadingStatus = useSelector(environmentsLoadingStatus)
+
   const environments = useSelector<RootState, EnvironmentEntity[]>((state) =>
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
@@ -60,7 +61,6 @@ export function General() {
 
   return (
     <GeneralPage
-      key={environments[0] ? environments[0].status?.id : ''}
       environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
       buttonActions={actions}
       listHelpfulLinks={listHelpfulLinks}

@@ -1,6 +1,6 @@
 import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Tooltip from '../../tooltip/tooltip'
 export interface MenuItemProps {
@@ -66,18 +66,17 @@ export function MenuItem(props: MenuItemProps) {
     )
   } else {
     return (
-      <Link to={link?.url ? link?.url : ''}>
-        <Item
-          className="menu-item"
-          data-testid="menuItem"
-          onClick={(e) => {
-            navigate(link?.url ? link?.url : '')
-            onClick && onClick(e)
-          }}
-        >
-          {itemContent}
-        </Item>
-      </Link>
+      <Item
+        className="menu-item"
+        data-testid="menuItem"
+        onClick={(e: ClickEvent) => {
+          e.syntheticEvent.preventDefault()
+          link?.url && navigate(link?.url)
+          onClick && onClick(e)
+        }}
+      >
+        {itemContent}
+      </Item>
     )
   }
 }

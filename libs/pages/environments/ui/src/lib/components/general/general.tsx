@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
 import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
@@ -17,6 +17,10 @@ export function GeneralPage(props: GeneralProps) {
   const { organizationId, projectId } = useParams()
 
   const [data, setData] = useState(environments)
+
+  useEffect(() => {
+    setData(environments)
+  }, [environments])
 
   const tableHead = [
     {
@@ -65,7 +69,7 @@ export function GeneralPage(props: GeneralProps) {
         filterData={data}
         setFilterData={setData}
         className="mt-2 bg-white rounded-sm"
-        columnsWidth="30% 15% 25% 30%"
+        columnsWidth="30% 20% 25% 25%"
       >
         <>
           {data.map((currentData) => (
@@ -74,7 +78,7 @@ export function GeneralPage(props: GeneralProps) {
               data={currentData}
               dataHead={tableHead}
               link={`${APPLICATIONS_URL(organizationId, projectId, currentData.id)}${APPLICATIONS_GENERAL_URL}`}
-              columnsWidth="25% 20% 25% 25%"
+              columnsWidth="25% 25% 25% 20%"
               buttonActions={buttonActions}
             />
           ))}

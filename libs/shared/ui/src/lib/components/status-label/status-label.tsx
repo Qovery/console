@@ -11,6 +11,17 @@ export interface StatusLabelProps {
 export function StatusLabel(props: StatusLabelProps) {
   const { status, className = '' } = props
 
+  function hideStatusLabel(): boolean {
+    switch (status) {
+      case StateEnum.READY:
+        return true
+      case StateEnum.RUNNING:
+        return true
+      default:
+        return false
+    }
+  }
+
   function showProgressIcon(): boolean {
     switch (status) {
       case StateEnum.BUILDING:
@@ -50,6 +61,10 @@ export function StatusLabel(props: StatusLabelProps) {
       default:
         return false
     }
+  }
+
+  if (hideStatusLabel()) {
+    return null
   }
 
   return (

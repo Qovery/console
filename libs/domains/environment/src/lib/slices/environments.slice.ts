@@ -42,6 +42,7 @@ export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: s
 
 export const initialEnvironmentsState: EnvironmentsState = environmentsAdapter.getInitialState({
   loadingStatus: 'not loaded',
+  loadingEnvironmentStatus: 'not loaded',
   error: null,
   joinProjectEnvironments: {},
 })
@@ -75,7 +76,7 @@ export const environmentsSlice = createSlice({
       })
       // get environments status
       .addCase(fetchEnvironmentsStatus.pending, (state: EnvironmentsState) => {
-        state.loadingStatus = 'loading'
+        state.loadingEnvironmentStatus = 'loading'
       })
       .addCase(fetchEnvironmentsStatus.fulfilled, (state: EnvironmentsState, action: PayloadAction<Status[]>) => {
         const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
@@ -87,10 +88,10 @@ export const environmentsSlice = createSlice({
           })
         )
         environmentsAdapter.updateMany(state, update as Update<Environment>[])
-        state.loadingStatus = 'loaded'
+        state.loadingEnvironmentStatus = 'loaded'
       })
       .addCase(fetchEnvironmentsStatus.rejected, (state: EnvironmentsState, action) => {
-        state.loadingStatus = 'error'
+        state.loadingEnvironmentStatus = 'error'
         state.error = action.error.message
       })
   },
@@ -119,3 +120,6 @@ export const selectEnvironmentById = (state: RootState, environmentId: string) =
 
 export const environmentsLoadingStatus = (state: RootState): string | undefined =>
   getEnvironmentsState(state).loadingStatus
+
+export const environmentsLoadingEnvironmentStatus = (state: RootState): string | undefined =>
+  getEnvironmentsState(state).loadingEnvironmentStatus

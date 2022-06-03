@@ -1,5 +1,5 @@
 import { TableHeadSort } from '@console/shared/ui'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 
 export interface TableProps {
