@@ -11,13 +11,20 @@ export interface StatusChipProps {
 export function StatusChip(props: StatusChipProps) {
   const { status, className = '' } = props
 
-  function showReadyIcon(): boolean {
+  function showRunningIcon(): boolean {
     switch (status) {
-      case StateEnum.READY:
-        return true
       case StateEnum.DEPLOYED:
         return true
       case StateEnum.RUNNING:
+        return true
+      default:
+        return false
+    }
+  }
+
+  function showReadyIcon(): boolean {
+    switch (status) {
+      case StateEnum.READY:
         return true
       default:
         return false
@@ -83,8 +90,17 @@ export function StatusChip(props: StatusChipProps) {
   return (
     <Tooltip content={<span>{upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}</span>}>
       <div data-testid="status-chip" className={className}>
-        {showReadyIcon() && (
+        {showRunningIcon() && (
           <Icon className="min-w-[14px]" width="0.875rem" viewBox="0 0 14 14" name={IconEnum.SUCCESS} />
+        )}
+        {showReadyIcon() && (
+          <Icon
+            className="min-w-[14px]"
+            width="0.875rem"
+            viewBox="0 0 14 14"
+            pathColor="#A0AFC5"
+            name={IconEnum.SUCCESS}
+          />
         )}
         {showProgressIcon() && (
           <Icon

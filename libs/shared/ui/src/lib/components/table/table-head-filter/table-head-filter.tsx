@@ -152,9 +152,27 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
     defaultData && setFilterData && setFilterData(defaultData)
   }
 
+  // return (
+  //   <div className="flex">
+  //     {createFilter(
+  //       dataHead,
+  //       defaultData,
+  //       ALL,
+  //       currentFilter,
+  //       setCurrentFilter,
+  //       setLocalFilter,
+  //       setDataFilterNumber,
+  //       setFilterData
+  //     ).map((current) => {
+  //       return <div onClick={(e: any) => current.items[1].onClick && current.items[1].onClick(e)}>filter</div>
+  //     })}
+  //   </div>
+  // )
+
   return (
-    <div className="flex">
+    <div className="flex" key={Math.random()}>
       <Menu
+        key={Math.random()}
         menus={createFilter(
           dataHead,
           defaultData,

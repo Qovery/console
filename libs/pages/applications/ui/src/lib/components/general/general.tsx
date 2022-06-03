@@ -59,7 +59,7 @@ export function GeneralPage(props: GeneralPageProps) {
         filterData={data}
         setFilterData={setData}
         className="mt-2 bg-white rounded-sm"
-        columnsWidth="30% 15% 25% 10% 20%"
+        columnsWidth="30% 20% 25% 10% 15%"
       >
         <>
           {data.map((currentData) => (
@@ -70,7 +70,7 @@ export function GeneralPage(props: GeneralPageProps) {
               link={
                 APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + APPLICATIONS_GENERAL_URL
               }
-              columnsWidth="25% 20% 25% 10% 15%"
+              columnsWidth="25% 25% 25% 10% 10%"
             />
           ))}
         </>

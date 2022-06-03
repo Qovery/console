@@ -7,7 +7,6 @@ export interface ToastProps {
   status: ToastEnum
   title?: string
   description?: string
-  linkLabel?: string
   callback?: () => void
 }
 
@@ -16,7 +15,6 @@ export const ToastContent = (
   options?: Toast,
   title?: string,
   description?: string,
-  linkLabel?: string,
   callback?: () => void
 ) => {
   return (
@@ -38,7 +36,7 @@ export const ToastContent = (
           </span>
         )}
       </div>
-      {options && callback && linkLabel && (
+      {options && callback && (
         <div
           className="flex justify-end items-center px-4 rounded-r border-l border-element-light-darker-100 transition ease-in-out duration-150 hover:bg-element-light-darker-500"
           onClick={() => {

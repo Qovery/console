@@ -3,7 +3,6 @@ import { ApplicationEntity } from '@console/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
-  IconFa,
   Skeleton,
   StatusChip,
   StatusLabel,
@@ -14,7 +13,6 @@ import {
   TagCommit,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
-import { StateEnum } from 'qovery-typescript-axios'
 
 export interface TableRowApplicationsProps {
   data: ApplicationEntity
