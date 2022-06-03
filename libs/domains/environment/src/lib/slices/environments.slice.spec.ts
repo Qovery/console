@@ -4,6 +4,7 @@ describe('environments reducer', () => {
   it('should handle initial state', () => {
     const expected = environmentsAdapter.getInitialState({
       loadingStatus: 'not loaded',
+      loadingEnvironmentStatus: 'not loaded',
       error: null,
       joinProjectEnvironments: {},
     })
@@ -17,6 +18,7 @@ describe('environments reducer', () => {
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loading',
+        loadingEnvironmentStatus: 'not loaded',
         error: null,
         entities: {},
       })
@@ -27,6 +29,7 @@ describe('environments reducer', () => {
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loaded',
+        loadingEnvironmentStatus: 'not loaded',
         error: null,
         entities: { 1: { id: 1 } },
       })
@@ -37,6 +40,7 @@ describe('environments reducer', () => {
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'error',
+        loadingEnvironmentStatus: 'not loaded',
         error: 'Uh oh',
         entities: { 1: { id: 1 } },
       })
