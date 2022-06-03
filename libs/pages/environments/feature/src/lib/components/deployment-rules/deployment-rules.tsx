@@ -1,6 +1,5 @@
 import {
   deleteDeploymentRule,
-  deploymentRulesFactoryMock,
   deploymentRulesLoadingStatus,
   fetchDeploymentRules,
   selectDeploymentRulesEntitiesByProjectId,
@@ -34,7 +33,6 @@ export function DeploymentRules() {
   }
 
   const loadingStatus = useSelector(deploymentRulesLoadingStatus)
-  const deploymentRulesLoading = deploymentRulesFactoryMock(3)
 
   useEffect(() => {
     dispatch(fetchDeploymentRules({ projectId }))
