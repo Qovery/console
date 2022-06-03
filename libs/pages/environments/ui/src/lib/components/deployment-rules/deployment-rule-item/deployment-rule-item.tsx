@@ -17,7 +17,7 @@ export interface DeploymentRuleItemProps {
 export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
   const { id, name, startTime, stopTime, weekDays, isLast = false, isLoading = false, removeDeploymentRule } = props
   const [menuOpen, setMenuOpen] = useState(false)
-  const { organizationId, projectId } = useParams()
+  // const { organizationId, projectId } = useParams()
 
   const getTime = (date: string) => {
     const converted = new Date(date)
@@ -37,17 +37,17 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
   }
 
   const menu: MenuData = [
-    {
-      items: [
-        {
-          name: 'Edit',
-          contentLeft: <Icon name="icon-solid-pen" className="text-brand-400 text-sm" />,
-          link: {
-            url: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}/edit/${id}`,
-          },
-        },
-      ],
-    },
+    // {
+    //   items: [
+    //     {
+    //       name: 'Edit',
+    //       contentLeft: <Icon name="icon-solid-pen" className="text-brand-400 text-sm" />,
+    //       link: {
+    //         url: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}/edit/${id}`,
+    //       },
+    //     },
+    //   ],
+    // },
     {
       items: [
         {
