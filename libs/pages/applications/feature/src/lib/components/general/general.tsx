@@ -1,23 +1,54 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { Application } from 'qovery-typescript-axios'
+import { Application, Environment } from 'qovery-typescript-axios'
 import {
   applicationFactoryMock,
   applicationsLoadingStatus,
+  deleteApplicationActionsStop,
+  postApplicationActionsDeploy,
+  postApplicationActionsRestart,
+  postApplicationActionsStop,
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
-import { RootState } from '@console/store/data'
+import { AppDispatch, RootState } from '@console/store/data'
 import { GeneralPage } from '@console/pages/applications/ui'
-import { BaseLink } from '@console/shared/ui'
+import { BaseLink, StatusMenuActions } from '@console/shared/ui'
+import { selectEnvironmentById } from '@console/domains/environment'
 
 export function General() {
   const { environmentId = '' } = useParams()
 
   const loadingApplications = applicationFactoryMock(3)
   const loadingStatus = useSelector<RootState>((state) => applicationsLoadingStatus(state))
+
   const applicationsByEnv = useSelector<RootState, Application[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
   )
+
+  const environment = useSelector<RootState, Environment | undefined>((state) =>
+    selectEnvironmentById(state, environmentId)
+  )
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const actions: StatusMenuActions[] = [
+    {
+      name: 'redeploy',
+      action: (applicationId: string) => dispatch(postApplicationActionsRestart({ environmentId, applicationId })),
+    },
+    {
+      name: 'deploy',
+      action: (applicationId: string) => dispatch(postApplicationActionsDeploy({ environmentId, applicationId })),
+    },
+    {
+      name: 'stop',
+      action: (applicationId: string) => dispatch(postApplicationActionsStop({ environmentId, applicationId })),
+    },
+    {
+      name: 'delete',
+      action: (applicationId: string) => dispatch(deleteApplicationActionsStop({ environmentId, applicationId })),
+    },
+  ]
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -32,6 +63,8 @@ export function General() {
       applications={
         loadingStatus !== 'loaded' && applicationsByEnv.length === 0 ? loadingApplications : applicationsByEnv
       }
+      buttonActions={actions}
+      environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
     />
   )

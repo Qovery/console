@@ -11,18 +11,28 @@ import {
   Avatar,
   AvatarStyle,
   TagCommit,
+  StatusMenuActions,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
 
 export interface TableRowApplicationsProps {
   data: ApplicationEntity
+  environmentMode: string
   dataHead: TableHeadProps[]
   link: string
+  buttonActions: StatusMenuActions[]
   columnsWidth?: string
 }
 
 export function TableRowApplications(props: TableRowApplicationsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link } = props
+  const {
+    data,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    link,
+    buttonActions,
+    environmentMode,
+  } = props
 
   const isLoading = !data.status?.id
 
@@ -31,7 +41,10 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
-      status: data.status?.state,
+      statusActions: {
+        status: data.status && data.status.state,
+        actions: buttonActions,
+      },
     },
     {
       iconLeft: <Icon name="icon-solid-scroll" />,
@@ -64,7 +77,16 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
                   {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
                 </span>
               </p>
-              <ButtonIconAction actions={buttonActionsDefault} />
+              {data.name && (
+                <ButtonIconAction
+                  actions={buttonActionsDefault}
+                  statusInformation={{
+                    id: data.id,
+                    name: data.name,
+                    mode: environmentMode,
+                  }}
+                />
+              )}
             </div>
           </Skeleton>
         </div>

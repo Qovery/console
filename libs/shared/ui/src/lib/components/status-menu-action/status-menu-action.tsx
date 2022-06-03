@@ -34,14 +34,14 @@ export type StatusMenuActionItem = {
 }
 
 export type StatusMenuInformation = {
-  id: string
-  name: string
-  mode: string
+  id?: string
+  name?: string
+  mode?: string
 }
 
 export type StatusMenuActions = {
   name: string
-  action: (id?: string) => void
+  action: (id: string) => void
 }
 
 export function StatusMenuAction(props: StatusMenuActionProps) {
@@ -63,7 +63,8 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
 
   const onClickAction = (name: string, titleModal: string, descriptionModal: string) => {
     const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === name)
-    const actionDeploy = () => currentAction && currentAction.action(statusActions.information?.id)
+    const actionDeploy = () =>
+      currentAction && statusActions.information && currentAction.action(statusActions.information?.id || '')
 
     if (statusActions.information && statusActions.information.mode === EnvironmentModeEnum.PRODUCTION) {
       setOpenModal(true)
@@ -151,7 +152,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
         setBottomMenu((bottomMenu) => [...bottomMenu, removeButton])
       }
     }
-  }, [statusActions.status])
+  }, [])
 
   const menus = bottomMenu.length === 0 ? [{ items: topMenu }] : [{ items: topMenu }, { items: bottomMenu }]
 

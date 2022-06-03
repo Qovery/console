@@ -1,8 +1,6 @@
-import { StateEnum } from 'qovery-typescript-axios'
 import {
   ButtonIconAction,
   Icon,
-  IconFa,
   Skeleton,
   StatusChip,
   StatusLabel,
@@ -19,8 +17,8 @@ export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
   dataHead: TableHeadProps[]
   link: string
-  columnsWidth?: string
   buttonActions: StatusMenuActions[]
+  columnsWidth?: string
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {

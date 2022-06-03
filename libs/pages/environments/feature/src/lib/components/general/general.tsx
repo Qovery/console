@@ -13,7 +13,7 @@ import {
 } from '@console/domains/environment'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
-import { BaseLink } from '@console/shared/ui'
+import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 
 export function General() {
   const { projectId = '' } = useParams()
@@ -27,7 +27,7 @@ export function General() {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const actions = [
+  const actions: StatusMenuActions[] = [
     {
       name: 'redeploy',
       action: (environmentId: string) => dispatch(postEnvironmentActionsRestart({ projectId, environmentId })),

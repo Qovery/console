@@ -7,8 +7,7 @@ import TableRowEnvironments from '../table-row-environments/table-row-environmen
 
 export interface GeneralProps {
   environments: EnvironmentEntity[]
-  // @todo remove "any" after connected all status update
-  buttonActions: StatusMenuActions | any
+  buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
 }
 
