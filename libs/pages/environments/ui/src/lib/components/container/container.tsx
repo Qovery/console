@@ -48,18 +48,7 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      {!isDeploymentRulesTab ? (
-        <ButtonAction iconRight="icon-solid-plus">New environment</ButtonAction>
-      ) : (
-        <Button
-          size={ButtonSize.SMALL}
-          className="leading-none"
-          link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE}`}
-        >
-          New rule
-          <Icon name="icon-solid-plus" className="ml-2 !text-base inline-block -mt-1" />
-        </Button>
-      )}
+      {!isDeploymentRulesTab && <ButtonAction iconRight="icon-solid-plus">New environment</ButtonAction>}
     </div>
   )
 
