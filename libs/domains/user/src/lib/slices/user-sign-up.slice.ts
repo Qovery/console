@@ -7,14 +7,15 @@ export const USER_SIGNUP_KEY = 'userSignUp'
 const userSignUpApi = new UserSignUpApi()
 
 export const fetchUserSignUp = createAsyncThunk<SignUp>('userSignUp/get', async () => {
-  return await userSignUpApi.getUserSignUp().then((response) => response.data)
+  const response = await userSignUpApi.getUserSignUp()
+  return response.data
 })
 
 export const postUserSignUp = createAsyncThunk<any, SignUpRequest>(
   'userSignUp/post',
   async (data: SignUpRequest, { rejectWithValue }) => {
     try {
-      const result = await userSignUpApi.createUserSignUp(data).then((response) => response)
+      const result = await userSignUpApi.createUserSignUp(data)
 
       if (typeof result === 'object') {
         return data

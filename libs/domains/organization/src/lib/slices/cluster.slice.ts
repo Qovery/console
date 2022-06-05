@@ -11,8 +11,8 @@ const clusterApi = new ClustersApi()
 export const clusterAdapter = createEntityAdapter<Cluster>()
 
 export const fetchClusters = createAsyncThunk<Cluster[], { organizationId: string }>('cluster/fetch', async (data) => {
-  const response = await clusterApi.listOrganizationCluster(data.organizationId).then((response) => response.data)
-  return response.results as Cluster[]
+  const response = await clusterApi.listOrganizationCluster(data.organizationId)
+  return response.data.results as Cluster[]
 })
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({

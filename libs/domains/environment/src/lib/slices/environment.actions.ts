@@ -10,16 +10,13 @@ export const postEnvironmentActionsRestart = createAsyncThunk<any, { projectId: 
   'environmentActions/restart',
   async (data, { dispatch }) => {
     try {
-      const response = await environmentActionApi.restartEnvironment(data.environmentId).then(async (response) => {
-        if (response.status === 200) {
-          // refetch status after update
-          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
-        }
-        return response.data
-      })
-
+      const response = await environmentActionApi.restartEnvironment(data.environmentId)
+      if (response.status === 200) {
+        // refetch status after update
+        await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
+      }
       return response
     } catch (err) {
       // error message
@@ -32,16 +29,13 @@ export const postEnvironmentActionsDeploy = createAsyncThunk<any, { projectId: s
   'environmentActions/deploy',
   async (data, { dispatch }) => {
     try {
-      const response = await environmentActionApi.deployEnvironment(data.environmentId).then(async (response) => {
-        if (response.status === 200) {
-          // refetch status after update
-          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your environment is deploying')
-        }
-        return response.data
-      })
-
+      const response = await environmentActionApi.deployEnvironment(data.environmentId)
+      if (response.status === 200) {
+        // refetch status after update
+        await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your environment is deploying')
+      }
       return response
     } catch (err) {
       // error message
@@ -54,16 +48,13 @@ export const postEnvironmentActionsStop = createAsyncThunk<any, { projectId: str
   'environmentActions/stop',
   async (data, { dispatch }) => {
     try {
-      const response = await environmentActionApi.stopEnvironment(data.environmentId).then(async (response) => {
-        if (response.status === 200) {
-          // refetch status after update
-          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your environment is stopping')
-        }
-        return response.data
-      })
-
+      const response = await environmentActionApi.stopEnvironment(data.environmentId)
+      if (response.status === 200) {
+        // refetch status after update
+        await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your environment is stopping')
+      }
       return response
     } catch (err) {
       // error message
@@ -77,17 +68,13 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
   { projectId: string; environmentId: string }
 >('environmentActions/cancel-deployment', async (data, { dispatch }) => {
   try {
-    const response = await environmentActionApi
-      .cancelEnvironmentDeployment(data.environmentId)
-      .then(async (response) => {
-        if (response.status === 200) {
-          // refetch status after update
-          await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your environment deployment is cancelling')
-        }
-        return response.data
-      })
+    const response = await environmentActionApi.cancelEnvironmentDeployment(data.environmentId)
+    if (response.status === 200) {
+      // refetch status after update
+      await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your environment deployment is cancelling')
+    }
 
     return response
   } catch (err) {
@@ -101,15 +88,13 @@ export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
   { projectId: string; environmentId: string }
 >('environmentActions/delete', async (data, { dispatch }) => {
   try {
-    const response = await environmentMainCallsApi.deleteEnvironment(data.environmentId).then(async (response) => {
-      if (response.status === 204) {
-        // refetch status after update
-        await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
-      }
-      return response.data
-    })
+    const response = await environmentMainCallsApi.deleteEnvironment(data.environmentId)
+    if (response.status === 204) {
+      // refetch status after update
+      await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
+    }
 
     return response
   } catch (err) {

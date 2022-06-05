@@ -11,8 +11,8 @@ const projectsApi = new ProjectsApi()
 export const projectsAdapter = createEntityAdapter<Project>()
 
 export const fetchProjects = createAsyncThunk<Project[], { organizationId: string }>('projects/fetch', async (data) => {
-  const response = await projectsApi.listProject(data.organizationId).then((response) => response.data)
-  return response.results as Project[]
+  const response = await projectsApi.listProject(data.organizationId)
+  return response.data.results as Project[]
 })
 
 export const postProject = createAsyncThunk<Project, { organizationId: string } & ProjectRequest>(
@@ -21,8 +21,8 @@ export const postProject = createAsyncThunk<Project, { organizationId: string } 
     const { organizationId, ...fields } = data
 
     try {
-      const result = await projectsApi.createProject(organizationId, fields).then((response) => response.data)
-      return result
+      const result = await projectsApi.createProject(organizationId, fields)
+      return result.data
     } catch (error) {
       return rejectWithValue(error)
     }

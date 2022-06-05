@@ -31,43 +31,36 @@ const applicationMetricsApi = new ApplicationMetricsApi()
 export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
   'applications/fetch',
   async (data, thunkApi) => {
-    const response = await applicationsApi.listApplication(data.environmentId).then((response) => {
-      return response.data
-    })
+    const response = await applicationsApi.listApplication(data.environmentId)
 
     if (!data.withoutStatus) {
       thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
     }
 
-    return response.results as Application[]
+    return response.data.results as Application[]
   }
 )
 
 export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
-    const response = await applicationsApi
-      .getEnvironmentApplicationStatus(data.environmentId)
-      .then((response: any) => response.data)
-    return response.results as Status[]
+    const response = await applicationsApi.getEnvironmentApplicationStatus(data.environmentId)
+    return response.data.results as Status[]
   }
 )
 
 export const fetchApplication = createAsyncThunk<Application, { applicationId: string }>(
   'application/fetch',
   async (data) => {
-    const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => response.data)
-    return response as Application
+    const response = await applicationMainCallsApi.getApplication(data.applicationId)
+    return response.data as Application
   }
 )
 
 export const removeOneApplication = createAsyncThunk<string, { applicationId: string }>(
   'applications/remove',
   async (data, thunkApi) => {
-    // const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => {
-    //   return response.data
-    // })
-
+    // const response = await applicationMainCallsApi.getApplication(data.applicationId)
     return data.applicationId
   }
 )
@@ -75,32 +68,24 @@ export const removeOneApplication = createAsyncThunk<string, { applicationId: st
 export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string }>(
   'application/links',
   async (data) => {
-    const response = await applicationMainCallsApi
-      .listApplicationLinks(data.applicationId)
-      .then((response) => response.data)
-    return response.results as Link[]
+    const response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
+    return response.data.results as Link[]
   }
 )
 
 export const fetchApplicationInstances = createAsyncThunk<Instance[], { applicationId: string }>(
   'application/instances',
   async (data) => {
-    const response = await applicationMetricsApi
-      .getApplicationCurrentInstance(data.applicationId)
-      .then((response) => response.data)
-
-    return response.results as Instance[]
+    const response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
+    return response.data.results as Instance[]
   }
 )
 
 export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationId: string }>(
   'application/commits',
   async (data) => {
-    const response = await applicationMainCallsApi
-      .listApplicationCommit(data.applicationId)
-      .then((response) => response.data)
-
-    return response.results as Commit[]
+    const response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
+    return response.data.results as Commit[]
   }
 )
 
