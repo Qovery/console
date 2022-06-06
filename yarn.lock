@@ -2216,6 +2216,17 @@
     semver "7.3.4"
     tslib "^2.3.0"
 
+"@nrwl/devkit@14.1.9":
+  version "14.1.9"
+  resolved "https://registry.yarnpkg.com/@nrwl/devkit/-/devkit-14.1.9.tgz#54c808e19bb95d56c7ccb0c44ba1bc710d979d2b"
+  integrity sha512-y+gqtluiOZ/wiAXb5Z4FfzroyB/+cLP5zHXQTNuuuVC9U25RiuGK8RL+Wg91VWzHCu7E+oMtCToNw7MWDRGFDg==
+  dependencies:
+    ejs "^3.1.7"
+    ignore "^5.0.4"
+    rxjs "^6.5.4"
+    semver "7.3.4"
+    tslib "^2.3.0"
+
 "@nrwl/eslint-plugin-nx@13.9.6":
   version "13.9.6"
   resolved "https://registry.yarnpkg.com/@nrwl/eslint-plugin-nx/-/eslint-plugin-nx-13.9.6.tgz#11da293ae94da0bd62dfab43193be47d6fbe68da"
@@ -2278,6 +2289,24 @@
     rxjs "^6.5.4"
     tslib "^2.3.0"
 
+"@nrwl/jest@14.1.9":
+  version "14.1.9"
+  resolved "https://registry.yarnpkg.com/@nrwl/jest/-/jest-14.1.9.tgz#c6c1c8fa96b17aa6225a1d607eea37ea85233d58"
+  integrity sha512-rZ/+X7OzhW8nKLaYOpbIwUKzEAIDLlQd/m6qndAKU1rbSOZZVa7ZwHRQpzBMooyXCQB/wJLTM+epAI6vWjCiNg==
+  dependencies:
+    "@jest/reporters" "27.5.1"
+    "@jest/test-result" "27.5.1"
+    "@nrwl/devkit" "14.1.9"
+    "@phenomnomnominal/tsquery" "4.1.1"
+    chalk "4.1.0"
+    identity-obj-proxy "3.0.0"
+    jest-config "27.5.1"
+    jest-resolve "27.5.1"
+    jest-util "27.5.1"
+    resolve.exports "1.1.0"
+    rxjs "^6.5.4"
+    tslib "^2.3.0"
+
 "@nrwl/js@14.1.6":
   version "14.1.6"
   resolved "https://registry.yarnpkg.com/@nrwl/js/-/js-14.1.6.tgz#422bc31e0753b287a44de9cd10854bc719b35b9e"
@@ -2326,6 +2355,17 @@
   dependencies:
     "@nrwl/devkit" "14.1.7"
     "@nrwl/jest" "14.1.7"
+    "@phenomnomnominal/tsquery" "4.1.1"
+    tmp "~0.2.1"
+    tslib "^2.3.0"
+
+"@nrwl/linter@14.1.9":
+  version "14.1.9"
+  resolved "https://registry.yarnpkg.com/@nrwl/linter/-/linter-14.1.9.tgz#94fa540d0659d0cd6929ad212e21f15237efa625"
+  integrity sha512-QgXTNWl1xzbEJuGbcOPJcvp58Tycd3yWTA1JnrAc3ZdOsouL0EphP5n1+JCePzR7mVo+kmfNhYbJhvpc8c4WEQ==
+  dependencies:
+    "@nrwl/devkit" "14.1.9"
+    "@nrwl/jest" "14.1.9"
     "@phenomnomnominal/tsquery" "4.1.1"
     tmp "~0.2.1"
     tslib "^2.3.0"
