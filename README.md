@@ -20,7 +20,7 @@
 <a href="https://discord.qovery.com"> <img alt="Discord" src="https://img.shields.io/discord/688766934917185556?label=discord&style=flat-square"> </a>
 </p>
 
-**What we use**
+## What we use
 
   React : [https://reactjs.org/](https://reactjs.org/)
 
@@ -31,7 +31,7 @@ Tailwind: [https://tailwindcss.com/](https://tailwindcss.com/)
 Storybook: [https://storybook.js.org/](https://storybook.js.org/)
 
 
-**Usage**
+## Usage
 
 Start the project on http://localhost:4200
 
@@ -58,7 +58,7 @@ Run end-to-end tests with Cypress
     nx affected:e2e
 
 
-**Community support**
+## Community support
 
 For help, you can use one of the channels to ask a question:
 
