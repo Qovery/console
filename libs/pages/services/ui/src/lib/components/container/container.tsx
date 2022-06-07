@@ -1,6 +1,6 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/utils'
 import {
   ButtonAction,
   ButtonIcon,
@@ -85,10 +85,8 @@ export function Container(props: ContainerProps) {
         </Skeleton>
       ),
       name: 'Overview',
-      active:
-        location.pathname ===
-        `${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATIONS_GENERAL_URL}`,
-      link: `${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATIONS_GENERAL_URL}`,
+      active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
+      link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
     },
   ]
 
@@ -104,7 +102,7 @@ export function Container(props: ContainerProps) {
     <div>
       <Header
         title={environment?.name}
-        icon={IconEnum.APPLICATIONS}
+        icon={IconEnum.APPLICATION}
         buttons={headerButtons}
         copyTitle
         copyContent={copyContent}

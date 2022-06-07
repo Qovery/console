@@ -3,8 +3,8 @@ import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Icon } from '@console/shared/ui'
 import {
-  APPLICATIONS_GENERAL_URL,
-  APPLICATIONS_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ORGANIZATION_URL,
@@ -73,7 +73,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         ? environments?.map((environment: Environment) => ({
             name: environment.name,
             link: {
-              url: `${APPLICATIONS_URL(organizationId, projectId, environment.id)}${APPLICATIONS_GENERAL_URL}`,
+              url: `${SERVICES_URL(organizationId, projectId, environment.id)}${SERVICES_GENERAL_URL}`,
             },
             contentLeft:
               environmentId === environment.id ? (
@@ -141,7 +141,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                 data={environments}
                 menuItems={environmentMenu}
                 paramId={environmentId}
-                link={APPLICATIONS_URL(organizationId, projectId, environmentId) + APPLICATIONS_GENERAL_URL}
+                link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
               />
             )}
           </div>
