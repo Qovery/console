@@ -5,7 +5,7 @@ import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   APPLICATION_URL,
-  APPLICATIONS_URL,
+  SERVICES_URL,
   ENVIRONMENTS_URL,
   LOGIN_URL,
   ONBOARDING_URL,
@@ -22,7 +22,7 @@ import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { EnvironmentsPage } from '@console/pages/environments/feature'
-import { ApplicationsPage } from '@console/pages/applications/feature'
+import { ServicesPage } from '@console/pages/services/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { ApplicationPage } from '@console/pages/application/feature'
 import { Layout } from '@console/shared/layout'
@@ -77,8 +77,8 @@ export const ROUTER = [
     layout: true,
   },
   {
-    path: `${APPLICATIONS_URL()}/*`,
-    component: <ApplicationsPage />,
+    path: `${SERVICES_URL()}/*`,
+    component: <ServicesPage />,
     protected: true,
     layout: true,
   },

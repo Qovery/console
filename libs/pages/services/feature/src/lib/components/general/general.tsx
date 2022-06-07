@@ -11,7 +11,7 @@ import {
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
 import { AppDispatch, RootState } from '@console/store/data'
-import { GeneralPage } from '@console/pages/applications/ui'
+import { GeneralPage } from '@console/pages/services/ui'
 import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
 

@@ -1,6 +1,6 @@
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { APPLICATION_URL, APPLICATIONS_GENERAL_URL } from '@console/shared/utils'
+import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/utils'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import TableRowApplications from '../table-row-applications/table-row-applications'
@@ -69,9 +69,7 @@ export function GeneralPage(props: GeneralPageProps) {
               key={currentData.id}
               data={currentData}
               dataHead={tableHead}
-              link={
-                APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + APPLICATIONS_GENERAL_URL
-              }
+              link={APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL}
               columnsWidth="25% 25% 25% 10% 10%"
               buttonActions={buttonActions}
               environmentMode={environmentMode}

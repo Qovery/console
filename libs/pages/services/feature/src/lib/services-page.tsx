@@ -1,8 +1,8 @@
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Application, Environment } from 'qovery-typescript-axios'
-import { APPLICATIONS_URL, APPLICATION_GENERAL_URL, useDocumentTitle } from '@console/shared/utils'
-import { Container } from '@console/pages/applications/ui'
+import { SERVICES_URL, APPLICATION_GENERAL_URL, useDocumentTitle } from '@console/shared/utils'
+import { Container } from '@console/pages/services/ui'
 import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -13,11 +13,11 @@ import {
   postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
 } from '@console/domains/environment'
-import { ROUTER_APPLICATIONS } from './router/router'
+import { ROUTER_SERVICES } from './router/router'
 import { useEffect } from 'react'
 
-export function ApplicationsPage() {
-  useDocumentTitle('Applications - Qovery')
+export function ServicesPage() {
+  useDocumentTitle('Services - Qovery')
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -31,8 +31,8 @@ export function ApplicationsPage() {
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    if (location.pathname === APPLICATIONS_URL(organizationId, projectId, environmentId)) {
-      navigate(`${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATION_GENERAL_URL}`)
+    if (location.pathname === SERVICES_URL(organizationId, projectId, environmentId)) {
+      navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${APPLICATION_GENERAL_URL}`)
     }
   }, [location, navigate, organizationId, projectId, environmentId])
 
@@ -62,7 +62,7 @@ export function ApplicationsPage() {
   return (
     <Container applications={applicationsByEnv} environment={environment} statusActions={statusActions}>
       <Routes>
-        {ROUTER_APPLICATIONS.map((route) => (
+        {ROUTER_SERVICES.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
       </Routes>
@@ -70,4 +70,4 @@ export function ApplicationsPage() {
   )
 }
 
-export default ApplicationsPage
+export default ServicesPage
