@@ -1,69 +1,72 @@
-<br />
+
+<br  />
+
 <p  align="center">
-  <a href="https://qovery.com" target="_blank">
-    <img style="display: block; margin: auto; width: 200px;" src="https://user-images.githubusercontent.com/533928/152318674-3d036713-8f05-4972-b6e1-1c84e27ea794.svg">
-  </a>
+
+<a  href="https://qovery.com"  target="_blank">
+
+<img  style="display: block; margin: auto; width: 200px;"  src="https://user-images.githubusercontent.com/533928/152318674-3d036713-8f05-4972-b6e1-1c84e27ea794.svg">
+
+</a>
+
 </p>
-<br />
 
-## Qovery console
+<br  />
 
-**Quick start**
+<h3 align="center">The simplest way to deploy your apps on AWS and Kubernetes</h3>
 
-```jsx
-yarn
-// start project
-yarn start
-// start storybook
-yarn run storybook
-```
+<p align="center">
+<a href="https://opensource.org/licenses"> <img alt="GPLv3 License" src="https://img.shields.io/badge/License-GPL%20v3-yellow.svg"> </a>
+<a href="https://discord.qovery.com"> <img alt="Discord" src="https://img.shields.io/discord/688766934917185556?label=discord&style=flat-square"> </a>
+</p>
 
-<br />
+**What we use**
 
-## Generate an application
+  React : [https://reactjs.org/](https://reactjs.org/)
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+Nx: [https://nx.dev/](https://nx.dev/)
 
-> You can use any of the plugins above to generate applications as well.
+Tailwind: [https://tailwindcss.com/](https://tailwindcss.com/)
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+Storybook: [https://storybook.js.org/](https://storybook.js.org/)
 
-## Generate a library
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+**Usage**
 
-> You can also use any of the plugins above to generate libraries as well.
+Start the project on http://localhost:4200
 
-Libraries are shareable across libraries and applications. They can be imported from `@q-frontend/mylib`.
+    yarn start
 
-## Development server
+Start Storybook on http://localhost:4400
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+    yarn run storybook
 
-## Code scaffolding
+Generate a library
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+    nx g @nrwl/react:lib my-lib
 
-## Build
+Generate a component
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+    nx g @nrwl/react:component my-component
 
-## Running unit tests
+Run unit tests with Jest
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+    nx affected:test
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+Run end-to-end tests with Cypress
 
-## Running end-to-end tests
+    nx affected:e2e
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
+**Community support**
 
-## Understand your workspace
+For help, you can use one of the channels to ask a question:
 
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
+-   [Forum](https://discuss.qovery.com/): (Bug reports, Questions)
+    
+-   [Discord](https://discord.com/invite/Bed5FRa): (Live discussion with the Community and Qovery Team)
+    
+-   [GitHub](https://github.com/Qovery/console): (Bug reports, Contributions)
+    
 
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev) to learn more.
+-   [Twitter](https://twitter.com/qovery_): (Get the news fast)
