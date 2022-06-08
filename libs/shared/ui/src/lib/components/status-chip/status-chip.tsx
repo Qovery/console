@@ -1,15 +1,16 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { IconEnum } from '@console/shared/enums'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 import { Icon, Tooltip } from '@console/shared/ui'
+import { IconEnum, RunningStatus } from '@console/shared/enums'
 
 export interface StatusChipProps {
-  status: StateEnum | undefined
+  status: StateEnum | RunningStatus | undefined
+  appendTooltipMessage?: string
   className?: string
 }
 
 export function StatusChip(props: StatusChipProps) {
-  const { status, className = '' } = props
+  const { status, className = '', appendTooltipMessage = '' } = props
 
   function showRunningIcon(): boolean {
     switch (status) {
@@ -87,10 +88,15 @@ export function StatusChip(props: StatusChipProps) {
     }
   }
 
-  console.log
-
   return (
-    <Tooltip content={<span>{upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}</span>}>
+    <Tooltip
+      content={
+        <span>
+          {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
+          {appendTooltipMessage ? ' - ' + appendTooltipMessage : ''}
+        </span>
+      }
+    >
       <div data-testid="status-chip" className={className}>
         {showRunningIcon() && (
           <Icon className="min-w-[14px]" width="0.875rem" viewBox="0 0 14 14" name={IconEnum.SUCCESS} />

@@ -15,7 +15,7 @@ import {
   Tag,
   TagMode,
 } from '@console/shared/ui'
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum, RunningStatus } from '@console/shared/enums'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 
 export interface ContainerProps {
@@ -46,6 +46,7 @@ export function Container(props: ContainerProps) {
           <StatusMenu
             statusActions={{
               status: environment?.status ? environment?.status.state : StateEnum.RUNNING,
+              running_status: environment?.running_status?.state || RunningStatus.STOPPED,
               actions: statusActions,
               information: {
                 id: environment?.id,
@@ -79,9 +80,9 @@ export function Container(props: ContainerProps) {
   const tabsItems = [
     {
       icon: (
-        <Skeleton width={16} height={16} rounded show={!environment?.status}>
-          <StatusChip status={environment?.status && environment?.status.state} />
-        </Skeleton>
+        <StatusChip
+          status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
+        />
       ),
       name: 'Overview',
       active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,

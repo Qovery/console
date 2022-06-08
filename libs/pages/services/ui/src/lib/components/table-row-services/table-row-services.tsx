@@ -1,4 +1,4 @@
-import { IconEnum, ServicesEnum } from '@console/shared/enums'
+import { IconEnum, ServicesEnum, RunningStatus } from '@console/shared/enums'
 import {
   Avatar,
   AvatarStyle,
@@ -61,7 +61,7 @@ export function TableRowServices(props: TableRowServicesProps) {
       <>
         <div className="flex items-center px-4 gap-1">
           <Skeleton show={isLoading} width={16} height={16}>
-            <StatusChip status={data.status && data.status.state} />
+            <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
           </Skeleton>
           <Skeleton show={isLoading} width={16} height={16}>
             <div className="ml-2 mr-2">
