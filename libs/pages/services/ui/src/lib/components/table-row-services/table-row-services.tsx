@@ -113,8 +113,12 @@ export function TableRowServices(props: TableRowServicesProps) {
         </div>
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
-            <div className="flex">
-              <Icon name={(data as ApplicationEntity).build_mode || (data as DatabaseEntity).type} />
+            <div className="flex items-center">
+              <Icon
+                name={(data as ApplicationEntity).build_mode || (data as DatabaseEntity).type}
+                width="20"
+                height="20"
+              />
               {(data as DatabaseEntity).version && (
                 <span className="block text-xs ml-2 text-text-600 font-medium">
                   v{(data as DatabaseEntity).version}

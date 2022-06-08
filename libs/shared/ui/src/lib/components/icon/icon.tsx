@@ -26,6 +26,7 @@ import DatabaseIcon from './icons/database'
 export interface IconProps {
   name: IconEnum | string
   width?: string
+  height?: string
   viewBox?: string
   className?: string
   pathColor?: string
