@@ -15862,10 +15862,10 @@ react-transition-state@^1.1.4:
   resolved "https://registry.yarnpkg.com/react-transition-state/-/react-transition-state-1.1.4.tgz#113224eaa27e0ff81661305e44d5e0348cdf61ac"
   integrity sha512-6nQLWWx95gYazCm6OdtD1zGbRiirvVXPrDtHAGsYb4xs9spMM7bA8Vx77KCpjL8PJ8qz1lXFGz2PTboCSvt7iw==
 
-react-use-intercom@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/react-use-intercom/-/react-use-intercom-1.5.1.tgz#94567a80ce3b56692962d712a54489c55fb4c54e"
-  integrity sha512-rsSiW3j6yv0bBWCaX+VOCK/ndh/VzntlYjxHLHhV++iQtFurFhcRD249rF07ZaLH8ZP5SR6FzP3Alqdi3usBQg==
+react-use-intercom@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/react-use-intercom/-/react-use-intercom-1.5.2.tgz#fa3aa5783f7896e59f36c90bea7761ece69851a7"
+  integrity sha512-5bK3TtsZ9S18vWuagncc1tJA/+2WouIjMHtVlgcrvECYbDhOwFNMb1h1XDDcOIk4gZv+eDx/oiWLbNHFAR7lIA==
 
 react@17.0.2:
   version "17.0.2"
