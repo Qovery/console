@@ -4,15 +4,16 @@ import { Environment } from 'qovery-typescript-axios'
 import { SERVICES_URL, APPLICATION_GENERAL_URL } from '@console/shared/router'
 import { useDocumentTitle } from '@console/shared/utils'
 import { Container } from '@console/pages/services/ui'
-import { selectEnvironmentById } from '@console/domains/environment'
-import { AppDispatch, RootState } from '@console/store/data'
+import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
 import {
   deleteEnvironmentActionsCancelDeployment,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
   postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
+  selectEnvironmentById,
 } from '@console/domains/environment'
+import { AppDispatch, RootState } from '@console/store/data'
 import { ROUTER_SERVICES } from './router/router'
 import { useEffect } from 'react'
 

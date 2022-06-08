@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
-import { useOrganization } from '@console/domains/organization'
+import { fetchClusters, useOrganization } from '@console/domains/organization'
 import { selectProjectsEntitiesByOrgId, useEnvironments, useProjects } from '@console/domains/projects'
 import { useUser } from '@console/domains/user'
 import { selectApplicationById, useApplication, useApplications } from '@console/domains/application'
@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
 import { Application, Environment, Project } from 'qovery-typescript-axios'
 import { AppDispatch, RootState } from '@console/store/data'
+import { WebsocketContainer } from '@console/shared/websockets'
 import { fetchDatabases, selectAllDatabases } from '@console/domains/database'
 
 export interface LayoutProps {
@@ -57,6 +58,10 @@ export function Layout(props: LayoutProps) {
     dispatch,
   ])
 
+  useEffect(() => {
+    dispatch(fetchClusters({ organizationId }))
+  }, [organizationId])
+
   return (
     <LayoutPage
       authLogout={authLogout}
@@ -68,7 +73,10 @@ export function Layout(props: LayoutProps) {
       application={application}
       databases={databases}
     >
-      {children}
+      <>
+        <WebsocketContainer />
+        {children}
+      </>
     </LayoutPage>
   )
 }

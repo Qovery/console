@@ -186,7 +186,7 @@ export function Container(props: ContainerProps) {
   return (
     <>
       <Header
-        title={application?.name}
+        title={application?.name + ' ' + application?.running_status?.state}
         icon={IconEnum.APPLICATION}
         buttons={headerButtons}
         copyTitle
