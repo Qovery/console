@@ -6,10 +6,11 @@ import { useUser } from '@console/domains/user'
 import { selectApplicationById, useApplication, useApplications } from '@console/domains/application'
 import { LayoutPage } from '@console/shared/ui'
 import { useAuth } from '@console/shared/utils'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
 import { Application, Environment, Project } from 'qovery-typescript-axios'
-import { RootState } from '@console/store/data'
+import { AppDispatch, RootState } from '@console/store/data'
+import { fetchDatabases, selectAllDatabases } from '@console/domains/database'
 
 export interface LayoutProps {
   children: React.ReactElement
@@ -18,7 +19,7 @@ export interface LayoutProps {
 export function Layout(props: LayoutProps) {
   const { children } = props
   const { authLogout } = useAuth()
-  const { organizationId = '', projectId = '', environmentId, applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { organization, getOrganization } = useOrganization()
   const { getProjects } = useProjects()
   const { userSignUp, getUserSignUp } = useUser()
@@ -27,11 +28,14 @@ export function Layout(props: LayoutProps) {
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
   const { applications, getApplications } = useApplications()
+  const databases = useSelector(selectAllDatabases)
   const { getApplication } = useApplication()
   const projects = useSelector<RootState, Project[]>((state) => selectProjectsEntitiesByOrgId(state, organizationId))
   const application = useSelector<RootState, Application | undefined>((state) =>
     selectApplicationById(state, applicationId)
   )
+
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     getUserSignUp()
@@ -39,6 +43,7 @@ export function Layout(props: LayoutProps) {
     organizationId && getProjects(organizationId)
     projectId && getEnvironments(projectId)
     environmentId && getApplications(environmentId)
+    environmentId && dispatch(fetchDatabases({ environmentId }))
   }, [
     getProjects,
     getOrganization,
@@ -49,6 +54,7 @@ export function Layout(props: LayoutProps) {
     environmentId,
     getApplications,
     getApplication,
+    dispatch,
   ])
 
   return (
@@ -60,6 +66,7 @@ export function Layout(props: LayoutProps) {
       environments={environments}
       applications={applications}
       application={application}
+      databases={databases}
     >
       {children}
     </LayoutPage>

@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { Application, Environment } from 'qovery-typescript-axios'
+import { Application, Database, Environment } from 'qovery-typescript-axios'
 import {
   applicationFactoryMock,
   applicationsLoadingStatus,
@@ -14,15 +14,21 @@ import { AppDispatch, RootState } from '@console/store/data'
 import { GeneralPage } from '@console/pages/services/ui'
 import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
+import { databasesLoadingStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
 
 export function General() {
   const { environmentId = '' } = useParams()
 
-  const loadingApplications = applicationFactoryMock(3)
-  const loadingStatus = useSelector<RootState>((state) => applicationsLoadingStatus(state))
+  const loadingServices = applicationFactoryMock(3)
+  const loadingApplicationsStatus = useSelector<RootState>((state) => applicationsLoadingStatus(state))
+  const loadingDatabasesStatus = useSelector<RootState>((state) => databasesLoadingStatus(state))
 
   const applicationsByEnv = useSelector<RootState, Application[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
+  )
+
+  const databasesByEnv = useSelector<RootState, Database[]>((state: RootState) =>
+    selectDatabasesEntitiesByEnvId(state, environmentId)
   )
 
   const environment = useSelector<RootState, Environment | undefined>((state) =>
@@ -58,11 +64,15 @@ export function General() {
     },
   ]
 
+  const isLoading =
+    loadingApplicationsStatus !== 'loaded' &&
+    applicationsByEnv.length === 0 &&
+    loadingDatabasesStatus !== 'loaded' &&
+    databasesByEnv.length === 0
+
   return (
     <GeneralPage
-      applications={
-        loadingStatus !== 'loaded' && applicationsByEnv.length === 0 ? loadingApplications : applicationsByEnv
-      }
+      services={isLoading ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
       buttonActions={actions}
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}

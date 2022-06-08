@@ -1,6 +1,6 @@
 import { IconProps } from '../icon'
 
-function PostgreIcon(props: IconProps) {
+function PostgresqlIcon(props: IconProps) {
   return (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20">
       <path
@@ -23,4 +23,4 @@ function PostgreIcon(props: IconProps) {
   )
 }
 
-export default PostgreIcon
+export default PostgresqlIcon
