@@ -1,4 +1,4 @@
-import { Application, Environment, Organization, Project } from 'qovery-typescript-axios'
+import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Icon } from '@console/shared/ui'
@@ -17,6 +17,7 @@ export interface BreadcrumbProps {
   projects?: Project[]
   environments?: Environment[]
   applications?: Application[]
+  databases?: Database[]
 }
 
 export function Breadcrumb(props: BreadcrumbProps) {

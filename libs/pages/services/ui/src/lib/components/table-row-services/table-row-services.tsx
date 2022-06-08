@@ -1,5 +1,5 @@
 import { IconEnum } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
@@ -14,9 +14,11 @@ import {
   StatusMenuActions,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
+import { ApplicationDatabaseEntities, ServicesEnum } from '../general/general'
 
-export interface TableRowApplicationsProps {
-  data: ApplicationEntity
+export interface TableRowServicesProps {
+  data: ApplicationDatabaseEntities
+  type: ServicesEnum
   environmentMode: string
   dataHead: TableHeadProps[]
   link: string
@@ -24,8 +26,9 @@ export interface TableRowApplicationsProps {
   columnsWidth?: string
 }
 
-export function TableRowApplications(props: TableRowApplicationsProps) {
+export function TableRowServices(props: TableRowServicesProps) {
   const {
+    type,
     data,
     dataHead,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
@@ -62,7 +65,9 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
             <StatusChip status={data.status && data.status.state} />
           </Skeleton>
           <Skeleton show={isLoading} width={16} height={16}>
-            <Icon name={IconEnum.APPLICATION} width="28" />
+            <div className="ml-2 mr-2">
+              <Icon name={type === ServicesEnum.APPLICATION ? IconEnum.APPLICATION : IconEnum.DATABASE} width="20" />
+            </div>
           </Skeleton>
           <Skeleton show={isLoading} width={400} height={16} truncate>
             <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
@@ -70,7 +75,7 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
         </div>
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
-            <div className="flex">
+            <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <StatusLabel status={data.status && data.status.state} />
                 <span className="text-xs text-text-300 mx-3 font-medium">
@@ -90,20 +95,24 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
             </div>
           </Skeleton>
         </div>
-
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          <Skeleton show={isLoading} width={160} height={16}>
-            <div className="flex gap-2 items-center">
-              {data.git_repository?.owner && (
-                <Avatar firstName={data.git_repository?.owner} style={AvatarStyle.STROKED} size={28} />
-              )}
-              <TagCommit commitId={data.git_repository?.deployed_commit_id} />
-            </div>
-          </Skeleton>
+          {type === ServicesEnum.APPLICATION && (
+            <Skeleton show={isLoading} width={160} height={16}>
+              <div className="flex gap-2 items-center">
+                {data.git_repository?.owner && (
+                  <Avatar firstName={data.git_repository?.owner} style={AvatarStyle.STROKED} size={28} />
+                )}
+                <TagCommit commitId={data.git_repository?.deployed_commit_id} />
+              </div>
+            </Skeleton>
+          )}
         </div>
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
-            <Icon name={IconEnum.DOCKER} />
+            <div className="flex">
+              <Icon name={data.build_mode || data.type} />
+              {data.version && <span className="block text-xs ml-2 text-text-600 font-medium">v{data.version}</span>}
+            </div>
           </Skeleton>
         </div>
         <div className="text-text-500">-</div>
@@ -112,4 +121,4 @@ export function TableRowApplications(props: TableRowApplicationsProps) {
   )
 }
 
-export default TableRowApplications
+export default TableRowServices

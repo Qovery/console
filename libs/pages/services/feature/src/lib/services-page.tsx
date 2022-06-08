@@ -1,6 +1,6 @@
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { Application, Environment } from 'qovery-typescript-axios'
+import { Application, Database, Environment } from 'qovery-typescript-axios'
 import { SERVICES_URL, APPLICATION_GENERAL_URL, useDocumentTitle } from '@console/shared/utils'
 import { Container } from '@console/pages/services/ui'
 import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
@@ -25,9 +25,7 @@ export function ServicesPage() {
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
-  const applicationsByEnv = useSelector<RootState, Application[]>((state: RootState) =>
-    selectApplicationsEntitiesByEnvId(state, environmentId)
-  )
+
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
@@ -60,7 +58,7 @@ export function ServicesPage() {
   ]
 
   return (
-    <Container applications={applicationsByEnv} environment={environment} statusActions={statusActions}>
+    <Container environment={environment} statusActions={statusActions}>
       <Routes>
         {ROUTER_SERVICES.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />

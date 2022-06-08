@@ -16,10 +16,9 @@ import {
   TagMode,
 } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
-import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 
 export interface ContainerProps {
-  applications: ApplicationEntity[]
   statusActions: StatusMenuActions[]
   environment?: EnvironmentEntity
   children?: React.ReactNode

@@ -1,18 +1,17 @@
-import { fetchApplications, applicationsAdapter, applications } from './applications.slice'
+import { fetchDatabases, databasesAdapter, databases } from './databases.slice'
 
-describe('applications reducer', () => {
+describe('databases reducer', () => {
   it('should handle initial state', () => {
-    const expected = applicationsAdapter.getInitialState({
+    const expected = databasesAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
-      joinEnvApplication: {},
     })
 
-    expect(applications(undefined, { type: '' })).toEqual(expected)
+    expect(databases(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchApplications', () => {
-    let state = applications(undefined, fetchApplications.pending(null, null))
+  it('should handle fetchDatabases', () => {
+    let state = databases(undefined, fetchDatabases.pending(null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -22,7 +21,7 @@ describe('applications reducer', () => {
       })
     )
 
-    state = applications(state, fetchApplications.fulfilled([{ id: 1 }], null, null))
+    state = databases(state, fetchDatabases.fulfilled([{ id: 1 }], null, null))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -32,7 +31,7 @@ describe('applications reducer', () => {
       })
     )
 
-    state = applications(state, fetchApplications.rejected(new Error('Uh oh'), null, null))
+    state = databases(state, fetchDatabases.rejected(new Error('Uh oh'), null, null))
 
     expect(state).toEqual(
       expect.objectContaining({

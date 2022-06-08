@@ -92,7 +92,7 @@ export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationI
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
-  joinEnvApp: {},
+  joinEnvApplication: {},
 })
 
 export const applicationsSlice = createSlice({
@@ -110,7 +110,7 @@ export const applicationsSlice = createSlice({
       .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<Application[]>) => {
         applicationsAdapter.upsertMany(state, action.payload)
         action.payload.forEach((app) => {
-          state.joinEnvApp = addOneToManyRelation(app.environment?.id, app.id, { ...state.joinEnvApp })
+          state.joinEnvApplication = addOneToManyRelation(app.environment?.id, app.id, { ...state.joinEnvApplication })
         })
         state.loadingStatus = 'loaded'
       })
@@ -151,7 +151,7 @@ export const applicationsSlice = createSlice({
       })
       // remove application
       .addCase(removeOneApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<string>) => {
-        state.joinEnvApp = removeOneToManyRelation(action.payload, state.joinEnvApp)
+        state.joinEnvApplication = removeOneToManyRelation(action.payload, state.joinEnvApplication)
       })
       .addCase(fetchApplicationLinks.pending, (state: ApplicationsState, action) => {
         const applicationId = action.meta.arg.applicationId
@@ -274,7 +274,7 @@ export const selectApplicationsEntities = createSelector(getApplicationsState, s
 
 export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): ApplicationEntity[] => {
   const appState = getApplicationsState(state)
-  return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApp[environmentId])
+  return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApplication[environmentId])
 }
 
 export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>

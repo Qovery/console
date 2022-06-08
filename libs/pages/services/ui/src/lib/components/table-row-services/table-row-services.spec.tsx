@@ -1,9 +1,9 @@
 import { applicationFactoryMock } from '@console/domains/application'
 import { render } from '__tests__/utils/setup-jest'
 
-import TableRowApplications, { TableRowApplicationsProps } from './table-row-applications'
+import TableRowServices, { TableRowServicesProps } from './table-row-services'
 
-let props: TableRowApplicationsProps
+let props: TableRowServicesProps
 
 beforeEach(() => {
   props = {
@@ -13,9 +13,9 @@ beforeEach(() => {
   }
 })
 
-describe('TableRowApplications', () => {
+describe('TableRowServices', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<TableRowApplications {...props} />)
+    const { baseElement } = render(<TableRowServices {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

@@ -60,9 +60,7 @@
     "react-use-intercom": "^1.5.1",
     "regenerator-runtime": "0.13.7",
     "tailwindcss": "^3.0.24",
-    "tslib": "^2.0.0",
-    "@nrwl/react": "14.1.6",
-    "@nrwl/web": "14.1.6"
+    "tslib": "^2.0.0"
   },
   "resolutions": {
     "axios": "0.27.2"
@@ -76,6 +74,8 @@
     "@babel/preset-typescript": "^7.12.13",
     "@nrwl/cypress": "13.9.6",
     "@nrwl/jest": "13.9.6",
+    "@nrwl/react": "14.1.6",
+    "@nrwl/web": "14.1.6",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.0.4",
