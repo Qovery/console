@@ -6,6 +6,7 @@ import { applicationsActions } from '@console/domains/application'
 import { JsonValue } from 'react-use-websocket/dist/lib/types'
 import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
 import { environmentsActions, selectEnvironmentsEntitiesByClusterId } from '@console/domains/environment'
+import { databasesActions } from '@console/domains/database'
 
 export interface ClusterWebSocketProps {
   url: string
@@ -60,10 +61,30 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
       )
     }
 
+    const storeDatabasesRunningStatus = (
+      message: { environments: WebsocketRunningStatusInterface[] },
+      clusterId: string
+    ): void => {
+      let runningDatabases: ServiceRunningStatus[] = []
+      message.environments.forEach((env) => {
+        if (env.applications && env.applications.length) {
+          runningDatabases = [...runningDatabases, ...env.applications]
+        }
+      })
+
+      dispatch(
+        databasesActions.updateDatabasessRunningStatus({
+          servicesRunningStatus: runningDatabases,
+          listEnvironmentIdFromCluster: environmentsAssociatedToCluster.map((env) => env.id),
+        })
+      )
+    }
+
     if (lastMessage !== null) {
       const message = JSON.parse(lastMessage.data) as { environments: WebsocketRunningStatusInterface[] }
       storeEnvironmentRunningStatus(message, clusterId)
       storeApplicationsRunningStatus(message, clusterId)
+      storeDatabasesRunningStatus(message, clusterId)
       //todo databases
     }
   }, [dispatch, lastMessage, getWebSocket])
