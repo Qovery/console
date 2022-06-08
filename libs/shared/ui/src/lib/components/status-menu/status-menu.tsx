@@ -3,6 +3,7 @@ import { isRunning, isStop, isWarning, upperCaseFirstLetter } from '@console/sha
 import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import Icon from '../icon/icon'
+import { RunningStatus } from '@console/shared/enums'
 
 export enum StatusMenuType {
   AVAILABLE = 'available',
@@ -13,6 +14,7 @@ export enum StatusMenuType {
 export interface StatusMenuProps {
   statusActions: {
     status: StateEnum
+    running_status: RunningStatus
     actions: StatusMenuActions[]
     information: StatusMenuInformation
   }
@@ -54,7 +56,7 @@ export function StatusMenu(props: StatusMenuProps) {
   return (
     <div className={statusClassName} data-testid="statusmenu">
       <p className="text-xs font-semibold">
-        {upperCaseFirstLetter(statusActions.status?.replace('_', ' ').toLowerCase())}
+        {upperCaseFirstLetter(statusActions.running_status?.replace('_', ' ').toLowerCase())}
       </p>
       <div className="status-menu__trigger h-full inline-flex items-center border-l ml-2 hover:transition transition ease-in-out duration-300">
         <StatusMenuAction

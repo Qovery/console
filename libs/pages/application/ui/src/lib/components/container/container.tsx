@@ -1,4 +1,4 @@
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum, RunningStatus } from '@console/shared/enums'
 import {
   Button,
   ButtonSize,
@@ -107,6 +107,7 @@ export function Container(props: ContainerProps) {
             <StatusMenu
               statusActions={{
                 status: application?.status.state,
+                running_status: application?.running_status?.state || RunningStatus.STOPPED,
                 actions: statusActions,
                 information: {
                   id: application?.id,
@@ -138,7 +139,11 @@ export function Container(props: ContainerProps) {
 
   const tabsItems = [
     {
-      icon: <StatusChip status={StateEnum.READY} />,
+      icon: (
+        <StatusChip
+          status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+        />
+      ),
       name: 'Overview',
       active:
         location.pathname ===
@@ -186,7 +191,7 @@ export function Container(props: ContainerProps) {
   return (
     <>
       <Header
-        title={application?.name + ' ' + application?.running_status?.state}
+        title={application?.name}
         icon={IconEnum.APPLICATION}
         buttons={headerButtons}
         copyTitle
