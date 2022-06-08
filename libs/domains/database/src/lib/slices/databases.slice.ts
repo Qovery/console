@@ -7,8 +7,8 @@ import {
   Update,
 } from '@reduxjs/toolkit'
 import { Database, DatabasesApi, Status } from 'qovery-typescript-axios'
-import { DatabaseEntity, DatabasesState, LoadingStatus } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
+import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
+import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const DATABASES_FEATURE_KEY = 'databases'
@@ -50,6 +50,44 @@ export const databasesSlice = createSlice({
   reducers: {
     add: databasesAdapter.addOne,
     remove: databasesAdapter.removeOne,
+    updateDatabasessRunningStatus: (
+      state,
+      action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>
+    ) => {
+      // we have to force this reset change because of the way the socket works.
+      // You can have information about an application (eg. if it's stopping)
+      // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
+      const resetChanges: Update<DatabaseEntity>[] = state.ids.map((id) => {
+        // as we can have this dispatch from different websocket, we don't want to reset
+        // and override all the application but only the ones associated to the cluster the websocket is
+        // coming from, more generally from all the environments that are contained in this cluster
+        const envId = state.entities[id]?.environment?.id
+
+        const runningStatusChanges =
+          envId && action.payload.listEnvironmentIdFromCluster.includes(envId)
+            ? undefined
+            : state.entities[id]?.running_status
+        return {
+          id,
+          changes: {
+            running_status: runningStatusChanges,
+          },
+        }
+      })
+      databasesAdapter.updateMany(state, resetChanges)
+
+      const changes: Update<DatabaseEntity>[] = action.payload.servicesRunningStatus.map((runningStatus) => {
+        const realId = shortToLongId(runningStatus.id, state.ids as string[])
+        return {
+          id: realId,
+          changes: {
+            running_status: runningStatus,
+          },
+        }
+      })
+
+      databasesAdapter.updateMany(state, changes)
+    },
   },
   extraReducers: (builder) => {
     builder
