@@ -1,22 +1,23 @@
 import { IconEnum } from '@console/shared/enums'
 import {
+  Avatar,
+  AvatarStyle,
   ButtonIconAction,
   Icon,
   Skeleton,
   StatusChip,
   StatusLabel,
+  StatusMenuActions,
   TableHeadProps,
   TableRow,
-  Avatar,
-  AvatarStyle,
   TagCommit,
-  StatusMenuActions,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
-import { ApplicationDatabaseEntities, ServicesEnum } from '../general/general'
+import { ServicesEnum } from '../general/general'
+import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 
 export interface TableRowServicesProps {
-  data: ApplicationDatabaseEntities
+  data: ApplicationEntity | DatabaseEntity
   type: ServicesEnum
   environmentMode: string
   dataHead: TableHeadProps[]
@@ -98,10 +99,14 @@ export function TableRowServices(props: TableRowServicesProps) {
           {type === ServicesEnum.APPLICATION && (
             <Skeleton show={isLoading} width={160} height={16}>
               <div className="flex gap-2 items-center">
-                {data.git_repository?.owner && (
-                  <Avatar firstName={data.git_repository?.owner} style={AvatarStyle.STROKED} size={28} />
+                {(data as ApplicationEntity).git_repository?.owner && (
+                  <Avatar
+                    firstName={(data as ApplicationEntity).git_repository?.owner || ''}
+                    style={AvatarStyle.STROKED}
+                    size={28}
+                  />
                 )}
-                <TagCommit commitId={data.git_repository?.deployed_commit_id} />
+                <TagCommit commitId={(data as ApplicationEntity).git_repository?.deployed_commit_id} />
               </div>
             </Skeleton>
           )}
@@ -109,8 +114,12 @@ export function TableRowServices(props: TableRowServicesProps) {
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
             <div className="flex">
-              <Icon name={data.build_mode || data.type} />
-              {data.version && <span className="block text-xs ml-2 text-text-600 font-medium">v{data.version}</span>}
+              <Icon name={(data as ApplicationEntity).build_mode || (data as DatabaseEntity).type} />
+              {(data as DatabaseEntity).version && (
+                <span className="block text-xs ml-2 text-text-600 font-medium">
+                  v{(data as DatabaseEntity).version}
+                </span>
+              )}
             </div>
           </Skeleton>
         </div>
