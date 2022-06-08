@@ -43,6 +43,7 @@
       "@console/shared/toast": ["libs/shared/toast/src/index.ts"],
       "@console/shared/ui": ["libs/shared/ui/src/index.ts"],
       "@console/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@console/shared/websockets": ["libs/shared/websockets/src/index.ts"],
       "@console/store/data": ["libs/store/data/src/index.ts"]
     }
   },

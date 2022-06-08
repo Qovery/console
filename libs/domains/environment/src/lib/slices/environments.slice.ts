@@ -6,6 +6,8 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
+import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
+import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
 import { EnvironmentEntity, EnvironmentsState } from '@console/shared/interfaces'
 import {
   DeploymentHistoryEnvironment,
@@ -67,6 +69,40 @@ export const environmentsSlice = createSlice({
   reducers: {
     add: environmentsAdapter.addOne,
     remove: environmentsAdapter.removeOne,
+    updateEnvironmentsRunningStatus: (
+      state,
+      action: PayloadAction<{ websocketRunningStatus: WebsocketRunningStatusInterface[]; clusterId: string }>
+    ) => {
+      // we have to force this reset change because of the way the socket works.
+      // You can have information about an application (eg. if it's stopping)
+      // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
+      const resetChanges: Update<EnvironmentEntity>[] = state.ids.map((id) => {
+        // as we can have this dispatch from different websocket, we don't want to reset
+        // and override all the entry but only the one associated to the cluster the websocket is
+        // coming from
+        const runningStatusChanges =
+          state.entities[id]?.cluster_id === action.payload.clusterId ? undefined : state.entities[id]?.running_status
+        return {
+          id,
+          changes: {
+            running_status: runningStatusChanges,
+          },
+        }
+      })
+      environmentsAdapter.updateMany(state, resetChanges)
+
+      const changes: Update<EnvironmentEntity>[] = action.payload.websocketRunningStatus.map((runningStatus) => {
+        const realId = shortToLongId(runningStatus.id, state.ids as string[])
+        return {
+          id: realId,
+          changes: {
+            running_status: runningStatus,
+          },
+        }
+      })
+
+      environmentsAdapter.updateMany(state, changes)
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -146,6 +182,18 @@ export const selectEnvironmentsEntitiesByProjectId = (state: RootState, projectI
   const environmentState = getEnvironmentsState(state)
   return getEntitiesByIds<Environment>(environmentState.entities, environmentState?.joinProjectEnvironments[projectId])
 }
+
+export const selectEnvironmentsEntitiesByClusterId = (clusterId: string) =>
+  createSelector(
+    (state: RootState) => {
+      return selectAll(getEnvironmentsState(state))
+    },
+    (environments): EnvironmentEntity[] => {
+      return environments.filter((env) => {
+        return env.cluster_id === clusterId
+      })
+    }
+  )
 
 export const selectEnvironmentById = (state: RootState, environmentId: string) =>
   getEnvironmentsState(state).entities[environmentId]

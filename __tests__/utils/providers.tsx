@@ -6,7 +6,7 @@ import { initialRootState, rootReducer } from '../../libs/store/data/src'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { IntercomProvider } from 'react-use-intercom'
 import posthog from 'posthog-js'
-import { RootState } from '@console/shared/interfaces'
+import { RootState } from '@console/store/data'
 
 type Params = {
   Component: ComponentType<any>

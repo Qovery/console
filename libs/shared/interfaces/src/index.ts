@@ -1,4 +1,5 @@
 export * from './lib/common/value.interface'
+export * from './lib/common/websocket-running-status.interface'
 export * from './lib/states/user-sign-up.interface'
 export * from './lib/states/environments.interface'
 export * from './lib/states/projects.interface'
@@ -12,6 +13,8 @@ export * from './lib/states/clusters.interface'
 export * from './lib/domain/application.entity'
 export * from './lib/domain/database.entity'
 export * from './lib/domain/environment.entity'
+
+export * from './lib/domain/service-running-status.interface'
 
 export * from './lib/types/loading-status.type'
 export * from './lib/types/deployment-service.type'

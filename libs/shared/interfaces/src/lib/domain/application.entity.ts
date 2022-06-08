@@ -1,5 +1,6 @@
 import { Application, Commit, Instance, Link, Status } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
+import { ServiceRunningStatus } from './service-running-status.interface'
 
 export interface ApplicationEntity extends Application {
   status?: Status
@@ -15,4 +16,5 @@ export interface ApplicationEntity extends Application {
     loadingStatus: LoadingStatus
     items?: Commit[]
   }
+  running_status?: ServiceRunningStatus
 }
