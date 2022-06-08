@@ -5,6 +5,7 @@ describe('databases reducer', () => {
     const expected = databasesAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
+      joinEnvDatabase: {},
     })
 
     expect(databases(undefined, { type: '' })).toEqual(expected)

@@ -5,5 +5,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/pages/applications/ui',
+  coverageDirectory: '../../../../coverage/libs/pages/services/ui',
 }
