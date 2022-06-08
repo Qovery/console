@@ -5,11 +5,9 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import TableRowServices from '../table-row-services/table-row-services'
 
-export type ApplicationDatabaseEntities = ApplicationEntity & DatabaseEntity
 export interface GeneralPageProps {
   environmentMode: string
-  // "any" mandatory to authorize the merge on the row
-  services: (ApplicationEntity | DatabaseEntity | any)[]
+  services: (ApplicationEntity | DatabaseEntity)[]
   buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
 }
@@ -71,8 +69,8 @@ export function GeneralPage(props: GeneralPageProps) {
         columnsWidth="30% 20% 25% 10% 15%"
       >
         <>
-          {data.map((currentData: ApplicationDatabaseEntities) => {
-            const isDatabase = !currentData.build_mode
+          {data.map((currentData) => {
+            const isDatabase = !(currentData as ApplicationEntity).build_mode
             return (
               <TableRowServices
                 key={currentData.id}
