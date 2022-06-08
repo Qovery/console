@@ -85,6 +85,8 @@ export function Icon(props: IconProps) {
       return <MongoDBIcon {...formattedProps} />
     case IconEnum.MYSQL:
       return <MysqlIcon {...formattedProps} />
+    case IconEnum.DATABASE:
+      return <DatabaseIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

@@ -7,13 +7,20 @@ import {
   Update,
 } from '@reduxjs/toolkit'
 import { EnvironmentEntity, EnvironmentsState } from '@console/shared/interfaces'
-import { Environment, EnvironmentsApi, Status } from 'qovery-typescript-axios'
+import {
+  DeploymentHistoryEnvironment,
+  Environment,
+  EnvironmentDeploymentHistoryApi,
+  EnvironmentsApi,
+  Status,
+} from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
+const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
@@ -38,9 +45,18 @@ export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: s
   }
 )
 
+export const fetchEnvironmentDeploymentHistory = createAsyncThunk<
+  DeploymentHistoryEnvironment[],
+  { environmentId: string }
+>('environments-deployments/fetch', async (data) => {
+  const response = await environmentDeploymentsApi.listEnvironmentDeploymentHistory(data.environmentId)
+  return response.data.results as DeploymentHistoryEnvironment[]
+})
+
 export const initialEnvironmentsState: EnvironmentsState = environmentsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   loadingEnvironmentStatus: 'not loaded',
+  loadingEnvironmentDeployments: 'not loaded',
   error: null,
   joinProjectEnvironments: {},
 })
@@ -92,6 +108,24 @@ export const environmentsSlice = createSlice({
         state.loadingEnvironmentStatus = 'error'
         state.error = action.error.message
       })
+      // get environment deployment history
+      .addCase(fetchEnvironmentDeploymentHistory.pending, (state: EnvironmentsState) => {
+        state.loadingEnvironmentDeployments = 'loading'
+      })
+      .addCase(fetchEnvironmentDeploymentHistory.fulfilled, (state: EnvironmentsState, action) => {
+        const update = {
+          id: action.meta.arg.environmentId,
+          changes: {
+            deployments: action.payload,
+          },
+        }
+        environmentsAdapter.updateOne(state, update as Update<Environment>)
+        state.loadingEnvironmentDeployments = 'loaded'
+      })
+      .addCase(fetchEnvironmentDeploymentHistory.rejected, (state: EnvironmentsState, action) => {
+        state.loadingEnvironmentDeployments = 'error'
+        state.error = action.error.message
+      })
   },
 })
 
@@ -121,3 +155,6 @@ export const environmentsLoadingStatus = (state: RootState): string | undefined 
 
 export const environmentsLoadingEnvironmentStatus = (state: RootState): string | undefined =>
   getEnvironmentsState(state).loadingEnvironmentStatus
+
+export const environmentsLoadingEnvironmentDeployments = (state: RootState): string | undefined =>
+  getEnvironmentsState(state).loadingEnvironmentDeployments
