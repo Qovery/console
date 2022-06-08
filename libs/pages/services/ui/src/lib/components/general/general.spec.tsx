@@ -6,7 +6,19 @@ let props: GeneralPageProps
 
 beforeEach(() => {
   props = {
-    applications: applicationFactoryMock(2),
+    environmentMode: '',
+    services: applicationFactoryMock(2),
+    buttonActions: [
+      {
+        name: 'stop',
+        action: jest.fn(),
+      },
+    ],
+    listHelpfulLinks: [
+      {
+        link: 'my-link',
+      },
+    ],
   }
 })
 

@@ -1,5 +1,4 @@
 import { IconEnum } from '@console/shared/enums'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
