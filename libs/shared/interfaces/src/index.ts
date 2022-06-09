@@ -14,3 +14,4 @@ export * from './lib/domain/database.entity'
 export * from './lib/domain/environment.entity'
 
 export * from './lib/types/loading-status.type'
+export * from './lib/types/deployment-service.type'
