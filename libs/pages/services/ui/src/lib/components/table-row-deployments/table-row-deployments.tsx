@@ -1,3 +1,4 @@
+import { DeploymentService } from '@console/shared/interfaces'
 import {
   Avatar,
   AvatarStyle,
@@ -10,29 +11,25 @@ import {
   TagCommit,
 } from '@console/shared/ui'
 import { timeAgo, upperCaseFirstLetter } from '@console/shared/utils'
-import { Commit, StateEnum } from 'qovery-typescript-axios'
-
-export interface DeploymentService {
-  id: string
-  created_at: string
-  updated_at: string
-  name: string
-  status: StateEnum
-  commit?: Commit
-}
 
 export interface TableRowDeploymentsProps {
   data: DeploymentService
   dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string
-  type: 'APPLICATION' | 'DATABASE'
-  id: string
   isLoading?: boolean
+  startGroup?: boolean
 }
 
 export function TableRowDeployments(props: TableRowDeploymentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, id, type, isLoading } = props
+  const {
+    data,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    link,
+    isLoading,
+    startGroup,
+  } = props
 
   const buttonActionsDefault = [
     {
@@ -44,11 +41,13 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
   ]
 
   return (
-    <TableRow columnsWidth={columnsWidth} link={link} className="!border-b">
+    <TableRow columnsWidth={columnsWidth} link={link} className={`!border-b bg-white ${startGroup ? 'mt-3' : ''}`}>
       <>
         <div className="flex items-center px-4 gap-1">
           <Skeleton show={isLoading} width={150} height={20}>
-            <span className="text-xxs font-bold text-text-500 py-0.5 px-1 bg-element-light-lighter-300">{id}</span>
+            <span className="text-xxs font-bold text-text-500 py-0.5 px-1 bg-element-light-lighter-300">
+              {data.execution_id}
+            </span>
           </Skeleton>
         </div>
         <div className="flex justify-start items-center px-4 gap-2">
@@ -65,7 +64,10 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
           <Skeleton show={isLoading} width={120} height={20}>
             <div className="flex items-center">
               <div className="w-8 text-center">
-                <Icon name={type} className={type === 'APPLICATION' ? 'w-7 h-7' : 'w-5 h-5'} />
+                <Icon
+                  name={data.type ? data.type : 'APPLICATION'}
+                  className={data.type === 'APPLICATION' ? 'w-7 h-7' : 'w-5 h-5'}
+                />
               </div>
               <p className="text-xs text-text-600 text-medium">{data.name}</p>
             </div>
@@ -76,7 +78,7 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
             <>
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <span className="text-xs text-text-300 mx-3 font-medium">
-                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
+                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at || ''))} ago
                 </span>
               </p>
               {data.name && <ButtonIconAction actions={buttonActionsDefault} />}

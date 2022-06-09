@@ -1,7 +1,9 @@
 import { DeploymentService } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Table } from '@console/shared/ui'
+import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@console/shared/utils'
 import { useEffect, useState } from 'react'
-import TableGroupDeployments from '../table-group-deployments/table-group-deployments'
+import { useParams } from 'react-router'
+import TableRowDeployments from '../table-row-deployments/table-row-deployments'
 
 export interface DeploymentsPageProps {
   deployments?: DeploymentService[]
@@ -13,6 +15,7 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
   const { deployments, listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState(deployments)
+  const { organizationId, projectId, environmentId } = useParams()
 
   useEffect(() => {
     deployments && setData(deployments)
@@ -26,7 +29,7 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
         {
           search: true,
           title: 'Filter by id',
-          key: 'id',
+          key: 'execution_id',
         },
       ],
     },
@@ -48,7 +51,7 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
         {
           search: true,
           title: 'Filter by service',
-          key: '',
+          key: 'name',
         },
       ],
     },
@@ -83,7 +86,14 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
       >
         <div>
           {data?.map((currentData, index) => (
-            <TableGroupDeployments data={currentData} key={index} tableHead={tableHead} isLoading={isLoading} />
+            <TableRowDeployments
+              key={index}
+              data={currentData as DeploymentService}
+              dataHead={tableHead}
+              link={APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + APPLICATION_GENERAL_URL}
+              isLoading={isLoading}
+              startGroup={currentData?.execution_id !== data[index - 1]?.execution_id && index !== 0 ? true : false}
+            />
           ))}
         </div>
       </Table>

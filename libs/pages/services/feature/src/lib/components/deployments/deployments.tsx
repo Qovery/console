@@ -6,11 +6,10 @@ import {
   selectEnvironmentById,
   environmentsLoadingStatus,
 } from '@console/domains/environment'
-import { DeploymentsPage } from '@console/pages/applications/ui'
 import { DeploymentService, EnvironmentEntity } from '@console/shared/interfaces'
 import { BaseLink } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
-import { DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
+import { DeploymentsPage } from '@console/pages/services/ui'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
@@ -36,28 +35,28 @@ export function Deployments() {
   ]
 
   const mergeDeploymentServices = (env: EnvironmentEntity) => {
-    const deployments = env?.deployments
-    deployments?.map((deployment) => {
-      const app = deployment.applications?.map((a) => {
-        return {
-          ...a,
+    const merged: DeploymentService[] = []
+    env.deployments?.forEach((deployment) => {
+      deployment.applications?.forEach((app) => {
+        const a: DeploymentService = {
+          ...app,
+          execution_id: deployment.id,
           type: 'APPLICATION',
-          execution_id: deployment.id,
         }
-      }) as DeploymentService[]
-      const db = deployment.databases?.map((d) => {
-        return {
-          ...d,
-          type: 'DATABASE',
-          execution_id: deployment.id,
-        }
-      }) as DeploymentService[]
-      const merged: DeploymentService[] = [...app, ...db]
-      return merged
-    })
-  }
+        merged.push(a)
+      })
 
-  environment && mergeDeploymentServices(environment)
+      deployment.databases?.forEach((db) => {
+        const d: DeploymentService = {
+          ...db,
+          execution_id: deployment.id,
+          type: 'DATABASE',
+        }
+        merged.push(d)
+      })
+    })
+    return merged
+  }
 
   useEffect(() => {
     const fetchEnv = async () => {
