@@ -24,7 +24,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
       <Link to={link}>
         <p
           data-testid="label"
-          className={`link-transition text-sm font-medium hover:text-text-500 ${
+          className={`link-transition text-sm font-medium hover:text-text-500 max-w-xs truncate ${
             isActive ? 'text-text-500' : 'text-text-400'
           }`}
         >
