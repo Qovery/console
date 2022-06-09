@@ -1,5 +1,5 @@
 import useWebSocket from 'react-use-websocket'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch } from '@console/store/data'
 import { applicationsActions, applicationsLoadingStatus } from '@console/domains/application'
@@ -8,6 +8,7 @@ import {
   environmentsActions,
   environmentsLoadingStatus,
   selectEnvironmentsEntitiesByClusterId,
+  selectEnvironmentsIdByClusterId,
 } from '@console/domains/environment'
 import { databasesActions, databasesLoadingStatus } from '@console/domains/database'
 
@@ -29,25 +30,19 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
     share: true,
   })
   const environmentsAssociatedToCluster = useSelector(selectEnvironmentsEntitiesByClusterId(clusterId))
+  const environmentsIdAssociatedToCluster = useSelector(selectEnvironmentsIdByClusterId(clusterId))
 
-  useEffect(() => {
-    if (url) {
-      const realUrl = new URL(url)
-      setClusterId(realUrl.searchParams.get('cluster') || '')
-    }
-  }, [])
-
-  useEffect(() => {
-    const storeEnvironmentRunningStatus = (
-      message: { environments: WebsocketRunningStatusInterface[] },
-      clusterId: string
-    ): void => {
+  const storeEnvironmentRunningStatus = useCallback(
+    (message: { environments: WebsocketRunningStatusInterface[] }, clusterId: string): void => {
       dispatch(
         environmentsActions.updateEnvironmentsRunningStatus({ websocketRunningStatus: message.environments, clusterId })
       )
-    }
+    },
+    [dispatch]
+  )
 
-    const storeApplicationsRunningStatus = (message: { environments: WebsocketRunningStatusInterface[] }): void => {
+  const storeApplicationsRunningStatus = useCallback(
+    (message: { environments: WebsocketRunningStatusInterface[] }, listEnvironmentIdFromCluster: string[]): void => {
       let runningApplication: ServiceRunningStatus[] = []
       message.environments.forEach((env) => {
         if (env.applications && env.applications.length) {
@@ -58,37 +53,50 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
       dispatch(
         applicationsActions.updateApplicationsRunningStatus({
           servicesRunningStatus: runningApplication,
-          listEnvironmentIdFromCluster: environmentsAssociatedToCluster.map((env) => env.id),
+          listEnvironmentIdFromCluster,
         })
       )
-    }
+    },
+    [dispatch]
+  )
 
-    const storeDatabasesRunningStatus = (message: { environments: WebsocketRunningStatusInterface[] }): void => {
+  const storeDatabasesRunningStatus = useCallback(
+    (message: { environments: WebsocketRunningStatusInterface[] }, listEnvironmentIdFromCluster: string[]): void => {
       let runningDatabases: ServiceRunningStatus[] = []
       message.environments.forEach((env) => {
-        if (env.applications && env.applications.length) {
-          runningDatabases = [...runningDatabases, ...env.applications]
+        if (env.databases && env.databases.length) {
+          runningDatabases = [...runningDatabases, ...env.databases]
         }
       })
 
       dispatch(
-        databasesActions.updateDatabasessRunningStatus({
+        databasesActions.updateDatabasesRunningStatus({
           servicesRunningStatus: runningDatabases,
-          listEnvironmentIdFromCluster: environmentsAssociatedToCluster.map((env) => env.id),
+          listEnvironmentIdFromCluster,
         })
       )
-    }
+    },
+    [dispatch]
+  )
 
+  useEffect(() => {
+    if (url) {
+      const realUrl = new URL(url)
+      setClusterId(realUrl.searchParams.get('cluster') || '')
+    }
+  }, [])
+
+  useEffect(() => {
     if (lastMessage !== null) {
       const message = JSON.parse(lastMessage.data) as { environments: WebsocketRunningStatusInterface[] }
       storeEnvironmentRunningStatus(message, clusterId)
 
       if (appsLoadingStatus === 'loaded') {
-        storeApplicationsRunningStatus(message)
+        storeApplicationsRunningStatus(message, environmentsIdAssociatedToCluster)
       }
 
       if (dbsLoadingStatus === 'loaded') {
-        storeDatabasesRunningStatus(message)
+        storeDatabasesRunningStatus(message, environmentsIdAssociatedToCluster)
       }
     }
   }, [dispatch, lastMessage, appsLoadingStatus, dbsLoadingStatus, envsLoadingStatus, clusterId])

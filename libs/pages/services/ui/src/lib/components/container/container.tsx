@@ -80,9 +80,19 @@ export function Container(props: ContainerProps) {
   const tabsItems = [
     {
       icon: (
-        <StatusChip
-          status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
-        />
+        <Skeleton
+          show={
+            environment?.running_status?.state === RunningStatus.STARTING ||
+            environment?.running_status?.state === RunningStatus.STOPPING
+          }
+          width={16}
+          height={16}
+          rounded={true}
+        >
+          <StatusChip
+            status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
+          />
+        </Skeleton>
       ),
       name: 'Overview',
       active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,

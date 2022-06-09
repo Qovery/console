@@ -3,7 +3,7 @@ import { RunningStatus } from '@console/shared/enums'
 
 export interface WebsocketRunningStatusInterface {
   applications?: ServiceRunningStatus[]
-  database?: ServiceRunningStatus[]
+  databases?: ServiceRunningStatus[]
   id: string
   project_id: string
   state: RunningStatus

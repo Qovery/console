@@ -50,7 +50,7 @@ export const databasesSlice = createSlice({
   reducers: {
     add: databasesAdapter.addOne,
     remove: databasesAdapter.removeOne,
-    updateDatabasessRunningStatus: (
+    updateDatabasesRunningStatus: (
       state,
       action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>
     ) => {
