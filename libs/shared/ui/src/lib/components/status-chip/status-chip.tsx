@@ -71,6 +71,8 @@ export function StatusChip(props: StatusChipProps) {
     switch (status) {
       case StateEnum.STOPPED:
         return true
+      case StateEnum.CANCELED:
+        return true
       default:
         return false
     }
