@@ -12,9 +12,9 @@ export interface DeploymentsPageProps {
 }
 
 export function DeploymentsPage(props: DeploymentsPageProps) {
-  const { deployments, listHelpfulLinks, isLoading = true } = props
+  const { deployments = [], listHelpfulLinks, isLoading = true } = props
 
-  const [data, setData] = useState(deployments)
+  const [data, setData] = useState<DeploymentService[]>(deployments)
   const { organizationId, projectId, environmentId } = useParams()
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
         dataHead={tableHead}
         defaultData={deployments}
         filterData={data}
-        setFilterData={() => deployments && setData}
+        setFilterData={setData}
         className="mt-2 rounded-sm"
       >
         <div>

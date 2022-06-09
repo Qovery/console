@@ -41,7 +41,11 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
   ]
 
   return (
-    <TableRow columnsWidth={columnsWidth} link={link} className={`!border-b bg-white ${startGroup ? 'mt-3' : ''}`}>
+    <TableRow
+      columnsWidth={columnsWidth}
+      link={link}
+      className={`border-b last-of-type:border-b-0 bg-white ${startGroup ? 'mt-2' : ''}`}
+    >
       <>
         <div className="flex items-center px-4 gap-1">
           <Skeleton show={isLoading} width={150} height={20}>
