@@ -36,7 +36,7 @@ export function MenuItem(props: MenuItemProps) {
 
   const itemContent = (
     <>
-      <div className={`flex items-center ${className}`}>
+      <div className={`flex items-center truncate ${className}`}>
         {copy && (
           <Tooltip content={copyTooltip ? copyTooltip : 'Copy'}>
             <div>
@@ -52,9 +52,9 @@ export function MenuItem(props: MenuItemProps) {
         )}
 
         {contentLeft && <span className="mr-3">{contentLeft}</span>}
-        <span className={`text-sm font-medium ${textClassName}`}>{name}</span>
+        <span className={`text-sm font-medium truncate block ${textClassName}`}>{name}</span>
       </div>
-      <div>{contentRight && <span className="ml-3">{contentRight}</span>}</div>
+      <div className="flex items-center">{contentRight && <span className="ml-3">{contentRight}</span>}</div>
     </>
   )
 
