@@ -33,6 +33,7 @@ export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: st
 export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: string }>(
   'environments-status/fetch',
   async (data) => {
+    console.log(data)
     const response = await environmentsApi.getProjectEnvironmentsStatus(data.projectId)
     return response.data.results as Status[]
   }

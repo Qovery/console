@@ -4,7 +4,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE,
 } from '@console/shared/utils'
-import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs, Button, ButtonSize } from '@console/shared/ui'
+import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
 
 export interface ContainerProps {
