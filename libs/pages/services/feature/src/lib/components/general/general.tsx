@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { Application, Database, Environment } from 'qovery-typescript-axios'
@@ -5,6 +6,7 @@ import {
   applicationFactoryMock,
   applicationsLoadingStatus,
   deleteApplicationActionsStop,
+  fetchApplicationsStatus,
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
@@ -14,7 +16,7 @@ import { AppDispatch, RootState } from '@console/store/data'
 import { GeneralPage } from '@console/pages/services/ui'
 import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
-import { databasesLoadingStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
+import { databasesLoadingStatus, fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
 
 export function General() {
   const { environmentId = '' } = useParams()
@@ -22,6 +24,16 @@ export function General() {
   const loadingServices = applicationFactoryMock(3)
   const loadingApplicationsStatus = useSelector<RootState>((state) => applicationsLoadingStatus(state))
   const loadingDatabasesStatus = useSelector<RootState>((state) => databasesLoadingStatus(state))
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    const fetchServicesStatusByInterval = setInterval(() => {
+      dispatch(fetchApplicationsStatus({ environmentId }))
+      dispatch(fetchDatabasesStatus({ environmentId }))
+    }, 3000)
+    return () => clearInterval(fetchServicesStatusByInterval)
+  }, [dispatch, environmentId])
 
   const applicationsByEnv = useSelector<RootState, Application[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
@@ -34,8 +46,6 @@ export function General() {
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
-
-  const dispatch = useDispatch<AppDispatch>()
 
   const actions: StatusMenuActions[] = [
     {
