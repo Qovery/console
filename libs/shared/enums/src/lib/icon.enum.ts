@@ -22,5 +22,4 @@ export enum IconEnum {
   BUILDPACKS = 'BUILDPACKS',
   MONGODB = 'MONGODB',
   MYSQL = 'MYSQL',
-  DATABASE = 'DATABASE',
 }

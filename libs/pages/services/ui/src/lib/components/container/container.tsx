@@ -1,6 +1,6 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { SERVICES_GENERAL_URL, SERVICES_URL, APPLICATION_DEPLOYMENTS_URL } from '@console/shared/utils'
+import { SERVICES_GENERAL_URL, SERVICES_URL, SERVICES_DEPLOYMENTS_URL } from '@console/shared/utils'
 import {
   ButtonAction,
   ButtonIcon,
@@ -95,9 +95,8 @@ export function Container(props: ContainerProps) {
       ),
       name: 'Deployments',
       active:
-        location.pathname ===
-        `${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATIONS_DEPLOYMENTS_URL}`,
-      link: `${APPLICATIONS_URL(organizationId, projectId, environmentId)}${APPLICATIONS_DEPLOYMENTS_URL}`,
+        location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
+      link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
     },
   ]
 
