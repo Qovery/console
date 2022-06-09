@@ -9,8 +9,10 @@ import {
   TableHeadProps,
   TableRow,
   TagCommit,
+  Tooltip,
 } from '@console/shared/ui'
-import { timeAgo, upperCaseFirstLetter } from '@console/shared/utils'
+import { timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
+import React, { useState } from 'react'
 
 export interface TableRowDeploymentsProps {
   data: DeploymentService
@@ -31,6 +33,8 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
     startGroup,
   } = props
 
+  const [copy, setCopy] = useState(false)
+
   const buttonActionsDefault = [
     {
       iconLeft: <Icon name="icon-solid-scroll" />,
@@ -39,6 +43,15 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
     },
   ]
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.preventDefault()
+    data.execution_id && navigator.clipboard.writeText(data.execution_id)
+    setCopy(true)
+    setTimeout(() => {
+      setCopy(false)
+    }, 2000)
+  }
 
   return (
     <TableRow
@@ -49,9 +62,17 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
       <>
         <div className="flex items-center px-4 gap-1">
           <Skeleton show={isLoading} width={150} height={20}>
-            <span className="text-xxs font-bold text-text-500 py-0.5 px-1 bg-element-light-lighter-300">
-              {data.execution_id}
-            </span>
+            <Tooltip content="Copy">
+              <p
+                onClick={handleCopy}
+                className={`text-xxs font-bold text-text-500 py-0.5 px-1 w-16 text-center rounded-sm ${
+                  copy ? 'bg-success-500 text-white' : 'bg-element-light-lighter-300'
+                }`}
+              >
+                {!copy && data.execution_id && <span>{trimId(data.execution_id)}</span>}
+                {copy && <span>Copied !</span>}
+              </p>
+            </Tooltip>
           </Skeleton>
         </div>
         <div className="flex justify-start items-center px-4 gap-2">

@@ -58,15 +58,15 @@ export function Deployments() {
     return merged
   }
 
-  useEffect(() => {
-    const fetchEnv = async () => {
-      await dispatch(fetchEnvironments({ projectId }))
-      await dispatch(fetchEnvironmentDeploymentHistory({ environmentId }))
-    }
-    fetchEnv()
-  }, [dispatch, environmentId, projectId])
-
   const isLoading = loadingStatusEnvironment !== 'loaded' || loadingStatusDeployments !== 'loaded'
+
+  useEffect(() => {
+    const fetchEnv = () => {
+      dispatch(fetchEnvironments({ projectId }))
+      dispatch(fetchEnvironmentDeploymentHistory({ environmentId }))
+    }
+    !environment?.deployments && fetchEnv()
+  }, [dispatch, environmentId, projectId, environment])
 
   return (
     <DeploymentsPage
