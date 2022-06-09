@@ -1,10 +1,10 @@
+import { DeploymentService } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Table } from '@console/shared/ui'
-import { DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import TableGroupDeployments from '../table-group-deployments/table-group-deployments'
 
 export interface DeploymentsPageProps {
-  deployments?: DeploymentHistoryEnvironment[]
+  deployments?: DeploymentService[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
@@ -48,7 +48,7 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
         {
           search: true,
           title: 'Filter by service',
-          key: 'name',
+          key: '',
         },
       ],
     },

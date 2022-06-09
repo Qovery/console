@@ -7,9 +7,10 @@ import {
   environmentsLoadingStatus,
 } from '@console/domains/environment'
 import { DeploymentsPage } from '@console/pages/applications/ui'
-import { EnvironmentEntity } from '@console/shared/interfaces'
+import { DeploymentService, EnvironmentEntity } from '@console/shared/interfaces'
 import { BaseLink } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
+import { DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
@@ -34,6 +35,30 @@ export function Deployments() {
     },
   ]
 
+  const mergeDeploymentServices = (env: EnvironmentEntity) => {
+    const deployments = env?.deployments
+    deployments?.map((deployment) => {
+      const app = deployment.applications?.map((a) => {
+        return {
+          ...a,
+          type: 'APPLICATION',
+          execution_id: deployment.id,
+        }
+      }) as DeploymentService[]
+      const db = deployment.databases?.map((d) => {
+        return {
+          ...d,
+          type: 'DATABASE',
+          execution_id: deployment.id,
+        }
+      }) as DeploymentService[]
+      const merged: DeploymentService[] = [...app, ...db]
+      return merged
+    })
+  }
+
+  environment && mergeDeploymentServices(environment)
+
   useEffect(() => {
     const fetchEnv = async () => {
       await dispatch(fetchEnvironments({ projectId }))
@@ -46,7 +71,11 @@ export function Deployments() {
 
   return (
     <DeploymentsPage
-      deployments={!isLoading ? environment?.deployments : loadingEnvironment[0].deployments}
+      deployments={
+        !isLoading
+          ? environment && (mergeDeploymentServices(environment) as unknown as DeploymentService[])
+          : (mergeDeploymentServices(loadingEnvironment[0]) as unknown as DeploymentService[])
+      }
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading}
     />
