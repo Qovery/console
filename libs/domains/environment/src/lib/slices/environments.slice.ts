@@ -195,6 +195,20 @@ export const selectEnvironmentsEntitiesByClusterId = (clusterId: string) =>
     }
   )
 
+export const selectEnvironmentsIdByClusterId = (clusterId: string) =>
+  createSelector(
+    (state: RootState) => {
+      return selectAll(getEnvironmentsState(state))
+    },
+    (environments): string[] => {
+      return environments
+        .filter((env) => {
+          return env.cluster_id === clusterId
+        })
+        .map((env) => env.id)
+    }
+  )
+
 export const selectEnvironmentById = (state: RootState, environmentId: string) =>
   getEnvironmentsState(state).entities[environmentId]
 

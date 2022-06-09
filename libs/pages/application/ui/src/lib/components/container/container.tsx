@@ -140,9 +140,19 @@ export function Container(props: ContainerProps) {
   const tabsItems = [
     {
       icon: (
-        <StatusChip
-          status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
-        />
+        <Skeleton
+          show={
+            application?.running_status?.state === RunningStatus.STARTING ||
+            application?.running_status?.state === RunningStatus.STOPPING
+          }
+          width={16}
+          height={16}
+          rounded={true}
+        >
+          <StatusChip
+            status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+          />
+        </Skeleton>
       ),
       name: 'Overview',
       active:

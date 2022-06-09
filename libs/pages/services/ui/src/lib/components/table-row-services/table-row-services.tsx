@@ -14,6 +14,7 @@ import {
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
@@ -60,9 +61,29 @@ export function TableRowServices(props: TableRowServicesProps) {
     <TableRow columnsWidth={columnsWidth} link={link}>
       <>
         <div className="flex items-center px-4 gap-1">
-          <Skeleton show={isLoading} width={16} height={16}>
-            <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
-          </Skeleton>
+          {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
+            <Skeleton show={isLoading} width={16} height={16} rounded={true}>
+              <StatusChip status={data.status && data.status.state} />
+            </Skeleton>
+          ) : (
+            <Skeleton
+              show={
+                isLoading ||
+                data?.running_status?.state === RunningStatus.STARTING ||
+                data?.running_status?.state === RunningStatus.STOPPING
+              }
+              width={16}
+              height={16}
+              rounded={true}
+            >
+              {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
+                <StatusChip status={data.status && data.status.state} />
+              ) : (
+                <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
+              )}
+            </Skeleton>
+          )}
+
           <Skeleton show={isLoading} width={16} height={16}>
             <div className="ml-2 mr-2">
               <Icon name={type === ServicesEnum.APPLICATION ? IconEnum.APPLICATION : IconEnum.DATABASE} width="20" />
