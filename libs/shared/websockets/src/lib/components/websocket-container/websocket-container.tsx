@@ -26,11 +26,11 @@ export function WebsocketContainer() {
   }, [organizationId, clusters, openWebSockets])
 
   return (
-    <>
+    <div>
       {websocketsUrl.map((url) => (
         <ClusterWebSocket key={url} url={url} />
       ))}
-    </>
+    </div>
   )
 }
 

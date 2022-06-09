@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch } from '@console/store/data'
 import { applicationsActions, applicationsLoadingStatus } from '@console/domains/application'
-import { JsonValue } from 'react-use-websocket/dist/lib/types'
 import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
 import {
   environmentsActions,
@@ -11,7 +10,6 @@ import {
   selectEnvironmentsEntitiesByClusterId,
 } from '@console/domains/environment'
 import { databasesActions, databasesLoadingStatus } from '@console/domains/database'
-import { useParams } from 'react-router-dom'
 
 export interface ClusterWebSocketProps {
   url: string
@@ -21,12 +19,11 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
   const { url } = props
   const dispatch = useDispatch<AppDispatch>()
   const [clusterId, setClusterId] = useState('')
-  const { environmentId = '', applicationId = '', databaseId = '' } = useParams()
   const appsLoadingStatus = useSelector(applicationsLoadingStatus)
   const dbsLoadingStatus = useSelector(databasesLoadingStatus)
   const envsLoadingStatus = useSelector(environmentsLoadingStatus)
 
-  const { lastMessage, getWebSocket } = useWebSocket<JsonValue>(url, {
+  const { lastMessage } = useWebSocket(url, {
     //Will attempt to reconnect on all close events, such as server shutting down
     shouldReconnect: (closeEvent) => false,
     share: true,
