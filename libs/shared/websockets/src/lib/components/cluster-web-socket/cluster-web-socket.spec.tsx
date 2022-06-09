@@ -3,7 +3,7 @@ import { ClusterWebSocket } from './cluster-web-socket'
 
 describe('ClusterWebSocket', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ClusterWebSocket url="url" />)
+    const { baseElement } = render(<ClusterWebSocket url={'ws://test.com'} />)
     expect(baseElement).toBeTruthy()
   })
 })
