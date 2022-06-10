@@ -1,6 +1,6 @@
 import { applicationFactoryMock } from '@console/domains/application'
+import { ServicesEnum } from '@console/shared/enums'
 import { render } from '__tests__/utils/setup-jest'
-import { ServicesEnum } from '../general/general'
 
 import TableRowServices, { TableRowServicesProps } from './table-row-services'
 
@@ -12,6 +12,13 @@ beforeEach(() => {
     type: ServicesEnum.APPLICATION,
     dataHead: [],
     link: '/',
+    buttonActions: [
+      {
+        name: 'action',
+        action: jest.fn(),
+      },
+    ],
+    environmentMode: '',
   }
 })
 
