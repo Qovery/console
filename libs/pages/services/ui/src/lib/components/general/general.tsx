@@ -1,19 +1,19 @@
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 import { ServicesEnum } from '@console/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
 import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
 import TableRowServices from '../table-row-services/table-row-services'
 
-export interface GeneralPageProps {
+export interface GeneralProps {
   environmentMode: string
   services: (ApplicationEntity | DatabaseEntity)[]
   buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
 }
 
-export function GeneralPage(props: GeneralPageProps) {
+function General(props: GeneralProps) {
   const { environmentMode, services, buttonActions, listHelpfulLinks } = props
   const { organizationId, projectId, environmentId } = useParams()
 
@@ -93,4 +93,15 @@ export function GeneralPage(props: GeneralPageProps) {
   )
 }
 
-export default GeneralPage
+export const GeneralPage = React.memo(General, (prevProps, nextProps) => {
+  // Stringify is necessary to avoid Redux selector behavior
+  const isEqual =
+    JSON.stringify(prevProps.services.map((service) => service.status?.state)) ===
+    JSON.stringify(nextProps.services.map((service) => service.status?.state))
+
+  if (isEqual) {
+    return true
+  }
+
+  return false
+})

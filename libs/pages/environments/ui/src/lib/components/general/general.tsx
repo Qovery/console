@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
@@ -11,7 +11,7 @@ export interface GeneralProps {
   listHelpfulLinks: BaseLink[]
 }
 
-export function GeneralPage(props: GeneralProps) {
+function General(props: GeneralProps) {
   const { environments, buttonActions, listHelpfulLinks } = props
   const { organizationId, projectId } = useParams()
 
@@ -90,4 +90,15 @@ export function GeneralPage(props: GeneralProps) {
   )
 }
 
-export default GeneralPage
+export const GeneralPage = React.memo(General, (prevProps, nextProps) => {
+  // Stringify is necessary to avoid Redux selector behavior
+  const isEqual =
+    JSON.stringify(prevProps.environments.map((environment) => environment.status?.state)) ===
+    JSON.stringify(nextProps.environments.map((environment) => environment.status?.state))
+
+  if (isEqual) {
+    return true
+  }
+
+  return false
+})
