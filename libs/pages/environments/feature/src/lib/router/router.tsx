@@ -4,7 +4,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL_EDIT,
   ENVIRONMENTS_GENERAL_URL,
   Route,
-} from '@console/shared/utils'
+} from '@console/shared/router'
 import CreateDeploymentRule from '../components/deployment-rules/create-deployment-rule/create-deployment-rule'
 import { DeploymentRules } from '../components/deployment-rules/deployment-rules'
 import EditDeploymentRule from '../components/deployment-rules/edit-deployment-rule/edit-deployment-rule'

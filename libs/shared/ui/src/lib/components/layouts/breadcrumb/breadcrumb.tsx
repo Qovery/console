@@ -11,7 +11,7 @@ import {
   OVERVIEW_URL,
   APPLICATION_URL,
   APPLICATION_GENERAL_URL,
-} from '@console/shared/utils'
+} from '@console/shared/router'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
 import { IconEnum } from '@console/shared/enums'

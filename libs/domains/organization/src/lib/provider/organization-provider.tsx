@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { OrganizationRequest } from 'qovery-typescript-axios'
-import { useAuth } from '@console/shared/utils'
+import { useAuth } from '@console/shared/auth'
 import {
   fetchOrganization,
   postOrganization,

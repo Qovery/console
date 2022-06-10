@@ -1,5 +1,5 @@
 import { Icon } from '@console/shared/ui'
-import { AuthEnum } from '@console/shared/utils'
+import { AuthEnum } from '@console/shared/auth'
 import { IconEnum } from '@console/shared/enums'
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void

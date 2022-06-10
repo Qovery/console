@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
-import { SETTINGS_URL } from '@console/shared/utils'
+import { SETTINGS_URL } from '@console/shared/router'
 import { Avatar } from '../../avatar/avatar'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'

@@ -1,6 +1,6 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { SERVICES_GENERAL_URL, SERVICES_URL, SERVICES_DEPLOYMENTS_URL } from '@console/shared/utils'
+import { SERVICES_GENERAL_URL, SERVICES_URL, SERVICES_DEPLOYMENTS_URL } from '@console/shared/router'
 import {
   ButtonAction,
   ButtonIcon,

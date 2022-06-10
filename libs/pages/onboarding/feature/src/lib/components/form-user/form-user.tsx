@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { useUser } from '@console/domains/user'
 import { StepPersonalize } from '@console/pages/onboarding/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_URL, useAuth } from '@console/shared/utils'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/router'
+import { useAuth } from '@console/shared/auth'
 
 const dataTypes = [
   {

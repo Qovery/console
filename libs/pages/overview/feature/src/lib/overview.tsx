@@ -1,5 +1,5 @@
 import { Overview } from '@console/pages/overview/ui'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@console/shared/utils'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 

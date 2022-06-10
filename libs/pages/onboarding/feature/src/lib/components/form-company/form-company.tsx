@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { user, userSignUpSlice, useUser } from '@console/domains/user'
+import { useUser } from '@console/domains/user'
 import { StepCompany } from '@console/pages/onboarding/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
 
 const dataSize: Value[] = [

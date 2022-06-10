@@ -6,7 +6,7 @@ import {
   ONBOARDING_PROJECT_URL,
   ONBOARDING_URL,
   Route,
-} from '@console/shared/utils'
+} from '@console/shared/router'
 import { LayoutOnboarding } from '@console/pages/onboarding/ui'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
 
