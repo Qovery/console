@@ -1,4 +1,3 @@
-export * from './lib/components/inputs/input-select-multiple/input-select-multiple'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'
@@ -45,3 +44,5 @@ export * from './lib/components/tag-commit/tag-commit'
 export * from './lib/components/avatar/avatar'
 export * from './lib/components/link/link'
 export * from './lib/components/help-section/help-section'
+export * from './lib/components/truncate/truncate'
+export * from './lib/components/inputs/input-select-multiple/input-select-multiple'

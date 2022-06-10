@@ -1,3 +1,4 @@
+import { Truncate } from '@console/shared/ui'
 import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -54,7 +55,9 @@ export function MenuItem(props: MenuItemProps) {
         )}
 
         {contentLeft && <span className="mr-3">{contentLeft}</span>}
-        <span className={`menu-item__name text-sm font-medium truncate block ${textClassName}`}>{name}</span>
+        <span className={`menu-item__name text-sm font-medium ${textClassName}`}>
+          <Truncate text={name} truncateLimit={34} />
+        </span>
       </div>
       <div className="flex items-center">{contentRight && <span className="ml-3">{contentRight}</span>}</div>
     </>
