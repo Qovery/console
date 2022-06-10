@@ -13,6 +13,7 @@ export interface MenuItemProps {
   copyTooltip?: string
   className?: string
   textClassName?: string
+  isActive?: boolean
 }
 
 export function MenuItem(props: MenuItemProps) {
@@ -24,6 +25,7 @@ export function MenuItem(props: MenuItemProps) {
     onClick,
     copy,
     copyTooltip,
+    isActive = false,
     textClassName = 'text-text-500',
     className = '',
   } = props
@@ -52,7 +54,7 @@ export function MenuItem(props: MenuItemProps) {
         )}
 
         {contentLeft && <span className="mr-3">{contentLeft}</span>}
-        <span className={`text-sm font-medium truncate block ${textClassName}`}>{name}</span>
+        <span className={`menu-item__name text-sm font-medium truncate block ${textClassName}`}>{name}</span>
       </div>
       <div className="flex items-center">{contentRight && <span className="ml-3">{contentRight}</span>}</div>
     </>
@@ -60,15 +62,22 @@ export function MenuItem(props: MenuItemProps) {
 
   if (link?.external) {
     return (
-      <Item className="menu-item" href={link.url} data-testid="menuItem" target="_blank" onClick={onClick}>
+      <Item
+        className={`menu-item ${isActive ? 'menu-item--hover' : ''}`}
+        href={link.url}
+        data-testid="menuItem"
+        target="_blank"
+        onClick={onClick}
+      >
         {itemContent}
       </Item>
     )
   } else {
     return (
       <Item
-        className="menu-item"
+        className={`menu-item ${isActive ? 'menu-item--hover' : ''}`}
         data-testid="menuItem"
+        defaultValue="prod"
         onClick={(e: ClickEvent) => {
           e.syntheticEvent.preventDefault()
           link?.url && navigate(link?.url)

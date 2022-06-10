@@ -13,7 +13,8 @@ import {
   APPLICATION_GENERAL_URL,
 } from '@console/shared/utils'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
-import { EnvironmentEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
+import { IconEnum, ServicesEnum } from '@console/shared/enums'
 
 export interface BreadcrumbProps {
   organizations: Organization[]
@@ -92,11 +93,12 @@ export function Breadcrumb(props: BreadcrumbProps) {
             contentLeft: (
               <div className="flex items-center">
                 <StatusChip status={environment.status?.state} />
-                <div className="ml-3">
+                <div className="ml-3 mt-0.5">
                   {environment.cloud_provider.provider && <Icon name={`${environment.cloud_provider.provider}_GRAY`} />}
                 </div>
               </div>
             ),
+            isActive: environmentId === environment.id,
           }))
         : [],
     },
@@ -107,7 +109,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
       title: 'Applications',
       search: true,
       items: applications
-        ? (applications?.map((application: Application) => ({
+        ? (applications?.map((application: ApplicationEntity) => ({
             name: application.name,
             link: {
               url: `${APPLICATION_URL(
@@ -118,11 +120,17 @@ export function Breadcrumb(props: BreadcrumbProps) {
               )}${APPLICATION_GENERAL_URL}`,
             },
             contentLeft: (
-              <Icon
-                name="icon-solid-check"
-                className={`text-sm ${applicationId === application.id ? 'text-success-400' : 'text-transparent'}`}
-              />
+              <div className="flex items-center">
+                <StatusChip status={application.status?.state} />
+                <div className="ml-3 mt-[1px]">
+                  <Icon
+                    name={!(application as ApplicationEntity).build_mode ? IconEnum.APPLICATION : IconEnum.DATABASE}
+                    width="16"
+                  />
+                </div>
+              </div>
             ),
+            isActive: applicationId === application.id,
           })) as MenuItemProps[])
         : [],
     },

@@ -1,4 +1,4 @@
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum, ServicesEnum } from '@console/shared/enums'
 import {
   Avatar,
   AvatarStyle,
@@ -13,7 +13,6 @@ import {
   TagCommit,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
-import { ServicesEnum } from '../general/general'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 
 export interface TableRowServicesProps {

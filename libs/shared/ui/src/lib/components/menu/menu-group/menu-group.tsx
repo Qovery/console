@@ -94,6 +94,7 @@ export function MenuGroup(props: MenuGroupProps) {
               copyTooltip={item.copyTooltip}
               className={item.className}
               textClassName={item.textClassName}
+              isActive={item.isActive}
             />
           ))}
         </div>
