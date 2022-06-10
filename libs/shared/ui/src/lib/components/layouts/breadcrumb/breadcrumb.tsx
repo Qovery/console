@@ -14,7 +14,7 @@ import {
 } from '@console/shared/utils'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
-import { IconEnum, ServicesEnum } from '@console/shared/enums'
+import { IconEnum } from '@console/shared/enums'
 
 export interface BreadcrumbProps {
   organizations: Organization[]
