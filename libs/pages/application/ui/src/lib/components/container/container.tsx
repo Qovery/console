@@ -102,7 +102,7 @@ export function Container(props: ContainerProps) {
   const headerActions = (
     <>
       <Skeleton width={150} height={24} show={!application?.status}>
-        <div>
+        <div className="flex">
           {environment && application && application?.status && (
             <StatusMenu
               statusActions={{

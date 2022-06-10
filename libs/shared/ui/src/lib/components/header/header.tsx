@@ -25,9 +25,9 @@ export function Header(props: HeaderProps) {
       <div className="flex gap-4 ml-2 items-center">
         {icon && <Icon name={icon} width="64" />}
         <div className="flex flex-col gap-3">
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center max-w-3xl">
             <Skeleton height={36} width={150} show={title ? false : true}>
-              <h1 className="font-bold text-text-700 text-3xl">{title}</h1>
+              <h1 className="font-bold text-text-700 text-3xl max-w-3xl truncate">{title}</h1>
             </Skeleton>
             {copyTitle && (
               <Tooltip content="Copy IDs">

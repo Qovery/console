@@ -1,3 +1,4 @@
+import { ServicesEnum } from '@console/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
 import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/utils'
@@ -10,11 +11,6 @@ export interface GeneralPageProps {
   services: (ApplicationEntity | DatabaseEntity)[]
   buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
-}
-
-export enum ServicesEnum {
-  DATABASE = 'DATABASE',
-  APPLICATION = 'APPLICATION',
 }
 
 export function GeneralPage(props: GeneralPageProps) {

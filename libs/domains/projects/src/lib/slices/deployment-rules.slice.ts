@@ -159,8 +159,6 @@ export const deploymentRulesSlice = createSlice({
           })
         })
 
-        console.log(state.entities)
-
         state.loadingStatus = 'loaded'
       })
       .addCase(updateDeploymentRuleOrder.rejected, (state: DeploymentRuleState, action) => {
