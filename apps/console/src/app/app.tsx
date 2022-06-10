@@ -13,10 +13,9 @@ import {
   OVERVIEW_URL,
   ProtectedRoute,
   SETTINGS_URL,
-  useAuth,
-  useAuthInterceptor,
-  useDocumentTitle,
-} from '@console/shared/utils'
+} from '@console/shared/router'
+import { useAuth } from '@console/shared/auth'
+import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
 import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'

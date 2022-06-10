@@ -5,7 +5,7 @@ import { selectProjectsEntitiesByOrgId, useEnvironments, useProjects } from '@co
 import { useUser } from '@console/domains/user'
 import { selectApplicationById, useApplication, useApplications } from '@console/domains/application'
 import { LayoutPage } from '@console/shared/ui'
-import { useAuth } from '@console/shared/utils'
+import { useAuth } from '@console/shared/auth'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
 import { Application, Environment, Project } from 'qovery-typescript-axios'

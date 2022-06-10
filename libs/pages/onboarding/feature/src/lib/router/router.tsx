@@ -5,7 +5,7 @@ import {
   ONBOARDING_PROJECT_URL,
   ONBOARDING_THANKS_URL,
   Route,
-} from '@console/shared/utils'
+} from '@console/shared/router'
 import { OnboardingPersonalize } from '../components/onboarding-personalize/onboarding-personalize'
 import { OnboardingMore } from '../components/onboarding-more/onboarding-more'
 import { OnboardingPricing } from '../components/onboarding-pricing/onboarding-pricing'

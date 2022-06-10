@@ -1,0 +1,23 @@
+{
+  "root": "libs/shared/router",
+  "sourceRoot": "libs/shared/router/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/shared/router/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/shared/router"],
+      "options": {
+        "jestConfig": "libs/shared/router/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

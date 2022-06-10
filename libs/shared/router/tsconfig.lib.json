@@ -9,6 +9,7 @@
     "../../../node_modules/@nrwl/react/typings/image.d.ts"
   ],
   "exclude": [
+    "jest.config.ts",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",
@@ -18,14 +19,5 @@
     "**/*.spec.jsx",
     "**/*.test.jsx"
   ],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx",
-    "../ui/src/lib/components/modal/modal-root.spec.tsx",
-    "../router/src/lib/router.ts",
-    "../router/src/lib/protected-route/protected-route.tsx",
-    "../router/src/lib/protected-route/protected-route.spec.tsx"
-  ]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

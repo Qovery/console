@@ -1,6 +1,5 @@
-import React from 'react'
 import { render } from '__tests__/utils/setup-jest'
-import ProtectedRoute from './protected-route'
+import ProtectedRoute from '../protected-route/protected-route'
 
 describe('ProtectedRoute', () => {
   const ProtectedComponent = () => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/utils'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 

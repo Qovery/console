@@ -1,7 +1,7 @@
 import { ServicesEnum } from '@console/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/utils'
+import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import TableRowServices from '../table-row-services/table-row-services'

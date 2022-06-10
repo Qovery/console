@@ -1,6 +1,6 @@
 import { DeploymentService } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Table } from '@console/shared/ui'
-import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@console/shared/utils'
+import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@console/shared/router'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import TableRowDeployments from '../table-row-deployments/table-row-deployments'

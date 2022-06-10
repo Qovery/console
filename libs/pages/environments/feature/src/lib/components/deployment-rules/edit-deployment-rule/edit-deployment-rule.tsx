@@ -8,7 +8,8 @@ import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { BaseLink } from '@console/shared/ui'
-import { dateToHours, ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/utils'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
+import { dateToHours } from '@console/shared/utils'
 
 export function EditDeploymentRule() {
   const { deploymentRuleId = '', organizationId = '', projectId = '' } = useParams()

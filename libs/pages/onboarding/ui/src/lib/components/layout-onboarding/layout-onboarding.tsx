@@ -1,4 +1,4 @@
-import { Route } from '@console/shared/utils'
+import { Route } from '@console/shared/router'
 import { Navbar } from '@console/shared/ui'
 import OnboardingRightContent from '../onboarding-right-content/onboarding-right-content'
 

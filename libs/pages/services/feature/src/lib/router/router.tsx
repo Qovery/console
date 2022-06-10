@@ -1,4 +1,4 @@
-import { SERVICES_GENERAL_URL, Route, SERVICES_DEPLOYMENTS_URL } from '@console/shared/utils'
+import { SERVICES_GENERAL_URL, Route, SERVICES_DEPLOYMENTS_URL } from '@console/shared/router'
 import Deployments from '../components/deployments/deployments'
 import General from '../components/general/general'
 

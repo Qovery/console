@@ -23,7 +23,7 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
-} from '@console/shared/utils'
+} from '@console/shared/router'
 import { Environment, StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'

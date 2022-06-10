@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { postDeploymentRules } from '@console/domains/projects'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/utils'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { CreateDeploymentRulePage } from '@console/pages/environments/ui'
 import { Value } from '@console/shared/interfaces'
 

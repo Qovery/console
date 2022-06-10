@@ -2,7 +2,9 @@ import { useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { StepProject } from '@console/pages/onboarding/ui'
-import { ONBOARDING_PRICING_URL, ONBOARDING_URL, useAuth, useDocumentTitle } from '@console/shared/utils'
+import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/router'
+import { useAuth } from '@console/shared/auth'
+import { useDocumentTitle } from '@console/shared/utils'
 import { ContextOnboarding } from '../container/container'
 
 export function OnboardingProject() {

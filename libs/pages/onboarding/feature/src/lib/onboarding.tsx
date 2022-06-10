@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Route, Routes, useNavigate, useParams } from 'react-router'
 import { useUser } from '@console/domains/user'
-import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/router'
 import { LoadingScreen } from '@console/shared/ui'
 import { Container } from './components/container/container'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from './router/router'
