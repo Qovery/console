@@ -1,7 +1,7 @@
 import { environmentFactoryMock } from '@console/domains/environment'
 import { render } from '__tests__/utils/setup-jest'
 
-import GeneralPage, { GeneralProps } from './general'
+import { GeneralPage, GeneralProps } from './general'
 
 let props: GeneralProps
 
