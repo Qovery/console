@@ -89,12 +89,9 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
           <Skeleton show={isLoading} width={120} height={20}>
             <div className="flex items-center">
               <div className="w-8 text-center">
-                <Icon
-                  name={data.type ? data.type : 'APPLICATION'}
-                  className={data.type === 'APPLICATION' ? 'w-7 h-7' : 'w-5 h-5'}
-                />
+                <Icon name={data.type ? data.type : 'APPLICATION'} className="w-5 h-5" />
               </div>
-              <p className="text-xs text-text-600 text-medium">{data.name}</p>
+              <p className="text-xs text-text-600 font-medium">{data.name}</p>
             </div>
           </Skeleton>
         </div>

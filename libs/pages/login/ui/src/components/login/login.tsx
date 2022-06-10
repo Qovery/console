@@ -12,7 +12,7 @@ export function Login(props: ILoginProps) {
   const { onClickAuthLogin, githubType, gitlabType, bitbucketType } = props
 
   return (
-    <div className="flex h-full max-w-screen-2xl ml-auto mr-auto">
+    <div className="flex h-full max-w-screen-2xl ml-auto mr-auto bg-white">
       <div className="flex-[2_1_0%] px-4 md:px-20">
         <div className="max-w-lg mt-28 mx-auto">
           <h1 className="h3 text-text-700 mb-3">Welcome to Qovery</h1>
