@@ -1,8 +1,8 @@
 import { applicationFactoryMock } from '@console/domains/application'
 import { render } from '__tests__/utils/setup-jest'
-import GeneralPage, { GeneralPageProps } from './general'
+import { GeneralPage, GeneralProps } from './general'
 
-let props: GeneralPageProps
+let props: GeneralProps
 
 beforeEach(() => {
   props = {
@@ -22,7 +22,7 @@ beforeEach(() => {
   }
 })
 
-describe('GeneralPage', () => {
+describe('General', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<GeneralPage {...props} />)
     expect(baseElement).toBeTruthy()
