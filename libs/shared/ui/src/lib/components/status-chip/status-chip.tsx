@@ -58,10 +58,9 @@ export function StatusChip(props: StatusChipProps) {
   function showErrorIcon(): boolean {
     switch (status) {
       case StateEnum.DEPLOYMENT_ERROR:
-        return true
       case StateEnum.STOP_ERROR:
-        return true
       case StateEnum.DELETE_ERROR:
+      case RunningStatus.ERROR:
         return true
       default:
         return false

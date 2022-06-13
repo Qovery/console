@@ -8,7 +8,6 @@ import {
 } from '@reduxjs/toolkit'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
-import { EnvironmentEntity, EnvironmentsState } from '@console/shared/interfaces'
 import {
   DeploymentHistoryEnvironment,
   Environment,
@@ -16,7 +15,6 @@ import {
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
