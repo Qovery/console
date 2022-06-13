@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useAuth } from '@console/shared/auth'
 
 export interface RunningStatusWebsocketProps {
@@ -12,10 +12,10 @@ export function useRunningStatusWebsocket() {
   const [websocketsUrl, setWebsocketsUrl] = useState<string[]>([])
   const { getAccessTokenSilently } = useAuth()
 
-  const closeSockets = (): void => {
+  const closeSockets = useCallback((): void => {
     setWebsockets([])
     setWebsocketsUrl([])
-  }
+  }, [])
 
   const openWebSockets = async (organizationId: string, clusterIds: string[]): Promise<string[]> => {
     clusterIds.forEach((clusterId) => {

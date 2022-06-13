@@ -1,29 +1,30 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@console/store/data'
-import { Cluster } from 'qovery-typescript-axios'
-import { selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { useRunningStatusWebsocket } from '@console/shared/utils'
 import { useParams } from 'react-router-dom'
 import { ClusterWebSocket } from '../cluster-web-socket/cluster-web-socket'
+import { selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 
 export function WebsocketContainer() {
   const { organizationId = '' } = useParams()
-  const clusters = useSelector<RootState, Cluster[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, organizationId)
-  )
+
   const { openWebSockets, closeSockets, websocketsUrl } = useRunningStatusWebsocket()
+
+  // const clusters = useSelector<RootState, Cluster[]>(selectClustersEntitiesByOrganizationIdMemoized(organizationId))
+  // const clusters = useSelector<RootState, Cluster[]>(selectAllCluster)
+  const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
 
   useEffect(() => {
     closeSockets()
-  }, [organizationId])
+  }, [organizationId, closeSockets])
 
   useEffect(() => {
     openWebSockets(
       organizationId,
       clusters.map((cluster) => cluster.id)
-    )
-  }, [organizationId, clusters, openWebSockets])
+    ).then()
+  }, [organizationId, clusters])
 
   return (
     <div>
