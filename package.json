@@ -18,7 +18,7 @@
     "@nrwl/cypress": "14.2.4",
     "@nrwl/devkit": "14.0.3",
     "@nrwl/eslint-plugin-nx": "13.9.6",
-    "@nrwl/linter": "13.9.6",
+    "@nrwl/linter": "14.1.9",
     "@nrwl/nx-cloud": "13.2.2",
     "@nrwl/storybook": "14.1.7",
     "@nrwl/tao": "13.8.5",
