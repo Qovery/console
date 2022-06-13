@@ -1903,7 +1903,7 @@
     graceful-fs "^4.2.9"
     source-map "^0.6.0"
 
-"@jest/test-result@27.2.2", "@jest/test-result@^27.2.2":
+"@jest/test-result@27.2.2":
   version "27.2.2"
   resolved "https://registry.npmjs.org/@jest/test-result/-/test-result-27.2.2.tgz"
   integrity sha512-yENoDEoWlEFI7l5z7UYyJb/y5Q8RqbPd4neAVhKr6l+vVaQOPKf8V/IseSMJI9+urDUIxgssA7RGNyCRhGjZvw==
@@ -1913,7 +1913,7 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     collect-v8-coverage "^1.0.0"
 
-"@jest/test-result@27.5.1", "@jest/test-result@^27.5.1":
+"@jest/test-result@27.5.1", "@jest/test-result@^27.2.2", "@jest/test-result@^27.5.1":
   version "27.5.1"
   resolved "https://registry.npmjs.org/@jest/test-result/-/test-result-27.5.1.tgz"
   integrity sha512-EW35l2RYFUcUQxFJz5Cv5MTOxlJIQs4I7gxzi2zVU7PJhOwfYq1MdC5nhSmYjX1gmMmLPvB3sIaC+BkcHRBfag==
@@ -12862,7 +12862,7 @@ jest-resolve-dependencies@^27.5.1:
     jest-regex-util "^27.5.1"
     jest-snapshot "^27.5.1"
 
-jest-resolve@27.2.2, jest-resolve@^27.2.2:
+jest-resolve@27.2.2:
   version "27.2.2"
   resolved "https://registry.npmjs.org/jest-resolve/-/jest-resolve-27.2.2.tgz"
   integrity sha512-tfbHcBs/hJTb3fPQ/3hLWR+TsLNTzzK98TU+zIAsrL9nNzWfWROwopUOmiSUqmHMZW5t9au/433kSF2/Af+tTw==
@@ -12878,7 +12878,7 @@ jest-resolve@27.2.2, jest-resolve@^27.2.2:
     resolve "^1.20.0"
     slash "^3.0.0"
 
-jest-resolve@27.5.1, jest-resolve@^27.5.1:
+jest-resolve@27.5.1, jest-resolve@^27.2.2, jest-resolve@^27.5.1:
   version "27.5.1"
   resolved "https://registry.npmjs.org/jest-resolve/-/jest-resolve-27.5.1.tgz"
   integrity sha512-FFDy8/9E6CV83IMbDpcjOhumAQPDyETnU2KZ1O98DwTnz8AOBsW/Xv3GySr1mOZdItLR+zDZ7I/UdTFbgSOVCw==
@@ -12998,7 +12998,7 @@ jest-snapshot@^27.5.1:
     pretty-format "^27.5.1"
     semver "^7.3.2"
 
-jest-util@27.2.0, jest-util@^27.0.0, jest-util@^27.2.0:
+jest-util@27.2.0:
   version "27.2.0"
   resolved "https://registry.npmjs.org/jest-util/-/jest-util-27.2.0.tgz"
   integrity sha512-T5ZJCNeFpqcLBpx+Hl9r9KoxBCUqeWlJ1Htli+vryigZVJ1vuLB9j35grEBASp4R13KFkV7jM52bBGnArpJN6A==
@@ -13010,7 +13010,7 @@ jest-util@27.2.0, jest-util@^27.0.0, jest-util@^27.2.0:
     is-ci "^3.0.0"
     picomatch "^2.2.3"
 
-jest-util@27.5.1, jest-util@^27.5.1:
+jest-util@27.5.1, jest-util@^27.0.0, jest-util@^27.2.0, jest-util@^27.5.1:
   version "27.5.1"
   resolved "https://registry.npmjs.org/jest-util/-/jest-util-27.5.1.tgz"
   integrity sha512-Kv2o/8jNvX1MQ0KGtw480E/w4fBCDOnH6+6DmeKi6LZUIlKA5kwY0YNdlzaWTiVgxqAqik11QyxDOKk543aKXw==
