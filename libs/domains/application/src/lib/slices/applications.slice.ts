@@ -8,10 +8,12 @@ import {
 } from '@reduxjs/toolkit'
 import {
   Application,
+  ApplicationDeploymentHistoryApi,
   ApplicationMainCallsApi,
   ApplicationMetricsApi,
   ApplicationsApi,
   Commit,
+  DeploymentHistoryApplication,
   Instance,
   Link,
   Status,
@@ -26,6 +28,7 @@ export const applicationsAdapter = createEntityAdapter<ApplicationEntity>()
 
 const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
+const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const applicationMetricsApi = new ApplicationMetricsApi()
 
 export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
@@ -86,6 +89,14 @@ export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationI
   async (data) => {
     const response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
     return response.data.results as Commit[]
+  }
+)
+
+export const fetchApplicationDeployments = createAsyncThunk<DeploymentHistoryApplication[], { applicationId: string }>(
+  'application/deployments',
+  async (data) => {
+    const response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
+    return response.data.results as DeploymentHistoryApplication[]
   }
 )
 
@@ -292,6 +303,42 @@ export const applicationsSlice = createSlice({
           },
         }
         applicationsAdapter.updateOne(state, update)
+      })
+      // get application deployment history
+      .addCase(fetchApplicationDeployments.pending, (state: ApplicationsState, action) => {
+        const update = {
+          id: action.meta.arg.applicationId,
+          changes: {
+            deployments: {
+              ...state.entities[action.meta.arg.applicationId]?.deployments,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update as Update<Application>)
+      })
+      .addCase(fetchApplicationDeployments.fulfilled, (state: ApplicationsState, action) => {
+        const update = {
+          id: action.meta.arg.applicationId,
+          changes: {
+            deployments: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update as Update<Application>)
+      })
+      .addCase(fetchApplicationDeployments.rejected, (state: ApplicationsState, action) => {
+        const update = {
+          id: action.meta.arg.applicationId,
+          changes: {
+            deployments: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update as Update<Application>)
       })
   },
 })
