@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import useAuth from '../../http/use-auth/use-auth'
+import { useAuth } from '@console/shared/auth'
 
 export interface RunningStatusWebsocketProps {
   organizationId: string

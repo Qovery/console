@@ -24,7 +24,7 @@ import {
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
 } from '@console/shared/router'
-import { Environment, StateEnum } from 'qovery-typescript-axios'
+import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
 
@@ -151,6 +151,11 @@ export function Container(props: ContainerProps) {
         >
           <StatusChip
             status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+            appendTooltipMessage={
+              application?.running_status?.state === RunningStatus.ERROR
+                ? application.running_status.pods[0]?.state_message
+                : ''
+            }
           />
         </Skeleton>
       ),

@@ -1,4 +1,4 @@
-import { IconEnum, ServicesEnum, RunningStatus } from '@console/shared/enums'
+import { IconEnum, RunningStatus, ServicesEnum } from '@console/shared/enums'
 import {
   Avatar,
   AvatarStyle,
@@ -79,11 +79,17 @@ export function TableRowServices(props: TableRowServicesProps) {
               {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
                 <StatusChip status={data.status && data.status.state} />
               ) : (
-                <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
+                <StatusChip
+                  status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED}
+                  appendTooltipMessage={
+                    data?.running_status?.state === RunningStatus.ERROR
+                      ? data.running_status.pods[0]?.state_message
+                      : ''
+                  }
+                />
               )}
             </Skeleton>
           )}
-
           <Skeleton show={isLoading} width={16} height={16}>
             <div className="ml-2 mr-2">
               <Icon name={type === ServicesEnum.APPLICATION ? IconEnum.APPLICATION : IconEnum.DATABASE} width="20" />
