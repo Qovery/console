@@ -59,19 +59,11 @@ export const getClusterState = (rootState: RootState): ClustersState => rootStat
 
 export const selectAllCluster = createSelector(getClusterState, selectAll)
 
-export const selectClustersEntitiesByOrganizationId = (state: RootState, organizationId: string): Cluster[] => {
-  const clusterState = getClusterState(state)
-  return getEntitiesByIds<Cluster>(clusterState.entities, clusterState?.joinOrganizationClusters[organizationId])
-}
-
-// export const selectClustersEntitiesByOrganizationIdMemoized = (organizationId: string) =>
-//   createSelector(
-//     (state: RootState) => {
-//       return getClusterState(state)
-//     },
-//     (clusterState): Cluster[] => {
-//       return getEntitiesByIds<Cluster>(clusterState.entities, clusterState?.joinOrganizationClusters[organizationId])
-//     }
-//   )
+export const selectClustersEntitiesByOrganizationId = createSelector(
+  [getClusterState, (state, organizationId: string) => organizationId],
+  (items, organizationId) => {
+    return getEntitiesByIds<Cluster>(items.entities, items?.joinOrganizationClusters[organizationId])
+  }
+)
 
 export const selectClusterEntities = createSelector(getClusterState, selectEntities)

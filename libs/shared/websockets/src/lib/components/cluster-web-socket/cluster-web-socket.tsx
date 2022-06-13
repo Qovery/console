@@ -1,13 +1,12 @@
 import useWebSocket from 'react-use-websocket'
-import { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch } from '@console/store/data'
+import { useCallback, useEffect } from 'react'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@console/store/data'
 import { applicationsActions, applicationsLoadingStatus } from '@console/domains/application'
 import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
 import {
   environmentsActions,
   environmentsLoadingStatus,
-  selectEnvironmentsEntitiesByClusterId,
   selectEnvironmentsIdByClusterId,
 } from '@console/domains/environment'
 import { databasesActions, databasesLoadingStatus } from '@console/domains/database'
@@ -18,8 +17,10 @@ export interface ClusterWebSocketProps {
 
 export function ClusterWebSocket(props: ClusterWebSocketProps) {
   const { url } = props
+  const realUrl = new URL(url)
+  const clusterId = realUrl.searchParams.get('cluster') || ''
   const dispatch = useDispatch<AppDispatch>()
-  const [clusterId, setClusterId] = useState('')
+  //const [clusterId, setClusterId] = useState('')
   const appsLoadingStatus = useSelector(applicationsLoadingStatus)
   const dbsLoadingStatus = useSelector(databasesLoadingStatus)
   const envsLoadingStatus = useSelector(environmentsLoadingStatus)
@@ -29,8 +30,11 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
     shouldReconnect: (closeEvent) => false,
     share: true,
   })
-  const environmentsAssociatedToCluster = useSelector(selectEnvironmentsEntitiesByClusterId(clusterId))
-  const environmentsIdAssociatedToCluster = useSelector(selectEnvironmentsIdByClusterId(clusterId))
+
+  const environmentsIdAssociatedToCluster = useSelector(
+    (state: RootState) => selectEnvironmentsIdByClusterId(state, clusterId),
+    shallowEqual
+  )
 
   const storeEnvironmentRunningStatus = useCallback(
     (message: { environments: WebsocketRunningStatusInterface[] }, clusterId: string): void => {
@@ -80,13 +84,6 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
   )
 
   useEffect(() => {
-    if (url) {
-      const realUrl = new URL(url)
-      setClusterId(realUrl.searchParams.get('cluster') || '')
-    }
-  }, [])
-
-  useEffect(() => {
     if (lastMessage !== null) {
       const message = JSON.parse(lastMessage.data) as { environments: WebsocketRunningStatusInterface[] }
       storeEnvironmentRunningStatus(message, clusterId)
@@ -99,7 +96,18 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
         storeDatabasesRunningStatus(message, environmentsIdAssociatedToCluster)
       }
     }
-  }, [dispatch, lastMessage, appsLoadingStatus, dbsLoadingStatus, envsLoadingStatus, clusterId])
+  }, [
+    dispatch,
+    lastMessage,
+    appsLoadingStatus,
+    dbsLoadingStatus,
+    envsLoadingStatus,
+    clusterId,
+    storeEnvironmentRunningStatus,
+    storeApplicationsRunningStatus,
+    storeDatabasesRunningStatus,
+    environmentsIdAssociatedToCluster,
+  ])
 
   return <div></div>
 }
