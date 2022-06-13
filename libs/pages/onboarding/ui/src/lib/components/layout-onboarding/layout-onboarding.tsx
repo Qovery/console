@@ -1,5 +1,6 @@
 import { Route } from '@console/shared/router'
 import { Navbar } from '@console/shared/ui'
+import { useEffect } from 'react'
 import OnboardingRightContent from '../onboarding-right-content/onboarding-right-content'
 
 export interface LayoutOnboardingProps {
@@ -14,6 +15,13 @@ export interface LayoutOnboardingProps {
 
 export function LayoutOnboarding(props: LayoutOnboardingProps) {
   const { children, currentStepPosition, stepsNumber, getProgressPercentValue, step, catchline } = props
+
+  useEffect(() => {
+    document.body.classList.add('bg-white')
+    return () => {
+      document.body.classList.remove('bg-white')
+    }
+  }, [])
 
   return (
     <main className="h-screen">
