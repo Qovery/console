@@ -1,0 +1,23 @@
+{
+  "root": "libs/pages/logs/infra/ui",
+  "sourceRoot": "libs/pages/logs/infra/ui/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/pages/logs/infra/ui/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/pages/logs/infra/ui"],
+      "options": {
+        "jestConfig": "libs/pages/logs/infra/ui/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

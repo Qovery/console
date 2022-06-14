@@ -12,22 +12,24 @@ export interface LayoutPageProps {
   applications?: Application[]
   application?: Application
   databases?: Database[]
+  darkMode?: boolean
 }
 
 export function LayoutPage(props: LayoutPageProps) {
-  const { children, authLogout, user, organizations, projects, environments, applications, databases } = props
+  const { children, authLogout, user, organizations, projects, environments, applications, databases, darkMode } = props
 
   return (
-    <main className="bg-element-light-lighter-400">
-      <Navigation authLogout={authLogout} firstName={user?.first_name} lastName={user?.last_name} />
+    <main className={`${darkMode ? 'bg-element-light-darker-600' : 'bg-element-light-lighter-400'}`}>
+      <Navigation darkMode={darkMode} authLogout={authLogout} firstName={user?.first_name} lastName={user?.last_name} />
       <TopBar
         organizations={organizations}
         projects={projects}
         environments={environments}
         applications={applications}
         databases={databases}
+        darkMode={darkMode}
       />
-      <div className="p-2 mt-14 ml-14 h-full flex flex-col">{children}</div>
+      <div className="p-2 mt-14 ml-16 h-full flex flex-col">{children}</div>
     </main>
   )
 }

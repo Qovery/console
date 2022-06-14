@@ -83,13 +83,21 @@
 
 // icon
 .btn-icon {
-  @apply w-8 h-8 p-0 min-w-0 relative;
+  @apply w-10 h-10 p-0 min-w-0 relative;
+
+  [class^='icon-'] {
+    @apply text-sm;
+  }
 
   &.btn-icon--big {
-    @apply w-9 h-9;
+    @apply w-11 h-11;
+
+    [class^='icon-'] {
+      @apply text-base;
+    }
   }
   &.btn.is-active {
-    @apply border-brand-400 bg-brand-400 text-white hover:text-white hover:bg-brand-400;
+    @apply border-brand-500 bg-brand-500 text-white hover:text-white hover:bg-brand-600;
   }
 }
 
