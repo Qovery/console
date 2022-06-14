@@ -83,16 +83,11 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
+              data={currentData as DeploymentService}
               key={index}
               dataHead={tableHead}
               isLoading={isLoading}
               startGroup={currentData?.execution_id !== data[index - 1]?.execution_id && index !== 0 ? true : false}
-              execution_id={currentData.execution_id || ''}
-              status={currentData.status}
-              service={{ id: currentData.id, type: currentData.type, name: currentData.name }}
-              created_at={currentData.created_at}
-              updated_at={currentData.updated_at}
-              commit={currentData?.commit}
             />
           ))}
         </div>
