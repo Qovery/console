@@ -81,7 +81,7 @@ export function MenuGroup(props: MenuGroupProps) {
         </p>
       )}
       {currentItems.length > 0 && (
-        <div style={paddingStyle}>
+        <div style={paddingStyle} className="overflow-y-auto max-h-80">
           {currentItems.map((item, index) => (
             <MenuItem
               key={index}
@@ -95,6 +95,7 @@ export function MenuGroup(props: MenuGroupProps) {
               className={item.className}
               textClassName={item.textClassName}
               isActive={item.isActive}
+              truncateLimit={item?.truncateLimit}
             />
           ))}
         </div>
