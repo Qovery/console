@@ -4,29 +4,46 @@ import {
   Avatar,
   AvatarStyle,
   ButtonIconAction,
-  Icon,
   Skeleton,
   StatusChip,
-  TableHeadProps,
   TableRow,
   TagCommit,
   Tooltip,
 } from '@console/shared/ui'
 import { timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Commit, DeploymentHistoryApplication, DeploymentHistoryDatabase, StateEnum } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { useParams } from 'react-router'
+import { Link } from 'react-router-dom'
+import Icon from '../../icon/icon'
+import { TableHeadProps } from '../table'
 
-export interface TableRowDeploymentsProps {
-  data: DeploymentService
+export interface TableRowDeploymentProps {
   dataHead: TableHeadProps[]
   columnsWidth?: string
   isLoading?: boolean
   startGroup?: boolean
+  execution_id: string
+  status?: StateEnum
+  service?: { name?: string; type?: 'APPLICATION' | 'DATABASE'; id?: string }
+  created_at?: string
+  updated_at?: string
+  commit?: Commit
 }
 
-export function TableRowDeployments(props: TableRowDeploymentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, startGroup } = props
+export function TableRowDeployment(props: TableRowDeploymentProps) {
+  const {
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    isLoading,
+    startGroup,
+    execution_id,
+    status,
+    service,
+    created_at,
+    updated_at,
+    commit,
+  } = props
 
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
@@ -38,7 +55,7 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
       onClick: () =>
         window
           .open(
-            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${data.id}/summary?fullscreenLogs=true`,
+            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${service?.id}/summary?fullscreenLogs=true`,
             '_blank'
           )
           ?.focus(),
@@ -51,7 +68,7 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
     setHoverId(true)
-    data.execution_id && navigator.clipboard.writeText(data.execution_id)
+    navigator.clipboard.writeText(execution_id)
     setCopy(true)
     setTimeout(() => {
       setCopy(false)
@@ -82,7 +99,7 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
                     <span>Copy ID</span>
                   </span>
                 )}
-                {!copy && data.execution_id && !hoverId && <span>{trimId(data.execution_id)}</span>}
+                {!copy && !hoverId && <span>{trimId(execution_id)}</span>}
                 {copy && (
                   <div className="inline-flex gap-1.5">
                     <Icon name="icon-solid-copy" />
@@ -95,48 +112,52 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
         </div>
         <div className="flex justify-start items-center px-4 gap-2">
           <Skeleton show={isLoading} width={20} height={20} rounded>
-            <StatusChip status={data.status} />
+            <StatusChip status={status} />
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
             <p className="text-xs text-text-400 font-medium">
-              {upperCaseFirstLetter(data.status?.replace('_', ' ').toLowerCase())}
+              {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
             </p>
           </Skeleton>
         </div>
-        <div className="px-3">
-          <Skeleton show={isLoading} width={120} height={20}>
-            <Link to={APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_GENERAL_URL}>
-              <div className="flex items-center">
-                <div className="w-8 text-center">
-                  <Icon name={data.type ? data.type : 'APPLICATION'} className="w-5 h-5" />
+        {service && service?.name && (
+          <div className="px-3">
+            <Skeleton show={isLoading} width={120} height={20}>
+              <Link
+                to={APPLICATION_URL(organizationId, projectId, environmentId, service.id) + APPLICATION_GENERAL_URL}
+              >
+                <div className="flex items-center">
+                  <div className="w-8 text-center">
+                    <Icon name={service.type ? service.type : 'APPLICATION'} className="w-5 h-5" />
+                  </div>
+                  <p className="text-xs text-text-600 font-medium">{service.name}</p>
                 </div>
-                <p className="text-xs text-text-600 font-medium">{data.name}</p>
-              </div>
-            </Link>
-          </Skeleton>
-        </div>
+              </Link>
+            </Skeleton>
+          </div>
+        )}
         <div className="flex justify-start items-center px-1 gap-2">
           <Skeleton show={isLoading} width={80} height={20}>
             <>
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <span className="text-xs text-text-300 mx-3 font-medium">
-                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at || ''))} ago
+                  {timeAgo(updated_at ? new Date(updated_at) : new Date(created_at || ''))} ago
                 </span>
               </p>
-              {data.name && <ButtonIconAction actions={buttonActionsDefault} />}
+              {service?.name && <ButtonIconAction actions={buttonActionsDefault} />}
             </>
           </Skeleton>
         </div>
         <div className="flex items-center px-4 gap-2 border-element-light-lighter-400 border-l h-full">
-          {data?.commit && (
+          {commit && (
             <>
               <Avatar
-                firstName={data?.commit?.author_name}
-                url={data?.commit?.author_avatar_url}
+                firstName={commit?.author_name}
+                url={commit?.author_avatar_url}
                 style={AvatarStyle.STROKED}
                 size={28}
               />
-              <TagCommit commitId={data?.commit?.git_commit_id} />
+              <TagCommit commitId={commit?.git_commit_id} />
             </>
           )}
         </div>
@@ -145,4 +166,4 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
   )
 }
 
-export default TableRowDeployments
+export default TableRowDeployment
