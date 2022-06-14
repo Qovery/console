@@ -13,6 +13,7 @@ import {
   OVERVIEW_URL,
   ProtectedRoute,
   SETTINGS_URL,
+  INFRA_LOGS_URL,
 } from '@console/shared/router'
 import { useAuth } from '@console/shared/auth'
 import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
@@ -24,6 +25,7 @@ import { EnvironmentsPage } from '@console/pages/environments/feature'
 import { ServicesPage } from '@console/pages/services/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { ApplicationPage } from '@console/pages/application/feature'
+import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import { Layout } from '@console/shared/layout'
 import { useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
@@ -86,6 +88,13 @@ export const ROUTER = [
     component: <ApplicationPage />,
     protected: true,
     layout: true,
+  },
+  {
+    path: `${INFRA_LOGS_URL()}`,
+    component: <InfraLogsPage />,
+    protected: true,
+    layout: true,
+    darkMode: true,
   },
 ]
 
@@ -150,10 +159,10 @@ export function App() {
                 path={route.path}
                 element={
                   !route.protected ? (
-                    <Layout>{route.component}</Layout>
+                    <Layout darkMode={route.darkMode}>{route.component}</Layout>
                   ) : (
                     <ProtectedRoute>
-                      <Layout>{route.component}</Layout>
+                      <Layout darkMode={route.darkMode}>{route.component}</Layout>
                     </ProtectedRoute>
                   )
                 }

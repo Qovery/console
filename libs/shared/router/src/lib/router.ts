@@ -9,7 +9,7 @@ export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':p
   `/organization/${organizationId}/project/${projectId}/overview`
 export const LOGIN_URL = '/login'
 export const SETTINGS_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/settings`
-
+export const INFRA_LOGS_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/logs`
 export interface Route {
   component: React.ReactElement
   path: string
