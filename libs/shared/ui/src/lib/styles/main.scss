@@ -26,6 +26,7 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: theme('colors.element.light.lighter.400');
 
   main:not(.h-screen) {
     height: calc(100vh - 56px);

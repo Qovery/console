@@ -8,13 +8,9 @@ import {
   OrganizationPrice,
   useOrganization,
 } from '@console/domains/organization'
-import {
-  ONBOARDING_PRICING_URL,
-  ONBOARDING_PROJECT_URL,
-  ONBOARDING_URL,
-  useAuth,
-  useDocumentTitle,
-} from '@console/shared/utils'
+import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/router'
+import { useAuth } from '@console/shared/auth'
+import { useDocumentTitle } from '@console/shared/utils'
 import { useProjects } from '@console/domains/projects'
 import { ContextOnboarding } from '../container/container'
 import { Organization, PlanEnum } from 'qovery-typescript-axios'

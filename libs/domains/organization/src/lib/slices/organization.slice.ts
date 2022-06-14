@@ -10,16 +10,16 @@ const organizationMainCalls = new OrganizationMainCallsApi()
 export const organizationAdapter = createEntityAdapter<Organization>()
 
 export const fetchOrganization = createAsyncThunk('organization/fetch', async () => {
-  const response = await organizationMainCalls.listOrganization().then((response) => response.data)
-  return response.results as Organization[]
+  const response = await organizationMainCalls.listOrganization()
+  return response.data.results as Organization[]
 })
 
 export const postOrganization = createAsyncThunk<Organization, OrganizationRequest>(
   'organization/post',
   async (data: OrganizationRequest, { rejectWithValue }) => {
     try {
-      const result = await organizationMainCalls.createOrganization(data).then((response) => response.data)
-      return result
+      const result = await organizationMainCalls.createOrganization(data)
+      return result.data
     } catch (err) {
       return rejectWithValue(err)
     }

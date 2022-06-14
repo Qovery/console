@@ -1,5 +1,5 @@
 import { ButtonIcon, ButtonIconStyle, ModalContentProps } from '@console/shared/ui'
-import { SETTINGS_URL } from '@console/shared/utils'
+import { SETTINGS_URL } from '@console/shared/router'
 import { useParams } from 'react-router'
 import Avatar from '../../avatar/avatar'
 import { Button, ButtonStyle } from '../../buttons/button/button'

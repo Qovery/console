@@ -7,13 +7,19 @@ import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { postDeploymentRules } from '@console/domains/projects'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/utils'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { CreateDeploymentRulePage } from '@console/pages/environments/ui'
 import { Value } from '@console/shared/interfaces'
 
 export function CreateDeploymentRule() {
   const { organizationId = '', projectId = '' } = useParams()
-  const listHelpfulLinks: BaseLink[] = [{ link: '#', linkLabel: 'How to configure my application', external: true }]
+  const listHelpfulLinks: BaseLink[] = [
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
+      linkLabel: 'How to configure my deployment rule',
+      external: true,
+    },
+  ]
   const { control, handleSubmit, setValue } = useForm()
 
   const dispatch = useDispatch<AppDispatch>()

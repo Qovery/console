@@ -1,22 +1,27 @@
-import { Application, Environment, Organization, Project } from 'qovery-typescript-axios'
+import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { Icon } from '@console/shared/ui'
+import { Icon, MenuItemProps, StatusChip } from '@console/shared/ui'
 import {
-  APPLICATIONS_GENERAL_URL,
-  APPLICATIONS_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
-} from '@console/shared/utils'
+  APPLICATION_URL,
+  APPLICATION_GENERAL_URL,
+} from '@console/shared/router'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
+import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
+import { IconEnum } from '@console/shared/enums'
 
 export interface BreadcrumbProps {
   organizations: Organization[]
   projects?: Project[]
   environments?: Environment[]
   applications?: Application[]
+  databases?: Database[]
 }
 
 export function Breadcrumb(props: BreadcrumbProps) {
@@ -24,7 +29,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const { organizationId, projectId, environmentId, applicationId } = useParams()
   const { pathname } = useLocation()
 
-  const currentApplicationName = applications?.find((application) => applicationId === application.id)?.name
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
 
   const organizationsMenu = [
@@ -37,12 +41,19 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link: {
               url: ORGANIZATION_URL(organization.id),
             },
-            contentLeft:
-              organizationId === organization.id ? (
-                <Icon name="icon-solid-check" className="text-sm text-success-400" />
-              ) : (
-                ''
-              ),
+            contentLeft: (
+              <Icon
+                name="icon-solid-check"
+                className={`text-sm ${organizationId === organization.id ? 'text-success-400' : 'text-transparent'}`}
+              />
+            ),
+            contentRight: (
+              <>
+                {organization.logo_url && (
+                  <img className="w-4 h-auto" src={organization.logo_url} alt={organization.name} />
+                )}
+              </>
+            ),
           }))
         : [],
     },
@@ -58,8 +69,12 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link: {
               url: OVERVIEW_URL(project.organization?.id, project.id),
             },
-            contentLeft:
-              projectId === project.id ? <Icon name="icon-solid-check" className="text-sm text-success-400" /> : '',
+            contentLeft: (
+              <Icon
+                name="icon-solid-check"
+                className={`text-sm ${projectId === project.id ? 'text-success-400' : 'text-transparent'}`}
+              />
+            ),
           }))
         : [],
     },
@@ -70,18 +85,53 @@ export function Breadcrumb(props: BreadcrumbProps) {
       title: 'Environments',
       search: true,
       items: environments
-        ? environments?.map((environment: Environment) => ({
+        ? environments?.map((environment: EnvironmentEntity) => ({
             name: environment.name,
             link: {
-              url: `${APPLICATIONS_URL(organizationId, projectId, environment.id)}${APPLICATIONS_GENERAL_URL}`,
+              url: `${SERVICES_URL(organizationId, projectId, environment.id)}${SERVICES_GENERAL_URL}`,
             },
-            contentLeft:
-              environmentId === environment.id ? (
-                <Icon name="icon-solid-check" className="text-sm text-success-400" />
-              ) : (
-                ''
-              ),
+            contentLeft: (
+              <div className="flex items-center">
+                <StatusChip status={environment.status?.state} />
+                <div className="ml-3 mt-0.5">
+                  {environment.cloud_provider.provider && <Icon name={`${environment.cloud_provider.provider}_GRAY`} />}
+                </div>
+              </div>
+            ),
+            isActive: environmentId === environment.id,
           }))
+        : [],
+    },
+  ]
+
+  const applicationMenu = [
+    {
+      title: 'Applications',
+      search: true,
+      items: applications
+        ? (applications?.map((application: ApplicationEntity) => ({
+            name: application.name,
+            link: {
+              url: `${APPLICATION_URL(
+                organizationId,
+                projectId,
+                environmentId,
+                application.id
+              )}${APPLICATION_GENERAL_URL}`,
+            },
+            contentLeft: (
+              <div className="flex items-center">
+                <StatusChip status={application.status?.state} />
+                <div className="ml-3 mt-[1px]">
+                  <Icon
+                    name={!(application as ApplicationEntity).build_mode ? IconEnum.APPLICATION : IconEnum.DATABASE}
+                    width="16"
+                  />
+                </div>
+              </div>
+            ),
+            isActive: applicationId === application.id,
+          })) as MenuItemProps[])
         : [],
     },
   ]
@@ -141,7 +191,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                 data={environments}
                 menuItems={environmentMenu}
                 paramId={environmentId}
-                link={APPLICATIONS_URL(organizationId, projectId, environmentId) + APPLICATIONS_GENERAL_URL}
+                link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
               />
             )}
           </div>
@@ -152,7 +202,12 @@ export function Breadcrumb(props: BreadcrumbProps) {
           <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
           <div className="flex items-center">
             {squareContent('S')}
-            <span className="text-sm text-text-500 font-medium">{currentApplicationName}</span>
+            <BreadcrumbItem
+              data={applications}
+              menuItems={applicationMenu}
+              paramId={applicationId}
+              link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
+            />
           </div>
         </>
       )}

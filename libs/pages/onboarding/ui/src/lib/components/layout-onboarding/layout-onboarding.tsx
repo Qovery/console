@@ -1,5 +1,6 @@
-import { Route } from '@console/shared/utils'
+import { Route } from '@console/shared/router'
 import { Navbar } from '@console/shared/ui'
+import { useEffect } from 'react'
 import OnboardingRightContent from '../onboarding-right-content/onboarding-right-content'
 
 export interface LayoutOnboardingProps {
@@ -14,6 +15,13 @@ export interface LayoutOnboardingProps {
 
 export function LayoutOnboarding(props: LayoutOnboardingProps) {
   const { children, currentStepPosition, stepsNumber, getProgressPercentValue, step, catchline } = props
+
+  useEffect(() => {
+    document.body.classList.add('bg-white')
+    return () => {
+      document.body.classList.remove('bg-white')
+    }
+  }, [])
 
   return (
     <main className="h-screen">
@@ -30,7 +38,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
         }
       />
       <div className="flex h-full max-w-screen-2xl ml-auto mr-auto relative">
-        <div className="flex-[2_1_0%] px-4 md:px-24">
+        <div className="flex-[2_1_0%] px-4 md:px-24 bg-white -z-10">
           <div className="max-w-lg mt-36 mx-auto">{children}</div>
         </div>
         <div className="hidden xl:block flex-[1_1_0%] pl-20 bg-element-light-lighter-300 overflow-hidden max-w-2xl -z-10 before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">

@@ -1,4 +1,4 @@
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum, RunningStatus } from '@console/shared/enums'
 import {
   Button,
   ButtonSize,
@@ -23,8 +23,8 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
-} from '@console/shared/utils'
-import { Environment, StateEnum } from 'qovery-typescript-axios'
+} from '@console/shared/router'
+import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
 
@@ -102,11 +102,12 @@ export function Container(props: ContainerProps) {
   const headerActions = (
     <>
       <Skeleton width={150} height={24} show={!application?.status}>
-        <div>
+        <div className="flex">
           {environment && application && application?.status && (
             <StatusMenu
               statusActions={{
                 status: application?.status.state,
+                running_status: application?.running_status?.state || RunningStatus.STOPPED,
                 actions: statusActions,
                 information: {
                   id: application?.id,
@@ -138,7 +139,26 @@ export function Container(props: ContainerProps) {
 
   const tabsItems = [
     {
-      icon: <StatusChip status={StateEnum.READY} />,
+      icon: (
+        <Skeleton
+          show={
+            application?.running_status?.state === RunningStatus.STARTING ||
+            application?.running_status?.state === RunningStatus.STOPPING
+          }
+          width={16}
+          height={16}
+          rounded={true}
+        >
+          <StatusChip
+            status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+            appendTooltipMessage={
+              application?.running_status?.state === RunningStatus.ERROR
+                ? application.running_status.pods[0]?.state_message
+                : ''
+            }
+          />
+        </Skeleton>
+      ),
       name: 'Overview',
       active:
         location.pathname ===

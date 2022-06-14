@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { GeneralPage } from '@console/pages/environments/ui'
 import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,6 +11,7 @@ import {
   postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
   selectEnvironmentsEntitiesByProjectId,
+  fetchEnvironmentsStatus,
 } from '@console/domains/environment'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -21,11 +23,16 @@ export function General() {
 
   const loadingStatus = useSelector(environmentsLoadingStatus)
 
+  const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    const fetchEnvironmentsStatusByInterval = setInterval(() => dispatch(fetchEnvironmentsStatus({ projectId })), 3000)
+    return () => clearInterval(fetchEnvironmentsStatusByInterval)
+  }, [dispatch, projectId])
+
   const environments = useSelector<RootState, EnvironmentEntity[]>((state) =>
     selectEnvironmentsEntitiesByProjectId(state, projectId)
   )
-
-  const dispatch = useDispatch<AppDispatch>()
 
   const actions: StatusMenuActions[] = [
     {
@@ -54,7 +61,7 @@ export function General() {
   const listHelpfulLinks: BaseLink[] = [
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment',
-      linkLabel: 'How to configure my environment',
+      linkLabel: 'How to manage my environment',
       external: true,
     },
   ]

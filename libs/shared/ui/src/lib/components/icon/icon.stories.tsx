@@ -80,11 +80,11 @@ const Template: Story<IconProps> = () => (
       <button onClick={() => copyName(IconEnum.ENVIRONMENT)}>
         <Icon name={IconEnum.ENVIRONMENT} />
       </button>
-      <button onClick={() => copyName(IconEnum.APPLICATIONS)}>
-        <Icon name={IconEnum.APPLICATIONS} />
-      </button>
       <button onClick={() => copyName(IconEnum.APPLICATION)}>
         <Icon name={IconEnum.APPLICATION} />
+      </button>
+      <button onClick={() => copyName(IconEnum.DATABASE)}>
+        <Icon name={IconEnum.DATABASE} />
       </button>
       <button onClick={() => copyName(IconEnum.AWS)}>
         <Icon name={IconEnum.AWS} />
@@ -122,8 +122,8 @@ const Template: Story<IconProps> = () => (
       <button onClick={() => copyName(IconEnum.DOCKER)}>
         <Icon name={IconEnum.DOCKER} width="24" />
       </button>
-      <button onClick={() => copyName(IconEnum.POSTGRE)}>
-        <Icon name={IconEnum.POSTGRE} width="24" />
+      <button onClick={() => copyName(IconEnum.POSTGRESQL)}>
+        <Icon name={IconEnum.POSTGRESQL} width="24" />
       </button>
       <button onClick={() => copyName(IconEnum.REDIS)}>
         <Icon name={IconEnum.REDIS} width="24" />

@@ -14,6 +14,7 @@ import {
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
 import { applications, initialApplicationsState } from '@console/domains/application'
 import { environments, initialEnvironmentsState } from '@console/domains/environment'
+import { databases, initialDatabasesState } from '@console/domains/database'
 
 export const uiReducer = combineReducers({
   user: user,
@@ -31,6 +32,7 @@ export const entitiesReducer = combineReducers({
   project: projectReducer,
   environments: environments,
   applications: applications,
+  databases: databases,
 })
 
 export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
@@ -60,5 +62,6 @@ export const initialRootState = (): RootState => ({
     },
     environments: initialEnvironmentsState,
     applications: initialApplicationsState,
+    databases: initialDatabasesState,
   },
 })

@@ -1,5 +1,4 @@
 {
-  "root": "libs/shared/enums",
   "sourceRoot": "libs/shared/enums/src",
   "projectType": "library",
   "tags": [],
@@ -15,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/shared/enums"],
       "options": {
-        "jestConfig": "libs/shared/enums/jest.config.js",
+        "jestConfig": "libs/shared/enums/jest.config.ts",
         "passWithNoTests": true
       }
     }

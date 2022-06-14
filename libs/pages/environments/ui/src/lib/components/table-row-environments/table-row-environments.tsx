@@ -12,6 +12,7 @@ import {
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
 import { EnvironmentEntity } from '@console/shared/interfaces'
+import { RunningStatus } from '@console/shared/enums'
 
 export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
@@ -45,8 +46,16 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     <TableRow columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
-          <Skeleton show={isLoading} width={16} height={16}>
-            <StatusChip status={data.status && data.status.state} />
+          <Skeleton
+            show={
+              isLoading ||
+              data?.running_status?.state === RunningStatus.STOPPING ||
+              data?.running_status?.state === RunningStatus.STARTING
+            }
+            width={16}
+            height={16}
+          >
+            <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
           </Skeleton>
           <Tooltip
             content={

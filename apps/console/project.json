@@ -1,5 +1,4 @@
 {
-  "root": "apps/console",
   "sourceRoot": "apps/console/src",
   "projectType": "application",
   "targets": {
@@ -88,7 +87,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/apps/console"],
       "options": {
-        "jestConfig": "apps/console/jest.config.js",
+        "jestConfig": "apps/console/jest.config.ts",
         "passWithNoTests": true
       }
     }

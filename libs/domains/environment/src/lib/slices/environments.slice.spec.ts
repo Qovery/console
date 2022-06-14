@@ -5,6 +5,7 @@ describe('environments reducer', () => {
     const expected = environmentsAdapter.getInitialState({
       loadingStatus: 'not loaded',
       loadingEnvironmentStatus: 'not loaded',
+      loadingEnvironmentDeployments: 'not loaded',
       error: null,
       joinProjectEnvironments: {},
     })

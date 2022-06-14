@@ -15,6 +15,7 @@
     "**/*.test.jsx",
     "**/*.spec.jsx",
     "**/*.d.ts",
-    "../ui/src/lib/components/modal/modal-root.spec.tsx"
+    "../ui/src/lib/components/modal/modal-root.spec.tsx",
+    "jest.config.ts"
   ]
 }

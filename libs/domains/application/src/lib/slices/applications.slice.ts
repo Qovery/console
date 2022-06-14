@@ -16,8 +16,8 @@ import {
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
-import { ApplicationEntity, ApplicationsState, LoadingStatus } from '@console/shared/interfaces'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation, shortToLongId } from '@console/shared/utils'
+import { ApplicationEntity, ApplicationsState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
 import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
@@ -31,43 +31,36 @@ const applicationMetricsApi = new ApplicationMetricsApi()
 export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
   'applications/fetch',
   async (data, thunkApi) => {
-    const response = await applicationsApi.listApplication(data.environmentId).then((response) => {
-      return response.data
-    })
+    const response = await applicationsApi.listApplication(data.environmentId)
 
     if (!data.withoutStatus) {
       thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
     }
 
-    return response.results as Application[]
+    return response.data.results as Application[]
   }
 )
 
 export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
-    const response = await applicationsApi
-      .getEnvironmentApplicationStatus(data.environmentId)
-      .then((response: any) => response.data)
-    return response.results as Status[]
+    const response = await applicationsApi.getEnvironmentApplicationStatus(data.environmentId)
+    return response.data.results as Status[]
   }
 )
 
 export const fetchApplication = createAsyncThunk<Application, { applicationId: string }>(
   'application/fetch',
   async (data) => {
-    const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => response.data)
-    return response as Application
+    const response = await applicationMainCallsApi.getApplication(data.applicationId)
+    return response.data as Application
   }
 )
 
 export const removeOneApplication = createAsyncThunk<string, { applicationId: string }>(
   'applications/remove',
   async (data, thunkApi) => {
-    // const response = await applicationMainCallsApi.getApplication(data.applicationId).then((response) => {
-    //   return response.data
-    // })
-
+    // const response = await applicationMainCallsApi.getApplication(data.applicationId)
     return data.applicationId
   }
 )
@@ -75,39 +68,31 @@ export const removeOneApplication = createAsyncThunk<string, { applicationId: st
 export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string }>(
   'application/links',
   async (data) => {
-    const response = await applicationMainCallsApi
-      .listApplicationLinks(data.applicationId)
-      .then((response) => response.data)
-    return response.results as Link[]
+    const response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
+    return response.data.results as Link[]
   }
 )
 
 export const fetchApplicationInstances = createAsyncThunk<Instance[], { applicationId: string }>(
   'application/instances',
   async (data) => {
-    const response = await applicationMetricsApi
-      .getApplicationCurrentInstance(data.applicationId)
-      .then((response) => response.data)
-
-    return response.results as Instance[]
+    const response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
+    return response.data.results as Instance[]
   }
 )
 
 export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationId: string }>(
   'application/commits',
   async (data) => {
-    const response = await applicationMainCallsApi
-      .listApplicationCommit(data.applicationId)
-      .then((response) => response.data)
-
-    return response.results as Commit[]
+    const response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
+    return response.data.results as Commit[]
   }
 )
 
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
-  joinEnvApp: {},
+  joinEnvApplication: {},
 })
 
 export const applicationsSlice = createSlice({
@@ -116,6 +101,44 @@ export const applicationsSlice = createSlice({
   reducers: {
     add: applicationsAdapter.addOne,
     remove: applicationsAdapter.removeOne,
+    updateApplicationsRunningStatus: (
+      state,
+      action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>
+    ) => {
+      // we have to force this reset change because of the way the socket works.
+      // You can have information about an application (eg. if it's stopping)
+      // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
+      const resetChanges: Update<ApplicationEntity>[] = state.ids.map((id) => {
+        // as we can have this dispatch from different websocket, we don't want to reset
+        // and override all the application but only the ones associated to the cluster the websocket is
+        // coming from, more generally from all the environments that are contained in this cluster
+        const envId = state.entities[id]?.environment?.id
+
+        const runningStatusChanges =
+          envId && action.payload.listEnvironmentIdFromCluster.includes(envId)
+            ? undefined
+            : state.entities[id]?.running_status
+        return {
+          id,
+          changes: {
+            running_status: runningStatusChanges,
+          },
+        }
+      })
+      applicationsAdapter.updateMany(state, resetChanges)
+
+      const changes: Update<ApplicationEntity>[] = action.payload.servicesRunningStatus.map((runningStatus) => {
+        const realId = shortToLongId(runningStatus.id, state.ids as string[])
+        return {
+          id: realId,
+          changes: {
+            running_status: runningStatus,
+          },
+        }
+      })
+
+      applicationsAdapter.updateMany(state, changes)
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -125,7 +148,7 @@ export const applicationsSlice = createSlice({
       .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<Application[]>) => {
         applicationsAdapter.upsertMany(state, action.payload)
         action.payload.forEach((app) => {
-          state.joinEnvApp = addOneToManyRelation(app.environment?.id, app.id, { ...state.joinEnvApp })
+          state.joinEnvApplication = addOneToManyRelation(app.environment?.id, app.id, { ...state.joinEnvApplication })
         })
         state.loadingStatus = 'loaded'
       })
@@ -166,7 +189,7 @@ export const applicationsSlice = createSlice({
       })
       // remove application
       .addCase(removeOneApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<string>) => {
-        state.joinEnvApp = removeOneToManyRelation(action.payload, state.joinEnvApp)
+        state.joinEnvApplication = removeOneToManyRelation(action.payload, state.joinEnvApplication)
       })
       .addCase(fetchApplicationLinks.pending, (state: ApplicationsState, action) => {
         const applicationId = action.meta.arg.applicationId
@@ -289,7 +312,7 @@ export const selectApplicationsEntities = createSelector(getApplicationsState, s
 
 export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): ApplicationEntity[] => {
   const appState = getApplicationsState(state)
-  return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApp[environmentId])
+  return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApplication[environmentId])
 }
 
 export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>

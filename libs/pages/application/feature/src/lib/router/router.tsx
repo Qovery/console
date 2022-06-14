@@ -5,7 +5,7 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_VARIABLES_URL,
   Route,
-} from '@console/shared/utils'
+} from '@console/shared/router'
 import General from '../components/general/general'
 import Deployments from '../components/deployments/deployments'
 import Metrics from '../components/metrics/metrics'

@@ -1,6 +1,6 @@
 import { ClustersState } from '@console/shared/interfaces'
 import { RootState } from '@console/store/data'
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { Cluster, ClustersApi } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
@@ -11,8 +11,8 @@ const clusterApi = new ClustersApi()
 export const clusterAdapter = createEntityAdapter<Cluster>()
 
 export const fetchClusters = createAsyncThunk<Cluster[], { organizationId: string }>('cluster/fetch', async (data) => {
-  const response = await clusterApi.listOrganizationCluster(data.organizationId).then((response) => response.data)
-  return response.results as Cluster[]
+  const response = await clusterApi.listOrganizationCluster(data.organizationId)
+  return response.data.results as Cluster[]
 })
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
@@ -59,9 +59,11 @@ export const getClusterState = (rootState: RootState): ClustersState => rootStat
 
 export const selectAllCluster = createSelector(getClusterState, selectAll)
 
-export const selectClustersEntitiesByOrganizationId = (state: RootState, organizationId: string): Cluster[] => {
-  const clusterState = getClusterState(state)
-  return getEntitiesByIds<Cluster>(clusterState.entities, clusterState?.joinOrganizationClusters[organizationId])
-}
+export const selectClustersEntitiesByOrganizationId = createSelector(
+  [getClusterState, (state, organizationId: string) => organizationId],
+  (items, organizationId) => {
+    return getEntitiesByIds<Cluster>(items.entities, items?.joinOrganizationClusters[organizationId])
+  }
+)
 
 export const selectClusterEntities = createSelector(getClusterState, selectEntities)

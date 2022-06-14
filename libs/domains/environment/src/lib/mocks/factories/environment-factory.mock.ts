@@ -6,7 +6,24 @@ const chance = new Chance()
 
 type Environments = EnvironmentEntity
 
-export const environmentFactoryMock = (howMany: number, noStatus = false): Environments[] =>
+const service = {
+  id: chance.integer().toString(),
+  created_at: chance.date().toString(),
+  updated_at: chance.date().toString(),
+  name: chance.name(),
+  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+}
+
+const deployment = {
+  id: chance.integer().toString(),
+  created_at: chance.date().toString(),
+  updated_at: chance.date().toString(),
+  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+  applications: [service, service, service],
+  databases: [service, service],
+}
+
+export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): Environments[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: chance.date().toString(),
@@ -29,4 +46,5 @@ export const environmentFactoryMock = (howMany: number, noStatus = false): Envir
           service_deployment_status: chance.pickone(Object.values([ServiceDeploymentStatusEnum.UP_TO_DATE])),
         }
       : undefined,
+    deployments: !noDeployments ? [deployment, deployment, deployment] : undefined,
   }))

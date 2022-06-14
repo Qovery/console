@@ -1,6 +1,6 @@
 import { Control, Controller } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@console/shared/ui'
-import { ONBOARDING_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/utils'
+import { ONBOARDING_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
 
 export interface StepMoreProps {

@@ -4,7 +4,6 @@ import GithubIcon from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'
 import BitbucketIcon from './icons-git/bitbucket'
 import EnvironmentIcon from './icons/environment'
-import ApplicationsIcon from './icons/applications'
 import AWSIcon from './icons/aws'
 import ApplicationIcon from './icons/application'
 import SuccessIcon from './icons-status/success'
@@ -15,7 +14,7 @@ import ProgressIcon from './icons-status/progress'
 import ScalewayIcon from './icons/scaleway'
 import DOIcon from './icons/do'
 import DockerIcon from './icons/docker'
-import PostgreIcon from './icons/postgre'
+import PostgresqlIcon from './icons/postgresql'
 import RedisIcon from './icons/redis'
 import BuildpacksIcon from './icons/buildpacks'
 import MongoDBIcon from './icons/mongodb'
@@ -23,9 +22,11 @@ import MysqlIcon from './icons/mysql'
 import AWSGrayIcon from './icons/aws-gray'
 import ScalewayGrayIcon from './icons/scaleway-gray'
 import DOGrayIcon from './icons/do-gray'
+import DatabaseIcon from './icons/database'
 export interface IconProps {
   name: IconEnum | string
   width?: string
+  height?: string
   viewBox?: string
   className?: string
   pathColor?: string
@@ -46,8 +47,6 @@ export function Icon(props: IconProps) {
       return <BitbucketIcon {...formattedProps} />
     case IconEnum.ENVIRONMENT:
       return <EnvironmentIcon {...formattedProps} />
-    case IconEnum.APPLICATIONS:
-      return <ApplicationsIcon {...formattedProps} />
     case IconEnum.AWS:
       return <AWSIcon {...formattedProps} />
     case IconEnum.AWS_GRAY:
@@ -62,6 +61,8 @@ export function Icon(props: IconProps) {
       return <DOGrayIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
+    case IconEnum.DATABASE:
+      return <DatabaseIcon {...formattedProps} />
     case IconEnum.SUCCESS:
       return <SuccessIcon {...formattedProps} />
     case IconEnum.ERROR:
@@ -74,8 +75,8 @@ export function Icon(props: IconProps) {
       return <ProgressIcon {...formattedProps} />
     case IconEnum.DOCKER:
       return <DockerIcon {...formattedProps} />
-    case IconEnum.POSTGRE:
-      return <PostgreIcon {...formattedProps} />
+    case IconEnum.POSTGRESQL:
+      return <PostgresqlIcon {...formattedProps} />
     case IconEnum.REDIS:
       return <RedisIcon {...formattedProps} />
     case IconEnum.BUILDPACKS:
@@ -84,6 +85,8 @@ export function Icon(props: IconProps) {
       return <MongoDBIcon {...formattedProps} />
     case IconEnum.MYSQL:
       return <MysqlIcon {...formattedProps} />
+    case IconEnum.DATABASE:
+      return <DatabaseIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

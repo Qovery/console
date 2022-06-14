@@ -10,15 +10,13 @@ export const postApplicationActionsRestart = createAsyncThunk<any, { environment
   'applicationActions/restart',
   async (data, { dispatch }) => {
     try {
-      const response = await applicationActionApi.restartApplication(data.applicationId).then(async (response) => {
-        if (response.status === 202) {
-          // refetch status after update
-          await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your application is redeploying')
-        }
-        return response.data
-      })
+      const response = await applicationActionApi.restartApplication(data.applicationId)
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is redeploying')
+      }
 
       return response
     } catch (err) {
@@ -32,15 +30,13 @@ export const postApplicationActionsDeploy = createAsyncThunk<any, { environmentI
   'applicationActions/deploy',
   async (data, { dispatch }) => {
     try {
-      const response = await applicationActionApi.deployApplication(data.applicationId).then(async (response) => {
-        if (response.status === 202) {
-          // refetch status after update
-          await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your application is deploying')
-        }
-        return response.data
-      })
+      const response = await applicationActionApi.deployApplication(data.applicationId)
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is deploying')
+      }
 
       return response
     } catch (err) {
@@ -54,15 +50,13 @@ export const postApplicationActionsStop = createAsyncThunk<any, { environmentId:
   'applicationActions/stop',
   async (data, { dispatch }) => {
     try {
-      const response = await applicationActionApi.stopApplication(data.applicationId).then(async (response) => {
-        if (response.status === 202) {
-          // refetch status after update
-          await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your application is stopping')
-        }
-        return response.data
-      })
+      const response = await applicationActionApi.stopApplication(data.applicationId)
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is stopping')
+      }
 
       return response
     } catch (err) {
@@ -76,15 +70,13 @@ export const deleteApplicationActionsStop = createAsyncThunk<any, { environmentI
   'applicationActions/delete',
   async (data, { dispatch }) => {
     try {
-      const response = await applicationMainCallsApi.deleteApplication(data.applicationId).then(async (response) => {
-        if (response.status === 204) {
-          // refetch status after update
-          await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-          // success message
-          toast(ToastEnum.SUCCESS, 'Your application is being deleted')
-        }
-        return response.data
-      })
+      const response = await applicationMainCallsApi.deleteApplication(data.applicationId)
+      if (response.status === 204) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is being deleted')
+      }
 
       return response
     } catch (err) {

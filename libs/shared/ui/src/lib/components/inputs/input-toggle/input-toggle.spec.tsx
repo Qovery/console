@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 
 import InputToggle, { InputToggleProps } from './input-toggle'
 
@@ -42,7 +42,9 @@ describe('InputToggle', () => {
 
     const toggleBtn = screen.getByLabelText('toggle-btn')
 
-    toggleBtn.click()
+    act(() => {
+      toggleBtn.click()
+    })
 
     let bg = screen.getByLabelText('bg')
     let circle = screen.getByLabelText('circle')

@@ -16,7 +16,13 @@ export function General() {
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
-  const listHelpfulLinks: BaseLink[] = [{ link: '#', linkLabel: 'How to configure my application', external: true }]
+  const listHelpfulLinks: BaseLink[] = [
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
+      linkLabel: 'How to manage my application',
+      external: true,
+    },
+  ]
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 
   const commitDeltaCount = useSelector(getCountNewCommitsToDeploy(applicationId))

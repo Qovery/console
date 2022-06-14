@@ -1,4 +1,4 @@
-const nxPreset = require('@nrwl/jest/preset')
+const nxPreset = require('@nrwl/jest/preset').default
 
 module.exports = {
   setupFilesAfterEnv: ['./__tests__/mocks.ts'],

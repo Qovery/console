@@ -13,10 +13,8 @@ export const deploymentRulesAdapter = createEntityAdapter<ProjectDeploymentRule>
 export const fetchDeploymentRules = createAsyncThunk<ProjectDeploymentRule[], { projectId: string }>(
   'project/deploymentRules/fetch',
   async (data) => {
-    const response = await deploymentRulesApi
-      .listProjectDeploymentRules(data.projectId)
-      .then((response) => response.data)
-    return response.results as ProjectDeploymentRule[]
+    const response = await deploymentRulesApi.listProjectDeploymentRules(data.projectId)
+    return response.data.results as ProjectDeploymentRule[]
   }
 )
 
@@ -24,10 +22,8 @@ export const fetchDeploymentRule = createAsyncThunk<
   ProjectDeploymentRule,
   { projectId: string; deploymentRuleId: string }
 >('project/deploymentRule/fetch', async (data) => {
-  const response = await deploymentRulesApi
-    .getProjectDeploymentRule(data.projectId, data.deploymentRuleId)
-    .then((response) => response.data)
-  return response as ProjectDeploymentRule
+  const response = await deploymentRulesApi.getProjectDeploymentRule(data.projectId, data.deploymentRuleId)
+  return response.data as ProjectDeploymentRule
 })
 
 export const postDeploymentRules = createAsyncThunk<
@@ -37,10 +33,8 @@ export const postDeploymentRules = createAsyncThunk<
   const { projectId, ...fields } = data
 
   try {
-    const result = await deploymentRulesApi
-      .createDeploymentRule(projectId, { ...fields })
-      .then((response) => response.data)
-    return result
+    const result = await deploymentRulesApi.createDeploymentRule(projectId, { ...fields })
+    return result.data
   } catch (error) {
     return rejectWithValue(error)
   }
@@ -51,11 +45,9 @@ export const updateDeploymentRuleOrder = createAsyncThunk<
   { projectId: string; deploymentRules: ProjectDeploymentRule[] }
 >('project/deploymentRules/update-order', async (data) => {
   const ids: string[] = data.deploymentRules.map((rule) => rule.id)
-  await deploymentRulesApi
-    .updateDeploymentRulesPriorityOrder(data.projectId, {
-      project_deployment_rule_ids_in_order: ids,
-    })
-    .then((res) => res.data)
+  await deploymentRulesApi.updateDeploymentRulesPriorityOrder(data.projectId, {
+    project_deployment_rule_ids_in_order: ids,
+  })
   return data.deploymentRules
 })
 
@@ -65,9 +57,7 @@ export const deleteDeploymentRule = createAsyncThunk<string, { projectId: string
     const { projectId, deploymentRuleId } = data
 
     try {
-      await deploymentRulesApi
-        .deleteProjectDeploymentRule(projectId, deploymentRuleId)
-        .then((response) => response.data)
+      await deploymentRulesApi.deleteProjectDeploymentRule(projectId, deploymentRuleId)
       return deploymentRuleId
     } catch (error) {
       return rejectWithValue(error)
@@ -82,10 +72,10 @@ export const updateDeploymentRule = createAsyncThunk<
   const { projectId, deploymentRuleId, ...fields } = data
 
   try {
-    const result = await deploymentRulesApi
-      .editProjectDeployemtnRule(projectId, deploymentRuleId, { ...(fields as ProjectDeploymentRuleRequest) })
-      .then((response) => response.data)
-    return result
+    const result = await deploymentRulesApi.editProjectDeployemtnRule(projectId, deploymentRuleId, {
+      ...(fields as ProjectDeploymentRuleRequest),
+    })
+    return result.data
   } catch (error) {
     return rejectWithValue(error)
   }
@@ -168,8 +158,6 @@ export const deploymentRulesSlice = createSlice({
             ...state.joinProjectDeploymentRules,
           })
         })
-
-        console.log(state.entities)
 
         state.loadingStatus = 'loaded'
       })

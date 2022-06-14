@@ -1,4 +1,4 @@
-import { AuthEnum } from '@console/shared/utils'
+import { AuthEnum } from '@console/shared/auth'
 import { render } from '__tests__/utils/setup-jest'
 
 import Login, { ILoginProps } from './login'

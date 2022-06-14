@@ -1,5 +1,5 @@
 import { Button, ButtonSize, ButtonStyle, Icon } from '@console/shared/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/utils'
+import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/router'
 
 interface StepThanksProps {
   firstName: string

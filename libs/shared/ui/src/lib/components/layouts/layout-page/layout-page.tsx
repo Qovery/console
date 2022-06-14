@@ -1,4 +1,4 @@
-import { Application, Environment, Organization, Project, SignUp } from 'qovery-typescript-axios'
+import { Application, Database, Environment, Organization, Project, SignUp } from 'qovery-typescript-axios'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 
@@ -11,10 +11,11 @@ export interface LayoutPageProps {
   environments?: Environment[]
   applications?: Application[]
   application?: Application
+  databases?: Database[]
 }
 
 export function LayoutPage(props: LayoutPageProps) {
-  const { children, authLogout, user, organizations, projects, environments, applications } = props
+  const { children, authLogout, user, organizations, projects, environments, applications, databases } = props
 
   return (
     <main className="bg-element-light-lighter-400">
@@ -24,6 +25,7 @@ export function LayoutPage(props: LayoutPageProps) {
         projects={projects}
         environments={environments}
         applications={applications}
+        databases={databases}
       />
       <div className="p-2 mt-14 ml-14 h-full flex flex-col">{children}</div>
     </main>

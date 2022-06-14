@@ -1,7 +1,7 @@
 import { Icon, Menu, MenuData, Skeleton } from '@console/shared/ui'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL, upperCaseFirstLetter } from '@console/shared/utils'
+// import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
+import { upperCaseFirstLetter } from '@console/shared/utils'
 import { useState } from 'react'
-import { useParams } from 'react-router'
 
 export interface DeploymentRuleItemProps {
   id: string

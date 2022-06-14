@@ -1,4 +1,4 @@
-import { Application, Environment, Organization, Project } from 'qovery-typescript-axios'
+import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { Menu, MenuAlign } from '../../menu/menu'
 import { ButtonIcon, ButtonIconSize, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
@@ -68,10 +68,11 @@ export interface TopBarProps {
   projects?: Project[]
   environments?: Environment[]
   applications?: Application[]
+  databases?: Database[]
 }
 
 export function TopBar(props: TopBarProps) {
-  const { organizations, projects, environments, applications } = props
+  const { organizations, projects, environments, applications, databases } = props
 
   return (
     <div className="fixed top-0 left-14 border-l border-b border-element-light-lighter-400 z-10 bg-white w-[calc(100%-3.5rem)] h-14">
@@ -81,6 +82,7 @@ export function TopBar(props: TopBarProps) {
           projects={projects}
           environments={environments}
           applications={applications}
+          databases={databases}
         />
         <div className="flex gap-3">
           <ButtonIcon

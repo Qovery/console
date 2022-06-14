@@ -52,7 +52,7 @@ export function MenuGroup(props: MenuGroupProps) {
       {!isFilter && menu?.title && (
         <div className="flex justify-between items-center" style={headPaddingStyle}>
           {menu?.title && (
-            <p data-testid="title" className="text-sm text-text-300">
+            <p data-testid="title" className="text-sm text-text-400">
               {menu?.title}
             </p>
           )}
@@ -94,6 +94,7 @@ export function MenuGroup(props: MenuGroupProps) {
               copyTooltip={item.copyTooltip}
               className={item.className}
               textClassName={item.textClassName}
+              isActive={item.isActive}
             />
           ))}
         </div>

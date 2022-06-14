@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { APPLICATIONS_GENERAL_URL, APPLICATIONS_URL } from '@console/shared/utils'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
@@ -11,7 +11,7 @@ export interface GeneralProps {
   listHelpfulLinks: BaseLink[]
 }
 
-export function GeneralPage(props: GeneralProps) {
+function General(props: GeneralProps) {
   const { environments, buttonActions, listHelpfulLinks } = props
   const { organizationId, projectId } = useParams()
 
@@ -76,7 +76,7 @@ export function GeneralPage(props: GeneralProps) {
               key={currentData.id}
               data={currentData}
               dataHead={tableHead}
-              link={`${APPLICATIONS_URL(organizationId, projectId, currentData.id)}${APPLICATIONS_GENERAL_URL}`}
+              link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
               columnsWidth="25% 25% 25% 20%"
               buttonActions={buttonActions}
             />
@@ -90,4 +90,15 @@ export function GeneralPage(props: GeneralProps) {
   )
 }
 
-export default GeneralPage
+export const GeneralPage = React.memo(General, (prevProps, nextProps) => {
+  // Stringify is necessary to avoid Redux selector behavior
+  const isEqual =
+    JSON.stringify(prevProps.environments.map((environment) => environment.status?.state)) ===
+    JSON.stringify(nextProps.environments.map((environment) => environment.status?.state))
+
+  if (isEqual) {
+    return true
+  }
+
+  return false
+})
