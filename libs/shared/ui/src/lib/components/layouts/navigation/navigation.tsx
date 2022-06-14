@@ -64,7 +64,7 @@ export function Navigation(props: NavigationProps) {
     <div className={`w-16 h-full fixed top-0 left-0 z-10 ${darkMode ? 'bg-element-light-darker-400' : 'bg-white'}`}>
       <Link
         to={'/'}
-        className={`flex w-16 h-14 items-center justify-center border-b z-10 ${
+        className={`flex w-16 h-16 items-center justify-center border-b z-10 ${
           darkMode ? 'border-element-light-darker-100' : 'border-element-light-lighter-400'
         }`}
       >
