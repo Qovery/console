@@ -72,7 +72,7 @@ export function Deployments(props: DeploymentsProps) {
       >
         <div>
           {data?.map((currentData, index) => (
-            <TableRowDeployment key={index} data={currentData} dataHead={tableHead} link="" isLoading={isLoading} />
+            <TableRowDeployment key={index} data={currentData} dataHead={tableHead} isLoading={isLoading} />
           ))}
         </div>
       </Table>

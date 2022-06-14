@@ -15,7 +15,6 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
   const { deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentService[]>(deployments)
-  const { organizationId, projectId, environmentId } = useParams()
 
   useEffect(() => {
     deployments && setData(deployments)
@@ -90,14 +89,13 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
               key={index}
               data={currentData as DeploymentService}
               dataHead={tableHead}
-              link={APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + APPLICATION_GENERAL_URL}
               isLoading={isLoading}
               startGroup={currentData?.execution_id !== data[index - 1]?.execution_id && index !== 0 ? true : false}
             />
           ))}
         </div>
       </Table>
-      <div className="rounded-b bg-white">
+      <div className="rounded-b bg-white mt-2">
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
     </>

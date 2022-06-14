@@ -1,4 +1,5 @@
 import { DeploymentService } from '@console/shared/interfaces'
+import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@console/shared/router'
 import {
   Avatar,
   AvatarStyle,
@@ -13,31 +14,34 @@ import {
 } from '@console/shared/ui'
 import { timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useParams } from 'react-router'
 
 export interface TableRowDeploymentsProps {
   data: DeploymentService
   dataHead: TableHeadProps[]
-  link: string
   columnsWidth?: string
   isLoading?: boolean
   startGroup?: boolean
 }
 
 export function TableRowDeployments(props: TableRowDeploymentsProps) {
-  const {
-    data,
-    dataHead,
-    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
-    link,
-    isLoading,
-    startGroup,
-  } = props
+  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, startGroup } = props
 
   const [copy, setCopy] = useState(false)
+  const [hoverId, setHoverId] = useState(false)
+  const { organizationId, projectId, environmentId } = useParams()
 
   const buttonActionsDefault = [
     {
       iconLeft: <Icon name="icon-solid-scroll" />,
+      onClick: () =>
+        window
+          .open(
+            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${data.id}/summary?fullscreenLogs=true`,
+            '_blank'
+          )
+          ?.focus(),
     },
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
@@ -46,17 +50,18 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
+    setHoverId(true)
     data.execution_id && navigator.clipboard.writeText(data.execution_id)
     setCopy(true)
     setTimeout(() => {
       setCopy(false)
+      setHoverId(false)
     }, 2000)
   }
 
   return (
     <TableRow
       columnsWidth={columnsWidth}
-      link={link}
       className={`border-b last-of-type:border-b-0 bg-white ${startGroup ? 'mt-2' : ''}`}
     >
       <>
@@ -65,12 +70,25 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
             <Tooltip content="Copy">
               <p
                 onClick={handleCopy}
-                className={`text-xxs font-bold text-text-500 py-0.5 px-1 w-16 text-center rounded-sm ${
+                onMouseEnter={() => setHoverId(true)}
+                onMouseLeave={() => !copy && setHoverId(false)}
+                className={`text-xxs font-bold text-text-500 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
                   copy ? 'bg-success-500 text-white' : 'bg-element-light-lighter-300'
                 }`}
               >
-                {!copy && data.execution_id && <span>{trimId(data.execution_id)}</span>}
-                {copy && <span>Copied !</span>}
+                {hoverId && !copy && (
+                  <span className="inline-flex gap-1.5">
+                    <Icon name="icon-solid-copy" />
+                    <span>Copy ID</span>
+                  </span>
+                )}
+                {!copy && data.execution_id && !hoverId && <span>{trimId(data.execution_id)}</span>}
+                {copy && (
+                  <div className="inline-flex gap-1.5">
+                    <Icon name="icon-solid-copy" />
+                    <span>Copied !</span>
+                  </div>
+                )}
               </p>
             </Tooltip>
           </Skeleton>
@@ -87,12 +105,14 @@ export function TableRowDeployments(props: TableRowDeploymentsProps) {
         </div>
         <div className="px-3">
           <Skeleton show={isLoading} width={120} height={20}>
-            <div className="flex items-center">
-              <div className="w-8 text-center">
-                <Icon name={data.type ? data.type : 'APPLICATION'} className="w-5 h-5" />
+            <Link to={APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_GENERAL_URL}>
+              <div className="flex items-center">
+                <div className="w-8 text-center">
+                  <Icon name={data.type ? data.type : 'APPLICATION'} className="w-5 h-5" />
+                </div>
+                <p className="text-xs text-text-600 font-medium">{data.name}</p>
               </div>
-              <p className="text-xs text-text-600 font-medium">{data.name}</p>
-            </div>
+            </Link>
           </Skeleton>
         </div>
         <div className="flex justify-start items-center px-1 gap-2">

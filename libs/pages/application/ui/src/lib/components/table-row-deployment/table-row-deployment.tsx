@@ -13,23 +13,39 @@ import {
 import { timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
 import { DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import { useState } from 'react'
+import { useParams } from 'react-router'
 
 export interface TableRowDeploymentProps {
   data: DeploymentHistoryApplication
   dataHead: TableHeadProps[]
-  link: string
+  link?: string
   columnsWidth?: string
   isLoading?: boolean
 }
 
 export function TableRowDeployment(props: TableRowDeploymentProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, isLoading } = props
+  const {
+    data,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    link = undefined,
+    isLoading,
+  } = props
 
   const [copy, setCopy] = useState(false)
+  const [hoverId, setHoverId] = useState(false)
+  const { organizationId, projectId, environmentId, applicationId } = useParams()
 
   const buttonActionsDefault = [
     {
       iconLeft: <Icon name="icon-solid-scroll" />,
+      onClick: () =>
+        window
+          .open(
+            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
+            '_blank'
+          )
+          ?.focus(),
     },
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
@@ -38,10 +54,12 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
+    setHoverId(true)
     data.id && navigator.clipboard.writeText(data.id)
     setCopy(true)
     setTimeout(() => {
       setCopy(false)
+      setHoverId(false)
     }, 2000)
   }
 
@@ -53,12 +71,25 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
             <Tooltip content="Copy">
               <p
                 onClick={handleCopy}
-                className={`text-xxs font-bold text-text-500 py-0.5 px-1 w-16 text-center rounded-sm ${
+                onMouseEnter={() => setHoverId(true)}
+                onMouseLeave={() => !copy && setHoverId(false)}
+                className={`text-xxs font-bold text-text-500 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
                   copy ? 'bg-success-500 text-white' : 'bg-element-light-lighter-300'
                 }`}
               >
-                {!copy && data.id && <span>{trimId(data.id)}</span>}
-                {copy && <span>Copied !</span>}
+                {hoverId && !copy && (
+                  <span className="inline-flex gap-1.5">
+                    <Icon name="icon-solid-copy" />
+                    <span>Copy ID</span>
+                  </span>
+                )}
+                {!copy && data.id && !hoverId && <span>{trimId(data.id)}</span>}
+                {copy && (
+                  <div className="inline-flex gap-1.5">
+                    <Icon name="icon-solid-copy" />
+                    <span>Copied !</span>
+                  </div>
+                )}
               </p>
             </Tooltip>
           </Skeleton>

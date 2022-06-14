@@ -103,6 +103,7 @@ export function groupBy(
   // create menus by keys
   const result: MenuItemProps[] = Object.keys(dataByKeys).map((key: string) => ({
     name: upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' ') || '',
+    truncateLimit: 20,
     contentLeft: (
       <Icon
         name="icon-solid-check"
