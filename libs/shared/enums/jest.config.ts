@@ -1,9 +1,10 @@
-module.exports = {
-  displayName: 'store-data',
+/* eslint-disable */
+export default {
+  displayName: 'shared-enums',
   preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/store/data',
+  coverageDirectory: '../../../coverage/libs/shared/enums',
 }

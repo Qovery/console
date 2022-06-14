@@ -1,5 +1,4 @@
 {
-  "root": "libs/shared/router",
   "sourceRoot": "libs/shared/router/src",
   "projectType": "library",
   "tags": [],

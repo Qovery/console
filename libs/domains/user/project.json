@@ -1,5 +1,4 @@
 {
-  "root": "libs/domains/user",
   "sourceRoot": "libs/domains/user/src",
   "projectType": "library",
   "tags": [],
@@ -15,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/domains/user"],
       "options": {
-        "jestConfig": "libs/domains/user/jest.config.js",
+        "jestConfig": "libs/domains/user/jest.config.ts",
         "passWithNoTests": true
       }
     }

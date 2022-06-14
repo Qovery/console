@@ -1,9 +1,10 @@
-module.exports = {
-  displayName: 'shared-enums',
+/* eslint-disable */
+export default {
+  displayName: 'domains-environment',
   preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/shared/enums',
+  coverageDirectory: '../../../coverage/libs/domains/environment',
 }

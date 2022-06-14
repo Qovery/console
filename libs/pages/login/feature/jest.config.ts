@@ -1,9 +1,10 @@
-module.exports = {
-  displayName: 'pages-environments-ui',
+/* eslint-disable */
+export default {
+  displayName: 'pages-login-feature',
   preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/pages/environments/ui',
+  coverageDirectory: '../../../../coverage/libs/pages/login/feature',
 }

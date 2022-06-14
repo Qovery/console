@@ -1,4 +1,5 @@
 /* eslint-disable */
+/* eslint-disable */
 export default {
   displayName: 'domains-database',
   preset: '../../../jest.preset.js',
