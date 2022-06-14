@@ -1,9 +1,6 @@
 import { DeploymentService } from '@console/shared/interfaces'
-import { BaseLink, HelpSection, Table } from '@console/shared/ui'
-import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@console/shared/router'
+import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
-import TableRowDeployments from '../table-row-deployments/table-row-deployments'
 
 export interface DeploymentsPageProps {
   deployments?: DeploymentService[]
@@ -85,12 +82,17 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
       >
         <div>
           {data?.map((currentData, index) => (
-            <TableRowDeployments
+            <TableRowDeployment
               key={index}
-              data={currentData as DeploymentService}
               dataHead={tableHead}
               isLoading={isLoading}
               startGroup={currentData?.execution_id !== data[index - 1]?.execution_id && index !== 0 ? true : false}
+              execution_id={currentData.execution_id || ''}
+              status={currentData.status}
+              service={{ id: currentData.id, type: currentData.type, name: currentData.name }}
+              created_at={currentData.created_at}
+              updated_at={currentData.updated_at}
+              commit={currentData?.commit}
             />
           ))}
         </div>
