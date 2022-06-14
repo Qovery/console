@@ -1,5 +1,4 @@
 {
-  "root": "libs/shared/websockets",
   "sourceRoot": "libs/shared/websockets/src",
   "projectType": "library",
   "tags": [],

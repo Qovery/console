@@ -1,5 +1,4 @@
 {
-  "root": "libs/pages/application/feature",
   "sourceRoot": "libs/pages/application/feature/src",
   "projectType": "library",
   "tags": [],
@@ -15,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/pages/application/feature"],
       "options": {
-        "jestConfig": "libs/pages/application/feature/jest.config.js",
+        "jestConfig": "libs/pages/application/feature/jest.config.ts",
         "passWithNoTests": true
       }
     }

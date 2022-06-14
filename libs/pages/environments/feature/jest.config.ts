@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
   displayName: 'pages-environments-feature',
   preset: '../../../../jest.preset.js',
   transform: {

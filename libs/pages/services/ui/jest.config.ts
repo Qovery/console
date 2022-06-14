@@ -1,4 +1,5 @@
-module.exports = {
+/* eslint-disable */
+export default {
   displayName: 'pages-applications-ui',
   preset: '../../../../jest.preset.js',
   transform: {

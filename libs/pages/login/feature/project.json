@@ -1,5 +1,4 @@
 {
-  "root": "libs/pages/login/feature",
   "sourceRoot": "libs/pages/login/feature/src",
   "projectType": "library",
   "tags": [],
@@ -15,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/pages/login/feature"],
       "options": {
-        "jestConfig": "libs/pages/login/feature/jest.config.js",
+        "jestConfig": "libs/pages/login/feature/jest.config.ts",
         "passWithNoTests": true
       }
     }

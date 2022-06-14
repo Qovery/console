@@ -1,5 +1,4 @@
 {
-  "root": "libs/domains/database",
   "sourceRoot": "libs/domains/database/src",
   "projectType": "library",
   "tags": [],

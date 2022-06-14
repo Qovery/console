@@ -1,5 +1,4 @@
 {
-  "root": "libs/store/toast",
   "sourceRoot": "libs/shared/toast/src",
   "projectType": "library",
   "tags": [],

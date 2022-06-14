@@ -1,5 +1,4 @@
 {
-  "root": "libs/shared/interfaces",
   "sourceRoot": "libs/shared/interfaces/src",
   "projectType": "library",
   "tags": [],
@@ -15,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/shared/interfaces"],
       "options": {
-        "jestConfig": "libs/shared/interfaces/jest.config.js",
+        "jestConfig": "libs/shared/interfaces/jest.config.ts",
         "passWithNoTests": true
       }
     }

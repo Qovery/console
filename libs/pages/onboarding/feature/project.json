@@ -1,5 +1,4 @@
 {
-  "root": "libs/pages/onboarding/feature",
   "sourceRoot": "libs/pages/onboarding/feature/src",
   "projectType": "library",
   "tags": [],
@@ -15,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/pages/onboarding/feature"],
       "options": {
-        "jestConfig": "libs/pages/onboarding/feature/jest.config.js",
+        "jestConfig": "libs/pages/onboarding/feature/jest.config.ts",
         "passWithNoTests": true
       }
     }

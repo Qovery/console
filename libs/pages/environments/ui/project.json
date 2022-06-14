@@ -1,5 +1,4 @@
 {
-  "root": "libs/pages/environments/ui",
   "sourceRoot": "libs/pages/environments/ui/src",
   "projectType": "library",
   "tags": [],
@@ -15,7 +14,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/libs/pages/environments/ui"],
       "options": {
-        "jestConfig": "libs/pages/environments/ui/jest.config.js",
+        "jestConfig": "libs/pages/environments/ui/jest.config.ts",
         "passWithNoTests": true
       }
     }

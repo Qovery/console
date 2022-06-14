@@ -1,5 +1,4 @@
 {
-  "root": "libs/shared/auth",
   "sourceRoot": "libs/shared/auth/src",
   "projectType": "library",
   "tags": [],
