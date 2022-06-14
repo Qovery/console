@@ -21,7 +21,13 @@ export function EditDeploymentRule() {
     selectDeploymentRuleById(state, deploymentRuleId)
   )
 
-  const listHelpfulLinks: BaseLink[] = [{ link: '#', linkLabel: 'How to configure my application', external: true }]
+  const listHelpfulLinks: BaseLink[] = [
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
+      linkLabel: 'How to configure my deployment rule',
+      external: true,
+    },
+  ]
 
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
