@@ -68,8 +68,8 @@ export function General() {
 
   const listHelpfulLinks: BaseLink[] = [
     {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/application',
-      linkLabel: 'How to configure my application',
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/',
+      linkLabel: 'How to manage my environment',
       external: true,
     },
   ]
