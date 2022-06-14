@@ -26,7 +26,7 @@
         "config": {
           "configFolder": "libs/shared/ui/.storybook"
         },
-        "staticDir": ["libs/shared/ui/src/lib"]
+        "staticDirs": ["libs/shared/ui/src/lib"]
       },
       "configurations": {
         "ci": {
@@ -43,7 +43,7 @@
         "config": {
           "configFolder": "libs/shared/ui/.storybook"
         },
-        "staticDir": ["libs/shared/ui/src/lib"]
+        "staticDirs": ["libs/shared/ui/src/lib"]
       },
       "configurations": {
         "ci": {

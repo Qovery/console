@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import React from 'react'
 import { render } from '__tests__/utils/setup-jest'
 import DetectClickOutside, { UseDetectOutsideProps } from './use-detect-click-outside'
@@ -32,7 +32,9 @@ describe('UseDetectOutside', () => {
 
     const outsideComponent = screen.getByRole('button')
 
-    outsideComponent.click()
+    act(() => {
+      outsideComponent.click()
+    })
 
     expect(callback).toHaveBeenCalled()
   })
