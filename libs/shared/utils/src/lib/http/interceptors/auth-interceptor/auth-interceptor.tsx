@@ -2,7 +2,7 @@ import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 
-//import { toast, ToastEnum } from '@console/shared/toast'
+import { toast, ToastEnum } from '@console/shared/toast'
 
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
@@ -26,13 +26,13 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       return config
     })
     const responseInterceptor = axiosInstance.interceptors.response.use(
-      async (response: AxiosResponse) => response
-      // (error) =>
-      //   toast(
-      //     ToastEnum.ERROR,
-      //     error.response.data.error || error.code || 'Error',
-      //     error.response.data.message || error.message
-      //   )
+      async (response: AxiosResponse) => response,
+      (error) =>
+        toast(
+          ToastEnum.ERROR,
+          error.response.data.error || error.code || 'Error',
+          error.response.data.message || error.message
+        )
     )
 
     return () => {
