@@ -19,31 +19,15 @@ import Icon from '../../icon/icon'
 import { TableHeadProps } from '../table'
 
 export interface TableRowDeploymentProps {
+  data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
   dataHead: TableHeadProps[]
   columnsWidth?: string
   isLoading?: boolean
   startGroup?: boolean
-  execution_id: string
-  status?: StateEnum
-  service?: { name?: string; type?: 'APPLICATION' | 'DATABASE'; id?: string }
-  created_at?: string
-  updated_at?: string
-  commit?: Commit
 }
 
 export function TableRowDeployment(props: TableRowDeploymentProps) {
-  const {
-    dataHead,
-    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
-    isLoading,
-    startGroup,
-    execution_id,
-    status,
-    service,
-    created_at,
-    updated_at,
-    commit,
-  } = props
+  const { dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, startGroup, data } = props
 
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
@@ -55,7 +39,9 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
       onClick: () =>
         window
           .open(
-            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${service?.id}/summary?fullscreenLogs=true`,
+            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${
+              (data as DeploymentService).id
+            }/summary?fullscreenLogs=true`,
             '_blank'
           )
           ?.focus(),
@@ -68,7 +54,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault()
     setHoverId(true)
-    navigator.clipboard.writeText(execution_id)
+    navigator.clipboard.writeText((data as DeploymentService).execution_id || data?.id || '')
     setCopy(true)
     setTimeout(() => {
       setCopy(false)
@@ -99,7 +85,13 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
                     <span>Copy ID</span>
                   </span>
                 )}
-                {!copy && !hoverId && <span>{trimId(execution_id)}</span>}
+                {!copy && !hoverId && (
+                  <span>
+                    {(data as DeploymentService).execution_id
+                      ? trimId((data as DeploymentService).execution_id || '')
+                      : trimId(data?.id || '')}
+                  </span>
+                )}
                 {copy && (
                   <div className="inline-flex gap-1.5">
                     <Icon name="icon-solid-copy" />
@@ -112,25 +104,23 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
         </div>
         <div className="flex justify-start items-center px-4 gap-2">
           <Skeleton show={isLoading} width={20} height={20} rounded>
-            <StatusChip status={status} />
+            <StatusChip status={data?.status} />
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
             <p className="text-xs text-text-400 font-medium">
-              {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
+              {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())}
             </p>
           </Skeleton>
         </div>
-        {service && service?.name && (
+        {(data as DeploymentService).type && (
           <div className="px-3">
             <Skeleton show={isLoading} width={120} height={20}>
-              <Link
-                to={APPLICATION_URL(organizationId, projectId, environmentId, service.id) + APPLICATION_GENERAL_URL}
-              >
+              <Link to={APPLICATION_URL(organizationId, projectId, environmentId, data?.id) + APPLICATION_GENERAL_URL}>
                 <div className="flex items-center">
                   <div className="w-8 text-center">
-                    <Icon name={service.type ? service.type : 'APPLICATION'} className="w-5 h-5" />
+                    <Icon name={(data as DeploymentService)?.type || 'APPLICATION'} className="w-5 h-5" />
                   </div>
-                  <p className="text-xs text-text-600 font-medium">{service.name}</p>
+                  <p className="text-xs text-text-600 font-medium">{data?.name}</p>
                 </div>
               </Link>
             </Skeleton>
@@ -141,23 +131,23 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
             <>
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <span className="text-xs text-text-300 mx-3 font-medium">
-                  {timeAgo(updated_at ? new Date(updated_at) : new Date(created_at || ''))} ago
+                  {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
-              {service?.name && <ButtonIconAction actions={buttonActionsDefault} />}
+              {data?.name && <ButtonIconAction actions={buttonActionsDefault} />}
             </>
           </Skeleton>
         </div>
         <div className="flex items-center px-4 gap-2 border-element-light-lighter-400 border-l h-full">
-          {commit && (
+          {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
             <>
               <Avatar
-                firstName={commit?.author_name}
-                url={commit?.author_avatar_url}
+                firstName={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name || ''}
+                url={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_avatar_url}
                 style={AvatarStyle.STROKED}
                 size={28}
               />
-              <TagCommit commitId={commit?.git_commit_id} />
+              <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             </>
           )}
         </div>

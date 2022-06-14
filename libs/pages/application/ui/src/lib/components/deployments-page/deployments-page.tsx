@@ -72,14 +72,10 @@ export function Deployments(props: DeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
+              data={currentData as DeploymentHistoryApplication}
               key={index}
               dataHead={tableHead}
               isLoading={isLoading}
-              execution_id={currentData.id}
-              status={currentData.status}
-              created_at={currentData.created_at}
-              updated_at={currentData.updated_at}
-              commit={currentData.commit}
             />
           ))}
         </div>
