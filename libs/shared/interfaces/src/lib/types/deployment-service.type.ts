@@ -7,6 +7,6 @@ export interface DeploymentService {
   name?: string
   status?: StateEnum
   commit?: Commit
-  type?: string
+  type?: 'APPLICATION' | 'DATABASE'
   execution_id?: string
 }

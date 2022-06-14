@@ -1,7 +1,6 @@
-import { BaseLink, HelpSection, Table } from '@console/shared/ui'
+import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
 import { DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import React, { useEffect, useState } from 'react'
-import TableRowDeployment from '../table-row-deployment/table-row-deployment'
 
 export interface DeploymentsProps {
   deployments?: DeploymentHistoryApplication[]
@@ -72,7 +71,16 @@ export function Deployments(props: DeploymentsProps) {
       >
         <div>
           {data?.map((currentData, index) => (
-            <TableRowDeployment key={index} data={currentData} dataHead={tableHead} isLoading={isLoading} />
+            <TableRowDeployment
+              key={index}
+              dataHead={tableHead}
+              isLoading={isLoading}
+              execution_id={currentData.id}
+              status={currentData.status}
+              created_at={currentData.created_at}
+              updated_at={currentData.updated_at}
+              commit={currentData.commit}
+            />
           ))}
         </div>
       </Table>
