@@ -1,4 +1,5 @@
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
+import { useNavigate } from 'react-router'
 import { Menu, MenuAlign } from '../../menu/menu'
 import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
@@ -74,6 +75,7 @@ export interface TopBarProps {
 
 export function TopBar(props: TopBarProps) {
   const { organizations, projects, environments, applications, databases, darkMode } = props
+  const navigate = useNavigate()
 
   return (
     <div
@@ -92,7 +94,7 @@ export function TopBar(props: TopBarProps) {
           databases={databases}
         />
         {/* @TODO fix me should be dynamic */}
-        {!darkMode && (
+        {!darkMode ? (
           <div className="flex gap-3">
             <ButtonIcon icon="icon-solid-rocket" style={ButtonIconStyle.STROKED} notification={true} />
             <Menu
@@ -126,6 +128,8 @@ export function TopBar(props: TopBarProps) {
             </Menu>
             <ButtonIcon icon="icon-solid-magnifying-glass" style={ButtonIconStyle.STROKED} />
           </div>
+        ) : (
+          <ButtonIcon icon="icon-solid-xmark" style={ButtonIconStyle.DARK} onClick={() => navigate(-1)} />
         )}
       </div>
     </div>
