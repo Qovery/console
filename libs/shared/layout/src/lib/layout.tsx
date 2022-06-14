@@ -15,10 +15,11 @@ import { fetchDatabases, selectAllDatabases } from '@console/domains/database'
 
 export interface LayoutProps {
   children: React.ReactElement
+  darkMode?: boolean
 }
 
 export function Layout(props: LayoutProps) {
-  const { children } = props
+  const { children, darkMode } = props
   const { authLogout } = useAuth()
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { organization, getOrganization } = useOrganization()
@@ -60,7 +61,7 @@ export function Layout(props: LayoutProps) {
 
   useEffect(() => {
     dispatch(fetchClusters({ organizationId }))
-  }, [organizationId])
+  }, [dispatch, organizationId])
 
   return (
     <LayoutPage
@@ -72,6 +73,7 @@ export function Layout(props: LayoutProps) {
       applications={applications}
       application={application}
       databases={databases}
+      darkMode={darkMode}
     >
       <>
         <WebsocketContainer />
