@@ -15,6 +15,7 @@ export interface MenuItemProps {
   className?: string
   textClassName?: string
   isActive?: boolean
+  truncateLimit?: number
 }
 
 export function MenuItem(props: MenuItemProps) {
@@ -29,6 +30,7 @@ export function MenuItem(props: MenuItemProps) {
     isActive = false,
     textClassName = 'text-text-500',
     className = '',
+    truncateLimit = 34,
   } = props
   const navigate = useNavigate()
 
@@ -56,7 +58,7 @@ export function MenuItem(props: MenuItemProps) {
 
         {contentLeft && <span className="mr-3">{contentLeft}</span>}
         <span className={`menu-item__name text-sm font-medium ${textClassName}`}>
-          <Truncate text={name} truncateLimit={34} />
+          <Truncate text={name} truncateLimit={truncateLimit} />
         </span>
       </div>
       <div className="flex items-center">{contentRight && <span className="ml-3">{contentRight}</span>}</div>
