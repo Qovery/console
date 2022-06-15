@@ -9,6 +9,7 @@
     "../../../node_modules/@nrwl/react/typings/image.d.ts"
   ],
   "exclude": [
+    "jest.config.ts",
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",
@@ -16,8 +17,7 @@
     "**/*.spec.js",
     "**/*.test.js",
     "**/*.spec.jsx",
-    "**/*.test.jsx",
-    "jest.config.ts"
+    "**/*.test.jsx"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

@@ -16,7 +16,7 @@ export function useOrganization() {
   const organization = useSelector(selectAllOrganization)
   const loadingStatus = useSelector(selectOrganizationLoadingStatus)
 
-  const getOrganization = useCallback(async () => dispatch(fetchOrganization()), [dispatch])
+  const getOrganization = useCallback(() => dispatch(fetchOrganization()), [dispatch])
 
   const createOrganization = async (payload: OrganizationRequest) => {
     const result = await dispatch(postOrganization(payload))

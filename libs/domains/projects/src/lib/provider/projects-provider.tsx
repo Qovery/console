@@ -8,10 +8,7 @@ export function useProjects() {
   const dispatch = useDispatch<AppDispatch>()
   const projects = useSelector(selectAllProjects)
 
-  const getProjects = useCallback(
-    async (organizationId: string) => dispatch(fetchProjects({ organizationId })),
-    [dispatch]
-  )
+  const getProjects = useCallback((organizationId: string) => dispatch(fetchProjects({ organizationId })), [dispatch])
 
   const createProject = async (organizationId: string, payload: ProjectRequest) => {
     const result = await dispatch(postProject({ organizationId: organizationId, ...payload }))
