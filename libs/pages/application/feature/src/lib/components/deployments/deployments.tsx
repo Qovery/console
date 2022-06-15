@@ -37,7 +37,6 @@ export function Deployments() {
 
   useEffect(() => {
     const fetchApp = () => {
-      dispatch(fetchApplication({ applicationId }))
       dispatch(fetchApplicationDeployments({ applicationId }))
     }
     !application?.deployments && fetchApp()

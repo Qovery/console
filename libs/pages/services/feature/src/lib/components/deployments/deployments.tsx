@@ -14,6 +14,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { ServicesEnum } from '@console/shared/enums'
+import { DeploymentHistoryApplication } from 'qovery-typescript-axios'
 
 export function Deployments() {
   const { environmentId = '', projectId = '' } = useParams()
@@ -59,11 +60,10 @@ export function Deployments() {
     return merged
   }
 
-  const isLoading = loadingStatusEnvironment !== 'loaded' || loadingStatusDeployments !== 'loaded'
+  const isLoading = loadingStatusDeployments !== 'loaded'
 
   useEffect(() => {
     const fetchEnv = () => {
-      dispatch(fetchEnvironments({ projectId }))
       dispatch(fetchEnvironmentDeploymentHistory({ environmentId }))
     }
     !environment?.deployments && fetchEnv()
@@ -73,8 +73,8 @@ export function Deployments() {
     <DeploymentsPage
       deployments={
         !isLoading
-          ? environment && (mergeDeploymentServices(environment) as unknown as DeploymentService[])
-          : (mergeDeploymentServices(loadingEnvironment[0]) as unknown as DeploymentService[])
+          ? environment && (mergeDeploymentServices(environment) as DeploymentService[])
+          : (mergeDeploymentServices(loadingEnvironment[0]) as DeploymentService[])
       }
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading}
