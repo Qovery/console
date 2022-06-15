@@ -1,19 +1,27 @@
-import { ClustersState } from '@console/shared/interfaces'
+import { ClusterEntity, ClustersState } from '@console/shared/interfaces'
 import { RootState } from '@console/store/data'
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { Cluster, ClustersApi } from 'qovery-typescript-axios'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, Update } from '@reduxjs/toolkit'
+import { Cluster, ClusterLogs, ClustersApi } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
 
 const clusterApi = new ClustersApi()
 
-export const clusterAdapter = createEntityAdapter<Cluster>()
+export const clusterAdapter = createEntityAdapter<ClusterEntity>()
 
 export const fetchClusters = createAsyncThunk<Cluster[], { organizationId: string }>('cluster/fetch', async (data) => {
   const response = await clusterApi.listOrganizationCluster(data.organizationId)
   return response.data.results as Cluster[]
 })
+
+export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizationId: string; clusterId: string }>(
+  'cluster-infra-logs/fetch',
+  async (data) => {
+    const response = await clusterApi.listClusterLogs(data.organizationId, data.clusterId)
+    return response.data.results as ClusterLogs[]
+  }
+)
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -46,6 +54,43 @@ export const clusterSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      // fetch cluster logs
+      .addCase(fetchClusterInfraLogs.pending, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            logs: {
+              ...state.entities[clusterId]?.logs,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchClusterInfraLogs.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            logs: {
+              items: action.payload,
+              loadingStatus: 'loaded',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchClusterInfraLogs.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            logs: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
   },
 })
 
@@ -67,3 +112,6 @@ export const selectClustersEntitiesByOrganizationId = createSelector(
 )
 
 export const selectClusterEntities = createSelector(getClusterState, selectEntities)
+
+export const selectClusterById = (state: RootState, applicationId: string): ClusterEntity | undefined =>
+  getClusterState(state).entities[applicationId]

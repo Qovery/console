@@ -58,6 +58,9 @@ const FaIcons = [
   'icon-solid-grip-lines',
   'icon-solid-arrow-left',
   'icon-solid-key',
+  'icon-solid-cloud-arrow-down',
+  'icon-solid-arrow-down-to-line',
+  'icon-solid-arrow-up-to-line',
   // schema: favicons name
 ]
 

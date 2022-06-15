@@ -5,6 +5,7 @@ import Icon from '../../icon/icon'
 export enum ButtonIconSize {
   BIG = 'big',
   NORMAL = 'normal',
+  SMALL = 'small',
 }
 
 export enum ButtonIconStyle {
@@ -21,7 +22,6 @@ export interface ButtonIconProps {
   style?: ButtonIconStyle
   icon: IconEnum | string
   link?: string
-  external?: boolean
   disabled?: boolean
   className?: string
   onClick?: (e: React.MouseEvent) => void
@@ -29,6 +29,7 @@ export interface ButtonIconProps {
   notification?: boolean
   active?: boolean
   iconClassName?: string
+  external?: boolean
 }
 
 export function ButtonIcon(props: ButtonIconProps) {

@@ -13,7 +13,7 @@ export * from './lib/states/clusters.interface'
 export * from './lib/domain/application.entity'
 export * from './lib/domain/database.entity'
 export * from './lib/domain/environment.entity'
-
+export * from './lib/domain/cluster.entity'
 export * from './lib/domain/service-running-status.interface'
 
 export * from './lib/types/loading-status.type'

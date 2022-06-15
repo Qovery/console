@@ -191,7 +191,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
             {localFilter === currentFilter && localFilter !== ALL ? (
               <Button
                 className="whitespace-nowrap inline-block btn--active"
-                size={ButtonSize.VERY_SMALL}
+                size={ButtonSize.TINY}
                 style={ButtonStyle.TAB}
               >
                 {title} ({dataFilterNumber})
@@ -199,7 +199,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
             ) : (
               <Button
                 className="inline-block"
-                size={ButtonSize.VERY_SMALL}
+                size={ButtonSize.TINY}
                 style={ButtonStyle.TAB}
                 iconRight="icon-solid-angle-down"
               >
@@ -210,7 +210,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         }
       />
       {localFilter === currentFilter && localFilter !== ALL && (
-        <div className="btn btn--very-small btn--tab btn--active relative left-[-9px]">
+        <div className="btn btn--tiny btn--tab btn--active relative left-[-9px]">
           <span onClick={(event) => cleanFilter(event)}>
             <Icon name="icon-solid-circle-xmark" />
           </span>

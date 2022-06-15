@@ -10,6 +10,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
+        code: ['Hack', 'sans-serif'],
         icons: ['FontAwesome'],
       },
       fontSize: {
