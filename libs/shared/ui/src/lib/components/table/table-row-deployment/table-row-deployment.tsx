@@ -1,3 +1,4 @@
+import { ServicesEnum } from '@console/shared/enums'
 import { DeploymentService } from '@console/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@console/shared/router'
 import {
@@ -11,7 +12,7 @@ import {
   Tooltip,
 } from '@console/shared/ui'
 import { timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
-import { Commit, DeploymentHistoryApplication, DeploymentHistoryDatabase, StateEnum } from 'qovery-typescript-axios'
+import { DeploymentHistoryApplication, DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -118,7 +119,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
               <Link to={APPLICATION_URL(organizationId, projectId, environmentId, data?.id) + APPLICATION_GENERAL_URL}>
                 <div className="flex items-center">
                   <div className="w-8 text-center">
-                    <Icon name={(data as DeploymentService)?.type || 'APPLICATION'} className="w-5 h-5" />
+                    <Icon name={(data as DeploymentService)?.type || ServicesEnum.APPLICATION} className="w-5 h-5" />
                   </div>
                   <p className="text-xs text-text-600 font-medium">{data?.name}</p>
                 </div>
