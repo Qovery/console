@@ -1,10 +1,61 @@
-import { render } from '@testing-library/react'
+import { applicationDeploymentsFactoryMock } from '@console/domains/application'
+import { render } from '__tests__/utils/setup-jest'
 
-import TableRowDeployment from './table-row-deployment'
+import TableRowDeployment, { TableRowDeploymentProps } from './table-row-deployment'
+
+let props: TableRowDeploymentProps
+
+beforeEach(() => {
+  props = {
+    data: applicationDeploymentsFactoryMock(1)[0],
+    dataHead: [
+      {
+        title: 'Execution ID',
+        className: 'px-4 py-2 bg-white h-full',
+        filter: [
+          {
+            search: true,
+            title: 'Filter by id',
+            key: 'id',
+          },
+        ],
+      },
+      {
+        title: 'Status',
+        className: 'px-4 py-2 bg-white h-full',
+        filter: [
+          {
+            search: true,
+            title: 'Filter by status',
+            key: 'status',
+          },
+        ],
+      },
+      {
+        title: 'Update',
+        className: 'px-4 py-2 bg-white h-full flex items-center',
+        sort: {
+          key: 'updated_at',
+        },
+      },
+      {
+        title: 'Commit',
+        className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full bg-white',
+        filter: [
+          {
+            search: true,
+            title: 'Filter by service',
+            key: 'commit.git_commit_id',
+          },
+        ],
+      },
+    ],
+  }
+})
 
 describe('TableRowDeployment', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<TableRowDeployment />)
+    const { baseElement } = render(<TableRowDeployment {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })
