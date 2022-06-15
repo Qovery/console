@@ -42,6 +42,7 @@ export const initialDatabasesState: DatabasesState = databasesAdapter.getInitial
   loadingStatus: 'not loaded',
   error: null,
   joinEnvDatabase: {},
+  statusLoadingStatus: 'not loaded',
 })
 
 export const databasesSlice = createSlice({
@@ -109,7 +110,7 @@ export const databasesSlice = createSlice({
       })
       // get environments status
       .addCase(fetchDatabasesStatus.pending, (state: DatabasesState) => {
-        state.loadingStatus = 'loading'
+        state.statusLoadingStatus = 'loading'
       })
       .addCase(fetchDatabasesStatus.fulfilled, (state: DatabasesState, action: PayloadAction<Status[]>) => {
         const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
@@ -121,10 +122,10 @@ export const databasesSlice = createSlice({
           })
         )
         databasesAdapter.updateMany(state, update as Update<Database>[])
-        state.loadingStatus = 'loaded'
+        state.statusLoadingStatus = 'loaded'
       })
       .addCase(fetchDatabasesStatus.rejected, (state: DatabasesState, action) => {
-        state.loadingStatus = 'error'
+        state.statusLoadingStatus = 'error'
         state.error = action.error.message
       })
   },

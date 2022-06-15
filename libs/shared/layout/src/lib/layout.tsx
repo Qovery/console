@@ -43,7 +43,6 @@ export function Layout(props: LayoutProps) {
     getUserSignUp()
     getOrganization()
     organizationId && getProjects(organizationId)
-    projectId && getEnvironments(projectId)
     environmentId && getApplications(environmentId)
     environmentId && dispatch(fetchDatabases({ environmentId }))
   }, [
@@ -58,6 +57,10 @@ export function Layout(props: LayoutProps) {
     getApplication,
     dispatch,
   ])
+
+  useEffect(() => {
+    projectId && getEnvironments(projectId)
+  }, [projectId, getEnvironments])
 
   useEffect(() => {
     dispatch(fetchClusters({ organizationId }))
