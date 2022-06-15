@@ -18,7 +18,6 @@ import {
 import { useAuth } from '@console/shared/auth'
 import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
-import { LoginPage } from '@console/pages/login/feature'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { EnvironmentsPage } from '@console/pages/environments/feature'
@@ -26,6 +25,7 @@ import { ServicesPage } from '@console/pages/services/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { ApplicationPage } from '@console/pages/application/feature'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
+import { PageLogin } from '@console/pages/login'
 import { Layout } from '@console/shared/layout'
 import { useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
@@ -50,7 +50,7 @@ function RedirectOverview() {
 export const ROUTER = [
   {
     path: LOGIN_URL,
-    component: <LoginPage />,
+    component: <PageLogin />,
     protected: false,
   },
   {
@@ -140,7 +140,7 @@ export function App() {
   return (
     <GTMProvider state={gtmParams}>
       <Routes>
-        <Route path={LOGIN_URL} element={<LoginPage />} />
+        <Route path={LOGIN_URL} element={<PageLogin />} />
         {ROUTER.map(
           (route) =>
             !route.layout && (

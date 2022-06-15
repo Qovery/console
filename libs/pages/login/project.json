@@ -1,5 +1,6 @@
 {
-  "sourceRoot": "libs/pages/login/feature/src",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/pages/login/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -7,14 +8,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/pages/login/feature/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/pages/login/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/pages/login/feature"],
+      "outputs": ["coverage/libs/pages/login"],
       "options": {
-        "jestConfig": "libs/pages/login/feature/jest.config.ts",
+        "jestConfig": "libs/pages/login/jest.config.ts",
         "passWithNoTests": true
       }
     }

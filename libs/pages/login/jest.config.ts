@@ -1,10 +1,10 @@
 /* eslint-disable */
 export default {
-  displayName: 'pages-login-feature',
-  preset: '../../../../jest.preset.js',
+  displayName: 'pages-login',
+  preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/pages/login/feature',
+  coverageDirectory: '../../../coverage/libs/pages/login',
 }
