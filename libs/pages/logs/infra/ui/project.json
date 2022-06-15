@@ -1,5 +1,4 @@
 {
-  "root": "libs/pages/logs/infra/ui",
   "sourceRoot": "libs/pages/logs/infra/ui/src",
   "projectType": "library",
   "tags": [],
