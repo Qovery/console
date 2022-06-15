@@ -24,7 +24,9 @@ export function LayoutPage(props: LayoutPageProps) {
           lastName={user?.last_name}
         />
         <TopBar darkMode={darkMode} />
-        <div className="pt-2 px-2 mt-navbar-height ml-16 h-page-container flex flex-col">{children}</div>
+        <div className={`mt-navbar-height ml-16 h-page-container flex flex-col ${!darkMode ? 'pt-2 px-2' : ''}`}>
+          {children}
+        </div>
       </main>
     </>
   )

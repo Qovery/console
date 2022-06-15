@@ -9,12 +9,12 @@ import {
   SETTINGS_URL,
 } from '@console/shared/router'
 import { OverviewPage } from '@console/pages/overview/feature'
-import { SettingsPage } from '@console/pages/settings/feature'
+import { PageSettings } from '@console/pages/settings'
 import { PageEnvironments } from '@console/pages/environments'
 import { PageServices } from '@console/pages/services'
 import { PageApplication } from '@console/pages/application'
 import { PageDatabase } from '@console/pages/database'
-import { InfraLogsPage } from '@console/pages/logs/infra/feature'
+import { PageInfraLogs } from '@console/pages/logs/infra'
 import RedirectOverview from '../components/redirect-overview'
 
 export const ROUTER = [
@@ -32,7 +32,7 @@ export const ROUTER = [
   },
   {
     path: SETTINGS_URL(),
-    component: <SettingsPage />,
+    component: <PageSettings />,
     protected: true,
     layout: true,
   },
@@ -62,7 +62,7 @@ export const ROUTER = [
   },
   {
     path: `${INFRA_LOGS_URL()}`,
-    component: <InfraLogsPage />,
+    component: <PageInfraLogs />,
     protected: true,
     layout: true,
     darkMode: true,

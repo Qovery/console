@@ -19,7 +19,7 @@ export function HelpSection(props: HelpSectionProps) {
             linkLabel={link.linkLabel || link.link}
             external={link.external}
             iconRight="icon-solid-arrow-up-right-from-square"
-          ></Link>
+          />
         ))}
     </div>
   )

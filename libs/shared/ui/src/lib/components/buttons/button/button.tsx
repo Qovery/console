@@ -6,7 +6,7 @@ export enum ButtonSize {
   BIG = 'big',
   NORMAL = 'normal',
   SMALL = 'small',
-  VERY_SMALL = 'very-small',
+  TINY = 'tiny',
 }
 
 export enum ButtonStyle {
