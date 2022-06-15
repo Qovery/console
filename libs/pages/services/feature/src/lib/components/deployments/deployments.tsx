@@ -13,6 +13,7 @@ import { DeploymentsPage } from '@console/pages/services/ui'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
+import { ServicesEnum } from '@console/shared/enums'
 
 export function Deployments() {
   const { environmentId = '', projectId = '' } = useParams()
@@ -41,7 +42,7 @@ export function Deployments() {
         const a: DeploymentService = {
           ...app,
           execution_id: deployment.id,
-          type: 'APPLICATION',
+          type: ServicesEnum.APPLICATION,
         }
         merged.push(a)
       })
@@ -50,7 +51,7 @@ export function Deployments() {
         const d: DeploymentService = {
           ...db,
           execution_id: deployment.id,
-          type: 'DATABASE',
+          type: ServicesEnum.DATABASE,
         }
         merged.push(d)
       })
