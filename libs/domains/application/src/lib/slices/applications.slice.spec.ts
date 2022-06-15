@@ -1,4 +1,4 @@
-import { fetchApplications, applicationsAdapter, applications } from './applications.slice'
+import { applications, applicationsAdapter, fetchApplications } from './applications.slice'
 
 describe('applications reducer', () => {
   it('should handle initial state', () => {
@@ -6,6 +6,7 @@ describe('applications reducer', () => {
       loadingStatus: 'not loaded',
       error: null,
       joinEnvApplication: {},
+      statusLoadingStatus: 'not loaded',
     })
 
     expect(applications(undefined, { type: '' })).toEqual(expected)
@@ -19,6 +20,7 @@ describe('applications reducer', () => {
         loadingStatus: 'loading',
         error: null,
         entities: {},
+        statusLoadingStatus: 'not loaded',
       })
     )
 
@@ -29,6 +31,7 @@ describe('applications reducer', () => {
         loadingStatus: 'loaded',
         error: null,
         entities: { 1: { id: 1 } },
+        statusLoadingStatus: 'not loaded',
       })
     )
 
@@ -39,6 +42,7 @@ describe('applications reducer', () => {
         loadingStatus: 'error',
         error: 'Uh oh',
         entities: { 1: { id: 1 } },
+        statusLoadingStatus: 'not loaded',
       })
     )
   })

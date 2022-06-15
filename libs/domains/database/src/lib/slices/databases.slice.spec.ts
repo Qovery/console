@@ -1,4 +1,4 @@
-import { fetchDatabases, databasesAdapter, databases } from './databases.slice'
+import { databases, databasesAdapter, fetchDatabases } from './databases.slice'
 
 describe('databases reducer', () => {
   it('should handle initial state', () => {
@@ -6,6 +6,7 @@ describe('databases reducer', () => {
       loadingStatus: 'not loaded',
       error: null,
       joinEnvDatabase: {},
+      statusLoadingStatus: 'not loaded',
     })
 
     expect(databases(undefined, { type: '' })).toEqual(expected)
@@ -19,6 +20,7 @@ describe('databases reducer', () => {
         loadingStatus: 'loading',
         error: null,
         entities: {},
+        statusLoadingStatus: 'not loaded',
       })
     )
 
@@ -29,6 +31,7 @@ describe('databases reducer', () => {
         loadingStatus: 'loaded',
         error: null,
         entities: { 1: { id: 1 } },
+        statusLoadingStatus: 'not loaded',
       })
     )
 
@@ -39,6 +42,7 @@ describe('databases reducer', () => {
         loadingStatus: 'error',
         error: 'Uh oh',
         entities: { 1: { id: 1 } },
+        statusLoadingStatus: 'not loaded',
       })
     )
   })

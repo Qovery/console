@@ -104,6 +104,7 @@ export const initialApplicationsState: ApplicationsState = applicationsAdapter.g
   loadingStatus: 'not loaded',
   error: null,
   joinEnvApplication: {},
+  statusLoadingStatus: 'not loaded',
 })
 
 export const applicationsSlice = createSlice({
@@ -180,7 +181,7 @@ export const applicationsSlice = createSlice({
       })
       // get environments status
       .addCase(fetchApplicationsStatus.pending, (state: ApplicationsState) => {
-        state.loadingStatus = 'loading'
+        state.statusLoadingStatus = 'loading'
       })
       .addCase(fetchApplicationsStatus.fulfilled, (state: ApplicationsState, action: PayloadAction<Status[]>) => {
         const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
@@ -192,10 +193,10 @@ export const applicationsSlice = createSlice({
           })
         )
         applicationsAdapter.updateMany(state, update as Update<Application>[])
-        state.loadingStatus = 'loaded'
+        state.statusLoadingStatus = 'loaded'
       })
       .addCase(fetchApplicationsStatus.rejected, (state: ApplicationsState, action) => {
-        state.loadingStatus = 'error'
+        state.statusLoadingStatus = 'error'
         state.error = action.error.message
       })
       // remove application

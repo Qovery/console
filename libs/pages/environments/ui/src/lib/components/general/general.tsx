@@ -94,11 +94,9 @@ export const GeneralPage = React.memo(General, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
   const isEqual =
     JSON.stringify(prevProps.environments.map((environment) => environment.status?.state)) ===
-    JSON.stringify(nextProps.environments.map((environment) => environment.status?.state))
+      JSON.stringify(nextProps.environments.map((environment) => environment.status?.state)) &&
+    JSON.stringify(prevProps.environments.map((environment) => environment.running_status?.state)) ===
+      JSON.stringify(nextProps.environments.map((environment) => environment.running_status?.state))
 
-  if (isEqual) {
-    return true
-  }
-
-  return false
+  return isEqual
 })

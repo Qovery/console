@@ -2,7 +2,6 @@ import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import { store } from '@console/store/data'
 import { ModalProvider, ToastBehavior } from '@console/shared/ui'
 import { createBrowserHistory } from 'history'
-import * as ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
@@ -10,6 +9,7 @@ import App from './app/app'
 import { environment } from './environments/environment'
 import './styles.scss'
 import posthog from 'posthog-js'
+import { createRoot } from 'react-dom/client'
 
 const OAUTH_CALLBACK = '/login/auth0-callback'
 
@@ -25,7 +25,10 @@ const onRedirectCallback = (appState: AppState | undefined) => {
   history.replace(appState?.returnTo || window.location.pathname)
 }
 
-ReactDOM.render(
+const container = document.getElementById('root') || document.createElement('div')
+const root = createRoot(container)
+
+root.render(
   // <IntercomProvider appId={environment.intercom} autoBoot={process.env['NODE_ENV'] === 'production'
   <IntercomProvider appId={environment.intercom} autoBoot>
     <Auth0Provider
@@ -46,6 +49,5 @@ ReactDOM.render(
         </BrowserRouter>
       </Provider>
     </Auth0Provider>
-  </IntercomProvider>,
-  document.getElementById('root') || document.createElement('div')
+  </IntercomProvider>
 )
