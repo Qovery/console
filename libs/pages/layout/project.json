@@ -1,5 +1,6 @@
 {
-  "sourceRoot": "libs/shared/layout/src",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/pages/layout/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -7,14 +8,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/layout/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/pages/layout/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/layout"],
+      "outputs": ["coverage/libs/pages/layout"],
       "options": {
-        "jestConfig": "libs/shared/layout/jest.config.ts",
+        "jestConfig": "libs/pages/layout/jest.config.ts",
         "passWithNoTests": true
       }
     }
