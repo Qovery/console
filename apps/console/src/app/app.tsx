@@ -5,13 +5,13 @@ import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   APPLICATION_URL,
-  SERVICES_URL,
   ENVIRONMENTS_URL,
   LOGIN_URL,
   ONBOARDING_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
   ProtectedRoute,
+  SERVICES_URL,
   SETTINGS_URL,
   INFRA_LOGS_URL,
 } from '@console/shared/router'
@@ -27,6 +27,7 @@ import { ApplicationPage } from '@console/pages/application/feature'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import { PageLogin } from '@console/pages/login'
 import { Layout } from '@console/shared/layout'
+
 import { useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
 
