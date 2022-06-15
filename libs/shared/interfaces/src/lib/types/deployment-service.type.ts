@@ -1,3 +1,4 @@
+import { ServicesEnum } from '@console/shared/enums'
 import { Commit, StateEnum } from 'qovery-typescript-axios'
 
 export interface DeploymentService {
@@ -7,6 +8,6 @@ export interface DeploymentService {
   name?: string
   status?: StateEnum
   commit?: Commit
-  type?: 'APPLICATION' | 'DATABASE'
+  type?: ServicesEnum
   execution_id?: string
 }

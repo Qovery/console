@@ -12,28 +12,19 @@ export interface TableRowProps {
 export function TableRow(props: TableRowProps) {
   const { children, link, className = '', columnsWidth, disabled } = props
 
+  const rowClasses = `grid items-center h-14 border-b-element-light-lighter-400 border-b last:border-0 hover:bg-element-light-lighter-200 ${className} ${
+    disabled ? 'pointer-events-none' : ''
+  }`
+
   if (link) {
     return (
-      <Link
-        data-testid="row"
-        to={link}
-        className={`grid items-center h-14 border-b-element-light-lighter-400 border-b last:border-0 hover:bg-element-light-lighter-200 ${className} ${
-          disabled ? 'pointer-events-none	' : ''
-        }`}
-        style={{ gridTemplateColumns: columnsWidth }}
-      >
+      <Link data-testid="row" to={link} className={rowClasses} style={{ gridTemplateColumns: columnsWidth }}>
         {children}
       </Link>
     )
   } else {
     return (
-      <div
-        data-testid="row"
-        className={`grid items-center h-14 border-b-element-light-lighter-400 border-b last:border-0 hover:bg-element-light-lighter-200 ${className} ${
-          disabled ? 'pointer-events-none	' : ''
-        }`}
-        style={{ gridTemplateColumns: columnsWidth }}
-      >
+      <div data-testid="row" className={rowClasses} style={{ gridTemplateColumns: columnsWidth }}>
         {children}
       </div>
     )
