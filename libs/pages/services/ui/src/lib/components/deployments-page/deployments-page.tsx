@@ -9,13 +9,20 @@ export interface DeploymentsPageProps {
 }
 
 export function DeploymentsPage(props: DeploymentsPageProps) {
-  const { deployments = [], listHelpfulLinks, isLoading = true } = props
+  const { deployments = [], listHelpfulLinks, isLoading } = props
 
-  const [data, setData] = useState<DeploymentService[]>(deployments)
+  const [data, setData] = useState<DeploymentService[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    deployments && setData(deployments)
-  }, [deployments])
+    // It's a hack to render the page before the table
+    // Without it the page take some time to render
+    // https://blog.thoughtspile.tech/2021/11/15/unintentional-layout-effect/
+    setTimeout(() => {
+      deployments && setData(deployments)
+      setLoading(isLoading || false)
+    })
+  }, [deployments, isLoading])
 
   const tableHead = [
     {
@@ -86,7 +93,7 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
               data={currentData as DeploymentService}
               key={index}
               dataHead={tableHead}
-              isLoading={isLoading}
+              isLoading={loading}
               startGroup={currentData?.execution_id !== data[index - 1]?.execution_id && index !== 0 ? true : false}
             />
           ))}
