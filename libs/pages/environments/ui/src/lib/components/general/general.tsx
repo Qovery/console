@@ -93,10 +93,18 @@ function General(props: GeneralProps) {
 export const GeneralPage = React.memo(General, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
   const isEqual =
-    JSON.stringify(prevProps.environments.map((environment) => environment.status?.state)) ===
-      JSON.stringify(nextProps.environments.map((environment) => environment.status?.state)) &&
-    JSON.stringify(prevProps.environments.map((environment) => environment.running_status?.state)) ===
-      JSON.stringify(nextProps.environments.map((environment) => environment.running_status?.state))
+    JSON.stringify(
+      prevProps.environments.map((environment) => ({
+        status: environment.status?.state,
+        running_status: environment.running_status?.state,
+      }))
+    ) ===
+    JSON.stringify(
+      nextProps.environments.map((environment) => ({
+        status: environment.status?.state,
+        running_status: environment.running_status?.state,
+      }))
+    )
 
   return isEqual
 })
