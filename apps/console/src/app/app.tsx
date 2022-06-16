@@ -22,7 +22,6 @@ import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { EnvironmentsPage } from '@console/pages/environments/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
-import { ApplicationPage } from '@console/pages/application/feature'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import { PageLogin } from '@console/pages/login'
 
@@ -30,6 +29,7 @@ import { useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
 import { Layout } from '@console/pages/layout'
 import { PageServices } from '@console/pages/services'
+import { PageApplication } from '@console/pages/application'
 
 function RedirectOverview() {
   const { organizationId } = useParams()
@@ -86,7 +86,7 @@ export const ROUTER = [
   },
   {
     path: `${APPLICATION_URL()}/*`,
-    component: <ApplicationPage />,
+    component: <PageApplication />,
     protected: true,
     layout: true,
   },
