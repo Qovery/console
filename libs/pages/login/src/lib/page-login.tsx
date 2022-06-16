@@ -1,7 +1,7 @@
-import { Container } from '../lib/feature/container/container'
+import { PageLoginFeature } from './feature/page-login/page-login'
 
 export function PageLogin() {
-  return <Container />
+  return <PageLoginFeature />
 }
 
 export default PageLogin

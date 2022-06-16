@@ -1,10 +1,10 @@
 import { render } from '__tests__/utils/setup-jest'
 
-import Login from './container'
+import PageLoginFeature from './page-login'
 
-describe('Login', () => {
+describe('PageLoginFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Login />)
+    const { baseElement } = render(<PageLoginFeature />)
     expect(baseElement).toBeTruthy()
   })
 })
