@@ -1,22 +1,20 @@
 import {
   environmentFactoryMock,
   environmentsLoadingEnvironmentDeployments,
-  fetchEnvironmentDeploymentHistory,
-  fetchEnvironments,
-  selectEnvironmentById,
   environmentsLoadingStatus,
+  fetchEnvironmentDeploymentHistory,
+  selectEnvironmentById,
 } from '@console/domains/environment'
 import { DeploymentService, EnvironmentEntity } from '@console/shared/interfaces'
 import { BaseLink } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
-import { DeploymentsPage } from '@console/pages/services/ui'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { ServicesEnum } from '@console/shared/enums'
-import { DeploymentHistoryApplication } from 'qovery-typescript-axios'
+import DeploymentsPage from '../../ui/deployments-page/deployments-page'
 
-export function Deployments() {
+export function DeploymentsFeature() {
   const { environmentId = '', projectId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
@@ -82,4 +80,4 @@ export function Deployments() {
   )
 }
 
-export default Deployments
+export default DeploymentsFeature

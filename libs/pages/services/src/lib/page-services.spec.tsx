@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-import General from './general'
+import PageServices from './page-services'
 
-describe('General', () => {
+describe('ServicesPage', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<General />)
+    const { baseElement } = render(<PageServices />)
     expect(baseElement).toBeTruthy()
   })
 })

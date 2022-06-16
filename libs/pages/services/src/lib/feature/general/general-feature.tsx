@@ -13,12 +13,12 @@ import {
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
 import { AppDispatch, RootState } from '@console/store/data'
-import { GeneralPage } from '@console/pages/services/ui'
 import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { databasesLoadingStatus, fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
+import { GeneralPage } from '../../ui/general/general'
 
-export function General() {
+export function GeneralFeature() {
   const { environmentId = '' } = useParams()
 
   const loadingServices = applicationFactoryMock(3)
@@ -90,4 +90,4 @@ export function General() {
   )
 }
 
-export default General
+export default GeneralFeature

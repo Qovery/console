@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-import Deployments from './deployments'
+import GeneralFeature from './general-feature'
 
-describe('Deployments', () => {
+describe('General', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Deployments />)
+    const { baseElement } = render(<GeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 })

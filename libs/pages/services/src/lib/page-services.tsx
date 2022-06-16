@@ -1,10 +1,8 @@
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Environment } from 'qovery-typescript-axios'
-import { SERVICES_URL, APPLICATION_GENERAL_URL } from '@console/shared/router'
+import { APPLICATION_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { useDocumentTitle } from '@console/shared/utils'
-import { Container } from '@console/pages/services/ui'
-import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
 import {
   deleteEnvironmentActionsCancelDeployment,
   postEnvironmentActionsCancelDeployment,
@@ -16,8 +14,9 @@ import {
 import { AppDispatch, RootState } from '@console/store/data'
 import { ROUTER_SERVICES } from './router/router'
 import { useEffect } from 'react'
+import Container from './ui/container/container'
 
-export function ServicesPage() {
+export function PageServices() {
   useDocumentTitle('Services - Qovery')
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
@@ -69,4 +68,4 @@ export function ServicesPage() {
   )
 }
 
-export default ServicesPage
+export default PageServices
