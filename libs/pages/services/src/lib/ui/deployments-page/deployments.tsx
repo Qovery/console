@@ -8,7 +8,7 @@ export interface DeploymentsPageProps {
   isLoading?: boolean
 }
 
-export function DeploymentsPage(props: DeploymentsPageProps) {
+export function Deployments(props: DeploymentsPageProps) {
   const { deployments = [], listHelpfulLinks, isLoading } = props
 
   const [data, setData] = useState<DeploymentService[]>([])
@@ -106,4 +106,4 @@ export function DeploymentsPage(props: DeploymentsPageProps) {
   )
 }
 
-export default DeploymentsPage
+export default Deployments

@@ -13,7 +13,7 @@ export interface GeneralProps {
   listHelpfulLinks: BaseLink[]
 }
 
-function General(props: GeneralProps) {
+function GeneralMemo(props: GeneralProps) {
   const { environmentMode, services, buttonActions, listHelpfulLinks } = props
   const { organizationId, projectId, environmentId } = useParams()
 
@@ -93,7 +93,7 @@ function General(props: GeneralProps) {
   )
 }
 
-export const GeneralPage = React.memo(General, (prevProps, nextProps) => {
+export const General = React.memo(GeneralMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
   const isEqual =
     JSON.stringify(
