@@ -21,7 +21,6 @@ import { LoadingScreen } from '@console/shared/ui'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { EnvironmentsPage } from '@console/pages/environments/feature'
-import { ServicesPage } from '@console/pages/services/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { ApplicationPage } from '@console/pages/application/feature'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
@@ -30,6 +29,7 @@ import { PageLogin } from '@console/pages/login'
 import { useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
 import { Layout } from '@console/pages/layout'
+import { PageServices } from '@console/pages/services'
 
 function RedirectOverview() {
   const { organizationId } = useParams()
@@ -80,7 +80,7 @@ export const ROUTER = [
   },
   {
     path: `${SERVICES_URL()}/*`,
-    component: <ServicesPage />,
+    component: <PageServices />,
     protected: true,
     layout: true,
   },
