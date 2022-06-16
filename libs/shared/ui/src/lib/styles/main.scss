@@ -29,6 +29,6 @@ body {
   background: theme('colors.element.light.lighter.400');
 
   main:not(.h-screen) {
-    height: calc(100vh - 56px);
+    height: calc(100vh - theme('spacing.16'));
   }
 }
