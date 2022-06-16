@@ -16,9 +16,9 @@ import { AppDispatch, RootState } from '@console/store/data'
 import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { databasesLoadingStatus, fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
-import { General } from '../../ui/general/general'
+import { PageGeneral } from '../../ui/page-general/page-general'
 
-export function GeneralFeature() {
+export function PageGeneralFeature() {
   const { environmentId = '' } = useParams()
 
   const loadingServices = applicationFactoryMock(3)
@@ -81,7 +81,7 @@ export function GeneralFeature() {
     databasesByEnv.length === 0
 
   return (
-    <General
+    <PageGeneral
       services={isLoading ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
       buttonActions={actions}
       environmentMode={environment?.mode || ''}
@@ -90,4 +90,4 @@ export function GeneralFeature() {
   )
 }
 
-export default GeneralFeature
+export default PageGeneralFeature

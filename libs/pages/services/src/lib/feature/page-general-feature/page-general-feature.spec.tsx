@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-import GeneralFeature from './general-feature'
+import PageGeneralFeature from './page-general-feature'
 
 describe('General', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<GeneralFeature />)
+    const { baseElement } = render(<PageGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 })
