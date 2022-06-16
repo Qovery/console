@@ -10,7 +10,7 @@ import Login from '../../ui/login/login'
 
 // import posthog from 'posthog-js'
 
-export function Container() {
+export function PageLoginFeature() {
   const navigate = useNavigate()
   const { authLogin, createAuthCookies, checkIsAuthenticated } = useAuth()
   const { getOrganization } = useOrganization()
@@ -59,4 +59,4 @@ export function Container() {
   )
 }
 
-export default Container
+export default PageLoginFeature
