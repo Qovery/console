@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
 
-import DeploymentsPage, { DeploymentsPageProps } from './deployments-page'
+import Deployments, { DeploymentsPageProps } from './deployments'
 
 let props: DeploymentsPageProps
 
@@ -18,7 +18,7 @@ beforeEach(() => {
 
 describe('DeploymentsPage', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<DeploymentsPage {...props} />)
+    const { baseElement } = render(<Deployments {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

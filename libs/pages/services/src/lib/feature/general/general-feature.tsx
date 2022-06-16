@@ -16,7 +16,7 @@ import { AppDispatch, RootState } from '@console/store/data'
 import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { databasesLoadingStatus, fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
-import { GeneralPage } from '../../ui/general/general'
+import { General } from '../../ui/general/general'
 
 export function GeneralFeature() {
   const { environmentId = '' } = useParams()
@@ -81,7 +81,7 @@ export function GeneralFeature() {
     databasesByEnv.length === 0
 
   return (
-    <GeneralPage
+    <General
       services={isLoading ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
       buttonActions={actions}
       environmentMode={environment?.mode || ''}

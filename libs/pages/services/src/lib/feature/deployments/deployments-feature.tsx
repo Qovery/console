@@ -12,7 +12,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { ServicesEnum } from '@console/shared/enums'
-import DeploymentsPage from '../../ui/deployments-page/deployments-page'
+import Deployments from '../../ui/deployments-page/deployments'
 
 export function DeploymentsFeature() {
   const { environmentId = '', projectId = '' } = useParams()
@@ -68,7 +68,7 @@ export function DeploymentsFeature() {
   }, [dispatch, environmentId, projectId, environment])
 
   return (
-    <DeploymentsPage
+    <Deployments
       deployments={
         !isLoading
           ? environment && (mergeDeploymentServices(environment) as DeploymentService[])
