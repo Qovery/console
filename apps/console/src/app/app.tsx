@@ -6,6 +6,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   APPLICATION_URL,
   ENVIRONMENTS_URL,
+  INFRA_LOGS_URL,
   LOGIN_URL,
   ONBOARDING_URL,
   ORGANIZATION_URL,
@@ -13,7 +14,6 @@ import {
   ProtectedRoute,
   SERVICES_URL,
   SETTINGS_URL,
-  INFRA_LOGS_URL,
 } from '@console/shared/router'
 import { useAuth } from '@console/shared/auth'
 import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
@@ -26,10 +26,10 @@ import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { ApplicationPage } from '@console/pages/application/feature'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import { PageLogin } from '@console/pages/login'
-import { Layout } from '@console/shared/layout'
 
 import { useProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
+import { Layout } from '@console/pages/layout'
 
 function RedirectOverview() {
   const { organizationId } = useParams()
