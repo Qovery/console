@@ -20,7 +20,6 @@ import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
-import { EnvironmentsPage } from '@console/pages/environments/feature'
 import { OnboardingPage } from '@console/pages/onboarding/feature'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import { PageLogin } from '@console/pages/login'
@@ -30,6 +29,7 @@ import { environment } from '../environments/environment'
 import { Layout } from '@console/pages/layout'
 import { PageServices } from '@console/pages/services'
 import { PageApplication } from '@console/pages/application'
+import { PageEnvironments } from '@console/pages/environments'
 
 function RedirectOverview() {
   const { organizationId } = useParams()
@@ -74,7 +74,7 @@ export const ROUTER = [
   },
   {
     path: `${ENVIRONMENTS_URL()}/*`,
-    component: <EnvironmentsPage />,
+    component: <PageEnvironments />,
     protected: true,
     layout: true,
   },
