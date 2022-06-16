@@ -6,14 +6,14 @@ import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared
 import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
 import TableRowServices from '../table-row-services/table-row-services'
 
-export interface GeneralProps {
+export interface PageGeneralProps {
   environmentMode: string
   services: (ApplicationEntity | DatabaseEntity)[]
   buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
 }
 
-function GeneralMemo(props: GeneralProps) {
+function PageGeneralMemo(props: PageGeneralProps) {
   const { environmentMode, services, buttonActions, listHelpfulLinks } = props
   const { organizationId, projectId, environmentId } = useParams()
 
@@ -93,7 +93,7 @@ function GeneralMemo(props: GeneralProps) {
   )
 }
 
-export const General = React.memo(GeneralMemo, (prevProps, nextProps) => {
+export const PageGeneral = React.memo(PageGeneralMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
   const isEqual =
     JSON.stringify(

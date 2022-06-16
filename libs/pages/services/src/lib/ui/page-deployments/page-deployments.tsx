@@ -2,13 +2,13 @@ import { DeploymentService } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
 import { useEffect, useState } from 'react'
 
-export interface DeploymentsPageProps {
+export interface PageDeploymentsProps {
   deployments?: DeploymentService[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
-export function Deployments(props: DeploymentsPageProps) {
+export function PageDeployments(props: PageDeploymentsProps) {
   const { deployments = [], listHelpfulLinks, isLoading } = props
 
   const [data, setData] = useState<DeploymentService[]>([])
@@ -106,4 +106,4 @@ export function Deployments(props: DeploymentsPageProps) {
   )
 }
 
-export default Deployments
+export default PageDeployments
