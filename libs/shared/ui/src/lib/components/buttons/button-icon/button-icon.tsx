@@ -21,6 +21,7 @@ export interface ButtonIconProps {
   style?: ButtonIconStyle
   icon: IconEnum | string
   link?: string
+  external?: boolean
   disabled?: boolean
   className?: string
   onClick?: (e: React.MouseEvent) => void
@@ -41,6 +42,7 @@ export function ButtonIcon(props: ButtonIconProps) {
     onClick,
     notification = false,
     link,
+    external = false,
     active = false,
     iconClassName = '',
   } = props
@@ -49,25 +51,40 @@ export function ButtonIcon(props: ButtonIconProps) {
     disabled || loading ? 'btn--disabled' : ''
   } ${active ? 'btn--active' : ''} ${className}`
 
-  if (!link) {
+  const contentBtn = () => {
     return (
-      <button className={defineClass} onClick={(e) => onClick && onClick(e)}>
-        {notification && (
-          <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+      <>
+        {!link && (
+          <button className={defineClass} onClick={(e) => onClick && onClick(e)}>
+            {notification && (
+              <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+            )}
+            <Icon name={icon} className={iconClassName}></Icon>
+          </button>
         )}
-        <Icon name={icon} className={iconClassName}></Icon>
-      </button>
-    )
-  } else {
-    return (
-      <Link to={link} className={defineClass} onClick={onClick}>
-        {notification && (
-          <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+
+        {link && !external && (
+          <Link to={link} className={defineClass} onClick={onClick}>
+            {notification && (
+              <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+            )}
+            <Icon name={icon} className={iconClassName}></Icon>
+          </Link>
         )}
-        <Icon name={icon} className={iconClassName}></Icon>
-      </Link>
+
+        {link && external && (
+          <a href={link} target="_blank" rel="noreferrer" className={defineClass} onClick={onClick}>
+            {notification && (
+              <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+            )}
+            <Icon name={icon} className={iconClassName}></Icon>
+          </a>
+        )}
+      </>
     )
   }
+
+  return contentBtn()
 }
 
 export default ButtonIcon

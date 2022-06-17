@@ -80,6 +80,7 @@ export function TopBar(props: TopBarProps) {
       <div className="flex px-5 justify-between items-center h-full">
         <BreadcrumbFeature />
         {/* @TODO fix me should be dynamic */}
+        {/*
         {!darkMode ? (
           <div className="flex gap-3">
             <ButtonIcon icon="icon-solid-rocket" style={ButtonIconStyle.STROKED} notification={true} />
@@ -117,6 +118,7 @@ export function TopBar(props: TopBarProps) {
         ) : (
           <ButtonIcon icon="icon-solid-xmark" style={ButtonIconStyle.DARK} onClick={() => navigate(-1)} />
         )}
+        */}
       </div>
     </div>
   )

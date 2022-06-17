@@ -55,14 +55,16 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     <div className="mt-2 bg-white rounded flex flex-grow">
       <div className="flex h-full flex-col flex-grow">
         <div className="py-7 px-10 flex-grow">
-          <div className="flex mb-8">
+          <div className="flex">
             <p className="mb-5 text-text-400 text-xs">
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
+            {/*
             <Button size={ButtonSize.SMALL} className="leading-none ml-5" link={linkNewRule}>
               New rule
               <Icon name="icon-solid-plus" className="ml-2 !text-base inline-block -mt-1" />
             </Button>
+            */}
           </div>
 
           <div className={`max-w-2xl ${listRules?.length === 0 ? 'hidden' : ''}`}>

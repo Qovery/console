@@ -100,8 +100,18 @@ export function Container(props: ContainerProps) {
     },
     {
       icon: (
-        <Skeleton width={16} height={16} rounded show={!environment?.status}>
-          <StatusChip status={environment?.status && environment?.status.state} />
+        <Skeleton
+          show={
+            environment?.running_status?.state === RunningStatus.STARTING ||
+            environment?.running_status?.state === RunningStatus.STOPPING
+          }
+          width={16}
+          height={16}
+          rounded={true}
+        >
+          <StatusChip
+            status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
+          />
         </Skeleton>
       ),
       name: 'Deployments',
@@ -114,7 +124,17 @@ export function Container(props: ContainerProps) {
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
       <Skeleton width={154} height={32} show={!environment?.status}>
-        {environment?.status ? <ButtonAction iconRight="icon-solid-plus">New service</ButtonAction> : <div />}
+        {environment?.status ? (
+          <ButtonAction
+            iconRight="icon-solid-plus"
+            external
+            link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications`}
+          >
+            New service
+          </ButtonAction>
+        ) : (
+          <div />
+        )}
       </Skeleton>
     </div>
   )
