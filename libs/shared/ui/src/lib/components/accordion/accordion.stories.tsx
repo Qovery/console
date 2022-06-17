@@ -8,7 +8,7 @@ export default {
 
 const ModalContent = () => {
   return (
-    <div className="py-4 px-5 text-center">
+    <div className="py-4 px-5 text-center bg-white">
       <h3 className="font-medium text-sm text-text-500">Accordion title</h3>
       <p className="text-sm text-text-400">Accordion content</p>
     </div>
