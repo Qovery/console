@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { StateEnum } from 'qovery-typescript-axios'
-import { Menu, StatusMenuInformation, StatusMenuActions } from '@console/shared/ui'
+import { Menu, StatusMenuInformation, StatusMenuActions, MenuAlign } from '@console/shared/ui'
 import { MenuItemProps } from '../../../menu/menu-item/menu-item'
 import StatusMenuAction from '../../../status-menu-action/status-menu-action'
 
@@ -12,16 +12,28 @@ export interface ButtonIconActionElementProps {
     items: MenuItemProps[]
   }[]
   menusClassName?: string
+  menuAlign?: MenuAlign
   statusActions?: {
     status: StateEnum | undefined
     actions: StatusMenuActions[]
     information?: StatusMenuInformation
   }
   statusInformation?: StatusMenuInformation
+  triggerClassName?: string
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
-  const { iconLeft, iconRight, onClick, menus, menusClassName = '', statusActions, statusInformation } = props
+  const {
+    iconLeft,
+    iconRight,
+    onClick,
+    menus,
+    menusClassName = '',
+    triggerClassName = '',
+    statusActions,
+    statusInformation,
+    menuAlign = MenuAlign.START,
+  } = props
 
   const [open, setOpen] = useState(false)
 
@@ -30,10 +42,14 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
       <Menu
         className={menusClassName}
         menus={menus}
+        arrowAlign={menuAlign}
         width={248}
         onOpen={(isOpen) => setOpen(isOpen)}
         trigger={
-          <div data-testid="element" className={`btn-icon-action__element ${open ? 'is-active' : ''}`}>
+          <div
+            data-testid="element"
+            className={`btn-icon-action__element ${triggerClassName} ${open ? 'is-active' : ''}`}
+          >
             {iconLeft}
             {iconRight}
           </div>

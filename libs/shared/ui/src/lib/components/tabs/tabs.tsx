@@ -5,6 +5,7 @@ export interface TabsItem {
   name: string
   active?: boolean
   link: string
+  external?: boolean
 }
 
 export interface TabsProps {
@@ -15,21 +16,42 @@ export interface TabsProps {
 export function Tabs(props: TabsProps) {
   const { items = [], contentRight } = props
 
+  const contentTab = (item: TabsItem, index: number) => {
+    if (!item.external) {
+      return (
+        <Link
+          to={item.link}
+          key={index}
+          className={`h-14 border-b-2 px-4 flex gap-3 items-center hover:border-brand-500 hover:text-brand-500 group transition ease-in-out duration-200  ${
+            item?.active ? 'text-brand-500 border-brand-500' : 'text-text-400 border-element-light-lighter-500'
+          }`}
+        >
+          {item.icon}
+          <p className="text-sm font-medium">{item.name}</p>
+        </Link>
+      )
+    } else {
+      return (
+        <a
+          href={item.link}
+          target="_blank"
+          rel="noreferrer"
+          key={index}
+          className={`h-14 border-b-2 px-4 flex gap-3 items-center hover:border-brand-500 hover:text-brand-500 group transition ease-in-out duration-200  ${
+            item?.active ? 'text-brand-500 border-brand-500' : 'text-text-400 border-element-light-lighter-500'
+          }`}
+        >
+          {item.icon}
+          <p className="text-sm font-medium">{item.name}</p>
+        </a>
+      )
+    }
+  }
+
   return (
     <div className="w-full h-14 bg-white flex shrink-0 justify-between items-center rounded-b">
       <div className="flex gap-1 h-14 pl-4">
-        {items.map((item: TabsItem, index: number) => (
-          <Link
-            to={item.link}
-            key={index}
-            className={`h-14 border-b-2 px-4 flex gap-3 items-center hover:border-brand-500 hover:text-brand-500 group transition ease-in-out duration-200  ${
-              item?.active ? 'text-brand-500 border-brand-500' : 'text-text-400 border-element-light-lighter-500'
-            }`}
-          >
-            {item.icon}
-            <p className="text-sm font-medium">{item.name}</p>
-          </Link>
-        ))}
+        {items.map((item: TabsItem, index: number) => contentTab(item, index))}
       </div>
       {contentRight && <div className="flex items-center">{contentRight}</div>}
     </div>
