@@ -32,10 +32,15 @@ export function Container(props: ContainerProps) {
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
 
   const headerButtons = (
-    <div className="hidden">
-      <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />
-      <ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />
-      <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />
+    <div>
+      <ButtonIcon
+        icon="icon-solid-scroll"
+        style={ButtonIconStyle.STROKED}
+        link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`}
+        external
+      />
+      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} /> 
+      <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
     </div>
   )
 
@@ -118,6 +123,12 @@ export function Container(props: ContainerProps) {
       active:
         location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" />,
+      name: 'Settings',
+      link: `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications`,
+      external: true,
     },
   ]
 

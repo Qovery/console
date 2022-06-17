@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
-import { SETTINGS_URL } from '@console/shared/router'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, SETTINGS_URL } from '@console/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -24,7 +24,7 @@ export interface NavigationProps {
 
 export function Navigation(props: NavigationProps) {
   const { authLogout, firstName, lastName, darkMode } = props
-  const { organizationId } = useParams()
+  const { organizationId, projectId } = useParams()
   const navigate = useNavigate()
 
   const infosMenu = [
@@ -79,6 +79,12 @@ export function Navigation(props: NavigationProps) {
 
       <div className="flex flex-col justify-between h-[calc(100%-8rem)] px-2.5 py-5">
         <div className="flex flex-col gap-3">
+          <ButtonIcon
+            icon="icon-solid-layer-group"
+            style={ButtonIconStyle.ALT}
+            size={ButtonIconSize.BIG}
+            link={ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL}
+          />
           {/*
           <ButtonIcon
             icon="icon-solid-gauge-high"
@@ -86,7 +92,6 @@ export function Navigation(props: NavigationProps) {
             size={ButtonIconSize.BIG}
             active={true}
           />
-          <ButtonIcon icon="icon-solid-layer-group" style={ButtonIconStyle.ALT} size={ButtonIconSize.BIG} />
           <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.ALT} size={ButtonIconSize.BIG} />
           */}
         </div>

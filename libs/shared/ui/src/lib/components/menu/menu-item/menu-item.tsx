@@ -73,6 +73,7 @@ export function MenuItem(props: MenuItemProps) {
         href={link.url}
         data-testid="menuItem"
         target="_blank"
+        rel="noopener noreferrer"
         onClick={onClick}
       >
         {itemContent}
