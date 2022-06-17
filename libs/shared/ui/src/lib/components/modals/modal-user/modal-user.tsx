@@ -11,7 +11,7 @@ export interface ModalUserProps extends ModalContentProps {
 }
 
 export function ModalUser(props: ModalUserProps) {
-  const { authLogout, firstName = 'William', lastName = 'Traoré', setOpen } = props
+  const { authLogout, firstName = '', lastName = '', setOpen } = props
 
   const { organizationId } = useParams()
 
@@ -34,11 +34,12 @@ export function ModalUser(props: ModalUserProps) {
           <h3 className="text-base font-medium text-text-500 mb-3">
             {firstName} {lastName}
           </h3>
+
           <Button
             style={ButtonStyle.STROKED}
-            link={SETTINGS_URL(organizationId)}
             iconLeft="icon-solid-wheel"
-            onClick={() => setOpen && setOpen(false)}
+            external
+            link="https://console.qovery.com/platform/organization/user/settings/general"
           >
             Settings
           </Button>

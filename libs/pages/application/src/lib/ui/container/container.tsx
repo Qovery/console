@@ -167,8 +167,23 @@ export function Container(props: ContainerProps) {
     },
     {
       icon: (
-        <Skeleton width={16} height={16} rounded show={!application?.status}>
-          <StatusChip status={application?.status && application?.status.state} />
+        <Skeleton
+          show={
+            application?.running_status?.state === RunningStatus.STARTING ||
+            application?.running_status?.state === RunningStatus.STOPPING
+          }
+          width={16}
+          height={16}
+          rounded={true}
+        >
+          <StatusChip
+            status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+            appendTooltipMessage={
+              application?.running_status?.state === RunningStatus.ERROR
+                ? application.running_status.pods[0]?.state_message
+                : ''
+            }
+          />
         </Skeleton>
       ),
       name: 'Deployments',
@@ -177,7 +192,7 @@ export function Container(props: ContainerProps) {
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
     },
-    {
+    /*{
       icon: <Icon name="icon-solid-chart-area" />,
       name: 'Metrics',
       active:
@@ -200,7 +215,7 @@ export function Container(props: ContainerProps) {
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
-    },
+    },*/
   ]
 
   return (
