@@ -48,7 +48,15 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      {!isDeploymentRulesTab && <ButtonAction iconRight="icon-solid-plus">New environment</ButtonAction>}
+      {!isDeploymentRulesTab && (
+        <ButtonAction
+          iconRight="icon-solid-plus"
+          external
+          link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments`}
+        >
+          New environment
+        </ButtonAction>
+      )}
     </div>
   )
 

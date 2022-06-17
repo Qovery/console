@@ -47,9 +47,9 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
           )
           ?.focus(),
     },
-    {
+    /*{
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },
+    },*/
   ]
 
   const handleCopy = (e: React.MouseEvent) => {

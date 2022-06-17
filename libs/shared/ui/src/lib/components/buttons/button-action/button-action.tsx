@@ -18,6 +18,7 @@ export interface ButtonActionProps {
   style?: ButtonActionStyle
   iconRight?: IconEnum | string
   link?: string
+  external?: boolean
   disabled?: boolean
   className?: string
   onClick?: () => void
@@ -36,6 +37,7 @@ export function ButtonAction(props: ButtonActionProps) {
     iconRight,
     link,
     disabled = false,
+    external = false,
     className = '',
     onClick,
     menus = [],
@@ -57,11 +59,17 @@ export function ButtonAction(props: ButtonActionProps) {
             {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
           </button>
         )}
-        {link && (
+        {link && !external && (
           <Link className="btn-action__content" to={link} onClick={onClick}>
             <span>{children}</span>
             {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
           </Link>
+        )}
+        {link && external && (
+          <a className="btn-action__content" href={link} target="_blank" onClick={onClick}>
+            <span>{children}</span>
+            {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
+          </a>
         )}
       </>
     )
