@@ -1,11 +1,14 @@
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 import {
   Button,
+  ButtonAction,
+  ButtonIconAction,
   ButtonSize,
   ButtonStyle,
   Header,
   Icon,
   Menu,
+  MenuAlign,
   MenuData,
   MenuItemProps,
   Skeleton,
@@ -27,6 +30,7 @@ import {
 import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
+import { ClickEvent } from '@szhsin/react-menu'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]
@@ -90,11 +94,50 @@ export function Container(props: ContainerProps) {
     }
   }
 
+  const openLogsActions = [
+    {
+      iconLeft: <Icon name="icon-solid-scroll" className="text-text-500" />,
+      iconRight: <Icon name="icon-solid-angle-down" className="text-text-500" />,
+      menuAlign: MenuAlign.END,
+      triggerClassName:
+        '!bg-element-light-lighter-300 border-element-light-lighten-500 !hover:bg-element-light-lighter-400',
+      menus: [
+        {
+          items: [
+            {
+              name: 'Deployment logs',
+              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+              onClick: () =>
+                window
+                  .open(
+                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
+                    '_blank'
+                  )
+                  ?.focus(),
+            },
+            {
+              name: 'Application logs',
+              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+              onClick: () =>
+                window
+                  .open(
+                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
+                    '_blank'
+                  )
+                  ?.focus(),
+            },
+          ],
+        },
+      ],
+    },
+  ]
+
   const headerButtons = (
-    <div>
+    <div className="flex items-start gap-2">
       {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
       {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
       {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
+      <ButtonIconAction actions={openLogsActions} className="!h-8" />
       {application?.links && application.links.items && application.links.items.length > 0 && linkButtons()}
     </div>
   )
@@ -191,6 +234,12 @@ export function Container(props: ContainerProps) {
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" />,
+      name: 'Settings',
+      link: `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary`,
+      external: true,
     },
     /*{
       icon: <Icon name="icon-solid-chart-area" />,
