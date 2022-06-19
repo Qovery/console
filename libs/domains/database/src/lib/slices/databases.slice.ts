@@ -1,3 +1,6 @@
+import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
+import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
+import { RootState } from '@console/store/data'
 import {
   createAsyncThunk,
   createEntityAdapter,
@@ -6,16 +9,27 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { Database, DatabasesApi, Status } from 'qovery-typescript-axios'
-import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
+import {
+  Credentials,
+  Database,
+  DatabaseCurrentMetric,
+  DatabaseMainCallsApi,
+  DatabaseMetricsApi,
+  DatabasesApi,
+  DeploymentHistoryDatabase,
+  Status,
+} from 'qovery-typescript-axios'
+import { databaseDeploymentsFactoryMock } from '../mocks/factories/database-deployments-factory.mock'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 
 export const databasesAdapter = createEntityAdapter<DatabaseEntity>()
 
 const databasesApi = new DatabasesApi()
+const databaseMainCallsApi = new DatabaseMainCallsApi()
+/** @TODO replace with the proper api once it is released  */
+// const databaseDeploymentsApi = new Object()
+const databaseMetricsApi = new DatabaseMetricsApi()
 
 export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string; withoutStatus?: boolean }>(
   'databases/fetch',
@@ -34,7 +48,41 @@ export const fetchDatabasesStatus = createAsyncThunk<Status[], { environmentId: 
   'databases-status/fetch',
   async (data) => {
     const response = await databasesApi.getEnvironmentDatabaseStatus(data.environmentId)
+
     return response.data.results as Status[]
+  }
+)
+
+export const fetchDatabase = createAsyncThunk<Database, { databaseId: string }>('database/fetch', async (data) => {
+  const response = await databaseMainCallsApi.getDatabase(data.databaseId)
+
+  return response.data
+})
+
+export const fetchDatabaseMetrics = createAsyncThunk<DatabaseCurrentMetric, { databaseId: string }>(
+  'database/instances',
+  async (data) => {
+    const response = await databaseMetricsApi.getDatabaseCurrentMetric(data.databaseId)
+    return response.data as DatabaseCurrentMetric
+  }
+)
+
+export const fetchDatabaseDeployments = createAsyncThunk<DeploymentHistoryDatabase[], { databaseId: string }>(
+  'database/deployments',
+  async (data) => {
+    /** @TODO uncomment this line once api is available */
+    // const response = await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)
+
+    return databaseDeploymentsFactoryMock(3) as DeploymentHistoryDatabase[]
+  }
+)
+
+export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { databaseId: string }>(
+  'database/credentials',
+  async (data) => {
+    const response = await databaseMainCallsApi.getDatabaseMasterCredentials(data.databaseId)
+
+    return response.data as Credentials
   }
 )
 
@@ -56,11 +104,11 @@ export const databasesSlice = createSlice({
       action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>
     ) => {
       // we have to force this reset change because of the way the socket works.
-      // You can have information about an application (eg. if it's stopping)
-      // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
+      // You can have information about an database (eg. if it's stopping)
+      // But you can also lose the information about this database (eg. it it's stopped it won't appear in the socket result)
       const resetChanges: Update<DatabaseEntity>[] = state.ids.map((id) => {
         // as we can have this dispatch from different websocket, we don't want to reset
-        // and override all the application but only the ones associated to the cluster the websocket is
+        // and override all the database but only the ones associated to the cluster the websocket is
         // coming from, more generally from all the environments that are contained in this cluster
         const envId = state.entities[id]?.environment?.id
 
@@ -108,6 +156,20 @@ export const databasesSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      .addCase(fetchDatabase.pending, (state: DatabasesState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(fetchDatabase.fulfilled, (state: DatabasesState, action: PayloadAction<Database>) => {
+        databasesAdapter.upsertOne(state, action.payload)
+        state.joinEnvDatabase = addOneToManyRelation(action.payload.environment?.id, action.payload.id, {
+          ...state.joinEnvDatabase,
+        })
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(fetchDatabase.rejected, (state: DatabasesState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
       // get environments status
       .addCase(fetchDatabasesStatus.pending, (state: DatabasesState) => {
         state.statusLoadingStatus = 'loading'
@@ -127,6 +189,114 @@ export const databasesSlice = createSlice({
       .addCase(fetchDatabasesStatus.rejected, (state: DatabasesState, action) => {
         state.statusLoadingStatus = 'error'
         state.error = action.error.message
+      })
+      .addCase(fetchDatabaseMetrics.pending, (state: DatabasesState, action) => {
+        const databaseId = action.meta.arg.databaseId
+        const update: Update<DatabaseEntity> = {
+          id: databaseId,
+          changes: {
+            metrics: {
+              ...state.entities[databaseId]?.metrics,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update)
+      })
+      .addCase(fetchDatabaseMetrics.fulfilled, (state: DatabasesState, action) => {
+        const databaseId = action.meta.arg.databaseId
+        const update: Update<DatabaseEntity> = {
+          id: databaseId,
+          changes: {
+            metrics: {
+              data: action.payload,
+              loadingStatus: 'loaded',
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update)
+      })
+      .addCase(fetchDatabaseMetrics.rejected, (state: DatabasesState, action) => {
+        const databaseId = action.meta.arg.databaseId
+        const update: Update<DatabaseEntity> = {
+          id: databaseId,
+          changes: {
+            metrics: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update)
+      })
+      .addCase(fetchDatabaseDeployments.pending, (state: DatabasesState, action) => {
+        const update = {
+          id: action.meta.arg.databaseId,
+          changes: {
+            deployments: {
+              ...state.entities[action.meta.arg.databaseId]?.deployments,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update as Update<Database>)
+      })
+      .addCase(fetchDatabaseDeployments.fulfilled, (state: DatabasesState, action) => {
+        const update = {
+          id: action.meta.arg.databaseId,
+          changes: {
+            deployments: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update as Update<Database>)
+      })
+      .addCase(fetchDatabaseDeployments.rejected, (state: DatabasesState, action) => {
+        const update = {
+          id: action.meta.arg.databaseId,
+          changes: {
+            deployments: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update as Update<Database>)
+      })
+      .addCase(fetchDatabaseMasterCredentials.pending, (state: DatabasesState, action) => {
+        const update = {
+          id: action.meta.arg.databaseId,
+          changes: {
+            credentials: {
+              ...state.entities[action.meta.arg.databaseId]?.credentials,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update as Update<Database>)
+      })
+      .addCase(fetchDatabaseMasterCredentials.fulfilled, (state: DatabasesState, action) => {
+        const update = {
+          id: action.meta.arg.databaseId,
+          changes: {
+            credentials: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update as Update<Database>)
+      })
+      .addCase(fetchDatabaseMasterCredentials.rejected, (state: DatabasesState, action) => {
+        const update = {
+          id: action.meta.arg.databaseId,
+          changes: {
+            credentials: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        databasesAdapter.updateOne(state, update as Update<Database>)
       })
   },
 })

@@ -1,4 +1,5 @@
 export * from './sub-router/application.router'
+export * from './sub-router/database.router'
 export * from './sub-router/services.router'
 export * from './sub-router/environments.router'
 export * from './sub-router/onboarding.router'

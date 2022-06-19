@@ -3,7 +3,7 @@ import { useParams } from 'react-router'
 import { ServicesEnum } from '@console/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
+import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
 import TableRowServices from '../table-row-services/table-row-services'
 
 export interface PageGeneralProps {
@@ -75,7 +75,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
                 dataHead={tableHead}
                 link={
                   isDatabase
-                    ? ''
+                    ? DATABASE_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
                     : APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
                 }
                 columnsWidth="25% 25% 25% 10% 10%"

@@ -57,6 +57,7 @@ const FaIcons = [
   'icon-solid-pen',
   'icon-solid-grip-lines',
   'icon-solid-arrow-left',
+  'icon-solid-key',
   // schema: favicons name
 ]
 
