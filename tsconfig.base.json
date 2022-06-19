@@ -24,6 +24,7 @@
       "@console/domains/projects": ["libs/domains/projects/src/index.ts"],
       "@console/domains/user": ["libs/domains/user/src/index.ts"],
       "@console/pages/application": ["libs/pages/application/src/index.ts"],
+      "@console/pages/database": ["libs/pages/database/src/index.ts"],
       "@console/pages/environments": ["libs/pages/environments/src/index.ts"],
       "@console/pages/layout": ["libs/pages/layout/src/index.ts"],
       "@console/pages/login": ["libs/pages/login/src/index.ts"],
