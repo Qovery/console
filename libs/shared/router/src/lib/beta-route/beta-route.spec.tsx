@@ -1,13 +1,13 @@
 import { render } from '__tests__/utils/setup-jest'
-import ProtectedRoute from '../protected-route/protected-route'
+import BetaRoute from './beta-route'
 
-describe('ProtectedRoute', () => {
+describe('BetaRoute', () => {
   const ProtectedComponent = () => {
     return <div>Protected component</div>
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<ProtectedRoute children={ProtectedComponent()} />)
+    const { baseElement } = render(<BetaRoute children={ProtectedComponent()} />)
     expect(baseElement).toBeTruthy()
   })
 })

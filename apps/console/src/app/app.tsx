@@ -5,9 +5,12 @@ import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   APPLICATION_URL,
+  BetaRoute,
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
   LOGIN_URL,
+  NO_BETA_ACCESS_URL,
+  NoBetaAccess,
   ONBOARDING_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
@@ -30,6 +33,9 @@ import { Layout } from '@console/pages/layout'
 import { PageServices } from '@console/pages/services'
 import { PageApplication } from '@console/pages/application'
 import { PageEnvironments } from '@console/pages/environments'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@console/domains/user'
+import posthog from 'posthog-js'
 
 function RedirectOverview() {
   const { organizationId } = useParams()
@@ -101,9 +107,11 @@ export const ROUTER = [
 
 export function App() {
   useDocumentTitle('Loading...')
-  const { isLoading, getCurrentUser } = useAuth()
+  const { isLoading } = useAuth()
 
   const gtmParams = { id: environment.gtm }
+
+  const user = useSelector(selectUser)
 
   // init axios interceptor
   useAuthInterceptor(axios, environment.api)
@@ -128,11 +136,12 @@ export function App() {
   }, [])
 
   useEffect(() => {
-    async function fetchData() {
-      await getCurrentUser()
+    if (user && user.sub) {
+      posthog.identify(user.sub, {
+        ...user,
+      })
     }
-    fetchData()
-  }, [getCurrentUser])
+  }, [user])
 
   if (isLoading) {
     return <LoadingScreen />
@@ -142,6 +151,14 @@ export function App() {
     <GTMProvider state={gtmParams}>
       <Routes>
         <Route path={LOGIN_URL} element={<PageLogin />} />
+        <Route
+          path={NO_BETA_ACCESS_URL}
+          element={
+            <ProtectedRoute>
+              <NoBetaAccess />
+            </ProtectedRoute>
+          }
+        />
         {ROUTER.map(
           (route) =>
             !route.layout && (
@@ -163,7 +180,9 @@ export function App() {
                     <Layout darkMode={route.darkMode}>{route.component}</Layout>
                   ) : (
                     <ProtectedRoute>
-                      <Layout darkMode={route.darkMode}>{route.component}</Layout>
+                      <BetaRoute>
+                        <Layout darkMode={route.darkMode}>{route.component}</Layout>
+                      </BetaRoute>
                     </ProtectedRoute>
                   )
                 }
