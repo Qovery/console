@@ -1,14 +1,17 @@
 import { useEffect } from 'react'
 import { Route, Routes, useNavigate, useParams } from 'react-router'
-import { useUser } from '@console/domains/user'
+import { useDispatch } from 'react-redux'
+import { SignUp } from 'qovery-typescript-axios'
+import { fetchUserSignUp } from '@console/domains/user'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/router'
 import { LoadingScreen } from '@console/shared/ui'
+import { AppDispatch } from '@console/store/data'
 import { Container } from './feature/container/container'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from './router/router'
 
 export function PageOnboarding() {
   const navigate = useNavigate()
-  const { getUserSignUp } = useUser()
+  const dispatch = useDispatch<AppDispatch>()
   const params = useParams()
 
   const firstStep = !!ROUTER_ONBOARDING_STEP_1.find((currentRoute) => currentRoute.path === `/${params['*']}`)
@@ -16,7 +19,7 @@ export function PageOnboarding() {
   useEffect(() => {
     async function fetchData() {
       if (params['*'] === '') {
-        const user = await getUserSignUp()
+        const user: SignUp = await dispatch(fetchUserSignUp()).unwrap()
         // check if user request work before redirect
         if (user) {
           navigate(`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`)
@@ -24,7 +27,7 @@ export function PageOnboarding() {
       }
     }
     fetchData()
-  }, [getUserSignUp, navigate, params])
+  }, [dispatch, navigate, params])
 
   if (params['*'] === '') {
     return <LoadingScreen />
