@@ -8,11 +8,10 @@ export interface PageGeneralProps {
   application?: ApplicationEntity
   listHelpfulLinks: BaseLink[]
   loadingStatus?: LoadingStatus
-  commitDeltaCount?: number
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { application, listHelpfulLinks, loadingStatus, commitDeltaCount } = props
+  const { application, listHelpfulLinks, loadingStatus } = props
 
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">

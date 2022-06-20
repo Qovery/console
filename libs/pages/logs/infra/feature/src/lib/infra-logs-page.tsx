@@ -1,7 +1,4 @@
-/* eslint-disable-next-line */
-export interface InfraLogsPageProps {}
-
-export function InfraLogsPage(props: InfraLogsPageProps) {
+export function InfraLogsPage() {
   return (
     <div>
       <h1 className="text-white">Welcome to InfraLogsPage!</h1>
