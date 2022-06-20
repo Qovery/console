@@ -156,7 +156,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                   <Controller
                     name="description"
                     control={control}
-                    render={({ field, fieldState: { error } }) => (
+                    render={({ field }) => (
                       <InputTextArea
                         name={field.name}
                         value={field.value}
@@ -170,7 +170,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                     name="wildcard"
                     control={control}
                     rules={{ required: true }}
-                    render={({ field, fieldState: { error } }) => (
+                    render={({ field }) => (
                       <InputTextArea
                         name={field.name}
                         value={field.value}
@@ -229,9 +229,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                     <Controller
                       name="auto_deploy"
                       control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputToggle value={field.value} onChange={field.onChange} small />
-                      )}
+                      render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} small />}
                     />
                     <p className="text-text-500 text-sm font-medium">Auto-deploy</p>
                   </div>
@@ -243,9 +241,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                     <Controller
                       name="auto_delete"
                       control={control}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputToggle value={field.value} onChange={field.onChange} small />
-                      )}
+                      render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} small />}
                     />
                     <p className="text-text-500 text-sm font-medium">Auto-delete</p>
                   </div>
@@ -270,7 +266,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                     <Controller
                       name="auto_stop"
                       control={control}
-                      render={({ field, fieldState: { error } }) => (
+                      render={({ field }) => (
                         <InputToggle
                           value={field.value}
                           onChange={(e) => {

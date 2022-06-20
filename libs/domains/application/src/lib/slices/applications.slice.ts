@@ -62,7 +62,7 @@ export const fetchApplication = createAsyncThunk<Application, { applicationId: s
 
 export const removeOneApplication = createAsyncThunk<string, { applicationId: string }>(
   'applications/remove',
-  async (data, thunkApi) => {
+  async (data) => {
     // const response = await applicationMainCallsApi.getApplication(data.applicationId)
     return data.applicationId
   }
@@ -354,7 +354,7 @@ export const getApplicationsState = (rootState: RootState): ApplicationsState =>
   rootState['entities'][APPLICATIONS_FEATURE_KEY]
 
 export const selectAllApplications = createSelector(getApplicationsState, selectAll)
-export const selectAllApplicationsByEnv = (environmentId: string) => createSelector(getApplicationsState, selectAll)
+export const selectAllApplicationsByEnv = () => createSelector(getApplicationsState, selectAll)
 
 export const selectApplicationsEntities = createSelector(getApplicationsState, selectEntities)
 

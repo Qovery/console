@@ -1,7 +1,6 @@
 import {
   environmentFactoryMock,
   environmentsLoadingEnvironmentDeployments,
-  environmentsLoadingStatus,
   fetchEnvironmentDeploymentHistory,
   selectEnvironmentById,
 } from '@console/domains/environment'
@@ -22,7 +21,6 @@ export function PageDeploymentsFeature() {
     selectEnvironmentById(state, environmentId)
   )
 
-  const loadingStatusEnvironment = useSelector<RootState>((state) => environmentsLoadingStatus(state))
   const loadingStatusDeployments = useSelector<RootState>((state) => environmentsLoadingEnvironmentDeployments(state))
   const loadingEnvironment = environmentFactoryMock(1, false, false)
 

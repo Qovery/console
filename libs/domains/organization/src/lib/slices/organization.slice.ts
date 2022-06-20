@@ -70,7 +70,7 @@ export const organization = organizationSlice.reducer
 
 export const { addOrganization, removeOrganization } = organizationSlice.actions
 
-const { selectAll, selectById } = organizationAdapter.getSelectors()
+const { selectAll } = organizationAdapter.getSelectors()
 
 export const getOrganizationState = (rootState: RootState): OrganizationState => rootState.entities[ORGANIZATION_KEY]
 
