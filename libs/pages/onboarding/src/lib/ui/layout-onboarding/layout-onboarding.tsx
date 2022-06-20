@@ -16,7 +16,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
   const { children, currentStepPosition, stepsNumber, getProgressPercentValue, step, catchline } = props
 
   return (
-    <main className="h-screen bg-white">
+    <main className="layout-onboarding h-full min-h-screen bg-white">
       <Navbar
         className="absolute top-0 w-full z-10"
         progress={getProgressPercentValue}
@@ -29,7 +29,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
           </div>
         }
       />
-      <div className="flex h-full max-w-screen-2xl ml-auto mr-auto relative">
+      <div className="flex h-full min-h-screen max-w-screen-2xl ml-auto mr-auto relative">
         <div className="flex-[2_1_0%] px-4 md:px-24 bg-white">
           <div className="max-w-lg mt-36 mx-auto">{children}</div>
         </div>

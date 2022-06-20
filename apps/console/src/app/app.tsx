@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import LogRocket from 'logrocket'
 import axios from 'axios'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { Project } from 'qovery-typescript-axios'
 import {
   APPLICATION_URL,
   BetaRoute,
@@ -21,13 +23,13 @@ import {
 import { useAuth } from '@console/shared/auth'
 import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
+import { AppDispatch } from '@console/store/data'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { PageOnboarding } from '@console/pages/onboarding'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import { PageLogin } from '@console/pages/login'
-
-import { useProjects } from '@console/domains/projects'
+import { fetchProjects } from '@console/domains/projects'
 import { environment } from '../environments/environment'
 import { Layout } from '@console/pages/layout'
 import { PageServices } from '@console/pages/services'
@@ -38,18 +40,18 @@ import { selectUser } from '@console/domains/user'
 import posthog from 'posthog-js'
 
 function RedirectOverview() {
-  const { organizationId } = useParams()
-  const { getProjects } = useProjects()
+  const { organizationId = '' } = useParams()
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    async function fetchProjects() {
-      const projects: any = organizationId && (await getProjects(organizationId))
-      if (projects?.payload.length > 0) {
-        window.location.href = OVERVIEW_URL(organizationId, projects.payload[0].id)
+    async function fetchCurrentProjects() {
+      const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
+      if (projects.length > 0) {
+        window.location.href = OVERVIEW_URL(organizationId, projects[0].id)
       }
     }
-    fetchProjects()
-  }, [organizationId, getProjects])
+    fetchCurrentProjects()
+  }, [organizationId, dispatch])
 
   return <LoadingScreen />
 }
