@@ -1,6 +1,11 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { SERVICES_DEPLOYMENTS_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
+import {
+  SERVICES_DEPLOYMENTS_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_SETTINGS_URL,
+  SERVICES_URL,
+} from '@console/shared/router'
 import {
   ButtonAction,
   ButtonIcon,
@@ -127,8 +132,8 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
-      link: `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications`,
-      external: true,
+      active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`,
+      link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`,
     },
   ]
 
@@ -151,7 +156,7 @@ export function Container(props: ContainerProps) {
   )
 
   return (
-    <div>
+    <>
       <Header
         title={environment?.name}
         icon={IconEnum.APPLICATION}
@@ -162,7 +167,7 @@ export function Container(props: ContainerProps) {
       />
       <Tabs items={tabsItems} contentRight={contentTabs} />
       {children}
-    </div>
+    </>
   )
 }
 
