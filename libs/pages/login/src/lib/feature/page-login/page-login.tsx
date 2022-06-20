@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useDocumentTitle } from '@console/shared/utils'
-import { OVERVIEW_URL } from '@console/shared/router'
+import { ONBOARDING_URL, OVERVIEW_URL } from '@console/shared/router'
 import { AuthEnum, useAuth } from '@console/shared/auth'
 import { useOrganization } from '@console/domains/organization'
 import { useProjects } from '@console/domains/projects'
@@ -24,7 +24,7 @@ export function PageLoginFeature() {
 
   useEffect(() => {
     // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
-    // const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
+    const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
 
     async function fetchData() {
       const organization: any = await getOrganization()
@@ -35,9 +35,9 @@ export function PageLoginFeature() {
         const projects: any = await getProjects(organizationId)
         if (projects.payload.length > 0) navigate(OVERVIEW_URL(organizationId, projects.payload[0].id))
       }
-      // if (isOnboarding && organization.payload.length === 0) {
-      //  navigate(ONBOARDING_URL)
-      // }
+      if (isOnboarding && organization.payload.length === 0) {
+        navigate(ONBOARDING_URL)
+      }
       // if (isOnboarding && organization.payload.length > 0) {
       //  window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
       // }

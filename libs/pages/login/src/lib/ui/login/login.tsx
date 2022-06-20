@@ -38,8 +38,8 @@ export function Login(props: ILoginProps) {
           </button>
         </div>
       </div>
-      <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:-z-10 before:w-full before:h-full before:bg-element-light-lighter-300">
-        <div className="max-w-md">
+      <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">
+        <div className="max-w-md relative z-10">
           <h2 className="h1 text-text-700 mt-44 mb-6">
             The Simplest Way To Deploy Your Apps on AWS and Kubernetes
             <span className="ml-2" role="img" aria-label="rocket">
