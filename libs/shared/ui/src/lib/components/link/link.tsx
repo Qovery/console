@@ -17,7 +17,7 @@ export function Link(props: LinkProps) {
   const { link, linkLabel, external = false, className = '', iconLeft, iconRight } = props
   return (
     <a
-      className={`${className} text-accent2-500 text-sm flex flex-center gap-1 hover:underline`}
+      className={`${className} text-accent2-500 text-sm inline-flex flex-center gap-1 hover:underline`}
       href={link}
       target={external ? '_blank' : '_self'}
       rel="noreferrer"
