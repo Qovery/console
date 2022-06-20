@@ -5,3 +5,4 @@ export const SERVICES_URL = (
 ) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/services`
 export const SERVICES_GENERAL_URL = '/general'
 export const SERVICES_DEPLOYMENTS_URL = '/deployments'
+export const SERVICES_SETTINGS_URL = '/settings'

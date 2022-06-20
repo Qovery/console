@@ -16,7 +16,7 @@ import { timeAgo } from '@console/shared/utils'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
@@ -52,7 +52,7 @@ export function TableRowServices(props: TableRowServicesProps) {
       ?.focus()
   }
 
-  const buttonActionsDefault = [
+  const buttonActionsDefaultApp = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
@@ -65,6 +65,20 @@ export function TableRowServices(props: TableRowServicesProps) {
     {
       iconLeft: <Icon name="icon-solid-scroll" />,
       onClick: () => openLogs(),
+    },
+    /*{
+      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+    },*/
+  ]
+
+  const buttonActionsDefaultDb = [
+    {
+      iconLeft: <Icon name="icon-solid-play" />,
+      iconRight: <Icon name="icon-solid-angle-down" />,
+      statusActions: {
+        status: data.status && data.status.state,
+        actions: buttonActions,
+      },
     },
     /*{
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
@@ -124,7 +138,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <ButtonIconAction
-                  actions={buttonActionsDefault}
+                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp : buttonActionsDefaultDb}
                   statusInformation={{
                     id: data.id,
                     name: data.name,

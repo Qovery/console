@@ -238,8 +238,10 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
-      link: `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary`,
-      external: true,
+      active:
+        location.pathname ===
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
     },
     /*{
       icon: <Icon name="icon-solid-chart-area" />,
@@ -256,14 +258,6 @@ export function Container(props: ContainerProps) {
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
-    },
-    {
-      icon: <Icon name="icon-solid-wheel" />,
-      name: 'Settings',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
     },*/
   ]
 
