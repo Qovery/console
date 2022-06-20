@@ -28,7 +28,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: theme('colors.element.light.lighter.400');
 
-  main:not(.h-screen) {
+  main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));
   }
 }

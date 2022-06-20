@@ -1,17 +1,19 @@
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useIntercom } from 'react-use-intercom'
-import { Organization, PlanEnum } from 'qovery-typescript-axios'
+import { useDispatch } from 'react-redux'
+import { Organization, PlanEnum, Project } from 'qovery-typescript-axios'
 import {
   OrganizationPlan,
   OrganizationPlanType,
   OrganizationPrice,
-  useOrganization,
+  postOrganization,
 } from '@console/domains/organization'
 import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/router'
 import { useAuth } from '@console/shared/auth'
 import { useDocumentTitle } from '@console/shared/utils'
-import { useProjects } from '@console/domains/projects'
+import { postProject } from '@console/domains/projects'
+import { AppDispatch } from '@console/store/data'
 import { ContextOnboarding } from '../container/container'
 import { StepPricing } from '../../ui/step-pricing/step-pricing'
 
@@ -83,11 +85,10 @@ export function OnboardingPricing() {
   useDocumentTitle('Onboarding Pricing - Qovery')
 
   const navigate = useNavigate()
+  const dispatch = useDispatch<AppDispatch>()
   const { showNewMessages } = useIntercom()
   const { organization_name, project_name } = useContext(ContextOnboarding)
-  const { createOrganization } = useOrganization()
-  const { createProject } = useProjects()
-  const { createAuthCookies } = useAuth()
+  const { createAuthCookies, getAccessTokenSilently } = useAuth()
   const [selectPlan, setSelectPlan] = useState(PLAN_DEFAULT)
   const [currentValue, setCurrentValue] = useState(DEFAULT_PRICE)
   const [currentDeploy, setCurrentDeploy] = useState(DEPLOY_DEFAULT)
@@ -128,15 +129,19 @@ export function OnboardingPricing() {
   const onSubmit = async () => {
     setLoading(true)
 
-    const organization: Organization = (await createOrganization({
-      name: organization_name,
-      plan: selectPlan,
-    })) as Organization
+    const organization: Organization = await dispatch(
+      postOrganization({
+        name: organization_name,
+        plan: selectPlan,
+      })
+    ).unwrap()
+    // refresh token needed after created an organization
+    await getAccessTokenSilently({ ignoreCache: true })
 
     if (organization) {
-      const project = await createProject(organization.id, {
-        name: project_name,
-      })
+      const project: Project = await dispatch(
+        postProject({ organizationId: organization.id, name: project_name })
+      ).unwrap()
 
       if (project) {
         await createAuthCookies()
