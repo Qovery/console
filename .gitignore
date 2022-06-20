@@ -10,3 +10,5 @@ dist
 tmp
 .tool-versions
 /.nx-cache
+yarn-error.log
+

@@ -10,7 +10,7 @@ import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environm
 import { selectProjectsEntitiesByOrgId } from '@console/domains/projects'
 
 export function BreadcrumbFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '', databaseId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const organizations = useSelector(selectAllOrganization)
   const applications = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
   const databases = useSelector((state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId))

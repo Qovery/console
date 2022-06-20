@@ -27,7 +27,7 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
 
   const { lastMessage } = useWebSocket(url, {
     //Will attempt to reconnect on all close events, such as server shutting down
-    shouldReconnect: (closeEvent) => false,
+    shouldReconnect: () => false,
     share: true,
   })
 
