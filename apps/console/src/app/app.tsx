@@ -128,24 +128,21 @@ export function App() {
     // }
   }, [])
 
-  if (window['Cypress']) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
+  useEffect(() => {
+    async function fetchData() {
+      await getCurrentUser()
+    }
+
+    if (window['Cypress']) {
       const auth0 = JSON.parse(localStorage.getItem('auth0Cypress')!)
 
       if (auth0) {
         localStorage.setItem(process.env['NX_OAUTH_TOKEN_NAME'] as string, auth0.token)
       }
-    }, [])
-  } else {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      async function fetchData() {
-        await getCurrentUser()
-      }
+    } else {
       fetchData()
-    }, [getCurrentUser])
-  }
+    }
+  }, [getCurrentUser])
 
   if (isLoading) {
     return <LoadingScreen />
