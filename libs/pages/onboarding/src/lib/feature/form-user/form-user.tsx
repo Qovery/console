@@ -1,9 +1,11 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { useUser } from '@console/domains/user'
+import { useDispatch, useSelector } from 'react-redux'
+import { postUserSignUp, selectUser, selectUserSignUp } from '@console/domains/user'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/router'
 import { useAuth } from '@console/shared/auth'
+import { AppDispatch } from '@console/store/data'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 
 const dataTypes = [
@@ -28,7 +30,9 @@ export interface FormUserProps {
 export function FormUser(props: FormUserProps) {
   const { setStepCompany } = props
   const navigate = useNavigate()
-  const { user, userSignUp, updateUserSignUp } = useUser()
+  const user = useSelector(selectUser)
+  const userSignUp = useSelector(selectUserSignUp)
+  const dispatch = useDispatch<AppDispatch>()
   const { authLogout } = useAuth()
   const { handleSubmit, control, setValue } = useForm()
 
@@ -49,7 +53,13 @@ export function FormUser(props: FormUserProps) {
       const checkIfCompany = data['type_of_use'] === 'work'
       if (checkIfCompany) {
         setStepCompany(true)
-        await updateUserSignUp({ ...userSignUp, ...data })
+
+        await dispatch(
+          postUserSignUp({
+            ...userSignUp,
+            ...data,
+          })
+        )
       } else {
         navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
 
@@ -59,7 +69,7 @@ export function FormUser(props: FormUserProps) {
           user_role: undefined,
         }
 
-        await updateUserSignUp({ ...userSignUp, ...data, ...resetCompany })
+        await dispatch(postUserSignUp({ ...userSignUp, ...data, ...resetCompany }))
       }
     }
   })

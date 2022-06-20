@@ -1,10 +1,12 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { useUser } from '@console/domains/user'
-import { StepCompany } from '../../ui/step-company/step-company'
+import { useDispatch, useSelector } from 'react-redux'
+import { postUserSignUp, selectUserSignUp } from '@console/domains/user'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
+import { AppDispatch } from '@console/store/data'
+import { StepCompany } from '../../ui/step-company/step-company'
 
 const dataSize: Value[] = [
   {
@@ -67,7 +69,8 @@ export interface FormCompanyProps {
 export function FormCompany(props: FormCompanyProps) {
   const { setStepCompany } = props
   const navigate = useNavigate()
-  const { userSignUp, updateUserSignUp } = useUser()
+  const dispatch = useDispatch<AppDispatch>()
+  const userSignUp = useSelector(selectUserSignUp)
   const { handleSubmit, control, setValue } = useForm()
 
   useEffect(() => {
@@ -78,10 +81,12 @@ export function FormCompany(props: FormCompanyProps) {
 
   const onSubmit = handleSubmit((data) => {
     if (data) {
-      updateUserSignUp({
-        ...userSignUp,
-        ...data,
-      })
+      dispatch(
+        postUserSignUp({
+          ...userSignUp,
+          ...data,
+        })
+      )
       navigate(`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`)
     }
   })

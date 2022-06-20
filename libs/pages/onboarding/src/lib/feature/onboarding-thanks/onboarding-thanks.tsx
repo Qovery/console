@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import { useIntercom } from 'react-use-intercom'
-import { useUser } from '@console/domains/user'
+import { useSelector } from 'react-redux'
+import { selectUser, selectUserSignUp } from '@console/domains/user'
 import { StepThanks } from '../../ui/step-thanks/step-thanks'
 
 export function OnboardingThanks() {
-  const { user, userSignUp } = useUser()
+  const user = useSelector(selectUser)
+  const userSignUp = useSelector(selectUserSignUp)
   const { update } = useIntercom()
 
   useEffect(() => {

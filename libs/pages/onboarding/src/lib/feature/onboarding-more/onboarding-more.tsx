@@ -1,10 +1,13 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
+import { useDispatch, useSelector } from 'react-redux'
+import { SignUp } from 'qovery-typescript-axios'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@console/shared/router'
 import { useDocumentTitle } from '@console/shared/utils'
-import { useUser } from '@console/domains/user'
+import { fetchUserSignUp, postUserSignUp, selectUserSignUp } from '@console/domains/user'
 import { Value } from '@console/shared/interfaces'
+import { AppDispatch } from '@console/store/data'
 import { StepMore } from '../../ui/step-more/step-more'
 
 const dataQuestions: Value[] = [
@@ -33,7 +36,8 @@ const dataQuestions: Value[] = [
 export function OnboardingMore() {
   useDocumentTitle('Onboarding Tell us more - Qovery')
   const { handleSubmit, control, setValue, watch } = useForm()
-  const { userSignUp, updateUserSignUp, getUserSignUp } = useUser()
+  const userSignUp = useSelector(selectUserSignUp)
+  const dispatch = useDispatch<AppDispatch>()
 
   const navigate = useNavigate()
 
@@ -52,13 +56,13 @@ export function OnboardingMore() {
         data['qovery_usage_other'] = null
       }
 
-      updateUserSignUp({ ...userSignUp, ...data })
+      await dispatch(postUserSignUp({ ...userSignUp, ...data }))
 
-      const user: any = await getUserSignUp()
+      const user: SignUp = await dispatch(fetchUserSignUp()).unwrap()
 
-      if (user.payload.dx_auth) {
+      if (user.dx_auth) {
         navigate(`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`)
-      } else if (!user.payload.dx_auth) {
+      } else if (!user.dx_auth) {
         // redirect to Thanks page if user not authorized by the dx team
         // dx_auth must be updated in the bdd
         navigate(`${ONBOARDING_URL}${ONBOARDING_THANKS_URL}`)

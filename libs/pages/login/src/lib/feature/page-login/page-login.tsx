@@ -40,8 +40,8 @@ export function PageLoginFeature() {
       if (isOnboarding && organization.length === 0) {
         navigate(ONBOARDING_URL)
       }
-      // if (isOnboarding && organization.payload.length > 0) {
-      //  window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
+      // if (isOnboarding && organization.length > 0) {
+      //   window.location.replace(`${process.env['NX_URL'] || 'https://console.qovery.com'}?redirectLoginV3`)
       // }
     }
     if (checkIsAuthenticated) {
