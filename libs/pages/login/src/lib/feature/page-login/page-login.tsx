@@ -1,20 +1,21 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router'
+import { useDispatch } from 'react-redux'
+import { Organization, Project } from 'qovery-typescript-axios'
 import { useDocumentTitle } from '@console/shared/utils'
 import { ONBOARDING_URL, OVERVIEW_URL } from '@console/shared/router'
 import { AuthEnum, useAuth } from '@console/shared/auth'
-import { useOrganization } from '@console/domains/organization'
-import { useProjects } from '@console/domains/projects'
+import { fetchOrganization } from '@console/domains/organization'
+import { fetchProjects } from '@console/domains/projects'
+import { AppDispatch } from '@console/store/data'
 import LayoutLogin from '../../ui/layout-login/layout-login'
 import Login from '../../ui/login/login'
-
 // import posthog from 'posthog-js'
 
 export function PageLoginFeature() {
   const navigate = useNavigate()
   const { authLogin, createAuthCookies, checkIsAuthenticated } = useAuth()
-  const { getOrganization } = useOrganization()
-  const { getProjects } = useProjects()
+  const dispatch = useDispatch<AppDispatch>()
 
   useDocumentTitle('Login - Qovery')
 
@@ -27,15 +28,16 @@ export function PageLoginFeature() {
     const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
 
     async function fetchData() {
-      const organization: any = await getOrganization()
+      const organization: Organization[] = await dispatch(fetchOrganization()).unwrap()
+
       await createAuthCookies()
 
-      if (organization.payload.length > 0) {
-        const organizationId = organization.payload[0].id
-        const projects: any = await getProjects(organizationId)
-        if (projects.payload.length > 0) navigate(OVERVIEW_URL(organizationId, projects.payload[0].id))
+      if (organization.length > 0) {
+        const organizationId = organization[0].id
+        const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
+        if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
       }
-      if (isOnboarding && organization.payload.length === 0) {
+      if (isOnboarding && organization.length === 0) {
         navigate(ONBOARDING_URL)
       }
       // if (isOnboarding && organization.payload.length > 0) {
@@ -45,7 +47,7 @@ export function PageLoginFeature() {
     if (checkIsAuthenticated) {
       fetchData()
     }
-  }, [getProjects, getOrganization, navigate, checkIsAuthenticated, createAuthCookies])
+  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch])
 
   return (
     <LayoutLogin>
