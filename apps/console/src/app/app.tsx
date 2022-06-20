@@ -23,7 +23,7 @@ import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
-import { OnboardingPage } from '@console/pages/onboarding/feature'
+import { PageOnboarding } from '@console/pages/onboarding'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import { PageLogin } from '@console/pages/login'
 
@@ -125,7 +125,7 @@ export function App() {
     if (isOnboarding) {
       ROUTER.push({
         path: `${ONBOARDING_URL}/*`,
-        component: <OnboardingPage />,
+        component: <PageOnboarding />,
         protected: true,
       })
     }
