@@ -23,10 +23,10 @@ export function InstancesTable(props: InstancesTableProps) {
             <tr className="text-xs text-text-500 font-medium" key={instance.name}>
               <td className="border border-element-light-lighter-400 px-6 py-4">{instance.name}</td>
               <td className="border border-element-light-lighter-400 px-6 py-4">
-                {instance.memory?.consumed_in_percent}%
+                {Math.round((instance.memory?.consumed_in_percent || 0) * 10) / 10}%
               </td>
               <td className="border border-element-light-lighter-400 px-6 py-4">
-                {instance.cpu?.consumed_in_percent}%
+                {Math.round((instance.cpu?.consumed_in_percent || 0) * 10) / 10}%
               </td>
               <td className="border border-element-light-lighter-400 px-6 py-4">–</td>
             </tr>
