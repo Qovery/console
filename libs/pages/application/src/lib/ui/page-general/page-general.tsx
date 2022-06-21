@@ -29,7 +29,6 @@ export function PageGeneral(props: PageGeneralProps) {
               <div className="h4 text-black">–</div>
             </div>
           </div>
-
           {application?.instances && application?.instances.items?.length && (
             <InstancesTable instances={application?.instances.items} />
           )}
