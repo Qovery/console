@@ -86,7 +86,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
           })}
         </>
       </Table>
-      <div className="bg-white rounded-b">
+      <div className="bg-white rounded-b flex flex-grow flex-col justify-end">
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
     </>
