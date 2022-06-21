@@ -30,7 +30,7 @@ export const postApplicationActionsDeploy = createAsyncThunk<any, { environmentI
   'applicationActions/deploy',
   async (data, { dispatch }) => {
     try {
-      const response = await applicationActionApi.deployApplication(data.applicationId)
+      const response = await applicationActionApi.restartApplication(data.applicationId)
       if (response.status === 202) {
         // refetch status after update
         await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))

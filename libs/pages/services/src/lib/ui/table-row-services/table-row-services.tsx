@@ -16,6 +16,7 @@ import { timeAgo } from '@console/shared/utils'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
+
 //import React, { useEffect } from 'react'
 
 export interface TableRowServicesProps {
@@ -94,16 +95,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               <StatusChip status={data.status && data.status.state} />
             </Skeleton>
           ) : (
-            <Skeleton
-              show={
-                isLoading ||
-                data?.running_status?.state === RunningStatus.STARTING ||
-                data?.running_status?.state === RunningStatus.STOPPING
-              }
-              width={16}
-              height={16}
-              rounded={true}
-            >
+            <>
               {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
                 <StatusChip status={data.status && data.status.state} />
               ) : (
@@ -116,7 +108,7 @@ export function TableRowServices(props: TableRowServicesProps) {
                   }
                 />
               )}
-            </Skeleton>
+            </>
           )}
           <Skeleton show={isLoading} width={16} height={16}>
             <div className="ml-2 mr-2">

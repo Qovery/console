@@ -1,7 +1,6 @@
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 import {
   Button,
-  //ButtonAction,
   ButtonIconAction,
   ButtonSize,
   ButtonStyle,
@@ -22,14 +21,13 @@ import {
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
-  //APPLICATION_METRICS_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
-  //APPLICATION_VARIABLES_URL,
 } from '@console/shared/router'
 import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
+
 //import { ClickEvent } from '@szhsin/react-menu'
 
 export interface ContainerProps {
@@ -183,24 +181,14 @@ export function Container(props: ContainerProps) {
   const tabsItems = [
     {
       icon: (
-        <Skeleton
-          show={
-            application?.running_status?.state === RunningStatus.STARTING ||
-            application?.running_status?.state === RunningStatus.STOPPING
+        <StatusChip
+          status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+          appendTooltipMessage={
+            application?.running_status?.state === RunningStatus.ERROR
+              ? application.running_status.pods[0]?.state_message
+              : ''
           }
-          width={16}
-          height={16}
-          rounded={true}
-        >
-          <StatusChip
-            status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
-            appendTooltipMessage={
-              application?.running_status?.state === RunningStatus.ERROR
-                ? application.running_status.pods[0]?.state_message
-                : ''
-            }
-          />
-        </Skeleton>
+        />
       ),
       name: 'Overview',
       active:
@@ -210,24 +198,14 @@ export function Container(props: ContainerProps) {
     },
     {
       icon: (
-        <Skeleton
-          show={
-            application?.running_status?.state === RunningStatus.STARTING ||
-            application?.running_status?.state === RunningStatus.STOPPING
+        <StatusChip
+          status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+          appendTooltipMessage={
+            application?.running_status?.state === RunningStatus.ERROR
+              ? application.running_status.pods[0]?.state_message
+              : ''
           }
-          width={16}
-          height={16}
-          rounded={true}
-        >
-          <StatusChip
-            status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
-            appendTooltipMessage={
-              application?.running_status?.state === RunningStatus.ERROR
-                ? application.running_status.pods[0]?.state_message
-                : ''
-            }
-          />
-        </Skeleton>
+        />
       ),
       name: 'Deployments',
       active:

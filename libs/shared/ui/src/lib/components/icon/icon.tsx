@@ -23,6 +23,7 @@ import AWSGrayIcon from './icons/aws-gray'
 import ScalewayGrayIcon from './icons/scaleway-gray'
 import DOGrayIcon from './icons/do-gray'
 import DatabaseIcon from './icons/database'
+
 export interface IconProps {
   name: IconEnum | string
   width?: string
@@ -37,6 +38,7 @@ export function Icon(props: IconProps) {
 
   formattedProps.width = formattedProps.width || '1.5rem'
   formattedProps.viewBox = formattedProps.viewBox || '0 0 24 24'
+  formattedProps.className = 'shrink-0 ' + formattedProps.className
 
   switch (props.name) {
     case IconEnum.GITHUB:

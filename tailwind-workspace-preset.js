@@ -182,7 +182,7 @@ module.exports = {
   },
   safelist: [
     {
-      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter-500|accent)(-\w+\d+)*/,
+      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter|accent)(-\w+\d+)*/,
       variants: ['focus', 'hover'],
     },
     {

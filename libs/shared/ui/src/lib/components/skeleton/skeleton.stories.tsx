@@ -1,6 +1,6 @@
-import { Button } from '@console/shared/ui'
 import { Meta, Story } from '@storybook/react'
 import { Skeleton, SkeletonProps } from './skeleton'
+import Button from '../buttons/button/button'
 
 export default {
   component: Skeleton,
