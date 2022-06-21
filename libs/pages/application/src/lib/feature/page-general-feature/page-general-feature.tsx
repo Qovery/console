@@ -20,7 +20,24 @@ export function PageGeneralFeature() {
   ]
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 
-  return <PageGeneral application={application} listHelpfulLinks={listHelpfulLinks} loadingStatus={loadingStatus} />
+  const computeStability = (): number => {
+    let c = 0
+
+    application?.running_status?.pods.forEach((pod) => {
+      c += pod.restart_count
+    })
+
+    return c
+  }
+
+  return (
+    <PageGeneral
+      application={application}
+      listHelpfulLinks={listHelpfulLinks}
+      loadingStatus={loadingStatus}
+      serviceStability={computeStability()}
+    />
+  )
 }
 
 export default PageGeneralFeature
