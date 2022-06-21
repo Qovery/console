@@ -92,13 +92,13 @@ export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationI
   }
 )
 
-export const fetchApplicationDeployments = createAsyncThunk<DeploymentHistoryApplication[], { applicationId: string }>(
-  'application/deployments',
-  async (data) => {
-    const response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
-    return response.data.results as DeploymentHistoryApplication[]
-  }
-)
+export const fetchApplicationDeployments = createAsyncThunk<
+  DeploymentHistoryApplication[],
+  { applicationId: string; silently: boolean }
+>('application/deployments', async (data) => {
+  const response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
+  return response.data.results as DeploymentHistoryApplication[]
+})
 
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -312,7 +312,7 @@ export const applicationsSlice = createSlice({
           changes: {
             deployments: {
               ...state.entities[action.meta.arg.applicationId]?.deployments,
-              loadingStatus: 'loading',
+              loadingStatus: action.meta.arg.silently ? 'loaded' : 'loading',
             },
           },
         }
