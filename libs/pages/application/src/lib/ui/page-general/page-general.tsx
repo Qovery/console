@@ -1,5 +1,5 @@
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
-import { BaseLink, HelpSection, Skeleton } from '@console/shared/ui'
+import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@console/shared/ui'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
@@ -8,10 +8,11 @@ export interface PageGeneralProps {
   application?: ApplicationEntity
   listHelpfulLinks: BaseLink[]
   loadingStatus?: LoadingStatus
+  serviceStability?: number
 }
 
 export function PageGeneral(props: PageGeneralProps) {
-  const { application, listHelpfulLinks, loadingStatus } = props
+  const { application, listHelpfulLinks, loadingStatus, serviceStability = 0 } = props
 
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
@@ -26,7 +27,17 @@ export function PageGeneral(props: PageGeneralProps) {
             </div>
             <div className="flex-1  px-6 py-3">
               <strong className="text-sm mb-1 text-text-400">Service Stability</strong>
-              <div className="h4 text-black">–</div>
+              <div className="h4 text-black flex items-center gap-2">
+                {serviceStability}{' '}
+                <Tooltip
+                  side="right"
+                  content="Number of application instance restarts since the last rollout due to application errors"
+                >
+                  <div className="flex items-center">
+                    <Icon className="text-caption text-element-light-lighter-700" name="icon-solid-circle-info"></Icon>
+                  </div>
+                </Tooltip>
+              </div>
             </div>
           </div>
           {application?.instances && application?.instances.items?.length && (
