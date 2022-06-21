@@ -10,7 +10,6 @@ import { fetchProjects } from '@console/domains/projects'
 import { AppDispatch } from '@console/store/data'
 import LayoutLogin from '../../ui/layout-login/layout-login'
 import Login from '../../ui/login/login'
-// import posthog from 'posthog-js'
 
 export function PageLoginFeature() {
   const navigate = useNavigate()
@@ -24,7 +23,6 @@ export function PageLoginFeature() {
   }
 
   useEffect(() => {
-    // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
     const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
 
     async function fetchData() {
