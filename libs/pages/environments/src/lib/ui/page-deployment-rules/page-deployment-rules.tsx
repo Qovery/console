@@ -1,4 +1,4 @@
-import { BaseLink, Button, ButtonSize, HelpSection, Icon } from '@console/shared/ui'
+import { BaseLink, /*Button, ButtonSize,*/ HelpSection /*Icon*/ } from '@console/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import {
   Draggable,
@@ -27,7 +27,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     updateDeploymentRulesOrder,
     isLoading = false,
     deleteDeploymentRule,
-    linkNewRule = '',
+    //linkNewRule = '',
   } = props
   const [listRules, setListRules] = useState<ProjectDeploymentRule[]>(deploymentRules)
 

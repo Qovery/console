@@ -1,7 +1,7 @@
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 import {
   Button,
-  ButtonAction,
+  //ButtonAction,
   ButtonIconAction,
   ButtonSize,
   ButtonStyle,
@@ -22,15 +22,15 @@ import {
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
-  APPLICATION_METRICS_URL,
+  //APPLICATION_METRICS_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
-  APPLICATION_VARIABLES_URL,
+  //APPLICATION_VARIABLES_URL,
 } from '@console/shared/router'
 import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
-import { ClickEvent } from '@szhsin/react-menu'
+//import { ClickEvent } from '@szhsin/react-menu'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]

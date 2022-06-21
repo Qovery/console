@@ -1,73 +1,73 @@
-import { useNavigate } from 'react-router'
-import { ButtonIcon, ButtonIconStyle, Icon, Menu, MenuAlign } from '@console/shared/ui'
+//import { useNavigate } from 'react-router'
+// import { ButtonIcon, ButtonIconStyle, Menu, MenuAlign, Icon } from '@console/shared/ui'
 import { BreadcrumbFeature } from '../../feature/breadcrumb/breadcrumb'
 
-const notificationsMenu = [
-  {
-    title: 'Steps to complete 28/35',
-    button: 'See all',
-    buttonLink: '/',
-    items: [
-      {
-        name: 'Invite member to the team',
-        link: {
-          url: '/overview',
-        },
-        contentLeft: <Icon name="icon-solid-arrow-right" className="text-sm text-brand-400" />,
-      },
-      {
-        name: 'Add a custom domain',
-        link: {
-          url: '/overview',
-        },
-        contentLeft: <Icon name="icon-solid-globe" className="text-sm text-brand-400" />,
-      },
-      {
-        name: 'Deploy your application',
-        link: {
-          url: '/overview',
-        },
-        contentLeft: <Icon name="icon-solid-cloud" className="text-sm text-brand-400" />,
-      },
-    ],
-  },
-  {
-    title: 'Need help?',
-    items: [
-      {
-        name: 'See documentations',
-        link: {
-          url: 'https://hub.qovery.com/',
-          external: true,
-        },
-        contentLeft: <Icon name="icon-solid-book" className="text-sm text-brand-400" />,
-      },
-      {
-        name: 'Join Discord',
-        link: {
-          url: 'https://discord.com/invite/Bed5FRa',
-          external: true,
-        },
-        contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
-      },
-      {
-        name: 'Contact us',
-        link: {
-          url: 'https://discord.qovery.com/',
-          external: true,
-        },
-        contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
-      },
-    ],
-  },
-]
+// const notificationsMenu = [
+//   {
+//     title: 'Steps to complete 28/35',
+//     button: 'See all',
+//     buttonLink: '/',
+//     items: [
+//       {
+//         name: 'Invite member to the team',
+//         link: {
+//           url: '/overview',
+//         },
+//         contentLeft: <Icon name="icon-solid-arrow-right" className="text-sm text-brand-400" />,
+//       },
+//       {
+//         name: 'Add a custom domain',
+//         link: {
+//           url: '/overview',
+//         },
+//         contentLeft: <Icon name="icon-solid-globe" className="text-sm text-brand-400" />,
+//       },
+//       {
+//         name: 'Deploy your application',
+//         link: {
+//           url: '/overview',
+//         },
+//         contentLeft: <Icon name="icon-solid-cloud" className="text-sm text-brand-400" />,
+//       },
+//     ],
+//   },
+//   {
+//     title: 'Need help?',
+//     items: [
+//       {
+//         name: 'See documentations',
+//         link: {
+//           url: 'https://hub.qovery.com/',
+//           external: true,
+//         },
+//         contentLeft: <Icon name="icon-solid-book" className="text-sm text-brand-400" />,
+//       },
+//       {
+//         name: 'Join Discord',
+//         link: {
+//           url: 'https://discord.com/invite/Bed5FRa',
+//           external: true,
+//         },
+//         contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
+//       },
+//       {
+//         name: 'Contact us',
+//         link: {
+//           url: 'https://discord.qovery.com/',
+//           external: true,
+//         },
+//         contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
+//       },
+//     ],
+//   },
+// ]
 export interface TopBarProps {
   darkMode?: boolean
 }
 
 export function TopBar(props: TopBarProps) {
   const { darkMode } = props
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
 
   return (
     <div

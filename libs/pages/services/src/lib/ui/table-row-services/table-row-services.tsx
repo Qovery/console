@@ -16,7 +16,7 @@ import { timeAgo } from '@console/shared/utils'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
-import React, { useEffect } from 'react'
+//import React, { useEffect } from 'react'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity

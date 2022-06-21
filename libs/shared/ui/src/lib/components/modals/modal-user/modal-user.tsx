@@ -1,6 +1,6 @@
 import { ButtonIcon, ButtonIconStyle, ModalContentProps } from '@console/shared/ui'
-import { SETTINGS_URL } from '@console/shared/router'
-import { useParams } from 'react-router'
+//import { SETTINGS_URL } from '@console/shared/router'
+//import { useParams } from 'react-router'
 import Avatar from '../../avatar/avatar'
 import { Button, ButtonStyle } from '../../buttons/button/button'
 
@@ -11,9 +11,9 @@ export interface ModalUserProps extends ModalContentProps {
 }
 
 export function ModalUser(props: ModalUserProps) {
-  const { authLogout, firstName = '', lastName = '', setOpen } = props
+  const { authLogout, firstName = '', lastName = '' /*setOpen*/ } = props
 
-  const { organizationId } = useParams()
+  //const { organizationId } = useParams()
 
   return (
     <>
