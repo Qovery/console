@@ -12,7 +12,7 @@ export interface TableRowProps {
 export function TableRow(props: TableRowProps) {
   const { children, link, className = '', columnsWidth, disabled } = props
 
-  const rowClasses = `grid items-center h-14 border-b-element-light-lighter-400 border-b last:border-0 hover:bg-element-light-lighter-200 ${className} ${
+  const rowClasses = `grid items-center h-14 border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 ${className} ${
     disabled ? 'pointer-events-none' : ''
   }`
 

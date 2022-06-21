@@ -99,7 +99,7 @@ export function PageDeployments(props: PageDeploymentsProps) {
           ))}
         </div>
       </Table>
-      <div className="rounded-b bg-white mt-2">
+      <div className="bg-white rounded-b flex flex-grow items-end mt-2">
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
     </>
