@@ -22,13 +22,7 @@
 
 ## What we use
 
-  React : [https://reactjs.org/](https://reactjs.org/)
-
-Nx: [https://nx.dev/](https://nx.dev/)
-
-Tailwind: [https://tailwindcss.com/](https://tailwindcss.com/)
-
-Storybook: [https://storybook.js.org/](https://storybook.js.org/)
+At Qovery for our Console, we use a couple of technologies, like [NX](https://nx.dev/), [React](https://reactjs.org/), [Redux](https://redux-toolkit.js.org/), [Tailwind](https://tailwindcss.com/), and [Storybook](https://storybook.js.org/).
 
 
 ## Usage
@@ -39,7 +33,7 @@ Start the project on http://localhost:4200
 
 Start Storybook on http://localhost:4400
 
-    yarn run storybook
+    yarn storybook
 
 Generate a library
 
@@ -64,7 +58,6 @@ For help, you can use one of the channels to ask a question:
 
 -   [Forum](https://discuss.qovery.com/): (Bug reports, Questions)
     
--   [Discord](https://discord.com/invite/Bed5FRa): (Live discussion with the Community and Qovery Team)
     
 -   [GitHub](https://github.com/Qovery/console): (Bug reports, Contributions)
     
