@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router'
+//import { useNavigate } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, SETTINGS_URL } from '@console/shared/router'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL /*SETTINGS_URL*/ } from '@console/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -25,7 +25,7 @@ export interface NavigationProps {
 export function Navigation(props: NavigationProps) {
   const { authLogout, firstName, lastName, darkMode } = props
   const { organizationId, projectId } = useParams()
-  const navigate = useNavigate()
+  //const navigate = useNavigate()
 
   const infosMenu = [
     {
