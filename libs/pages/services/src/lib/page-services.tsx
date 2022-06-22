@@ -5,6 +5,7 @@ import { APPLICATION_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { useDocumentTitle } from '@console/shared/utils'
 import {
   deleteEnvironmentActionsCancelDeployment,
+  fetchEnvironmentsStatus,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
   postEnvironmentActionsRestart,
@@ -32,7 +33,9 @@ export function PageServices() {
     if (location.pathname === SERVICES_URL(organizationId, projectId, environmentId)) {
       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${APPLICATION_GENERAL_URL}`)
     }
-  }, [location, navigate, organizationId, projectId, environmentId])
+    const fetchEnvironmentsStatusByInterval = setInterval(() => dispatch(fetchEnvironmentsStatus({ projectId })), 3000)
+    return () => clearInterval(fetchEnvironmentsStatusByInterval)
+  }, [location, navigate, organizationId, projectId, environmentId, dispatch])
 
   const statusActions = [
     {

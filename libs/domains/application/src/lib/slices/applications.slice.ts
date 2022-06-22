@@ -100,6 +100,14 @@ export const fetchApplicationDeployments = createAsyncThunk<
   return response.data.results as DeploymentHistoryApplication[]
 })
 
+export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string }>(
+  'application/status',
+  async (data) => {
+    const response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
+    return response.data as Status
+  }
+)
+
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -340,6 +348,31 @@ export const applicationsSlice = createSlice({
           },
         }
         applicationsAdapter.updateOne(state, update as Update<Application>)
+      })
+      // get application status
+      .addCase(fetchApplicationStatus.pending, (state: ApplicationsState, action) => {
+        const update = {
+          id: action.meta.arg.applicationId,
+          changes: {
+            status: {
+              ...state.entities[action.meta.arg.applicationId]?.status,
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update as Update<Application>)
+      })
+      .addCase(fetchApplicationStatus.fulfilled, (state: ApplicationsState, action) => {
+        const update = {
+          id: action.meta.arg.applicationId,
+          changes: {
+            status: action.payload,
+          },
+        }
+        applicationsAdapter.updateOne(state, update as Update<Application>)
+        state.statusLoadingStatus = 'loaded'
+      })
+      .addCase(fetchApplicationStatus.rejected, (state: ApplicationsState, action) => {
+        state.statusLoadingStatus = 'error'
       })
   },
 })

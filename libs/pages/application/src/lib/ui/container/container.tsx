@@ -23,7 +23,7 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
 } from '@console/shared/router'
-import { Environment } from 'qovery-typescript-axios'
+import { Environment, StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
 
@@ -202,14 +202,12 @@ export function Container(props: ContainerProps) {
     },
     {
       icon: (
-        <StatusChip
-          status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
-          appendTooltipMessage={
-            application?.running_status?.state === RunningStatus.ERROR
-              ? application.running_status.pods[0]?.state_message
-              : ''
-          }
-        />
+        <Skeleton show={application?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
+          <StatusChip
+            status={(application?.status && application?.status.state) || StateEnum.STOPPED}
+            appendTooltipMessage={application?.status && application.status.message ? application.status.message : ''}
+          />
+        </Skeleton>
       ),
       name: 'Deployments',
       active:
