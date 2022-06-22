@@ -125,10 +125,18 @@
   },
   "release": {
     "branches": [
-      "main",
+      "staging"
+    ],
+    "tagFormat": "${version}",
+    "publish": [
+      "@semantic-release/github"
+    ],
+    "prepare": [
+      "@semantic-release/npm",
+      "@semantic-release/changelog",
       {
-        "name": "staging",
-        "prerelease": true
+        "path": "@semantic-release/git",
+        "message": "release ${nextRelease.version}\n\n${nextRelease.notes}"
       }
     ]
   }
