@@ -22,6 +22,7 @@ import {
 } from '@console/shared/ui'
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 import { EnvironmentEntity } from '@console/shared/interfaces'
+import { StateEnum } from 'qovery-typescript-axios'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]
@@ -120,9 +121,9 @@ export function Container(props: ContainerProps) {
     },
     {
       icon: (
-        <StatusChip
-          status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
-        />
+        <Skeleton show={environment?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
+          <StatusChip status={(environment?.status && environment?.status.state) || StateEnum.STOPPED} />
+        </Skeleton>
       ),
       name: 'Deployments',
       active:

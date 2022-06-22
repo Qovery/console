@@ -11,6 +11,7 @@ import {
   fetchApplicationCommits,
   fetchApplicationInstances,
   fetchApplicationLinks,
+  fetchApplicationStatus,
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
@@ -60,7 +61,12 @@ export function PageApplication() {
       application?.instances?.loadingStatus !== 'loaded' && dispatch(fetchApplicationInstances({ applicationId }))
       application?.commits?.loadingStatus !== 'loaded' && dispatch(fetchApplicationCommits({ applicationId }))
     }
-  }, [applicationId, loadingStatus])
+    const fetchApplicationStatusByInterval = setInterval(
+      () => dispatch(fetchApplicationStatus({ applicationId })),
+      3000
+    )
+    return () => clearInterval(fetchApplicationStatusByInterval)
+  }, [applicationId, loadingStatus, dispatch])
 
   return (
     <Container application={application} environment={environment} statusActions={statusActions}>
