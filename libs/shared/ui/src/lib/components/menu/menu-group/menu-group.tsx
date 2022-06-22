@@ -66,7 +66,7 @@ export function MenuGroup(props: MenuGroupProps) {
         </div>
       )}
       {menu?.search && (
-        <div className="menu__search" style={headPaddingStyle}>
+        <div className="menu__search" style={headPaddingStyle} data-testid="menu-search">
           <InputSearch
             autofocus
             placeholder="Search"

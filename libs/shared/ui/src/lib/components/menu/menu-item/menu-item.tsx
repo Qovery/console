@@ -57,7 +57,11 @@ export function MenuItem(props: MenuItemProps) {
           </Tooltip>
         )}
 
-        {contentLeft && <span className="mr-3">{contentLeft}</span>}
+        {contentLeft && (
+          <span className="mr-3" data-testid="menu-icon">
+            {contentLeft}
+          </span>
+        )}
         <span className={`menu-item__name text-sm font-medium ${textClassName}`}>
           <Truncate text={name} truncateLimit={truncateLimit} />
         </span>
