@@ -6,7 +6,7 @@ export interface TagProps {
 export function Tag(props: TagProps) {
   const { children, className = '' } = props
 
-  return <span className={`h-6 px-2 rounded text-xs items-center inline-flex font-bold ${className}`}>{children}</span>
+  return <span className={`h-8 px-3 rounded text-xs items-center inline-flex font-bold ${className}`}>{children}</span>
 }
 
 export default Tag
