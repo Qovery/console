@@ -60,7 +60,7 @@ export function PageDeploymentsFeature() {
 
   useEffect(() => {
     const fetchEnv = () => {
-      dispatch(fetchEnvironmentDeploymentHistory({ environmentId, silently: false }))
+      dispatch(fetchEnvironmentDeploymentHistory({ environmentId }))
     }
 
     !environment?.deployments && fetchEnv()

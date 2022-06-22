@@ -47,7 +47,7 @@ export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: s
 
 export const fetchEnvironmentDeploymentHistory = createAsyncThunk<
   DeploymentHistoryEnvironment[],
-  { environmentId: string; silently: boolean }
+  { environmentId: string; silently?: boolean }
 >('environments-deployments/fetch', async (data) => {
   const response = await environmentDeploymentsApi.listEnvironmentDeploymentHistory(data.environmentId)
   return response.data.results as DeploymentHistoryEnvironment[]
