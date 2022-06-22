@@ -8,12 +8,10 @@ import {
   Header,
   Icon,
   Menu,
-  MenuAlign,
   MenuData,
   MenuItemProps,
   Skeleton,
   StatusChip,
-  StatusMenu,
   StatusMenuActions,
   Tabs,
   Tag,
@@ -47,6 +45,50 @@ export function Container(props: ContainerProps) {
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${applicationId}`
 
   const menuLink: MenuData = []
+
+  const buttonActionsDefault = [
+    {
+      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
+      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      menusClassName: 'border-r border-r-element-light-lighter-500',
+      statusActions: {
+        status: application?.status && application?.status.state,
+        actions: statusActions,
+      },
+    },
+    {
+      iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      menus: [
+        {
+          items: [
+            {
+              name: 'Deployment logs',
+              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+              onClick: () =>
+                window
+                  .open(
+                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
+                    '_blank'
+                  )
+                  ?.focus(),
+            },
+            {
+              name: 'Application logs',
+              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+              onClick: () =>
+                window
+                  .open(
+                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
+                    '_blank'
+                  )
+                  ?.focus(),
+            },
+          ],
+        },
+      ],
+    },
+  ]
 
   if (application && application.links && application.links.items) {
     const items: MenuItemProps[] = application.links.items.map((link) => {
@@ -94,50 +136,11 @@ export function Container(props: ContainerProps) {
     }
   }
 
-  const openLogsActions = [
-    {
-      iconLeft: <Icon name="icon-solid-scroll" className="text-text-500" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="text-text-500" />,
-      menuAlign: MenuAlign.END,
-      triggerClassName:
-        '!bg-element-light-lighter-300 border-element-light-lighten-500 !hover:bg-element-light-lighter-400',
-      menus: [
-        {
-          items: [
-            {
-              name: 'Deployment logs',
-              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-              onClick: () =>
-                window
-                  .open(
-                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-                    '_blank'
-                  )
-                  ?.focus(),
-            },
-            {
-              name: 'Application logs',
-              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-              onClick: () =>
-                window
-                  .open(
-                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
-                    '_blank'
-                  )
-                  ?.focus(),
-            },
-          ],
-        },
-      ],
-    },
-  ]
-
   const headerButtons = (
     <div className="flex items-start gap-2">
       {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
       {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
       {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
-      <ButtonIconAction actions={openLogsActions} className="!h-8" />
       {application?.links && application.links.items && application.links.items.length > 0 && linkButtons()}
     </div>
   )
@@ -147,18 +150,18 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={24} show={!application?.status}>
         <div className="flex">
           {environment && application && application?.status && (
-            <StatusMenu
-              statusActions={{
-                status: application?.status.state,
-                running_status: application?.running_status?.state || RunningStatus.STOPPED,
-                actions: statusActions,
-                information: {
+            <>
+              <ButtonIconAction
+                className="!h-8 flex"
+                actions={buttonActionsDefault}
+                statusInformation={{
                   id: application?.id,
                   name: application?.name,
                   mode: environment?.mode,
-                },
-              }}
-            />
+                }}
+              />
+              <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
+            </>
           )}
         </div>
       </Skeleton>
@@ -168,7 +171,7 @@ export function Container(props: ContainerProps) {
         </Skeleton>
       )}
       <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
-        <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
+        <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>
         </div>
