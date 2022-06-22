@@ -117,7 +117,7 @@ describe('Menu', () => {
 
     render(<Menu {...props} />)
 
-    const item = screen.getByRole('img')
+    const item = screen.getByTestId('menu-icon')
 
     expect(item).toBeTruthy()
   })
@@ -140,7 +140,7 @@ describe('Menu', () => {
 
     render(<Menu {...props} />)
 
-    const search = screen.getByRole('textbox')
+    const search = screen.getByTestId('menu-search')
 
     expect(search).toBeTruthy()
   })
