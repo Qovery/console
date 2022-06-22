@@ -21,4 +21,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn
       - name: Launch Semantic release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
