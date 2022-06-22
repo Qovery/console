@@ -17,5 +17,4 @@ jobs:
       application-commit-id: ${{ github.sha }}
     secrets:
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}
-      project-name: ${{ secrets.QOVERY_PROJECT_NAME }}
       api-token: ${{ secrets.QOVERY_API_TOKEN }}
