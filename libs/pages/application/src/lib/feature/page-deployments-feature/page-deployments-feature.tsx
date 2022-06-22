@@ -36,7 +36,7 @@ export function PageDeploymentsFeature() {
 
   useEffect(() => {
     const fetchApp = () => {
-      dispatch(fetchApplicationDeployments({ applicationId, silently: false }))
+      dispatch(fetchApplicationDeployments({ applicationId }))
     }
 
     !application?.deployments && fetchApp()
