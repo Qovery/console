@@ -1,7 +1,7 @@
 import posthog from 'posthog-js'
 import { matchPath, useLocation, useParams } from 'react-router'
-import { INFRA_LOGS_URL, NO_BETA_ACCESS_URL } from '../router'
-import { useNavigate } from 'react-router-dom'
+import { INFRA_LOGS_URL } from '../router'
+import { NoBetaAccess } from '../pages/no-beta-access'
 
 export interface IBetaRoute {
   children: React.ReactElement
@@ -10,7 +10,6 @@ export interface IBetaRoute {
 export const BetaRoute = ({ children }: IBetaRoute) => {
   const { organizationId = '' } = useParams()
   const location = useLocation()
-  const navigate = useNavigate()
 
   const matchLogInfraRoute = matchPath(location.pathname || '', INFRA_LOGS_URL(organizationId))
 
@@ -22,8 +21,7 @@ export const BetaRoute = ({ children }: IBetaRoute) => {
     return children
   }
 
-  navigate(NO_BETA_ACCESS_URL, { replace: true })
-  return null
+  return <NoBetaAccess />
 }
 
 export default BetaRoute
