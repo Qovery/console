@@ -26,12 +26,12 @@ export function PageGeneral(props: PageGeneralProps) {
               </Skeleton>
             </div>
             <div className="flex-1  px-6 py-3">
-              <strong className="text-sm mb-1 text-text-400">Service Stability</strong>
+              <strong className="text-sm mb-1 text-text-400">Service Restart</strong>
               <div className="h4 text-black flex items-center gap-2">
                 {serviceStability}{' '}
                 <Tooltip
                   side="right"
-                  content="Number of application instance restarts since the last rollout due to application errors"
+                  content="Number of application instance restarts since the last deployment due to application errors"
                 >
                   <div className="flex items-center">
                     <Icon className="text-caption text-element-light-lighter-700" name="icon-solid-circle-info"></Icon>
