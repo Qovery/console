@@ -47,7 +47,7 @@ export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: s
 
 export const fetchEnvironmentDeploymentHistory = createAsyncThunk<
   DeploymentHistoryEnvironment[],
-  { environmentId: string }
+  { environmentId: string; silently?: boolean }
 >('environments-deployments/fetch', async (data) => {
   const response = await environmentDeploymentsApi.listEnvironmentDeploymentHistory(data.environmentId)
   return response.data.results as DeploymentHistoryEnvironment[]
@@ -143,8 +143,8 @@ export const environmentsSlice = createSlice({
         state.error = action.error.message
       })
       // get environment deployment history
-      .addCase(fetchEnvironmentDeploymentHistory.pending, (state: EnvironmentsState) => {
-        state.loadingEnvironmentDeployments = 'loading'
+      .addCase(fetchEnvironmentDeploymentHistory.pending, (state: EnvironmentsState, action) => {
+        if (!action.meta.arg.silently) state.loadingEnvironmentDeployments = 'loading'
       })
       .addCase(fetchEnvironmentDeploymentHistory.fulfilled, (state: EnvironmentsState, action) => {
         const update = {
