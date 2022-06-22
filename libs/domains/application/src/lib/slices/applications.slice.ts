@@ -94,7 +94,7 @@ export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationI
 
 export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],
-  { applicationId: string; silently: boolean }
+  { applicationId: string; silently?: boolean }
 >('application/deployments', async (data) => {
   const response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
   return response.data.results as DeploymentHistoryApplication[]
