@@ -41,13 +41,12 @@ export function PageDeploymentsFeature() {
 
     !application?.deployments && fetchApp()
 
-    const pullDeployments = setInterval(() => {
-      dispatch(fetchApplicationDeployments({ applicationId, silently: true }))
-    }, 3000)
+    const pullDeployments = setInterval(
+      () => dispatch(fetchApplicationDeployments({ applicationId, silently: true })),
+      2500
+    )
 
-    return () => {
-      clearInterval(pullDeployments)
-    }
+    return () => clearInterval(pullDeployments)
   }, [dispatch, applicationId, application])
 
   return (
