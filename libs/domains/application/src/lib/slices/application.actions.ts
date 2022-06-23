@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { ApplicationActionsApi, ApplicationMainCallsApi } from 'qovery-typescript-axios'
-import { fetchApplicationsStatus } from './applications.slice'
+import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 import { toast, ToastEnum } from '@console/shared/toast'
 
 const applicationActionApi = new ApplicationActionsApi()
@@ -14,6 +14,8 @@ export const postApplicationActionsRestart = createAsyncThunk<any, { environment
       if (response.status === 202) {
         // refetch status after update
         await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your application is redeploying')
       }
@@ -34,6 +36,8 @@ export const postApplicationActionsDeploy = createAsyncThunk<any, { environmentI
       if (response.status === 202) {
         // refetch status after update
         await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your application is deploying')
       }
@@ -54,6 +58,8 @@ export const postApplicationActionsStop = createAsyncThunk<any, { environmentId:
       if (response.status === 202) {
         // refetch status after update
         await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your application is stopping')
       }
@@ -74,6 +80,8 @@ export const deleteApplicationActionsStop = createAsyncThunk<any, { environmentI
       if (response.status === 204) {
         // refetch status after update
         await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your application is being deleted')
       }
