@@ -1,3 +1,4 @@
+export * from './lib/components/warning-screen-mobile/warning-screen-mobile'
 // components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'
