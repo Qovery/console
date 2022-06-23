@@ -15,6 +15,8 @@ const OAUTH_CALLBACK = '/login/auth0-callback'
 
 export const history = createBrowserHistory()
 
+console.log(process.env)
+
 // posthog init
 posthog.init(environment.posthog, {
   api_host: environment.posthog_apihost,
