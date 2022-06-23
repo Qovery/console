@@ -18,6 +18,7 @@ import {
   Tabs,
   Tag,
   TagMode,
+  TagSize,
 } from '@console/shared/ui'
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 import { EnvironmentEntity } from '@console/shared/interfaces'
@@ -74,7 +75,7 @@ export function Container(props: ContainerProps) {
         {environment?.status ? (
           <>
             <ButtonIconAction
-              className="!h-8 flex"
+              className="!h-8"
               actions={buttonActionsDefault}
               statusInformation={{
                 id: environment?.id,
@@ -90,7 +91,7 @@ export function Container(props: ContainerProps) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
-          <TagMode status={environment?.mode} />
+          <TagMode size={TagSize.BIG} status={environment?.mode} />
         </Skeleton>
       )}
       <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
