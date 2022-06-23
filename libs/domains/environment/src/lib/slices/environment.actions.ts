@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
-import { fetchEnvironmentsStatus } from './environments.slice'
+import { fetchEnvironmentDeploymentHistory, fetchEnvironmentsStatus } from './environments.slice'
 import { toast, ToastEnum } from '@console/shared/toast'
 
 const environmentActionApi = new EnvironmentActionsApi()
@@ -14,6 +14,8 @@ export const postEnvironmentActionsRestart = createAsyncThunk<any, { projectId: 
       if (response.status === 200) {
         // refetch status after update
         await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+        // refresh deployments after update
+        await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
       }
@@ -33,6 +35,8 @@ export const postEnvironmentActionsDeploy = createAsyncThunk<any, { projectId: s
       if (response.status === 200) {
         // refetch status after update
         await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+        // refresh deployments after update
+        await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your environment is deploying')
       }
@@ -52,6 +56,8 @@ export const postEnvironmentActionsStop = createAsyncThunk<any, { projectId: str
       if (response.status === 200) {
         // refetch status after update
         await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+        // refresh deployments after update
+        await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your environment is stopping')
       }
@@ -72,6 +78,8 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
     if (response.status === 200) {
       // refetch status after update
       await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+      // refresh deployments after update
+      await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
       // success message
       toast(ToastEnum.SUCCESS, 'Your environment deployment is cancelling')
     }
@@ -92,6 +100,8 @@ export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
     if (response.status === 204) {
       // refetch status after update
       await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+      // refresh deployments after update
+      await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
       // success message
       toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
     }
