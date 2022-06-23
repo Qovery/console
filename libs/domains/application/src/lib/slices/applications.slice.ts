@@ -100,6 +100,7 @@ export const fetchApplicationDeployments = createAsyncThunk<
   return response.data.results as DeploymentHistoryApplication[]
 })
 
+
 export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string }>(
   'application/status',
   async (data) => {

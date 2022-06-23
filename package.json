@@ -125,7 +125,7 @@
   },
   "release": {
     "branches": [
-      "staging"
+      "main"
     ],
     "tagFormat": "${version}",
     "publish": [
