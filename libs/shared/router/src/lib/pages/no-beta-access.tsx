@@ -2,9 +2,21 @@ import { useSelector } from 'react-redux'
 import { selectUser } from '@console/domains/user'
 
 import { Link } from '@console/shared/ui'
+import posthog from 'posthog-js'
 
 export function NoBetaAccess() {
   const user = useSelector(selectUser)
+
+  if (posthog.isFeatureEnabled('v3-beta')) {
+    window.location.reload()
+  }
+
+  setInterval(() => {
+    if (posthog.isFeatureEnabled('v3-beta')) {
+      window.location.reload()
+    }
+  }, 1000)
+
   return (
     <div className="w-full h-screen bg-brand-500 flex items-center justify-center text-element-light-darker-400">
       <div className="w-[400px] bg-white rounded p-6 text-center shadow-xl">
