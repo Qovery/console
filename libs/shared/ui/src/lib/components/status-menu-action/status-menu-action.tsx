@@ -66,7 +66,10 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     const actionDeploy = () =>
       currentAction && statusActions.information && currentAction.action(statusActions.information?.id || '')
 
-    if (statusActions.information && statusActions.information.mode === EnvironmentModeEnum.PRODUCTION) {
+    if (
+      statusActions?.information?.mode === EnvironmentModeEnum.PRODUCTION ||
+      statusActions?.information?.mode === EnvironmentModeEnum.STAGING
+    ) {
       setOpenModal(true)
       setContentModal(
         <ModalConfirmation

@@ -63,7 +63,7 @@ export function ToastBehavior() {
       reverseOrder={false}
       gutter={4}
       toastOptions={{
-        duration: 3000,
+        duration: 5000,
         style: { background: 'transparent', boxShadow: 'initial', padding: 0 },
         icon: null,
       }}
