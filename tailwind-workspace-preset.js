@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       spacing: {
         'right-help-sidebar': '22.5rem',
+        'page-container': 'calc(100vh - 64px)',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],

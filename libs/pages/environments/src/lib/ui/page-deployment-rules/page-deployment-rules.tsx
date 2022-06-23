@@ -53,7 +53,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
 
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
-      <div className="py-7 px-10 flex-grow">
+      <div className="py-7 px-10 flex-grow overflow-scroll min-h-0">
         <div className="flex">
           <p className="mb-5 text-text-400 text-xs">
             Configure your default deployment rules. Drag & drop rules to prioritize them.
