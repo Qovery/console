@@ -7375,7 +7375,7 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001251, caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001349:
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001251, caniuse-lite@^1.0.30001335, caniuse-lite@^1.0.30001358:
   version "1.0.30001358"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001358.tgz#473d35dabf5e448b463095cab7924e96ccfb8c00"
   integrity sha512-hvp8PSRymk85R20bsDra7ZTCpSVGN/PAz9pSAjPSjKC+rNmnUk5vCRgJwiTT/O4feQ/yu/drvZYpKxxhbFuChw==
@@ -8951,10 +8951,10 @@ ejs@^3.1.7:
   dependencies:
     jake "^10.8.5"
 
-electron-to-chromium@^1.4.147:
-  version "1.4.164"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.164.tgz#3d0f5c83557d8ec8a7faa531e498f198c3bd974a"
-  integrity sha512-K7iy5y6XyP9Pzh3uaDti0KC4JUNT6T1tLG5RTOmesqq2YgAJpYYYJ32m+anvZYjCV35llPTEh87kvEV/uSsiyQ==
+electron-to-chromium@^1.4.164:
+  version "1.4.167"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.167.tgz#72424aebc85df12c5331d37b1bcfd1ae01322c55"
+  integrity sha512-lPHuHXBwpkr4RcfaZBKm6TKOWG/1N9mVggUpP4fY3l1JIUU2x4fkM8928smYdZ5lF+6KCTAxo1aK9JmqT+X71Q==
 
 element-resize-detector@^1.2.2:
   version "1.2.4"

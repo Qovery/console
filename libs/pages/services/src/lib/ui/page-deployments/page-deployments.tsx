@@ -85,7 +85,7 @@ export function PageDeployments(props: PageDeploymentsProps) {
         defaultData={deployments}
         filterData={data}
         setFilterData={setData}
-        className="mt-2 rounded-sm"
+        className="mt-2 rounded-sm flex-grow overflow-scroll min-h-0"
       >
         <div>
           {data?.map((currentData, index) => (
@@ -99,7 +99,7 @@ export function PageDeployments(props: PageDeploymentsProps) {
           ))}
         </div>
       </Table>
-      <div className="bg-white rounded-b flex flex-grow items-end mt-2">
+      <div className="bg-white rounded-b flex flex-col flex-grow justify-end w-full">
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
     </>
