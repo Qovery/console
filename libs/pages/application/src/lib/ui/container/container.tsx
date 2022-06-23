@@ -16,6 +16,7 @@ import {
   Tabs,
   Tag,
   TagMode,
+  TagSize,
 } from '@console/shared/ui'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -152,7 +153,7 @@ export function Container(props: ContainerProps) {
           {environment && application && application?.status && (
             <>
               <ButtonIconAction
-                className="!h-8 flex"
+                className="!h-8"
                 actions={buttonActionsDefault}
                 statusInformation={{
                   id: application?.id,
@@ -167,7 +168,7 @@ export function Container(props: ContainerProps) {
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
-          <TagMode status={environment?.mode} />
+          <TagMode size={TagSize.BIG} status={environment?.mode} />
         </Skeleton>
       )}
       <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
