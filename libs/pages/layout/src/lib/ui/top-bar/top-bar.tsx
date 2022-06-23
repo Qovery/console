@@ -71,7 +71,7 @@ export function TopBar(props: TopBarProps) {
 
   return (
     <div
-      className={`fixed top-0 left-16 border-l border-b w-[calc(100%-3.5rem)] h-16 ${
+      className={`fixed top-0 left-16 border-l border-b w-[calc(100%-3.5rem)] h-navbar-height ${
         darkMode
           ? 'border-element-light-darker-100 bg-element-light-darker-400 border-b-0'
           : 'border-element-light-lighter-400 z-10 bg-white'

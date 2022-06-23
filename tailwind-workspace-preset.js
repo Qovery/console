@@ -5,7 +5,8 @@ module.exports = {
     extend: {
       spacing: {
         'right-help-sidebar': '22.5rem',
-        'page-container': 'calc(100vh - 64px)',
+        'navbar-height': '4rem',
+        'page-container': 'calc(100vh - theme(spacing.navbar-height))',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
