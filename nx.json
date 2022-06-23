@@ -19,7 +19,19 @@
       "options": {
         "cacheableOperations": ["build", "lint", "test", "e2e"],
         "accessToken": "ZDhiYzMyN2QtNTg2ZS00ZWU0LWJhMjQtYWY4Y2I4Y2QwMTE5fHJlYWQtd3JpdGU=",
-        "runtimeCacheInputs": ["echo $NODE_ENV", "echo $NX_GTM", "echo $NX_INTERCOM"]
+        "runtimeCacheInputs": [
+          "echo $NODE_ENV",
+          "echo $NX_GTM",
+          "echo $NX_INTERCOM",
+          "echo $NX_LOGROCKET",
+          "echo $NX_OAUTH_AUDIENCE",
+          "echo $NX_OAUTH_DOMAIN",
+          "echo $NX_OAUTH_KEY",
+          "echo $NX_POSTHOG",
+          "echo $NX_POSTHOG_APIHOST",
+          "echo $NX_QOVERY_API",
+          "echo $NX_URL"
+        ]
       }
     }
   },
