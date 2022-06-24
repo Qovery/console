@@ -10,8 +10,7 @@ import { environment } from './environments/environment'
 import './styles.scss'
 import posthog from 'posthog-js'
 import { createRoot } from 'react-dom/client'
-
-const OAUTH_CALLBACK = '/login/auth0-callback'
+import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@console/shared/router'
 
 export const history = createBrowserHistory()
 
@@ -22,7 +21,7 @@ posthog.init(environment.posthog, {
 
 const onRedirectCallback = (appState: AppState | undefined) => {
   // use the router's history module to replace the url
-  history.replace(appState?.returnTo || window.location.pathname)
+  //history.replace(appState?.returnTo || window.location.pathname)
 }
 
 const container = document.getElementById('root') || document.createElement('div')
@@ -34,7 +33,7 @@ root.render(
     <Auth0Provider
       domain={environment.oauth_domain}
       clientId={environment.oauth_key}
-      redirectUri={`${window.location.origin}${OAUTH_CALLBACK}`}
+      redirectUri={`${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`}
       audience={environment.oauth_audience}
       useRefreshTokens={true}
       onRedirectCallback={onRedirectCallback}

@@ -3,13 +3,11 @@ import {
   DATABASE_URL,
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
-  LOGIN_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
   SERVICES_URL,
   SETTINGS_URL,
 } from '@console/shared/router'
-import { PageLogin } from '@console/pages/login'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { PageEnvironments } from '@console/pages/environments'
@@ -20,11 +18,6 @@ import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import RedirectOverview from '../components/redirect-overview'
 
 export const ROUTER = [
-  {
-    path: LOGIN_URL,
-    component: <PageLogin />,
-    protected: false,
-  },
   {
     path: ORGANIZATION_URL(),
     component: <RedirectOverview />,
