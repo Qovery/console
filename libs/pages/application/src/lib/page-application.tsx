@@ -21,10 +21,13 @@ import { useEffect } from 'react'
 import { StatusMenuActions } from '@console/shared/ui'
 import Container from './ui/container/container'
 import { ROUTER_APPLICATION } from './router/router'
+import { useLocation } from 'react-router-dom'
+import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@console/shared/router'
 
 export function PageApplication() {
   useDocumentTitle('Application - Qovery')
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { applicationId = '', environmentId = '', organizationId, projectId } = useParams()
+  const { pathname } = useLocation()
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
@@ -35,25 +38,6 @@ export function PageApplication() {
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 
   const dispatch = useDispatch<AppDispatch>()
-
-  const statusActions: StatusMenuActions[] = [
-    {
-      name: 'redeploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsRestart({ environmentId, applicationId })),
-    },
-    {
-      name: 'deploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsDeploy({ environmentId, applicationId })),
-    },
-    {
-      name: 'stop',
-      action: (applicationId: string) => dispatch(postApplicationActionsStop({ environmentId, applicationId })),
-    },
-    {
-      name: 'delete',
-      action: (applicationId: string) => dispatch(deleteApplicationActionsStop({ environmentId, applicationId })),
-    },
-  ]
 
   useEffect(() => {
     if (applicationId && loadingStatus === 'loaded') {
@@ -67,6 +51,61 @@ export function PageApplication() {
     )
     return () => clearInterval(fetchApplicationStatusByInterval)
   }, [applicationId, loadingStatus, dispatch])
+
+  const statusActions: StatusMenuActions[] = [
+    {
+      name: 'redeploy',
+      action: (applicationId: string) =>
+        dispatch(
+          postApplicationActionsRestart({
+            environmentId,
+            applicationId,
+            withDeployments:
+              pathname ===
+              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+          })
+        ),
+    },
+    {
+      name: 'deploy',
+      action: (applicationId: string) =>
+        dispatch(
+          postApplicationActionsDeploy({
+            environmentId,
+            applicationId,
+            withDeployments:
+              pathname ===
+              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+          })
+        ),
+    },
+    {
+      name: 'stop',
+      action: (applicationId: string) =>
+        dispatch(
+          postApplicationActionsStop({
+            environmentId,
+            applicationId,
+            withDeployments:
+              pathname ===
+              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+          })
+        ),
+    },
+    {
+      name: 'delete',
+      action: (applicationId: string) =>
+        dispatch(
+          deleteApplicationActionsStop({
+            environmentId,
+            applicationId,
+            withDeployments:
+              pathname ===
+              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+          })
+        ),
+    },
+  ]
 
   return (
     <Container application={application} environment={environment} statusActions={statusActions}>
