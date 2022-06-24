@@ -206,7 +206,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
               data={applications}
               menuItems={applicationMenu}
               paramId={applicationId}
-              link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
+              link={APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL}
             />
           </div>
         </>
