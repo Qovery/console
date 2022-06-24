@@ -67,7 +67,7 @@ export function Deployments(props: PageDeploymentsProps) {
         defaultData={deployments}
         filterData={data}
         setFilterData={setData}
-        className="mt-2 rounded-sm flex-grow overflow-scroll min-h-0"
+        className="mt-2 rounded-sm flex-grow overflow-y-auto min-h-0"
       >
         <div>
           {data?.map((currentData, index) => (

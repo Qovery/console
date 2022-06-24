@@ -117,9 +117,7 @@ export function StatusChip(props: StatusChipProps) {
             name={IconEnum.SUCCESS}
           />
         )}
-        {showProgressIcon() && (
-          <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.SUCCESS} pathColor="#FF7C00" />
-        )}
+        {showProgressIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PROGRESS} />}
         {showErrorIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.ERROR} />}
         {showStoppedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PAUSE} />}
         {showDeletedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.DELETE} />}

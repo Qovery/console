@@ -65,13 +65,12 @@ export function PageDeploymentsFeature() {
 
     !environment?.deployments && fetchEnv()
 
-    const pullDeployments = setInterval(() => {
-      dispatch(fetchEnvironmentDeploymentHistory({ environmentId, silently: true }))
-    }, 3000)
+    const pullDeployments = setInterval(
+      () => dispatch(fetchEnvironmentDeploymentHistory({ environmentId, silently: true })),
+      2500
+    )
 
-    return () => {
-      clearInterval(pullDeployments)
-    }
+    return () => clearInterval(pullDeployments)
   }, [dispatch, environmentId, projectId, environment])
 
   return (

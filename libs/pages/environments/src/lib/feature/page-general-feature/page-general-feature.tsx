@@ -3,21 +3,23 @@ import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   deleteEnvironmentActionsCancelDeployment,
-  environmentsLoadingStatus,
   environmentFactoryMock,
+  environmentsLoadingStatus,
+  fetchEnvironmentsStatus,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
   postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
   selectEnvironmentsEntitiesByProjectId,
-  fetchEnvironmentsStatus,
 } from '@console/domains/environment'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import { BaseLink, StatusMenuActions } from '@console/shared/ui'
 import { PageGeneral } from '../../ui/page-general/page-general'
+import { useDocumentTitle } from '@console/shared/utils'
 
 export function PageGeneralFeature() {
+  useDocumentTitle('Environments - Qovery')
   const { projectId = '' } = useParams()
   const loadingEnvironments = environmentFactoryMock(3, true)
 
