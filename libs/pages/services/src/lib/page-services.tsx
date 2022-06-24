@@ -1,7 +1,7 @@
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { Environment } from 'qovery-typescript-axios'
-import { APPLICATION_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
+import { APPLICATION_GENERAL_URL, SERVICES_DEPLOYMENTS_URL, SERVICES_URL } from '@console/shared/router'
 import { useDocumentTitle } from '@console/shared/utils'
 import {
   deleteEnvironmentActionsCancelDeployment,
@@ -40,23 +40,63 @@ export function PageServices() {
   const statusActions = [
     {
       name: 'redeploy',
-      action: () => dispatch(postEnvironmentActionsRestart({ projectId, environmentId })),
+      action: () =>
+        dispatch(
+          postEnvironmentActionsRestart({
+            projectId,
+            environmentId,
+            withDeployments:
+              location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+          })
+        ),
     },
     {
       name: 'deploy',
-      action: () => dispatch(postEnvironmentActionsDeploy({ projectId, environmentId })),
+      action: () =>
+        dispatch(
+          postEnvironmentActionsDeploy({
+            projectId,
+            environmentId,
+            withDeployments:
+              location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+          })
+        ),
     },
     {
       name: 'stop',
-      action: () => dispatch(postEnvironmentActionsStop({ projectId, environmentId })),
+      action: () =>
+        dispatch(
+          postEnvironmentActionsStop({
+            projectId,
+            environmentId,
+            withDeployments:
+              location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+          })
+        ),
     },
     {
       name: 'cancel-deployment',
-      action: () => dispatch(postEnvironmentActionsCancelDeployment({ projectId, environmentId })),
+      action: () =>
+        dispatch(
+          postEnvironmentActionsCancelDeployment({
+            projectId,
+            environmentId,
+            withDeployments:
+              location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+          })
+        ),
     },
     {
       name: 'delete',
-      action: () => dispatch(deleteEnvironmentActionsCancelDeployment({ projectId, environmentId })),
+      action: () =>
+        dispatch(
+          deleteEnvironmentActionsCancelDeployment({
+            projectId,
+            environmentId,
+            withDeployments:
+              location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+          })
+        ),
     },
   ]
 
