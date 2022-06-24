@@ -160,6 +160,8 @@ export function Breadcrumb(props: BreadcrumbProps) {
     </div>
   )
 
+  const mergedServices = applications && databases && [...applications, ...databases]
+
   if (organizations?.length === 0) return <div />
 
   return (
@@ -219,10 +221,14 @@ export function Breadcrumb(props: BreadcrumbProps) {
           <div className="flex items-center">
             {squareContent('S')}
             <BreadcrumbItem
-              data={applications || databases}
+              data={mergedServices}
               menuItems={applicationMenu}
               paramId={applicationId || databaseId || ''}
-              link={APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL}
+              link={
+                applicationId
+                  ? APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL
+                  : DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL
+              }
             />
           </div>
         </>
