@@ -6,90 +6,94 @@ import { toast, ToastEnum } from '@console/shared/toast'
 const applicationActionApi = new ApplicationActionsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 
-export const postApplicationActionsRestart = createAsyncThunk<any, { environmentId: string; applicationId: string }>(
-  'applicationActions/restart',
-  async (data, { dispatch }) => {
-    try {
-      const response = await applicationActionApi.restartApplication(data.applicationId)
-      if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-        // refetch deployments after update
+export const postApplicationActionsRestart = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; withDeployments?: boolean }
+>('applicationActions/restart', async (data, { dispatch }) => {
+  try {
+    const response = await applicationActionApi.restartApplication(data.applicationId)
+    if (response.status === 202) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      // refetch deployments after update
+      if (data.withDeployments)
         await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your application is redeploying')
-      }
-
-      return response
-    } catch (err) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Redeploying error')
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your application is redeploying')
     }
-  }
-)
 
-export const postApplicationActionsDeploy = createAsyncThunk<any, { environmentId: string; applicationId: string }>(
-  'applicationActions/deploy',
-  async (data, { dispatch }) => {
-    try {
-      const response = await applicationActionApi.restartApplication(data.applicationId)
-      if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-        // refetch deployments after update
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Redeploying error')
+  }
+})
+
+export const postApplicationActionsDeploy = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; withDeployments?: boolean }
+>('applicationActions/deploy', async (data, { dispatch }) => {
+  try {
+    const response = await applicationActionApi.restartApplication(data.applicationId)
+    if (response.status === 202) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      // refetch deployments after update
+      if (data.withDeployments)
         await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your application is deploying')
-      }
-
-      return response
-    } catch (err) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Deploying error')
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your application is deploying')
     }
-  }
-)
 
-export const postApplicationActionsStop = createAsyncThunk<any, { environmentId: string; applicationId: string }>(
-  'applicationActions/stop',
-  async (data, { dispatch }) => {
-    try {
-      const response = await applicationActionApi.stopApplication(data.applicationId)
-      if (response.status === 202) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-        // refetch deployments after update
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Deploying error')
+  }
+})
+
+export const postApplicationActionsStop = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; withDeployments?: boolean }
+>('applicationActions/stop', async (data, { dispatch }) => {
+  try {
+    const response = await applicationActionApi.stopApplication(data.applicationId)
+    if (response.status === 202) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      // refetch deployments after update
+      if (data.withDeployments)
         await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your application is stopping')
-      }
-
-      return response
-    } catch (err) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Stopping error')
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your application is stopping')
     }
-  }
-)
 
-export const deleteApplicationActionsStop = createAsyncThunk<any, { environmentId: string; applicationId: string }>(
-  'applicationActions/delete',
-  async (data, { dispatch }) => {
-    try {
-      const response = await applicationMainCallsApi.deleteApplication(data.applicationId)
-      if (response.status === 204) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-        // refetch deployments after update
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Stopping error')
+  }
+})
+
+export const deleteApplicationActionsStop = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; withDeployments?: boolean }
+>('applicationActions/delete', async (data, { dispatch }) => {
+  try {
+    const response = await applicationMainCallsApi.deleteApplication(data.applicationId)
+    if (response.status === 204) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      // refetch deployments after update
+      if (data.withDeployments)
         await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your application is being deleted')
-      }
-
-      return response
-    } catch (err) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Deleting error')
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your application is being deleted')
     }
+
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Deleting error')
   }
-)
+})
