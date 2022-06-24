@@ -106,48 +106,31 @@ export function Breadcrumb(props: BreadcrumbProps) {
     },
   ]
 
+  const mergedServices =
+    applications && databases && ([...applications, ...databases] as ApplicationEntity[] | DatabaseEntity[])
+
   const applicationMenu = [
     {
       title: 'Services',
       search: true,
       items: applications
-        ? [
-            ...(applications?.map((application: ApplicationEntity) => ({
-              name: application.name,
-              link: {
-                url: `${APPLICATION_URL(
-                  organizationId,
-                  projectId,
-                  environmentId,
-                  application.id
-                )}${APPLICATION_GENERAL_URL}`,
-              },
-              contentLeft: (
-                <div className="flex items-center">
-                  <StatusChip status={application.status?.state} />
-                  <div className="ml-3 mt-[1px]">
-                    <Icon name={IconEnum.APPLICATION} width="16" />
-                  </div>
+        ? (mergedServices?.map((service: ApplicationEntity | DatabaseEntity) => ({
+            name: service.name,
+            link: {
+              url: (service as DatabaseEntity).type
+                ? `${DATABASE_URL(organizationId, projectId, environmentId, service.id)}${DATABASE_GENERAL_URL}`
+                : `${APPLICATION_URL(organizationId, projectId, environmentId, service.id)}${APPLICATION_GENERAL_URL}`,
+            },
+            contentLeft: (
+              <div className="flex items-center">
+                <StatusChip status={service.status?.state} />
+                <div className="ml-3 mt-[1px]">
+                  <Icon name={(service as DatabaseEntity).type ? IconEnum.DATABASE : IconEnum.APPLICATION} width="16" />
                 </div>
-              ),
-              isActive: applicationId === application.id,
-            })) as MenuItemProps[]),
-            ...(databases?.map((database: DatabaseEntity) => ({
-              name: database.name,
-              link: {
-                url: `${DATABASE_URL(organizationId, projectId, environmentId, database.id)}${DATABASE_GENERAL_URL}`,
-              },
-              contentLeft: (
-                <div className="flex items-center">
-                  <StatusChip status={database.status?.state} />
-                  <div className="ml-3 mt-[1px]">
-                    <Icon name={IconEnum.DATABASE} width="16" />
-                  </div>
-                </div>
-              ),
-              isActive: applicationId === database.id,
-            })) as MenuItemProps[]),
-          ]
+              </div>
+            ),
+            isActive: applicationId === service.id,
+          })) as MenuItemProps[])
         : [],
     },
   ]
@@ -159,8 +142,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
       {text}
     </div>
   )
-
-  const mergedServices = applications && databases && [...applications, ...databases]
 
   if (organizations?.length === 0) return <div />
 
