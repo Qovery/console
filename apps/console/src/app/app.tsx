@@ -38,8 +38,13 @@ export function App() {
     (user: UserInterface) => {
       if (!user || !user.sub) return
 
-      posthog.identify(user.sub, {
-        ...user,
+      posthog.init(environment.posthog, {
+        api_host: environment.posthog_apihost,
+        loaded: () => {
+          posthog.identify(user.sub, {
+            ...user,
+          })
+        },
       })
 
       LogRocket.identify(user.sub, {
