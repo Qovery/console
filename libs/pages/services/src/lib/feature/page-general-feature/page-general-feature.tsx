@@ -5,15 +5,11 @@ import { Application, Database, Environment } from 'qovery-typescript-axios'
 import {
   applicationFactoryMock,
   applicationsLoadingStatus,
-  deleteApplicationActionsStop,
   fetchApplicationsStatus,
-  postApplicationActionsDeploy,
-  postApplicationActionsRestart,
-  postApplicationActionsStop,
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
 import { AppDispatch, RootState } from '@console/store/data'
-import { BaseLink, StatusMenuActions } from '@console/shared/ui'
+import { BaseLink } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
 import { databasesLoadingStatus, fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
 import { PageGeneral } from '../../ui/page-general/page-general'
@@ -47,25 +43,6 @@ export function PageGeneralFeature() {
     selectEnvironmentById(state, environmentId)
   )
 
-  const actions: StatusMenuActions[] = [
-    {
-      name: 'redeploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsRestart({ environmentId, applicationId })),
-    },
-    {
-      name: 'deploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsDeploy({ environmentId, applicationId })),
-    },
-    {
-      name: 'stop',
-      action: (applicationId: string) => dispatch(postApplicationActionsStop({ environmentId, applicationId })),
-    },
-    {
-      name: 'delete',
-      action: (applicationId: string) => dispatch(deleteApplicationActionsStop({ environmentId, applicationId })),
-    },
-  ]
-
   const listHelpfulLinks: BaseLink[] = [
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment/',
@@ -83,7 +60,6 @@ export function PageGeneralFeature() {
   return (
     <PageGeneral
       services={isLoading ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
-      buttonActions={actions}
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
     />

@@ -1,7 +1,14 @@
-import { PageLoginFeature } from './feature/page-login/page-login'
+import { Route, Routes } from 'react-router-dom'
+import { ROUTER_LOGIN } from './router/router'
 
 export function PageLogin() {
-  return <PageLoginFeature />
+  return (
+    <Routes>
+      {ROUTER_LOGIN.map((route) => (
+        <Route key={route.path} path={route.path} element={route.component} />
+      ))}
+    </Routes>
+  )
 }
 
 export default PageLogin

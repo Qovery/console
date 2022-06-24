@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { ServicesEnum } from '@console/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
-import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { APPLICATION_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
-import TableRowServices from '../table-row-services/table-row-services'
+import { BaseLink, HelpSection, Table } from '@console/shared/ui'
+import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
+import TableRowServicesFeature from '../../feature/table-row-services-feature/table-row-services-feature'
 
 export interface PageGeneralProps {
   environmentMode: string
   services: (ApplicationEntity | DatabaseEntity)[]
-  buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {
-  const { environmentMode, services, buttonActions, listHelpfulLinks } = props
+  const { environmentMode, services, listHelpfulLinks } = props
   const { organizationId, projectId, environmentId } = useParams()
 
   const [data, setData] = useState(services)
@@ -68,18 +66,15 @@ function PageGeneralMemo(props: PageGeneralProps) {
           {data.map((currentData) => {
             const isDatabase = !(currentData as ApplicationEntity).build_mode
             return (
-              <TableRowServices
+              <TableRowServicesFeature
                 key={currentData.id}
-                type={isDatabase ? ServicesEnum.DATABASE : ServicesEnum.APPLICATION}
                 data={currentData}
                 dataHead={tableHead}
                 link={
                   isDatabase
-                    ? ''
+                    ? DATABASE_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
                     : APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
                 }
-                columnsWidth="25% 25% 25% 10% 10%"
-                buttonActions={buttonActions}
                 environmentMode={environmentMode}
               />
             )

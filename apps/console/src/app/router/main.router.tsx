@@ -1,28 +1,23 @@
 import {
   APPLICATION_URL,
+  DATABASE_URL,
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
-  LOGIN_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
   SERVICES_URL,
   SETTINGS_URL,
 } from '@console/shared/router'
-import { PageLogin } from '@console/pages/login'
 import { OverviewPage } from '@console/pages/overview/feature'
 import { SettingsPage } from '@console/pages/settings/feature'
 import { PageEnvironments } from '@console/pages/environments'
 import { PageServices } from '@console/pages/services'
 import { PageApplication } from '@console/pages/application'
+import { PageDatabase } from '@console/pages/database'
 import { InfraLogsPage } from '@console/pages/logs/infra/feature'
 import RedirectOverview from '../components/redirect-overview'
 
 export const ROUTER = [
-  {
-    path: LOGIN_URL,
-    component: <PageLogin />,
-    protected: false,
-  },
   {
     path: ORGANIZATION_URL(),
     component: <RedirectOverview />,
@@ -56,6 +51,12 @@ export const ROUTER = [
   {
     path: `${APPLICATION_URL()}/*`,
     component: <PageApplication />,
+    protected: true,
+    layout: true,
+  },
+  {
+    path: `${DATABASE_URL()}/*`,
+    component: <PageDatabase />,
     protected: true,
     layout: true,
   },

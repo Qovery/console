@@ -15,7 +15,6 @@ import { useAuth } from '@console/shared/auth'
 import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
 import { PageOnboarding } from '@console/pages/onboarding'
-import { PageLogin } from '@console/pages/login'
 import { environment } from '../environments/environment'
 import { Layout } from '@console/pages/layout'
 import { useSelector } from 'react-redux'
@@ -24,6 +23,7 @@ import posthog from 'posthog-js'
 import { ROUTER } from './router/main.router'
 import { useIntercom } from 'react-use-intercom'
 import { UserInterface } from '@console/shared/interfaces'
+import { PageLogin } from '@console/pages/login'
 
 export function App() {
   useDocumentTitle('Loading...')
@@ -74,6 +74,7 @@ export function App() {
         path: `${ONBOARDING_URL}/*`,
         component: <PageOnboarding />,
         protected: true,
+        layout: false,
       })
     }
 
@@ -98,7 +99,7 @@ export function App() {
   return (
     <GTMProvider state={gtmParams}>
       <Routes>
-        <Route path={LOGIN_URL} element={<PageLogin />} />
+        <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
         <Route
           path={NO_BETA_ACCESS_URL}
           element={

@@ -11,9 +11,11 @@ import {
   OVERVIEW_URL,
   APPLICATION_URL,
   APPLICATION_GENERAL_URL,
+  DATABASE_URL,
+  DATABASE_GENERAL_URL,
 } from '@console/shared/router'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
-import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, EnvironmentEntity } from '@console/shared/interfaces'
 import { IconEnum } from '@console/shared/enums'
 
 export interface BreadcrumbProps {
@@ -25,8 +27,8 @@ export interface BreadcrumbProps {
 }
 
 export function Breadcrumb(props: BreadcrumbProps) {
-  const { organizations, projects, environments, applications } = props
-  const { organizationId, projectId, environmentId, applicationId } = useParams()
+  const { organizations, projects, environments, applications, databases } = props
+  const { organizationId, projectId, environmentId, applicationId, databaseId } = useParams()
   const { pathname } = useLocation()
 
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
@@ -104,33 +106,30 @@ export function Breadcrumb(props: BreadcrumbProps) {
     },
   ]
 
+  const mergedServices =
+    applications && databases && ([...applications, ...databases] as ApplicationEntity[] | DatabaseEntity[])
+
   const applicationMenu = [
     {
-      title: 'Applications',
+      title: 'Services',
       search: true,
       items: applications
-        ? (applications?.map((application: ApplicationEntity) => ({
-            name: application.name,
+        ? (mergedServices?.map((service: ApplicationEntity | DatabaseEntity) => ({
+            name: service.name,
             link: {
-              url: `${APPLICATION_URL(
-                organizationId,
-                projectId,
-                environmentId,
-                application.id
-              )}${APPLICATION_GENERAL_URL}`,
+              url: (service as DatabaseEntity).type
+                ? `${DATABASE_URL(organizationId, projectId, environmentId, service.id)}${DATABASE_GENERAL_URL}`
+                : `${APPLICATION_URL(organizationId, projectId, environmentId, service.id)}${APPLICATION_GENERAL_URL}`,
             },
             contentLeft: (
               <div className="flex items-center">
-                <StatusChip status={application.status?.state} />
+                <StatusChip status={service.status?.state} />
                 <div className="ml-3 mt-[1px]">
-                  <Icon
-                    name={!(application as ApplicationEntity).build_mode ? IconEnum.APPLICATION : IconEnum.DATABASE}
-                    width="16"
-                  />
+                  <Icon name={(service as DatabaseEntity).type ? IconEnum.DATABASE : IconEnum.APPLICATION} width="16" />
                 </div>
               </div>
             ),
-            isActive: applicationId === application.id,
+            isActive: applicationId === service.id,
           })) as MenuItemProps[])
         : [],
     },
@@ -197,16 +196,20 @@ export function Breadcrumb(props: BreadcrumbProps) {
           </div>
         </>
       )}
-      {applicationId && (
+      {(applicationId || databaseId) && (
         <>
           <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
           <div className="flex items-center">
             {squareContent('S')}
             <BreadcrumbItem
-              data={applications}
+              data={mergedServices}
               menuItems={applicationMenu}
-              paramId={applicationId}
-              link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
+              paramId={applicationId || databaseId || ''}
+              link={
+                applicationId
+                  ? APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL
+                  : DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL
+              }
             />
           </div>
         </>
