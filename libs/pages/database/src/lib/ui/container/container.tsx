@@ -11,12 +11,12 @@ import {
   TagMode,
 } from '@console/shared/ui'
 import {
-  DATABASE_DEPLOYMENTS_URL,
+  //DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
-  DATABASE_METRICS_URL,
+  //DATABASE_METRICS_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
-  DATABASE_VARIABLES_URL,
+  //DATABASE_VARIABLES_URL,
 } from '@console/shared/router'
 import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
@@ -102,33 +102,33 @@ export function Container(props: ContainerProps) {
         location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
     },
-    {
-      icon: (
-        <Skeleton width={16} height={16} rounded show={!database?.status}>
-          <StatusChip status={database?.status && database?.status.state} />
-        </Skeleton>
-      ),
-      name: 'Deployments',
-      active:
-        location.pathname ===
-        DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
-      link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
-    },
-    {
-      icon: <Icon name="icon-solid-chart-area" />,
-      name: 'Metrics',
-      active:
-        location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_METRICS_URL,
-      link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_METRICS_URL,
-    },
-    {
-      icon: <Icon name="icon-solid-wheel" />,
-      name: 'Variables',
-      active:
-        location.pathname ===
-        DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_VARIABLES_URL,
-      link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_VARIABLES_URL,
-    },
+    // {
+    //   icon: (
+    //     <Skeleton width={16} height={16} rounded show={!database?.status}>
+    //       <StatusChip status={database?.status && database?.status.state} />
+    //     </Skeleton>
+    //   ),
+    //   name: 'Deployments',
+    //   active:
+    //     location.pathname ===
+    //     DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
+    //   link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
+    // },
+    // {
+    //   icon: <Icon name="icon-solid-chart-area" />,
+    //   name: 'Metrics',
+    //   active:
+    //     location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_METRICS_URL,
+    //   link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_METRICS_URL,
+    // },
+    // {
+    //   icon: <Icon name="icon-solid-wheel" />,
+    //   name: 'Variables',
+    //   active:
+    //     location.pathname ===
+    //     DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_VARIABLES_URL,
+    //   link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_VARIABLES_URL,
+    // },
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',

@@ -1,9 +1,7 @@
+import PageSettings from '../../ui/page-settings/page-settings'
+
 export function PageSettingsFeature() {
-  return (
-    <div>
-      <h1>Welcome to Settings!</h1>
-    </div>
-  )
+  return <PageSettings />
 }
 
 export default PageSettingsFeature
