@@ -28,34 +28,73 @@ export interface ContainerProps {
   statusActions: StatusMenuActions[]
   environment?: EnvironmentEntity
   children?: React.ReactNode
+  removeEnvironment?: () => void | null | undefined
 }
 
 export function Container(props: ContainerProps) {
-  const { environment, children, statusActions } = props
+  const { environment, children, statusActions, removeEnvironment } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
 
-  const buttonActionsDefault = [
-    {
-      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
-      statusActions: {
-        status: environment?.status && environment?.status.state,
-        actions: statusActions,
-      },
-    },
-    {
-      iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-      onClick: () =>
-        window.open(
-          `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-          '_blank'
-        ),
-    },
-  ]
+  const buttonActionsDefault = () => {
+    if (removeEnvironment) {
+      return [
+        {
+          iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
+          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+          menusClassName: 'border-r border-r-element-light-lighter-500',
+          statusActions: {
+            status: environment?.status && environment?.status.state,
+            actions: statusActions,
+          },
+        },
+        {
+          iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+          onClick: () =>
+            window.open(
+              `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
+              '_blank'
+            ),
+        },
+        {
+          iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
+          menus: [
+            {
+              items: [
+                {
+                  name: 'Remove',
+                  contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                  onClick: () => removeEnvironment(),
+                },
+              ],
+            },
+          ],
+        },
+      ]
+    } else {
+      return [
+        {
+          iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
+          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+          menusClassName: 'border-r border-r-element-light-lighter-500',
+          statusActions: {
+            status: environment?.status && environment?.status.state,
+            actions: statusActions,
+          },
+        },
+        {
+          iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+          onClick: () =>
+            window.open(
+              `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
+              '_blank'
+            ),
+        },
+      ]
+    }
+  }
 
   const headerButtons = (
     <div>
@@ -77,7 +116,7 @@ export function Container(props: ContainerProps) {
           <>
             <ButtonIconAction
               className="!h-8"
-              actions={buttonActionsDefault}
+              actions={buttonActionsDefault()}
               statusInformation={{
                 id: environment?.id,
                 name: environment?.name,
