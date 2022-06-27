@@ -45,7 +45,7 @@
     "autoprefixer": "^10.4.2",
     "axios": "^0.27.2",
     "chance": "^1.1.8",
-    "core-js": "^3.6.5",
+    "core-js": "^3.23.3",
     "date-fns": "^2.28.0",
     "logrocket": "^2.2.1",
     "msw": "^0.42.1",
