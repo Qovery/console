@@ -26,8 +26,6 @@ import { UserInterface } from '@console/shared/interfaces'
 import { PageLogin } from '@console/pages/login'
 
 export function App() {
-  console.log(process.env)
-
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
 
