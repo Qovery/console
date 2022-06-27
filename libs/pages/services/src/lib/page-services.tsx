@@ -1,6 +1,5 @@
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { Environment, StateEnum } from 'qovery-typescript-axios'
 import { APPLICATION_GENERAL_URL, SERVICES_DEPLOYMENTS_URL, SERVICES_URL } from '@console/shared/router'
 import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
 import {
@@ -24,7 +23,7 @@ export function PageServices() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const environment: EnvironmentEntity | undefined = useSelector<RootState, Environment | undefined>((state) =>
+  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
 
@@ -117,7 +116,7 @@ export function PageServices() {
       environment={environment}
       statusActions={statusActions}
       removeEnvironment={
-        isDeleteAvailable(environment?.status?.state || StateEnum.BUILDING) ? removeEnvironment : undefined
+        environment?.status && isDeleteAvailable(environment?.status?.state) ? removeEnvironment : undefined
       }
     >
       <Routes>

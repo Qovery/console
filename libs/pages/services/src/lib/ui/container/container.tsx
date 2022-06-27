@@ -28,7 +28,7 @@ export interface ContainerProps {
   statusActions: StatusMenuActions[]
   environment?: EnvironmentEntity
   children?: React.ReactNode
-  removeEnvironment?: () => void | null | undefined
+  removeEnvironment?: () => void
 }
 
 export function Container(props: ContainerProps) {

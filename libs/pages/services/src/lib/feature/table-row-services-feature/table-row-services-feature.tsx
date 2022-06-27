@@ -17,6 +17,7 @@ import {
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@console/domains/database'
+import { isDeleteAvailable } from '@console/shared/utils'
 
 export interface TableRowServicesFeatureProps {
   data: ApplicationEntity | DatabaseEntity
@@ -50,10 +51,10 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       name: 'stop',
       action: (applicationId: string) => dispatch(postApplicationActionsStop({ environmentId, applicationId })),
     },
-    {
-      name: 'delete',
-      action: (applicationId: string) => dispatch(deleteApplicationActionsStop({ environmentId, applicationId })),
-    },
+    // {
+    //   name: 'delete',
+    //   action: (applicationId: string) => dispatch(deleteApplicationActionsStop({ environmentId, applicationId })),
+    // },
   ]
 
   const databaseActions: StatusMenuActions[] = [
@@ -75,6 +76,10 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     // },
   ]
 
+  const removeApplication = (applicationId: string) => {
+    dispatch(deleteApplicationActionsStop({ environmentId, applicationId }))
+  }
+
   const actions = isDatabase ? databaseActions : applicationActions
 
   return (
@@ -86,6 +91,9 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       link={link}
       buttonActions={actions}
       columnsWidth="25% 25% 25% 10% 10%"
+      removeApplication={
+        !isDatabase && data.status && isDeleteAvailable(data.status.state) ? removeApplication : undefined
+      }
     />
   )
 }

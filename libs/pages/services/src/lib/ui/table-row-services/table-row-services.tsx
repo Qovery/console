@@ -27,6 +27,7 @@ export interface TableRowServicesProps {
   link: string
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
+  removeApplication?: (serviceId: string) => void
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -38,6 +39,7 @@ export function TableRowServices(props: TableRowServicesProps) {
     link,
     buttonActions,
     environmentMode,
+    removeApplication,
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
@@ -53,24 +55,58 @@ export function TableRowServices(props: TableRowServicesProps) {
       ?.focus()
   }
 
-  const buttonActionsDefaultApp = [
-    {
-      iconLeft: <Icon name="icon-solid-play" />,
-      iconRight: <Icon name="icon-solid-angle-down" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
-      statusActions: {
-        status: data.status && data.status.state,
-        actions: buttonActions,
-      },
-    },
-    {
-      iconLeft: <Icon name="icon-solid-scroll" />,
-      onClick: () => openLogs(),
-    },
-    /*{
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },*/
-  ]
+  const buttonActionsDefaultApp = () => {
+    if (removeApplication) {
+      return [
+        {
+          iconLeft: <Icon name="icon-solid-play" />,
+          iconRight: <Icon name="icon-solid-angle-down" />,
+          menusClassName: 'border-r border-r-element-light-lighter-500',
+          statusActions: {
+            status: data.status && data.status.state,
+            actions: buttonActions,
+          },
+        },
+        {
+          iconLeft: <Icon name="icon-solid-scroll" />,
+          onClick: () => openLogs(),
+        },
+        {
+          iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+          menus: [
+            {
+              items: [
+                {
+                  name: 'Remove',
+                  contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                  onClick: () => removeApplication(data.id),
+                },
+              ],
+            },
+          ],
+        },
+      ]
+    } else {
+      return [
+        {
+          iconLeft: <Icon name="icon-solid-play" />,
+          iconRight: <Icon name="icon-solid-angle-down" />,
+          menusClassName: 'border-r border-r-element-light-lighter-500',
+          statusActions: {
+            status: data.status && data.status.state,
+            actions: buttonActions,
+          },
+        },
+        {
+          iconLeft: <Icon name="icon-solid-scroll" />,
+          onClick: () => openLogs(),
+        },
+        /*{
+          iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+        },*/
+      ]
+    }
+  }
 
   const buttonActionsDefaultDb = [
     {
@@ -95,7 +131,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               <StatusChip status={data.status && data.status.state} />
             </Skeleton>
           ) : (
-            <>
+            <div>
               {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
                 <StatusChip status={data.status && data.status.state} />
               ) : (
@@ -108,7 +144,7 @@ export function TableRowServices(props: TableRowServicesProps) {
                   }
                 />
               )}
-            </>
+            </div>
           )}
           <Skeleton show={isLoading} width={16} height={16}>
             <div className="ml-2 mr-2">
@@ -119,7 +155,7 @@ export function TableRowServices(props: TableRowServicesProps) {
             <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
           </Skeleton>
         </div>
-        <div className="flex justify-end justify-items-center px-3">
+        <div className="flex justify-end justify-items-center px-2">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
@@ -130,7 +166,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <ButtonIconAction
-                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp : buttonActionsDefaultDb}
+                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp() : buttonActionsDefaultDb}
                   statusInformation={{
                     id: data.id,
                     name: data.name,
