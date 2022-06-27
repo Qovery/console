@@ -90,24 +90,7 @@ export function Container(props: ContainerProps) {
   const tabsItems = [
     {
       icon: (
-        <Skeleton
-          show={
-            database?.running_status?.state === RunningStatus.STARTING ||
-            database?.running_status?.state === RunningStatus.STOPPING
-          }
-          width={16}
-          height={16}
-          rounded={true}
-        >
-          <StatusChip
-            status={(database?.running_status && database?.running_status.state) || RunningStatus.STOPPED}
-            appendTooltipMessage={
-              database?.running_status?.state === RunningStatus.ERROR
-                ? database.running_status.pods[0]?.state_message
-                : ''
-            }
-          />
-        </Skeleton>
+        <StatusChip status={(database?.running_status && database?.running_status.state) || RunningStatus.STOPPED} />
       ),
       name: 'Overview',
       active:
