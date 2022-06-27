@@ -24,7 +24,6 @@ export function useRedirectIfLogged() {
       if (organization.length > 0) {
         const organizationId = organization[0].id
         const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
-        console.log(organizationId, projects)
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
       }
       if (isOnboarding && organization.length === 0) {
