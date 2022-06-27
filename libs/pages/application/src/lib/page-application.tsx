@@ -1,4 +1,4 @@
-import { useDocumentTitle } from '@console/shared/utils'
+import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
 import { Route, Routes, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -107,8 +107,27 @@ export function PageApplication() {
     },
   ]
 
+  const removeApplication = (applicationId: string) => {
+    dispatch(
+      deleteApplicationActionsStop({
+        environmentId,
+        applicationId,
+        withDeployments:
+          pathname ===
+          APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+      })
+    )
+  }
+
   return (
-    <Container application={application} environment={environment} statusActions={statusActions}>
+    <Container
+      application={application}
+      environment={environment}
+      statusActions={statusActions}
+      removeApplication={
+        application?.status && isDeleteAvailable(application.status.state) ? removeApplication : undefined
+      }
+    >
       <Routes>
         {ROUTER_APPLICATION.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />

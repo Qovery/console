@@ -155,7 +155,7 @@ export function TableRowServices(props: TableRowServicesProps) {
             <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
           </Skeleton>
         </div>
-        <div className="flex justify-end justify-items-center px-2">
+        <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
