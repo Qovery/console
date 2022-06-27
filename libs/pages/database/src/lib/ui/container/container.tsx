@@ -1,14 +1,15 @@
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 import {
+  ButtonIconAction,
   Header,
   Icon,
   Skeleton,
   StatusChip,
-  StatusMenu,
   StatusMenuActions,
   Tabs,
   Tag,
   TagMode,
+  TagSize,
 } from '@console/shared/ui'
 import {
   //DATABASE_DEPLOYMENTS_URL,
@@ -37,33 +38,44 @@ export function Container(props: ContainerProps) {
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${databaseId}`
 
+  const buttonActionsDefault = [
+    {
+      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
+      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      statusActions: {
+        status: database?.status && database?.status.state,
+        actions: statusActions,
+      },
+    },
+  ]
+
   const headerActions = (
     <>
       <Skeleton width={150} height={24} show={!database?.status}>
         <div className="flex">
           {environment && database && database?.status && (
-            <StatusMenu
-              statusActions={{
-                status: database?.status.state,
-                running_status: database?.running_status?.state || RunningStatus.STOPPED,
-                actions: statusActions,
-                information: {
+            <>
+              <ButtonIconAction
+                className="!h-8"
+                actions={buttonActionsDefault}
+                statusInformation={{
                   id: database?.id,
                   name: database?.name,
                   mode: environment?.mode,
-                },
-              }}
-            />
+                }}
+              />
+              <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
+            </>
           )}
         </div>
       </Skeleton>
       {environment && (
         <Skeleton width={80} height={24} show={!environment?.mode}>
-          <TagMode status={environment?.mode} />
+          <TagMode status={environment?.mode} size={TagSize.BIG} />
         </Skeleton>
       )}
       <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
-        <div className="border border-element-light-lighter-400 bg-white h-6 px-2 rounded text-xs items-center inline-flex font-medium gap-2">
+        <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>
         </div>
