@@ -11,6 +11,7 @@ import {
   Truncate,
   ErrorLogsProps,
 } from '@console/shared/ui'
+import { ClusterLogsError } from 'qovery-typescript-axios'
 
 export const enum TabsLogsSection {
   INFORMATION = 'INFORMATION',
@@ -28,7 +29,7 @@ export function TabsLogs(props: TabsLogsProps) {
 
   const { organizationId = '' } = useParams()
 
-  const [section, setSection] = useState(defaultSection)
+  const [section, setSection] = useState(errors && errors?.length > 0 ? TabsLogsSection.ERROR : defaultSection)
 
   const items = [
     {
@@ -50,11 +51,9 @@ export function TabsLogs(props: TabsLogsProps) {
     },
   ]
 
-  const copyToClipboard = () => {
-    errors &&
-      errors.length > 0 &&
-      errors[0].error &&
-      navigator.clipboard.writeText(errors[0].error?.event_details?.underlying_error?.message as string)
+  const copyToClipboard = (error: ClusterLogsError) => {
+    navigator.clipboard.writeText(`Transmitter: ${error.event_details?.transmitter?.name} -
+      ${error.underlying_error?.message}`)
   }
 
   return (
@@ -69,7 +68,7 @@ export function TabsLogs(props: TabsLogsProps) {
                 <>
                   <div className="flex items-center">
                     <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-error-500 mr-3">
-                      <Icon name="icon-solid-circle-exclamation" className="text-text-100" />
+                      <Icon name="icon-solid-triangle-exclamation" className="text-text-100" />
                     </div>
                     <div>
                       <Tooltip content={errors[0].error.tag || ''}>
@@ -86,14 +85,14 @@ export function TabsLogs(props: TabsLogsProps) {
                     <div className="flex items-center justify-between">
                       <p className="text-error-500 text-xs font-medium">Full error</p>
                       <Tooltip content="Copy">
-                        <div className="cursor-pointer" onClick={copyToClipboard}>
+                        <div className="cursor-pointer" onClick={() => copyToClipboard(errors[0].error)}>
                           <Icon name="icon-solid-copy" className="text-xs text-text-300 hover:text-text-100" />
                         </div>
                       </Tooltip>
                     </div>
                     <p data-testid="error-msg" className="text-text-200 text-xs">
                       Transmitter: {errors[0].error.event_details?.transmitter?.name} -{' '}
-                      {errors[0].error.event_details?.underlying_error?.message}
+                      {errors[0].error.underlying_error?.message}
                     </p>
                   </div>
                   {errors[0].error.hint_message && (

@@ -6,7 +6,7 @@ import { databasesLoadingStatus, fetchDatabaseDeployments, getDatabasesState } f
 import { BaseLink } from '@console/shared/ui'
 import { useEffect } from 'react'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
-import { StateEnum } from 'qovery-typescript-axios'
+import { DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
 
 export function PageDeploymentsFeature() {
   const { databaseId = '' } = useParams()
@@ -22,7 +22,7 @@ export function PageDeploymentsFeature() {
       created_at: new Date().toString(),
       updated_at: new Date().toString(),
       name: 'someName',
-      status: StateEnum.RUNNING,
+      status: DeploymentHistoryStatusEnum.SUCCESS,
     },
   ]
 

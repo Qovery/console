@@ -2,7 +2,7 @@ import { screen, render } from '__tests__/utils/setup-jest'
 import { clusterLogFactoryMock } from '@console/domains/organization'
 import { LayoutLogsProps } from '@console/shared/ui'
 
-import LayoutLogs from './layout-logs'
+import { LayoutLogsMemo } from './layout-logs'
 
 describe('LayoutLogs', () => {
   const props: LayoutLogsProps = {
@@ -15,7 +15,7 @@ describe('LayoutLogs', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<LayoutLogs {...props} />)
+    const { baseElement } = render(<LayoutLogsMemo {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -25,7 +25,7 @@ describe('LayoutLogs', () => {
       items: [],
     }
 
-    render(<LayoutLogs {...props} />)
+    render(<LayoutLogsMemo {...props} />)
 
     const loadingScreen = screen.getByTestId('loading-screen')
 
@@ -38,7 +38,7 @@ describe('LayoutLogs', () => {
       items: [],
     }
 
-    render(<LayoutLogs {...props} />)
+    render(<LayoutLogsMemo {...props} />)
 
     const loadingScreen = screen.getByTestId('loading-screen')
 
@@ -58,7 +58,7 @@ describe('LayoutLogs', () => {
       ],
     }
 
-    render(<LayoutLogs {...props} />)
+    render(<LayoutLogsMemo {...props} />)
 
     const errorLine = screen.getByTestId('error-line')
 
