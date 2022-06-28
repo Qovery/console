@@ -1,8 +1,6 @@
 import { IconEnum } from '@console/shared/enums'
-import { Skeleton, Truncate } from '@console/shared/ui'
-import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
+import { CopyToClipboard, Skeleton, Truncate } from '@console/shared/ui'
 import Icon from '../icon/icon'
-import Tooltip from '../tooltip/tooltip'
 
 export interface HeaderProps {
   title?: string
@@ -16,10 +14,6 @@ export interface HeaderProps {
 export function Header(props: HeaderProps) {
   const { title, icon, buttons, copyTitle = false, copyContent = '', actions } = props
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(copyContent)
-  }
-
   return (
     <div className="flex h-32 border-b border-element-light-lighter-400 items-center justify-between bg-white rounded-t p-5 shrink-0">
       <div className="flex gap-4 ml-2 items-center">
@@ -31,18 +25,7 @@ export function Header(props: HeaderProps) {
                 {title && <Truncate text={title} truncateLimit={50} />}
               </h1>
             </Skeleton>
-            {copyTitle && (
-              <Tooltip content="Copy IDs">
-                <div>
-                  <ButtonIcon
-                    icon="icon-solid-copy"
-                    style={ButtonIconStyle.FLAT}
-                    iconClassName="!text-base text-text-400"
-                    onClick={copyToClipboard}
-                  />
-                </div>
-              </Tooltip>
-            )}
+            {copyTitle && <CopyToClipboard className="text-text-400 text-base ml-2" content={copyContent} />}
           </div>
           {actions && <div className="flex gap-3 items-start">{actions}</div>}
         </div>

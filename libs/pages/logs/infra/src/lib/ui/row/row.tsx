@@ -1,5 +1,5 @@
 import { LogsType } from '@console/shared/enums'
-import { Icon, Tooltip } from '@console/shared/ui'
+import { CopyToClipboard } from '@console/shared/ui'
 import { dateDifference } from '@console/shared/utils'
 import { ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 
@@ -14,12 +14,6 @@ export function Row(props: RowProps) {
 
   const type = data.type
   const success = data.step === ClusterLogsStepEnum.CREATED
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(
-      type === LogsType.ERROR ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)
-    )
-  }
 
   const indexClassName = `${
     type === LogsType.ERROR
@@ -61,11 +55,12 @@ export function Row(props: RowProps) {
         </div>
       </div>
       <div className={`flex whitespace-nowrap py-1 px-2 ${colorsCellClassName()}`}>
-        <Tooltip content="Copy">
-          <div className="cursor-pointer opacity-0 group-hover:opacity-100 mr-4" onClick={copyToClipboard}>
-            <Icon name="icon-solid-copy" className="text-white hover:text-text-300" />
-          </div>
-        </Tooltip>
+        <CopyToClipboard
+          className="opacity-0 group-hover:opacity-100 mr-4 text-white"
+          content={
+            type === LogsType.ERROR ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)
+          }
+        />
         {data.timestamp}
       </div>
     </div>

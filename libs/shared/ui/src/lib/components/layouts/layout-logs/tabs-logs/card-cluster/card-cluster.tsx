@@ -1,5 +1,5 @@
 import { ClusterEntity } from '@console/shared/interfaces'
-import { Icon, StatusChip, Tooltip } from '@console/shared/ui'
+import { Icon, StatusChip, CopyToClipboard } from '@console/shared/ui'
 
 export interface CardClusterProps {
   cluster?: ClusterEntity
@@ -10,12 +10,6 @@ export const splitId = (id: string) => `${id.split('-')[0]}[...]${id.split('-')[
 
 export function CardCluster(props: CardClusterProps) {
   const { cluster, organizationId } = props
-
-  const copyToClipboard = (string?: string) => {
-    string && navigator.clipboard.writeText(string)
-  }
-
-  if (!cluster) return null
 
   return (
     <div className="bg-element-light-darker-300 p-4 rounded">
@@ -33,29 +27,16 @@ export function CardCluster(props: CardClusterProps) {
               <li className="flex mb-2">
                 <span className="text-text-300 w-16 mr-3">Cluster ID</span>
                 <div className="flex">
-                  <span className="text-accent2-400">{splitId(cluster.id)}</span>
-                  <Tooltip content="Copy">
-                    <div className="cursor-pointer ml-1" onClick={() => copyToClipboard(cluster.id)}>
-                      <Icon name="icon-solid-copy" className="text-text-300" />
-                    </div>
-                  </Tooltip>
+                  <span className="text-accent2-400">{splitId(id)}</span>
+                  <CopyToClipboard content={id} className="text-text-300 ml-1" />
                 </div>
               </li>
               {cluster.extendedStatus?.status?.last_execution_id && (
                 <li className="flex mb-2">
                   <span className="text-text-300 w-16 mr-3">Exec. ID</span>
                   <div className="flex">
-                    <span className="text-accent2-400">
-                      {splitId(cluster.extendedStatus?.status?.last_execution_id)}
-                    </span>
-                    <Tooltip content="Copy">
-                      <div
-                        className="cursor-pointer ml-1"
-                        onClick={() => copyToClipboard(cluster.extendedStatus?.status?.last_execution_id)}
-                      >
-                        <Icon name="icon-solid-copy" className="text-text-300" />
-                      </div>
-                    </Tooltip>
+                    <span className="text-accent2-400">{splitId(last_execution_id)}</span>
+                    <CopyToClipboard content={last_execution_id} className="text-text-300 ml-1" />
                   </div>
                 </li>
               )}
@@ -67,11 +48,7 @@ export function CardCluster(props: CardClusterProps) {
                 <span className="text-text-300 w-16 mr-3">Org. ID</span>
                 <div className="flex">
                   <span className="text-accent2-400">{splitId(organizationId)}</span>
-                  <Tooltip content="Copy">
-                    <div className="cursor-pointer ml-1" onClick={() => copyToClipboard(organizationId)}>
-                      <Icon name="icon-solid-copy" className="text-text-300" />
-                    </div>
-                  </Tooltip>
+                  <CopyToClipboard content={organizationId} className="text-text-300 ml-1" />
                 </div>
               </li>
             </ul>

@@ -1,27 +1,15 @@
 import { Icon, Tooltip } from '@console/shared/ui'
 import { useState } from 'react'
 
-export enum CopyToClipboardLayout {
-  NORMAL = 'NORMAL',
-  DARK = 'DARK',
-}
-
 export interface CopyToClipboardProps {
   content: string
-  layout?: CopyToClipboardLayout
   className?: string
   iconClassName?: string
   tooltipContent?: string
 }
 
 export function CopyToClipboard(props: CopyToClipboardProps) {
-  const {
-    content,
-    layout = CopyToClipboardLayout.NORMAL,
-    className = '',
-    iconClassName = '',
-    tooltipContent = 'Copy',
-  } = props
+  const { content, className = '', iconClassName = '', tooltipContent = 'Copy' } = props
 
   const [icon, setIcon] = useState('icon-solid-copy')
 
@@ -33,15 +21,10 @@ export function CopyToClipboard(props: CopyToClipboardProps) {
     }, 1000)
   }
 
-  const btnLayout = {
-    NORMAL: 'text-text-400',
-    DARK: 'text-white',
-  }
-
   return (
     <Tooltip content={tooltipContent}>
       <span onClick={copyToClipboard} className={`cursor-pointer ${className}`} data-testid="copy-container">
-        <Icon name={icon} className={`${btnLayout[layout]} ${iconClassName}`} />
+        <Icon name={icon} className={`${iconClassName}`} />
       </span>
     </Tooltip>
   )
