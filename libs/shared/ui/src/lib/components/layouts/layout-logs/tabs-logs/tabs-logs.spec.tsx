@@ -66,7 +66,6 @@ describe('TabsLogs', () => {
     render(<TabsLogs {...props} />)
 
     const errorMsg = screen.getByTestId('error-msg')
-    console.log(errorMsg)
 
     const msg = `Transmitter: ${props.errors[0].error.event_details?.transmitter?.name} - ${props.errors[0].error.event_details?.underlying_error?.message}`
 
