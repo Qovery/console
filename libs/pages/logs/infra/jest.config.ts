@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'pages-logs--infra',
+  displayName: 'pages-logs-infra',
   preset: '../../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
