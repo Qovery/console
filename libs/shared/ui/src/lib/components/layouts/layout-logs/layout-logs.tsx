@@ -22,20 +22,6 @@ export interface ErrorLogsProps {
 export function LayoutLogsMemo(props: LayoutLogsProps) {
   const { data, tabInformation, children } = props
 
-  if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded')
-    return (
-      <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
-        <img
-          className="w-40 pointer-events-none user-none"
-          src="/assets/images/event-placeholder-dark.svg"
-          alt="Event placeholder"
-        />
-        <p className="mt-5 text-text-100 font-medium">
-          {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
-        </p>
-      </div>
-    )
-
   const refScrollSection = useRef<HTMLDivElement>(null)
 
   const forcedScroll = (down?: boolean) => {
@@ -54,6 +40,20 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
     forcedScroll && forcedScroll(true)
   }, [data])
 
+  if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded')
+    return (
+      <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
+        <img
+          className="w-40 pointer-events-none user-none"
+          src="/assets/images/event-placeholder-dark.svg"
+          alt="Event placeholder"
+        />
+        <p className="mt-5 text-text-100 font-medium">
+          {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
+        </p>
+      </div>
+    )
+
   const errors =
     data.items &&
     (data.items
@@ -67,7 +67,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
     const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
     const target = event.currentTarget
     target.setAttribute('href', 'data:' + file)
-    target.setAttribute('download', 'data.json')
+    target.setAttribute('download', `data-${Date.now()}.json`)
   }
 
   return (
@@ -82,7 +82,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
         <div className="flex">
           <ButtonIcon
             icon="icon-solid-arrow-up-to-line"
-            className="mr-[1px] !rounded-tr-none !rounded-br-none"
+            className="mr-px !rounded-tr-none !rounded-br-none"
             size={ButtonIconSize.SMALL}
             style={ButtonIconStyle.DARK}
             onClick={() => forcedScroll()}
