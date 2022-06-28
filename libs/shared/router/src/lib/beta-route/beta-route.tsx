@@ -1,4 +1,4 @@
-import posthog from 'posthog-js'
+// import posthog from 'posthog-js'
 import { matchPath, useLocation, useParams } from 'react-router'
 import { INFRA_LOGS_URL } from '../router'
 import { NoBetaAccess } from '../pages/no-beta-access'
@@ -13,9 +13,9 @@ export const BetaRoute = ({ children }: IBetaRoute) => {
 
   const matchLogInfraRoute = matchPath(location.pathname || '', INFRA_LOGS_URL(organizationId))
 
-  if (posthog.isFeatureEnabled('v3-beta')) {
-    return children
-  }
+  // if (posthog.isFeatureEnabled('v3-beta')) {
+  return children
+  // }
 
   if (matchLogInfraRoute) {
     return children
