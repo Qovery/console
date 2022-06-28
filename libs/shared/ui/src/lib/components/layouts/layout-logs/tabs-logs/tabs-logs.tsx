@@ -64,20 +64,20 @@ export function TabsLogs(props: TabsLogsProps) {
           {section === TabsLogsSection.INFORMATION && tabInformation}
           {section === TabsLogsSection.ERROR && (
             <>
-              {errors && errors.length > 0 && errors[0].error ? (
+              {errors && errors.length > 0 && errors[errors.length - 1].error ? (
                 <>
                   <div className="flex items-center">
                     <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-error-500 mr-3">
                       <Icon name="icon-solid-triangle-exclamation" className="text-text-100" />
                     </div>
                     <div>
-                      <Tooltip content={errors[0].error.tag || ''}>
+                      <Tooltip content={errors[errors.length - 1].error.tag || ''}>
                         <p className="text-text-100 font-medium">
-                          <Truncate text={errors[0].error.tag || ''} truncateLimit={28} />
+                          <Truncate text={errors[errors.length - 1].error.tag || ''} truncateLimit={28} />
                         </p>
                       </Tooltip>
                       <span data-testid="error-line" className="text-text-400 text-xs">
-                        Line {errors[0].index}{' '}
+                        Line {errors[errors.length - 1].index}{' '}
                       </span>
                     </div>
                   </div>
@@ -91,15 +91,15 @@ export function TabsLogs(props: TabsLogsProps) {
                       </Tooltip>
                     </div>
                     <p data-testid="error-msg" className="text-text-200 text-xs">
-                      Transmitter: {errors[0].error.event_details?.transmitter?.name} -{' '}
-                      {errors[0].error.underlying_error?.message}
+                      Transmitter: {errors[errors.length - 1].error.event_details?.transmitter?.name} -{' '}
+                      {errors[errors.length - 1].error.underlying_error?.message}
                     </p>
                   </div>
-                  {errors[0].error.hint_message && (
+                  {errors[errors.length - 1].error.hint_message && (
                     <div className="bg-element-light-darker-300 mt-3 p-2 rounded ml-8">
                       <p className="text-xs text-accent2-400 font-medium mb-1">Solution</p>
                       <p data-testid="solution-msg" className="text-text-100 text-xs mb-2">
-                        {errors[0].error.hint_message}
+                        {errors[errors.length - 1].error.hint_message}
                       </p>
                       <Button
                         className="mr-2"
@@ -111,11 +111,11 @@ export function TabsLogs(props: TabsLogsProps) {
                       >
                         Cluster settings
                       </Button>
-                      {errors[0].error.link && (
+                      {errors[errors.length - 1].error.link && (
                         <Button
                           iconLeft="icon-solid-book"
                           external={true}
-                          link={errors[0].error.link}
+                          link={errors[errors.length - 1].error.link}
                           style={ButtonStyle.STROKED}
                           size={ButtonSize.TINY}
                         >

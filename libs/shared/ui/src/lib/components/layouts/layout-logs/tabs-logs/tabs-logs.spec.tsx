@@ -1,3 +1,4 @@
+import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { screen, render } from '__tests__/utils/setup-jest'
 
 import TabsLogs, { TabsLogsProps, TabsLogsSection } from './tabs-logs'
@@ -8,6 +9,7 @@ describe('TabsLogs', () => {
     errors: [
       {
         index: 1,
+        step: ClusterLogsStepEnum.RETRIEVE_CLUSTER_CONFIG,
         error: {
           user_log_message: 'user-log-message',
           hint_message: 'hint-message',
@@ -15,9 +17,9 @@ describe('TabsLogs', () => {
             transmitter: {
               name: 'transmitter-name',
             },
-            underlying_error: {
-              message: 'underlying-error',
-            },
+          },
+          underlying_error: {
+            message: 'underlying-error',
           },
         },
       },
@@ -33,6 +35,7 @@ describe('TabsLogs', () => {
     props.errors = [
       {
         index: 44,
+        step: ClusterLogsStepEnum.RETRIEVE_CLUSTER_CONFIG,
         error: {},
       },
     ]
@@ -49,14 +52,15 @@ describe('TabsLogs', () => {
     props.errors = [
       {
         index: 0,
+        step: ClusterLogsStepEnum.DELETE_ERROR,
         error: {
           event_details: {
             transmitter: {
               name: 'transmitter-name',
             },
-            underlying_error: {
-              message: 'underlying-error',
-            },
+          },
+          underlying_error: {
+            message: 'underlying-error',
           },
         },
       },
@@ -67,7 +71,7 @@ describe('TabsLogs', () => {
 
     const errorMsg = screen.getByTestId('error-msg')
 
-    const msg = `Transmitter: ${props.errors[0].error.event_details?.transmitter?.name} - ${props.errors[0].error.event_details?.underlying_error?.message}`
+    const msg = `Transmitter: ${props.errors[0].error.event_details?.transmitter?.name} - ${props.errors[0].error?.underlying_error?.message}`
 
     expect(errorMsg.textContent).toBe(msg)
   })
@@ -76,6 +80,7 @@ describe('TabsLogs', () => {
     props.errors = [
       {
         index: 0,
+        step: ClusterLogsStepEnum.DELETE_ERROR,
         error: {
           hint_message: 'my-solution',
         },
