@@ -42,7 +42,7 @@ export function TabsLogs(props: TabsLogsProps) {
         <p className="font-medium text-sm">
           Error{' '}
           {errors && errors.length > 0 && (
-            <span className="relative top-[-1px] text-xs ml-2 px-1 h-4 bg-error-500 text-text-100 rounded-sm">1</span>
+            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-error-500 text-text-100 rounded-sm">1</span>
           )}
         </p>
       ),

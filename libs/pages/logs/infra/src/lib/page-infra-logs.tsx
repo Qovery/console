@@ -39,6 +39,8 @@ export function PageInfraLogs() {
             version={cluster?.version}
             status={cluster?.status}
             name={cluster?.name}
+            // last_execution_id={cluster?.last_execution_id}
+            last_execution_id={'ffffffff-ffffffff'}
             cloud_provider={cluster?.cloud_provider}
             region={cluster?.region}
             organizationId={organizationId}

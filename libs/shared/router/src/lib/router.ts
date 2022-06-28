@@ -12,7 +12,7 @@ export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':p
 export const NO_BETA_ACCESS_URL = '/no-beta-access'
 export const SETTINGS_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/settings`
 export const INFRA_LOGS_URL = (organizationId = ':organizationId', clusterId = ':clusterId') =>
-  `/organization/${organizationId}/${clusterId}/logs`
+  `/organization/${organizationId}/cluster/${clusterId}/logs`
 export interface Route {
   component: React.ReactElement
   path: string
