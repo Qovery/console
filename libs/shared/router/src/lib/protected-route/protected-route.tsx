@@ -1,6 +1,6 @@
 import { useAuth } from '@console/shared/auth'
 import { useEffect } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { LOGIN_URL } from '../router'
 
 export interface IProtectedRoute {
@@ -9,12 +9,14 @@ export interface IProtectedRoute {
 
 export const ProtectedRoute = ({ children }: IProtectedRoute) => {
   const { checkIsAuthenticated, getCurrentUser } = useAuth()
+  const location = useLocation()
 
   useEffect(() => {
     getCurrentUser()
   }, [getCurrentUser])
 
   if (!checkIsAuthenticated) {
+    localStorage.setItem('redirectLoginUri', location.pathname)
     return <Navigate to={LOGIN_URL} replace />
   }
 
