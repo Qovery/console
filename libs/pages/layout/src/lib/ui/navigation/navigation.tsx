@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { IconEnum } from '@console/shared/enums'
-import { ORGANIZATION_URL } from '@console/shared/router'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ORGANIZATION_URL } from '@console/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -15,15 +15,14 @@ import {
 } from '@console/shared/ui'
 
 export interface NavigationProps {
-  authLogout: () => void
   firstName: string
   lastName: string
   darkMode?: boolean
 }
 
 export function Navigation(props: NavigationProps) {
-  const { authLogout, firstName, lastName, darkMode } = props
-  const { organizationId } = useParams()
+  const { firstName, lastName, darkMode } = props
+  const { organizationId, projectId } = useParams()
   //const navigate = useNavigate()
 
   const infosMenu = [
@@ -128,7 +127,7 @@ export function Navigation(props: NavigationProps) {
             </div>
           }
         >
-          <ModalUser firstName={firstName} lastName={lastName} authLogout={authLogout} />
+          <ModalUser firstName={firstName} lastName={lastName} />
         </Modal>
       </div>
     </div>

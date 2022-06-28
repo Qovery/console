@@ -10,7 +10,6 @@ describe('LayoutPage', () => {
   beforeEach(() => {
     props = {
       children: React.createElement('div'),
-      authLogout: Function,
       user: userSignUpFactoryMock(),
     }
   })

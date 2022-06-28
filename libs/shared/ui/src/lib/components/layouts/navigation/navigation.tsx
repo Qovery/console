@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
 import { SETTINGS_URL } from '@console/shared/router'
 import { Avatar } from '../../avatar/avatar'
-import { ButtonIcon, ButtonIconStyle, ButtonIconSize } from '../../buttons/button-icon/button-icon'
+import { ButtonIcon, ButtonIconSize, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Icon from '../../icon/icon'
 import Menu, { MenuAlign, MenuDirection } from '../../menu/menu'
 import Modal from '../../modal/modal'
@@ -17,7 +17,7 @@ export interface NavigationProps {
 }
 
 export function Navigation(props: NavigationProps) {
-  const { authLogout, firstName, lastName, darkMode } = props
+  const { firstName, lastName, darkMode } = props
   const { organizationId } = useParams()
   const navigate = useNavigate()
 
@@ -115,7 +115,7 @@ export function Navigation(props: NavigationProps) {
             </div>
           }
         >
-          <ModalUser firstName={firstName} lastName={lastName} authLogout={authLogout} />
+          <ModalUser firstName={firstName} lastName={lastName} />
         </Modal>
       </div>
     </div>
