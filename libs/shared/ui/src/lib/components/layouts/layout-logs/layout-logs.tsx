@@ -1,5 +1,5 @@
 import React, { ReactNode, MouseEvent, useRef, useEffect } from 'react'
-import { ClusterLogs, ClusterLogsError } from 'qovery-typescript-axios'
+import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { ButtonIcon, ButtonIconSize, ButtonIconStyle, Icon } from '@console/shared/ui'
 import TabsLogs from './tabs-logs/tabs-logs'
 import { LoadingStatus } from '@console/shared/interfaces'
@@ -15,31 +15,12 @@ export interface LayoutLogsProps {
 
 export interface ErrorLogsProps {
   index: number
+  step: ClusterLogsStepEnum
   error: ClusterLogsError
 }
 
 export function LayoutLogsMemo(props: LayoutLogsProps) {
   const { data, tabInformation, children } = props
-
-  console.log(data)
-
-  const refScrollSection = useRef<HTMLDivElement>(null)
-
-  const forcedScroll = (down?: boolean) => {
-    const section = refScrollSection.current
-    if (!section) return
-
-    if (down) {
-      section?.scroll(0, section?.scrollHeight)
-    } else {
-      section?.scroll(0, 0)
-    }
-  }
-
-  useEffect(() => {
-    // auto scroll when we add data
-    forcedScroll(true)
-  }, [data])
 
   if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded')
     return (
@@ -55,11 +36,30 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       </div>
     )
 
+  const refScrollSection = useRef<HTMLDivElement>(null)
+
+  const forcedScroll = (down?: boolean) => {
+    const section = refScrollSection.current
+    if (!section) return
+
+    if (down) {
+      section.scroll(0, section.scrollHeight)
+    } else {
+      section.scroll(0, 0)
+    }
+  }
+
+  useEffect(() => {
+    // auto scroll when we add data
+    forcedScroll && forcedScroll(true)
+  }, [data])
+
   const errors =
     data.items &&
     (data.items
       .map(
-        (currentData: ClusterLogs, index: number) => currentData.error && { index: index + 1, error: currentData.error }
+        (currentData: ClusterLogs, index: number) =>
+          currentData.error && { index: index + 1, step: currentData.step, error: currentData.error }
       )
       .filter((error) => error) as ErrorLogsProps[])
 
@@ -105,7 +105,15 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       >
         <div className="relative z-10">{children}</div>
       </div>
-      <TabsLogs tabInformation={tabInformation} errors={errors} />
+      <TabsLogs
+        tabInformation={tabInformation}
+        errors={errors?.filter(
+          (error: ErrorLogsProps) =>
+            error.step === ClusterLogsStepEnum.DELETE_ERROR ||
+            error.step === ClusterLogsStepEnum.PAUSE_ERROR ||
+            error.step === ClusterLogsStepEnum.CREATE_ERROR
+        )}
+      />
     </div>
   )
 }

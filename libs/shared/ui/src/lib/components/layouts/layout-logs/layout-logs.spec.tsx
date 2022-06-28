@@ -15,6 +15,8 @@ describe('LayoutLogs', () => {
   }
 
   it('should render successfully', () => {
+    window.HTMLElement.prototype.scroll = function () {}
+
     const { baseElement } = render(<LayoutLogsMemo {...props} />)
     expect(baseElement).toBeTruthy()
   })
@@ -46,6 +48,8 @@ describe('LayoutLogs', () => {
   })
 
   it('should have text with error line', () => {
+    window.HTMLElement.prototype.scroll = function () {}
+
     props.data = {
       loadingStatus: 'loaded',
       items: [
