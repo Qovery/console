@@ -25,7 +25,22 @@ export function useRedirectIfLogged() {
         console.warn(e)
       }
 
+      const currentOrganization = localStorage.getItem('currentOrganizationId')
+      const currentProject = localStorage.getItem('currentProjectId')
+      const redirectLoginUri = localStorage.getItem('redirectLoginUri')
+
       await createAuthCookies()
+
+      if (redirectLoginUri) {
+        navigate(redirectLoginUri)
+        localStorage.removeItem('redirectLoginUri')
+        return
+      }
+
+      if (currentOrganization && currentProject) {
+        navigate(OVERVIEW_URL(currentOrganization, currentProject))
+        return
+      }
 
       if (organization.length > 0) {
         const organizationId = organization[0].id
