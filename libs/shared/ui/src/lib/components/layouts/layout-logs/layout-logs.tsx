@@ -1,4 +1,4 @@
-import { ReactNode, MouseEvent, useRef } from 'react'
+import React, { ReactNode, MouseEvent, useRef, useEffect } from 'react'
 import { ClusterLogs, ClusterLogsError } from 'qovery-typescript-axios'
 import { ButtonIcon, ButtonIconSize, ButtonIconStyle, Icon } from '@console/shared/ui'
 import TabsLogs from './tabs-logs/tabs-logs'
@@ -18,8 +18,28 @@ export interface ErrorLogsProps {
   error: ClusterLogsError
 }
 
-export function LayoutLogs(props: LayoutLogsProps) {
+export function LayoutLogsMemo(props: LayoutLogsProps) {
   const { data, tabInformation, children } = props
+
+  console.log(data)
+
+  const refScrollSection = useRef<HTMLDivElement>(null)
+
+  const forcedScroll = (down?: boolean) => {
+    const section = refScrollSection.current
+    if (!section) return
+
+    if (down) {
+      section?.scroll(0, section?.scrollHeight)
+    } else {
+      section?.scroll(0, 0)
+    }
+  }
+
+  useEffect(() => {
+    // auto scroll when we add data
+    forcedScroll(true)
+  }, [data])
 
   if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded')
     return (
@@ -34,8 +54,6 @@ export function LayoutLogs(props: LayoutLogsProps) {
         </p>
       </div>
     )
-
-  const refScrollSection = useRef<HTMLDivElement>(null)
 
   const errors =
     data.items &&
@@ -52,22 +70,13 @@ export function LayoutLogs(props: LayoutLogsProps) {
     target.setAttribute('download', 'data.json')
   }
 
-  const forcedScroll = (down?: boolean) => {
-    const section = refScrollSection.current
-    if (down) {
-      section?.scroll(0, section?.scrollHeight)
-    } else {
-      section?.scroll(0, 0)
-    }
-  }
-
   return (
     <div className="overflow-hidden flex relative h-full">
       <div className="absolute z-20 left-0 w-[calc(100%-360px)] flex justify-end items-center h-9 bg-element-light-darker-200 px-5">
         {errors && errors.length > 0 && (
           <p data-testid="error-line" className="flex items-center w-full ml-1 text-xs font-bold text-text-200">
             <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
-            An error occured line {errors[0]?.index}
+            An error occured line {errors[errors.length - 1]?.index}
           </p>
         )}
         <div className="flex">
@@ -101,4 +110,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
   )
 }
 
-export default LayoutLogs
+export const LayoutLogs = React.memo(LayoutLogsMemo, (prevProps: LayoutLogsProps, nextProps: LayoutLogsProps) => {
+  // stringify is necessary to avoid Redux selector behavior
+  const isEqual = JSON.stringify(prevProps.data?.items) === JSON.stringify(nextProps.data?.items)
+  return isEqual
+})

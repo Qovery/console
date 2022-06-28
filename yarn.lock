@@ -15602,10 +15602,10 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==
 
-qovery-typescript-axios@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.1.tgz#eb78fc84c7a23f2041cadae4a5cb3fc6343e7c8e"
-  integrity sha512-z6mlrXzZgIdoz6J+VMzflybbXdwTrZM7GOGF+fQ8buq0VG8i0JYljcPXRGT5Q/sIAaU+TrAQbyAHh1AIGYXhZQ==
+qovery-typescript-axios@1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.7.tgz#8d0885afc318c704eeba29e48d26b0481a1d3fa6"
+  integrity sha512-4unJkFbOc+ODTmsyCGhbB2dhulHAUnS4HojC5SPZfDjNAIhH6I8gTjmOar963qJ7KojWUDRHsb2+VmnECvMpTQ==
   dependencies:
     axios "^0.21.4"
 

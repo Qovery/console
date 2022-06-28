@@ -1,10 +1,10 @@
-import { StateEnum } from 'qovery-typescript-axios'
+import { StateEnum, DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 import { Icon, Tooltip } from '@console/shared/ui'
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 
 export interface StatusChipProps {
-  status: StateEnum | RunningStatus | undefined
+  status: StateEnum | RunningStatus | DeploymentHistoryStatusEnum | undefined
   appendTooltipMessage?: string
   className?: string
   isRunningStatus?: boolean
