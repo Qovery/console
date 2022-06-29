@@ -17,7 +17,13 @@ export function useRedirectIfLogged() {
     const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
 
     async function fetchData() {
-      const organization: Organization[] = await dispatch(fetchOrganization()).unwrap()
+      let organization: Organization[] = []
+
+      try {
+        organization = await dispatch(fetchOrganization()).unwrap()
+      } catch (e) {
+        console.warn(e)
+      }
 
       await createAuthCookies()
 
