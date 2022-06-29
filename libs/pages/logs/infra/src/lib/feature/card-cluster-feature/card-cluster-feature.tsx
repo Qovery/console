@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { AppDispatch, RootState } from '@console/store/data'
 import { fetchClusterStatus, selectClusterById } from '@console/domains/organization'
@@ -17,7 +17,7 @@ export function CardClusterFeature() {
     return () => clearInterval(fetchLogsAndClusterStatusByInterval)
   }, [dispatch, organizationId, clusterId])
 
-  const cluster = useSelector((state: RootState) => selectClusterById(state, clusterId), shallowEqual)
+  const cluster = useSelector((state: RootState) => selectClusterById(state, clusterId))
 
   return <CardCluster cluster={cluster} organizationId={organizationId} />
 }

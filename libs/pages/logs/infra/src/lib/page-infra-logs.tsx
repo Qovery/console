@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { LayoutLogs } from '@console/shared/ui'
 import { useDocumentTitle } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { fetchClusterInfraLogs, selectClusterById } from '@console/domains/organization'
 import { ClusterLogs } from 'qovery-typescript-axios'
@@ -21,7 +21,7 @@ export function PageInfraLogs() {
     return () => clearInterval(fetchLogsAndClusterStatusByInterval)
   }, [dispatch, organizationId, clusterId])
 
-  const cluster = useSelector((state: RootState) => selectClusterById(state, clusterId), shallowEqual)
+  const cluster = useSelector((state: RootState) => selectClusterById(state, clusterId))
 
   useDocumentTitle(`Cluster ${cluster ? `- ${cluster?.name} (${cluster?.region}) ` : '- Loading...'}`)
 
