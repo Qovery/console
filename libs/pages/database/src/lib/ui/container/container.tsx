@@ -45,6 +45,7 @@ export function Container(props: ContainerProps) {
         {
           iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
           iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+          menusClassName: 'border-r border-r-element-light-lighter-500',
           statusActions: {
             status: database?.status && database?.status.state,
             actions: statusActions,
