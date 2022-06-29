@@ -11,6 +11,9 @@ export const organizationAdapter = createEntityAdapter<Organization>()
 
 export const fetchOrganization = createAsyncThunk('organization/fetch', async () => {
   const response = await organizationMainCalls.listOrganization()
+
+  console.log(response)
+
   return response.data.results as Organization[]
 })
 

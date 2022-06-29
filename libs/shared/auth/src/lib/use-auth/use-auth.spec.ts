@@ -12,10 +12,4 @@ describe('useAuth', () => {
   it('should render successfully', () => {
     expect(rendered.result).toBeTruthy()
   })
-
-  it('should call the login with popup method', async () => {})
-
-  it('should call the dispatch and logout method', async () => {})
-
-  it('should call the get access token method and dispatch the user infos', async () => {})
 })
