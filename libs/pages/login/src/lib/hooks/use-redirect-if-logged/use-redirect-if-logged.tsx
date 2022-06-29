@@ -21,7 +21,9 @@ export function useRedirectIfLogged() {
 
       try {
         organization = await dispatch(fetchOrganization()).unwrap()
-      } catch (e) {}
+      } catch (e) {
+        console.warn(e)
+      }
 
       await createAuthCookies()
 
