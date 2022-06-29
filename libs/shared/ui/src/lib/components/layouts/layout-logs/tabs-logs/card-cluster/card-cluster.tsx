@@ -1,57 +1,58 @@
+import { ClusterEntity } from '@console/shared/interfaces'
 import { Icon, StatusChip, Tooltip } from '@console/shared/ui'
-import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
 
 export interface CardClusterProps {
-  name: string
-  cloud_provider: CloudProviderEnum
-  region: string
-  id: string
+  cluster?: ClusterEntity
   organizationId: string
-  last_execution_id?: string
-  status?: StateEnum
-  version?: string
 }
 
 export const splitId = (id: string) => `${id.split('-')[0]}[...]${id.split('-')[id.split('-').length - 1]}`
 
 export function CardCluster(props: CardClusterProps) {
-  const { name, cloud_provider, region, id, organizationId, version, status, last_execution_id } = props
+  const { cluster, organizationId } = props
 
-  const copyToClipboard = (string: string) => {
-    navigator.clipboard.writeText(string)
+  const copyToClipboard = (string?: string) => {
+    string && navigator.clipboard.writeText(string)
   }
+
+  if (!cluster) return null
 
   return (
     <div className="bg-element-light-darker-300 p-4 rounded">
       <div data-testid="status" className="flex items-center text-text-300 font-bold text-xs">
-        <StatusChip status={status} className="mr-4" /> Cluster infra logs
+        <StatusChip status={cluster.extendedStatus?.status?.status} className="mr-4" /> Cluster infra logs
       </div>
       <div className="mt-4">
         <div className="flex mt-1">
-          <Icon data-testid="icon" name={`${cloud_provider}_GRAY`} className="mr-4 mt-0.5" />
+          <Icon data-testid="icon" name={`${cluster.cloud_provider}_GRAY`} className="mr-4 mt-0.5" />
           <div>
             <p className="text-text-200 text-sm font-medium">
-              {name} ({region})
+              {cluster.name} ({cluster.region})
             </p>
             <ul className="text-xs mt-5">
               <li className="flex mb-2">
                 <span className="text-text-300 w-16 mr-3">Cluster ID</span>
                 <div className="flex">
-                  <span className="text-accent2-400">{splitId(id)}</span>
+                  <span className="text-accent2-400">{splitId(cluster.id)}</span>
                   <Tooltip content="Copy">
-                    <div className="cursor-pointer ml-1" onClick={() => copyToClipboard(id)}>
+                    <div className="cursor-pointer ml-1" onClick={() => copyToClipboard(cluster.id)}>
                       <Icon name="icon-solid-copy" className="text-text-300" />
                     </div>
                   </Tooltip>
                 </div>
               </li>
-              {last_execution_id && (
+              {cluster.extendedStatus?.status?.last_execution_id && (
                 <li className="flex mb-2">
                   <span className="text-text-300 w-16 mr-3">Exec. ID</span>
                   <div className="flex">
-                    <span className="text-accent2-400">{splitId(last_execution_id)}</span>
+                    <span className="text-accent2-400">
+                      {splitId(cluster.extendedStatus?.status?.last_execution_id)}
+                    </span>
                     <Tooltip content="Copy">
-                      <div className="cursor-pointer ml-1" onClick={() => copyToClipboard(last_execution_id)}>
+                      <div
+                        className="cursor-pointer ml-1"
+                        onClick={() => copyToClipboard(cluster.extendedStatus?.status?.last_execution_id)}
+                      >
                         <Icon name="icon-solid-copy" className="text-text-300" />
                       </div>
                     </Tooltip>
@@ -60,7 +61,7 @@ export function CardCluster(props: CardClusterProps) {
               )}
               <li className="flex mb-2">
                 <span className="text-text-300 w-16 mr-3">Version</span>
-                <span className="text-text-300">{version}</span>
+                <span className="text-text-300">{cluster.version}</span>
               </li>
               <li className="flex">
                 <span className="text-text-300 w-16 mr-3">Org. ID</span>
