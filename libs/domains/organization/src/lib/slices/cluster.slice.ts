@@ -1,7 +1,7 @@
 import { ClusterEntity, ClustersState } from '@console/shared/interfaces'
 import { RootState } from '@console/store/data'
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, Update } from '@reduxjs/toolkit'
-import { Cluster, ClusterLogs, ClustersApi } from 'qovery-typescript-axios'
+import { Cluster, ClusterLogs, ClustersApi, ClusterStatus } from 'qovery-typescript-axios'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
@@ -14,6 +14,14 @@ export const fetchClusters = createAsyncThunk<Cluster[], { organizationId: strin
   const response = await clusterApi.listOrganizationCluster(data.organizationId)
   return response.data.results as Cluster[]
 })
+
+export const fetchClusterStatus = createAsyncThunk<ClusterStatus, { organizationId: string; clusterId: string }>(
+  'cluster-status/fetch',
+  async (data) => {
+    const response = await clusterApi.getClusterStatus(data.organizationId, data.clusterId)
+    return response.data as ClusterStatus
+  }
+)
 
 export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizationId: string; clusterId: string }>(
   'cluster-infra-logs/fetch',
@@ -53,6 +61,43 @@ export const clusterSlice = createSlice({
       .addCase(fetchClusters.rejected, (state: ClustersState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+      })
+      // fetch cluster status
+      .addCase(fetchClusterStatus.pending, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            extendedStatus: {
+              ...state.entities[clusterId]?.extendedStatus,
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchClusterStatus.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            extendedStatus: {
+              status: action.payload,
+              loadingStatus: 'loaded',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchClusterStatus.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            extendedStatus: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
       })
       // fetch cluster logs
       .addCase(fetchClusterInfraLogs.pending, (state: ClustersState, action) => {

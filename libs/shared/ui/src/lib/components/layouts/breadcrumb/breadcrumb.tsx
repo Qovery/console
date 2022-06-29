@@ -13,13 +13,15 @@ import {
   APPLICATION_GENERAL_URL,
   DATABASE_URL,
   DATABASE_GENERAL_URL,
+  INFRA_LOGS_URL,
 } from '@console/shared/router'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
-import { ApplicationEntity, DatabaseEntity, EnvironmentEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@console/shared/interfaces'
 import { IconEnum } from '@console/shared/enums'
 
 export interface BreadcrumbProps {
   organizations: Organization[]
+  clusters?: ClusterEntity[]
   projects?: Project[]
   environments?: Environment[]
   applications?: Application[]
@@ -27,8 +29,8 @@ export interface BreadcrumbProps {
 }
 
 export function Breadcrumb(props: BreadcrumbProps) {
-  const { organizations, projects, environments, applications, databases } = props
-  const { organizationId, projectId, environmentId, applicationId, databaseId } = useParams()
+  const { organizations, clusters, projects, environments, applications, databases } = props
+  const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
   const { pathname } = useLocation()
 
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
@@ -55,6 +57,30 @@ export function Breadcrumb(props: BreadcrumbProps) {
                   <img className="w-4 h-auto" src={organization.logo_url} alt={organization.name} />
                 )}
               </>
+            ),
+          }))
+        : [],
+    },
+  ]
+
+  const clustersMenu = [
+    {
+      title: 'Clusters',
+      search: true,
+      items: clusters
+        ? clusters?.map((cluster: ClusterEntity) => ({
+            name: cluster.name,
+            link: {
+              url: INFRA_LOGS_URL(cluster.id),
+            },
+            contentLeft: (
+              <Icon
+                name="icon-solid-check"
+                className={`text-sm ${clusterId === cluster.id ? 'text-success-400' : 'text-transparent'}`}
+              />
+            ),
+            contentRight: (
+              <>{cluster.cloud_provider && <Icon data-testid="icon" name={`${cluster.cloud_provider}_GRAY`} />}</>
             ),
           }))
         : [],
@@ -163,6 +189,18 @@ export function Breadcrumb(props: BreadcrumbProps) {
           paramId={organizationId}
           link={ORGANIZATION_URL(organizationId)}
         />
+      )}
+      {clusterId && (
+        <>
+          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
+          <BreadcrumbItem
+            isDark
+            data={clusters}
+            menuItems={clustersMenu}
+            paramId={clusterId}
+            link={INFRA_LOGS_URL(organizationId, clusterId)}
+          />
+        </>
       )}
       {projectId && (
         <>
