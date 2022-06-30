@@ -24,7 +24,11 @@ export function CopyToClipboard(props: CopyToClipboardProps) {
 
   return (
     <Tooltip content={tooltipContent}>
-      <span onClick={copyToClipboard} className={`cursor-pointer ${className}`} data-testid="copy-container">
+      <span
+        onClick={copyToClipboard}
+        className={`bigger-click-zone cursor-pointer ${className}`}
+        data-testid="copy-container"
+      >
         <Icon name={icon} className={`${iconClassName}`} />
       </span>
     </Tooltip>
