@@ -75,25 +75,22 @@ export const postApplicationActionsStop = createAsyncThunk<
   }
 })
 
-export const deleteApplicationActionsStop = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; withDeployments?: boolean }
->('applicationActions/delete', async (data, { dispatch }) => {
-  try {
-    const response = await applicationMainCallsApi.deleteApplication(data.applicationId)
-    if (response.status === 204) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // refetch deployments after update
-      if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your application is being deleted')
-    }
+export const deleteApplicationAction = createAsyncThunk<any, { environmentId: string; applicationId: string }>(
+  'applicationActions/delete',
+  async (data, { dispatch }) => {
+    try {
+      const response = await applicationMainCallsApi.deleteApplication(data.applicationId)
+      if (response.status === 204) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is being deleted')
+      }
 
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Deleting error')
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Deleting error')
+    }
   }
-})
+)

@@ -95,7 +95,7 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
   }
 })
 
-export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
+export const deleteEnvironmentAction = createAsyncThunk<
   any,
   { projectId: string; environmentId: string; withDeployments?: boolean }
 >('environmentActions/delete', async (data, { dispatch }) => {
@@ -104,9 +104,6 @@ export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
     if (response.status === 204) {
       // refetch status after update
       await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-      // refresh deployments after update
-      if (data.withDeployments)
-        await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
       // success message
       toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
     }
