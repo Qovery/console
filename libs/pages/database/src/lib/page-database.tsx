@@ -7,13 +7,13 @@ import { selectEnvironmentById } from '@console/domains/environment'
 import { DatabaseEntity, LoadingStatus } from '@console/shared/interfaces'
 import {
   databasesLoadingStatus,
+  deleteDatabaseAction,
   fetchDatabase,
   fetchDatabaseMasterCredentials,
   fetchDatabaseMetrics,
   postDatabaseActionsDeploy,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
-  removeOneDatabase,
   selectDatabaseById,
 } from '@console/domains/database'
 import { useEffect } from 'react'
@@ -52,7 +52,7 @@ export function PageDatabase() {
   ]
 
   const removeDatabase = (databaseId: string) => {
-    dispatch(removeOneDatabase({ databaseId }))
+    dispatch(deleteDatabaseAction({ environmentId, databaseId }))
     navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
   }
 

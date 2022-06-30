@@ -99,9 +99,6 @@ export function PageApplication() {
       deleteApplicationAction({
         environmentId,
         applicationId,
-        withDeployments:
-          pathname ===
-          APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
       })
     )
   }

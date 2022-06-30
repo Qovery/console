@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { DatabaseActionsApi } from 'qovery-typescript-axios'
+import { DatabaseActionsApi, DatabaseMainCallsApi } from 'qovery-typescript-axios'
 import { fetchDatabasesStatus } from './databases.slice'
 import { toast, ToastEnum } from '@console/shared/toast'
 
 const databaseActionApi = new DatabaseActionsApi()
+const databaseMainCallsApi = new DatabaseMainCallsApi()
 
 export const postDatabaseActionsRestart = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
   'databaseActions/restart',
@@ -61,6 +62,26 @@ export const postDatabaseActionsStop = createAsyncThunk<any, { environmentId: st
     } catch (err) {
       // error message
       return toast(ToastEnum.ERROR, 'Stopping error')
+    }
+  }
+)
+
+export const deleteDatabaseAction = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
+  'databaseActions/delete',
+  async (data, { dispatch }) => {
+    try {
+      const response = await databaseMainCallsApi.deleteDatabase(data.databaseId)
+      if (response.status === 204) {
+        // refetch status after update
+        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is being deleted')
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Deleting error')
     }
   }
 )

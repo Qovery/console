@@ -13,10 +13,10 @@ import {
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '@console/store/data'
 import {
+  deleteDatabaseAction,
   postDatabaseActionsDeploy,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
-  removeOneDatabase,
 } from '@console/domains/database'
 import { isDeleteAvailable } from '@console/shared/utils'
 
@@ -74,7 +74,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   }
 
   const removeDatabase = (databaseId: string) => {
-    dispatch(removeOneDatabase({ databaseId }))
+    dispatch(deleteDatabaseAction({ environmentId, databaseId }))
   }
 
   const actions = isDatabase ? databaseActions : applicationActions
