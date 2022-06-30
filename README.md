@@ -53,7 +53,7 @@ Run end-to-end tests with Cypress
 
 ## Contributing
 
-Qovery Console V3 is in its early stage of development and we need some help, you are welcome to contribute. To better synchronize consider joining our #v3 channel on our Discord.
+Qovery Console V3 is in its early stage of development and we need some help, you are welcome to contribute. To better synchronize consider joining our #v3 channel on our [Discord](https://discord.qovery.com).
 Otherwise, you can directly propose improvements from the [issues](https://github.com/Qovery/console/issues) pages or add them directly from your pull request for the changes.
 
 ## Community support
