@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import LogRocket from 'logrocket'
 import axios from 'axios'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
@@ -6,6 +6,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import {
   BetaRoute,
   LOGIN_URL,
+  LOGOUT_URL,
   NO_BETA_ACCESS_URL,
   NoBetaAccess,
   ONBOARDING_URL,
@@ -23,11 +24,13 @@ import posthog from 'posthog-js'
 import { ROUTER } from './router/main.router'
 import { useIntercom } from 'react-use-intercom'
 import { UserInterface } from '@console/shared/interfaces'
-import { PageLogin } from '@console/pages/login'
+import { PageLogin, PageLogoutFeature } from '@console/pages/login'
 
 export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
+
+  const [, setBetaAccess] = useState(false)
 
   const gtmParams = { id: environment.gtm }
 
@@ -38,13 +41,8 @@ export function App() {
     (user: UserInterface) => {
       if (!user || !user.sub) return
 
-      posthog.init(environment.posthog, {
-        api_host: environment.posthog_apihost,
-        loaded: () => {
-          posthog.identify(user.sub, {
-            ...user,
-          })
-        },
+      posthog.identify(user.sub, {
+        ...user,
       })
 
       LogRocket.identify(user.sub, {
@@ -86,6 +84,7 @@ export function App() {
     if (user && user.sub) {
       if (process.env['NODE_ENV'] !== 'production') {
         posthog.feature_flags.override(['v3-beta'])
+        setBetaAccess(posthog.isFeatureEnabled('v3-beta'))
       } else {
         initMonitorings(user)
       }
@@ -100,6 +99,7 @@ export function App() {
     <GTMProvider state={gtmParams}>
       <Routes>
         <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
+        <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
         <Route
           path={NO_BETA_ACCESS_URL}
           element={

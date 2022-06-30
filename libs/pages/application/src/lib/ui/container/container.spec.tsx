@@ -5,7 +5,6 @@ import Container, { ContainerProps } from '../container/container'
 
 describe('Container', () => {
   const props: ContainerProps = {
-    authLogout: Function,
     user: userSignUpFactoryMock(),
     application: {
       id: '',
