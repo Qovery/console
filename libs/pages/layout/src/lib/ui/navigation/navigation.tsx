@@ -15,14 +15,13 @@ import {
 } from '@console/shared/ui'
 
 export interface NavigationProps {
-  authLogout: () => void
   firstName: string
   lastName: string
   darkMode?: boolean
 }
 
 export function Navigation(props: NavigationProps) {
-  const { authLogout, firstName, lastName, darkMode } = props
+  const { firstName, lastName, darkMode } = props
   const { organizationId } = useParams()
   //const navigate = useNavigate()
 
@@ -128,7 +127,7 @@ export function Navigation(props: NavigationProps) {
             </div>
           }
         >
-          <ModalUser firstName={firstName} lastName={lastName} authLogout={authLogout} />
+          <ModalUser firstName={firstName} lastName={lastName} />
         </Modal>
       </div>
     </div>

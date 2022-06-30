@@ -11,11 +11,11 @@ export function NoBetaAccess() {
     window.location.reload()
   }
 
-  setInterval(() => {
+  posthog.onFeatureFlags(() => {
     if (posthog.isFeatureEnabled('v3-beta')) {
       window.location.reload()
     }
-  }, 1000)
+  })
 
   return (
     <div className="w-full h-screen bg-brand-500 flex items-center justify-center text-element-light-darker-400">

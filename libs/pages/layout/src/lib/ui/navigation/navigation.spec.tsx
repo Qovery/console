@@ -4,7 +4,6 @@ import Navigation, { NavigationProps } from './navigation'
 
 describe('Navigation', () => {
   const props: NavigationProps = {
-    authLogout: Function,
     firstName: '',
     lastName: '',
   }

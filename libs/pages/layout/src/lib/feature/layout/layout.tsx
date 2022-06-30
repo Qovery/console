@@ -5,7 +5,6 @@ import { fetchClusters, fetchOrganization } from '@console/domains/organization'
 import { fetchProjects } from '@console/domains/projects'
 import { fetchUserSignUp, selectUserSignUp } from '@console/domains/user'
 import { fetchApplications } from '@console/domains/application'
-import { useAuth } from '@console/shared/auth'
 import { AppDispatch } from '@console/store/data'
 import { WebsocketContainer } from '@console/shared/websockets'
 import { fetchDatabases } from '@console/domains/database'
@@ -19,7 +18,6 @@ export interface LayoutProps {
 
 export function Layout(props: LayoutProps) {
   const { children, darkMode } = props
-  const { authLogout } = useAuth()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const userSignUp = useSelector(selectUserSignUp)
 
@@ -49,7 +47,7 @@ export function Layout(props: LayoutProps) {
   }, [dispatch, organizationId])
 
   return (
-    <LayoutPage authLogout={authLogout} user={userSignUp} darkMode={darkMode}>
+    <LayoutPage user={userSignUp} darkMode={darkMode}>
       <>
         <WebsocketContainer />
         {children}
