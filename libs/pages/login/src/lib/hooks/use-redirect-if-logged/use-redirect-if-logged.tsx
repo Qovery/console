@@ -7,7 +7,11 @@ import { ONBOARDING_URL, OVERVIEW_URL } from '@console/shared/router'
 import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '@console/store/data'
-import { getRedirectLoginUri } from './utils/utils'
+import {
+  getCurrentOrganizationIdFromStorage,
+  getCurrentProjectIdFromStorage,
+  getRedirectLoginUriFromStorage,
+} from './utils/utils'
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
@@ -40,9 +44,9 @@ export function useRedirectIfLogged() {
       // }
     }
     if (checkIsAuthenticated) {
-      const currentOrganization = localStorage.getItem('currentOrganizationId')
-      const currentProject = localStorage.getItem('currentProjectId')
-      const redirectLoginUri = getRedirectLoginUri()
+      const currentOrganization = getCurrentOrganizationIdFromStorage()
+      const currentProject = getCurrentProjectIdFromStorage()
+      const redirectLoginUri = getRedirectLoginUriFromStorage()
 
       if (redirectLoginUri) {
         navigate(redirectLoginUri)

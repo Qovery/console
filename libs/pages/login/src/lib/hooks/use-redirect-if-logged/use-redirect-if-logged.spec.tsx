@@ -1,7 +1,12 @@
 import { useRedirectIfLogged } from './use-redirect-if-logged'
 import { renderHook } from '@testing-library/react-hooks'
 import { Wrapper } from '__tests__/utils/providers'
-import { getRedirectLoginUri } from './utils/utils'
+import {
+  getCurrentOrganizationIdFromStorage,
+  getCurrentProjectIdFromStorage,
+  getRedirectLoginUriFromStorage,
+} from './utils/utils'
+import { OVERVIEW_URL } from '@console/shared/router'
 
 jest.mock('./utils/utils')
 
@@ -17,9 +22,16 @@ describe('UseRedirectIfLogged', () => {
     expect(result).toBeTruthy()
   })
 
-  it('should call navigate', () => {
-    getRedirectLoginUri.mockImplementation(() => '/login')
+  it('should redirect to the stored localStorage last visited URL', () => {
+    getRedirectLoginUriFromStorage.mockImplementation(() => '/login')
     renderHook(useRedirectIfLogged, { wrapper: Wrapper })
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/login')
+  })
+
+  it('should redirect to the last visited project', () => {
+    getCurrentOrganizationIdFromStorage.mockImplementation(() => 'fff')
+    getCurrentProjectIdFromStorage.mockImplementation(() => 'iii')
+    renderHook(useRedirectIfLogged, { wrapper: Wrapper })
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(OVERVIEW_URL('fff', 'iii'))
   })
 })
