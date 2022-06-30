@@ -11,6 +11,8 @@ export const splitId = (id: string) => `${id.split('-')[0]}[...]${id.split('-')[
 export function CardCluster(props: CardClusterProps) {
   const { cluster, organizationId } = props
 
+  if (!cluster) return null
+
   return (
     <div className="bg-element-light-darker-300 p-4 rounded">
       <div data-testid="status" className="flex items-center text-text-300 font-bold text-xs">
@@ -27,16 +29,21 @@ export function CardCluster(props: CardClusterProps) {
               <li className="flex mb-2">
                 <span className="text-text-300 w-16 mr-3">Cluster ID</span>
                 <div className="flex">
-                  <span className="text-accent2-400">{splitId(id)}</span>
-                  <CopyToClipboard content={id} className="text-text-300 ml-1" />
+                  <span className="text-accent2-400">{splitId(cluster.id)}</span>
+                  <CopyToClipboard content={cluster.id} className="text-text-300 ml-1" />
                 </div>
               </li>
               {cluster.extendedStatus?.status?.last_execution_id && (
                 <li className="flex mb-2">
                   <span className="text-text-300 w-16 mr-3">Exec. ID</span>
                   <div className="flex">
-                    <span className="text-accent2-400">{splitId(last_execution_id)}</span>
-                    <CopyToClipboard content={last_execution_id} className="text-text-300 ml-1" />
+                    <span className="text-accent2-400">
+                      {splitId(cluster.extendedStatus?.status?.last_execution_id)}
+                    </span>
+                    <CopyToClipboard
+                      content={cluster.extendedStatus?.status?.last_execution_id}
+                      className="text-text-300 ml-1"
+                    />
                   </div>
                 </li>
               )}
