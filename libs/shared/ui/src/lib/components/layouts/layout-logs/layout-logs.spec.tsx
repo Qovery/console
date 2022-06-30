@@ -3,6 +3,7 @@ import { clusterLogFactoryMock } from '@console/domains/organization'
 import { LayoutLogsProps } from '@console/shared/ui'
 
 import { LayoutLogsMemo } from './layout-logs'
+import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
 
 describe('LayoutLogs', () => {
   const props: LayoutLogsProps = {
@@ -53,8 +54,11 @@ describe('LayoutLogs', () => {
     props.data = {
       loadingStatus: 'loaded',
       items: [
-        {},
         {
+          step: ClusterLogsStepEnum.UNKNOWN,
+        },
+        {
+          step: ClusterLogsStepEnum.CREATE_ERROR,
           error: {
             hint_message: 'my-message',
           },
@@ -64,7 +68,7 @@ describe('LayoutLogs', () => {
 
     render(<LayoutLogsMemo {...props} />)
 
-    const errorLine = screen.getByTestId('error-line')
+    const errorLine = screen.getByTestId('error-layout-line')
 
     expect(errorLine?.textContent).toBe('An error occured line 2')
   })

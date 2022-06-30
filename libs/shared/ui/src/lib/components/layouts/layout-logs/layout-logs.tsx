@@ -63,6 +63,13 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       )
       .filter((error) => error) as ErrorLogsProps[])
 
+  const realErrors = errors?.filter(
+    (error: ErrorLogsProps) =>
+      error.step === ClusterLogsStepEnum.DELETE_ERROR ||
+      error.step === ClusterLogsStepEnum.PAUSE_ERROR ||
+      error.step === ClusterLogsStepEnum.CREATE_ERROR
+  )
+
   const downloadJSON = (event: MouseEvent) => {
     const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
     const target = event.currentTarget
@@ -73,10 +80,10 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
   return (
     <div className="overflow-hidden flex relative h-full">
       <div className="absolute z-20 left-0 w-[calc(100%-360px)] flex justify-end items-center h-9 bg-element-light-darker-200 px-5">
-        {errors && errors.length > 0 && (
-          <p data-testid="error-line" className="flex items-center w-full ml-1 text-xs font-bold text-text-200">
+        {realErrors && realErrors.length > 0 && (
+          <p data-testid="error-layout-line" className="flex items-center w-full ml-1 text-xs font-bold text-text-200">
             <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
-            An error occured line {errors[errors.length - 1]?.index}
+            An error occured line {realErrors[realErrors.length - 1]?.index}
           </p>
         )}
         <div className="flex">
@@ -105,15 +112,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       >
         <div className="relative z-10">{children}</div>
       </div>
-      <TabsLogs
-        tabInformation={tabInformation}
-        errors={errors?.filter(
-          (error: ErrorLogsProps) =>
-            error.step === ClusterLogsStepEnum.DELETE_ERROR ||
-            error.step === ClusterLogsStepEnum.PAUSE_ERROR ||
-            error.step === ClusterLogsStepEnum.CREATE_ERROR
-        )}
-      />
+      <TabsLogs tabInformation={tabInformation} errors={realErrors} />
     </div>
   )
 }
