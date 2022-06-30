@@ -27,17 +27,6 @@ export function useRedirectIfLogged() {
 
       await createAuthCookies()
 
-      if (redirectLoginUri) {
-        navigate(redirectLoginUri)
-        localStorage.removeItem('redirectLoginUri')
-        return
-      }
-
-      if (currentOrganization && currentProject) {
-        navigate(OVERVIEW_URL(currentOrganization, currentProject))
-        return
-      }
-
       if (organization.length > 0) {
         const organizationId = organization[0].id
         const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
