@@ -14,6 +14,10 @@ export function Row(props: RowProps) {
 
   const type = data.type
   const success = data.step === ClusterLogsStepEnum.CREATED
+  const realError =
+    data.step === ClusterLogsStepEnum.DELETE_ERROR ||
+    data.step === ClusterLogsStepEnum.PAUSE_ERROR ||
+    data.step === ClusterLogsStepEnum.CREATE_ERROR
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(
@@ -22,10 +26,8 @@ export function Row(props: RowProps) {
   }
 
   const indexClassName = `${
-    type === LogsType.ERROR
+    type === LogsType.ERROR && realError
       ? 'bg-error-500 text-text-800 group-hover:bg-error-600'
-      : type === LogsType.WARNING
-      ? 'bg-warning-500 text-text-800 group-hover:bg-warning-600'
       : success
       ? 'bg-success-500 text-text-800 group-hover:bg-success-600'
       : 'bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200'
@@ -45,7 +47,7 @@ export function Row(props: RowProps) {
   return (
     <div
       className={`group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 ${
-        type === LogsType.ERROR || type === LogsType.WARNING || success ? 'bg-element-light-darker-300' : ''
+        realError || success ? 'bg-element-light-darker-300' : ''
       }`}
     >
       <div className="flex">

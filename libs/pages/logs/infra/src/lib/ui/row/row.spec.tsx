@@ -1,6 +1,5 @@
 import { screen, render } from '__tests__/utils/setup-jest'
 import { clusterLogFactoryMock } from '@console/domains/organization'
-
 import Row, { RowProps } from './row'
 import { LogsType } from '@console/shared/enums'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
@@ -26,12 +25,25 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-warning-500 text-text-800 group-hover:bg-warning-600')
+    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
   })
 
   it('should have error index color', () => {
     props.data = {
       type: LogsType.ERROR,
+    }
+
+    render(<Row {...props} />)
+
+    const index = screen.getByTestId('index')
+
+    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
+  })
+
+  it('should have real error index color', () => {
+    props.data = {
+      type: LogsType.ERROR,
+      step: ClusterLogsStepEnum.DELETE_ERROR,
     }
 
     render(<Row {...props} />)
