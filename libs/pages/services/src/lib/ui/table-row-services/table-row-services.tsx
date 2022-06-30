@@ -55,58 +55,37 @@ export function TableRowServices(props: TableRowServicesProps) {
       ?.focus()
   }
 
-  const buttonActionsDefaultApp = () => {
-    if (removeApplication) {
-      return [
-        {
-          iconLeft: <Icon name="icon-solid-play" />,
-          iconRight: <Icon name="icon-solid-angle-down" />,
-          menusClassName: 'border-r border-r-element-light-lighter-500',
-          statusActions: {
-            status: data.status && data.status.state,
-            actions: buttonActions,
+  const buttonActionsDefaultApp = [
+    {
+      iconLeft: <Icon name="icon-solid-play" />,
+      iconRight: <Icon name="icon-solid-angle-down" />,
+      menusClassName: 'border-r border-r-element-light-lighter-500',
+      statusActions: {
+        status: data.status && data.status.state,
+        actions: buttonActions,
+      },
+    },
+    {
+      iconLeft: <Icon name="icon-solid-scroll" />,
+      onClick: () => openLogs(),
+    },
+    {
+      ...(removeApplication && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeApplication(data.id),
+              },
+            ],
           },
-        },
-        {
-          iconLeft: <Icon name="icon-solid-scroll" />,
-          onClick: () => openLogs(),
-        },
-        {
-          iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-          menus: [
-            {
-              items: [
-                {
-                  name: 'Remove',
-                  contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                  onClick: () => removeApplication(data.id),
-                },
-              ],
-            },
-          ],
-        },
-      ]
-    } else {
-      return [
-        {
-          iconLeft: <Icon name="icon-solid-play" />,
-          iconRight: <Icon name="icon-solid-angle-down" />,
-          menusClassName: 'border-r border-r-element-light-lighter-500',
-          statusActions: {
-            status: data.status && data.status.state,
-            actions: buttonActions,
-          },
-        },
-        {
-          iconLeft: <Icon name="icon-solid-scroll" />,
-          onClick: () => openLogs(),
-        },
-        /*{
-          iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-        },*/
-      ]
-    }
-  }
+        ],
+      }),
+    },
+  ]
 
   const buttonActionsDefaultDb = [
     {
@@ -166,7 +145,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <ButtonIconAction
-                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp() : buttonActionsDefaultDb}
+                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp : buttonActionsDefaultDb}
                   statusInformation={{
                     id: data.id,
                     name: data.name,

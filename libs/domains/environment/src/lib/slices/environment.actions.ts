@@ -95,7 +95,7 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
   }
 })
 
-export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
+export const deleteEnvironmentActions = createAsyncThunk<
   any,
   { projectId: string; environmentId: string; withDeployments?: boolean }
 >('environmentActions/delete', async (data, { dispatch }) => {

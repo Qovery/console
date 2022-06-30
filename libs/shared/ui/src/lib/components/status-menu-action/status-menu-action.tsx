@@ -128,15 +128,6 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
   }
 
-  // const removeButton = {
-  //   name: 'Remove',
-  //   onClick: (e: ClickEvent) => {
-  //     e.syntheticEvent.preventDefault()
-  //     onClickAction('delete', 'Confirm delete', 'To confirm the delete of your environment, please type the name:')
-  //   },
-  //   contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-  // }
-
   useEffect(() => {
     if (statusActions.status) {
       if (isDeployAvailable(statusActions.status)) {
@@ -151,9 +142,6 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
       if (isCancelBuildAvailable(statusActions.status)) {
         setBottomMenu((bottomMenu) => [...bottomMenu, cancelBuildButton])
       }
-      // if (isDeleteAvailable(statusActions.status)) {
-      //   setBottomMenu((bottomMenu) => [...bottomMenu, removeButton])
-      // }
     }
   }, [])
 

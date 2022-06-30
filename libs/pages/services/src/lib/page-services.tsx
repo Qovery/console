@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { APPLICATION_GENERAL_URL, SERVICES_DEPLOYMENTS_URL, SERVICES_URL } from '@console/shared/router'
 import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
 import {
-  deleteEnvironmentActionsCancelDeployment,
+  deleteEnvironmentActions,
   fetchEnvironmentsStatus,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
@@ -86,27 +86,13 @@ export function PageServices() {
           })
         ),
     },
-    // {
-    //   name: 'delete',
-    //   action: () =>
-    //     dispatch(
-    //       deleteEnvironmentActionsCancelDeployment({
-    //         projectId,
-    //         environmentId,
-    //         withDeployments:
-    //           location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
-    //       })
-    //     ),
-    // },
   ]
 
   const removeEnvironment = () => {
     dispatch(
-      deleteEnvironmentActionsCancelDeployment({
+      deleteEnvironmentActions({
         projectId,
         environmentId,
-        withDeployments:
-          location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
       })
     )
   }
