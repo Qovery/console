@@ -34,10 +34,11 @@ export interface ContainerProps {
   application?: ApplicationEntity
   environment?: Environment
   children?: React.ReactNode
+  removeApplication?: (applicationId: string) => void
 }
 
 export function Container(props: ContainerProps) {
-  const { application, environment, children, statusActions } = props
+  const { application, environment, children, statusActions, removeApplication } = props
   const { organizationId, projectId, environmentId, applicationId } = useParams()
   const location = useLocation()
 
@@ -58,6 +59,7 @@ export function Container(props: ContainerProps) {
     {
       iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
       iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      menusClassName: 'border-r border-r-element-light-lighter-500',
       menus: [
         {
           items: [
@@ -86,6 +88,22 @@ export function Container(props: ContainerProps) {
           ],
         },
       ],
+    },
+    {
+      ...(removeApplication && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeApplication(applicationId ? applicationId : ''),
+              },
+            ],
+          },
+        ],
+      }),
     },
   ]
 

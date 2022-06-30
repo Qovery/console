@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  deleteEnvironmentActionsCancelDeployment,
+  deleteEnvironmentAction,
   environmentFactoryMock,
   environmentsLoadingStatus,
   fetchEnvironmentsStatus,
@@ -55,8 +55,7 @@ export function PageGeneralFeature() {
     },
     {
       name: 'delete',
-      action: (environmentId: string) =>
-        dispatch(deleteEnvironmentActionsCancelDeployment({ projectId, environmentId })),
+      action: (environmentId: string) => dispatch(deleteEnvironmentAction({ projectId, environmentId })),
     },
   ]
 

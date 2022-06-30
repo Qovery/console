@@ -27,6 +27,8 @@ export interface TableRowServicesProps {
   link: string
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
+  removeApplication?: (serviceId: string) => void
+  removeDatabase?: (serviceId: string) => void
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -38,6 +40,8 @@ export function TableRowServices(props: TableRowServicesProps) {
     link,
     buttonActions,
     environmentMode,
+    removeApplication,
+    removeDatabase,
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
@@ -67,23 +71,50 @@ export function TableRowServices(props: TableRowServicesProps) {
       iconLeft: <Icon name="icon-solid-scroll" />,
       onClick: () => openLogs(),
     },
-    /*{
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },*/
+    {
+      ...(removeApplication && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeApplication(data.id),
+              },
+            ],
+          },
+        ],
+      }),
+    },
   ]
 
   const buttonActionsDefaultDb = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
+      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
       statusActions: {
         status: data.status && data.status.state,
         actions: buttonActions,
       },
     },
-    /*{
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },*/
+    {
+      ...(removeDatabase && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeDatabase(data.id),
+              },
+            ],
+          },
+        ],
+      }),
+    },
   ]
 
   return (
@@ -95,7 +126,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               <StatusChip status={data.status && data.status.state} />
             </Skeleton>
           ) : (
-            <>
+            <div>
               {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
                 <StatusChip status={data.status && data.status.state} />
               ) : (
@@ -108,7 +139,7 @@ export function TableRowServices(props: TableRowServicesProps) {
                   }
                 />
               )}
-            </>
+            </div>
           )}
           <Skeleton show={isLoading} width={16} height={16}>
             <div className="ml-2 mr-2">

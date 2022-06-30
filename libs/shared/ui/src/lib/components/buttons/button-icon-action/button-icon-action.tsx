@@ -4,7 +4,7 @@ import ButtonIconActionElement, {
 } from './button-icon-action-element/button-icon-action-element'
 
 export interface ButtonIconActionProps {
-  actions: ButtonIconActionElementProps[]
+  actions?: ButtonIconActionElementProps[]
   statusInformation?: StatusMenuInformation
   className?: string
 }
@@ -14,9 +14,10 @@ export function ButtonIconAction(props: ButtonIconActionProps) {
 
   return (
     <div className={`btn-icon-action ${className}`} onClick={(e) => e.preventDefault()}>
-      {actions.map((action, index) => (
-        <ButtonIconActionElement key={index} statusInformation={statusInformation} {...action} />
-      ))}
+      {actions &&
+        actions.map((action, index) => (
+          <ButtonIconActionElement key={index} statusInformation={statusInformation} {...action} />
+        ))}
     </div>
   )
 }
