@@ -33,11 +33,7 @@ export function Layout(props: LayoutProps) {
       dispatch(fetchApplications({ environmentId }))
       dispatch(fetchDatabases({ environmentId }))
     }
-
-    //save current organizationId & projectId on localStorage
-    localStorage.setItem('currentOrganizationId', organizationId)
-    localStorage.setItem('currentProjectId', projectId)
-  }, [environmentId, dispatch, organizationId, projectId])
+  }, [environmentId, dispatch])
 
   useEffect(() => {
     projectId && dispatch(fetchEnvironments({ projectId }))
