@@ -28,10 +28,11 @@ export interface ContainerProps {
   database?: DatabaseEntity
   environment?: Environment
   children?: React.ReactNode
+  removeDatabase?: (databaseId: string) => void
 }
 
 export function Container(props: ContainerProps) {
-  const { database, environment, children, statusActions } = props
+  const { database, environment, children, statusActions, removeDatabase } = props
 
   const { organizationId, projectId, environmentId, databaseId } = useParams()
   const location = useLocation()
@@ -42,10 +43,27 @@ export function Container(props: ContainerProps) {
     {
       iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
       iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
       statusActions: {
         status: database?.status && database?.status.state,
         actions: statusActions,
       },
+    },
+    {
+      ...(removeDatabase && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeDatabase(databaseId ? databaseId : ''),
+              },
+            ],
+          },
+        ],
+      }),
     },
   ]
 

@@ -2,13 +2,7 @@ import { ClickEvent } from '@szhsin/react-menu'
 import { EnvironmentModeEnum, StateEnum } from 'qovery-typescript-axios'
 import { useState, useEffect, useContext } from 'react'
 import { Icon, ModalContext, ModalConfirmation } from '@console/shared/ui'
-import {
-  isCancelBuildAvailable,
-  //isDeleteAvailable,
-  isDeployAvailable,
-  isRestartAvailable,
-  isStopAvailable,
-} from '@console/shared/utils'
+import { isCancelBuildAvailable, isDeployAvailable, isRestartAvailable, isStopAvailable } from '@console/shared/utils'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
 
 export interface StatusMenuActionProps {

@@ -5,7 +5,7 @@ import TableRowServices from '../../ui/table-row-services/table-row-services'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
 import { useParams } from 'react-router'
 import {
-  deleteApplicationActionsStop,
+  deleteApplicationAction,
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
@@ -16,6 +16,7 @@ import {
   postDatabaseActionsDeploy,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
+  removeOneDatabase,
 } from '@console/domains/database'
 import { isDeleteAvailable } from '@console/shared/utils'
 
@@ -51,10 +52,6 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       name: 'stop',
       action: (applicationId: string) => dispatch(postApplicationActionsStop({ environmentId, applicationId })),
     },
-    // {
-    //   name: 'delete',
-    //   action: (applicationId: string) => dispatch(deleteApplicationActionsStop({ environmentId, applicationId })),
-    // },
   ]
 
   const databaseActions: StatusMenuActions[] = [
@@ -70,14 +67,14 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       name: 'stop',
       action: (databaseId: string) => dispatch(postDatabaseActionsStop({ environmentId, databaseId })),
     },
-    // {
-    //   name: 'delete',
-    //   action: (databaseId: string) => dispatch(deleteApplicationActionsStop({ environmentId, databaseId })),
-    // },
   ]
 
   const removeApplication = (applicationId: string) => {
-    dispatch(deleteApplicationActionsStop({ environmentId, applicationId }))
+    dispatch(deleteApplicationAction({ environmentId, applicationId }))
+  }
+
+  const removeDatabase = (databaseId: string) => {
+    dispatch(removeOneDatabase({ databaseId }))
   }
 
   const actions = isDatabase ? databaseActions : applicationActions
@@ -94,6 +91,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       removeApplication={
         !isDatabase && data.status && isDeleteAvailable(data.status.state) ? removeApplication : undefined
       }
+      removeDatabase={isDatabase && data.status && isDeleteAvailable(data.status.state) ? removeDatabase : undefined}
     />
   )
 }

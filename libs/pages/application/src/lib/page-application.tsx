@@ -7,7 +7,7 @@ import { selectEnvironmentById } from '@console/domains/environment'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import {
   applicationsLoadingStatus,
-  deleteApplicationActionsStop,
+  deleteApplicationAction,
   fetchApplicationCommits,
   fetchApplicationInstances,
   fetchApplicationLinks,
@@ -92,24 +92,11 @@ export function PageApplication() {
           })
         ),
     },
-    {
-      name: 'delete',
-      action: (applicationId: string) =>
-        dispatch(
-          deleteApplicationActionsStop({
-            environmentId,
-            applicationId,
-            withDeployments:
-              pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-          })
-        ),
-    },
   ]
 
   const removeApplication = (applicationId: string) => {
     dispatch(
-      deleteApplicationActionsStop({
+      deleteApplicationAction({
         environmentId,
         applicationId,
         withDeployments:

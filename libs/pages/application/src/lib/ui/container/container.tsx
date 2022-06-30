@@ -46,112 +46,66 @@ export function Container(props: ContainerProps) {
 
   const menuLink: MenuData = []
 
-  const buttonActionsDefault = () => {
-    if (removeApplication) {
-      return [
+  const buttonActionsDefault = [
+    {
+      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
+      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      menusClassName: 'border-r border-r-element-light-lighter-500',
+      statusActions: {
+        status: application?.status && application?.status.state,
+        actions: statusActions,
+      },
+    },
+    {
+      iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      menusClassName: 'border-r border-r-element-light-lighter-500',
+      menus: [
         {
-          iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-          menusClassName: 'border-r border-r-element-light-lighter-500',
-          statusActions: {
-            status: application?.status && application?.status.state,
-            actions: statusActions,
+          items: [
+            {
+              name: 'Deployment logs',
+              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+              onClick: () =>
+                window
+                  .open(
+                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
+                    '_blank'
+                  )
+                  ?.focus(),
+            },
+            {
+              name: 'Application logs',
+              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+              onClick: () =>
+                window
+                  .open(
+                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
+                    '_blank'
+                  )
+                  ?.focus(),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      ...(removeApplication && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeApplication(applicationId ? applicationId : ''),
+              },
+            ],
           },
-        },
-        {
-          iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-          menusClassName: 'border-r border-r-element-light-lighter-500',
-          menus: [
-            {
-              items: [
-                {
-                  name: 'Deployment logs',
-                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                  onClick: () =>
-                    window
-                      .open(
-                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-                        '_blank'
-                      )
-                      ?.focus(),
-                },
-                {
-                  name: 'Application logs',
-                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                  onClick: () =>
-                    window
-                      .open(
-                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
-                        '_blank'
-                      )
-                      ?.focus(),
-                },
-              ],
-            },
-          ],
-        },
-        {
-          iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
-          menus: [
-            {
-              items: [
-                {
-                  name: 'Remove',
-                  contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                  onClick: () => removeApplication(applicationId ? applicationId : ''),
-                },
-              ],
-            },
-          ],
-        },
-      ]
-    } else {
-      return [
-        {
-          iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-          menusClassName: 'border-r border-r-element-light-lighter-500',
-          statusActions: {
-            status: application?.status && application?.status.state,
-            actions: statusActions,
-          },
-        },
-        {
-          iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-          menus: [
-            {
-              items: [
-                {
-                  name: 'Deployment logs',
-                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                  onClick: () =>
-                    window
-                      .open(
-                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-                        '_blank'
-                      )
-                      ?.focus(),
-                },
-                {
-                  name: 'Application logs',
-                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                  onClick: () =>
-                    window
-                      .open(
-                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
-                        '_blank'
-                      )
-                      ?.focus(),
-                },
-              ],
-            },
-          ],
-        },
-      ]
-    }
-  }
+        ],
+      }),
+    },
+  ]
 
   if (application && application.links && application.links.items) {
     const items: MenuItemProps[] = application.links.items.map((link) => {
@@ -216,7 +170,7 @@ export function Container(props: ContainerProps) {
             <>
               <ButtonIconAction
                 className="!h-8"
-                actions={buttonActionsDefault()}
+                actions={buttonActionsDefault}
                 statusInformation={{
                   id: application?.id,
                   name: application?.name,

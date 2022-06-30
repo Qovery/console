@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { APPLICATION_GENERAL_URL, SERVICES_DEPLOYMENTS_URL, SERVICES_URL } from '@console/shared/router'
 import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
 import {
-  deleteEnvironmentActions,
+  deleteEnvironmentAction,
   fetchEnvironmentsStatus,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
@@ -90,7 +90,7 @@ export function PageServices() {
 
   const removeEnvironment = () => {
     dispatch(
-      deleteEnvironmentActions({
+      deleteEnvironmentAction({
         projectId,
         environmentId,
       })

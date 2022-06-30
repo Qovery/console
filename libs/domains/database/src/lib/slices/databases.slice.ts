@@ -86,6 +86,11 @@ export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { da
   }
 )
 
+export const removeOneDatabase = createAsyncThunk<string, { databaseId: string }>('database/remove', async (data) => {
+  await databaseMainCallsApi.deleteDatabase(data.databaseId)
+  return data.databaseId
+})
+
 export const initialDatabasesState: DatabasesState = databasesAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -297,6 +302,18 @@ export const databasesSlice = createSlice({
           },
         }
         databasesAdapter.updateOne(state, update as Update<Database>)
+      })
+      // remove one database
+      .addCase(removeOneDatabase.pending, (state: DatabasesState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(removeOneDatabase.fulfilled, (state: DatabasesState, action) => {
+        databasesAdapter.removeOne(state, action.meta.arg.databaseId)
+        state.loadingStatus = 'loaded'
+      })
+      .addCase(removeOneDatabase.rejected, (state: DatabasesState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
       })
   },
 })

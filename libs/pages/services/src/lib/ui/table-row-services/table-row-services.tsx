@@ -28,6 +28,7 @@ export interface TableRowServicesProps {
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
   removeApplication?: (serviceId: string) => void
+  removeDatabase?: (serviceId: string) => void
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -40,6 +41,7 @@ export function TableRowServices(props: TableRowServicesProps) {
     buttonActions,
     environmentMode,
     removeApplication,
+    removeDatabase,
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
@@ -91,14 +93,28 @@ export function TableRowServices(props: TableRowServicesProps) {
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
+      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
       statusActions: {
         status: data.status && data.status.state,
         actions: buttonActions,
       },
     },
-    /*{
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },*/
+    {
+      ...(removeDatabase && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeDatabase(data.id),
+              },
+            ],
+          },
+        ],
+      }),
+    },
   ]
 
   return (

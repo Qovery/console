@@ -75,7 +75,7 @@ export const postApplicationActionsStop = createAsyncThunk<
   }
 })
 
-export const deleteApplicationActionsStop = createAsyncThunk<
+export const deleteApplicationAction = createAsyncThunk<
   any,
   { environmentId: string; applicationId: string; withDeployments?: boolean }
 >('applicationActions/delete', async (data, { dispatch }) => {
@@ -84,9 +84,6 @@ export const deleteApplicationActionsStop = createAsyncThunk<
     if (response.status === 204) {
       // refetch status after update
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // refetch deployments after update
-      if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
       // success message
       toast(ToastEnum.SUCCESS, 'Your application is being deleted')
     }
