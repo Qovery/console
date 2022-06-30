@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "setup": ". ./s.sh",
     "start": "nx serve",
     "storybook": "nx storybook shared-ui",
     "build-storybook": "nx run shared-ui:build-storybook",
