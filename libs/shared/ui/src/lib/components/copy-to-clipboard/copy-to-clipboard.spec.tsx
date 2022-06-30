@@ -1,9 +1,12 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 
 import CopyToClipboard, { CopyToClipboardProps } from './copy-to-clipboard'
+import { copyToClipboard } from './utils/copy-to-clipboard'
+import { act } from '@testing-library/react'
+
+jest.mock('./utils/copy-to-clipboard')
 
 let props: CopyToClipboardProps
-
 beforeEach(() => {
   props = {
     content: 'text to copy',
@@ -28,5 +31,16 @@ describe('CopyToClipboard', () => {
     render(<CopyToClipboard {...props} />)
     const icon = screen.getByRole('img')
     expect(icon.classList.contains('class-name')).toBeTruthy()
+  })
+
+  it('should call the copy function on click', () => {
+    render(<CopyToClipboard {...props} />)
+    copyToClipboard.mockImplementation(jest.fn())
+
+    act(() => {
+      screen.getByTestId('copy-container').click()
+    })
+
+    expect(copyToClipboard).toHaveBeenCalledWith('text to copy')
   })
 })

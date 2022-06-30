@@ -1,5 +1,6 @@
 import { Icon, Tooltip } from '@console/shared/ui'
 import { useState } from 'react'
+import { copyToClipboard as copyToClipboardUtil } from './utils/copy-to-clipboard'
 
 export interface CopyToClipboardProps {
   content: string
@@ -14,7 +15,7 @@ export function CopyToClipboard(props: CopyToClipboardProps) {
   const [icon, setIcon] = useState('icon-solid-copy')
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(content)
+    copyToClipboardUtil(content)
     setIcon('icon-solid-check')
     setTimeout(() => {
       setIcon('icon-solid-copy')
