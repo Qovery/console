@@ -1,3 +1,5 @@
+import React from 'react'
+import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -28,7 +30,7 @@ export interface BreadcrumbProps {
   databases?: Database[]
 }
 
-export function Breadcrumb(props: BreadcrumbProps) {
+export function BreadcrumbMemo(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, applications, databases } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
   const { pathname } = useLocation()
@@ -256,4 +258,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
   )
 }
 
-export default Breadcrumb
+export const Breadcrumb = React.memo(BreadcrumbMemo, (prevProps, nextProps) => {
+  return equal(prevProps, nextProps)
+})
