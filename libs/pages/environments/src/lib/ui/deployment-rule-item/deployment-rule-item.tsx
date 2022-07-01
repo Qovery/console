@@ -78,7 +78,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
         isLast ? 'rounded-b' : ''
       } border bg-element-light-lighter-200 border-element-light-lighter-500 flex px-5 py-4 -mt-px justify-between`}
     >
-      <div className="border-r border-element-light-lighter-400">
+      <div>
         <Skeleton show={isLoading} width={180} height={20} className="mb-1">
           <h3 className="text-sm text-text-500 font-medium max-w-full truncate">{name}</h3>
         </Skeleton>
@@ -92,8 +92,8 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
         </Skeleton>
       </div>
       <Skeleton show={isLoading} width={58} height={30}>
-        <div className="flex border border-element-light-lighter-500 rounded h-[34px]">
-          <span className="w-8 h-8 flex items-center rounded bg-white justify-center border-r border-element-light-lighter-500 text-text-400 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition">
+        <div className="flex border border-element-light-lighter-500 rounded h-[34px] overflow-hidden">
+          <span className="w-8 h-8 flex items-center bg-white justify-center border-r border-element-light-lighter-500 text-text-400 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition">
             <Icon name="icon-solid-grip-lines" />
           </span>
           <Menu
@@ -102,7 +102,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
             onOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
             trigger={
               <span
-                className={`w-8 h-8 flex items-center justify-center rounded text-text-400 text-xs bg-white cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
+                className={`w-8 h-8 flex items-center justify-center text-text-400 text-xs bg-white cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
                   menuOpen ? 'bg-brand-50 !text-brand-500' : ''
                 }`}
               >
