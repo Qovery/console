@@ -19,11 +19,19 @@ export interface TableRowEnvironmentsProps {
   dataHead: TableHeadProps[]
   link: string
   buttonActions: StatusMenuActions[]
+  removeEnvironment?: (environmentId: string) => void
   columnsWidth?: string
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, buttonActions } = props
+  const {
+    data,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    link,
+    buttonActions,
+    removeEnvironment,
+  } = props
 
   const buttonActionsDefault = [
     {
@@ -36,7 +44,20 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
       },
     },
     {
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+      ...(removeEnvironment && {
+        iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeEnvironment(data.id),
+              },
+            ],
+          },
+        ],
+      }),
     },
   ]
 

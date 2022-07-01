@@ -5,6 +5,7 @@ import {
   deleteEnvironmentAction,
   environmentFactoryMock,
   environmentsLoadingStatus,
+  fetchEnvironments,
   fetchEnvironmentsStatus,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
@@ -59,6 +60,16 @@ export function PageGeneralFeature() {
     },
   ]
 
+  const removeEnvironment = async (environmentId: string) => {
+    await dispatch(
+      deleteEnvironmentAction({
+        projectId,
+        environmentId,
+      })
+    )
+    await dispatch(fetchEnvironments({ projectId: projectId }))
+  }
+
   const listHelpfulLinks: BaseLink[] = [
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/environment',
@@ -72,6 +83,7 @@ export function PageGeneralFeature() {
       environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
       buttonActions={actions}
       listHelpfulLinks={listHelpfulLinks}
+      removeEnvironment={removeEnvironment}
     />
   )
 }
