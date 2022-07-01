@@ -15,9 +15,12 @@ export function ButtonIconAction(props: ButtonIconActionProps) {
   return (
     <div className={`btn-icon-action ${className}`} onClick={(e) => e.preventDefault()}>
       {actions &&
-        actions.map((action, index) => (
-          <ButtonIconActionElement key={index} statusInformation={statusInformation} {...action} />
-        ))}
+        actions.map(
+          (action, index) =>
+            (action.menus || action.statusActions) && (
+              <ButtonIconActionElement key={index} statusInformation={statusInformation} {...action} />
+            )
+        )}
     </div>
   )
 }

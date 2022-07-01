@@ -1,9 +1,16 @@
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { APPLICATION_GENERAL_URL, SERVICES_DEPLOYMENTS_URL, SERVICES_URL } from '@console/shared/router'
+import {
+  APPLICATION_GENERAL_URL,
+  ENVIRONMENTS_GENERAL_URL,
+  ENVIRONMENTS_URL,
+  SERVICES_DEPLOYMENTS_URL,
+  SERVICES_URL,
+} from '@console/shared/router'
 import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
 import {
   deleteEnvironmentAction,
+  fetchEnvironments,
   fetchEnvironmentsStatus,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
@@ -88,13 +95,15 @@ export function PageServices() {
     },
   ]
 
-  const removeEnvironment = () => {
-    dispatch(
+  const removeEnvironment = async () => {
+    await dispatch(
       deleteEnvironmentAction({
         projectId,
         environmentId,
       })
     )
+    await dispatch(fetchEnvironments({ projectId: projectId }))
+    await navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
   }
 
   return (

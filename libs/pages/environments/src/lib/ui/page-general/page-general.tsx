@@ -4,15 +4,17 @@ import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
+import { isDeleteAvailable } from '@console/shared/utils'
 
 export interface PageGeneralProps {
   environments: EnvironmentEntity[]
   buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
+  removeEnvironment: (environmentId: string) => void
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {
-  const { environments, buttonActions, listHelpfulLinks } = props
+  const { environments, buttonActions, listHelpfulLinks, removeEnvironment } = props
   const { organizationId, projectId } = useParams()
 
   const [data, setData] = useState(environments)
@@ -79,6 +81,9 @@ function PageGeneralMemo(props: PageGeneralProps) {
               link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
               columnsWidth="25% 25% 25% 20%"
               buttonActions={buttonActions}
+              removeEnvironment={
+                currentData?.status && isDeleteAvailable(currentData?.status?.state) ? removeEnvironment : undefined
+              }
             />
           ))}
         </>
