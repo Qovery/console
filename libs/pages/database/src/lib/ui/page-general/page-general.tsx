@@ -52,17 +52,19 @@ export function PageGeneral(props: PageGeneralProps) {
             </p>
           )}
           <div className="flex border border-element-light-lighter-400 mb-4">
-            <div className="flex-1 border-r border-element-light-lighter-400 px-6 py-3">
+            <div className="flex-1 border-r border-element-light-lighter-400 p-5">
               <Skeleton height={16} width={48} show={false}>
-                <div className="h4 text-black mb-1">
+                <div className="text-text-600 font-bold">
                   {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '1 / 1'}
                 </div>
               </Skeleton>
-              <strong className="text-sm text-text-400">Requested Instances</strong>
+              <span className="text-xs text-text-400 font-medium">Running instances</span>
             </div>
-            <div className="flex-1 px-6 py-3">
-              <div className="h4 text-black mb-1">{database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '-'}</div>
-              <strong className="text-sm text-text-400">Service Stability</strong>
+            <div className="flex-1 p-5">
+              <div className="text-text-600 font-bold">
+                {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '-'}
+              </div>
+              <span className="text-xs text-text-400 font-medium">Service restart</span>
             </div>
           </div>
 

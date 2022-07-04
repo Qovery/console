@@ -17,7 +17,7 @@ export function ButtonIconAction(props: ButtonIconActionProps) {
       {actions &&
         actions.map(
           (action, index) =>
-            (action.menus || action.statusActions) && (
+            (action.menus || action.statusActions || action.onClick) && (
               <ButtonIconActionElement key={index} statusInformation={statusInformation} {...action} />
             )
         )}

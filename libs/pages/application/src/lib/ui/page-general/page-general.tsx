@@ -19,25 +19,28 @@ export function PageGeneral(props: PageGeneralProps) {
       <div className="flex flex-col flex-grow">
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex border border-element-light-lighter-400 mb-4">
-            <div className="flex-1 border-r border-element-light-lighter-400 px-6 py-3">
-              <strong className="text-sm mb-1 text-text-400">Running Instances</strong>
-              <Skeleton height={16} width={48} show={application?.instances?.loadingStatus === 'loading'}>
-                <div className="h4 text-black">{application?.instances?.items?.length || '–'}</div>
+            <div className="flex-1 border-r border-element-light-lighter-400 p-5">
+              <Skeleton height={24} width={48} show={application?.instances?.loadingStatus === 'loading'}>
+                <span className="text-text-600 font-bold">{application?.instances?.items?.length || '–'}</span>
               </Skeleton>
+              <span className="text-xs text-text-400 font-medium">Running instances</span>
             </div>
-            <div className="flex-1  px-6 py-3">
-              <strong className="text-sm mb-1 text-text-400">Service Restart</strong>
-              <div className="h4 text-black flex items-center gap-2">
-                {serviceStability}{' '}
+            <div className="flex-1 p-5">
+              <div className="text-text-600 font-bold mb-1">{serviceStability}</div>
+              <span className="flex text-xs text-text-400 font-medium">
+                Service stability
                 <Tooltip
                   side="right"
                   content="Number of application instance restarts since the last deployment due to application errors"
                 >
                   <div className="flex items-center">
-                    <Icon className="text-caption text-element-light-lighter-700" name="icon-solid-circle-info"></Icon>
+                    <Icon
+                      className="cursor-pointer ml-1 text-xs text-element-light-lighter-700"
+                      name="icon-solid-circle-info"
+                    />
                   </div>
                 </Tooltip>
-              </div>
+              </span>
             </div>
           </div>
           {application?.instances && application?.instances.items?.length && (
