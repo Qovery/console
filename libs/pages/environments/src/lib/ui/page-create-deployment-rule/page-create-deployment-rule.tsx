@@ -1,8 +1,6 @@
 import {
   BaseLink,
   Button,
-  ButtonIcon,
-  ButtonIconStyle,
   ButtonSize,
   ButtonStyle,
   HelpSection,
@@ -109,7 +107,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
       <div className="flex h-full flex-col flex-grow">
         <div className="py-7 px-10 flex-grow">
           <div className="max-w-[620px]">
-            <div className="flex gap-4 mb-3 items-center">
+            {/* <div className="flex gap-4 mb-3 items-center">
               <ButtonIcon
                 icon="icon-solid-arrow-left"
                 style={ButtonIconStyle.STROKED}
@@ -117,10 +115,16 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                 onClick={() => navigate(-1)}
               />
               <h1 className="font-bold text-base text-text-600">Create rule</h1>
-            </div>
+            </div> */}
+            <Button size={ButtonSize.TINY} style={ButtonStyle.FLAT} onClick={() => navigate(-1)} className="!px-0 mb-1">
+              <Icon name="icon-solid-arrow-left" className="mr-1 text-xs" />
+              Back
+            </Button>
 
-            <div className="mb-3">
-              <p className="text-text-400 text-xs">
+            <h1 className="font-bold text-xl text-text-700 mb-2">Create rule</h1>
+
+            <div className="mb-10">
+              <p className="text-text-500 text-xs">
                 Automatically create a preview environment when a merge request is submitted on one of your
                 applications. Your environment will be cloned with the application synchronised on the branch waiting to
                 be merged.
@@ -128,9 +132,9 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
             </div>
 
             <form onSubmit={onSubmit}>
-              <div className="border border-element-light-lighter-400 rounded mb-5">
-                <div className="flex items-center justify-between h-11 px-4 border-b border-element-light-lighter-400">
-                  <h2 className="font-medium text-text-500 text-sm">Matching rule definition</h2>
+              <div className="border border-element-light-lighter-500 bg-element-light-lighter-200 rounded mb-5">
+                <div className="flex items-center justify-between h-9 px-4 border-b border-element-light-lighter-500">
+                  <h2 className="font-medium text-text-600 text-sm">Matching rule definition</h2>
                   <Tooltip content="Information">
                     <div>
                       <Icon name="icon-solid-circle-info" className="text-sm text-text-400" />
@@ -169,14 +173,15 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                   <Controller
                     name="wildcard"
                     control={control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
+                    rules={{ required: 'Plase add a matching condition' }}
+                    render={({ field, fieldState: { error } }) => (
                       <InputTextArea
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}
                         label="Matching Condition - Environment Name"
                         className="mb-3"
+                        error={error?.message}
                       />
                     )}
                   />
@@ -187,8 +192,8 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                 </div>
               </div>
 
-              <div className="border border-element-light-lighter-400 rounded mb-5">
-                <div className="flex items-center justify-between h-11 px-4 border-b border-element-light-lighter-400">
+              <div className="border border-element-light-lighter-500 bg-element-light-lighter-200 rounded mb-5">
+                <div className="flex items-center justify-between h-9 px-4 border-b border-element-light-lighter-500">
                   <h2 className="font-medium text-text-500 text-sm">Setup to apply - General</h2>
                 </div>
                 <div className="p-5">
@@ -252,8 +257,8 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                 </div>
               </div>
 
-              <div className="border border-element-light-lighter-400 rounded mb-5">
-                <div className="flex items-center justify-between h-11 px-4 border-b border-element-light-lighter-400">
+              <div className="border border-element-light-lighter-500 bg-element-light-lighter-200 rounded mb-5">
+                <div className="flex items-center justify-between h-9 px-4 border-b border-element-light-lighter-500">
                   <h2 className="font-medium text-text-500 text-sm">Setup to apply - Start & stop</h2>
                   <Tooltip content="Information">
                     <div>
@@ -352,7 +357,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                 </div>
               </div>
               <Button size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
-                Create
+                Create rule
               </Button>
             </form>
           </div>
@@ -361,8 +366,8 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
       </div>
       <div className="w-right-help-sidebar border-l border-element-light-lighter-400">
         <div className="p-10 border-b border-element-light-lighter-400">
-          <span className="text-4xl" role="img" aria-label="light">
-            💡
+          <span className="flex justify-center items-center rounded bg-accent1-500 w-7 h-7 text-sm text-white">
+            <Icon name="icon-solid-lightbulb" />
           </span>
           <h2 className="h5 text-text-700 mt-5 mb-5">What is an organization, what is a project?</h2>
           <ul className="text-sm ml-2">

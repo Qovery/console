@@ -62,7 +62,6 @@ export function PageCreateDeploymentRuleFeature() {
     setValue('auto_deploy', false)
     setValue('auto_delete', false)
     setValue('auto_stop', false)
-    setValue('wildcard', ' ')
     setValue('weekdays', weekdaysSelection)
   }, [setValue, dispatch, organizationId])
 

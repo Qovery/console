@@ -65,7 +65,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       {' - '}
       {weekDays.map((day: string, index: number) => (
         <span key={index}>
-          {upperCaseFirstLetter(day)?.slice(0, 3)}
+          {upperCaseFirstLetter(day.toLowerCase())?.slice(0, 3)}
           {index !== weekDays.length - 1 && ', '}
         </span>
       ))}

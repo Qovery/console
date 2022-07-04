@@ -12,9 +12,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE, ENVIRONMENTS_URL } from '@console/shared/router'
 
 export function PageDeploymentRulesFeature() {
-  const { projectId = '' } = useParams()
+  const { projectId = '', organizationId = '' } = useParams()
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -40,6 +41,8 @@ export function PageDeploymentRulesFeature() {
 
   const loadingStatus = useSelector(deploymentRulesLoadingStatus)
 
+  const linkNewRule = ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE
+
   useEffect(() => {
     dispatch(fetchDeploymentRules({ projectId }))
   }, [projectId, dispatch])
@@ -51,6 +54,7 @@ export function PageDeploymentRulesFeature() {
       updateDeploymentRulesOrder={updateDeploymentRulesOrder}
       isLoading={loadingStatus !== 'loaded'}
       deleteDeploymentRule={removeDeploymentRule}
+      linkNewRule={linkNewRule}
     />
   )
 }

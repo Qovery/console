@@ -66,6 +66,7 @@ const FaIcons = [
   'icon-solid-eye-slash',
   'icon-solid-user-secret',
   'icon-solid-arrow-circle-right',
+  'icon-solid-lightbulb',
   // schema: favicons name
 ]
 
