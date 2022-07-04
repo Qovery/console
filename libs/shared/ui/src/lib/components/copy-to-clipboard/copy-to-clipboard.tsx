@@ -1,6 +1,7 @@
-import { Icon, Tooltip } from '@console/shared/ui'
 import { useState } from 'react'
 import { copyToClipboard as copyToClipboardUtil } from './utils/copy-to-clipboard'
+import Tooltip from '../tooltip/tooltip'
+import Icon from '../icon/icon'
 
 export interface CopyToClipboardProps {
   content: string
