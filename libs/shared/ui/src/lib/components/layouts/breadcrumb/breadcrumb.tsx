@@ -1,7 +1,7 @@
 import React from 'react'
 import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
-import { useLocation, useParams } from 'react-router'
+import { matchPath, useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Icon, MenuItemProps, StatusChip } from '@console/shared/ui'
 import {
@@ -36,6 +36,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   const { pathname } = useLocation()
 
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
+  const matchLogInfraRoute = matchPath(location.pathname || '', INFRA_LOGS_URL(organizationId, clusterId))
 
   const organizationsMenu = [
     {
@@ -65,29 +66,29 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     },
   ]
 
-  const clustersMenu = [
-    {
-      title: 'Clusters',
-      search: true,
-      items: clusters
-        ? clusters?.map((cluster: ClusterEntity) => ({
-            name: cluster.name,
-            link: {
-              url: INFRA_LOGS_URL(cluster.id),
-            },
-            contentLeft: (
-              <Icon
-                name="icon-solid-check"
-                className={`text-sm ${clusterId === cluster.id ? 'text-success-400' : 'text-transparent'}`}
-              />
-            ),
-            contentRight: (
-              <>{cluster.cloud_provider && <Icon data-testid="icon" name={`${cluster.cloud_provider}_GRAY`} />}</>
-            ),
-          }))
-        : [],
-    },
-  ]
+  // const clustersMenu = [
+  //   {
+  //     title: 'Clusters',
+  //     search: true,
+  //     items: clusters
+  //       ? clusters?.map((cluster: ClusterEntity) => ({
+  //           name: cluster.name,
+  //           link: {
+  //             url: INFRA_LOGS_URL(cluster.id),
+  //           },
+  //           contentLeft: (
+  //             <Icon
+  //               name="icon-solid-check"
+  //               className={`text-sm ${clusterId === cluster.id ? 'text-success-400' : 'text-transparent'}`}
+  //             />
+  //           ),
+  //           contentRight: (
+  //             <>{cluster.cloud_provider && <Icon data-testid="icon" name={`${cluster.cloud_provider}_GRAY`} />}</>
+  //           ),
+  //         }))
+  //       : [],
+  //   },
+  // ]
 
   const projectMenu = [
     {
@@ -187,7 +188,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       {organizationId && (
         <BreadcrumbItem
           data={projects}
-          menuItems={organizationsMenu}
+          menuItems={matchLogInfraRoute ? [] : organizationsMenu}
           paramId={organizationId}
           link={ORGANIZATION_URL(organizationId)}
         />
@@ -198,7 +199,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
           <BreadcrumbItem
             isDark
             data={clusters}
-            menuItems={clustersMenu}
+            menuItems={[]}
             paramId={clusterId}
             link={INFRA_LOGS_URL(organizationId, clusterId)}
           />

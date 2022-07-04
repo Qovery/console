@@ -1,6 +1,7 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { matchPath, useLocation, useParams } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
-import { ORGANIZATION_URL } from '@console/shared/router'
+import { INFRA_LOGS_URL, ORGANIZATION_URL } from '@console/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -22,7 +23,10 @@ export interface NavigationProps {
 
 export function Navigation(props: NavigationProps) {
   const { firstName, lastName, darkMode } = props
-  const { organizationId } = useParams()
+  const { organizationId = '', clusterId = '' } = useParams()
+  const { pathname } = useLocation()
+
+  const matchLogInfraRoute = matchPath(pathname, INFRA_LOGS_URL(organizationId, clusterId))
   //const navigate = useNavigate()
 
   const infosMenu = [
@@ -67,7 +71,7 @@ export function Navigation(props: NavigationProps) {
   return (
     <div className={`w-16 h-full fixed top-0 left-0 z-10 ${darkMode ? 'bg-element-light-darker-400' : 'bg-white'}`}>
       <Link
-        to={'/'}
+        to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
         className={`flex w-16 h-16 items-center justify-center border-b z-10 ${
           darkMode ? 'border-element-light-darker-100' : 'border-element-light-lighter-400'
         }`}
@@ -77,12 +81,22 @@ export function Navigation(props: NavigationProps) {
 
       <div className="flex flex-col justify-between h-[calc(100%-8rem)] px-2.5 py-5">
         <div className="flex flex-col gap-3">
-          <ButtonIcon
-            icon="icon-solid-layer-group"
-            style={ButtonIconStyle.ALT}
-            size={ButtonIconSize.BIG}
-            link={ORGANIZATION_URL(organizationId)}
-          />
+          {matchLogInfraRoute ? (
+            <ButtonIcon
+              icon="icon-solid-layer-group"
+              style={ButtonIconStyle.ALT}
+              size={ButtonIconSize.BIG}
+              link={`https://console.qovery.com/platform/organization/${organizationId}/projects`}
+              external
+            />
+          ) : (
+            <ButtonIcon
+              icon="icon-solid-layer-group"
+              style={ButtonIconStyle.ALT}
+              size={ButtonIconSize.BIG}
+              link={ORGANIZATION_URL(organizationId)}
+            />
+          )}
           {/*
           <ButtonIcon
             icon="icon-solid-gauge-high"
