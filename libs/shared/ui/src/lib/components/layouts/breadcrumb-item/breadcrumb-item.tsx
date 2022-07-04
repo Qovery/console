@@ -32,18 +32,20 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
           {currentName}
         </p>
       </Link>
-      <Menu
-        menus={menuItems}
-        open={false}
-        arrowAlign={MenuAlign.START}
-        trigger={
-          <ButtonIcon
-            className="btn-icon--circle ml-1 mt-0.5"
-            icon="icon-solid-angle-down"
-            style={ButtonIconStyle.FLAT}
-          />
-        }
-      />
+      {menuItems.length > 0 && (
+        <Menu
+          menus={menuItems}
+          open={false}
+          arrowAlign={MenuAlign.START}
+          trigger={
+            <ButtonIcon
+              className="btn-icon--circle ml-1 mt-0.5"
+              icon="icon-solid-angle-down"
+              style={ButtonIconStyle.FLAT}
+            />
+          }
+        />
+      )}
     </div>
   )
 }
