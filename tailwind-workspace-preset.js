@@ -27,6 +27,13 @@ module.exports = {
             letterSpacing: '0.002em',
           },
         ],
+        ssm: [
+          '0.8125rem',
+          {
+            lineHeight: '1.25rem',
+            letterSpacing: '0.0025em',
+          },
+        ],
         sm: [
           '0.875rem',
           {

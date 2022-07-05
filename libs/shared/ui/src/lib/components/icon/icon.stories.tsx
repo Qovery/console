@@ -142,6 +142,9 @@ const Template: Story<IconProps> = () => (
       <button onClick={() => copyName(IconEnum.MYSQL)}>
         <Icon name={IconEnum.MYSQL} width="20" />
       </button>
+      <button onClick={() => copyName(IconEnum.CHILDREN_ARROW)}>
+        <Icon name={IconEnum.CHILDREN_ARROW} />
+      </button>
     </div>
     <div className="storybook-icons__container max-w-sm w-full p-3 rounded bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">
       <h2 className="w-full mb-2">FontAwesome Icons</h2>

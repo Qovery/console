@@ -22,6 +22,7 @@ import {
   APPLICATION_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
+  APPLICATION_VARIABLES_URL,
 } from '@console/shared/router'
 import { Environment, StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
@@ -248,7 +249,7 @@ export function Container(props: ContainerProps) {
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_METRICS_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_METRICS_URL,
-    },
+    },*/
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Variables',
@@ -256,7 +257,7 @@ export function Container(props: ContainerProps) {
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
-    },*/
+    },
   ]
 
   return (

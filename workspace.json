@@ -7,6 +7,7 @@
     "domains-application": "libs/domains/application",
     "domains-database": "libs/domains/database",
     "domains-environment": "libs/domains/environment",
+    "domains-environment-variable": "libs/domains/environment-variable",
     "domains-organization": "libs/domains/organization",
     "domains-projects": "libs/domains/projects",
     "domains-user": "libs/domains/user",
