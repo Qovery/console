@@ -1,5 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+import { renameStatus, upperCaseFirstLetter } from '@console/shared/utils'
 import { IconEnum } from '@console/shared/enums'
 import { Icon } from '@console/shared/ui'
 
@@ -60,14 +60,6 @@ export function StatusLabel(props: StatusLabelProps) {
         return true
       default:
         return false
-    }
-  }
-
-  function renameStatus(value?: string): string | undefined {
-    if (value === StateEnum.RUNNING) {
-      return 'DEPLOYMENT OK'
-    } else {
-      return value
     }
   }
 

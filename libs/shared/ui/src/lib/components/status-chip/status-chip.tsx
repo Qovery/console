@@ -1,5 +1,5 @@
 import { StateEnum, DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+import { renameStatus, upperCaseFirstLetter } from '@console/shared/utils'
 import { Icon, Tooltip } from '@console/shared/ui'
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 
@@ -94,14 +94,6 @@ export function StatusChip(props: StatusChipProps) {
         return true
       default:
         return false
-    }
-  }
-
-  function renameStatus(value?: string): string | undefined {
-    if (value === StateEnum.RUNNING) {
-      return 'DEPLOYMENT OK'
-    } else {
-      return value
     }
   }
 

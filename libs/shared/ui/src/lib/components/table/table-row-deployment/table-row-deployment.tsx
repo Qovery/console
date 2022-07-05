@@ -11,8 +11,8 @@ import {
   TagCommit,
   Tooltip,
 } from '@console/shared/ui'
-import { timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
-import { DeploymentHistoryApplication, DeploymentHistoryDatabase, StateEnum } from 'qovery-typescript-axios'
+import { renameStatus, timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
+import { DeploymentHistoryApplication, DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
@@ -61,14 +61,6 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
       setCopy(false)
       setHoverId(false)
     }, 2000)
-  }
-
-  function renameStatus(value?: string): string | undefined {
-    if (value === StateEnum.RUNNING) {
-      return 'DEPLOYMENT OK'
-    } else {
-      return value
-    }
   }
 
   return (
