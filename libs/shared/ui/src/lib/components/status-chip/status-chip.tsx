@@ -97,11 +97,19 @@ export function StatusChip(props: StatusChipProps) {
     }
   }
 
+  function renameStatus(value?: string): string | undefined {
+    if (value === StateEnum.RUNNING) {
+      return 'DEPLOYMENT OK'
+    } else {
+      return value
+    }
+  }
+
   return (
     <Tooltip
       content={
         <span>
-          {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
+          {upperCaseFirstLetter(renameStatus(status)?.replace('_', ' ').toLowerCase())}
           {appendTooltipMessage ? ' - ' + appendTooltipMessage : ''}
         </span>
       }
