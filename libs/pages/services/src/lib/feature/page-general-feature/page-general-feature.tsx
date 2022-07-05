@@ -1,26 +1,23 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { Application, Database, Environment } from 'qovery-typescript-axios'
+import { Environment } from 'qovery-typescript-axios'
 import {
   applicationFactoryMock,
-  applicationsLoadingStatus,
   fetchApplicationsStatus,
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
 import { AppDispatch, RootState } from '@console/store/data'
 import { BaseLink } from '@console/shared/ui'
 import { selectEnvironmentById } from '@console/domains/environment'
-import { databasesLoadingStatus, fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
+import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
+import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {
   const { environmentId = '' } = useParams()
 
   const loadingServices = applicationFactoryMock(3)
-  const loadingApplicationsStatus = useSelector<RootState>((state) => applicationsLoadingStatus(state))
-  const loadingDatabasesStatus = useSelector<RootState>((state) => databasesLoadingStatus(state))
-
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
@@ -31,11 +28,11 @@ export function PageGeneralFeature() {
     return () => clearInterval(fetchServicesStatusByInterval)
   }, [dispatch, environmentId])
 
-  const applicationsByEnv = useSelector<RootState, Application[]>((state: RootState) =>
+  const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
-  const databasesByEnv = useSelector<RootState, Database[]>((state: RootState) =>
+  const databasesByEnv = useSelector<RootState, DatabaseEntity[]>((state: RootState) =>
     selectDatabasesEntitiesByEnvId(state, environmentId)
   )
 
@@ -51,15 +48,37 @@ export function PageGeneralFeature() {
     },
   ]
 
-  const isLoading =
-    loadingApplicationsStatus !== 'loaded' &&
-    applicationsByEnv.length === 0 &&
-    loadingDatabasesStatus !== 'loaded' &&
-    databasesByEnv.length === 0
+  function isLoading() {
+    let isLoading = true
+
+    if (applicationsByEnv.length > 0 && databasesByEnv.length > 0) {
+      if (
+        applicationsByEnv.filter((application) => application.status?.id).length > 0 &&
+        databasesByEnv.filter((database) => database.status?.id).length > 0
+      ) {
+        isLoading = false
+      }
+      return isLoading
+    }
+
+    if (applicationsByEnv.length > 0) {
+      if (applicationsByEnv.filter((application) => application.status?.id).length > 0) {
+        isLoading = false
+      }
+    }
+
+    if (databasesByEnv.length > 0) {
+      if (databasesByEnv.filter((database) => database.status?.id).length > 0) {
+        isLoading = false
+      }
+    }
+
+    return isLoading
+  }
 
   return (
     <PageGeneral
-      services={isLoading ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
+      services={isLoading() ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
     />
