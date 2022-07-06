@@ -62,6 +62,9 @@ const FaIcons = [
   'icon-solid-arrow-down-to-line',
   'icon-solid-arrow-up-to-line',
   'icon-solid-triangle-exclamation',
+  'icon-solid-eye',
+  'icon-solid-eye-slash',
+  'icon-solid-user-secret',
   // schema: favicons name
 ]
 
@@ -141,6 +144,9 @@ const Template: Story<IconProps> = () => (
       </button>
       <button onClick={() => copyName(IconEnum.MYSQL)}>
         <Icon name={IconEnum.MYSQL} width="20" />
+      </button>
+      <button onClick={() => copyName(IconEnum.CHILDREN_ARROW)}>
+        <Icon name={IconEnum.CHILDREN_ARROW} />
       </button>
     </div>
     <div className="storybook-icons__container max-w-sm w-full p-3 rounded bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 flex flex-wrap gap-x-2 justify-center mb-6 mx-auto">

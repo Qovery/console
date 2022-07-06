@@ -1,9 +1,9 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import {
-  initialOrganizationState,
-  organization,
   clusterReducer,
   initialClusterState,
+  initialOrganizationState,
+  organization,
 } from '@console/domains/organization'
 import {
   deploymentRulesReducer,
@@ -15,6 +15,12 @@ import { initialUserSignUpState, initialUserState, user, userSignUp } from '@con
 import { applications, initialApplicationsState } from '@console/domains/application'
 import { environments, initialEnvironmentsState } from '@console/domains/environment'
 import { databases, initialDatabasesState } from '@console/domains/database'
+import {
+  environmentVariables,
+  initialEnvironmentVariablesState,
+  initialSecretEnvironmentVariablesState,
+  secretEnvironmentVariables,
+} from '@console/domains/environment-variable'
 
 export const uiReducer = combineReducers({
   user: user,
@@ -25,6 +31,11 @@ export const projectReducer = combineReducers({
   deploymentRules: deploymentRulesReducer,
 })
 
+export const environmentVariable = combineReducers({
+  public: environmentVariables,
+  secret: secretEnvironmentVariables,
+})
+
 export const entitiesReducer = combineReducers({
   organization: organization,
   cluster: clusterReducer,
@@ -33,6 +44,7 @@ export const entitiesReducer = combineReducers({
   environments: environments,
   applications: applications,
   databases: databases,
+  environmentVariable,
 })
 
 export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
@@ -63,5 +75,9 @@ export const initialRootState = (): RootState => ({
     environments: initialEnvironmentsState,
     applications: initialApplicationsState,
     databases: initialDatabasesState,
+    environmentVariable: {
+      public: initialEnvironmentVariablesState,
+      secret: initialSecretEnvironmentVariablesState,
+    },
   },
 })

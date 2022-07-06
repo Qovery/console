@@ -20,6 +20,7 @@
       "@console/domains/application": ["libs/domains/application/src/index.ts"],
       "@console/domains/database": ["libs/domains/database/src/index.ts"],
       "@console/domains/environment": ["libs/domains/environment/src/index.ts"],
+      "@console/domains/environment-variable": ["libs/domains/environment-variable/src/index.ts"],
       "@console/domains/organization": ["libs/domains/organization/src/index.ts"],
       "@console/domains/projects": ["libs/domains/projects/src/index.ts"],
       "@console/domains/user": ["libs/domains/user/src/index.ts"],
