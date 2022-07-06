@@ -1,5 +1,5 @@
 import { StateEnum, DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
-import { renameStatus, upperCaseFirstLetter } from '@console/shared/utils'
+import { upperCaseFirstLetter } from '@console/shared/utils'
 import { Icon, Tooltip } from '@console/shared/ui'
 import { IconEnum, RunningStatus } from '@console/shared/enums'
 
@@ -101,7 +101,7 @@ export function StatusChip(props: StatusChipProps) {
     <Tooltip
       content={
         <span>
-          {upperCaseFirstLetter(renameStatus(status)?.replace('_', ' ').toLowerCase())}
+          {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
           {appendTooltipMessage ? ' - ' + appendTooltipMessage : ''}
         </span>
       }
