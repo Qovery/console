@@ -54,7 +54,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                 ) : (
                   ''
                 )}
-                <Tooltip content={variable.key || ''}>
+                <Tooltip align="start" content={variable.key || ''}>
                   <span className="truncate w-full">{variable.key}</span>
                 </Tooltip>
               </div>
