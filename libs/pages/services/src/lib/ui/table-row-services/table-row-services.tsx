@@ -17,8 +17,6 @@ import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
 
-//import React, { useEffect } from 'react'
-
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
   type: ServicesEnum
@@ -126,7 +124,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               <StatusChip status={data.status && data.status.state} />
             </Skeleton>
           ) : (
-            <div>
+            <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
               {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
                 <StatusChip status={data.status && data.status.state} />
               ) : (
@@ -139,13 +137,13 @@ export function TableRowServices(props: TableRowServicesProps) {
                   }
                 />
               )}
-            </div>
+            </Skeleton>
           )}
-          <Skeleton show={isLoading} width={16} height={16}>
-            <div className="ml-2 mr-2">
+          <div className="ml-2 mr-2">
+            <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
               <Icon name={type === ServicesEnum.APPLICATION ? IconEnum.APPLICATION : IconEnum.DATABASE} width="20" />
-            </div>
-          </Skeleton>
+            </Skeleton>
+          </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
             <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
           </Skeleton>

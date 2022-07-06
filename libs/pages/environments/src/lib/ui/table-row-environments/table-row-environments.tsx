@@ -67,7 +67,9 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     <TableRow columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
-          <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
+          <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
+            <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
+          </Skeleton>
           <Tooltip
             content={
               <p className="flex">
