@@ -95,9 +95,11 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <StatusLabel status={data.status && data.status.state} />
-                <span className="text-xs text-text-300 mx-3 font-medium">
-                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
-                </span>
+                {data.status?.last_deployment_date && (
+                  <span className="text-xs text-text-300 mx-3 font-medium">
+                    {timeAgo(new Date(data.status.last_deployment_date))} ago
+                  </span>
+                )}
               </p>
               <ButtonIconAction
                 actions={buttonActionsDefault}
