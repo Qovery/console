@@ -5,13 +5,13 @@ export interface NavigationLeftProps {
   className?: string
 }
 
-export interface LinkProps {
+interface LinkProps {
   title: string
-  url: string
+  url?: string
   onClick?: () => void
   subLinks?: {
     title: string
-    link: string
+    url?: string
     onClick?: () => void
   }[]
 }
@@ -28,13 +28,13 @@ export function NavigationLeft(props: NavigationLeftProps) {
   return (
     <div className={`flex flex-col px-5 ${className}`}>
       {links.map((link, index) =>
-        !link.onClick && !link.subLinks ? (
+        !link.onClick && !link.subLinks && link.url ? (
           <Link key={index} to={link.url} className={linkClassName}>
             {link.title}
           </Link>
         ) : !link.onClick && link.subLinks ? (
           <>
-            <span key={index} onClick={() => link.onClick} className={linkClassName}>
+            <span key={index} className={linkClassName}>
               {link.title}
             </span>
             <div>

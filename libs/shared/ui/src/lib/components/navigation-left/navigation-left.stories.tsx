@@ -24,7 +24,11 @@ Primary.args = {
     },
     {
       title: 'Deployment',
-      url: '/deployment',
+      subLinks: [
+        {
+          title: 'General',
+        },
+      ],
     },
   ],
 }
