@@ -64,6 +64,8 @@
     "react-use-websocket": "^4.2.0",
     "regenerator-runtime": "0.13.7",
     "tailwindcss": "^3.0.24",
+    "@nrwl/react": "14.3.6",
+    "@nrwl/web": "14.3.6",
     "tslib": "^2.0.0"
   },
   "resolutions": {
@@ -77,8 +79,6 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.12.13",
     "@nrwl/jest": "14.3.1",
-    "@nrwl/react": "14.3.6",
-    "@nrwl/web": "14.3.6",
     "@semantic-release/changelog": "^6.0.1",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.0.4",
