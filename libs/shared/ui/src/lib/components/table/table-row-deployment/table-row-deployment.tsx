@@ -152,7 +152,12 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
             {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
               <>
                 <Avatar
-                  firstName={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name || ''}
+                  firstName={
+                    (data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name.split(' ')[0] || ''
+                  }
+                  lastName={
+                    (data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name.split(' ')[1] || ''
+                  }
                   url={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_avatar_url}
                   style={AvatarStyle.STROKED}
                   size={28}

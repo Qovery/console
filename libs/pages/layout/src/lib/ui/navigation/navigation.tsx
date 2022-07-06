@@ -137,7 +137,7 @@ export function Navigation(props: NavigationProps) {
           buttonClose={false}
           trigger={
             <div className="cursor-pointer">
-              <Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB} />
+              <Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB} noTooltip />
             </div>
           }
         >

@@ -20,8 +20,8 @@ export function LastCommit(props: LastCommitProps) {
         <Skeleton rounded={true} height={32} width={32} show={!loadingStatus || loadingStatus === 'loading'}>
           <Avatar
             className="border-2 border-element-light-lighter-400"
-            firstName={commit?.author_name || 'e'}
-            lastName={commit?.author_name || 'r'}
+            firstName={commit?.author_name.split(' ')[0] || ''}
+            lastName={commit?.author_name.split(' ')[1] || ''}
             url={commit?.author_avatar_url}
           />
         </Skeleton>
