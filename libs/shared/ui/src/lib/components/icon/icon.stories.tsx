@@ -62,6 +62,9 @@ const FaIcons = [
   'icon-solid-arrow-down-to-line',
   'icon-solid-arrow-up-to-line',
   'icon-solid-triangle-exclamation',
+  'icon-solid-eye',
+  'icon-solid-eye-slash',
+  'icon-solid-user-secret',
   // schema: favicons name
 ]
 

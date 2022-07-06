@@ -73,17 +73,6 @@ export const selectAllEnvironmentVariables = createSelector(getEnvironmentVariab
 
 export const selectEnvironmentVariablesEntities = createSelector(getEnvironmentVariablesState, selectEntities)
 
-// export const selectEnvironmentVariablesByApplicationId = (
-//   state: RootState,
-//   applicationId: string
-// ): EnvironmentVariableEntity[] => {
-//   const _state = getEnvironmentVariablesState(state)
-//   return getEntitiesByIds<EnvironmentVariableEntity>(
-//     _state.entities,
-//     _state?.joinApplicationEnvironmentVariable[applicationId]
-//   )
-// }
-
 export const selectEnvironmentVariablesByApplicationId = createSelector(
   [getEnvironmentVariablesState, (state, applicationId: string) => applicationId],
   (state, applicationId) => {

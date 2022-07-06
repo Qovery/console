@@ -21,14 +21,6 @@ export interface TableRowEnvironmentVariableProps {
 export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariableProps) {
   const { variable, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, rowActions } = props
 
-  // const buttonActionsDefault = [
-  //   {
-  //     iconLeft: <Icon name="icon-solid-play" />,
-  //     iconRight: <Icon name="icon-solid-angle-down" />,
-  //     menusClassName: 'border-r border-r-element-light-lighter-500',
-  //   },
-  // ]
-
   return (
     <TableRow columnsWidth={columnsWidth}>
       <>

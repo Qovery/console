@@ -103,22 +103,6 @@ export function PageVariablesFeature() {
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
     </>
-    // <div>
-    //   <VariableTableHeadFeature />
-    //
-    //   <ul>
-    //     {environmentVariables.map((env) => (
-    //       <li key={env.key}>
-    //         {env.key} - {env.value}
-    //       </li>
-    //     ))}
-    //     {secretEnvironmentVariables.map((env) => (
-    //       <li key={env.key}>
-    //         {env.key} - {env.scope}
-    //       </li>
-    //     ))}
-    //   </ul>
-    // </div>
   )
 }
 
