@@ -3,7 +3,7 @@ import { RunningStatus } from '@console/shared/enums'
 
 export function renameStatus(value?: StateEnum | RunningStatus | DeploymentHistoryStatusEnum): string | undefined {
   if (value === StateEnum.RUNNING) {
-    return 'DEPLOYMENT OK'
+    return 'Deployment OK'
   } else {
     return value
   }

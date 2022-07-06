@@ -139,7 +139,10 @@ export function Container(props: ContainerProps) {
     {
       icon: (
         <Skeleton show={environment?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip status={(environment?.status && environment?.status.state) || StateEnum.STOPPED} />
+          <StatusChip
+            mustRenameStatus
+            status={(environment?.status && environment?.status.state) || StateEnum.STOPPED}
+          />
         </Skeleton>
       ),
       name: 'Deployments',
