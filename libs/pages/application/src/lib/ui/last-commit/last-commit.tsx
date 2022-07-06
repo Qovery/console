@@ -29,9 +29,15 @@ export function LastCommit(props: LastCommitProps) {
           <div className="gap-3 flex items-center">
             <TagCommit commitId={commit?.git_commit_id} />
             <span className="flex gap-2 rounded-full items-center h-7 px-3 text-text-500 text-xs font-medium border border-element-light-lighter-400">
-              <span className="h-4 w-4 rounded-full bg-progressing-400 flex items-center justify-center text-white">
-                {commitDeltaCount}
-              </span>{' '}
+              {commitDeltaCount && (
+                <span
+                  className={`h-4 ${
+                    commitDeltaCount >= 100 ? 'w-6' : 'w-4'
+                  } rounded-full bg-progressing-400 flex items-center justify-center text-white`}
+                >
+                  {commitDeltaCount && commitDeltaCount < 100 ? commitDeltaCount : '+99'}
+                </span>
+              )}{' '}
               update{commitDeltaCount && commitDeltaCount > 1 ? 's' : ''}
             </span>
           </div>
