@@ -11,7 +11,7 @@ import {
   TagCommit,
   Tooltip,
 } from '@console/shared/ui'
-import { timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
+import { renameStatus, timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
 import { DeploymentHistoryApplication, DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useParams } from 'react-router'
@@ -117,7 +117,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
             <p className="text-xs text-text-400 font-medium">
-              {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())}
+              {upperCaseFirstLetter(renameStatus(data?.status)?.replace('_', ' ').toLowerCase())}
             </p>
           </Skeleton>
         </div>
