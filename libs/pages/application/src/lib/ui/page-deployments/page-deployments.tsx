@@ -91,9 +91,7 @@ export function Deployments(props: PageDeploymentsProps) {
 
 export const PageDeployments = React.memo(Deployments, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
-  const isEqual =
-    JSON.stringify(prevProps.deployments?.length && prevProps.applicationId) ===
-    JSON.stringify(nextProps.deployments?.length && nextProps.applicationId)
+  const isEqual = JSON.stringify(prevProps.deployments?.length) === JSON.stringify(nextProps.deployments?.length)
 
   if (isEqual) {
     return true

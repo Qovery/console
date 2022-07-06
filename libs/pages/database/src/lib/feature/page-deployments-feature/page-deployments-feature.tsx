@@ -1,7 +1,8 @@
-import { DatabaseEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
+import { DatabaseEntity } from '@console/shared/interfaces'
+import { AppDispatch, RootState } from '@console/store/data'
 import {
   databaseDeploymentsFactoryMock,
   databasesLoadingStatus,
@@ -9,10 +10,12 @@ import {
   getDatabasesState,
 } from '@console/domains/database'
 import { BaseLink } from '@console/shared/ui'
-import { useEffect } from 'react'
+import { useDocumentTitle } from '@console/shared/utils'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
+  useDocumentTitle('Database Deployments - Qovery')
+
   const { databaseId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
