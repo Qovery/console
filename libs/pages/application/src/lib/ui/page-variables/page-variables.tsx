@@ -13,6 +13,7 @@ export interface PageVariablesProps {
 
 export function PageVariablesMemo(props: PageVariablesProps) {
   const { tableHead, variables, setFilterData, filterData, listHelpfulLinks } = props
+  const columnsWidth = '30% 10% 30% 15% 15%'
 
   return (
     <>
@@ -22,11 +23,16 @@ export function PageVariablesMemo(props: PageVariablesProps) {
         filterData={filterData}
         setFilterData={setFilterData}
         className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
-        columnsWidth="40% 15% 25% 10% 10%"
+        columnsWidth={columnsWidth}
       >
         <>
           {filterData.map((envVariable) => (
-            <TableRowEnvironmentVariableFeature key={envVariable.id} variable={envVariable} dataHead={tableHead} />
+            <TableRowEnvironmentVariableFeature
+              key={envVariable.id}
+              variable={envVariable}
+              dataHead={tableHead}
+              columnsWidth={columnsWidth}
+            />
           ))}
         </>
       </Table>

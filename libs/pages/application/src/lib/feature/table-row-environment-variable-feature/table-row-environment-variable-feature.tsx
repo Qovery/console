@@ -5,10 +5,11 @@ import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
   dataHead: TableHeadProps[]
+  columnsWidth?: string
 }
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
-  const { variable, dataHead } = props
+  const { variable, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
   const rowActions: ButtonIconActionElementProps[] = [
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
@@ -37,7 +38,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       dataHead={dataHead}
       rowActions={rowActions}
       isLoading={false}
-      columnsWidth="40% 15% 25% 10% 10%"
+      columnsWidth={columnsWidth}
     />
   )
 }
