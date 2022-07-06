@@ -3,12 +3,14 @@ import {
   secretEnvironmentVariables,
   secretEnvironmentVariablesAdapter,
 } from './secret-environment-variables.slice'
+import { mockSecretEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
 
 describe('secretEnvironmentVariables reducer', () => {
   it('should handle initial state', () => {
     const expected = secretEnvironmentVariablesAdapter.getInitialState({
       loadingStatus: 'not loaded',
       error: null,
+      joinApplicationSecretEnvironmentVariable: {},
     })
 
     expect(secretEnvironmentVariables(undefined, { type: '' })).toEqual(expected)
@@ -22,18 +24,28 @@ describe('secretEnvironmentVariables reducer', () => {
         loadingStatus: 'loading',
         error: null,
         entities: {},
+        joinApplicationSecretEnvironmentVariable: {},
       })
     )
 
-    state = secretEnvironmentVariables(state, fetchSecretEnvironmentVariables.fulfilled([{ id: 1 }], null, null))
+    const applicationId = '123'
+    const secretEnv = mockSecretEnvironmentVariable(false, false)
+    state = secretEnvironmentVariables(
+      state,
+      fetchSecretEnvironmentVariables.fulfilled([secretEnv], null, applicationId)
+    )
 
     expect(state).toEqual(
       expect.objectContaining({
         loadingStatus: 'loaded',
         error: null,
-        entities: { 1: { id: 1 } },
+        joinApplicationSecretEnvironmentVariable: {
+          [applicationId]: [secretEnv.id],
+        },
       })
     )
+
+    expect(state.entities[secretEnv.id]).toStrictEqual(secretEnv)
 
     state = secretEnvironmentVariables(state, fetchSecretEnvironmentVariables.rejected(new Error('Uh oh'), null, null))
 
@@ -41,7 +53,6 @@ describe('secretEnvironmentVariables reducer', () => {
       expect.objectContaining({
         loadingStatus: 'error',
         error: 'Uh oh',
-        entities: { 1: { id: 1 } },
       })
     )
   })

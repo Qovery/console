@@ -1,5 +1,5 @@
-import { EnvironmentVariable } from 'qovery-typescript-axios'
+import { Secret } from 'qovery-typescript-axios'
 
-export interface SecretEnvironmentVariableEntity extends EnvironmentVariable {
+export interface SecretEnvironmentVariableEntity extends Secret {
   variable_type: 'secret' | 'public'
 }

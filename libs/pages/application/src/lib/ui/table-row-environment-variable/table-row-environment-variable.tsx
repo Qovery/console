@@ -7,7 +7,11 @@ import {
   TableRow,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
-import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
+import {
+  EnvironmentVariableEntity,
+  EnvironmentVariableSecretOrPublic,
+  SecretEnvironmentVariableEntity,
+} from '@console/shared/interfaces'
 import { IconEnum } from '@console/shared/enums'
 
 export interface TableRowEnvironmentVariableProps {
@@ -29,14 +33,16 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
             <Skeleton show={isLoading} width={16} height={16}>
               <div className="cursor-pointer mt-0.5 text-text-600 text-ssm font-medium flex items-center">
                 {' '}
-                {variable.aliased_variable ? (
+                {(variable as EnvironmentVariableEntity).aliased_variable ||
+                (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
                   <>
                     <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
                     <span className="bg-accent3-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
                       ALIAS
                     </span>
                   </>
-                ) : variable.overridden_variable ? (
+                ) : (variable as EnvironmentVariableEntity).overridden_variable ||
+                  (variable as SecretEnvironmentVariableEntity).overridden_secret ? (
                   <>
                     <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
                     <span className="bg-brand-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
@@ -65,10 +71,14 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
         </div>
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
           <Skeleton show={isLoading} width={30} height={16}>
-            <span className="text-xs text-text-600">{variable.value}</span>
+            <span className="text-xs text-text-600">
+              {variable.variable_type === 'public' ? (variable as EnvironmentVariableEntity).value : ''}
+            </span>
           </Skeleton>
         </div>
-        <div className="text-text-600 text-ssm font-medium px-4">{variable.service_name}</div>
+        <div className="text-text-600 text-ssm font-medium px-4">
+          {variable.variable_type === 'public' ? (variable as EnvironmentVariableEntity).service_name : ''}
+        </div>
         <div className="text-text-600 text-ssm capitalize font-medium px-4 ">{variable.scope.toLowerCase()}</div>
       </>
     </TableRow>

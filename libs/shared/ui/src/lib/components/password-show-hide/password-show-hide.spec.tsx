@@ -36,4 +36,35 @@ describe('PasswordShowHide', () => {
 
     expect(baseElement).toBeTruthy()
   })
+
+  it('should disabled the tooltip showing the whole value if we are in password mode', () => {
+    const { baseElement } = render(<PasswordShowHide {...defaultProps} />)
+
+    const input = screen.getByTestId('input')
+    expect(input).toBeDisabled()
+
+    expect(baseElement).toBeTruthy()
+  })
+
+  it('should show the tooltip showing the whole value if visible mode', () => {
+    const props: PasswordShowHideProps = {
+      ...defaultProps,
+      defaultVisible: true,
+    }
+    const { baseElement } = render(<PasswordShowHide {...props} />)
+
+    const input = screen.getByTestId('input')
+    expect(input).not.toBeDisabled()
+
+    expect(baseElement).toBeTruthy()
+  })
+
+  it('should not be possible to edit the value', () => {
+    const { baseElement } = render(<PasswordShowHide {...defaultProps} />)
+
+    const input = screen.getByTestId('input')
+    expect(input.hasAttribute('readonly')).toBeTruthy()
+
+    expect(baseElement).toBeTruthy()
+  })
 })
