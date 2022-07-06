@@ -90,6 +90,7 @@ export function PageDeployments(props: PageDeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
+              id={currentData.id}
               data={currentData as DeploymentService}
               key={index}
               dataHead={tableHead}

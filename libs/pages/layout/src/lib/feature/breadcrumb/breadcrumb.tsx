@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { Breadcrumb } from '@console/shared/ui'
 import { useSelector } from 'react-redux'
 import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'

@@ -20,15 +20,25 @@ import Icon from '../../icon/icon'
 import { TableHeadProps } from '../table'
 
 export interface TableRowDeploymentProps {
+  id?: string
   data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
   dataHead: TableHeadProps[]
   columnsWidth?: string
   isLoading?: boolean
   startGroup?: boolean
+  noCommit?: boolean
 }
 
 export function TableRowDeployment(props: TableRowDeploymentProps) {
-  const { dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, startGroup, data } = props
+  const {
+    id,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    isLoading,
+    startGroup,
+    data,
+    noCommit,
+  } = props
 
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
@@ -40,9 +50,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
       onClick: () =>
         window
           .open(
-            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${
-              (data as DeploymentService).id
-            }/summary?fullscreenLogs=true`,
+            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${id}/summary?fullscreenLogs=true`,
             '_blank'
           )
           ?.focus(),
@@ -139,19 +147,23 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
             </>
           </Skeleton>
         </div>
-        <div className="flex items-center px-4 gap-2 border-element-light-lighter-400 border-l h-full">
-          {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
-            <>
-              <Avatar
-                firstName={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name || ''}
-                url={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_avatar_url}
-                style={AvatarStyle.STROKED}
-                size={28}
-              />
-              <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
-            </>
-          )}
-        </div>
+        {!noCommit && (
+          <div className="flex items-center px-4 gap-2 border-element-light-lighter-400 border-l h-full">
+            {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
+              <>
+                <Avatar
+                  firstName={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name || ''}
+                  url={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_avatar_url}
+                  style={AvatarStyle.STROKED}
+                  size={28}
+                />
+                <TagCommit
+                  commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id}
+                />
+              </>
+            )}
+          </div>
+        )}
       </>
     </TableRow>
   )

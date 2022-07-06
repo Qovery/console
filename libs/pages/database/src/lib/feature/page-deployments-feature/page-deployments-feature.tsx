@@ -2,11 +2,15 @@ import { DatabaseEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { databasesLoadingStatus, fetchDatabaseDeployments, getDatabasesState } from '@console/domains/database'
+import {
+  databaseDeploymentsFactoryMock,
+  databasesLoadingStatus,
+  fetchDatabaseDeployments,
+  getDatabasesState,
+} from '@console/domains/database'
 import { BaseLink } from '@console/shared/ui'
 import { useEffect } from 'react'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
-import { DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
 
 export function PageDeploymentsFeature() {
   const { databaseId = '' } = useParams()
@@ -16,15 +20,7 @@ export function PageDeploymentsFeature() {
     (state) => getDatabasesState(state).entities[databaseId]
   )
 
-  const loadingDatabasesDeployments = [
-    {
-      id: '1',
-      created_at: new Date().toString(),
-      updated_at: new Date().toString(),
-      name: 'someName',
-      status: DeploymentHistoryStatusEnum.SUCCESS,
-    },
-  ]
+  const loadingDatabasesDeployments = databaseDeploymentsFactoryMock(3)
 
   const loadingStatus = useSelector<RootState>((state) => databasesLoadingStatus(state))
   const loadingStatusDeployments = database?.deployments?.loadingStatus
@@ -47,6 +43,7 @@ export function PageDeploymentsFeature() {
 
   return (
     <PageDeployments
+      databaseId={database?.id}
       deployments={!isLoading ? database?.deployments?.items : loadingDatabasesDeployments}
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading}

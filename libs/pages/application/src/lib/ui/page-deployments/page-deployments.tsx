@@ -3,13 +3,14 @@ import { DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import React, { useEffect, useState } from 'react'
 
 export interface PageDeploymentsProps {
+  applicationId?: string
   deployments?: DeploymentHistoryApplication[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
 export function Deployments(props: PageDeploymentsProps) {
-  const { deployments = [], listHelpfulLinks, isLoading = true } = props
+  const { applicationId, deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryApplication[]>(deployments)
 
@@ -72,6 +73,7 @@ export function Deployments(props: PageDeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
+              id={applicationId}
               data={currentData as DeploymentHistoryApplication}
               key={index}
               dataHead={tableHead}
@@ -89,7 +91,9 @@ export function Deployments(props: PageDeploymentsProps) {
 
 export const PageDeployments = React.memo(Deployments, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
-  const isEqual = JSON.stringify(prevProps.deployments?.length) === JSON.stringify(nextProps.deployments?.length)
+  const isEqual =
+    JSON.stringify(prevProps.deployments?.length && prevProps.applicationId) ===
+    JSON.stringify(nextProps.deployments?.length && nextProps.applicationId)
 
   if (isEqual) {
     return true
