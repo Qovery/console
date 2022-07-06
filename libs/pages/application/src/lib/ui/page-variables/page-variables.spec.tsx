@@ -1,7 +1,14 @@
-import PageVariables from './page-variables'
+import PageVariables, { PageVariablesProps } from './page-variables'
 import { render } from '__tests__/utils/setup-jest'
+import { secretEnvironmentVariableFactoryMock } from '@console/domains/environment-variable'
 
-const props = {}
+const props: PageVariablesProps = {
+  variables: secretEnvironmentVariableFactoryMock(3, false, false),
+  filterData: secretEnvironmentVariableFactoryMock(3, false, false),
+  listHelpfulLinks: [],
+  setFilterData: () => {},
+  tableHead: [],
+}
 
 describe('PageVariables', () => {
   it('should render successfully', () => {
