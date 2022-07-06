@@ -37,7 +37,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       dataHead={dataHead}
       rowActions={rowActions}
       isLoading={false}
-      columnsWidth="30% 20% 25% 15% 10%"
+      columnsWidth="40% 15% 25% 10% 10%"
     />
   )
 }

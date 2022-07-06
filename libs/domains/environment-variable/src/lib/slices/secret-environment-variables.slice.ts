@@ -4,7 +4,7 @@ import { RootState } from '@console/store/data'
 import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
-export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secretEnvironmentVariables'
+export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'
 
 export const secretEnvironmentVariablesAdapter = createEntityAdapter<SecretEnvironmentVariableEntity>()
 
@@ -67,7 +67,7 @@ export const secretEnvironmentVariablesActions = secretEnvironmentVariablesSlice
 const { selectAll, selectEntities } = secretEnvironmentVariablesAdapter.getSelectors()
 
 export const getSecretEnvironmentVariablesState = (rootState: RootState): SecretEnvironmentVariablesState =>
-  rootState['entities'][SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY]
+  rootState['entities']['environmentVariable'][SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY]
 
 export const selectAllSecretEnvironmentVariables = createSelector(getSecretEnvironmentVariablesState, selectAll)
 

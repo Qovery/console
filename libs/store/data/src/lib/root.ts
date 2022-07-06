@@ -31,6 +31,11 @@ export const projectReducer = combineReducers({
   deploymentRules: deploymentRulesReducer,
 })
 
+export const environmentVariable = combineReducers({
+  public: environmentVariables,
+  secret: secretEnvironmentVariables,
+})
+
 export const entitiesReducer = combineReducers({
   organization: organization,
   cluster: clusterReducer,
@@ -39,8 +44,7 @@ export const entitiesReducer = combineReducers({
   environments: environments,
   applications: applications,
   databases: databases,
-  environmentVariables: environmentVariables,
-  secretEnvironmentVariables: secretEnvironmentVariables,
+  environmentVariable,
 })
 
 export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
@@ -71,7 +75,9 @@ export const initialRootState = (): RootState => ({
     environments: initialEnvironmentsState,
     applications: initialApplicationsState,
     databases: initialDatabasesState,
-    environmentVariables: initialEnvironmentVariablesState,
-    secretEnvironmentVariables: initialSecretEnvironmentVariablesState,
+    environmentVariable: {
+      public: initialEnvironmentVariablesState,
+      secret: initialSecretEnvironmentVariablesState,
+    },
   },
 })

@@ -18,4 +18,5 @@ Primary.args = {
   value: 'Un text très long ça te tenterait ou bien\n pour voir comment le truc sen sort ?',
   defaultVisible: false,
   isSecret: false,
+  canCopy: false,
 }

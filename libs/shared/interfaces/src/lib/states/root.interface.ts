@@ -21,7 +21,9 @@ export type RootState = {
     }
     environments: EnvironmentsState
     applications: ApplicationsState
-    environmentVariable: EnvironmentVariablesState
-    secretEnvironmentVariable: SecretEnvironmentVariablesState
+    environmentVariable: {
+      public: EnvironmentVariablesState
+      secret: SecretEnvironmentVariablesState
+    }
   }
 }

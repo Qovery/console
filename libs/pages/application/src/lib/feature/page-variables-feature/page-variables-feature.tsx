@@ -8,15 +8,17 @@ import {
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@console/domains/environment-variable'
 import { useParams } from 'react-router'
-import { BaseLink, HelpSection, Table, TableHeadProps } from '@console/shared/ui'
+import { BaseLink, TableHeadProps } from '@console/shared/ui'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
-import TableRowEnvironmentVariableFeature from '../table-row-environment-variable-feature/table-row-environment-variable-feature'
+import { useDocumentTitle } from '@console/shared/utils'
+import PageVariables from '../../ui/page-variables/page-variables'
 
 export function PageVariablesFeature() {
+  useDocumentTitle('Environment Variables – Qovery')
   const dispatch = useDispatch<AppDispatch>()
   const { applicationId = '' } = useParams()
   const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>([])
@@ -47,9 +49,6 @@ export function PageVariablesFeature() {
     {
       title: 'Update',
       className: 'pl-4 pr-12 text-end',
-      sort: {
-        key: 'updated_at',
-      },
     },
     {
       title: 'Value',
@@ -84,25 +83,13 @@ export function PageVariablesFeature() {
   ]
 
   return (
-    <>
-      <Table
-        dataHead={tableHead}
-        defaultData={[...environmentVariables, ...secretEnvironmentVariables]}
-        filterData={data}
-        setFilterData={setData}
-        className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
-        columnsWidth="30% 20% 25% 15% 10%"
-      >
-        <>
-          {data.map((envVariable) => (
-            <TableRowEnvironmentVariableFeature key={envVariable.id} variable={envVariable} dataHead={tableHead} />
-          ))}
-        </>
-      </Table>
-      <div className="bg-white rounded-b flex flex-grow flex-col justify-end">
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
-      </div>
-    </>
+    <PageVariables
+      tableHead={tableHead}
+      variables={[...environmentVariables, ...secretEnvironmentVariables]}
+      setFilterData={setData}
+      filterData={data}
+      listHelpfulLinks={listHelpfulLinks}
+    />
   )
 }
 

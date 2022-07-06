@@ -2,9 +2,11 @@ import {
   ButtonIconAction,
   ButtonIconActionElementProps,
   Icon,
+  PasswordShowHide,
   Skeleton,
   TableHeadProps,
   TableRow,
+  Tooltip,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
 import {
@@ -29,9 +31,9 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
     <TableRow columnsWidth={columnsWidth}>
       <>
         <div className="flex items-center px-4">
-          <div className="mx-3">
+          <div className="mx-3 w-full">
             <Skeleton show={isLoading} width={16} height={16}>
-              <div className="cursor-pointer mt-0.5 text-text-600 text-ssm font-medium flex items-center">
+              <div className="cursor-pointer w-full mt-0.5 text-text-600 text-ssm font-medium flex items-center">
                 {' '}
                 {(variable as EnvironmentVariableEntity).aliased_variable ||
                 (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
@@ -46,13 +48,15 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                   <>
                     <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
                     <span className="bg-brand-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
-                      ALIAS
+                      OVERRIDE
                     </span>
                   </>
                 ) : (
                   ''
                 )}
-                {variable.key}
+                <Tooltip content={variable.key || ''}>
+                  <span className="truncate w-full">{variable.key}</span>
+                </Tooltip>
               </div>
             </Skeleton>
           </div>
@@ -70,10 +74,18 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           </Skeleton>
         </div>
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          <Skeleton show={isLoading} width={30} height={16}>
-            <span className="text-xs text-text-600">
-              {variable.variable_type === 'public' ? (variable as EnvironmentVariableEntity).value : ''}
-            </span>
+          <Skeleton show={isLoading} width={30} height={16} className="w-full">
+            <div className="text-xs text-text-600 w-full">
+              {variable.variable_type === 'public' ? (
+                <PasswordShowHide
+                  value={(variable as EnvironmentVariableEntity).value}
+                  defaultVisible={false}
+                  canCopy={true}
+                />
+              ) : (
+                <PasswordShowHide value="" defaultVisible={false} isSecret={true} />
+              )}
+            </div>
           </Skeleton>
         </div>
         <div className="text-text-600 text-ssm font-medium px-4">

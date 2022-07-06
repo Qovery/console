@@ -5,7 +5,7 @@ import { RootState } from '@console/store/data'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 
-export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'environmentVariables'
+export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'public'
 export const environmentVariablesAdapter = createEntityAdapter<EnvironmentVariableEntity>()
 
 const applicationEnvironmentVariableApi = new ApplicationEnvironmentVariableApi()
@@ -67,7 +67,7 @@ export const environmentVariablesActions = environmentVariablesSlice.actions
 const { selectAll, selectEntities } = environmentVariablesAdapter.getSelectors()
 
 export const getEnvironmentVariablesState = (rootState: RootState): EnvironmentVariablesState =>
-  rootState['entities'][ENVIRONMENT_VARIABLES_FEATURE_KEY]
+  rootState['entities']['environmentVariable'][ENVIRONMENT_VARIABLES_FEATURE_KEY]
 
 export const selectAllEnvironmentVariables = createSelector(getEnvironmentVariablesState, selectAll)
 

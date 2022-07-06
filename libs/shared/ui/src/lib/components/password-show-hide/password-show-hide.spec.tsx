@@ -31,8 +31,8 @@ describe('PasswordShowHide', () => {
       toggleButton.click()
     })
 
-    const input = screen.getByTestId('input')
-    expect(input.getAttribute('type')).toBe('text')
+    const value = screen.getByTestId('visible_value')
+    expect(value).toBeVisible()
 
     expect(baseElement).toBeTruthy()
   })
@@ -53,8 +53,8 @@ describe('PasswordShowHide', () => {
     }
     const { baseElement } = render(<PasswordShowHide {...props} />)
 
-    const input = screen.getByTestId('input')
-    expect(input).not.toBeDisabled()
+    const value = screen.getByTestId('visible_value')
+    expect(value).toBeVisible()
 
     expect(baseElement).toBeTruthy()
   })
@@ -64,6 +64,26 @@ describe('PasswordShowHide', () => {
 
     const input = screen.getByTestId('input')
     expect(input.hasAttribute('readonly')).toBeTruthy()
+
+    expect(baseElement).toBeTruthy()
+  })
+
+  it('click on copy should not hide the password', () => {
+    const props = {
+      ...defaultProps,
+      canCopy: true,
+      visible: true,
+    }
+    const { baseElement } = render(<PasswordShowHide {...props} />)
+
+    const toggleButton = screen.getByTestId('toggle-button')
+
+    act(() => {
+      toggleButton.click()
+    })
+
+    const value = screen.getByTestId('visible_value')
+    expect(value).toBeVisible()
 
     expect(baseElement).toBeTruthy()
   })

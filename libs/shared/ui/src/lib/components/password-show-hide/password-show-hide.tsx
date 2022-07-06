@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
+import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard'
 
 export interface PasswordShowHideProps {
   value: string
   defaultVisible: boolean
   isSecret?: boolean
   className?: string
+  canCopy?: boolean
 }
 
 export function PasswordShowHide(props: PasswordShowHideProps) {
-  const { value = '', isSecret = false, className = '' } = props
+  const { value = '', isSecret = false, className = '', canCopy = false } = props
   const [visible, setVisible] = useState<boolean>(props.defaultVisible)
 
   return (
@@ -21,10 +23,20 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
         <button
           data-testid="toggle-button"
           className="flex items-center mr-3 text-text-500"
-          onClick={() => setVisible(!visible)}
+          onClick={() => {
+            if (!visible) {
+              setVisible(!visible)
+            } else {
+              !canCopy && setVisible(!visible)
+            }
+          }}
         >
           {visible ? (
-            <Icon className="text-xs" name="icon-solid-eye-slash" />
+            !canCopy ? (
+              <Icon className="text-xs" name="icon-solid-eye-slash" />
+            ) : (
+              <CopyToClipboard data-testid="copy" content={value} />
+            )
           ) : (
             <Icon className="text-xs" name="icon-solid-eye" />
           )}
@@ -32,16 +44,20 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
       )}
 
       <Tooltip content={value}>
-        <input
-          type={visible ? 'text' : 'password'}
-          value={isSecret ? 'Ōtsuka Station' : visible ? value : value.substring(0, 15)}
-          className={`bg-transparent outline-0 border-0 overflow-hidden text-ellipsis ${
-            visible ? 'text-text-600' : ''
-          }`}
-          readOnly
-          disabled={!visible}
-          data-testid="input"
-        />
+        {visible ? (
+          <div data-testid="visible_value" className="truncate text-text-600">
+            {value}
+          </div>
+        ) : (
+          <input
+            type={visible ? 'text' : 'password'}
+            value={isSecret ? 'Ōtsuka Station' : visible ? value : value.substring(0, 15)}
+            className={`bg-transparent outline-0 w-full border-0 overflow-hidden text-ellipsis`}
+            readOnly
+            disabled={!visible}
+            data-testid="input"
+          />
+        )}
       </Tooltip>
     </div>
   )
