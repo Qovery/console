@@ -84,6 +84,9 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
         isDisabled={disabled}
         value={selected}
       />
+      <div className="absolute top-1/2 -translate-y-1/2 right-4">
+        <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+      </div>
     </div>
   )
 }
