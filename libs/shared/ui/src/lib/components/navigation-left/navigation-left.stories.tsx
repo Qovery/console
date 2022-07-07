@@ -20,10 +20,32 @@ Primary.args = {
   links: [
     {
       title: 'General',
-      url: '/general',
+      url: '/',
+      icon: 'icon-solid-wheel',
     },
     {
       title: 'Deployment',
+      icon: 'icon-solid-wheel',
+      subLinks: [
+        {
+          title: 'General',
+        },
+        {
+          title: 'Dependencies',
+          url: '/',
+        },
+        {
+          title: 'Restrictions',
+        },
+      ],
+    },
+    {
+      title: 'Preview Environments',
+      icon: 'icon-solid-wheel',
+    },
+    {
+      title: 'Advanced settings',
+      icon: 'icon-solid-wheel',
       subLinks: [
         {
           title: 'General',
