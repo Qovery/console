@@ -7,6 +7,7 @@ export interface NavigationLeftProps {
 
 interface LinkProps {
   title: string
+  icon?: string
   url?: string
   onClick?: () => void
   subLinks?: {
@@ -21,8 +22,10 @@ export function NavigationLeft(props: NavigationLeftProps) {
 
   const isActive = false
 
-  const linkClassName = `p-2 rounded font-medium ${
-    isActive ? 'text-brand-500 bg-brand-50' : 'hover:text-text-500 hover:bg-element-light-lighter-300'
+  const linkClassName = `px-2 py-[6px] rounded font-medium cursor-pointer ${
+    isActive
+      ? 'text-brand-500 bg-brand-50 hover:text-text-600'
+      : 'text-text-400 hover:text-text-500 hover:bg-element-light-lighter-300'
   }`
 
   return (
@@ -37,9 +40,11 @@ export function NavigationLeft(props: NavigationLeftProps) {
             <span key={index} className={linkClassName}>
               {link.title}
             </span>
-            <div>
+            <div className="w-full h-full">
               {link.subLinks.map((subLink, index) => (
-                <span key={index}>{subLink.title}</span>
+                <div key={index} className={`${linkClassName} pl-9`}>
+                  {subLink.title}
+                </div>
               ))}
             </div>
           </>
