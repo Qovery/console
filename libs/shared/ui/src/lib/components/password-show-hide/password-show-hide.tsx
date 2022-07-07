@@ -34,24 +34,25 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
           )}
         </button>
       )}
-
-      <Tooltip content={value}>
-        {visible ? (
-          <div data-testid="visible_value" className="truncate text-text-600">
-            {value}
-          </div>
-        ) : (
-          <input
-            type={visible ? 'text' : 'password'}
-            value={'Ōtsuka Station 2018'}
-            className={`bg-transparent outline-0 w-full border-0 overflow-hidden text-ellipsis`}
-            readOnly
-            disabled={!visible}
-            data-testid="input"
-          />
-        )}
-      </Tooltip>
-      {visible && canCopy && <CopyToClipboard className="ml-2" data-testid="copy" content={value} />}
+      <div className="flex grow">
+        <Tooltip content={value}>
+          {visible ? (
+            <div data-testid="visible_value" className="truncate text-text-600">
+              {value}
+            </div>
+          ) : (
+            <input
+              type={visible ? 'text' : 'password'}
+              value={'Ōtsuka Station 2018 lets go yes'}
+              className={`inline-flex bg-transparent outline-0 border-0 overflow-hidden text-ellipsis`}
+              readOnly
+              disabled={!visible}
+              data-testid="input"
+            />
+          )}
+        </Tooltip>
+        {!isSecret && canCopy && <CopyToClipboard className="ml-2" data-testid="copy" content={value} />}
+      </div>
     </div>
   )
 }

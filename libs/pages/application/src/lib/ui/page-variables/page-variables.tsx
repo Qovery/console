@@ -1,6 +1,6 @@
 import { HelpSection, Table, TableHeadProps } from '@console/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
-import { EnvironmentVariableSecretOrPublic, LoadingStatus } from '@console/shared/interfaces'
+import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
 import React, { Dispatch, SetStateAction } from 'react'
 
 export interface PageVariablesProps {
@@ -8,7 +8,6 @@ export interface PageVariablesProps {
   variables: EnvironmentVariableSecretOrPublic[]
   setFilterData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   filterData: EnvironmentVariableSecretOrPublic[]
-  loadingStatus?: LoadingStatus
   isLoading: boolean
 }
 
@@ -38,7 +37,7 @@ export function PageVariablesMemo(props: PageVariablesProps) {
             />
           ))}
 
-          <div className="bg-white rounded-b flex flex-grow flex-col justify-end">
+          <div className="bg-white rounded-b flex flex-col justify-end">
             <HelpSection
               description="Need help? You may find these links useful"
               links={[

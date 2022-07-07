@@ -74,9 +74,9 @@ export function TabsFeature() {
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
-      active: location.pathname.includes(
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL
-      ),
+      active:
+        location.pathname ===
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
     },
     /*{

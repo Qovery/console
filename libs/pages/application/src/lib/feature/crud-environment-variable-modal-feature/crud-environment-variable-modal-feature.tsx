@@ -3,20 +3,10 @@ import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-mod
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
-import {
-  createAliasEnvironmentVariables,
-  createAliasSecret,
-  createEnvironmentVariables,
-  createOverrideEnvironmentVariables,
-  createOverrideSecret,
-  createSecret,
-  editEnvironmentVariables,
-  editSecret,
-  getEnvironmentVariablesState,
-} from '@console/domains/environment-variable'
+import { getEnvironmentVariablesState } from '@console/domains/environment-variable'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { postEnvironmentActionsRestart } from '@console/domains/environment'
+import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
@@ -39,6 +29,13 @@ export enum EnvironmentVariableType {
   ALIAS = 'ALIAS',
 }
 
+export interface DataFormEnvironmentVariableInterface {
+  key: string
+  value: string
+  scope: string
+  isSecret: boolean
+}
+
 export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariableModalFeatureProps) {
   const { variable, mode, type } = props
   const dispatch = useDispatch<AppDispatch>()
@@ -53,12 +50,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])
 
-  const methods = useForm<{
-    key: string
-    value: string
-    scope: string
-    isSecret: boolean
-  }>({
+  const methods = useForm<DataFormEnvironmentVariableInterface>({
     defaultValues: {
       key: variable?.key,
       scope: variable?.scope,
@@ -68,199 +60,9 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (data) {
-      let entityId
-      setLoading(true)
-      switch (data.scope) {
-        case EnvironmentVariableScopeEnum.ENVIRONMENT:
-          entityId = props.environmentId
-          break
-        case EnvironmentVariableScopeEnum.PROJECT:
-          entityId = props.projectId
-          break
-        case EnvironmentVariableScopeEnum.APPLICATION:
-        default:
-          entityId = props.applicationId
-          break
-      }
-
-      const toasterCallback = () => {
-        dispatch(postEnvironmentActionsRestart({ projectId: props.projectId, environmentId: props.environmentId }))
-      }
-
-      if (!data.isSecret) {
-        if (props.mode === EnvironmentVariableCrudMode.CREATION) {
-          switch (props.type) {
-            case EnvironmentVariableType.OVERRIDE:
-              dispatch(
-                createOverrideEnvironmentVariables({
-                  entityId,
-                  applicationId: props.applicationId,
-                  environmentVariableRequest: {
-                    value: data.value,
-                  },
-                  environmentVariableId: variable?.id || '',
-                  scope: data.scope as EnvironmentVariableScopeEnum,
-                  toasterCallback,
-                })
-              )
-                .then(() => {
-                  setClosing(true)
-                })
-                .finally(() => {
-                  setLoading(false)
-                })
-              break
-            case EnvironmentVariableType.ALIAS:
-              dispatch(
-                createAliasEnvironmentVariables({
-                  entityId,
-                  applicationId: props.applicationId,
-                  environmentVariableRequest: {
-                    key: data.key,
-                  },
-                  environmentVariableId: variable?.id || '',
-                  scope: data.scope as EnvironmentVariableScopeEnum,
-                  toasterCallback,
-                })
-              )
-                .then(() => {
-                  setClosing(true)
-                })
-                .finally(() => {
-                  setLoading(false)
-                })
-
-              break
-            default:
-              dispatch(
-                createEnvironmentVariables({
-                  entityId,
-                  applicationId: props.applicationId,
-                  environmentVariableRequest: {
-                    key: data.key,
-                    value: data.value,
-                  },
-                  scope: data.scope as EnvironmentVariableScopeEnum,
-                  toasterCallback,
-                })
-              )
-                .then(() => {
-                  setClosing(true)
-                })
-                .finally(() => {
-                  setLoading(false)
-                })
-              break
-          }
-        } else {
-          dispatch(
-            editEnvironmentVariables({
-              entityId,
-              environmentVariableId: props.variable?.id || '',
-              environmentVariableRequest: {
-                key: data.key,
-                value: data.value,
-              },
-              scope: data.scope as EnvironmentVariableScopeEnum,
-              toasterCallback,
-            })
-          )
-            .then(() => {
-              setClosing(true)
-            })
-            .finally(() => {
-              setLoading(false)
-            })
-        }
-      } else {
-        if (props.mode === EnvironmentVariableCrudMode.CREATION) {
-          switch (props.type) {
-            case EnvironmentVariableType.OVERRIDE:
-              dispatch(
-                createOverrideSecret({
-                  entityId,
-                  applicationId: props.applicationId,
-                  environmentVariableRequest: {
-                    value: data.value,
-                  },
-                  environmentVariableId: variable?.id || '',
-                  scope: data.scope as EnvironmentVariableScopeEnum,
-                  toasterCallback,
-                })
-              )
-                .then(() => {
-                  setClosing(true)
-                })
-                .finally(() => {
-                  setLoading(false)
-                })
-              break
-            case EnvironmentVariableType.ALIAS:
-              dispatch(
-                createAliasSecret({
-                  entityId,
-                  applicationId: props.applicationId,
-                  environmentVariableRequest: {
-                    key: data.key,
-                  },
-                  environmentVariableId: variable?.id || '',
-                  scope: data.scope as EnvironmentVariableScopeEnum,
-                  toasterCallback,
-                })
-              )
-                .then(() => {
-                  setClosing(true)
-                })
-                .finally(() => {
-                  setLoading(false)
-                })
-              break
-            default:
-              dispatch(
-                createSecret({
-                  entityId,
-                  applicationId: props.applicationId,
-                  environmentVariableRequest: {
-                    key: data.key,
-                    value: data.value,
-                  },
-                  scope: data.scope as EnvironmentVariableScopeEnum,
-                  toasterCallback,
-                })
-              )
-                .then(() => {
-                  setClosing(true)
-                })
-                .finally(() => {
-                  setLoading(false)
-                })
-              break
-          }
-        } else {
-          dispatch(
-            editSecret({
-              entityId,
-              environmentVariableId: props.variable?.id || '',
-              environmentVariableRequest: {
-                key: data.key,
-                value: data.value,
-              },
-              scope: data.scope as EnvironmentVariableScopeEnum,
-              toasterCallback,
-            })
-          )
-            .then(() => {
-              setClosing(true)
-            })
-            .finally(() => {
-              setLoading(false)
-            })
-        }
-      }
-    }
-  })
+  const onSubmit = methods.handleSubmit((data) =>
+    handleSubmitForEnvSecretCreation(data, setLoading, props, dispatch, setClosing)
+  )
 
   const computeTitle = (): string => {
     if (mode === EnvironmentVariableCrudMode.CREATION && type === EnvironmentVariableType.NORMAL) {

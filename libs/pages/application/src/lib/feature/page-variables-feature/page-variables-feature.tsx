@@ -27,7 +27,6 @@ export function PageVariablesFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const { applicationId = '' } = useParams()
   const [placeholder] = useState(environmentVariableFactoryMock(5))
-  const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>(placeholder)
 
   const environmentVariables = useSelector<RootState, EnvironmentVariableEntity[]>(
     (state) => selectEnvironmentVariablesByApplicationId(state, applicationId),
@@ -38,7 +37,7 @@ export function PageVariablesFeature() {
     shallowEqual
   )
 
-  const environmentVariablesLoadinStatus = useSelector<RootState, LoadingStatus>(
+  const environmentVariablesLoadingStatus = useSelector<RootState, LoadingStatus>(
     (state) => getEnvironmentVariablesState(state).loadingStatus
   )
 
@@ -53,6 +52,8 @@ export function PageVariablesFeature() {
   const isSecretEnvVariableLoading = useSelector<RootState, LoadingStatus>(
     (state) => getSecretEnvironmentVariablesState(state).loadingStatus
   )
+
+  const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>(sortVariableMemo || placeholder)
   const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -61,14 +62,18 @@ export function PageVariablesFeature() {
   }, [dispatch, applicationId])
 
   useEffect(() => {
-    setLoading(!(isPublicEnvVariableLoading === 'loaded' || isSecretEnvVariableLoading === 'loaded'))
+    setLoading(
+      !(isPublicEnvVariableLoading === 'loaded' || isSecretEnvVariableLoading === 'loaded') &&
+        !environmentVariables.length &&
+        !secretEnvironmentVariables.length
+    )
   }, [isPublicEnvVariableLoading, isSecretEnvVariableLoading])
 
   useEffect(() => {
-    if (!isLoading) {
-      setData(sortVariableMemo)
-    } else {
+    if (isLoading) {
       setData(placeholder)
+    } else {
+      setData(sortVariableMemo)
     }
   }, [
     environmentVariables,
@@ -76,7 +81,7 @@ export function PageVariablesFeature() {
     sortVariableMemo,
     placeholder,
     isLoading,
-    environmentVariablesLoadinStatus,
+    environmentVariablesLoadingStatus,
   ])
 
   const tableHead: TableHeadProps[] = [
@@ -118,7 +123,6 @@ export function PageVariablesFeature() {
       variables={!isLoading ? sortVariableMemo : placeholder}
       setFilterData={setData}
       filterData={data}
-      loadingStatus={environmentVariablesLoadinStatus}
       isLoading={isLoading}
     />
   )

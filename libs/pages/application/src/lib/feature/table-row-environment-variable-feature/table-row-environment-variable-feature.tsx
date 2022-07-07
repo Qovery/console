@@ -88,7 +88,9 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   }
 
   const computeMenuActions = (): MenuItemProps[] => {
-    const menu = [edit]
+    const menu = []
+
+    if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) menu.push(edit)
 
     if (
       !(
@@ -100,8 +102,9 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
         (variable as SecretEnvironmentVariableEntity).aliased_secret
       )
     ) {
-      menu.push(createOverride)
       menu.push(createAlias)
+
+      if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) menu.push(createOverride)
     }
 
     return menu
@@ -114,47 +117,50 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
         {
           items: computeMenuActions(),
         },
-        {
-          items: [
-            {
-              name: 'Delete',
-              textClassName: '!text-error-600',
-              onClick: () => {
-                let entityId: string
-                switch (variable.scope) {
-                  case EnvironmentVariableScopeEnum.ENVIRONMENT:
-                    entityId = environmentId
-                    break
-                  case EnvironmentVariableScopeEnum.PROJECT:
-                    entityId = projectId
-                    break
-                  case EnvironmentVariableScopeEnum.APPLICATION:
-                  default:
-                    entityId = applicationId
-                    break
-                }
-
-                if (variable.variable_type === 'public') {
-                  dispatch(
-                    deleteEnvironmentVariable({ entityId, environmentVariableId: variable.id, scope: variable.scope })
-                  )
-                } else {
-                  dispatch(
-                    deleteSecret({
-                      entityId,
-                      environmentVariableId: variable.id,
-                      scope: variable.scope,
-                    })
-                  )
-                }
-              },
-              contentLeft: <Icon name="icon-solid-trash" className="text-sm text-error-600" />,
-            },
-          ],
-        },
       ],
     },
   ]
+
+  if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) {
+    rowActions[0]?.menus?.push({
+      items: [
+        {
+          name: 'Delete',
+          textClassName: '!text-error-600',
+          onClick: () => {
+            let entityId: string
+            switch (variable.scope) {
+              case EnvironmentVariableScopeEnum.ENVIRONMENT:
+                entityId = environmentId
+                break
+              case EnvironmentVariableScopeEnum.PROJECT:
+                entityId = projectId
+                break
+              case EnvironmentVariableScopeEnum.APPLICATION:
+              default:
+                entityId = applicationId
+                break
+            }
+
+            if (variable.variable_type === 'public') {
+              dispatch(
+                deleteEnvironmentVariable({ entityId, environmentVariableId: variable.id, scope: variable.scope })
+              )
+            } else {
+              dispatch(
+                deleteSecret({
+                  entityId,
+                  environmentVariableId: variable.id,
+                  scope: variable.scope,
+                })
+              )
+            }
+          },
+          contentLeft: <Icon name="icon-solid-trash" className="text-sm text-error-600" />,
+        },
+      ],
+    })
+  }
 
   return (
     <TableRowEnvironmentVariable

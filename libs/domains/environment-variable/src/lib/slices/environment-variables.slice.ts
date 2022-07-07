@@ -11,7 +11,7 @@ import {
 import { RootState } from '@console/store/data'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
-import { errorToaster, toast, ToastEnum } from '@console/shared/toast'
+import { toast, ToastEnum, toastError } from '@console/shared/toast'
 import { Key } from 'qovery-typescript-axios/api'
 
 export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'public'
@@ -30,81 +30,85 @@ export const fetchEnvironmentVariables = createAsyncThunk(
   }
 )
 
+export const createEnvironmentVariablePayloadCreator = async (payload: {
+  entityId: string
+  applicationId: string
+  environmentVariableRequest: EnvironmentVariableRequest
+  scope: EnvironmentVariableScopeEnum
+  toasterCallback?: () => void
+}) => {
+  let response
+  switch (payload.scope) {
+    case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariable(
+        payload.entityId,
+        payload.environmentVariableRequest
+      )
+      break
+    case EnvironmentVariableScopeEnum.PROJECT:
+      response = await projectEnvironmentVariableApi.createProjectEnvironmentVariable(
+        payload.entityId,
+        payload.environmentVariableRequest
+      )
+
+      break
+    case EnvironmentVariableScopeEnum.APPLICATION:
+    default:
+      response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariable(
+        payload.entityId,
+        payload.environmentVariableRequest
+      )
+      break
+  }
+  return response.data
+}
+
 export const createEnvironmentVariables = createAsyncThunk(
   'environmentVariables/create',
-  async (payload: {
-    entityId: string
-    applicationId: string
-    environmentVariableRequest: EnvironmentVariableRequest
-    scope: EnvironmentVariableScopeEnum
-    toasterCallback?: () => void
-  }) => {
-    let response
-    switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
-        response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariable(
-          payload.entityId,
-          payload.environmentVariableRequest
-        )
-        break
-      case EnvironmentVariableScopeEnum.PROJECT:
-        response = await projectEnvironmentVariableApi.createProjectEnvironmentVariable(
-          payload.entityId,
-          payload.environmentVariableRequest
-        )
-
-        break
-      case EnvironmentVariableScopeEnum.APPLICATION:
-      default:
-        response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariable(
-          payload.entityId,
-          payload.environmentVariableRequest
-        )
-        break
-    }
-    return response.data
-  }
+  createEnvironmentVariablePayloadCreator
 )
+
+export const createOverrideEnvironmentVariablesPayloadCreator = async (payload: {
+  entityId: string
+  applicationId: string
+  environmentVariableId: string
+  environmentVariableRequest: Value
+  scope: EnvironmentVariableScopeEnum
+  toasterCallback?: () => void
+}) => {
+  const { entityId, environmentVariableId, environmentVariableRequest } = payload
+  let response
+  switch (payload.scope) {
+    case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariableOverride(
+        entityId,
+        environmentVariableId,
+        environmentVariableRequest
+      )
+      break
+    case EnvironmentVariableScopeEnum.PROJECT:
+      response = await projectEnvironmentVariableApi.createProjectEnvironmentVariableOverride(
+        entityId,
+        environmentVariableId,
+        environmentVariableRequest
+      )
+      break
+    case EnvironmentVariableScopeEnum.APPLICATION:
+    default:
+      response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariableOverride(
+        entityId,
+        environmentVariableId,
+        environmentVariableRequest
+      )
+      break
+  }
+
+  return response.data
+}
 
 export const createOverrideEnvironmentVariables = createAsyncThunk(
   'environmentVariables/create-override',
-  async (payload: {
-    entityId: string
-    applicationId: string
-    environmentVariableId: string
-    environmentVariableRequest: Value
-    scope: EnvironmentVariableScopeEnum
-    toasterCallback?: () => void
-  }) => {
-    const { entityId, environmentVariableId, environmentVariableRequest } = payload
-    let response
-    switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
-        response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariableOverride(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
-        break
-      case EnvironmentVariableScopeEnum.PROJECT:
-        response = await projectEnvironmentVariableApi.createProjectEnvironmentVariableOverride(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
-        break
-      case EnvironmentVariableScopeEnum.APPLICATION:
-      default:
-        response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariableOverride(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
-        break
-    }
-
-    return response.data
-  }
+  createOverrideEnvironmentVariablesPayloadCreator
 )
 
 export const createAliasEnvironmentVariables = createAsyncThunk(
@@ -274,7 +278,7 @@ export const environmentVariablesSlice = createSlice({
       })
       .addCase(createEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
-        errorToaster(action.error)
+        toastError(action.error)
       })
       .addCase(createAliasEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
@@ -289,7 +293,7 @@ export const environmentVariablesSlice = createSlice({
         )
       })
       .addCase(createAliasEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
-        errorToaster(action.error)
+        toastError(action.error)
         state.error = action.error.message
       })
       .addCase(createOverrideEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
@@ -305,7 +309,7 @@ export const environmentVariablesSlice = createSlice({
         )
       })
       .addCase(createOverrideEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
-        errorToaster(action.error)
+        toastError(action.error)
         state.error = null
         state.error = action.error.message
       })
@@ -331,7 +335,7 @@ export const environmentVariablesSlice = createSlice({
       })
       .addCase(editEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
-        errorToaster(action.error)
+        toastError(action.error)
       })
       .addCase(deleteEnvironmentVariable.fulfilled, (state: EnvironmentVariablesState, action) => {
         let name = state.entities[action.meta.arg.environmentVariableId]?.key
@@ -345,18 +349,19 @@ export const environmentVariablesSlice = createSlice({
       })
       .addCase(deleteEnvironmentVariable.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
-        errorToaster(action.error)
+        toastError(action.error)
       })
   },
 })
 
-const addVariableToStore = (state: EnvironmentVariablesState, action: any) => {
-  if (!action.payload) return
+export const addVariableToStore = (state: EnvironmentVariablesState, action: any) => {
+  if (!action.payload || !action.meta.arg) return
 
   const extendedEnv: EnvironmentVariableEntity = {
     ...action.payload,
     variable_type: 'public',
     service_name: action.payload.service_name || '',
+    is_new: true,
   }
   environmentVariablesAdapter.addOne(state, extendedEnv)
 
