@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { ApplicationEnvironmentVariableApi } from 'qovery-typescript-axios'
+import { ApplicationEnvironmentVariableApi, EnvironmentVariableRequest } from 'qovery-typescript-axios'
 
 import { RootState } from '@console/store/data'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@console/shared/interfaces'
@@ -16,6 +16,18 @@ export const fetchEnvironmentVariables = createAsyncThunk(
     const response = await applicationEnvironmentVariableApi.listApplicationEnvironmentVariable(applicationId)
 
     return response.data.results as EnvironmentVariableEntity[]
+  }
+)
+
+export const createEnvironmentVariables = createAsyncThunk(
+  'environmentVariables/create',
+  async (payload: { applicationId: string; environmentVariableRequest: EnvironmentVariableRequest }) => {
+    const response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariable(
+      payload.applicationId,
+      payload.environmentVariableRequest
+    )
+
+    return response.data
   }
 )
 
@@ -56,6 +68,19 @@ export const environmentVariablesSlice = createSlice({
       .addCase(fetchEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+      })
+      .addCase(createEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
+        const extendedEnv: EnvironmentVariableEntity = {
+          ...action.payload,
+          variable_type: 'public',
+          service_name: action.payload.service_name || '',
+        }
+        environmentVariablesAdapter.addOne(state, extendedEnv)
+
+        state.joinApplicationEnvironmentVariable = addOneToManyRelation(action.meta.arg.applicationId, extendedEnv.id, {
+          ...state.joinApplicationEnvironmentVariable,
+        })
+        state.loadingStatus = 'loaded'
       })
   },
 })
