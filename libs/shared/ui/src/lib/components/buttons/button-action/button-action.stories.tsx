@@ -1,10 +1,20 @@
-import { ButtonAction, ButtonActionProps, ButtonActionStyle, Icon } from '@console/shared/ui'
+import { ButtonAction, ButtonActionProps, ButtonActionSize, ButtonActionStyle, Icon } from '@console/shared/ui'
 import { Meta, Story } from '@storybook/react'
 import { ClickEvent } from '@szhsin/react-menu'
 
 export default {
   component: ButtonAction,
   title: 'Buttons/ButtonAction',
+  argTypes: {
+    size: {
+      options: Object.values(ButtonActionSize).filter((x) => typeof x === 'string'),
+      control: { type: 'select' },
+    },
+    style: {
+      options: Object.values(ButtonActionStyle).filter((x) => typeof x === 'string'),
+      control: { type: 'select' },
+    },
+  },
 } as Meta
 
 const Template: Story<ButtonActionProps> = (args) => <ButtonAction {...args}>Button</ButtonAction>
@@ -48,6 +58,7 @@ const menusButton = [
 export const Primary = Template.bind({})
 Primary.args = {
   style: ButtonActionStyle.BASIC,
+  size: ButtonActionSize.LARGE,
   iconRight: 'icon-solid-plus',
   menus: menusButton,
 }
