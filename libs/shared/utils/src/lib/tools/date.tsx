@@ -2,8 +2,8 @@ import { differenceInMinutes, formatDistanceToNowStrict } from 'date-fns'
 
 export const timeAgo = (date: Date) => formatDistanceToNowStrict(date)
 
-export const dateDifferenceMinutes = (firstDate: Date, secondDate: Date) => {
-  return differenceInMinutes(firstDate, secondDate)
+export const dateDifferenceMinutes = (firstDate?: Date, secondDate?: Date) => {
+  return firstDate && secondDate && differenceInMinutes(firstDate, secondDate)
 }
 
 export function dateDifference(firstDate: Date, secondDate: Date) {

@@ -10,8 +10,8 @@ import {
   Tooltip,
   Truncate,
   ErrorLogsProps,
+  CopyToClipboard,
 } from '@console/shared/ui'
-import { ClusterLogsError } from 'qovery-typescript-axios'
 
 export const enum TabsLogsSection {
   INFORMATION = 'INFORMATION',
@@ -19,13 +19,14 @@ export const enum TabsLogsSection {
 }
 
 export interface TabsLogsProps {
+  scrollToError: () => void
   tabInformation?: ReactNode
   errors?: ErrorLogsProps[]
   defaultSection?: TabsLogsSection
 }
 
 export function TabsLogs(props: TabsLogsProps) {
-  const { tabInformation, errors, defaultSection = TabsLogsSection.INFORMATION } = props
+  const { scrollToError, tabInformation, errors, defaultSection = TabsLogsSection.INFORMATION } = props
 
   const { organizationId = '' } = useParams()
 
@@ -51,11 +52,6 @@ export function TabsLogs(props: TabsLogsProps) {
     },
   ]
 
-  const copyToClipboard = (error: ClusterLogsError) => {
-    navigator.clipboard.writeText(`Transmitter: ${error.event_details?.transmitter?.name} -
-      ${error.underlying_error?.message}`)
-  }
-
   return (
     <div className="w-[360px] shrink-0 border-l border-t border-element-light-darker-100">
       <div className="py-2 px-5">
@@ -77,18 +73,27 @@ export function TabsLogs(props: TabsLogsProps) {
                         </p>
                       </Tooltip>
                       <span data-testid="error-line" className="text-text-400 text-xs">
-                        Line {errors[errors.length - 1].index}{' '}
+                        Line {errors[errors.length - 1].index} - After {errors[errors.length - 1].timeAgo} minute
+                        {parseInt(errors[errors.length - 1].timeAgo, 10) > 1 ? 's' : ''}
                       </span>
                     </div>
                   </div>
                   <div className="bg-element-light-darker-500 mt-4 p-2 rounded ml-8">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-1">
                       <p className="text-error-500 text-xs font-medium">Full error</p>
-                      <Tooltip content="Copy">
-                        <div className="cursor-pointer" onClick={() => copyToClipboard(errors[0].error)}>
-                          <Icon name="icon-solid-copy" className="text-xs text-text-300 hover:text-text-100" />
-                        </div>
-                      </Tooltip>
+                      <div className="flex text-xs">
+                        <p
+                          onClick={() => scrollToError()}
+                          className="transition-colors cursor-pointer text-error-500 hover:text-error-600 font-bold mr-2.5"
+                        >
+                          <span className="text-xxs relative -top-[1px] mr-1">{errors[errors.length - 1].index}</span>
+                          <Icon name="icon-solid-arrow-circle-right" className=" cursor-pointer" />
+                        </p>
+                        <CopyToClipboard
+                          className="text-text-300 hover:text-text-100"
+                          content={`Transmitter: ${errors[0].error.event_details?.transmitter?.name} - ${errors[0].error.underlying_error?.message}`}
+                        />
+                      </div>
                     </div>
                     <p data-testid="error-msg" className="text-text-200 text-xs">
                       Transmitter: {errors[errors.length - 1].error.event_details?.transmitter?.name} -{' '}
