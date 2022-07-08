@@ -10,6 +10,7 @@ describe('TabsLogs', () => {
       {
         index: 1,
         step: ClusterLogsStepEnum.RETRIEVE_CLUSTER_CONFIG,
+        timeAgo: '10',
         error: {
           user_log_message: 'user-log-message',
           hint_message: 'hint-message',
@@ -36,6 +37,7 @@ describe('TabsLogs', () => {
       {
         index: 44,
         step: ClusterLogsStepEnum.RETRIEVE_CLUSTER_CONFIG,
+        timeAgo: '10',
         error: {},
       },
     ]
@@ -45,7 +47,7 @@ describe('TabsLogs', () => {
 
     const errorLine = screen.getByTestId('error-line')
 
-    expect(errorLine.textContent).toBe('Line 44 ')
+    expect(errorLine.textContent).toBe('Line 44 - After 10 minutes')
   })
 
   it('should have error message', () => {
@@ -53,6 +55,7 @@ describe('TabsLogs', () => {
       {
         index: 0,
         step: ClusterLogsStepEnum.DELETE_ERROR,
+        timeAgo: '10',
         error: {
           event_details: {
             transmitter: {
@@ -81,6 +84,7 @@ describe('TabsLogs', () => {
       {
         index: 0,
         step: ClusterLogsStepEnum.DELETE_ERROR,
+        timeAgo: '10',
         error: {
           hint_message: 'my-solution',
         },

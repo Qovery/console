@@ -39,7 +39,7 @@ export function Icon(props: IconProps) {
 
   formattedProps.width = formattedProps.width || '1.5rem'
   formattedProps.viewBox = formattedProps.viewBox || '0 0 24 24'
-  formattedProps.className = 'shrink-0 ' + formattedProps.className
+  formattedProps.className = 'shrink-0 ' + (formattedProps.className || '')
 
   switch (props.name) {
     case IconEnum.GITHUB:

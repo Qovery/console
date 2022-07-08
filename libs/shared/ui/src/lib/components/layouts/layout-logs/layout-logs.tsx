@@ -1,8 +1,9 @@
 import React, { ReactNode, MouseEvent, useRef, useEffect } from 'react'
 import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { ButtonIcon, ButtonIconSize, ButtonIconStyle, Icon } from '@console/shared/ui'
-import TabsLogs from './tabs-logs/tabs-logs'
 import { LoadingStatus } from '@console/shared/interfaces'
+import { dateDifferenceMinutes, scrollParentToChild } from '@console/shared/utils'
+import TabsLogs from './tabs-logs/tabs-logs'
 
 export interface LayoutLogsProps {
   children: ReactNode
@@ -15,6 +16,7 @@ export interface LayoutLogsProps {
 
 export interface ErrorLogsProps {
   index: number
+  timeAgo: string
   step: ClusterLogsStepEnum
   error: ClusterLogsError
 }
@@ -59,7 +61,16 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
     (data.items
       .map(
         (currentData: ClusterLogs, index: number) =>
-          currentData.error && { index: index + 1, step: currentData.step, error: currentData.error }
+          currentData.error && {
+            index: index + 1,
+            timeAgo:
+              data.items &&
+              data.items[0].timestamp &&
+              currentData.timestamp &&
+              dateDifferenceMinutes(new Date(currentData.timestamp), new Date(data.items[0].timestamp)),
+            step: currentData.step,
+            error: currentData.error,
+          }
       )
       .filter((error) => error) as ErrorLogsProps[])
 
@@ -77,13 +88,26 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
     target.setAttribute('download', `data-${Date.now()}.json`)
   }
 
+  const scrollToError = () => {
+    const section = refScrollSection.current
+    if (!section) return
+
+    const row = section.querySelector('.row-error')
+    if (row) scrollParentToChild(section, row, 100)
+  }
+
   return (
     <div className="overflow-hidden flex relative h-full">
       <div className="absolute z-20 left-0 w-[calc(100%-360px)] flex justify-end items-center h-9 bg-element-light-darker-200 px-5">
         {realErrors && realErrors.length > 0 && (
-          <p data-testid="error-layout-line" className="flex items-center w-full ml-1 text-xs font-bold text-text-200">
+          <p
+            data-testid="error-layout-line"
+            onClick={() => scrollToError()}
+            className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-text-200 hover:text-text-300 cursor-pointer"
+          >
             <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
             An error occured line {realErrors[realErrors.length - 1]?.index}
+            <Icon name="icon-solid-arrow-circle-right" className="ml-1.5" />
           </p>
         )}
         <div className="flex">
@@ -112,7 +136,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       >
         <div className="relative z-10">{children}</div>
       </div>
-      <TabsLogs tabInformation={tabInformation} errors={realErrors} />
+      <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={realErrors} />
     </div>
   )
 }

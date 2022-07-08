@@ -42,7 +42,7 @@ export function Row(props: RowProps) {
     <div
       className={`group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 ${
         realError || success ? 'bg-element-light-darker-300' : ''
-      }`}
+      } ${realError ? 'row-error' : ''}`}
     >
       <div className="flex">
         <div data-testid="index" className={indexClassName}>
