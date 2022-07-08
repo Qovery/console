@@ -37,4 +37,14 @@ describe('NavigationLeftSubLink', () => {
 
     expect(subLinks).toBeTruthy()
   })
+
+  it('should have rotate the arrow', () => {
+    render(<NavigationLeftSubLink {...props} />)
+
+    const trigger = screen.getByTestId('link')
+
+    fireEvent.click(trigger)
+
+    expect(trigger.querySelector('.icon-solid-angle-down')?.classList.contains('rotate-180')).toBeTruthy()
+  })
 })
