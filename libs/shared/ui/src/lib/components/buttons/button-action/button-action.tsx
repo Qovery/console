@@ -13,6 +13,11 @@ export enum ButtonActionStyle {
   FLAT = 'flat',
 }
 
+export enum ButtonActionSize {
+  NORMAL = 'normal',
+  LARGE = 'large',
+}
+
 export interface ButtonActionProps {
   children: React.ReactNode
   style?: ButtonActionStyle
@@ -28,6 +33,7 @@ export interface ButtonActionProps {
     actions: StatusMenuActions[]
     information: StatusMenuInformation
   }
+  size?: ButtonActionSize
 }
 
 export function ButtonAction(props: ButtonActionProps) {
@@ -42,11 +48,17 @@ export function ButtonAction(props: ButtonActionProps) {
     onClick,
     menus = [],
     statusActions,
+    size = ButtonActionSize.NORMAL,
   } = props
 
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const defineClass = `btn-action ${style ? `btn-action--${style}` : ''} ${
+  const btnSize = {
+    [ButtonActionSize.NORMAL]: 'h-9',
+    [ButtonActionSize.LARGE]: 'h-10',
+  }
+
+  const defineClass = `btn-action ${btnSize[size]} ${style ? `btn-action--${style}` : ''} ${
     disabled ? 'btn-action--disabled' : ''
   } ${className}`
 

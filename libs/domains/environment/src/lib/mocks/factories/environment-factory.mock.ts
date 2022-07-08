@@ -1,5 +1,10 @@
 import { Chance } from 'chance'
-import { EnvironmentModeEnum, StateEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import {
+  EnvironmentModeEnum,
+  StateEnum,
+  ServiceDeploymentStatusEnum,
+  DeploymentHistoryStatusEnum,
+} from 'qovery-typescript-axios'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 
 const chance = new Chance()
@@ -14,13 +19,21 @@ const service = {
   status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
 }
 
+const database = {
+  id: chance.integer().toString(),
+  created_at: chance.date().toString(),
+  updated_at: chance.date().toString(),
+  name: chance.name(),
+  status: chance.pickone(Object.values([DeploymentHistoryStatusEnum.SUCCESS, DeploymentHistoryStatusEnum.FAILED])),
+}
+
 const deployment = {
   id: chance.integer().toString(),
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
-  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+  status: StateEnum.DEPLOYED,
   applications: [service, service, service],
-  databases: [service, service],
+  databases: [database, database, database],
 }
 
 export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): Environments[] =>

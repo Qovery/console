@@ -3,13 +3,14 @@ import { DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import React, { useEffect, useState } from 'react'
 
 export interface PageDeploymentsProps {
+  databaseId?: string
   deployments?: DeploymentHistoryDatabase[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
 export function Deployments(props: PageDeploymentsProps) {
-  const { deployments = [], listHelpfulLinks, isLoading = true } = props
+  const { databaseId, deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryDatabase[]>(deployments)
 
@@ -47,17 +48,6 @@ export function Deployments(props: PageDeploymentsProps) {
         key: 'updated_at',
       },
     },
-    {
-      title: 'Commit',
-      className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full bg-white',
-      filter: [
-        {
-          search: true,
-          title: 'Filter by service',
-          key: 'commit.git_commit_id',
-        },
-      ],
-    },
   ]
 
   return (
@@ -72,10 +62,12 @@ export function Deployments(props: PageDeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
+              id={databaseId}
               data={currentData as DeploymentHistoryDatabase}
               key={index}
               dataHead={tableHead}
               isLoading={isLoading}
+              noCommit
             />
           ))}
         </div>

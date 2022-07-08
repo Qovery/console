@@ -1,17 +1,17 @@
 import { ButtonIcon, ButtonIconStyle, ModalContentProps } from '@console/shared/ui'
-//import { SETTINGS_URL } from '@console/shared/router'
-//import { useParams } from 'react-router'
 import Avatar from '../../avatar/avatar'
 import { Button, ButtonStyle } from '../../buttons/button/button'
+import { useNavigate } from 'react-router-dom'
+import { LOGOUT_URL } from '@console/shared/router'
 
 export interface ModalUserProps extends ModalContentProps {
-  authLogout: () => void
   firstName: string
   lastName: string
 }
 
 export function ModalUser(props: ModalUserProps) {
-  const { authLogout, firstName = '', lastName = '' /*setOpen*/ } = props
+  const { firstName = '', lastName = '' /*setOpen*/ } = props
+  const navigate = useNavigate()
 
   //const { organizationId } = useParams()
 
@@ -24,7 +24,7 @@ export function ModalUser(props: ModalUserProps) {
             icon="icon-solid-arrow-right-from-bracket"
             iconClassName="text-brand-500"
             style={ButtonIconStyle.ALT}
-            onClick={authLogout}
+            onClick={() => navigate(LOGOUT_URL)}
           />
         </div>
         <div className="flex flex-col gap-2 items-center">

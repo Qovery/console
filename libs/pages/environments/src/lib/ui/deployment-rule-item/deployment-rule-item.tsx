@@ -74,16 +74,16 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
 
   return (
     <div
-      className={`${isLast ? 'rounded-b' : ''} border border-element-light-lighter-400 h-11 flex -mt-[1px] bg-white`}
+      className={`${
+        isLast ? 'rounded-b' : ''
+      } border bg-element-light-lighter-200 border-element-light-lighter-500 flex px-5 py-4 -mt-px justify-between`}
     >
-      <div className="px-4 flex items-center border-r border-element-light-lighter-400 w-4/12">
-        <Skeleton show={isLoading} width={180} height={20}>
+      <div>
+        <Skeleton show={isLoading} width={180} height={20} className="mb-1">
           <h3 className="text-sm text-text-500 font-medium max-w-full truncate">{name}</h3>
         </Skeleton>
-      </div>
-      <div className="px-4 flex items-center border-r border-element-light-lighter-400 grow">
         <Skeleton show={isLoading} width={300} height={20}>
-          <p className="text-sm text-text-500 font-medium max-w-full truncate">
+          <p className="text-xs text-text-500 max-w-full truncate">
             {getTime(startTime)}-{getTime(stopTime)}
             {isWeekdays() && weekDays.length < 7 ? ' - Running every weekday' : ''}
             {weekDays.length === 7 && ' - Running everyday'}
@@ -91,29 +91,27 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
           </p>
         </Skeleton>
       </div>
-      <div className="px-3 py-2 flex items-center">
-        <Skeleton show={isLoading} width={58} height={30}>
-          <div className="flex border border-element-light-lighter-500 rounded">
-            <span className="w-7 h-7 flex items-center justify-center border-r border-element-light-lighter-500 text-text-400 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition">
-              <Icon name="icon-solid-grip-lines" />
-            </span>
-            <Menu
-              menus={menu}
-              width={248}
-              onOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
-              trigger={
-                <span
-                  className={`w-7 h-7 flex items-center justify-center text-text-400 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
-                    menuOpen ? 'bg-brand-50 !text-brand-500' : ''
-                  }`}
-                >
-                  <Icon name="icon-solid-ellipsis-v" />
-                </span>
-              }
-            />
-          </div>
-        </Skeleton>
-      </div>
+      <Skeleton show={isLoading} width={58} height={30}>
+        <div className="flex border border-element-light-lighter-500 rounded h-[34px] overflow-hidden">
+          <span className="w-8 h-8 flex items-center bg-white justify-center border-r border-element-light-lighter-500 text-text-400 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition">
+            <Icon name="icon-solid-grip-lines" />
+          </span>
+          <Menu
+            menus={menu}
+            width={248}
+            onOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
+            trigger={
+              <span
+                className={`w-8 h-8 flex items-center justify-center text-text-400 text-xs bg-white cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
+                  menuOpen ? 'bg-brand-50 !text-brand-500' : ''
+                }`}
+              >
+                <Icon name="icon-solid-ellipsis-v" />
+              </span>
+            }
+          />
+        </div>
+      </Skeleton>
     </div>
   )
 }

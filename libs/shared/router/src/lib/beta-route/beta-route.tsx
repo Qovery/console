@@ -8,10 +8,10 @@ export interface IBetaRoute {
 }
 
 export const BetaRoute = ({ children }: IBetaRoute) => {
-  const { organizationId = '' } = useParams()
+  const { organizationId = '', clusterId = '' } = useParams()
   const location = useLocation()
 
-  const matchLogInfraRoute = matchPath(location.pathname || '', INFRA_LOGS_URL(organizationId))
+  const matchLogInfraRoute = matchPath(location.pathname || '', INFRA_LOGS_URL(organizationId, clusterId))
 
   if (posthog.isFeatureEnabled('v3-beta')) {
     return children

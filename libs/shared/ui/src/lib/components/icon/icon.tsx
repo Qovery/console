@@ -23,6 +23,7 @@ import AWSGrayIcon from './icons/aws-gray'
 import ScalewayGrayIcon from './icons/scaleway-gray'
 import DOGrayIcon from './icons/do-gray'
 import DatabaseIcon from './icons/database'
+import ChildrenArrow from './icons/children-arrow'
 
 export interface IconProps {
   name: IconEnum | string
@@ -38,11 +39,13 @@ export function Icon(props: IconProps) {
 
   formattedProps.width = formattedProps.width || '1.5rem'
   formattedProps.viewBox = formattedProps.viewBox || '0 0 24 24'
-  formattedProps.className = 'shrink-0 ' + formattedProps.className
+  formattedProps.className = 'shrink-0 ' + (formattedProps.className || '')
 
   switch (props.name) {
     case IconEnum.GITHUB:
       return <GithubIcon {...formattedProps} />
+    case IconEnum.CHILDREN_ARROW:
+      return <ChildrenArrow {...formattedProps} />
     case IconEnum.GITLAB:
       return <GitlabIcon {...formattedProps} />
     case IconEnum.BITBUCKET:

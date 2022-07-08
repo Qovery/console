@@ -3,13 +3,14 @@ import { DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import React, { useEffect, useState } from 'react'
 
 export interface PageDeploymentsProps {
+  applicationId?: string
   deployments?: DeploymentHistoryApplication[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
 export function Deployments(props: PageDeploymentsProps) {
-  const { deployments = [], listHelpfulLinks, isLoading = true } = props
+  const { applicationId, deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryApplication[]>(deployments)
 
@@ -72,6 +73,7 @@ export function Deployments(props: PageDeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
+              id={applicationId}
               data={currentData as DeploymentHistoryApplication}
               key={index}
               dataHead={tableHead}

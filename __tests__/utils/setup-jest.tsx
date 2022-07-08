@@ -4,7 +4,15 @@ import React from 'react'
 import { server } from '../server'
 import { Wrapper } from './providers'
 
-beforeAll(() => server.listen())
+beforeAll(() =>
+  server.listen({
+    onUnhandledRequest: ({ method, url }) => {
+      if (url.pathname.indexOf('__test') === -1) {
+        throw new Error(`Unhandled ${method} request to ${url}`)
+      }
+    },
+  })
+)
 
 afterEach(() => {
   server.resetHandlers()

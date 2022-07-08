@@ -12,7 +12,7 @@ import {
   TagSize,
 } from '@console/shared/ui'
 import {
-  //DATABASE_DEPLOYMENTS_URL,
+  DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
   //DATABASE_METRICS_URL,
   DATABASE_SETTINGS_URL,
@@ -28,10 +28,11 @@ export interface ContainerProps {
   database?: DatabaseEntity
   environment?: Environment
   children?: React.ReactNode
+  removeDatabase?: (databaseId: string) => void
 }
 
 export function Container(props: ContainerProps) {
-  const { database, environment, children, statusActions } = props
+  const { database, environment, children, statusActions, removeDatabase } = props
 
   const { organizationId, projectId, environmentId, databaseId } = useParams()
   const location = useLocation()
@@ -42,10 +43,27 @@ export function Container(props: ContainerProps) {
     {
       iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
       iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
       statusActions: {
         status: database?.status && database?.status.state,
         actions: statusActions,
       },
+    },
+    {
+      ...(removeDatabase && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeDatabase(databaseId ? databaseId : ''),
+              },
+            ],
+          },
+        ],
+      }),
     },
   ]
 
@@ -97,18 +115,18 @@ export function Container(props: ContainerProps) {
         location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
     },
-    // {
-    //   icon: (
-    //     <Skeleton width={16} height={16} rounded show={!database?.status}>
-    //       <StatusChip status={database?.status && database?.status.state} />
-    //     </Skeleton>
-    //   ),
-    //   name: 'Deployments',
-    //   active:
-    //     location.pathname ===
-    //     DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
-    //   link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
-    // },
+    {
+      icon: (
+        <Skeleton width={16} height={16} rounded show={!database?.status}>
+          <StatusChip mustRenameStatus status={database?.status && database?.status.state} />
+        </Skeleton>
+      ),
+      name: 'Deployments',
+      active:
+        location.pathname ===
+        DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
+      link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
+    },
     // {
     //   icon: <Icon name="icon-solid-chart-area" />,
     //   name: 'Metrics',

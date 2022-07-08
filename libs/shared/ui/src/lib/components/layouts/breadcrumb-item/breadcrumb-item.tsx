@@ -7,10 +7,11 @@ export interface BreadcrumbItemProps {
   paramId: string
   menuItems: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
   link: string
+  isDark?: boolean
 }
 
 export function BreadcrumbItem(props: BreadcrumbItemProps) {
-  const { data, paramId, menuItems, link } = props
+  const { data, paramId, menuItems, link, isDark } = props
   const { pathname } = useLocation()
 
   const currentName: string = data && data.find((currentData) => paramId === currentData.id)?.name
@@ -25,24 +26,26 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
         <p
           data-testid="label"
           className={`link-transition text-sm font-medium hover:text-text-500 max-w-xs truncate ${
-            isActive ? 'text-text-500' : 'text-text-400'
+            isActive ? `${isDark ? 'text-text-300' : 'text-text-500'}` : 'text-text-400'
           }`}
         >
           {currentName}
         </p>
       </Link>
-      <Menu
-        menus={menuItems}
-        open={false}
-        arrowAlign={MenuAlign.START}
-        trigger={
-          <ButtonIcon
-            className="btn-icon--circle ml-1 mt-0.5"
-            icon="icon-solid-angle-down"
-            style={ButtonIconStyle.FLAT}
-          />
-        }
-      />
+      {menuItems.length > 0 && (
+        <Menu
+          menus={menuItems}
+          open={false}
+          arrowAlign={MenuAlign.START}
+          trigger={
+            <ButtonIcon
+              className="btn-icon--circle ml-1 mt-0.5"
+              icon="icon-solid-angle-down"
+              style={ButtonIconStyle.FLAT}
+            />
+          }
+        />
+      )}
     </div>
   )
 }

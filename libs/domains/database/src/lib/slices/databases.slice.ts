@@ -13,13 +13,13 @@ import {
   Credentials,
   Database,
   DatabaseCurrentMetric,
+  DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
   DatabaseMetricsApi,
   DatabasesApi,
   DeploymentHistoryDatabase,
   Status,
 } from 'qovery-typescript-axios'
-import { databaseDeploymentsFactoryMock } from '../mocks/factories/database-deployments-factory.mock'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 
@@ -27,8 +27,7 @@ export const databasesAdapter = createEntityAdapter<DatabaseEntity>()
 
 const databasesApi = new DatabasesApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
-/** @TODO replace with the proper api once it is released  */
-// const databaseDeploymentsApi = new Object()
+const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const databaseMetricsApi = new DatabaseMetricsApi()
 
 export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string; withoutStatus?: boolean }>(
@@ -70,10 +69,9 @@ export const fetchDatabaseMetrics = createAsyncThunk<DatabaseCurrentMetric, { da
 export const fetchDatabaseDeployments = createAsyncThunk<DeploymentHistoryDatabase[], { databaseId: string }>(
   'database/deployments',
   async (data) => {
-    /** @TODO uncomment this line once api is available */
-    // const response = await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)
-
-    return databaseDeploymentsFactoryMock(3) as DeploymentHistoryDatabase[]
+    // @todo remove response any update documentation
+    const response: any = await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)
+    return response.data.results as DeploymentHistoryDatabase[]
   }
 )
 
@@ -81,7 +79,6 @@ export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { da
   'database/credentials',
   async (data) => {
     const response = await databaseMainCallsApi.getDatabaseMasterCredentials(data.databaseId)
-
     return response.data as Credentials
   }
 )

@@ -2,9 +2,10 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  deleteEnvironmentActionsCancelDeployment,
+  deleteEnvironmentAction,
   environmentFactoryMock,
   environmentsLoadingStatus,
+  fetchEnvironments,
   fetchEnvironmentsStatus,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
@@ -55,10 +56,19 @@ export function PageGeneralFeature() {
     },
     {
       name: 'delete',
-      action: (environmentId: string) =>
-        dispatch(deleteEnvironmentActionsCancelDeployment({ projectId, environmentId })),
+      action: (environmentId: string) => dispatch(deleteEnvironmentAction({ projectId, environmentId })),
     },
   ]
+
+  const removeEnvironment = async (environmentId: string) => {
+    await dispatch(
+      deleteEnvironmentAction({
+        projectId,
+        environmentId,
+      })
+    )
+    await dispatch(fetchEnvironments({ projectId: projectId }))
+  }
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -73,6 +83,7 @@ export function PageGeneralFeature() {
       environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
       buttonActions={actions}
       listHelpfulLinks={listHelpfulLinks}
+      removeEnvironment={removeEnvironment}
     />
   )
 }

@@ -19,11 +19,19 @@ export interface TableRowEnvironmentsProps {
   dataHead: TableHeadProps[]
   link: string
   buttonActions: StatusMenuActions[]
+  removeEnvironment?: (environmentId: string) => void
   columnsWidth?: string
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, buttonActions } = props
+  const {
+    data,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    link,
+    buttonActions,
+    removeEnvironment,
+  } = props
 
   const buttonActionsDefault = [
     {
@@ -36,7 +44,20 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
       },
     },
     {
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+      ...(removeEnvironment && {
+        iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeEnvironment(data.id),
+              },
+            ],
+          },
+        ],
+      }),
     },
   ]
 
@@ -46,7 +67,9 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     <TableRow columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
-          <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
+          <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
+            <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
+          </Skeleton>
           <Tooltip
             content={
               <p className="flex">
@@ -74,9 +97,11 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <StatusLabel status={data.status && data.status.state} />
-                <span className="text-xs text-text-300 mx-3 font-medium">
-                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
-                </span>
+                {data.status?.last_deployment_date && (
+                  <span className="text-xs text-text-300 mx-3 font-medium">
+                    {timeAgo(new Date(data.status.last_deployment_date))} ago
+                  </span>
+                )}
               </p>
               <ButtonIconAction
                 actions={buttonActionsDefault}

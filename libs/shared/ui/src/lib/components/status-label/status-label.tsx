@@ -1,5 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+import { renameStatus, upperCaseFirstLetter } from '@console/shared/utils'
 import { IconEnum } from '@console/shared/enums'
 import { Icon } from '@console/shared/ui'
 
@@ -73,7 +73,9 @@ export function StatusLabel(props: StatusLabelProps) {
       data-testid="status-label"
     >
       {showProgressIcon() && <Icon name={IconEnum.PROGRESS} width="12" viewBox="0 0 12 12" className="mr-2 mt-[1px]" />}
-      {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
+      {status !== StateEnum.RUNNING
+        ? upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())
+        : renameStatus(status)}
       {showErrorIcon() && <Icon name={IconEnum.ERROR} width="12" viewBox="0 0 14 14" className="ml-2 mt-[1px]" />}
     </span>
   )

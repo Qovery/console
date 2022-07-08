@@ -95,25 +95,22 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
   }
 })
 
-export const deleteEnvironmentActionsCancelDeployment = createAsyncThunk<
-  any,
-  { projectId: string; environmentId: string; withDeployments?: boolean }
->('environmentActions/delete', async (data, { dispatch }) => {
-  try {
-    const response = await environmentMainCallsApi.deleteEnvironment(data.environmentId)
-    if (response.status === 204) {
-      // refetch status after update
-      await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-      // refresh deployments after update
-      if (data.withDeployments)
-        await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
-    }
+export const deleteEnvironmentAction = createAsyncThunk<any, { projectId: string; environmentId: string }>(
+  'environmentActions/delete',
+  async (data, { dispatch }) => {
+    try {
+      const response = await environmentMainCallsApi.deleteEnvironment(data.environmentId)
+      if (response.status === 204) {
+        // refetch status after update
+        await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
+      }
 
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Deleting error')
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Deleting error')
+    }
   }
-})
+)

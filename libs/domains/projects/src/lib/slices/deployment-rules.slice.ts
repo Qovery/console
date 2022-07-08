@@ -148,7 +148,7 @@ export const deploymentRulesSlice = createSlice({
       })
       // update order
       .addCase(updateDeploymentRuleOrder.pending, (state: DeploymentRuleState) => {
-        state.loadingStatus = 'loading'
+        //Don't update the loading status to not see the skeleton on drag'n'drop
       })
       .addCase(updateDeploymentRuleOrder.fulfilled, (state: DeploymentRuleState, action) => {
         state.joinProjectDeploymentRules = {}

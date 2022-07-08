@@ -5,7 +5,7 @@ import { MenuItemProps } from '../../../menu/menu-item/menu-item'
 import StatusMenuAction from '../../../status-menu-action/status-menu-action'
 
 export interface ButtonIconActionElementProps {
-  iconLeft: React.ReactNode
+  iconLeft?: React.ReactNode
   iconRight?: React.ReactNode
   onClick?: () => void
   menus?: {

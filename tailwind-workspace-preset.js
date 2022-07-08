@@ -10,6 +10,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
+        code: ['Hack', 'sans-serif'],
         icons: ['FontAwesome'],
       },
       fontSize: {
@@ -24,6 +25,13 @@ module.exports = {
           {
             lineHeight: '1rem',
             letterSpacing: '0.002em',
+          },
+        ],
+        ssm: [
+          '0.8125rem',
+          {
+            lineHeight: '1.25rem',
+            letterSpacing: '0.0025em',
           },
         ],
         sm: [

@@ -28,10 +28,11 @@ export interface ContainerProps {
   statusActions: StatusMenuActions[]
   environment?: EnvironmentEntity
   children?: React.ReactNode
+  removeEnvironment?: () => void
 }
 
 export function Container(props: ContainerProps) {
-  const { environment, children, statusActions } = props
+  const { environment, children, statusActions, removeEnvironment } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
 
@@ -54,6 +55,22 @@ export function Container(props: ContainerProps) {
           `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
           '_blank'
         ),
+    },
+    {
+      ...(removeEnvironment && {
+        iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeEnvironment(),
+              },
+            ],
+          },
+        ],
+      }),
     },
   ]
 
@@ -122,7 +139,10 @@ export function Container(props: ContainerProps) {
     {
       icon: (
         <Skeleton show={environment?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip status={(environment?.status && environment?.status.state) || StateEnum.STOPPED} />
+          <StatusChip
+            mustRenameStatus
+            status={(environment?.status && environment?.status.state) || StateEnum.STOPPED}
+          />
         </Skeleton>
       ),
       name: 'Deployments',

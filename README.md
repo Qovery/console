@@ -1,4 +1,3 @@
-
 <br  />
 
 <p  align="center">
@@ -22,8 +21,11 @@
 </p>
 <br />
 
-
 ## Getting Started
+
+First use
+
+    yarn setup
 
 Start the project on http://localhost:4200
 
@@ -48,23 +50,25 @@ Run unit tests with Jest
 Run end-to-end tests with Cypress
 
     nx affected:e2e
-    
+
+## Contributing
+
+Qovery Console V3 is in its early stage of development and we need some help, you are welcome to contribute. To better synchronize consider joining our #v3 channel on our [Discord](https://discord.qovery.com).
+Otherwise, you can directly propose improvements from the [issues](https://github.com/Qovery/console/issues) pages or add them directly from your pull request for the changes.
 
 ## Community support
 
 For help, you can use one of the channels to ask a question:
 
--   [Forum](https://discuss.qovery.com/): (Bug reports, Questions)
--   [GitHub](https://github.com/Qovery/console): (Bug reports, Contributions)
--   [Twitter](https://twitter.com/qovery_): (Get the news fast)
+- [Forum](https://discuss.qovery.com/): (Bug reports, Questions)
+- [GitHub](https://github.com/Qovery/console): (Bug reports, Contributions)
+- [Twitter](https://twitter.com/qovery_): (Get the news fast)
 
-
-## FAQ 
+## FAQ
 
 ### Why does Qovery exist?
 
 At Qovery, we believe that the Cloud must be simpler than what it is today. Our goal is to consolidate the Cloud ecosystem and makes it accessible to any developer, DevOps, and company. Qovery helps people to focus on what they build instead of wasting time doing plumbing stuff.
-
 
 ### Why do we use NX?
 

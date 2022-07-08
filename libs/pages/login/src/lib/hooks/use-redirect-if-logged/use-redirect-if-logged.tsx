@@ -7,6 +7,11 @@ import { ONBOARDING_URL, OVERVIEW_URL } from '@console/shared/router'
 import { useNavigate } from 'react-router'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '@console/store/data'
+import {
+  getCurrentOrganizationIdFromStorage,
+  getCurrentProjectIdFromStorage,
+  getRedirectLoginUriFromStorage,
+} from './utils/utils'
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
@@ -15,9 +20,14 @@ export function useRedirectIfLogged() {
 
   useEffect(() => {
     const isOnboarding = process.env?.['NX_ONBOARDING'] === 'true'
-
     async function fetchData() {
-      const organization: Organization[] = await dispatch(fetchOrganization()).unwrap()
+      let organization: Organization[] = []
+
+      try {
+        organization = await dispatch(fetchOrganization()).unwrap()
+      } catch (e) {
+        console.warn(e)
+      }
 
       await createAuthCookies()
 
@@ -34,6 +44,21 @@ export function useRedirectIfLogged() {
       // }
     }
     if (checkIsAuthenticated) {
+      const currentOrganization = getCurrentOrganizationIdFromStorage()
+      const currentProject = getCurrentProjectIdFromStorage()
+      const redirectLoginUri = getRedirectLoginUriFromStorage()
+
+      if (redirectLoginUri) {
+        navigate(redirectLoginUri)
+        localStorage.removeItem('redirectLoginUri')
+        return
+      }
+
+      if (currentOrganization && currentProject) {
+        navigate(OVERVIEW_URL(currentOrganization, currentProject))
+        return
+      }
+
       fetchData()
     }
   }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch])

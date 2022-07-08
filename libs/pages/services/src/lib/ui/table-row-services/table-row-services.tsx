@@ -17,8 +17,6 @@ import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
 
-//import React, { useEffect } from 'react'
-
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
   type: ServicesEnum
@@ -27,6 +25,8 @@ export interface TableRowServicesProps {
   link: string
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
+  removeApplication?: (serviceId: string) => void
+  removeDatabase?: (serviceId: string) => void
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -38,6 +38,8 @@ export function TableRowServices(props: TableRowServicesProps) {
     link,
     buttonActions,
     environmentMode,
+    removeApplication,
+    removeDatabase,
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
@@ -67,23 +69,50 @@ export function TableRowServices(props: TableRowServicesProps) {
       iconLeft: <Icon name="icon-solid-scroll" />,
       onClick: () => openLogs(),
     },
-    /*{
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },*/
+    {
+      ...(removeApplication && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeApplication(data.id),
+              },
+            ],
+          },
+        ],
+      }),
+    },
   ]
 
   const buttonActionsDefaultDb = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
+      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
       statusActions: {
         status: data.status && data.status.state,
         actions: buttonActions,
       },
     },
-    /*{
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },*/
+    {
+      ...(removeDatabase && {
+        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+        menus: [
+          {
+            items: [
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeDatabase(data.id),
+              },
+            ],
+          },
+        ],
+      }),
+    },
   ]
 
   return (
@@ -95,7 +124,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               <StatusChip status={data.status && data.status.state} />
             </Skeleton>
           ) : (
-            <>
+            <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
               {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
                 <StatusChip status={data.status && data.status.state} />
               ) : (
@@ -108,13 +137,13 @@ export function TableRowServices(props: TableRowServicesProps) {
                   }
                 />
               )}
-            </>
+            </Skeleton>
           )}
-          <Skeleton show={isLoading} width={16} height={16}>
-            <div className="ml-2 mr-2">
+          <div className="ml-2 mr-2">
+            <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
               <Icon name={type === ServicesEnum.APPLICATION ? IconEnum.APPLICATION : IconEnum.DATABASE} width="20" />
-            </div>
-          </Skeleton>
+            </Skeleton>
+          </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
             <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
           </Skeleton>
@@ -124,9 +153,11 @@ export function TableRowServices(props: TableRowServicesProps) {
             <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <StatusLabel status={data.status && data.status.state} />
-                <span className="text-xs text-text-300 mx-3 font-medium">
-                  {timeAgo(data.updated_at ? new Date(data.updated_at) : new Date(data.created_at))} ago
-                </span>
+                {data.status?.last_deployment_date && (
+                  <span className="text-xs text-text-300 mx-3 font-medium">
+                    {timeAgo(new Date(data.status.last_deployment_date))} ago
+                  </span>
+                )}
               </p>
               {data.name && (
                 <ButtonIconAction

@@ -29,7 +29,7 @@ export function LayoutPage(props: LayoutPageProps) {
         databases={databases}
         darkMode={darkMode}
       />
-      <div className="p-2 mt-16 ml-16 h-full flex flex-col">{children}</div>
+      <div className={`mt-16 ml-16 h-full flex flex-col ${!darkMode ? 'p-2' : ''}`}>{children}</div>
     </main>
   )
 }
