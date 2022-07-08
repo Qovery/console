@@ -149,3 +149,8 @@ jobs:
           key: cache-node-${{ hashFiles('yarn.lock') }}
       - name: Start Nx Agent ${{ matrix.agent }}
         run: yarn nx-cloud start-agent
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
