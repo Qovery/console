@@ -86,7 +86,7 @@ export function TabsLogs(props: TabsLogsProps) {
                           onClick={() => scrollToError()}
                           className="transition-colors cursor-pointer text-error-500 hover:text-error-600 font-bold mr-2.5"
                         >
-                          <span className="text-xxs relative -top-[1px] mr-1">{errors[errors.length - 1].index}</span>
+                          <span className="text-xxs relative -top-px mr-1">{errors[errors.length - 1].index}</span>
                           <Icon name="icon-solid-arrow-circle-right" className=" cursor-pointer" />
                         </p>
                         <CopyToClipboard
