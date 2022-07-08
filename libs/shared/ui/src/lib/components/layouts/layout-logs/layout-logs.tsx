@@ -107,7 +107,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
           >
             <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
             An error occured line {realErrors[realErrors.length - 1]?.index}
-            <Icon name="icon-solid-arrow-circle-right" className="ml-1.5" />
+            <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
           </p>
         )}
         <div className="flex">
