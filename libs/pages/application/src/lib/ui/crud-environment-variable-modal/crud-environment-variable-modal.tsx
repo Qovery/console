@@ -66,6 +66,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               className="mb-6"
+              portal={false}
               items={[
                 {
                   label: EnvironmentVariableScopeEnum.PROJECT.toString().toLowerCase(),
