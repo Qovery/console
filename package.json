@@ -8,7 +8,7 @@
     "storybook": "nx storybook shared-ui",
     "build-storybook": "nx run shared-ui:build-storybook",
     "build": "npx nx build",
-    "test": "nx test",
+    "test:ci": "nx run-many --target=test --all --parallel --coverage --coverageReporters=lcov && node ./tools/coverageMerger.js",
     "prepare": "husky install"
   },
   "private": true,
@@ -21,8 +21,10 @@
     "@nrwl/eslint-plugin-nx": "14.3.6",
     "@nrwl/linter": "14.3.1",
     "@nrwl/nx-cloud": "14.1.0",
+    "@nrwl/react": "14.3.6",
     "@nrwl/storybook": "14.3.1",
     "@nrwl/tao": "13.8.5",
+    "@nrwl/web": "14.3.6",
     "@nrwl/workspace": "14.4.2",
     "@radix-ui/react-accordion": "^0.1.6",
     "@radix-ui/react-dialog": "^0.1.7",
@@ -64,8 +66,6 @@
     "react-use-websocket": "^4.2.0",
     "regenerator-runtime": "0.13.9",
     "tailwindcss": "^3.0.24",
-    "@nrwl/react": "14.3.6",
-    "@nrwl/web": "14.3.6",
     "tslib": "^2.0.0"
   },
   "resolutions": {
@@ -110,6 +110,7 @@
     "eslint-plugin-react": "7.30.1",
     "eslint-plugin-react-hooks": "4.5.0",
     "faker": "^6.6.6",
+    "glob": "^8.0.3",
     "history": "^5.2.0",
     "husky": "^7.0.0",
     "identity-obj-proxy": "^3.0.0",
