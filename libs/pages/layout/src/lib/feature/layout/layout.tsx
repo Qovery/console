@@ -46,6 +46,11 @@ export function Layout(props: LayoutProps) {
     }
   }, [dispatch, organizationId])
 
+  useEffect(() => {
+    localStorage.setItem('currentOrganizationId', organizationId)
+    localStorage.setItem('currentProjectId', projectId)
+  }, [organizationId, projectId])
+
   return (
     <LayoutPage user={userSignUp} darkMode={darkMode}>
       <>
