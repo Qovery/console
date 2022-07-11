@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '@console/store/data'
 import { createEnvironmentVariables } from '@console/domains/environment-variable'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
@@ -11,6 +12,8 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   type?: EnvironmentVariableType
   setOpen: (open: boolean) => void
   applicationId: string
+  environmentId: string
+  projectId: string
 }
 
 export enum EnvironmentVariableCrudMode {
@@ -39,15 +42,29 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
 
   const onSubmit = handleSubmit((data) => {
     if (data) {
-      console.log(props.applicationId)
+      let entityId
+      switch (data.scope) {
+        case EnvironmentVariableScopeEnum.ENVIRONMENT:
+          entityId = props.environmentId
+          break
+        case EnvironmentVariableScopeEnum.PROJECT:
+          entityId = props.environmentId
+          break
+        case EnvironmentVariableScopeEnum.APPLICATION:
+        default:
+          entityId = props.applicationId
+          break
+      }
+
       if (props.mode === EnvironmentVariableCrudMode.CREATION) {
         dispatch(
           createEnvironmentVariables({
-            applicationId: props.applicationId,
+            entityId,
             environmentVariableRequest: {
               key: data.key,
               value: data.value,
             },
+            scope: data.scope as EnvironmentVariableScopeEnum,
           })
         ).then(() => {
           props.setOpen(false)

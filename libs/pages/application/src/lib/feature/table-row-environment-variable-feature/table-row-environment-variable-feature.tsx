@@ -17,7 +17,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
   const { variable, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
   const { setOpenModal, setContentModal } = useContext(ModalContext)
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', projectId = '', environmentId = '' } = useParams()
 
   const rowActions: ButtonIconActionElementProps[] = [
     {
@@ -35,6 +35,8 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                     variable={variable}
                     mode={EnvironmentVariableCrudMode.EDITION}
                     applicationId={applicationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
                   />
                 )
               },
@@ -50,6 +52,8 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                     type={EnvironmentVariableType.OVERRIDE}
                     mode={EnvironmentVariableCrudMode.CREATION}
                     applicationId={applicationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
                   />
                 )
               },
@@ -65,6 +69,8 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                     type={EnvironmentVariableType.ALIAS}
                     mode={EnvironmentVariableCrudMode.CREATION}
                     applicationId={applicationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
                   />
                 )
               },

@@ -30,7 +30,7 @@ import CrudEnvironmentVariableModalFeature, {
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 
 export function TabsFeature() {
-  const { organizationId, projectId, environmentId, applicationId = '' } = useParams()
+  const { organizationId, projectId = '', environmentId = '', applicationId = '' } = useParams()
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
@@ -139,6 +139,8 @@ export function TabsFeature() {
             type={EnvironmentVariableType.NORMAL}
             mode={EnvironmentVariableCrudMode.CREATION}
             applicationId={applicationId}
+            environmentId={environmentId}
+            projectId={projectId}
           />
         )
       }}
