@@ -62,6 +62,8 @@ function PageGeneralMemo(props: PageGeneralProps) {
     },
   ]
 
+  const columnWidth = '35% 15% 25% 25%'
+
   return (
     <>
       <Table
@@ -70,7 +72,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
         filterData={data}
         setFilterData={setData}
         className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
-        columnsWidth="30% 20% 25% 25%"
+        columnsWidth={columnWidth}
       >
         <>
           {data.map((currentData) => (
@@ -79,7 +81,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
               data={currentData}
               dataHead={tableHead}
               link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
-              columnsWidth="25% 25% 25% 20%"
+              columnsWidth={columnWidth}
               buttonActions={buttonActions}
               removeEnvironment={
                 currentData?.status && isDeleteAvailable(currentData?.status?.state) ? removeEnvironment : undefined
