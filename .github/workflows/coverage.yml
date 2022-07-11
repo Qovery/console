@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [6, 8, 10, 12, 14]
+        node: [16]
         os: [ubuntu-latest, windows-latest]
 
     steps:
@@ -24,13 +24,10 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Install npm dependencies
-        run: npm install # switch to `npm ci` when Node.js 6 support is dropped
-
-      - name: Run lint
-        run: npm run lint
+        run: yarn
 
       - name: Run tests
-        run: npm run test-cov
+        run: yarn test:ci
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
