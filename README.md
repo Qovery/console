@@ -13,6 +13,7 @@
 
 <p align="center">
 <a href="https://opensource.org/licenses"><img alt="GPLv3 License" src="https://img.shields.io/badge/License-GPL%20v3-yellow.svg"></a>
+<a href='https://coveralls.io/github/Qovery/console?branch=staging'><img src='https://coveralls.io/repos/github/Qovery/console/badge.svg?branch=staging' alt='Coverage Status' /></a>
 <a href="https://discord.qovery.com"><img alt="Discord" src="https://img.shields.io/discord/688766934917185556?label=discord&style=flat-circle"></a>
 </p>
 
