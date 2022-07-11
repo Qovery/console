@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
-import { Icon } from '@console/shared/ui'
+import { Icon } from '../icon/icon'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'
 export interface NavigationLeftProps {
   links: NavigationLeftLinkProps[]
@@ -51,7 +51,7 @@ export function NavigationLeft(props: NavigationLeftProps) {
           <span
             data-testid="link"
             key={index}
-            onClick={() => link.onClick}
+            onClick={link.onClick}
             className={linkClassName(link.url || '', pathname)}
           >
             {linkContent(link)}

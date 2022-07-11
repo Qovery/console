@@ -1,4 +1,5 @@
 import { screen, render } from '__tests__/utils/setup-jest'
+import { fireEvent } from '@testing-library/react'
 import NavigationLeft, { NavigationLeftProps, linkClassName } from './navigation-left'
 
 describe('NavigationLeft', () => {
@@ -69,5 +70,24 @@ describe('NavigationLeft', () => {
     const link = screen.getByTestId('link')
 
     expect(link.textContent).toBe(props.links[0].title)
+  })
+
+  it('should have a click emitted', () => {
+    const onClick = jest.fn()
+
+    props.links = [
+      {
+        title: 'General',
+        onClick: onClick,
+      },
+    ]
+
+    render(<NavigationLeft {...props} />)
+
+    const link = screen.getByTestId('link')
+
+    fireEvent.click(link)
+
+    expect(onClick.mock.calls.length).toEqual(1)
   })
 })
