@@ -30,7 +30,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     deleteDeploymentRule,
     linkNewRule = '',
   } = props
-  const [listRules, setListRules] = useState<ProjectDeploymentRule[]>(deploymentRules)
+  const [listRules, setListRules] = useState<ProjectDeploymentRule[]>(deploymentRules || [])
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result

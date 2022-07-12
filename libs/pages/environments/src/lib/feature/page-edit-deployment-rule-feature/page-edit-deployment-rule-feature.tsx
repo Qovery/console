@@ -40,9 +40,11 @@ export function PageEditDeploymentRuleFeature() {
   })
 
   useEffect(() => {
-    dispatch(fetchClusters({ organizationId }))
     dispatch(fetchDeploymentRule({ projectId, deploymentRuleId }))
+    dispatch(fetchClusters({ organizationId }))
+  }, [dispatch, organizationId, projectId, deploymentRuleId])
 
+  useEffect(() => {
     const startTime = deploymentRule?.start_time && dateToHours(deploymentRule?.start_time)
 
     const stopTime = deploymentRule?.stop_time && dateToHours(deploymentRule?.stop_time)
@@ -60,7 +62,7 @@ export function PageEditDeploymentRuleFeature() {
     setValue('wildcard', deploymentRule?.wildcard)
     setValue('description', deploymentRule?.description)
     setValue('cluster_id', deploymentRule?.cluster_id)
-  }, [deploymentRule, setValue, dispatch, organizationId, deploymentRuleId, projectId])
+  }, [deploymentRule, setValue])
 
   return (
     <PageCreateEditDeploymentRule
