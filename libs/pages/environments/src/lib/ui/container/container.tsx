@@ -2,7 +2,7 @@ import { useLocation, useParams } from 'react-router'
 import {
   ENVIRONMENTS_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
-  ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE,
+  ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
 } from '@console/shared/router'
 import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
@@ -37,14 +37,14 @@ export function Container(props: ContainerProps) {
       active:
         location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
         location.pathname ===
-          `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE}`,
+          `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },
   ]
 
   const isDeploymentRulesTab =
     location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
-    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE}`
+    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">

@@ -18,7 +18,7 @@ export interface PageDeploymentRulesProps {
   updateDeploymentRulesOrder: (list: ProjectDeploymentRule[]) => void
   deleteDeploymentRule: (rule: string) => void
   linkNewRule?: string
-  isLoading?: boolean
+  isLoading?: string
 }
 
 export function PageDeploymentRules(props: PageDeploymentRulesProps) {
@@ -49,13 +49,17 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
   }
 
   useEffect(() => {
-    setListRules(deploymentRules)
-  }, [deploymentRules])
+    if (isLoading === 'loaded') setListRules(deploymentRules)
+  }, [deploymentRules, isLoading])
+
+  console.log(listRules)
+  console.log(isLoading)
 
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
-      {listRules.length === 0 && <PlaceholderNoRules linkNewRule={linkNewRule} />}
-      {listRules.length >= 1 && (
+      {isLoading === 'loading' && <div className="h-full" />}
+      {listRules.length === 0 && isLoading === 'loaded' && <PlaceholderNoRules linkNewRule={linkNewRule} />}
+      {listRules.length >= 1 && isLoading === 'loaded' && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex justify-between items-center mb-8 w-[640px]">
             <p className="text-text-500 text-xs">
@@ -97,7 +101,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
                               stopTime={rule.stop_time}
                               weekDays={rule.weekdays}
                               isLast={index === listRules.length - 1 ? true : false}
-                              isLoading={isLoading}
+                              isLoading={isLoading !== 'loaded'}
                               removeDeploymentRule={deleteDeploymentRule}
                             />
                           </div>

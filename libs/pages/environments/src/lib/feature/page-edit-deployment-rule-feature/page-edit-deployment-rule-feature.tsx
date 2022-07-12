@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import { BaseLink } from '@console/shared/ui'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { dateToHours } from '@console/shared/utils'
-import PageEditDeploymentRule from '../../ui/page-edit-deployment-rule/page-edit-deployment-rule'
+import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageEditDeploymentRuleFeature() {
   const { deploymentRuleId = '', organizationId = '', projectId = '' } = useParams()
@@ -72,7 +72,7 @@ export function PageEditDeploymentRuleFeature() {
   }, [deploymentRule, setValue, dispatch, organizationId, deploymentRuleId, projectId])
 
   return (
-    <PageEditDeploymentRule
+    <PageCreateEditDeploymentRule
       listHelpfulLinks={listHelpfulLinks}
       control={control}
       clusters={clusters}

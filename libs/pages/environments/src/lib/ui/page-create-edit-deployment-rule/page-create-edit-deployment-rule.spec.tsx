@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
 
-import PageCreateDeploymentRule, { PageCreateDeploymentRuleProps } from './page-create-deployment-rule'
+import PageCreateEditDeploymentRule, { PageCreateEditDeploymentRuleProps } from './page-create-edit-deployment-rule'
 
-let props: PageCreateDeploymentRuleProps
+let props: PageCreateEditDeploymentRuleProps
 
 beforeEach(() => {
   props = {
@@ -17,9 +17,9 @@ beforeEach(() => {
   }
 })
 
-describe('PageCreateDeploymentRule', () => {
+describe('PageCreateEditDeploymentRule', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageCreateDeploymentRule {...props} />)
+    const { baseElement } = render(<PageCreateEditDeploymentRule {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

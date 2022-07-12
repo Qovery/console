@@ -9,7 +9,7 @@ import { useNavigate, useParams } from 'react-router'
 import { postDeploymentRules } from '@console/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
-import PageCreateDeploymentRule from '../../ui/page-create-deployment-rule/page-create-deployment-rule'
+import PageCreateDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 import { toast, ToastEnum } from '@console/shared/toast'
 import { useDocumentTitle } from '@console/shared/utils'
 

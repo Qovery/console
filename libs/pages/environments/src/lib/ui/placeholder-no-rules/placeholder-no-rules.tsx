@@ -17,12 +17,9 @@ export function PlaceholderNoRules(props: PlaceholderNoRulesProps) {
             src="/assets/images/event-placeholder-light.svg"
             alt="Event placeholder"
           />
-          <h2 className="text-base text-text-600 font-medium mb-1">
+          <h2 className="text-base text-text-600 font-medium mb-5">
             Create your first Deployment Rules <span role="img">🕹</span>
           </h2>
-          <p className="text-sm text-text-500 max-w-[420px] text-center mb-5">
-            Events enable you to Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.
-          </p>
           <Button link={linkNewRule}>Create Deployment Rule</Button>
         </div>
       </div>

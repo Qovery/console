@@ -1,10 +1,9 @@
 import {
   BaseLink,
   Button,
-  ButtonIcon,
-  ButtonIconStyle,
   ButtonSize,
   ButtonStyle,
+  BlockContent,
   HelpSection,
   Icon,
   InputSelect,
@@ -12,7 +11,6 @@ import {
   InputText,
   InputTextArea,
   InputToggle,
-  Tooltip,
 } from '@console/shared/ui'
 import { useNavigate } from 'react-router-dom'
 import { Control, Controller } from 'react-hook-form'
@@ -21,21 +19,17 @@ import { Cluster } from 'qovery-typescript-axios'
 import { Value } from '@console/shared/interfaces'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
-export interface PageEditDeploymentRuleProps {
+export interface PageCreateDeploymentRuleProps {
   listHelpfulLinks: BaseLink[]
-  control: Control<any, any>
+  control?: Control<any, any>
   onSubmit: () => void
   clusters?: Cluster[]
 }
 
-export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
+export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
   const { listHelpfulLinks, control, onSubmit, clusters } = props
 
   const [autoStop, setAutoStop] = useState(false)
-
-  /*useEffect(() => {
-    control && setAutoStop(control?._defaultValues['auto_stop'])
-  }, [control])*/
 
   const modeSelection = [
     {
@@ -61,31 +55,31 @@ export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
 
   const weekdaysSelection = [
     {
-      label: 'MONDAY',
+      label: 'Monday',
       value: 'MONDAY',
     },
     {
-      label: 'TUESDAY',
+      label: 'Tuesday',
       value: 'TUESDAY',
     },
     {
-      label: 'WEDNESDAY',
+      label: 'Wednesday',
       value: 'WEDNESDAY',
     },
     {
-      label: 'THURSDAY',
+      label: 'Thursday',
       value: 'THURSDAY',
     },
     {
-      label: 'FRIDAY',
+      label: 'Friday',
       value: 'FRIDAY',
     },
     {
-      label: 'SATURDAY',
+      label: 'Saturday',
       value: 'SATURDAY',
     },
     {
-      label: 'SUNDAY',
+      label: 'Sunday',
       value: 'SUNDAY',
     },
   ]
@@ -103,39 +97,33 @@ export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
     : []
 
   return (
-    <div className="mt-2 bg-white rounded flex flex-grow">
-      <div className="flex h-full flex-col flex-grow">
-        <div className="py-7 px-10 flex-grow">
-          <div className="max-w-[620px]">
-            <div className="flex gap-4 mb-3 items-center">
-              <ButtonIcon
-                icon="icon-solid-arrow-left"
-                style={ButtonIconStyle.STROKED}
-                className="!bg-element-light-lighter-300"
+    <div className="mt-2 bg-white rounded">
+      <div className="flex">
+        <div className="flex-grow overflow-y-auto">
+          <div className="py-7 px-10">
+            <div className="max-w-[620px]">
+              <Button
+                size={ButtonSize.TINY}
+                style={ButtonStyle.FLAT}
                 onClick={() => navigate(-1)}
-              />
-              <h1 className="font-bold text-base text-text-600">Edit rule</h1>
-            </div>
+                className="!px-0 mb-1"
+              >
+                <Icon name="icon-solid-arrow-left" className="mr-1 text-xs" />
+                Back
+              </Button>
 
-            <div className="mb-3">
-              <p className="text-text-400 text-xs">
-                Automatically create a preview environment when a merge request is submitted on one of your
-                applications. Your environment will be cloned with the application synchronised on the branch waiting to
-                be merged.
-              </p>
-            </div>
+              <h1 className="font-bold text-xl text-text-700 mb-2">Create rule</h1>
 
-            <form onSubmit={onSubmit}>
-              <div className="border border-element-light-lighter-400 rounded mb-5">
-                <div className="flex items-center justify-between h-11 px-4 border-b border-element-light-lighter-400">
-                  <h2 className="font-medium text-text-500 text-sm">Matching rule definition</h2>
-                  <Tooltip content="Information">
-                    <div>
-                      <Icon name="icon-solid-circle-info" className="text-sm text-text-400" />
-                    </div>
-                  </Tooltip>
-                </div>
-                <div className="p-5">
+              <div className="mb-10">
+                <p className="text-text-500 text-xs leading-5">
+                  Automatically create a preview environment when a merge request is submitted on one of your
+                  applications. Your environment will be cloned with the application synchronised on the branch waiting
+                  to be merged.
+                </p>
+              </div>
+
+              <form onSubmit={onSubmit}>
+                <BlockContent title="Matching rule definition">
                   <Controller
                     name="name"
                     control={control}
@@ -167,14 +155,15 @@ export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
                   <Controller
                     name="wildcard"
                     control={control}
-                    rules={{ required: 'Please enter a matching condition.' }}
-                    render={({ field }) => (
+                    rules={{ required: 'Please add a matching condition' }}
+                    render={({ field, fieldState: { error } }) => (
                       <InputTextArea
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}
                         label="Matching Condition - Environment Name"
                         className="mb-3"
+                        error={error?.message}
                       />
                     )}
                   />
@@ -182,14 +171,9 @@ export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
                   <p className="text-xs text-text-400">
                     Use wildcards to specify just part of the name of the target environment.
                   </p>
-                </div>
-              </div>
+                </BlockContent>
 
-              <div className="border border-element-light-lighter-400 rounded mb-5">
-                <div className="flex items-center justify-between h-11 px-4 border-b border-element-light-lighter-400">
-                  <h2 className="font-medium text-text-500 text-sm">Setup to apply - General</h2>
-                </div>
-                <div className="p-5">
+                <BlockContent title="Setup to apply - General">
                   <Controller
                     name="mode"
                     control={control}
@@ -216,51 +200,32 @@ export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
-                        className="mb-1"
+                        className="mb-5"
                       />
                     )}
                   />
-                  <p className="text-xs text-text-400 mb-3">
-                    Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.
-                  </p>
-                  <div className="flex items-center gap-3 mb-1">
+                  <div className="flex items-center gap-3 mb-4">
                     <Controller
                       name="auto_deploy"
                       control={control}
-                      render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} small />}
+                      render={({ field }) => (
+                        <InputToggle value={field.value} onChange={field.onChange} title="Auto-deploy" small />
+                      )}
                     />
-                    <p className="text-text-500 text-sm font-medium">Auto-deploy</p>
                   </div>
-                  <p className="text-xs text-text-400 mb-3">
-                    Your environment will auto-stop amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-                    sint.
-                  </p>
                   <div className="flex items-center gap-3 mb-1">
                     <Controller
                       name="auto_delete"
                       control={control}
-                      render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} small />}
+                      render={({ field }) => (
+                        <InputToggle value={field.value} onChange={field.onChange} title="Auto-delete" small />
+                      )}
                     />
-                    <p className="text-text-500 text-sm font-medium">Auto-delete</p>
                   </div>
-                  <p className="text-xs text-text-400 mb-3">
-                    Your environment will auto-stop amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-                    sint.
-                  </p>
-                </div>
-              </div>
+                </BlockContent>
 
-              <div className="border border-element-light-lighter-400 rounded mb-5">
-                <div className="flex items-center justify-between h-11 px-4 border-b border-element-light-lighter-400">
-                  <h2 className="font-medium text-text-500 text-sm">Setup to apply - Start & stop</h2>
-                  <Tooltip content="Information">
-                    <div>
-                      <Icon name="icon-solid-circle-info" className="text-sm text-text-400" />
-                    </div>
-                  </Tooltip>
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center gap-3 mb-1">
+                <BlockContent title="Setup to apply - Start & stop">
+                  <div className="flex items-center gap-3">
                     <Controller
                       name="auto_stop"
                       control={control}
@@ -271,16 +236,14 @@ export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
                             field.onChange(e)
                             setAutoStop(e)
                           }}
+                          className="mb-5"
+                          title="Deploy on specific timeframe"
+                          description="The rule will only be applied to new environments that match the regex you specify here. Leave this field empty if you want the rule to be applied to all new environments."
                           small
                         />
                       )}
                     />
-                    <p className="text-text-500 text-sm font-medium">Deploy on specific timeframe</p>
                   </div>
-                  <p className="text-xs text-text-400 mb-3">
-                    The rule will only be applied to new environments that match the regex you specify here. Leave this
-                    field empty if you want the rule to be applied to all new environments.
-                  </p>
                   <Controller
                     name="weekdays"
                     control={control}
@@ -347,19 +310,25 @@ export function PageEditDeploymentRule(props: PageEditDeploymentRuleProps) {
                       )}
                     />
                   </div>
-                </div>
-              </div>
-              <Button size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
-                Edit
-              </Button>
-            </form>
+                </BlockContent>
+
+                <Button size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
+                  Create rule
+                </Button>
+              </form>
+            </div>
+          </div>
+          <div className="bg-white rounded-b w-full">
+            <HelpSection
+              description="Need help? You may find these links useful"
+              links={listHelpfulLinks}
+            ></HelpSection>
           </div>
         </div>
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
+        <HelpSidebar />
       </div>
-      <HelpSidebar />
     </div>
   )
 }
 
-export default PageEditDeploymentRule
+export default PageCreateDeploymentRule

@@ -2,5 +2,5 @@ export const ENVIRONMENTS_URL = (organizationId = ':organizationId', projectId =
   `/organization/${organizationId}/project/${projectId}/environments`
 export const ENVIRONMENTS_GENERAL_URL = '/general'
 export const ENVIRONMENTS_DEPLOYMENT_RULES_URL = `/deployment-rules`
-export const ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE = '/deployment-rules/create'
-export const ENVIRONMENTS_DEPLOYMENT_RULES_URL_EDIT = '/deployment-rules/edit/:deploymentRuleId'
+export const ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL = '/deployment-rules/create'
+export const ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL = '/deployment-rules/edit/:deploymentRuleId'

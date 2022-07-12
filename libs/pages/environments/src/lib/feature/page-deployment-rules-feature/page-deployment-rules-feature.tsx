@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE, ENVIRONMENTS_URL } from '@console/shared/router'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { useDocumentTitle } from '@console/shared/utils'
 
 export function PageDeploymentRulesFeature() {
@@ -43,7 +43,7 @@ export function PageDeploymentRulesFeature() {
 
   const loadingStatus = useSelector(deploymentRulesLoadingStatus)
 
-  const linkNewRule = ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE
+  const linkNewRule = ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL
 
   useEffect(() => {
     dispatch(fetchDeploymentRules({ projectId }))
@@ -54,7 +54,7 @@ export function PageDeploymentRulesFeature() {
       listHelpfulLinks={listHelpfulLinks}
       deploymentRules={deploymentRulesList}
       updateDeploymentRulesOrder={updateDeploymentRulesOrder}
-      isLoading={loadingStatus !== 'loaded'}
+      isLoading={loadingStatus}
       deleteDeploymentRule={removeDeploymentRule}
       linkNewRule={linkNewRule}
     />
