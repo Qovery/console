@@ -1,11 +1,11 @@
 import { Button, Icon } from '@console/shared/ui'
 
-export interface NoRulesProps {
+export interface PlaceholderNoRulesProps {
   list: string[]
   linkNewRule: string
 }
 
-export function NoRules(props: NoRulesProps) {
+export function PlaceholderNoRules(props: PlaceholderNoRulesProps) {
   const { linkNewRule, list } = props
 
   return (
@@ -67,4 +67,4 @@ export function NoRules(props: NoRulesProps) {
   )
 }
 
-export default NoRules
+export default PlaceholderNoRules

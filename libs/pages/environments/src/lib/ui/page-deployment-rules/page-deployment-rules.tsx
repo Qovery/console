@@ -10,7 +10,7 @@ import {
 import { ProjectDeploymentRule } from 'qovery-typescript-axios'
 import { BaseLink, Button, ButtonSize, HelpSection } from '@console/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
-import NoRules from '../no-rules/no-rules'
+import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 
 export interface PageDeploymentRulesProps {
   listHelpfulLinks: BaseLink[]
@@ -59,7 +59,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
 
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
-      {listRules.length === 0 && <NoRules linkNewRule={linkNewRule} list={LIST} />}
+      {listRules.length === 0 && <PlaceholderNoRules linkNewRule={linkNewRule} list={LIST} />}
       {listRules.length >= 1 && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex justify-between items-center mb-8 w-[640px]">

@@ -33,8 +33,8 @@ describe('InputToggle', () => {
     bg = screen.getByLabelText('bg')
     circle = screen.getByLabelText('circle')
 
-    expect(bg.className).toContain('w-6 h-3.5')
-    expect(circle.className).toContain('w-2.5 h-2.5')
+    expect(bg.className).toContain('w-8 h-4.5')
+    expect(circle.className).toContain('w-3.5 h-3.5')
   })
 
   it('should apply the accurate classes when toggling', () => {
@@ -59,7 +59,7 @@ describe('InputToggle', () => {
     bg = screen.getByLabelText('bg')
     circle = screen.getByLabelText('circle')
 
-    expect(bg.className).toContain('bg-success-500')
-    expect(circle.className).toContain('translate-x-2.5')
+    expect(bg.className).toContain('bg-brand-500')
+    expect(circle.className).toContain('translate-x-3.5')
   })
 })

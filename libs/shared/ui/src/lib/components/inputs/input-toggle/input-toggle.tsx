@@ -46,7 +46,7 @@ export function InputToggle(props: InputToggleProps) {
         </div>
       </div>
       <div className="ml-3">
-        {title && <p className="text-text-600 text-ssm font-medium">{title}</p>}
+        {title && <p className={`text-text-600 text-ssm font-medium ${description ? 'mb-1' : ''}`}>{title}</p>}
         {description && <p className="text-xs text-text-400">{description}</p>}
       </div>
     </div>
