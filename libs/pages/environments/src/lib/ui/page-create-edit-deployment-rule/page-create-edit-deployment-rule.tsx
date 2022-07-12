@@ -19,14 +19,14 @@ import { Cluster } from 'qovery-typescript-axios'
 import { Value } from '@console/shared/interfaces'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
-export interface PageCreateDeploymentRuleProps {
+export interface PageCreateEditDeploymentRuleProps {
   title: string
   control?: Control<any, any>
   onSubmit: () => void
   clusters?: Cluster[]
 }
 
-export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
+export function PageCreateDeploymentRule(props: PageCreateEditDeploymentRuleProps) {
   const { title, control, onSubmit, clusters } = props
 
   const [autoStop, setAutoStop] = useState(false)
