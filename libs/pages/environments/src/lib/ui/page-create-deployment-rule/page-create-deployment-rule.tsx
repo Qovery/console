@@ -200,41 +200,32 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                       onChange={field.onChange}
                       value={field.value}
                       error={error?.message}
-                      className="mb-1"
+                      className="mb-5"
                     />
                   )}
                 />
-                <p className="text-xs text-text-400 mb-3">
-                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint.
-                </p>
-                <div className="flex items-center gap-3 mb-1">
+                <div className="flex items-center gap-3 mb-4">
                   <Controller
                     name="auto_deploy"
                     control={control}
-                    render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} small />}
+                    render={({ field }) => (
+                      <InputToggle value={field.value} onChange={field.onChange} title="Auto-deploy" small />
+                    )}
                   />
-                  <p className="text-text-500 text-sm font-medium">Auto-deploy</p>
                 </div>
-                <p className="text-xs text-text-400 mb-3">
-                  Your environment will auto-stop amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-                  sint.
-                </p>
                 <div className="flex items-center gap-3 mb-1">
                   <Controller
                     name="auto_delete"
                     control={control}
-                    render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} small />}
+                    render={({ field }) => (
+                      <InputToggle value={field.value} onChange={field.onChange} title="Auto-delete" small />
+                    )}
                   />
-                  <p className="text-text-500 text-sm font-medium">Auto-delete</p>
                 </div>
-                <p className="text-xs text-text-400 mb-3">
-                  Your environment will auto-stop amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-                  sint.
-                </p>
               </BlockContent>
 
               <BlockContent title="Setup to apply - Start & stop">
-                <div className="flex items-center gap-3 mb-1">
+                <div className="flex items-center gap-3">
                   <Controller
                     name="auto_stop"
                     control={control}
@@ -245,16 +236,14 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                           field.onChange(e)
                           setAutoStop(e)
                         }}
+                        className="mb-5"
+                        title="Deploy on specific timeframe"
+                        description="The rule will only be applied to new environments that match the regex you specify here. Leave this field empty if you want the rule to be applied to all new environments."
                         small
                       />
                     )}
                   />
-                  <p className="text-text-500 text-sm font-medium">Deploy on specific timeframe</p>
                 </div>
-                <p className="text-xs text-text-400 mb-3">
-                  The rule will only be applied to new environments that match the regex you specify here. Leave this
-                  field empty if you want the rule to be applied to all new environments.
-                </p>
                 <Controller
                   name="weekdays"
                   control={control}

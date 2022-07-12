@@ -1,5 +1,4 @@
-import { BaseLink, Button, ButtonSize, HelpSection, Icon } from '@console/shared/ui'
-import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
+import { useEffect, useState } from 'react'
 import {
   Draggable,
   DragDropContext,
@@ -8,8 +7,9 @@ import {
   DraggableProvided,
   DropResult,
 } from 'react-beautiful-dnd'
-import { useEffect, useState } from 'react'
 import { ProjectDeploymentRule } from 'qovery-typescript-axios'
+import { BaseLink, Button, ButtonSize, HelpSection } from '@console/shared/ui'
+import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import NoRules from '../no-rules/no-rules'
 
 export interface PageDeploymentRulesProps {
@@ -67,9 +67,13 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
 
-            <Button size={ButtonSize.SMALL} className="leading-none" link={linkNewRule}>
+            <Button
+              size={ButtonSize.NORMAL}
+              className="leading-none"
+              link={linkNewRule}
+              iconRight="icon-solid-circle-plus"
+            >
               Add rule
-              <Icon name="icon-solid-plus" className="ml-2 !text-base inline-block -mt-1" />
             </Button>
           </div>
 

@@ -1,10 +1,10 @@
-export interface ContentBlockProps {
+export interface BlockContentProps {
   className?: string
   children: React.ReactNode
   title: string
 }
 
-export function BlockContent(props: ContentBlockProps) {
+export function BlockContent(props: BlockContentProps) {
   const { children, className = '', title } = props
 
   return (

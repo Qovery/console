@@ -84,7 +84,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
         </Skeleton>
         <Skeleton show={isLoading} width={300} height={20}>
           <p className="text-xs text-text-500 max-w-full truncate">
-            {getTime(startTime)}-{getTime(stopTime)}
+            {getTime(startTime)} - {getTime(stopTime)}
             {isWeekdays() && weekDays.length < 7 ? ' - Running every weekday' : ''}
             {weekDays.length === 7 && ' - Running everyday'}
             {!isWeekdays() && weekDays.length !== 7 ? weekDaysList : ''}
@@ -102,8 +102,8 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
             onOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
             trigger={
               <span
-                className={`w-8 h-8 flex items-center justify-center text-text-400 text-xs bg-white cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
-                  menuOpen ? 'bg-brand-50 !text-brand-500' : ''
+                className={`w-8 h-8 flex items-center justify-center text-xs bg-white cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
+                  menuOpen ? 'bg-element-light-lighter-300 text-brand-500' : 'text-text-400'
                 }`}
               >
                 <Icon name="icon-solid-ellipsis-v" />
