@@ -14,30 +14,19 @@ describe('error toaster', () => {
     expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, title, message)
   })
 
-  it('should called error toaster with response data error messages', () => {
-    const message = 'error message'
-    const title = 'error title'
-
+  it('should call error toaster with error name and error message', () => {
     const error = {
-      response: {
-        data: {
-          error: 'error',
-          message: 'error message',
-        },
-      },
+      name: 'error',
+      message: 'error message',
     }
 
     errorToaster(error)
     expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'error', 'error message')
   })
 
-  it('should called error toaster with response error code and message', () => {
-    const error = {
-      code: 'error',
-      message: 'error message',
-    }
-
+  it('should call error toaster with default error name', () => {
+    const error = {}
     errorToaster(error)
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'error', 'error message')
+    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'Error', 'No message found')
   })
 })

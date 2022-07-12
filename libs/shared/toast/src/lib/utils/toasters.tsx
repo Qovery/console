@@ -1,9 +1,6 @@
 import toast, { ToastEnum } from '../toast'
+import { SerializedError } from '@reduxjs/toolkit'
 
-export function errorToaster(error: any, title?: string, message?: string): void {
-  toast(
-    ToastEnum.ERROR,
-    title || error.response?.data?.error || error.code || 'Error',
-    message || error.response?.data?.message || error.message
-  )
+export function errorToaster(error: SerializedError, title?: string, message?: string): void {
+  toast(ToastEnum.ERROR, title || error.name || 'Error', message || error.message || 'No message found')
 }

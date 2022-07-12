@@ -1,9 +1,9 @@
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from '@console/store/data'
-import { createEnvironmentVariables } from '@console/domains/environment-variable'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@console/store/data'
+import { createEnvironmentVariables, getEnvironmentVariablesState } from '@console/domains/environment-variable'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
@@ -30,6 +30,7 @@ export enum EnvironmentVariableType {
 export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariableModalFeatureProps) {
   const { variable, mode, type } = props
   const dispatch = useDispatch<AppDispatch>()
+  const errorEnvironmentVariable = useSelector<RootState>((state) => getEnvironmentVariablesState(state).error)
 
   const { handleSubmit, control, formState } = useForm<{ key: string; value: string; scope: string }>({
     defaultValues: {
@@ -67,7 +68,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
             scope: data.scope as EnvironmentVariableScopeEnum,
           })
         ).then(() => {
-          props.setOpen(false)
+          if (!errorEnvironmentVariable) props.setOpen(false)
         })
       }
     }

@@ -49,6 +49,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                 setContentModal(
                   <CrudEnvironmentVariableModalFeature
                     setOpen={setOpenModal}
+                    variable={variable}
                     type={EnvironmentVariableType.OVERRIDE}
                     mode={EnvironmentVariableCrudMode.CREATION}
                     applicationId={applicationId}
@@ -66,6 +67,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                 setContentModal(
                   <CrudEnvironmentVariableModalFeature
                     setOpen={setOpenModal}
+                    variable={variable}
                     type={EnvironmentVariableType.ALIAS}
                     mode={EnvironmentVariableCrudMode.CREATION}
                     applicationId={applicationId}
