@@ -7,11 +7,12 @@ import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
-import { dateToHours } from '@console/shared/utils'
+import { dateToHours, useDocumentTitle } from '@console/shared/utils'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageEditDeploymentRuleFeature() {
   const { deploymentRuleId = '', organizationId = '', projectId = '' } = useParams()
+  useDocumentTitle('Edit Deployment Rule - Qovery')
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { control, handleSubmit, setValue } = useForm()
@@ -66,7 +67,8 @@ export function PageEditDeploymentRuleFeature() {
 
   return (
     <PageCreateEditDeploymentRule
-      title={`Edit ${deploymentRule?.name}`}
+      title={`Edit ${deploymentRule?.name || ''}`}
+      btnLabel="Edit rule"
       control={control}
       clusters={clusters}
       onSubmit={onSubmit}

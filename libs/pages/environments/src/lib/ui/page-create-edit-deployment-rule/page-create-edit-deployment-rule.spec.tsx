@@ -24,6 +24,7 @@ describe('PageCreateEditDeploymentRule', () => {
   beforeEach(() => {
     props = {
       title: 'Create rule',
+      btnLabel: 'Create',
       onSubmit: jest.fn(),
       control: null as any,
       clusters: clusterFactoryMock(2),

@@ -21,13 +21,14 @@ import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PageCreateEditDeploymentRuleProps {
   title: string
+  btnLabel?: string
   control?: Control<any, any>
   onSubmit: () => void
   clusters?: Cluster[]
 }
 
 export function PageCreateDeploymentRule(props: PageCreateEditDeploymentRuleProps) {
-  const { title, control, onSubmit, clusters } = props
+  const { title, control, onSubmit, clusters, btnLabel = 'Create Rule' } = props
 
   const [autoStop, setAutoStop] = useState(false)
 
@@ -321,7 +322,7 @@ export function PageCreateDeploymentRule(props: PageCreateEditDeploymentRuleProp
                 </BlockContent>
 
                 <Button className="mb-14" size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
-                  Create rule
+                  {btnLabel}
                 </Button>
               </form>
             </div>
