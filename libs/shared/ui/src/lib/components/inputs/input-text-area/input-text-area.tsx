@@ -6,6 +6,7 @@ export interface InputTextAreaProps {
   value?: string | undefined
   onChange?: () => void
   className?: string
+  disabled?: boolean
   error?: string
 }
 
@@ -19,9 +20,11 @@ export function InputTextArea(props: InputTextAreaProps) {
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const inputActions = hasFocus ? 'input--focused' : ''
 
+  const isDisabled = props.disabled ? 'input--disabled !border-element-light-lighter-500' : ''
+
   return (
     <div className={className} onClick={() => inputRef.current?.querySelector('textarea')?.focus()}>
-      <div aria-label="textarea-container" className={`input pb-0 pr-2 ${inputActions} ${hasError}`} ref={inputRef}>
+      <div aria-label="textarea-container" className={`input pb-0 pr-2 ${inputActions} ${hasError} ${isDisabled}`} ref={inputRef}>
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
         </label>
@@ -33,6 +36,7 @@ export function InputTextArea(props: InputTextAreaProps) {
           onChange={onChange}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
+          disabled={props.disabled}
         />
       </div>
       {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}

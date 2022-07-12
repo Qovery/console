@@ -47,9 +47,11 @@ export const PageVariables = React.memo(PageVariablesMemo, (prevProps, nextProps
   // Stringify is necessary to avoid Redux selector behavior
   const prevProsIds = prevProps.filterData.map((envVariables) => ({
     id: envVariables.id,
+    updated_at: envVariables.updated_at,
   }))
   const nextPropsIds = nextProps.filterData.map((envVariables) => ({
     id: envVariables.id,
+    updated_at: envVariables.updated_at,
   }))
 
   return JSON.stringify(prevProsIds) === JSON.stringify(nextPropsIds)

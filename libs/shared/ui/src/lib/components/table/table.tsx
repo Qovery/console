@@ -43,7 +43,7 @@ export function Table(props: TableProps) {
     <div className={className}>
       <div
         data-testid="table-container"
-        className="grid items-center border-b-element-light-lighter-400 border-b"
+        className="grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10"
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(({ title, className = 'px-4 py-2', filter, sort }, index) => (

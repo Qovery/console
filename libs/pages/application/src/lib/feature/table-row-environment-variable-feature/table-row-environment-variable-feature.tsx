@@ -1,5 +1,9 @@
-import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
-import { ButtonIconActionElementProps, Icon, ModalContext, TableHeadProps } from '@console/shared/ui'
+import {
+  EnvironmentVariableEntity,
+  EnvironmentVariableSecretOrPublic,
+  SecretEnvironmentVariableEntity,
+} from '@console/shared/interfaces'
+import { ButtonIconActionElementProps, Icon, MenuItemProps, ModalContext, TableHeadProps } from '@console/shared/ui'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
 import { useContext } from 'react'
 import CrudEnvironmentVariableModalFeature, {
@@ -19,66 +23,89 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const { setOpenModal, setContentModal } = useContext(ModalContext)
   const { applicationId = '', projectId = '', environmentId = '' } = useParams()
 
+  const edit = {
+    name: 'Edit',
+    onClick: () => {
+      setOpenModal(true)
+      setContentModal(
+        <CrudEnvironmentVariableModalFeature
+          setOpen={setOpenModal}
+          variable={variable}
+          mode={EnvironmentVariableCrudMode.EDITION}
+          applicationId={applicationId}
+          projectId={projectId}
+          environmentId={environmentId}
+          type={EnvironmentVariableType.NORMAL}
+        />
+      )
+    },
+    contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-500" />,
+  }
+
+  const createOverride = {
+    name: 'Create override',
+    onClick: () => {
+      setOpenModal(true)
+      setContentModal(
+        <CrudEnvironmentVariableModalFeature
+          setOpen={setOpenModal}
+          variable={variable}
+          type={EnvironmentVariableType.OVERRIDE}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          applicationId={applicationId}
+          projectId={projectId}
+          environmentId={environmentId}
+        />
+      )
+    },
+    contentLeft: <Icon name="icon-solid-pen-line" className="text-sm text-brand-500" />,
+  }
+
+  const createAlias = {
+    name: 'Create alias',
+    onClick: () => {
+      setOpenModal(true)
+      setContentModal(
+        <CrudEnvironmentVariableModalFeature
+          setOpen={setOpenModal}
+          variable={variable}
+          type={EnvironmentVariableType.ALIAS}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          applicationId={applicationId}
+          projectId={projectId}
+          environmentId={environmentId}
+        />
+      )
+    },
+    contentLeft: <Icon name="icon-solid-pen-swirl" className="text-sm text-brand-500" />,
+  }
+
+  const computeMenuActions = (): MenuItemProps[] => {
+    const menu = [edit]
+
+    if (
+      !(
+        (variable as EnvironmentVariableEntity).overridden_variable ||
+        (variable as SecretEnvironmentVariableEntity).overridden_secret
+      ) &&
+      !(
+        (variable as EnvironmentVariableEntity).aliased_variable ||
+        (variable as SecretEnvironmentVariableEntity).aliased_secret
+      )
+    ) {
+      menu.push(createOverride)
+      menu.push(createAlias)
+    }
+
+    return menu
+  }
+
   const rowActions: ButtonIconActionElementProps[] = [
     {
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
       menus: [
         {
-          items: [
-            {
-              name: 'Edit',
-              onClick: () => {
-                setOpenModal(true)
-                setContentModal(
-                  <CrudEnvironmentVariableModalFeature
-                    setOpen={setOpenModal}
-                    variable={variable}
-                    mode={EnvironmentVariableCrudMode.EDITION}
-                    applicationId={applicationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                  />
-                )
-              },
-              contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-500" />,
-            },
-            {
-              name: 'Create override',
-              onClick: () => {
-                setOpenModal(true)
-                setContentModal(
-                  <CrudEnvironmentVariableModalFeature
-                    setOpen={setOpenModal}
-                    variable={variable}
-                    type={EnvironmentVariableType.OVERRIDE}
-                    mode={EnvironmentVariableCrudMode.CREATION}
-                    applicationId={applicationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                  />
-                )
-              },
-              contentLeft: <Icon name="icon-solid-pen-line" className="text-sm text-brand-500" />,
-            },
-            {
-              name: 'Create alias',
-              onClick: () => {
-                setOpenModal(true)
-                setContentModal(
-                  <CrudEnvironmentVariableModalFeature
-                    setOpen={setOpenModal}
-                    variable={variable}
-                    type={EnvironmentVariableType.ALIAS}
-                    mode={EnvironmentVariableCrudMode.CREATION}
-                    applicationId={applicationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                  />
-                )
-              },
-              contentLeft: <Icon name="icon-solid-pen-swirl" className="text-sm text-brand-500" />,
-            },
-          ],
+          items: computeMenuActions(),
         },
         {
           items: [

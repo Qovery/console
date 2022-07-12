@@ -5,12 +5,14 @@ import {
   EnvironmentVariableRequest,
   EnvironmentVariableScopeEnum,
   ProjectEnvironmentVariableApi,
+  Value,
 } from 'qovery-typescript-axios'
 
 import { RootState } from '@console/store/data'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { errorToaster, toast, ToastEnum } from '@console/shared/toast'
+import { Key } from 'qovery-typescript-axios/api'
 
 export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'public'
 export const environmentVariablesAdapter = createEntityAdapter<EnvironmentVariableEntity>()
@@ -67,7 +69,7 @@ export const createOverrideEnvironmentVariables = createAsyncThunk(
   async (payload: {
     entityId: string
     environmentVariableId: string
-    environmentVariableRequest: EnvironmentVariableRequest
+    environmentVariableRequest: Value
     scope: EnvironmentVariableScopeEnum
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -106,7 +108,7 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
   async (payload: {
     entityId: string
     environmentVariableId: string
-    environmentVariableRequest: EnvironmentVariableRequest
+    environmentVariableRequest: Key
     scope: EnvironmentVariableScopeEnum
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -136,6 +138,44 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
         break
     }
 
+    return response.data
+  }
+)
+
+export const editEnvironmentVariables = createAsyncThunk(
+  'environmentVariables/edit',
+  async (payload: {
+    entityId: string
+    environmentVariableId: string
+    environmentVariableRequest: EnvironmentVariableRequest
+    scope: EnvironmentVariableScopeEnum
+  }) => {
+    let response
+    switch (payload.scope) {
+      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+        response = await environmentEnvironmentVariableApi.editEnvironmentEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableId,
+          payload.environmentVariableRequest
+        )
+        break
+      case EnvironmentVariableScopeEnum.PROJECT:
+        response = await projectEnvironmentVariableApi.editProjectEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableId,
+          payload.environmentVariableRequest
+        )
+
+        break
+      case EnvironmentVariableScopeEnum.APPLICATION:
+      default:
+        response = await applicationEnvironmentVariableApi.editApplicationEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableId,
+          payload.environmentVariableRequest
+        )
+        break
+    }
     return response.data
   }
 )
@@ -180,6 +220,7 @@ export const environmentVariablesSlice = createSlice({
       })
       .addCase(createEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
+        state.error = null
         toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable has been created successfully')
       })
       .addCase(createEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
@@ -192,13 +233,34 @@ export const environmentVariablesSlice = createSlice({
       })
       .addCase(createAliasEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         errorToaster(action.error)
+        state.error = action.error.message
       })
       .addCase(createOverrideEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
+        state.error = null
         toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable alias has been created successfully')
       })
       .addCase(createOverrideEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
-        toast(ToastEnum.ERROR, 'Creation Failed', action.error.message)
+        errorToaster(action.error)
+        state.error = null
+        state.error = action.error.message
+      })
+      .addCase(editEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
+        const extendedEnv: EnvironmentVariableEntity = {
+          ...action.payload,
+          variable_type: 'public',
+          service_name: action.payload.service_name || '',
+        }
+        console.log(extendedEnv)
+        environmentVariablesAdapter.updateOne(state, {
+          id: extendedEnv.id,
+          changes: extendedEnv,
+        })
+        state.error = null
+        toast(ToastEnum.SUCCESS, 'Edition success', 'Variable edited successfully')
+      })
+      .addCase(editEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
+        state.error = action.error.message
         errorToaster(action.error)
       })
   },

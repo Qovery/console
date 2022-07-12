@@ -15,10 +15,10 @@ export interface CrudEnvironmentVariableModalProps {
   control: Control<{ key: string; value: string; scope: string }>
   formState: FormState<{ key: string; value: string; scope: string }>
   setOpen: (open: boolean) => void
+  availableScopes: EnvironmentVariableScopeEnum[]
 }
 
 export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModalProps) {
-  console.log(props.formState)
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{props.title}</h2>
@@ -38,6 +38,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
               value={field.value}
               label="Variable"
               error={error?.message}
+              disabled={props.type === EnvironmentVariableType.OVERRIDE}
             />
           )}
         />
@@ -54,6 +55,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
               onChange={field.onChange}
               value={field.value}
               label="Value"
+              disabled={props.type === EnvironmentVariableType.ALIAS}
             />
           )}
         />
@@ -67,20 +69,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             <InputSelect
               className="mb-6"
               portal={false}
-              items={[
-                {
-                  label: EnvironmentVariableScopeEnum.PROJECT.toString().toLowerCase(),
-                  value: EnvironmentVariableScopeEnum.PROJECT,
-                },
-                {
-                  label: EnvironmentVariableScopeEnum.ENVIRONMENT.toString().toLowerCase(),
-                  value: EnvironmentVariableScopeEnum.ENVIRONMENT,
-                },
-                {
-                  label: EnvironmentVariableScopeEnum.APPLICATION.toString().toLowerCase(),
-                  value: EnvironmentVariableScopeEnum.APPLICATION,
-                },
-              ]}
+              items={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
               onChange={field.onChange}
               value={field.value}
               label="Scope"

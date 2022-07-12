@@ -3,8 +3,15 @@ import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-mod
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
-import { createEnvironmentVariables, getEnvironmentVariablesState } from '@console/domains/environment-variable'
+import {
+  createAliasEnvironmentVariables,
+  createEnvironmentVariables,
+  createOverrideEnvironmentVariables,
+  editEnvironmentVariables,
+  getEnvironmentVariablesState,
+} from '@console/domains/environment-variable'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
@@ -30,7 +37,15 @@ export enum EnvironmentVariableType {
 export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariableModalFeatureProps) {
   const { variable, mode, type } = props
   const dispatch = useDispatch<AppDispatch>()
-  const errorEnvironmentVariable = useSelector<RootState>((state) => getEnvironmentVariablesState(state).error)
+  const errorEnvironmentVariable = useSelector<RootState, string | null | undefined>(
+    (state) => getEnvironmentVariablesState(state).error
+  )
+  const [closing, setClosing] = useState(false)
+
+  useEffect(() => {
+    if (closing && !errorEnvironmentVariable) props.setOpen(false)
+    setClosing(false)
+  }, [closing, errorEnvironmentVariable, props])
 
   const { handleSubmit, control, formState } = useForm<{ key: string; value: string; scope: string }>({
     defaultValues: {
@@ -49,7 +64,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
           entityId = props.environmentId
           break
         case EnvironmentVariableScopeEnum.PROJECT:
-          entityId = props.environmentId
+          entityId = props.projectId
           break
         case EnvironmentVariableScopeEnum.APPLICATION:
         default:
@@ -58,9 +73,55 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       }
 
       if (props.mode === EnvironmentVariableCrudMode.CREATION) {
+        switch (props.type) {
+          case EnvironmentVariableType.OVERRIDE:
+            dispatch(
+              createOverrideEnvironmentVariables({
+                entityId,
+                environmentVariableRequest: {
+                  value: data.value,
+                },
+                environmentVariableId: variable?.id || '',
+                scope: data.scope as EnvironmentVariableScopeEnum,
+              })
+            ).then(() => {
+              setClosing(true)
+            })
+            break
+          case EnvironmentVariableType.ALIAS:
+            dispatch(
+              createAliasEnvironmentVariables({
+                entityId,
+                environmentVariableRequest: {
+                  key: data.key,
+                },
+                environmentVariableId: variable?.id || '',
+                scope: data.scope as EnvironmentVariableScopeEnum,
+              })
+            ).then(() => {
+              setClosing(true)
+            })
+            break
+          default:
+            dispatch(
+              createEnvironmentVariables({
+                entityId,
+                environmentVariableRequest: {
+                  key: data.key,
+                  value: data.value,
+                },
+                scope: data.scope as EnvironmentVariableScopeEnum,
+              })
+            ).then(() => {
+              setClosing(true)
+            })
+            break
+        }
+      } else {
         dispatch(
-          createEnvironmentVariables({
+          editEnvironmentVariables({
             entityId,
+            environmentVariableId: props.variable?.id || '',
             environmentVariableRequest: {
               key: data.key,
               value: data.value,
@@ -68,7 +129,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
             scope: data.scope as EnvironmentVariableScopeEnum,
           })
         ).then(() => {
-          if (!errorEnvironmentVariable) props.setOpen(false)
+          setClosing(true)
         })
       }
     }
@@ -104,6 +165,48 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     return 'Lorem ipsum blablabla'
   }
 
+  const computeAvailableScope = (): EnvironmentVariableScopeEnum[] => {
+    if (!props.variable) {
+      return [
+        EnvironmentVariableScopeEnum.PROJECT,
+        EnvironmentVariableScopeEnum.ENVIRONMENT,
+        EnvironmentVariableScopeEnum.APPLICATION,
+      ]
+    }
+
+    const environmentScopes: {
+      name: EnvironmentVariableScopeEnum
+      hierarchy: number
+    }[] = [
+      {
+        name: EnvironmentVariableScopeEnum.BUILT_IN,
+        hierarchy: -1,
+      },
+      {
+        name: EnvironmentVariableScopeEnum.PROJECT,
+        hierarchy: 1,
+      },
+      {
+        name: EnvironmentVariableScopeEnum.ENVIRONMENT,
+        hierarchy: 2,
+      },
+      {
+        name: EnvironmentVariableScopeEnum.APPLICATION,
+        hierarchy: 3,
+      },
+    ]
+
+    const theScope = environmentScopes.find((s) => {
+      return s.name === props?.variable?.scope
+    })
+
+    return environmentScopes
+      .filter((scope) => {
+        return scope.hierarchy >= (theScope?.hierarchy || -1) && scope.hierarchy >= 0
+      })
+      .map((scope) => scope.name)
+  }
+
   return (
     <CrudEnvironmentVariableModal
       mode={mode}
@@ -113,6 +216,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       control={control}
       formState={formState}
       setOpen={props.setOpen}
+      type={props.type}
+      availableScopes={computeAvailableScope()}
     />
   )
 }
