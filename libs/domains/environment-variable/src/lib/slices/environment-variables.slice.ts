@@ -38,13 +38,18 @@ export const createEnvironmentVariables = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    console.log('CREATE ENV VARIABLE')
     const response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariable(
       payload.entityId,
-      payload.environmentVariableRequest
+      payload.environmentVariableRequest,
+      {
+        // working ! but not sure it's super bullet proof to send a query param to backend
+        // params: {
+        //   silent: true,
+        // },
+      }
     )
-    console.log(response)
-    return response.data
+
+    return response
 
     // switch (payload.scope) {
     //   case EnvironmentVariableScopeEnum.ENVIRONMENT:
