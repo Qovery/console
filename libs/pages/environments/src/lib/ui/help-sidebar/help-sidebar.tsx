@@ -26,7 +26,7 @@ export function HelpSidebar() {
           </ul>
         </div>
         <div className="p-10">
-          <p className="text-sm text-text-500 mb-5">You may find these links useful</p>
+          <p className="text-sm text-text-500 mb-5">Need help? You may find these links useful</p>
           <Link
             className="font-medium text-accent2-500 text-sm block mb-3"
             link="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"

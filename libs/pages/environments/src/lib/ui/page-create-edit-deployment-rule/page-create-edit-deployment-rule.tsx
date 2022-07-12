@@ -20,14 +20,14 @@ import { Value } from '@console/shared/interfaces'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PageCreateDeploymentRuleProps {
-  listHelpfulLinks: BaseLink[]
+  title: string
   control?: Control<any, any>
   onSubmit: () => void
   clusters?: Cluster[]
 }
 
 export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
-  const { listHelpfulLinks, control, onSubmit, clusters } = props
+  const { title, control, onSubmit, clusters } = props
 
   const [autoStop, setAutoStop] = useState(false)
 
@@ -84,6 +84,14 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
     },
   ]
 
+  const listHelpfulLinks: BaseLink[] = [
+    {
+      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
+      linkLabel: 'How to configure my deployment rule',
+      external: true,
+    },
+  ]
+
   const navigate = useNavigate()
 
   const clustersList: Value[] = clusters
@@ -112,7 +120,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                 Back
               </Button>
 
-              <h1 className="font-bold text-xl text-text-700 mb-2">Create rule</h1>
+              <h1 className="font-bold text-xl text-text-700 mb-2">{title}</h1>
 
               <div className="mb-10">
                 <p className="text-text-500 text-xs leading-5">
@@ -312,17 +320,14 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                   </div>
                 </BlockContent>
 
-                <Button size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
+                <Button className="mb-14" size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
                   Create rule
                 </Button>
               </form>
             </div>
           </div>
           <div className="bg-white rounded-b w-full">
-            <HelpSection
-              description="Need help? You may find these links useful"
-              links={listHelpfulLinks}
-            ></HelpSection>
+            <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
           </div>
         </div>
         <HelpSidebar />

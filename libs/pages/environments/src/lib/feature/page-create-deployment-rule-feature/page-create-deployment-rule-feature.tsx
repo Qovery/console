@@ -1,4 +1,3 @@
-import { BaseLink } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { Cluster, ProjectDeploymentRuleRequest, WeekdayEnum } from 'qovery-typescript-axios'
@@ -16,13 +15,7 @@ import { useDocumentTitle } from '@console/shared/utils'
 export function PageCreateDeploymentRuleFeature() {
   const { organizationId = '', projectId = '' } = useParams()
   useDocumentTitle('Create Deployment Rule - Qovery')
-  const listHelpfulLinks: BaseLink[] = [
-    {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
-      linkLabel: 'How to configure my deployment rule',
-      external: true,
-    },
-  ]
+
   const { control, handleSubmit, setValue } = useForm()
 
   const dispatch = useDispatch<AppDispatch>()
@@ -88,14 +81,7 @@ export function PageCreateDeploymentRuleFeature() {
     }
   })
 
-  return (
-    <PageCreateDeploymentRule
-      listHelpfulLinks={listHelpfulLinks}
-      control={control}
-      clusters={clusters}
-      onSubmit={onSubmit}
-    />
-  )
+  return <PageCreateDeploymentRule title="Create rule" control={control} clusters={clusters} onSubmit={onSubmit} />
 }
 
 export default PageCreateDeploymentRuleFeature

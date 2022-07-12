@@ -52,9 +52,6 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     if (isLoading === 'loaded') setListRules(deploymentRules)
   }, [deploymentRules, isLoading])
 
-  console.log(listRules)
-  console.log(isLoading)
-
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
       {isLoading === 'loading' && <div className="h-full" />}
@@ -117,7 +114,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
         </div>
       )}
       <div className="bg-white rounded-b">
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks}></HelpSection>
+        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
     </div>
   )

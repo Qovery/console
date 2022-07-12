@@ -6,7 +6,6 @@ import { fetchDeploymentRule, selectDeploymentRuleById, updateDeploymentRule } f
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
-import { BaseLink } from '@console/shared/ui'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { dateToHours } from '@console/shared/utils'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
@@ -20,14 +19,6 @@ export function PageEditDeploymentRuleFeature() {
   const deploymentRule = useSelector<RootState, ProjectDeploymentRule | undefined>((state) =>
     selectDeploymentRuleById(state, deploymentRuleId)
   )
-
-  const listHelpfulLinks: BaseLink[] = [
-    {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
-      linkLabel: 'How to configure my deployment rule',
-      external: true,
-    },
-  ]
 
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
@@ -73,7 +64,7 @@ export function PageEditDeploymentRuleFeature() {
 
   return (
     <PageCreateEditDeploymentRule
-      listHelpfulLinks={listHelpfulLinks}
+      title={`Edit ${deploymentRule?.name}`}
       control={control}
       clusters={clusters}
       onSubmit={onSubmit}

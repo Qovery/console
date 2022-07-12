@@ -76,7 +76,6 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
         components={{ Option, MultiValue }}
         closeMenuOnSelect={false}
         onChange={handleChange}
-        placeholder=""
         classNamePrefix="input--select-multiple"
         hideSelectedOptions={false}
         isSearchable={false}
