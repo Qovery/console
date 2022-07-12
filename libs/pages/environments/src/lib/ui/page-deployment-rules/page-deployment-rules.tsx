@@ -48,18 +48,13 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
     updateDeploymentRulesOrder(currentList)
   }
 
-  const LIST = [
-    'An environment help you to amet minim mollit non deserunt.',
-    'Ullamco est sit aliqua dolor do amet sint.',
-  ]
-
   useEffect(() => {
     setListRules(deploymentRules)
   }, [deploymentRules])
 
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
-      {listRules.length === 0 && <PlaceholderNoRules linkNewRule={linkNewRule} list={LIST} />}
+      {listRules.length === 0 && <PlaceholderNoRules linkNewRule={linkNewRule} />}
       {listRules.length >= 1 && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex justify-between items-center mb-8 w-[640px]">
