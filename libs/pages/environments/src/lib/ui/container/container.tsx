@@ -3,6 +3,7 @@ import {
   ENVIRONMENTS_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
+  ENVIRONMENTS_SETTINGS_URL,
 } from '@console/shared/router'
 import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
@@ -24,6 +25,10 @@ export function Container(props: ContainerProps) {
     </div>
   )
 
+  const isDeploymentRulesTab =
+    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
+    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`
+
   const tabsItems = [
     {
       icon: <Icon name={IconEnum.SUCCESS} viewBox="0 0 16 16" className="w-4 mt-0.5" />,
@@ -34,17 +39,16 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name="icon-solid-browser" className="text-sm text-inherit" />,
       name: 'Deployment Rules',
-      active:
-        location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
-        location.pathname ===
-          `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`,
+      active: isDeploymentRulesTab,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },
+    {
+      icon: <Icon name="icon-solid-wheel" className="text-sm text-inherit" />,
+      name: 'Settings',
+      active: location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_SETTINGS_URL}`,
+      link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_SETTINGS_URL}`,
+    },
   ]
-
-  const isDeploymentRulesTab =
-    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
-    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
