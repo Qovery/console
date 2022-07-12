@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react'
 
-import ContentBlock from './content-block'
+import NoRules from './no-rules'
 
-describe('ContentBlock', () => {
+describe('NoRules', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ContentBlock />)
+    const { baseElement } = render(<NoRules />)
     expect(baseElement).toBeTruthy()
   })
 })

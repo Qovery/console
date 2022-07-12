@@ -10,9 +10,12 @@ import { postDeploymentRules } from '@console/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
 import PageCreateDeploymentRule from '../../ui/page-create-deployment-rule/page-create-deployment-rule'
+import { toast, ToastEnum } from '@console/shared/toast'
+import { useDocumentTitle } from '@console/shared/utils'
 
 export function PageCreateDeploymentRuleFeature() {
   const { organizationId = '', projectId = '' } = useParams()
+  useDocumentTitle('Create Deployment Rule - Qovery')
   const listHelpfulLinks: BaseLink[] = [
     {
       link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
@@ -79,6 +82,7 @@ export function PageCreateDeploymentRuleFeature() {
       fields.weekdays = weekdaysList
 
       dispatch(postDeploymentRules({ projectId, ...fields })).then(() => {
+        toast(ToastEnum.SUCCESS, 'Your rule is created')
         navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
       })
     }

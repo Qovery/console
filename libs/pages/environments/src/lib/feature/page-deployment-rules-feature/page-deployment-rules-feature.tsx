@@ -13,9 +13,11 @@ import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE, ENVIRONMENTS_URL } from '@console/shared/router'
+import { useDocumentTitle } from '@console/shared/utils'
 
 export function PageDeploymentRulesFeature() {
   const { projectId = '', organizationId = '' } = useParams()
+  useDocumentTitle('Deployment Rules - Qovery')
 
   const listHelpfulLinks: BaseLink[] = [
     {

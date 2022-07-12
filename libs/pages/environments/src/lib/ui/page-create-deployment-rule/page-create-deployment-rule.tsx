@@ -3,7 +3,7 @@ import {
   Button,
   ButtonSize,
   ButtonStyle,
-  ContentBlock,
+  BlockContent,
   HelpSection,
   Icon,
   InputSelect,
@@ -123,7 +123,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
             </div>
 
             <form onSubmit={onSubmit}>
-              <ContentBlock title="Matching rule definition">
+              <BlockContent title="Matching rule definition">
                 <Controller
                   name="name"
                   control={control}
@@ -171,9 +171,9 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                 <p className="text-xs text-text-400">
                   Use wildcards to specify just part of the name of the target environment.
                 </p>
-              </ContentBlock>
+              </BlockContent>
 
-              <ContentBlock title="Setup to apply - General">
+              <BlockContent title="Setup to apply - General">
                 <Controller
                   name="mode"
                   control={control}
@@ -231,9 +231,9 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                   Your environment will auto-stop amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
                   sint.
                 </p>
-              </ContentBlock>
+              </BlockContent>
 
-              <ContentBlock title="Setup to apply - Start & stop">
+              <BlockContent title="Setup to apply - Start & stop">
                 <div className="flex items-center gap-3 mb-1">
                   <Controller
                     name="auto_stop"
@@ -321,7 +321,7 @@ export function PageCreateDeploymentRule(props: PageCreateDeploymentRuleProps) {
                     )}
                   />
                 </div>
-              </ContentBlock>
+              </BlockContent>
 
               <Button size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
                 Create rule

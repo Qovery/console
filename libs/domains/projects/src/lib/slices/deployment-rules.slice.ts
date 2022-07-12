@@ -3,6 +3,7 @@ import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, Update } from '@reduxjs/toolkit'
 import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
 import { RootState } from '@console/store/data'
+import { toast, ToastEnum } from '@console/shared/toast'
 
 export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
 
@@ -58,6 +59,7 @@ export const deleteDeploymentRule = createAsyncThunk<string, { projectId: string
 
     try {
       await deploymentRulesApi.deleteProjectDeploymentRule(projectId, deploymentRuleId)
+      toast(ToastEnum.SUCCESS, 'Your rule is deleted')
       return deploymentRuleId
     } catch (error) {
       return rejectWithValue(error)

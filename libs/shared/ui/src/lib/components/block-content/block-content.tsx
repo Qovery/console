@@ -4,7 +4,7 @@ export interface ContentBlockProps {
   title: string
 }
 
-export function ContentBlock(props: ContentBlockProps) {
+export function BlockContent(props: ContentBlockProps) {
   const { children, className = '', title } = props
 
   return (
@@ -17,4 +17,4 @@ export function ContentBlock(props: ContentBlockProps) {
   )
 }
 
-export default ContentBlock
+export default BlockContent
