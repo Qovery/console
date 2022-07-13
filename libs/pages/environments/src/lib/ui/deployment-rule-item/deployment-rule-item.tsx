@@ -22,12 +22,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
 
   const isWeekdays = (): boolean => {
     const weekdays = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
-
-    const checkIfWeekdays = weekdays.every((weekday) => {
-      return weekDays.includes(weekday)
-    })
-
-    return checkIfWeekdays
+    return weekdays.every((weekday) => weekDays.includes(weekday))
   }
 
   const menu: MenuData = [
@@ -68,6 +63,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
 
   return (
     <div
+      data-testid="item"
       className={`${
         isLast ? 'rounded-b' : ''
       } border bg-element-light-lighter-200 border-element-light-lighter-500 flex px-5 py-4 -mt-px justify-between`}
@@ -77,7 +73,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
           <h3 className="text-sm text-text-500 font-medium max-w-full truncate">{name}</h3>
         </Skeleton>
         <Skeleton show={isLoading} width={300} height={20}>
-          <p className="text-xs text-text-500 max-w-full truncate">
+          <p data-testid="time" className="text-xs text-text-500 max-w-full truncate">
             {dateToHours(startTime)} - {dateToHours(stopTime)}
             {isWeekdays() && weekDays.length < 7 ? ' - Running every weekday' : ''}
             {weekDays.length === 7 && ' - Running everyday'}

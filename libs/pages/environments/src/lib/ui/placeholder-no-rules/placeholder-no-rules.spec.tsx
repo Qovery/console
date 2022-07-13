@@ -1,10 +1,14 @@
 import { render } from '@testing-library/react'
 
-import PlaceholderNoRules from './placeholder-no-rules'
+import PlaceholderNoRules, { PlaceholderNoRulesProps } from './placeholder-no-rules'
 
 describe('PlaceholderNoRules', () => {
+  const props: PlaceholderNoRulesProps = {
+    linkNewRule: '/general',
+  }
+
   it('should render successfully', () => {
-    const { baseElement } = render(<PlaceholderNoRules />)
+    const { baseElement } = render(<PlaceholderNoRules {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

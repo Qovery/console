@@ -54,7 +54,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
 
   return (
     <div className="mt-2 bg-white rounded flex flex-col flex-grow">
-      {isLoading === 'loading' && <div className="h-full" />}
+      {isLoading === 'loading' && <div date-testid="screen-loading" className="h-full" />}
       {listRules.length === 0 && isLoading === 'loaded' && <PlaceholderNoRules linkNewRule={linkNewRule} />}
       {listRules.length >= 1 && isLoading === 'loaded' && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">

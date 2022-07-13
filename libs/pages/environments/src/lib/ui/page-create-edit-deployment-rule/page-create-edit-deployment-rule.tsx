@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom'
-import { Control, Controller } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Control, Controller, FieldValues } from 'react-hook-form'
 import { useEffect, useState } from 'react'
 import { Cluster } from 'qovery-typescript-axios'
 import {
@@ -18,11 +18,12 @@ import {
 } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
 import HelpSidebar from '../help-sidebar/help-sidebar'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 
 export interface PageCreateEditDeploymentRuleProps {
   title: string
+  control?: Control<FieldValues>
   btnLabel?: string
-  control?: Control<any, any>
   onSubmit: () => void
   clusters?: Cluster[]
   defaultAutoStop?: boolean
@@ -30,7 +31,7 @@ export interface PageCreateEditDeploymentRuleProps {
 
 export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRuleProps) {
   const { title, control, onSubmit, clusters, btnLabel = 'Create Rule', defaultAutoStop = false } = props
-
+  const { organizationId, projectId } = useParams()
   const [autoStop, setAutoStop] = useState(defaultAutoStop)
 
   useEffect(() => {
@@ -119,7 +120,9 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
               <Button
                 size={ButtonSize.TINY}
                 style={ButtonStyle.FLAT}
-                onClick={() => navigate(-1)}
+                onClick={() =>
+                  navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_URL)
+                }
                 className="!px-0 mb-1"
               >
                 <Icon name="icon-solid-arrow-left" className="mr-1 text-xs" />

@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from '@console/store/data'
 import { fetchDeploymentRule, selectDeploymentRuleById, updateDeploymentRule } from '@console/domains/projects'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
-import { dateToHours, useDocumentTitle } from '@console/shared/utils'
+import { dateToHours, upperCaseFirstLetter, useDocumentTitle } from '@console/shared/utils'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageEditDeploymentRuleFeature() {
@@ -64,7 +64,7 @@ export function PageEditDeploymentRuleFeature() {
       'weekdays',
       deploymentRule?.weekdays.map((day: string) => ({
         value: day,
-        label: day.charAt(0) + day.slice(1).toLowerCase(),
+        label: upperCaseFirstLetter(day.toLowerCase()),
       }))
     )
     setValue('wildcard', deploymentRule?.wildcard)
