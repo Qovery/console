@@ -42,11 +42,8 @@ export function Login(props: ILoginProps) {
         <div className="max-w-md relative z-10">
           <h2 className="h1 text-text-700 mt-44 mb-6">
             The Next-Gen DevOps Platform to Build and Scale Your Apps on AWS
-            <span className="ml-2" role="img" aria-label="rocket">
-              🚀
-            </span>
           </h2>
-          <p className="text-text-500 mb-6 text-sm">Built for DevOps, Loved by developers</p>
+          <p className="text-text-500 mb-6 text-sm">Built for DevOps, Loved by developers 🚀</p>
           <ul className="list-disc pl-4 text-sm">
             <li className="font-bold text-text-500 mb-2">
               <a
@@ -66,7 +63,7 @@ export function Login(props: ILoginProps) {
               </a>
               environments
             </li>
-            <li className="font-bold text-text-500">
+            <li className="font-bold text-text-500 mb-2">
               <a
                 href="https://hub.qovery.com/docs/using-qovery/integration/terraform/"
                 className="link text-brand-500 mr-1"
@@ -75,7 +72,7 @@ export function Login(props: ILoginProps) {
               </a>
               with Terraform
             </li>
-            <li className="font-bold text-text-500 mb-2">
+            <li className="font-bold text-text-500">
               <a href="https://hub.qovery.com/docs/using-qovery/integration" className="link text-brand-500 mr-1">
                 Integrate Qovery
               </a>
