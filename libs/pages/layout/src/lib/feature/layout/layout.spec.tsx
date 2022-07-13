@@ -20,14 +20,18 @@ describe('Layout', () => {
   })
 
   it('should save the current organization id on local storage', () => {
-    setCurrentOrganizationIdOnStorage.mockImplementation((orgId: string) => orgId)
+    const mockSetOrganizationId = setCurrentOrganizationIdOnStorage as jest.Mock<
+      typeof setCurrentOrganizationIdOnStorage
+    >
+    mockSetOrganizationId.mockImplementation()
     render(<Layout {...props} />)
-    expect(setCurrentOrganizationIdOnStorage).toBeCalled()
+    expect(mockSetOrganizationId).toBeCalled()
   })
 
   it('should save the current project id on local storage', () => {
-    setCurrentProjectIdOnStorage.mockImplementation((projectId: string) => projectId)
+    const mockSetProjectId = setCurrentProjectIdOnStorage as jest.Mock<typeof setCurrentProjectIdOnStorage>
+    mockSetProjectId.mockImplementation()
     render(<Layout {...props} />)
-    expect(setCurrentProjectIdOnStorage).toBeCalled()
+    expect(mockSetProjectId).toBeCalled()
   })
 })
