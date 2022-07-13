@@ -1,5 +1,5 @@
 import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@console/shared/ui'
-import { Control, Controller, FormState } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
@@ -12,13 +12,13 @@ export interface CrudEnvironmentVariableModalProps {
   title: string
   description: string
   onSubmit: () => void
-  control: Control<{ key: string; value: string; scope: string; isSecret: boolean }>
-  formState: FormState<{ key: string; value: string; scope: string; isSecret: boolean }>
   setOpen: (open: boolean) => void
   availableScopes: EnvironmentVariableScopeEnum[]
 }
 
 export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModalProps) {
+  const { control, formState } = useFormContext()
+
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{props.title}</h2>
@@ -26,7 +26,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
       <form onSubmit={props.onSubmit}>
         <Controller
           name="key"
-          control={props.control}
+          control={control}
           rules={{
             required: 'Please enter a variable key.',
           }}
@@ -44,7 +44,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         />
         <Controller
           name="value"
-          control={props.control}
+          control={control}
           rules={{
             required: 'Please enter a value.',
           }}
@@ -61,7 +61,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         />
         <Controller
           name="scope"
-          control={props.control}
+          control={control}
           rules={{
             required: 'Please select a value.',
           }}
@@ -81,7 +81,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           <div className="flex items-center gap-3 mb-8">
             <Controller
               name="isSecret"
-              control={props.control}
+              control={control}
               render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
             />
             <p className="text-text-500 text-sm font-medium">Secret variable</p>
@@ -98,7 +98,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           >
             Cancel
           </Button>
-          <Button className="btn--no-min-w" type="submit" disabled={!props.formState.isValid}>
+          <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid}>
             Confirm
           </Button>
         </div>

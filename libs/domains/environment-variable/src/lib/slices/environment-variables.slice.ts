@@ -306,34 +306,6 @@ export const selectEnvironmentVariablesByApplicationId = createSelector(
       state.joinApplicationEnvironmentVariable[applicationId]
     )
 
-    const sortedAscii = variables
-      .filter((sorted) => !sorted.aliased_variable && !sorted.overridden_variable)
-      .sort((a, b) => {
-        if (a.key < b.key) {
-          return -1
-        }
-        if (a.key > b.key) {
-          return 1
-        }
-        return 0
-      })
-
-    const withAliasOrOverride = variables.filter((sorted) => sorted.aliased_variable || sorted.overridden_variable)
-
-    const final: EnvironmentVariableEntity[] = []
-
-    sortedAscii.map((el) => {
-      final.push(el)
-      withAliasOrOverride.some((elAliasOrOverride) => {
-        if (
-          elAliasOrOverride.aliased_variable?.key === el.key ||
-          elAliasOrOverride.overridden_variable?.key === el.key
-        ) {
-          final.push(elAliasOrOverride)
-        }
-      })
-    })
-
-    return final
+    return variables
   }
 )

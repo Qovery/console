@@ -51,7 +51,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])
 
-  const { handleSubmit, control, formState } = useForm<{
+  const { handleSubmit } = useForm<{
     key: string
     value: string
     scope: string
@@ -292,8 +292,6 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       title={computeTitle()}
       description={computeDescription()}
       onSubmit={onSubmit}
-      control={control}
-      formState={formState}
       setOpen={props.setOpen}
       type={props.type}
       availableScopes={computeAvailableScope()}

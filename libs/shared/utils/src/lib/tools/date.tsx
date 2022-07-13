@@ -29,3 +29,9 @@ export const dateToHours = (date: string) => {
   const d = new Date(date)
   return `${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`
 }
+
+export function dateYearMonthDayHourMinuteSecond(date: Date) {
+  return `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+}

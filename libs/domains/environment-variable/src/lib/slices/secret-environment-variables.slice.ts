@@ -303,34 +303,6 @@ export const selectSecretEnvironmentVariablesByApplicationId = createSelector(
       state.entities,
       state.joinApplicationSecretEnvironmentVariable[applicationId]
     )
-
-    const sortedAscii = variables
-      .filter((sorted) => !sorted.aliased_secret && !sorted.overridden_secret)
-      .sort((a, b) => {
-        if (!a.key || !b.key) return 0
-
-        if (a.key < b.key) {
-          return -1
-        }
-        if (a.key > b.key) {
-          return 1
-        }
-        return 0
-      })
-
-    const withAliasOrOverride = variables.filter((sorted) => sorted.aliased_secret || sorted.overridden_secret)
-
-    const final: SecretEnvironmentVariableEntity[] = []
-
-    sortedAscii.map((el) => {
-      final.push(el)
-      withAliasOrOverride.some((elAliasOrOverride) => {
-        if (elAliasOrOverride.aliased_secret?.key === el.key || elAliasOrOverride.overridden_secret?.key === el.key) {
-          final.push(elAliasOrOverride)
-        }
-      })
-    })
-
-    return final
+    return variables
   }
 )

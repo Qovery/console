@@ -1,6 +1,6 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
@@ -16,6 +16,7 @@ import {
 } from '@console/shared/interfaces'
 import { useDocumentTitle } from '@console/shared/utils'
 import PageVariables from '../../ui/page-variables/page-variables'
+import { sortVariable } from './utils/sort-variable'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
@@ -32,14 +33,18 @@ export function PageVariablesFeature() {
     shallowEqual
   )
 
+  const sortVariableMemo = useMemo(
+    () => sortVariable(environmentVariables, secretEnvironmentVariables),
+    [environmentVariables, secretEnvironmentVariables]
+  )
+
   useEffect(() => {
     dispatch(fetchEnvironmentVariables(applicationId))
     dispatch(fetchSecretEnvironmentVariables(applicationId))
   }, [dispatch, applicationId])
 
   useEffect(() => {
-    setData([...environmentVariables, ...secretEnvironmentVariables])
-    console.log(environmentVariables)
+    setData(sortVariableMemo)
   }, [environmentVariables, secretEnvironmentVariables])
 
   const tableHead: TableHeadProps[] = [
@@ -86,7 +91,7 @@ export function PageVariablesFeature() {
   return (
     <PageVariables
       tableHead={tableHead}
-      variables={[...environmentVariables, ...secretEnvironmentVariables]}
+      variables={sortVariableMemo}
       setFilterData={setData}
       filterData={data}
       listHelpfulLinks={listHelpfulLinks}
