@@ -51,7 +51,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
 
   const inputActions =
     hasFocus && !disabled
-      ? '!border-2 !border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)]'
+      ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)]'
       : value && value.length > 0
       ? 'input--success'
       : disabled
@@ -83,6 +83,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
         isDisabled={disabled}
         value={selected}
         placeholder=""
+        onFocus={() => setFocused(true)}
       />
       <div className="absolute top-1/2 -translate-y-1/2 right-4">
         <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />

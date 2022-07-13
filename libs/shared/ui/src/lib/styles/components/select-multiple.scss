@@ -64,7 +64,7 @@
   display: flex !important;
   background: #fff !important;
   padding: 8px !important;
-  @apply items-center gap-2;
+  @apply items-center gap-2 rounded-sm;
 
   label {
     @apply static translate-y-0 font-medium text-ssm text-text-400;
@@ -80,7 +80,7 @@
 }
 
 .input--select-multiple__option--is-selected {
-  background: #fff !important;
+  background: theme('colors.white');
 
   label {
     @apply text-text-600;
@@ -89,4 +89,10 @@
   .input--select-multiple__checkbox {
     @apply bg-brand-500 border-0;
   }
+}
+
+.input--select-multiple__option--is-focused,
+.input--select-multiple__option--is-focused.input--select-multiple__option--is-selected,
+.input--select-multiple__option--is-focused:hover {
+  background: theme('colors.element.light.lighter.300') !important;
 }
