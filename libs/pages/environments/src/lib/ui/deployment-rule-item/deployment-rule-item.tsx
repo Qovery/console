@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router'
 import { Icon, Menu, MenuData, Skeleton } from '@console/shared/ui'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+import { dateToHours, upperCaseFirstLetter } from '@console/shared/utils'
 
 export interface DeploymentRuleItemProps {
   id: string
@@ -19,13 +19,6 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
   const { id, name, startTime, stopTime, weekDays, isLast = false, isLoading = false, removeDeploymentRule } = props
   const [menuOpen, setMenuOpen] = useState(false)
   const { organizationId, projectId } = useParams()
-
-  const getTime = (date: string) => {
-    const converted = new Date(date)
-    const hours = converted.getUTCHours()
-    const minutes = converted.getUTCMinutes()
-    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`
-  }
 
   const isWeekdays = (): boolean => {
     const weekdays = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
@@ -85,7 +78,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
         </Skeleton>
         <Skeleton show={isLoading} width={300} height={20}>
           <p className="text-xs text-text-500 max-w-full truncate">
-            {getTime(startTime)} - {getTime(stopTime)}
+            {dateToHours(startTime)} - {dateToHours(stopTime)}
             {isWeekdays() && weekDays.length < 7 ? ' - Running every weekday' : ''}
             {weekDays.length === 7 && ' - Running everyday'}
             {!isWeekdays() && weekDays.length !== 7 ? weekDaysList : ''}

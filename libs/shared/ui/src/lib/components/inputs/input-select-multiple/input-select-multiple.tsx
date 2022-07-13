@@ -1,7 +1,7 @@
+import Select, { components, GroupBase, MultiValue, MultiValueProps, OptionProps } from 'react-select'
 import { Value } from '@console/shared/interfaces'
 import { useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
-import Select, { components } from 'react-select'
 
 export interface InputSelectMultipleProps {
   className?: string
@@ -10,18 +10,18 @@ export interface InputSelectMultipleProps {
   options: Value[]
   disabled?: boolean
   error?: string
-  onChange?: (values: Value[]) => void
+  onChange?: (values: MultiValue<Value>) => void
 }
 
 export function InputSelectMultiple(props: InputSelectMultipleProps) {
   const { className = '', label, value, options, disabled, error = false, onChange } = props
   const [focused, setFocused] = useState(false)
-  const [selected, setSelected] = useState<Value[]>([])
+  const [selected, setSelected] = useState<MultiValue<Value>>([])
 
   const hasFocus = focused || selected.length > 0
   const hasError = error ? 'input--select-multiple--error' : ''
 
-  const handleChange = (values: any) => {
+  const handleChange = (values: MultiValue<Value>) => {
     setSelected(values)
     onChange && onChange(values)
     values.length === 0 && setFocused(false)
@@ -31,18 +31,18 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
     value && setSelected(value)
   }, [value])
 
-  const Option = (props: any) => (
+  const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
     <div>
       <components.Option {...props}>
         <span className="input--select-multiple__checkbox">
           {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
         </span>
-        <label>{props.label}</label>
+        <label className="ml-2">{props.label}</label>
       </components.Option>
     </div>
   )
 
-  const MultiValue = (props: any) => (
+  const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
     <span className="text-sm text-text-600 mr-1">
       {props.data.label}
       {props.index + 1 !== selected.length && ', '}
@@ -82,7 +82,6 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
         isClearable={false}
         isDisabled={disabled}
         value={selected}
-        placeholder=""
         onFocus={() => setFocused(true)}
       />
       <div className="absolute top-1/2 -translate-y-1/2 right-4">
