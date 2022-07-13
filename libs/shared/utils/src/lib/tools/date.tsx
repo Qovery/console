@@ -6,6 +6,8 @@ export const dateDifferenceMinutes = (firstDate?: Date, secondDate?: Date) => {
   return firstDate && secondDate && differenceInMinutes(firstDate, secondDate)
 }
 
+const addZero = (time: number) => (time < 10 ? `0${time}` : time)
+
 export function dateDifference(firstDate: Date, secondDate: Date) {
   let difference = new Date(firstDate).getTime() - new Date(secondDate).getTime()
 
@@ -20,7 +22,10 @@ export function dateDifference(firstDate: Date, secondDate: Date) {
 
   const secondsDifference = Math.floor(difference / 1000)
 
-  const addZero = (time: number) => (time < 10 ? `0${time}` : time)
-
   return `${addZero(hoursDifference)}:${addZero(minutesDifference)}:${addZero(secondsDifference)}`
+}
+
+export const dateToHours = (date: string) => {
+  const d = new Date(date)
+  return `${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`
 }

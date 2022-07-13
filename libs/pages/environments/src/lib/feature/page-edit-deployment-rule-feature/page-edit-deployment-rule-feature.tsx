@@ -47,7 +47,6 @@ export function PageEditDeploymentRuleFeature() {
 
   useEffect(() => {
     const startTime = deploymentRule?.start_time && dateToHours(deploymentRule?.start_time)
-
     const stopTime = deploymentRule?.stop_time && dateToHours(deploymentRule?.stop_time)
 
     setValue('id', deploymentRule?.id)
@@ -59,7 +58,10 @@ export function PageEditDeploymentRuleFeature() {
     setValue('auto_deploy', deploymentRule?.auto_deploy)
     setValue('auto_delete', deploymentRule?.auto_delete)
     setValue('auto_stop', deploymentRule?.auto_stop)
-    setValue('weekdays', deploymentRule?.weekdays)
+    setValue(
+      'weekdays',
+      deploymentRule?.weekdays.map((day: string) => ({ value: day, label: day }))
+    )
     setValue('wildcard', deploymentRule?.wildcard)
     setValue('description', deploymentRule?.description)
     setValue('cluster_id', deploymentRule?.cluster_id)
