@@ -1,7 +1,7 @@
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
-  ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE,
-  ENVIRONMENTS_DEPLOYMENT_RULES_URL_EDIT,
+  ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
+  ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL,
   ENVIRONMENTS_GENERAL_URL,
   Route,
 } from '@console/shared/router'
@@ -20,11 +20,11 @@ export const ROUTER_ENVIRONMENTS: Route[] = [
     component: <PageDeploymentRulesFeature />,
   },
   {
-    path: ENVIRONMENTS_DEPLOYMENT_RULES_URL_CREATE,
+    path: ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
     component: <PageCreateDeploymentRuleFeature />,
   },
   {
-    path: ENVIRONMENTS_DEPLOYMENT_RULES_URL_EDIT,
+    path: ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL(),
     component: <PageEditDeploymentRuleFeature />,
   },
 ]

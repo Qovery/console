@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import Icon from '../../icon/icon'
 
 export interface InputTextProps {
   name: string
@@ -31,8 +32,18 @@ export function InputText(props: InputTextProps) {
 
   const isDisabled = disabled ? 'input--disabled !border-element-light-lighter-500' : ''
 
+  const displayPicker = () => {
+    const input: any = inputRef.current?.querySelector('input')
+    if (!disabled) input.showPicker()
+  }
+
+  const isInputDate = type === 'time' || type === 'date' || type === 'datetime'
+
   return (
-    <div className={className} onClick={() => inputRef.current?.querySelector('input')?.focus()}>
+    <div
+      className={className}
+      onClick={() => (isInputDate ? displayPicker() : inputRef.current?.querySelector('input')?.focus())}
+    >
       <div aria-label="input-container" className={`input ${inputActions} ${isDisabled} ${hasError}`} ref={inputRef}>
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
           {label}
@@ -48,6 +59,11 @@ export function InputText(props: InputTextProps) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
+        {isInputDate && (
+          <div className="absolute top-1/2 -translate-y-1/2 right-4">
+            <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+          </div>
+        )}
       </div>
       {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}
     </div>

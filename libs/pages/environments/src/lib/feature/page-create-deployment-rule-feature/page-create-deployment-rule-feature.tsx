@@ -1,25 +1,20 @@
-import { BaseLink } from '@console/shared/ui'
-import { AppDispatch, RootState } from '@console/store/data'
-import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { Cluster, ProjectDeploymentRuleRequest, WeekdayEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
-import { postDeploymentRules } from '@console/domains/projects'
+import { AppDispatch, RootState } from '@console/store/data'
+import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
+import { postDeploymentRule } from '@console/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
-import PageCreateDeploymentRule from '../../ui/page-create-deployment-rule/page-create-deployment-rule'
+import { useDocumentTitle } from '@console/shared/utils'
+import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageCreateDeploymentRuleFeature() {
   const { organizationId = '', projectId = '' } = useParams()
-  const listHelpfulLinks: BaseLink[] = [
-    {
-      link: 'https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/',
-      linkLabel: 'How to configure my deployment rule',
-      external: true,
-    },
-  ]
+  useDocumentTitle('Create Deployment Rule - Qovery')
+
   const { control, handleSubmit, setValue } = useForm()
 
   const dispatch = useDispatch<AppDispatch>()
@@ -62,7 +57,6 @@ export function PageCreateDeploymentRuleFeature() {
     setValue('auto_deploy', false)
     setValue('auto_delete', false)
     setValue('auto_stop', false)
-    setValue('wildcard', ' ')
     setValue('weekdays', weekdaysSelection)
   }, [setValue, dispatch, organizationId])
 
@@ -79,20 +73,13 @@ export function PageCreateDeploymentRuleFeature() {
 
       fields.weekdays = weekdaysList
 
-      dispatch(postDeploymentRules({ projectId, ...fields })).then(() => {
+      dispatch(postDeploymentRule({ projectId, data: fields })).then(() => {
         navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
       })
     }
   })
 
-  return (
-    <PageCreateDeploymentRule
-      listHelpfulLinks={listHelpfulLinks}
-      control={control}
-      clusters={clusters}
-      onSubmit={onSubmit}
-    />
-  )
+  return <PageCreateEditDeploymentRule title="Create rule" control={control} clusters={clusters} onSubmit={onSubmit} />
 }
 
 export default PageCreateDeploymentRuleFeature

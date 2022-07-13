@@ -12,9 +12,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { useEffect } from 'react'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@console/shared/router'
+import { useDocumentTitle } from '@console/shared/utils'
 
 export function PageDeploymentRulesFeature() {
-  const { projectId = '' } = useParams()
+  const { projectId = '', organizationId = '' } = useParams()
+  useDocumentTitle('Deployment Rules - Qovery')
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -40,6 +43,8 @@ export function PageDeploymentRulesFeature() {
 
   const loadingStatus = useSelector(deploymentRulesLoadingStatus)
 
+  const linkNewRule = ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL
+
   useEffect(() => {
     dispatch(fetchDeploymentRules({ projectId }))
   }, [projectId, dispatch])
@@ -49,8 +54,9 @@ export function PageDeploymentRulesFeature() {
       listHelpfulLinks={listHelpfulLinks}
       deploymentRules={deploymentRulesList}
       updateDeploymentRulesOrder={updateDeploymentRulesOrder}
-      isLoading={loadingStatus !== 'loaded'}
+      isLoading={loadingStatus}
       deleteDeploymentRule={removeDeploymentRule}
+      linkNewRule={linkNewRule}
     />
   )
 }
