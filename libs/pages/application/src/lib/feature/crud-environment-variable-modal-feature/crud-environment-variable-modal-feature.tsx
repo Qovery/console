@@ -5,9 +5,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
 import {
   createAliasEnvironmentVariables,
+  createAliasSecret,
   createEnvironmentVariables,
   createOverrideEnvironmentVariables,
+  createOverrideSecret,
+  createSecret,
   editEnvironmentVariables,
+  editSecret,
   getEnvironmentVariablesState,
 } from '@console/domains/environment-variable'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
@@ -47,11 +51,17 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])
 
-  const { handleSubmit, control, formState } = useForm<{ key: string; value: string; scope: string }>({
+  const { handleSubmit, control, formState } = useForm<{
+    key: string
+    value: string
+    scope: string
+    isSecret: boolean
+  }>({
     defaultValues: {
       key: variable?.key,
       scope: variable?.scope,
       value: (variable as EnvironmentVariableEntity)?.value,
+      isSecret: variable?.variable_type === 'secret',
     },
     mode: 'onChange',
   })
@@ -72,65 +82,134 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
           break
       }
 
-      if (props.mode === EnvironmentVariableCrudMode.CREATION) {
-        switch (props.type) {
-          case EnvironmentVariableType.OVERRIDE:
-            dispatch(
-              createOverrideEnvironmentVariables({
-                entityId,
-                environmentVariableRequest: {
-                  value: data.value,
-                },
-                environmentVariableId: variable?.id || '',
-                scope: data.scope as EnvironmentVariableScopeEnum,
+      if (!data.isSecret) {
+        if (props.mode === EnvironmentVariableCrudMode.CREATION) {
+          switch (props.type) {
+            case EnvironmentVariableType.OVERRIDE:
+              dispatch(
+                createOverrideEnvironmentVariables({
+                  entityId,
+                  applicationId: props.applicationId,
+                  environmentVariableRequest: {
+                    value: data.value,
+                  },
+                  environmentVariableId: variable?.id || '',
+                  scope: data.scope as EnvironmentVariableScopeEnum,
+                })
+              ).then(() => {
+                setClosing(true)
               })
-            ).then(() => {
-              setClosing(true)
-            })
-            break
-          case EnvironmentVariableType.ALIAS:
-            dispatch(
-              createAliasEnvironmentVariables({
-                entityId,
-                environmentVariableRequest: {
-                  key: data.key,
-                },
-                environmentVariableId: variable?.id || '',
-                scope: data.scope as EnvironmentVariableScopeEnum,
+              break
+            case EnvironmentVariableType.ALIAS:
+              dispatch(
+                createAliasEnvironmentVariables({
+                  entityId,
+                  applicationId: props.applicationId,
+                  environmentVariableRequest: {
+                    key: data.key,
+                  },
+                  environmentVariableId: variable?.id || '',
+                  scope: data.scope as EnvironmentVariableScopeEnum,
+                })
+              ).then(() => {
+                setClosing(true)
               })
-            ).then(() => {
-              setClosing(true)
-            })
-            break
-          default:
-            dispatch(
-              createEnvironmentVariables({
-                entityId,
-                environmentVariableRequest: {
-                  key: data.key,
-                  value: data.value,
-                },
-                scope: data.scope as EnvironmentVariableScopeEnum,
+              break
+            default:
+              dispatch(
+                createEnvironmentVariables({
+                  entityId,
+                  applicationId: props.applicationId,
+                  environmentVariableRequest: {
+                    key: data.key,
+                    value: data.value,
+                  },
+                  scope: data.scope as EnvironmentVariableScopeEnum,
+                })
+              ).then(() => {
+                setClosing(true)
               })
-            ).then(() => {
-              setClosing(true)
+              break
+          }
+        } else {
+          dispatch(
+            editEnvironmentVariables({
+              entityId,
+              environmentVariableId: props.variable?.id || '',
+              environmentVariableRequest: {
+                key: data.key,
+                value: data.value,
+              },
+              scope: data.scope as EnvironmentVariableScopeEnum,
             })
-            break
+          ).then(() => {
+            setClosing(true)
+          })
         }
       } else {
-        dispatch(
-          editEnvironmentVariables({
-            entityId,
-            environmentVariableId: props.variable?.id || '',
-            environmentVariableRequest: {
-              key: data.key,
-              value: data.value,
-            },
-            scope: data.scope as EnvironmentVariableScopeEnum,
+        if (props.mode === EnvironmentVariableCrudMode.CREATION) {
+          switch (props.type) {
+            case EnvironmentVariableType.OVERRIDE:
+              dispatch(
+                createOverrideSecret({
+                  entityId,
+                  applicationId: props.applicationId,
+                  environmentVariableRequest: {
+                    value: data.value,
+                  },
+                  environmentVariableId: variable?.id || '',
+                  scope: data.scope as EnvironmentVariableScopeEnum,
+                })
+              ).then(() => {
+                setClosing(true)
+              })
+              break
+            case EnvironmentVariableType.ALIAS:
+              dispatch(
+                createAliasSecret({
+                  entityId,
+                  applicationId: props.applicationId,
+                  environmentVariableRequest: {
+                    key: data.key,
+                  },
+                  environmentVariableId: variable?.id || '',
+                  scope: data.scope as EnvironmentVariableScopeEnum,
+                })
+              ).then(() => {
+                setClosing(true)
+              })
+              break
+            default:
+              dispatch(
+                createSecret({
+                  entityId,
+                  applicationId: props.applicationId,
+                  environmentVariableRequest: {
+                    key: data.key,
+                    value: data.value,
+                  },
+                  scope: data.scope as EnvironmentVariableScopeEnum,
+                })
+              ).then(() => {
+                setClosing(true)
+              })
+              break
+          }
+        } else {
+          dispatch(
+            editSecret({
+              entityId,
+              environmentVariableId: props.variable?.id || '',
+              environmentVariableRequest: {
+                key: data.key,
+                value: data.value,
+              },
+              scope: data.scope as EnvironmentVariableScopeEnum,
+            })
+          ).then(() => {
+            setClosing(true)
           })
-        ).then(() => {
-          setClosing(true)
-        })
+        }
       }
     }
   })

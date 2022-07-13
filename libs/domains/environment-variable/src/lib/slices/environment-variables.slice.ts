@@ -34,6 +34,7 @@ export const createEnvironmentVariables = createAsyncThunk(
   'environmentVariables/create',
   async (payload: {
     entityId: string
+    applicationId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
   }) => {
@@ -68,6 +69,7 @@ export const createOverrideEnvironmentVariables = createAsyncThunk(
   'environmentVariables/create-override',
   async (payload: {
     entityId: string
+    applicationId: string
     environmentVariableId: string
     environmentVariableRequest: Value
     scope: EnvironmentVariableScopeEnum
@@ -107,6 +109,7 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
   'environmentVariables/create-alias',
   async (payload: {
     entityId: string
+    applicationId: string
     environmentVariableId: string
     environmentVariableRequest: Key
     scope: EnvironmentVariableScopeEnum
@@ -229,6 +232,7 @@ export const environmentVariablesSlice = createSlice({
       })
       .addCase(createAliasEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
+        state.error = null
         toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable override has been created successfully')
       })
       .addCase(createAliasEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
@@ -251,7 +255,6 @@ export const environmentVariablesSlice = createSlice({
           variable_type: 'public',
           service_name: action.payload.service_name || '',
         }
-        console.log(extendedEnv)
         environmentVariablesAdapter.updateOne(state, {
           id: extendedEnv.id,
           changes: extendedEnv,
@@ -276,7 +279,7 @@ const addVariableToStore = (state: EnvironmentVariablesState, action: any) => {
   }
   environmentVariablesAdapter.addOne(state, extendedEnv)
 
-  state.joinApplicationEnvironmentVariable = addOneToManyRelation(action.meta.arg.entityId, extendedEnv.id, {
+  state.joinApplicationEnvironmentVariable = addOneToManyRelation(action.meta.arg.applicationId, extendedEnv.id, {
     ...state.joinApplicationEnvironmentVariable,
   })
   state.loadingStatus = 'loaded'

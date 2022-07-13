@@ -39,6 +39,7 @@ export function PageVariablesFeature() {
 
   useEffect(() => {
     setData([...environmentVariables, ...secretEnvironmentVariables])
+    console.log(environmentVariables)
   }, [environmentVariables, secretEnvironmentVariables])
 
   const tableHead: TableHeadProps[] = [

@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, InputSelect, InputText, InputTextArea } from '@console/shared/ui'
+import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@console/shared/ui'
 import { Control, Controller, FormState } from 'react-hook-form'
 import {
   EnvironmentVariableCrudMode,
@@ -12,8 +12,8 @@ export interface CrudEnvironmentVariableModalProps {
   title: string
   description: string
   onSubmit: () => void
-  control: Control<{ key: string; value: string; scope: string }>
-  formState: FormState<{ key: string; value: string; scope: string }>
+  control: Control<{ key: string; value: string; scope: string; isSecret: boolean }>
+  formState: FormState<{ key: string; value: string; scope: string; isSecret: boolean }>
   setOpen: (open: boolean) => void
   availableScopes: EnvironmentVariableScopeEnum[]
 }
@@ -76,6 +76,18 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             />
           )}
         />
+
+        {props.mode === EnvironmentVariableCrudMode.CREATION && props.type === EnvironmentVariableType.NORMAL && (
+          <div className="flex items-center gap-3 mb-8">
+            <Controller
+              name="isSecret"
+              control={props.control}
+              render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
+            />
+            <p className="text-text-500 text-sm font-medium">Secret variable</p>
+          </div>
+        )}
+
         <div className="flex gap-3 justify-end">
           <Button
             className="btn--no-min-w"
