@@ -29,7 +29,7 @@ export function InputTextArea(props: InputTextAreaProps) {
           name={name}
           id={label}
           className="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-text-700 outline-0"
-          defaultValue={value}
+          value={value}
           onChange={onChange}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}

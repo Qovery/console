@@ -1,3 +1,7 @@
+import { useNavigate } from 'react-router-dom'
+import { Control, Controller } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import { Cluster } from 'qovery-typescript-axios'
 import {
   BaseLink,
   Button,
@@ -12,10 +16,6 @@ import {
   InputTextArea,
   InputToggle,
 } from '@console/shared/ui'
-import { useNavigate } from 'react-router-dom'
-import { Control, Controller } from 'react-hook-form'
-import { useState } from 'react'
-import { Cluster } from 'qovery-typescript-axios'
 import { Value } from '@console/shared/interfaces'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
@@ -25,12 +25,17 @@ export interface PageCreateEditDeploymentRuleProps {
   control?: Control<any, any>
   onSubmit: () => void
   clusters?: Cluster[]
+  defaultAutoStop?: boolean
 }
 
-export function PageCreateDeploymentRule(props: PageCreateEditDeploymentRuleProps) {
-  const { title, control, onSubmit, clusters, btnLabel = 'Create Rule' } = props
+export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRuleProps) {
+  const { title, control, onSubmit, clusters, btnLabel = 'Create Rule', defaultAutoStop = false } = props
 
-  const [autoStop, setAutoStop] = useState(false)
+  const [autoStop, setAutoStop] = useState(defaultAutoStop)
+
+  useEffect(() => {
+    setAutoStop(defaultAutoStop)
+  }, [defaultAutoStop])
 
   const modeSelection = [
     {
@@ -337,4 +342,4 @@ export function PageCreateDeploymentRule(props: PageCreateEditDeploymentRuleProp
   )
 }
 
-export default PageCreateDeploymentRule
+export default PageCreateEditDeploymentRule

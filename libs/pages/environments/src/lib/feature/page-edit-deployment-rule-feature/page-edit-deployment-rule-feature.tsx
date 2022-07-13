@@ -1,11 +1,11 @@
-import { AppDispatch, RootState } from '@console/store/data'
-import { Cluster, ProjectDeploymentRule, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
+import { Cluster, ProjectDeploymentRule, ProjectDeploymentRuleRequest, Value } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
-import { fetchDeploymentRule, selectDeploymentRuleById, updateDeploymentRule } from '@console/domains/projects'
-import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
+import { AppDispatch, RootState } from '@console/store/data'
+import { fetchDeploymentRule, selectDeploymentRuleById, updateDeploymentRule } from '@console/domains/projects'
+import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { dateToHours, useDocumentTitle } from '@console/shared/utils'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
@@ -27,16 +27,18 @@ export function PageEditDeploymentRuleFeature() {
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      delete data['id']
-      const fields = data as ProjectDeploymentRuleRequest
-      fields.start_time = `1970-01-01T${fields.start_time}:00.000Z`
-      fields.stop_time = `1970-01-01T${fields.stop_time}:00.000Z`
+      data['weekdays'] = (data['weekdays'] as Value[]).map((day) => day?.value)
+      data['start_time'] = `1970-01-01T${data['start_time']}:00.000Z`
+      data['stop_time'] = `1970-01-01T${data['stop_time']}:00.000Z`
 
-      await dispatch(updateDeploymentRule({ projectId, deploymentRuleId, ...fields }))
-        .then((res) => {
-          if (res) navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
-        })
-        .catch((err) => err)
+      delete data['id']
+
+      const result = await dispatch(
+        updateDeploymentRule({ projectId, deploymentRuleId, data: data as ProjectDeploymentRuleRequest })
+      )
+      if (result.payload) {
+        navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
+      }
     }
   })
 
@@ -60,7 +62,10 @@ export function PageEditDeploymentRuleFeature() {
     setValue('auto_stop', deploymentRule?.auto_stop)
     setValue(
       'weekdays',
-      deploymentRule?.weekdays.map((day: string) => ({ value: day, label: day }))
+      deploymentRule?.weekdays.map((day: string) => ({
+        value: day,
+        label: day.charAt(0) + day.slice(1).toLowerCase(),
+      }))
     )
     setValue('wildcard', deploymentRule?.wildcard)
     setValue('description', deploymentRule?.description)
@@ -74,6 +79,7 @@ export function PageEditDeploymentRuleFeature() {
       control={control}
       clusters={clusters}
       onSubmit={onSubmit}
+      defaultAutoStop={deploymentRule?.auto_stop}
     />
   )
 }

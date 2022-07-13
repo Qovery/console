@@ -1,7 +1,7 @@
-import { DeploymentRuleState, LoadingStatus } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, Update } from '@reduxjs/toolkit'
 import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
+import { DeploymentRuleState, LoadingStatus } from '@console/shared/interfaces'
+import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 import { toast, ToastEnum } from '@console/shared/toast'
 
@@ -19,69 +19,53 @@ export const fetchDeploymentRules = createAsyncThunk<ProjectDeploymentRule[], { 
   }
 )
 
-export const fetchDeploymentRule = createAsyncThunk<
-  ProjectDeploymentRule,
-  { projectId: string; deploymentRuleId: string }
->('project/deploymentRule/fetch', async (data) => {
-  const response = await deploymentRulesApi.getProjectDeploymentRule(data.projectId, data.deploymentRuleId)
-  return response.data as ProjectDeploymentRule
-})
-
-export const postDeploymentRules = createAsyncThunk<
-  ProjectDeploymentRule,
-  { projectId: string } & ProjectDeploymentRuleRequest
->('project/deploymentRules/post', async (data, { rejectWithValue }) => {
-  const { projectId, ...fields } = data
-
-  try {
-    const result = await deploymentRulesApi.createDeploymentRule(projectId, { ...fields })
-    return result.data
-  } catch (error) {
-    return rejectWithValue(error)
-  }
-})
-
-export const updateDeploymentRuleOrder = createAsyncThunk<
-  any,
-  { projectId: string; deploymentRules: ProjectDeploymentRule[] }
->('project/deploymentRules/update-order', async (data) => {
-  const ids: string[] = data.deploymentRules.map((rule) => rule.id)
-  await deploymentRulesApi.updateDeploymentRulesPriorityOrder(data.projectId, {
-    project_deployment_rule_ids_in_order: ids,
-  })
-  return data.deploymentRules
-})
-
-export const deleteDeploymentRule = createAsyncThunk<string, { projectId: string; deploymentRuleId: string }>(
-  'project/deploymentRules/delete',
-  async (data, { rejectWithValue }) => {
-    const { projectId, deploymentRuleId } = data
-
-    try {
-      await deploymentRulesApi.deleteProjectDeploymentRule(projectId, deploymentRuleId)
-      toast(ToastEnum.SUCCESS, 'Your rule is deleted')
-      return deploymentRuleId
-    } catch (error) {
-      return rejectWithValue(error)
-    }
+export const fetchDeploymentRule = createAsyncThunk(
+  'project/deploymentRule/fetch',
+  async (payload: { projectId: string; deploymentRuleId: string }) => {
+    const response = await deploymentRulesApi.getProjectDeploymentRule(payload.projectId, payload.deploymentRuleId)
+    return response.data as ProjectDeploymentRule
   }
 )
 
-export const updateDeploymentRule = createAsyncThunk<
-  ProjectDeploymentRule,
-  { projectId: string; deploymentRuleId: string } & ProjectDeploymentRuleRequest
->('project/deploymentRules/update', async (data, { rejectWithValue }) => {
-  const { projectId, deploymentRuleId, ...fields } = data
-
-  try {
-    const result = await deploymentRulesApi.editProjectDeployemtnRule(projectId, deploymentRuleId, {
-      ...(fields as ProjectDeploymentRuleRequest),
-    })
+export const postDeploymentRule = createAsyncThunk(
+  'project/deploymentRules/post',
+  async (payload: { projectId: string; data: ProjectDeploymentRuleRequest }) => {
+    const result = await deploymentRulesApi.createDeploymentRule(payload.projectId, payload.data)
     return result.data
-  } catch (error) {
-    return rejectWithValue(error)
   }
-})
+)
+
+export const updateDeploymentRuleOrder = createAsyncThunk(
+  'project/deploymentRules/update-order',
+  async (payload: { projectId: string; deploymentRules: ProjectDeploymentRule[] }) => {
+    const ids: string[] = payload.deploymentRules.map((rule) => rule.id)
+    await deploymentRulesApi.updateDeploymentRulesPriorityOrder(payload.projectId, {
+      project_deployment_rule_ids_in_order: ids,
+    })
+    return payload.deploymentRules
+  }
+)
+
+export const deleteDeploymentRule = createAsyncThunk(
+  'project/deploymentRules/delete',
+  async (payload: { projectId: string; deploymentRuleId: string }) => {
+    const response = await deploymentRulesApi.deleteProjectDeploymentRule(payload.projectId, payload.deploymentRuleId)
+    return response.data
+  }
+)
+
+export const updateDeploymentRule = createAsyncThunk(
+  'project/deploymentRules/update',
+  async (payload: { projectId: string; deploymentRuleId: string; data: ProjectDeploymentRuleRequest }) => {
+    const response = await deploymentRulesApi.editProjectDeployemtnRule(
+      payload.projectId,
+      payload.deploymentRuleId,
+      payload.data
+    )
+    console.log(response)
+    return response.data
+  }
+)
 
 export const initialDeploymentRulesState: DeploymentRuleState = deploymentRulesAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -98,6 +82,7 @@ export const deploymentRulesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // fetch all deployment rules
       .addCase(fetchDeploymentRules.pending, (state: DeploymentRuleState) => {
         state.loadingStatus = 'loading'
       })
@@ -136,22 +121,23 @@ export const deploymentRulesSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
-      // post
-      .addCase(postDeploymentRules.pending, (state: DeploymentRuleState) => {
+      // post one deployment rule
+      .addCase(postDeploymentRule.pending, (state: DeploymentRuleState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(postDeploymentRules.fulfilled, (state: DeploymentRuleState, action) => {
+      .addCase(postDeploymentRule.fulfilled, (state: DeploymentRuleState, action) => {
         deploymentRulesAdapter.upsertOne(state, action.payload)
+        state.error = null
         state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Your rule is created')
       })
-      .addCase(postDeploymentRules.rejected, (state: DeploymentRuleState, action) => {
+      .addCase(postDeploymentRule.rejected, (state: DeploymentRuleState, action) => {
         state.loadingStatus = 'error'
+        // @todo fix with toastError
+        toast(ToastEnum.ERROR, action.error.message || `Your rule isn't created`)
         state.error = action.error.message
       })
-      // update order
-      .addCase(updateDeploymentRuleOrder.pending, (state: DeploymentRuleState) => {
-        //Don't update the loading status to not see the skeleton on drag'n'drop
-      })
+      // update order for one deployment rule
       .addCase(updateDeploymentRuleOrder.fulfilled, (state: DeploymentRuleState, action) => {
         state.joinProjectDeploymentRules = {}
         deploymentRulesAdapter.upsertMany(state, action.payload)
@@ -167,19 +153,23 @@ export const deploymentRulesSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
-      // delete
+      // delete deployment rule
       .addCase(deleteDeploymentRule.pending, (state: DeploymentRuleState) => {
         state.loadingStatus = 'loading'
       })
       .addCase(deleteDeploymentRule.fulfilled, (state: DeploymentRuleState, action) => {
         deploymentRulesAdapter.removeOne(state, action.meta.arg.deploymentRuleId)
+        state.error = null
         state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Your rule is deleted')
       })
       .addCase(deleteDeploymentRule.rejected, (state: DeploymentRuleState, action) => {
         state.loadingStatus = 'error'
+        // @todo fix with toastError
+        toast(ToastEnum.ERROR, action.error.message || `Your rule isn't deleted`)
         state.error = action.error.message
       })
-      // update
+      // update deployment rule
       .addCase(updateDeploymentRule.pending, (state: DeploymentRuleState) => {
         state.loadingStatus = 'loading'
       })
@@ -191,10 +181,14 @@ export const deploymentRulesSlice = createSlice({
           },
         }
         deploymentRulesAdapter.updateOne(state, update)
+        state.error = null
         state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Your rule is updated')
       })
       .addCase(updateDeploymentRule.rejected, (state: DeploymentRuleState, action) => {
         state.loadingStatus = 'error'
+        // @todo fix with toastError
+        toast(ToastEnum.ERROR, action.error.message || `Your rule isn't updated`)
         state.error = action.error.message
       })
   },

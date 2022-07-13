@@ -1,16 +1,15 @@
-import { AppDispatch, RootState } from '@console/store/data'
-import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { Cluster, ProjectDeploymentRuleRequest, WeekdayEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
-import { postDeploymentRules } from '@console/domains/projects'
+import { AppDispatch, RootState } from '@console/store/data'
+import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
+import { postDeploymentRule } from '@console/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
-import PageCreateDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
-import { toast, ToastEnum } from '@console/shared/toast'
 import { useDocumentTitle } from '@console/shared/utils'
+import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageCreateDeploymentRuleFeature() {
   const { organizationId = '', projectId = '' } = useParams()
@@ -74,14 +73,13 @@ export function PageCreateDeploymentRuleFeature() {
 
       fields.weekdays = weekdaysList
 
-      dispatch(postDeploymentRules({ projectId, ...fields })).then(() => {
-        toast(ToastEnum.SUCCESS, 'Your rule is created')
+      dispatch(postDeploymentRule({ projectId, data: fields })).then(() => {
         navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
       })
     }
   })
 
-  return <PageCreateDeploymentRule title="Create rule" control={control} clusters={clusters} onSubmit={onSubmit} />
+  return <PageCreateEditDeploymentRule title="Create rule" control={control} clusters={clusters} onSubmit={onSubmit} />
 }
 
 export default PageCreateDeploymentRuleFeature

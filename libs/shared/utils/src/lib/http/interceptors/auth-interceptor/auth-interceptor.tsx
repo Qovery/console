@@ -1,8 +1,7 @@
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
-
-import { toast, ToastEnum } from '@console/shared/toast'
+import { SerializedError } from '@reduxjs/toolkit'
 
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
@@ -26,13 +25,27 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       return config
     })
     const responseInterceptor = axiosInstance.interceptors.response.use(
-      async (response: AxiosResponse) => response,
-      (error) =>
-        toast(
-          ToastEnum.ERROR,
-          error.response.data.error || error.code || 'Error',
-          error.response.data.message || error.message
-        )
+      async (response: AxiosResponse) => {
+        return response
+      },
+      (error) => {
+        if (process.env['NODE_ENV'] !== 'production') {
+          console.error(
+            error.response?.data?.error || error.code || 'Error',
+            error.response?.data?.message || error.message
+          )
+        }
+
+        // we reformat the error output to increase the dev experience
+        // without this we should add a catch in every asyncThunk api call
+        // see: https://stackoverflow.com/questions/63439021/handling-errors-with-redux-toolkit
+        const err: SerializedError = {
+          message: error.response?.data?.message,
+          name: error.response?.data?.error,
+          code: error.response?.data?.status?.toString(),
+        }
+        return Promise.reject(err)
+      }
     )
 
     return () => {
