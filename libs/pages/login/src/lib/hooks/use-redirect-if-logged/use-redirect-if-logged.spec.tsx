@@ -23,14 +23,17 @@ describe('UseRedirectIfLogged', () => {
   })
 
   it('should redirect to the stored localStorage last visited URL', () => {
-    getRedirectLoginUriFromStorage.mockImplementation(() => '/login')
+    const mockRedirect = getRedirectLoginUriFromStorage as jest.Mock<string | null>
+    mockRedirect.mockImplementation(() => '/login')
     renderHook(useRedirectIfLogged, { wrapper: Wrapper })
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/login')
   })
 
   it('should redirect to the last visited project', () => {
-    getCurrentOrganizationIdFromStorage.mockImplementation(() => 'fff')
-    getCurrentProjectIdFromStorage.mockImplementation(() => 'iii')
+    const mockGetCurrentOrganizationId = getCurrentOrganizationIdFromStorage as jest.Mock<string | null>
+    const mockGetCurrentProjectId = getCurrentProjectIdFromStorage as jest.Mock<string | null>
+    mockGetCurrentOrganizationId.mockImplementation(() => 'fff')
+    mockGetCurrentProjectId.mockImplementation(() => 'iii')
     renderHook(useRedirectIfLogged, { wrapper: Wrapper })
     expect(mockedUsedNavigate).toHaveBeenCalledWith(OVERVIEW_URL('fff', 'iii'))
   })
