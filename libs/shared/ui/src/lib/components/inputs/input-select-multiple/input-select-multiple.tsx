@@ -35,7 +35,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
     <div>
       <components.Option {...props}>
         <span className="input--select-multiple__checkbox">
-          {props.isSelected && <Icon name="icon-solid-check" className="text-xxs" />}
+          {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
         </span>
         <label>{props.label}</label>
       </components.Option>
@@ -51,7 +51,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
 
   const inputActions =
     hasFocus && !disabled
-      ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)]'
+      ? '!border-2 !border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)]'
       : value && value.length > 0
       ? 'input--success'
       : disabled
@@ -67,7 +67,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
       }`}
       data-testid="select-multiple"
     >
-      <label htmlFor={label} className={`${hasFocus ? '!text-xs !translate-y-0' : 'text-sm translate-y-2'}`}>
+      <label htmlFor={label} className={`${hasFocus ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`}>
         {label}
       </label>
       <Select
@@ -82,6 +82,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
         isClearable={false}
         isDisabled={disabled}
         value={selected}
+        placeholder=""
       />
       <div className="absolute top-1/2 -translate-y-1/2 right-4">
         <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />

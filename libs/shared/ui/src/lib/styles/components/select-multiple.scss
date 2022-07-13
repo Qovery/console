@@ -1,14 +1,21 @@
 /* Value selected container */
+.input--select-multiple {
+  &:hover {
+  }
+}
+
 .input--select-multiple__control {
   border: none !important;
   background: none !important;
   box-shadow: none !important;
+  min-height: auto !important;
+  height: 34px;
 }
 
 .input--select-multiple__value-container {
   padding: 0 !important;
   cursor: pointer;
-  @apply mt-3;
+  @apply mt-2 top-1;
 }
 
 // state
@@ -55,14 +62,16 @@
 // option
 .input--select-multiple__option {
   display: flex !important;
+  background: #fff !important;
+  padding: 8px !important;
   @apply items-center gap-2;
 
   label {
-    @apply static translate-y-0 font-medium text-xs text-text-400;
+    @apply static translate-y-0 font-medium text-ssm text-text-400;
   }
 
   .input--select-multiple__checkbox {
-    @apply bg-white border border-element-light-lighter-500 rounded-sm w-4 h-4 flex items-center justify-center;
+    @apply bg-white border-2 border-element-light-lighter-700 rounded-sm w-4 h-4 flex items-center justify-center;
   }
 
   &:hover {
@@ -78,6 +87,6 @@
   }
 
   .input--select-multiple__checkbox {
-    @apply bg-brand-500;
+    @apply bg-brand-500 border-0;
   }
 }
