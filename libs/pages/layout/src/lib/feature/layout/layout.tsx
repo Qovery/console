@@ -10,6 +10,7 @@ import { WebsocketContainer } from '@console/shared/websockets'
 import { fetchDatabases } from '@console/domains/database'
 import { fetchEnvironments } from '@console/domains/environment'
 import LayoutPage from '../../ui/layout-page/layout-page'
+import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 
 export interface LayoutProps {
   children: React.ReactElement
@@ -47,8 +48,8 @@ export function Layout(props: LayoutProps) {
   }, [dispatch, organizationId])
 
   useEffect(() => {
-    localStorage.setItem('currentOrganizationId', organizationId)
-    localStorage.setItem('currentProjectId', projectId)
+    setCurrentOrganizationIdOnStorage(organizationId)
+    setCurrentProjectIdOnStorage(projectId)
   }, [organizationId, projectId])
 
   return (
