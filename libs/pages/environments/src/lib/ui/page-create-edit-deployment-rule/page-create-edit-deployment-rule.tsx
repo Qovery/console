@@ -133,9 +133,8 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
 
               <div className="mb-10">
                 <p className="text-text-500 text-xs leading-5">
-                  Automatically create a preview environment when a merge request is submitted on one of your
-                  applications. Your environment will be cloned with the application synchronised on the branch waiting
-                  to be merged.
+                  Declaring deployment rules at the project level allows you to apply defaults rule to all newly created
+                  environments.
                 </p>
               </div>
 
@@ -174,7 +173,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     control={control}
                     rules={{ required: 'Please add a matching condition' }}
                     render={({ field, fieldState: { error } }) => (
-                      <InputTextArea
+                      <InputText
                         name={field.name}
                         value={field.value}
                         onChange={field.onChange}
@@ -186,7 +185,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                   />
 
                   <p className="text-xs text-text-400">
-                    Use wildcards to specify just part of the name of the target environment.
+                    Use wildcards to specify just part of the name of the target environment (ex: [PR] Dev-*).
                   </p>
                 </BlockContent>
 
@@ -221,12 +220,18 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                       />
                     )}
                   />
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-7">
                     <Controller
                       name="auto_deploy"
                       control={control}
                       render={({ field }) => (
-                        <InputToggle value={field.value} onChange={field.onChange} title="Auto-deploy" small />
+                        <InputToggle
+                          value={field.value}
+                          onChange={field.onChange}
+                          title="Auto-deploy"
+                          description="Your applications will be redeployed each time a commit is done on the selected branch."
+                          small
+                        />
                       )}
                     />
                   </div>
@@ -235,7 +240,13 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                       name="auto_delete"
                       control={control}
                       render={({ field }) => (
-                        <InputToggle value={field.value} onChange={field.onChange} title="Auto-delete" small />
+                        <InputToggle
+                          value={field.value}
+                          onChange={field.onChange}
+                          title="Auto-delete"
+                          description="Your environment will be automatically deleted if the associated PR/MR is closed."
+                          small
+                        />
                       )}
                     />
                   </div>
@@ -255,7 +266,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                           }}
                           className="mb-5"
                           title="Deploy on specific timeframe"
-                          description="The rule will only be applied to new environments that match the regex you specify here. Leave this field empty if you want the rule to be applied to all new environments."
+                          description="Specify a timeframe to automatically start & stop your environment."
                           small
                         />
                       )}

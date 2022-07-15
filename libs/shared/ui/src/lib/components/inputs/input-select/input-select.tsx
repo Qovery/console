@@ -1,4 +1,4 @@
-import { ListboxButton, ListboxInput, ListboxOption, ListboxPopover } from '@reach/listbox'
+import { ListboxButton, ListboxInput, ListboxList, ListboxOption, ListboxPopover } from '@reach/listbox'
 import { Value } from '@console/shared/interfaces'
 import Icon from '../../icon/icon'
 
@@ -20,8 +20,9 @@ export function InputSelect(props: InputSelectProps) {
 
   return (
     <div className={`input input--select ${hasError} ${disabled ? '!bg-element-light-lighter-200' : ''} ${className}`}>
-      <ListboxInput onChange={onChange} disabled={disabled}>
+      <ListboxInput key={label} onChange={onChange} disabled={disabled}>
         <ListboxButton
+          onClick={() => console.log('hello')}
           className={`input__button ${value !== undefined ? 'input__button--focused' : ''} ${
             disabled ? '!border-element-light-lighter-500' : ''
           }`}
@@ -33,20 +34,22 @@ export function InputSelect(props: InputSelectProps) {
           {value && <div className="input__value">{selectedLabel}</div>}
         </ListboxButton>
         <ListboxPopover className="input__list">
-          <ListboxOption label="Hidden" className="hidden" value="hidden"></ListboxOption>
-          {items.map((currentItem, index) => (
-            <ListboxOption
-              key={index}
-              className={`input__item ${value === currentItem.value ? 'is-active' : ''}`}
-              value={currentItem.value}
-            >
-              <Icon
-                name="icon-solid-check"
-                className={`text-success-500 mr-3 ${value === currentItem.value ? 'opacity-100' : 'opacity-0'}`}
-              />
-              {currentItem.label}
-            </ListboxOption>
-          ))}
+          <ListboxList>
+            <ListboxOption label="Hidden" className="hidden" value="hidden"></ListboxOption>
+            {items.map((currentItem, index) => (
+              <ListboxOption
+                key={index}
+                className={`input__item ${value === currentItem.value ? 'is-active' : ''}`}
+                value={currentItem.value}
+              >
+                <Icon
+                  name="icon-solid-check"
+                  className={`text-success-500 mr-3 ${value === currentItem.value ? 'opacity-100' : 'opacity-0'}`}
+                />
+                {currentItem.label}
+              </ListboxOption>
+            ))}
+          </ListboxList>
         </ListboxPopover>
       </ListboxInput>
       {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}

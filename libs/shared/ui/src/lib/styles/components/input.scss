@@ -85,6 +85,10 @@
 .input__list {
   @apply mt-2 bg-white p-2 rounded border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full z-10 list-none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+
+  ul {
+    outline: 0;
+  }
 }
 
 .input__item {
