@@ -6,20 +6,23 @@ import {
   PayloadAction,
   Update,
 } from '@reduxjs/toolkit'
-import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
 import {
   DeploymentHistoryEnvironment,
   Environment,
   EnvironmentDeploymentHistoryApi,
+  EnvironmentEditRequest,
+  EnvironmentMainCallsApi,
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
+import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
 import { RootState } from '@console/store/data'
-
+import { toast, ToastEnum } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
+const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
@@ -52,6 +55,14 @@ export const fetchEnvironmentDeploymentHistory = createAsyncThunk<
   const response = await environmentDeploymentsApi.listEnvironmentDeploymentHistory(data.environmentId)
   return response.data.results as DeploymentHistoryEnvironment[]
 })
+
+export const updateEnvironment = createAsyncThunk(
+  'environment/update',
+  async (payload: { environmentId: string; data: EnvironmentEditRequest }) => {
+    const response = await environmentMainCallsApi.editEnvironment(payload.environmentId, payload.data)
+    return response.data
+  }
+)
 
 export const initialEnvironmentsState: EnvironmentsState = environmentsAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -158,6 +169,28 @@ export const environmentsSlice = createSlice({
       })
       .addCase(fetchEnvironmentDeploymentHistory.rejected, (state: EnvironmentsState, action) => {
         state.loadingEnvironmentDeployments = 'error'
+        state.error = action.error.message
+      })
+      // update environment
+      .addCase(updateEnvironment.pending, (state: EnvironmentsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(updateEnvironment.fulfilled, (state: EnvironmentsState, action) => {
+        const update: Update<Environment> = {
+          id: action.payload.id,
+          changes: {
+            ...action.payload,
+          },
+        }
+        environmentsAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Your environment is updated')
+      })
+      .addCase(updateEnvironment.rejected, (state: EnvironmentsState, action) => {
+        state.loadingStatus = 'error'
+        // @todo fix with toastError
+        toast(ToastEnum.ERROR, action.error.message || `Your environment isn't updated`)
         state.error = action.error.message
       })
   },

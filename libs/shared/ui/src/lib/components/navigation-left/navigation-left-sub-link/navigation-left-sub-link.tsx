@@ -34,7 +34,11 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
           className={`w-full ${open ? 'opacity-100 h-full' : 'opacity-0 h-0 pointer-events-none'}`}
         >
           {link.subLinks.map((subLink, index) => (
-            <div key={index} className={`${linkClassName(pathname, subLink.url)} pl-[37px]`}>
+            <div
+              key={index}
+              className={`${linkClassName(pathname, subLink.url)} pl-[37px]`}
+              onClick={() => subLink.onClick && subLink.onClick()}
+            >
               {subLink.title}
             </div>
           ))}

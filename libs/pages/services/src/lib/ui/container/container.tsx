@@ -153,7 +153,9 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
-      active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`,
+      active: location.pathname.includes(
+        `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`
+      ),
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`,
     },
   ]
