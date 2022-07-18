@@ -1,6 +1,6 @@
 import React, { ReactNode, MouseEvent, useRef, useEffect } from 'react'
 import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-typescript-axios'
-import { ButtonIcon, ButtonIconSize, ButtonIconStyle, Icon } from '@console/shared/ui'
+import { ButtonIcon, ButtonSize, ButtonIconStyle, Icon } from '@console/shared/ui'
 import { LoadingStatus } from '@console/shared/interfaces'
 import { dateDifferenceMinutes, scrollParentToChild } from '@console/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
@@ -114,14 +114,14 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
           <ButtonIcon
             icon="icon-solid-arrow-up-to-line"
             className="mr-px !rounded-tr-none !rounded-br-none"
-            size={ButtonIconSize.SMALL}
+            size={ButtonSize.SMALL}
             style={ButtonIconStyle.DARK}
             onClick={() => forcedScroll()}
           />
           <ButtonIcon
             icon="icon-solid-arrow-down-to-line"
             className="mr-2 !rounded-tl-none !rounded-bl-none"
-            size={ButtonIconSize.SMALL}
+            size={ButtonSize.SMALL}
             style={ButtonIconStyle.DARK}
             onClick={() => forcedScroll(true)}
           />
