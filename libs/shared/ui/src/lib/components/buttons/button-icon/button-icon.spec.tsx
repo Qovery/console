@@ -25,7 +25,7 @@ describe('ButtonIcon', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.classList.contains('btn-icon--normal')).toBe(true)
+    expect(button.classList.contains('btn--regular')).toBe(true)
     expect(button.classList.contains('btn-icon--basic')).toBe(true)
     expect(button.classList.contains('some-class-name')).toBe(true)
   })
