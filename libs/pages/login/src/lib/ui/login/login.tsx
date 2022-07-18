@@ -40,9 +40,7 @@ export function Login(props: ILoginProps) {
       </div>
       <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">
         <div className="max-w-md relative z-10">
-          <h2 className="h1 text-text-700 mt-44 mb-6">
-            The Next-Gen DevOps Platform to Build and Scale Your Apps on AWS
-          </h2>
+          <h2 className="h1 text-text-700 mt-44 mb-6">Deploy On-demand Environments on AWS, Remarkably Fast</h2>
           <p className="text-text-500 mb-6 text-sm">Built for DevOps, Loved by developers 🚀</p>
           <ul className="list-disc pl-4 text-sm">
             <li className="font-bold text-text-500 mb-2">

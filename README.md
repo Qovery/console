@@ -8,7 +8,7 @@
 </a>
 </p>
 
-<h3 align="center">The simplest way to deploy your apps on AWS and Kubernetes</h3>
+<h3 align="center">Deploy On-demand Environments on AWS, Remarkably Fast</h3>
         <p align="center">Website: https://www.qovery.com</p>
 
 <p align="center">
