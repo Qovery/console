@@ -32,7 +32,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
       <>
         <div onClick={() => console.log(props.variable)} className="flex items-center px-4">
           <div className="mx-3 w-full">
-            <Skeleton show={isLoading} width={16} height={16}>
+            <Skeleton show={isLoading} width={250} height={16}>
               <div className="cursor-pointer w-full mt-0.5 text-text-600 text-ssm font-medium flex items-center">
                 {' '}
                 {(variable as EnvironmentVariableEntity).aliased_variable ||

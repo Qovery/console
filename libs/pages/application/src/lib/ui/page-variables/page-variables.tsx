@@ -1,6 +1,6 @@
-import { BaseLink, HelpSection, Table, TableHeadProps } from '@console/shared/ui'
+import { HelpSection, Table, TableHeadProps } from '@console/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
-import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
+import { EnvironmentVariableSecretOrPublic, LoadingStatus } from '@console/shared/interfaces'
 import React, { Dispatch, SetStateAction } from 'react'
 
 export interface PageVariablesProps {
@@ -8,11 +8,12 @@ export interface PageVariablesProps {
   variables: EnvironmentVariableSecretOrPublic[]
   setFilterData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   filterData: EnvironmentVariableSecretOrPublic[]
-  listHelpfulLinks: BaseLink[]
+  loadingStatus?: LoadingStatus
+  isLoading: boolean
 }
 
 export function PageVariablesMemo(props: PageVariablesProps) {
-  const { tableHead, variables, setFilterData, filterData, listHelpfulLinks } = props
+  const { tableHead, variables, setFilterData, filterData } = props
   const columnsWidth = '30% 20% 25% 10% 15%'
 
   return (
@@ -32,13 +33,24 @@ export function PageVariablesMemo(props: PageVariablesProps) {
               variable={envVariable}
               dataHead={tableHead}
               columnsWidth={columnsWidth}
+              isLoading={props.isLoading}
             />
           ))}
+
+          <div className="bg-white rounded-b flex flex-grow flex-col justify-end">
+            <HelpSection
+              description="Need help? You may find these links useful"
+              links={[
+                {
+                  link: '#',
+                  linkLabel: 'How to configure my environment variables',
+                  external: true,
+                },
+              ]}
+            />
+          </div>
         </>
       </Table>
-      <div className="bg-white rounded-b flex flex-grow flex-col justify-end">
-        <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
-      </div>
     </>
   )
 }

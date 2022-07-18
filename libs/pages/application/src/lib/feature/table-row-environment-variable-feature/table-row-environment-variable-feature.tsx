@@ -16,6 +16,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
   dataHead: TableHeadProps[]
   columnsWidth?: string
+  isLoading: boolean
 }
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
@@ -126,7 +127,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       variable={variable}
       dataHead={dataHead}
       rowActions={rowActions}
-      isLoading={false}
+      isLoading={props.isLoading}
       columnsWidth={columnsWidth}
     />
   )
