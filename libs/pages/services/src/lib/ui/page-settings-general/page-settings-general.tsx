@@ -10,7 +10,7 @@ export interface PageSettingsGeneralProps {
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   const { clusters, onSubmit } = props
-  const { control } = useFormContext()
+  const { control, formState } = useFormContext()
 
   const modeSelection = [
     {
@@ -94,7 +94,13 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             />
             <p className="text-xs text-text-400 ml-4">Clusters cannot be changed at this time.</p>
           </BlockContent>
-          <Button className="mb-6" size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
+          <Button
+            className="mb-6"
+            disabled={!formState.isValid}
+            size={ButtonSize.NORMAL}
+            style={ButtonStyle.BASIC}
+            type="submit"
+          >
             Save
           </Button>
         </form>

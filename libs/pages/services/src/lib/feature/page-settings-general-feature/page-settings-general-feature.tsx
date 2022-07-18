@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Cluster, Environment } from 'qovery-typescript-axios'
-import { useForm } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import equal from 'fast-deep-equal'
@@ -14,7 +14,7 @@ export function PageSettingsGeneralFeature() {
   const { organizationId = '', environmentId = '' } = useParams()
   useDocumentTitle('Environment General - Settings - Qovery')
   const dispatch = useDispatch<AppDispatch>()
-  const { handleSubmit, setValue } = useForm()
+  const methods = useForm()
 
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
@@ -25,7 +25,7 @@ export function PageSettingsGeneralFeature() {
     equal
   )
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
       delete data['cluster_id']
       await dispatch(updateEnvironment({ environmentId, data }))
@@ -37,12 +37,16 @@ export function PageSettingsGeneralFeature() {
   }, [dispatch, organizationId])
 
   useEffect(() => {
-    setValue('name', environment?.name)
-    setValue('mode', environment?.mode)
-    setValue('cluster_id', environment?.cluster_id)
-  }, [setValue, environment])
+    methods.setValue('name', environment?.name)
+    methods.setValue('mode', environment?.mode)
+    methods.setValue('cluster_id', environment?.cluster_id)
+  }, [methods, environment])
 
-  return <PageSettingsGeneral clusters={clusters} onSubmit={onSubmit} />
+  return (
+    <FormProvider {...methods}>
+      <PageSettingsGeneral clusters={clusters} onSubmit={onSubmit} />
+    </FormProvider>
+  )
 }
 
 export default PageSettingsGeneralFeature
