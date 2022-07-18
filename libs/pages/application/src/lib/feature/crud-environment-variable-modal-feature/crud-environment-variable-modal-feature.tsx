@@ -1,6 +1,6 @@
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
 import {
@@ -45,13 +45,14 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     (state) => getEnvironmentVariablesState(state).error
   )
   const [closing, setClosing] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (closing && !errorEnvironmentVariable) props.setOpen(false)
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])
 
-  const { handleSubmit } = useForm<{
+  const methods = useForm<{
     key: string
     value: string
     scope: string
@@ -66,9 +67,10 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     mode: 'onChange',
   })
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit((data) => {
     if (data) {
       let entityId
+      setLoading(true)
       switch (data.scope) {
         case EnvironmentVariableScopeEnum.ENVIRONMENT:
           entityId = props.environmentId
@@ -96,9 +98,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
                 })
-              ).then(() => {
-                setClosing(true)
-              })
+              )
+                .then(() => {
+                  setClosing(true)
+                })
+                .finally(() => {
+                  setLoading(false)
+                })
               break
             case EnvironmentVariableType.ALIAS:
               dispatch(
@@ -111,9 +117,14 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
                 })
-              ).then(() => {
-                setClosing(true)
-              })
+              )
+                .then(() => {
+                  setClosing(true)
+                })
+                .finally(() => {
+                  setLoading(false)
+                })
+
               break
             default:
               dispatch(
@@ -126,9 +137,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   },
                   scope: data.scope as EnvironmentVariableScopeEnum,
                 })
-              ).then(() => {
-                setClosing(true)
-              })
+              )
+                .then(() => {
+                  setClosing(true)
+                })
+                .finally(() => {
+                  setLoading(false)
+                })
               break
           }
         } else {
@@ -142,9 +157,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               },
               scope: data.scope as EnvironmentVariableScopeEnum,
             })
-          ).then(() => {
-            setClosing(true)
-          })
+          )
+            .then(() => {
+              setClosing(true)
+            })
+            .finally(() => {
+              setLoading(false)
+            })
         }
       } else {
         if (props.mode === EnvironmentVariableCrudMode.CREATION) {
@@ -160,9 +179,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
                 })
-              ).then(() => {
-                setClosing(true)
-              })
+              )
+                .then(() => {
+                  setClosing(true)
+                })
+                .finally(() => {
+                  setLoading(false)
+                })
               break
             case EnvironmentVariableType.ALIAS:
               dispatch(
@@ -175,9 +198,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
                 })
-              ).then(() => {
-                setClosing(true)
-              })
+              )
+                .then(() => {
+                  setClosing(true)
+                })
+                .finally(() => {
+                  setLoading(false)
+                })
               break
             default:
               dispatch(
@@ -190,9 +217,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   },
                   scope: data.scope as EnvironmentVariableScopeEnum,
                 })
-              ).then(() => {
-                setClosing(true)
-              })
+              )
+                .then(() => {
+                  setClosing(true)
+                })
+                .finally(() => {
+                  setLoading(false)
+                })
               break
           }
         } else {
@@ -206,9 +237,13 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
               },
               scope: data.scope as EnvironmentVariableScopeEnum,
             })
-          ).then(() => {
-            setClosing(true)
-          })
+          )
+            .then(() => {
+              setClosing(true)
+            })
+            .finally(() => {
+              setLoading(false)
+            })
         }
       }
     }
@@ -241,7 +276,14 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   }
 
   const computeDescription = (): string => {
-    return 'Lorem ipsum blablabla'
+    switch (props.type) {
+      case EnvironmentVariableType.ALIAS:
+        return 'Aliases allow you to specify a diffenrent name for a variable on a specific scope.'
+      case EnvironmentVariableType.OVERRIDE:
+        return 'Overrides allow you to define a different env var value on a specific scope.'
+      default:
+        return 'Variable are used at build/run time. Secrets are special variables, their value can only be accessed by the application.'
+    }
   }
 
   const computeAvailableScope = (): EnvironmentVariableScopeEnum[] => {
@@ -287,15 +329,18 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   }
 
   return (
-    <CrudEnvironmentVariableModal
-      mode={mode}
-      title={computeTitle()}
-      description={computeDescription()}
-      onSubmit={onSubmit}
-      setOpen={props.setOpen}
-      type={props.type}
-      availableScopes={computeAvailableScope()}
-    />
+    <FormProvider {...methods}>
+      <CrudEnvironmentVariableModal
+        mode={mode}
+        title={computeTitle()}
+        description={computeDescription()}
+        onSubmit={onSubmit}
+        setOpen={props.setOpen}
+        type={props.type}
+        availableScopes={computeAvailableScope()}
+        loading={loading}
+      />
+    </FormProvider>
   )
 }
 

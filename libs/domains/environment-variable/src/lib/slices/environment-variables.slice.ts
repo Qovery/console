@@ -224,7 +224,7 @@ export const environmentVariablesSlice = createSlice({
       .addCase(createEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable has been created successfully')
+        toast(ToastEnum.SUCCESS, 'Creation success', 'Your variable has been created')
       })
       .addCase(createEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
@@ -233,7 +233,7 @@ export const environmentVariablesSlice = createSlice({
       .addCase(createAliasEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable override has been created successfully')
+        toast(ToastEnum.SUCCESS, 'Creation success', 'Your variable has been created')
       })
       .addCase(createAliasEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         errorToaster(action.error)
@@ -242,7 +242,7 @@ export const environmentVariablesSlice = createSlice({
       .addCase(createOverrideEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable alias has been created successfully')
+        toast(ToastEnum.SUCCESS, 'Creation success', 'Your variable has been created')
       })
       .addCase(createOverrideEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         errorToaster(action.error)
@@ -260,7 +260,9 @@ export const environmentVariablesSlice = createSlice({
           changes: extendedEnv,
         })
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Edition success', 'Variable edited successfully')
+        toast(ToastEnum.SUCCESS, 'Edition success', 'Variable edited successfully', () => {
+          return 'hey'
+        })
       })
       .addCase(editEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message

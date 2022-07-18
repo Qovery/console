@@ -1,5 +1,5 @@
 .toast {
-  @apply relative flex bg-element-light-darker-700 rounded cursor-pointer;
+  @apply relative bg-element-light-darker-700 rounded cursor-pointer;
   box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12);
 
   &:hover {
@@ -11,6 +11,10 @@
 
 .toast__icon {
   @apply mt-[1px] pl-4 pt-2 h-full flex justify-center;
+}
+
+.toast__wrapper {
+  @apply flex;
 }
 
 .toast__content {

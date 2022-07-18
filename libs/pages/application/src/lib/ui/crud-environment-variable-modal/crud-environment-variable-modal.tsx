@@ -14,6 +14,7 @@ export interface CrudEnvironmentVariableModalProps {
   onSubmit: () => void
   setOpen: (open: boolean) => void
   availableScopes: EnvironmentVariableScopeEnum[]
+  loading: boolean
 }
 
 export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModalProps) {
@@ -98,7 +99,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           >
             Cancel
           </Button>
-          <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid}>
+          <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={props.loading}>
             Confirm
           </Button>
         </div>
