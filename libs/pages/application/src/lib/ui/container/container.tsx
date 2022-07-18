@@ -127,21 +127,12 @@ export function Container(props: ContainerProps) {
     })
   }
 
-  const linkButtons = () => {
-    if (application?.links && application.links.items && application.links.items.length === 1) {
-      return (
-        <Button
-          iconRight="icon-solid-link"
-          external={true}
-          link={application.links.items[0].url}
-          style={ButtonStyle.STROKED}
-          size={ButtonSize.SMALL}
-        >
-          Open link
-        </Button>
-      )
-    } else {
-      return (
+  const headerButtons = (
+    <div className="flex items-start gap-2">
+      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
+      {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
+      {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
+      {application?.links && application.links.items && application.links.items.length > 0 && (
         <Menu
           menus={menuLink}
           trigger={
@@ -150,16 +141,7 @@ export function Container(props: ContainerProps) {
             </Button>
           }
         />
-      )
-    }
-  }
-
-  const headerButtons = (
-    <div className="flex items-start gap-2">
-      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
-      {application?.links && application.links.items && application.links.items.length > 0 && linkButtons()}
+      )}
     </div>
   )
 
