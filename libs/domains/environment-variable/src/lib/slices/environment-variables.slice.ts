@@ -37,6 +37,7 @@ export const createEnvironmentVariables = createAsyncThunk(
     applicationId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
@@ -73,6 +74,7 @@ export const createOverrideEnvironmentVariables = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Value
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
     let response
@@ -113,6 +115,7 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Key
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
     let response
@@ -152,6 +155,7 @@ export const editEnvironmentVariables = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
@@ -224,7 +228,14 @@ export const environmentVariablesSlice = createSlice({
       .addCase(createEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your variable has been created')
+        toast(
+          ToastEnum.SUCCESS,
+          'Creation success',
+          'Your variable has been created. You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(createEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
@@ -233,7 +244,14 @@ export const environmentVariablesSlice = createSlice({
       .addCase(createAliasEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your variable has been created')
+        toast(
+          ToastEnum.SUCCESS,
+          'Creation success',
+          'Your variable has been created. You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(createAliasEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         errorToaster(action.error)
@@ -242,7 +260,14 @@ export const environmentVariablesSlice = createSlice({
       .addCase(createOverrideEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         addVariableToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your variable has been created')
+        toast(
+          ToastEnum.SUCCESS,
+          'Creation success',
+          'Your variable has been created. You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(createOverrideEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         errorToaster(action.error)
@@ -260,9 +285,14 @@ export const environmentVariablesSlice = createSlice({
           changes: extendedEnv,
         })
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Edition success', 'Variable edited successfully', () => {
-          return 'hey'
-        })
+        toast(
+          ToastEnum.SUCCESS,
+          'Edition success',
+          'You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(editEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message

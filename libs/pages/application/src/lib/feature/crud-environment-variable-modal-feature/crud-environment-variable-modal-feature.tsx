@@ -16,6 +16,7 @@ import {
 } from '@console/domains/environment-variable'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
+import { postEnvironmentActionsRestart } from '@console/domains/environment'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
@@ -84,6 +85,10 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
           break
       }
 
+      const toasterCallback = () => {
+        dispatch(postEnvironmentActionsRestart({ projectId: props.projectId, environmentId: props.environmentId }))
+      }
+
       if (!data.isSecret) {
         if (props.mode === EnvironmentVariableCrudMode.CREATION) {
           switch (props.type) {
@@ -97,6 +102,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   },
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
+                  toasterCallback,
                 })
               )
                 .then(() => {
@@ -116,6 +122,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   },
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
+                  toasterCallback,
                 })
               )
                 .then(() => {
@@ -136,6 +143,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                     value: data.value,
                   },
                   scope: data.scope as EnvironmentVariableScopeEnum,
+                  toasterCallback,
                 })
               )
                 .then(() => {
@@ -156,6 +164,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                 value: data.value,
               },
               scope: data.scope as EnvironmentVariableScopeEnum,
+              toasterCallback,
             })
           )
             .then(() => {
@@ -178,6 +187,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   },
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
+                  toasterCallback,
                 })
               )
                 .then(() => {
@@ -197,6 +207,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                   },
                   environmentVariableId: variable?.id || '',
                   scope: data.scope as EnvironmentVariableScopeEnum,
+                  toasterCallback,
                 })
               )
                 .then(() => {
@@ -216,6 +227,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                     value: data.value,
                   },
                   scope: data.scope as EnvironmentVariableScopeEnum,
+                  toasterCallback,
                 })
               )
                 .then(() => {
@@ -236,6 +248,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
                 value: data.value,
               },
               scope: data.scope as EnvironmentVariableScopeEnum,
+              toasterCallback,
             })
           )
             .then(() => {
@@ -278,7 +291,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const computeDescription = (): string => {
     switch (props.type) {
       case EnvironmentVariableType.ALIAS:
-        return 'Aliases allow you to specify a diffenrent name for a variable on a specific scope.'
+        return 'Aliases allow you to specify a different name for a variable on a specific scope.'
       case EnvironmentVariableType.OVERRIDE:
         return 'Overrides allow you to define a different env var value on a specific scope.'
       default:

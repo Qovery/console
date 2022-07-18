@@ -37,6 +37,7 @@ export const createSecret = createAsyncThunk(
     applicationId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
@@ -70,6 +71,7 @@ export const createOverrideSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Value
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
     let response
@@ -110,6 +112,7 @@ export const createAliasSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Key
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
     let response
@@ -149,6 +152,7 @@ export const editSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
@@ -220,7 +224,14 @@ export const secretEnvironmentVariablesSlice = createSlice({
       .addCase(createSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         addSecretToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable has been created successfully')
+        toast(
+          ToastEnum.SUCCESS,
+          'Creation success',
+          'You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(createSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         state.error = action.error.message
@@ -229,7 +240,14 @@ export const secretEnvironmentVariablesSlice = createSlice({
       .addCase(createAliasSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         addSecretToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable override has been created successfully')
+        toast(
+          ToastEnum.SUCCESS,
+          'Creation success',
+          'You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(createAliasSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         errorToaster(action.error)
@@ -238,7 +256,14 @@ export const secretEnvironmentVariablesSlice = createSlice({
       .addCase(createOverrideSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         addSecretToStore(state, action)
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Creation success', 'Your environment variable alias has been created successfully')
+        toast(
+          ToastEnum.SUCCESS,
+          'Creation success',
+          'You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(createOverrideSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         errorToaster(action.error)
@@ -255,7 +280,14 @@ export const secretEnvironmentVariablesSlice = createSlice({
           changes: extendedEnv,
         })
         state.error = null
-        toast(ToastEnum.SUCCESS, 'Edition success', 'Variable edited successfully')
+        toast(
+          ToastEnum.SUCCESS,
+          'Edition success',
+          'You need to redeploy your environment for your changes to be applied',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(editSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         state.error = action.error.message
