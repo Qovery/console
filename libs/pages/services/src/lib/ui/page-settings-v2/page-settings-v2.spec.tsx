@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-import PageSettings from './page-settings'
+import PageSettingsV2 from './page-settings-v2'
 
-describe('PageSettings', () => {
+describe('PageSettingsV2', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettings />)
+    const { baseElement } = render(<PageSettingsV2 />)
     expect(baseElement).toBeTruthy()
   })
 })

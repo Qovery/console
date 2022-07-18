@@ -1,7 +1,7 @@
 import { Button } from '@console/shared/ui'
 import { useParams } from 'react-router'
 
-export function PageSettings() {
+export function PageSettingsV2() {
   const { organizationId, projectId, environmentId } = useParams()
 
   return (
@@ -19,4 +19,4 @@ export function PageSettings() {
   )
 }
 
-export default PageSettings
+export default PageSettingsV2
