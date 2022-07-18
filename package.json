@@ -27,7 +27,7 @@
     "@radix-ui/react-accordion": "^0.1.6",
     "@radix-ui/react-dialog": "^0.1.7",
     "@radix-ui/react-tooltip": "^0.1.7",
-    "@reach/listbox": "^0.16.2",
+    "@reach/listbox": "^0.17.0",
     "@reduxjs/toolkit": "1.8.2",
     "@storybook/addon-essentials": "6.5.9",
     "@storybook/addon-knobs": "^6.4.0",
