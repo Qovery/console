@@ -1,10 +1,19 @@
 import { Button, ButtonProps, ButtonSize, ButtonStyle } from './button'
-import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
 
 export default {
   component: Button,
   title: 'Buttons/ButtonDefault',
+  argTypes: {
+    size: {
+      options: Object.values(ButtonSize).filter((x) => typeof x === 'string'),
+      control: { type: 'select' },
+    },
+    style: {
+      options: Object.values(ButtonStyle).filter((x) => typeof x === 'string'),
+      control: { type: 'select' },
+    },
+  },
 } as Meta
 
 const ButtonContent = () => {
@@ -19,8 +28,8 @@ const Template: Story<ButtonProps> = (args) => (
 
 export const Primary = Template.bind({})
 Primary.args = {
-  size: select('Size', ButtonSize, ButtonSize.REGULAR),
-  style: select('Type', ButtonStyle, ButtonStyle.BASIC),
+  size: ButtonSize.REGULAR,
+  style: ButtonStyle.BASIC,
   iconLeft: 'icon-solid-eye',
   iconRight: 'icon-solid-eye',
 }

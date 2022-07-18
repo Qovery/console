@@ -26,6 +26,11 @@
   @apply text-xs;
 }
 
+.btn--regular {
+  height: theme('spacing.9');
+  @apply text-ssm;
+}
+
 .btn--large {
   height: theme('spacing.10');
   @apply text-sm;
