@@ -11,8 +11,9 @@ import {
   TableHeadProps,
   TableRow,
   TagCommit,
+  Tooltip,
 } from '@console/shared/ui'
-import { timeAgo } from '@console/shared/utils'
+import { timeAgo, upperCaseFirstLetter } from '@console/shared/utils'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
@@ -191,11 +192,16 @@ export function TableRowServices(props: TableRowServicesProps) {
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
             <div className="flex items-center">
-              <Icon
-                name={(data as ApplicationEntity).build_mode || (data as DatabaseEntity).type}
-                width="20"
-                height="20"
-              />
+              {(data as DatabaseEntity).type ? (
+                <Tooltip content={`${upperCaseFirstLetter((data as DatabaseEntity).mode)}`}>
+                  <div>
+                    <Icon name={(data as DatabaseEntity).type} width="20" height="20" />
+                  </div>
+                </Tooltip>
+              ) : (
+                <Icon name={(data as ApplicationEntity).build_mode || ''} width="20" height="20" />
+              )}
+
               {(data as DatabaseEntity).version && (
                 <span className="block text-xs ml-2 text-text-600 font-medium">
                   v{(data as DatabaseEntity).version}
