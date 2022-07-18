@@ -1,10 +1,7 @@
 import { Button } from '@console/shared/ui'
 import { useParams } from 'react-router'
 
-/* eslint-disable-next-line */
-export interface PageSettingsProps {}
-
-export function PageSettings(props: PageSettingsProps) {
+export function PageSettings() {
   const { organizationId, projectId, environmentId } = useParams()
 
   return (

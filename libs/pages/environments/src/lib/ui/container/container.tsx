@@ -15,7 +15,7 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { children } = props
   const { organizationId, projectId } = useParams()
-  const location = useLocation()
+  const { pathname } = useLocation()
 
   const headerButtons = (
     <div className="hidden">
@@ -26,14 +26,14 @@ export function Container(props: ContainerProps) {
   )
 
   const isDeploymentRulesTab =
-    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
-    location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`
+    pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
+    pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL}`
 
   const tabsItems = [
     {
       icon: <Icon name={IconEnum.SUCCESS} viewBox="0 0 16 16" className="w-4 mt-0.5" />,
       name: 'Environments',
-      active: location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
+      active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
     },
     {
@@ -45,7 +45,7 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name="icon-solid-wheel" className="text-sm text-inherit" />,
       name: 'Settings',
-      active: location.pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_SETTINGS_URL}`,
+      active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_SETTINGS_URL}`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_SETTINGS_URL}`,
     },
   ]

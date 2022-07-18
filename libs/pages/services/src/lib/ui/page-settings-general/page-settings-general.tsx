@@ -1,16 +1,16 @@
 import { Cluster } from 'qovery-typescript-axios'
-import { Control, Controller, FieldValues } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
 
 export interface PageSettingsGeneralProps {
   onSubmit: () => void
   clusters: Cluster[]
-  control?: Control<FieldValues>
 }
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { clusters, control, onSubmit } = props
+  const { clusters, onSubmit } = props
+  const { control } = useFormContext()
 
   const modeSelection = [
     {

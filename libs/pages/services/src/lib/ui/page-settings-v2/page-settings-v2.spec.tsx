@@ -1,5 +1,4 @@
-import { render } from '@testing-library/react'
-
+import { render } from '__tests__/utils/setup-jest'
 import PageSettingsV2 from './page-settings-v2'
 
 describe('PageSettingsV2', () => {

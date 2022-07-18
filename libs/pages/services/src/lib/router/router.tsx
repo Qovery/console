@@ -11,7 +11,7 @@ import {
 } from '@console/shared/router'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
-import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
+import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 

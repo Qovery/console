@@ -14,7 +14,7 @@ export function PageSettingsGeneralFeature() {
   const { organizationId = '', environmentId = '' } = useParams()
   useDocumentTitle('Environment General - Settings - Qovery')
   const dispatch = useDispatch<AppDispatch>()
-  const { control, handleSubmit, setValue } = useForm()
+  const { handleSubmit, setValue } = useForm()
 
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
@@ -42,7 +42,7 @@ export function PageSettingsGeneralFeature() {
     setValue('cluster_id', environment?.cluster_id)
   }, [setValue, environment])
 
-  return <PageSettingsGeneral control={control} clusters={clusters} onSubmit={onSubmit} />
+  return <PageSettingsGeneral clusters={clusters} onSubmit={onSubmit} />
 }
 
 export default PageSettingsGeneralFeature

@@ -1,7 +1,7 @@
-import PageSettingsFeature from './page-settings-feature'
 import { render } from '__tests__/utils/setup-jest'
+import PageSettingsFeature from './page-settings-feature'
 
-describe('Settings', () => {
+describe('PageSettingsFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<PageSettingsFeature />)
     expect(baseElement).toBeTruthy()
