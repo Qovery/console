@@ -64,7 +64,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
             </p>
 
             <Button
-              size={ButtonSize.NORMAL}
+              size={ButtonSize.REGULAR}
               className="leading-none"
               link={linkNewRule}
               iconRight="icon-solid-circle-plus"

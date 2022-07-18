@@ -66,13 +66,13 @@ export function StepMore(props: StepMoreProps) {
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`}
-            size={ButtonSize.BIG}
+            size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
-          <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} type="submit">
+          <Button size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} type="submit">
             Validate
           </Button>
         </div>

@@ -100,19 +100,19 @@ export function StepPricing(props: StepPricingProps) {
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
-            size={ButtonSize.BIG}
+            size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
           {selectPlan === PlanEnum.ENTERPRISE && (
-            <Button onClick={onClickContact} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
+            <Button onClick={onClickContact} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
               Contact us
             </Button>
           )}
           {selectPlan !== PlanEnum.ENTERPRISE && (
-            <Button size={ButtonSize.BIG} style={ButtonStyle.BASIC} onClick={onSubmit} loading={loading}>
+            <Button size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} onClick={onSubmit} loading={loading}>
               Let’s go
               <span className="ml-1" role="img" aria-label="star">
                 💫

@@ -340,7 +340,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                   </div>
                 </BlockContent>
 
-                <Button className="mb-14" size={ButtonSize.NORMAL} style={ButtonStyle.BASIC} type="submit">
+                <Button className="mb-14" size={ButtonSize.REGULAR} style={ButtonStyle.BASIC} type="submit">
                   {btnLabel}
                 </Button>
               </form>
