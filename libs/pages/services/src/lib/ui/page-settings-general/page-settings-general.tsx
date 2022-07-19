@@ -97,7 +97,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           <Button
             className="mb-6"
             disabled={!formState.isValid}
-            size={ButtonSize.NORMAL}
+            size={ButtonSize.REGULAR}
             style={ButtonStyle.BASIC}
             type="submit"
           >
