@@ -28,7 +28,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
   const { variable, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, rowActions } = props
 
   return (
-    <TableRow columnsWidth={columnsWidth}>
+    <TableRow columnsWidth={columnsWidth} anchorForScroll={variable.id}>
       <>
         <div onClick={() => console.log(props.variable)} className="flex items-center px-4">
           <div className="mx-3 w-full">

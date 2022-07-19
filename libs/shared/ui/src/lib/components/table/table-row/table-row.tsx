@@ -7,6 +7,7 @@ export interface TableRowProps {
   disabled?: boolean
   columnsWidth?: string
   className?: string
+  anchorForScroll?: string
 }
 
 export function TableRow(props: TableRowProps) {
@@ -18,13 +19,24 @@ export function TableRow(props: TableRowProps) {
 
   if (link) {
     return (
-      <Link data-testid="row" to={link} className={rowClasses} style={{ gridTemplateColumns: columnsWidth }}>
+      <Link
+        data-testid="row"
+        to={link}
+        className={rowClasses}
+        style={{ gridTemplateColumns: columnsWidth }}
+        data-anchor-scroll={props.anchorForScroll}
+      >
         {children}
       </Link>
     )
   } else {
     return (
-      <div data-testid="row" className={rowClasses} style={{ gridTemplateColumns: columnsWidth }}>
+      <div
+        data-testid="row"
+        className={rowClasses}
+        style={{ gridTemplateColumns: columnsWidth }}
+        data-anchor-scroll={props.anchorForScroll}
+      >
         {children}
       </div>
     )

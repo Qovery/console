@@ -115,7 +115,7 @@ export function PageVariablesFeature() {
   return (
     <PageVariables
       tableHead={tableHead}
-      variables={environmentVariablesLoadinStatus !== 'loaded' ? sortVariableMemo : placeholder}
+      variables={!isLoading ? sortVariableMemo : placeholder}
       setFilterData={setData}
       filterData={data}
       loadingStatus={environmentVariablesLoadinStatus}
