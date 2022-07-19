@@ -10,7 +10,7 @@ import {
 
 import { RootState } from '@console/store/data'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
 import { errorToaster, toast, ToastEnum } from '@console/shared/toast'
 import { Key } from 'qovery-typescript-axios/api'
 
@@ -187,6 +187,41 @@ export const editEnvironmentVariables = createAsyncThunk(
   }
 )
 
+export const deleteEnvironmentVariable = createAsyncThunk(
+  'environmentVariables/delete',
+  async (payload: {
+    entityId: string
+    environmentVariableId: string
+    scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
+  }) => {
+    let response
+    switch (payload.scope) {
+      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+        response = await environmentEnvironmentVariableApi.deleteEnvironmentEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableId
+        )
+        break
+      case EnvironmentVariableScopeEnum.PROJECT:
+        response = await projectEnvironmentVariableApi.deleteProjectEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableId
+        )
+
+        break
+      case EnvironmentVariableScopeEnum.APPLICATION:
+      default:
+        response = await applicationEnvironmentVariableApi.deleteApplicationEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableId
+        )
+        break
+    }
+    return response.data
+  }
+)
+
 export const initialEnvironmentVariablesState: EnvironmentVariablesState = environmentVariablesAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -295,6 +330,20 @@ export const environmentVariablesSlice = createSlice({
         )
       })
       .addCase(editEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
+        state.error = action.error.message
+        errorToaster(action.error)
+      })
+      .addCase(deleteEnvironmentVariable.fulfilled, (state: EnvironmentVariablesState, action) => {
+        let name = state.entities[action.meta.arg.environmentVariableId]?.key
+        if (name && name.length > 30) {
+          name = name.substring(0, 30) + '...'
+        }
+        environmentVariablesAdapter.removeOne(state, action.meta.arg.environmentVariableId)
+        removeOneToManyRelation(action.meta.arg.environmentVariableId, state.joinApplicationEnvironmentVariable)
+        state.error = null
+        toast(ToastEnum.SUCCESS, 'Deletion success', `${name} has been deleted`)
+      })
+      .addCase(deleteEnvironmentVariable.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
         errorToaster(action.error)
       })

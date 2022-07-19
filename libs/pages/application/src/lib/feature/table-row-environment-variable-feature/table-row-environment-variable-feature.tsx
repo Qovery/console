@@ -11,6 +11,10 @@ import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import { useParams } from 'react-router'
+import { deleteEnvironmentVariable, deleteSecret } from '@console/domains/environment-variable'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '@console/store/data'
 
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
@@ -23,6 +27,8 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const { variable, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
   const { setOpenModal, setContentModal } = useContext(ModalContext)
   const { applicationId = '', projectId = '', environmentId = '' } = useParams()
+
+  const dispatch = useDispatch<AppDispatch>()
 
   const edit = {
     name: 'Edit',
@@ -112,8 +118,36 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
           items: [
             {
               name: 'Delete',
-              textClassName: 'text-error-600',
-              onClick: () => console.log('Deploy'),
+              textClassName: '!text-error-600',
+              onClick: () => {
+                let entityId: string
+                switch (variable.scope) {
+                  case EnvironmentVariableScopeEnum.ENVIRONMENT:
+                    entityId = environmentId
+                    break
+                  case EnvironmentVariableScopeEnum.PROJECT:
+                    entityId = projectId
+                    break
+                  case EnvironmentVariableScopeEnum.APPLICATION:
+                  default:
+                    entityId = applicationId
+                    break
+                }
+
+                if (variable.variable_type === 'public') {
+                  dispatch(
+                    deleteEnvironmentVariable({ entityId, environmentVariableId: variable.id, scope: variable.scope })
+                  )
+                } else {
+                  dispatch(
+                    deleteSecret({
+                      entityId,
+                      environmentVariableId: variable.id,
+                      scope: variable.scope,
+                    })
+                  )
+                }
+              },
               contentLeft: <Icon name="icon-solid-trash" className="text-sm text-error-600" />,
             },
           ],

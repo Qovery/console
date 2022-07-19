@@ -25,6 +25,7 @@ const Template: Story<TableProps> = (args) => {
   return (
     <>
       <Button
+        className="mb-4"
         onClick={() => {
           setData(addRow(data))
         }}

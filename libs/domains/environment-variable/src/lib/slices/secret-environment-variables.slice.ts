@@ -184,6 +184,32 @@ export const editSecret = createAsyncThunk(
   }
 )
 
+export const deleteSecret = createAsyncThunk(
+  'secretEnvironmentVariables/delete',
+  async (payload: {
+    entityId: string
+    environmentVariableId: string
+    scope: EnvironmentVariableScopeEnum
+    toasterCallback?: () => void
+  }) => {
+    let response
+    switch (payload.scope) {
+      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+        response = await environmentSecretApi.deleteEnvironmentSecret(payload.entityId, payload.environmentVariableId)
+        break
+      case EnvironmentVariableScopeEnum.PROJECT:
+        response = await projectSecretApi.deleteProjectSecret(payload.entityId, payload.environmentVariableId)
+
+        break
+      case EnvironmentVariableScopeEnum.APPLICATION:
+      default:
+        response = await applicationSecretApi.deleteApplicationSecret(payload.entityId, payload.environmentVariableId)
+        break
+    }
+    return response.data
+  }
+)
+
 export const initialSecretEnvironmentVariablesState: SecretEnvironmentVariablesState =
   secretEnvironmentVariablesAdapter.getInitialState({
     loadingStatus: 'not loaded',
@@ -290,6 +316,19 @@ export const secretEnvironmentVariablesSlice = createSlice({
         )
       })
       .addCase(editSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
+        state.error = action.error.message
+        errorToaster(action.error)
+      })
+      .addCase(deleteSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
+        let name = state.entities[action.meta.arg.environmentVariableId]?.key
+        if (name && name.length > 30) {
+          name = name.substring(0, 30) + '...'
+        }
+        secretEnvironmentVariablesAdapter.removeOne(state, action.meta.arg.environmentVariableId)
+        state.error = null
+        toast(ToastEnum.SUCCESS, 'Deletion success', `${name} has been deleted`)
+      })
+      .addCase(deleteSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         state.error = action.error.message
         errorToaster(action.error)
       })
