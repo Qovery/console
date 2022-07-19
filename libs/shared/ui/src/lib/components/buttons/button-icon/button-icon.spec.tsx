@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { ButtonIcon, ButtonIconProps, ButtonIconSize, ButtonIconStyle } from './button-icon'
+import { ButtonIcon, ButtonIconProps, ButtonIconStyle } from './button-icon'
+import { ButtonSize } from '../button/button'
 import { Chance } from 'chance'
 
 const props: ButtonIconProps = {
@@ -16,7 +17,7 @@ describe('ButtonIcon', () => {
   })
 
   it('should apply the accurate classes', () => {
-    props.size = ButtonIconSize.NORMAL
+    props.size = ButtonSize.REGULAR
     props.style = ButtonIconStyle.BASIC
     props.className = 'some-class-name'
 
@@ -24,7 +25,7 @@ describe('ButtonIcon', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.classList.contains('btn-icon--normal')).toBe(true)
+    expect(button.classList.contains('btn--regular')).toBe(true)
     expect(button.classList.contains('btn-icon--basic')).toBe(true)
     expect(button.classList.contains('some-class-name')).toBe(true)
   })

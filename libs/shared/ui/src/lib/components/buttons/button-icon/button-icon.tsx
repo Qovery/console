@@ -1,12 +1,7 @@
 import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
 import Icon from '../../icon/icon'
-
-export enum ButtonIconSize {
-  BIG = 'big',
-  NORMAL = 'normal',
-  SMALL = 'small',
-}
+import { ButtonSize } from '../button/button'
 
 export enum ButtonIconStyle {
   BASIC = 'basic',
@@ -18,7 +13,7 @@ export enum ButtonIconStyle {
 }
 
 export interface ButtonIconProps {
-  size?: ButtonIconSize
+  size?: ButtonSize
   style?: ButtonIconStyle
   icon: IconEnum | string
   link?: string
@@ -36,7 +31,7 @@ export function ButtonIcon(props: ButtonIconProps) {
   const {
     icon,
     style = ButtonIconStyle.BASIC,
-    size = ButtonIconSize.NORMAL,
+    size = ButtonSize.REGULAR,
     disabled = false,
     loading = false,
     className = '',
@@ -48,7 +43,7 @@ export function ButtonIcon(props: ButtonIconProps) {
     iconClassName = '',
   } = props
 
-  const defineClass = `btn btn-icon ${size ? `btn-icon--${size}` : ''} ${style ? `btn-icon--${style}` : ''} ${
+  const defineClass = `btn btn-icon ${size ? `btn--${size}` : ''} ${style ? `btn-icon--${style}` : ''} ${
     disabled || loading ? 'btn--disabled' : ''
   } ${active ? 'btn--active' : ''} ${className}`
 

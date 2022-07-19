@@ -1,5 +1,5 @@
 .btn {
-  @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm gap-2;
+  @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 hover:bg-brand-600 text-white font-medium text-ssm gap-2;
   transition: 0.25s all $timing-cubic;
 
   &:not(.btn--tiny, .btn-icon, .btn--no-min-w) {
@@ -17,15 +17,28 @@
 
 // size
 .btn--tiny {
-  @apply h-7 text-xs px-[10px];
+  height: theme('spacing.7');
+  @apply text-xs px-[10px];
 }
 
 .btn--small {
-  @apply h-8 text-xs px-2;
+  height: theme('spacing.8');
+  @apply text-xs;
 }
 
-.btn--big {
-  @apply h-11 text-base px-5;
+.btn--regular {
+  height: theme('spacing.9');
+  @apply text-ssm;
+}
+
+.btn--large {
+  height: theme('spacing.10');
+  @apply text-sm;
+}
+
+.btn--xlarge {
+  height: theme('spacing.11');
+  @apply text-sm;
 }
 
 // color
@@ -89,8 +102,8 @@
     @apply text-sm;
   }
 
-  &.btn-icon--big {
-    @apply w-11 h-11;
+  &.btn--xlarge {
+    width: theme('spacing.11');
 
     [class^='icon-'] {
       @apply text-base;

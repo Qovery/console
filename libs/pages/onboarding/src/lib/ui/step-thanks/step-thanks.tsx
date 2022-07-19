@@ -57,21 +57,25 @@ export function StepThanks(props: StepThanksProps) {
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_MORE_URL}`}
-            size={ButtonSize.BIG}
+            size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
             iconLeft="icon-solid-arrow-left"
           >
             Back
           </Button>
           {dxAuth ? (
-            <Button link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`} size={ButtonSize.BIG} style={ButtonStyle.BASIC}>
+            <Button
+              link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
+              size={ButtonSize.XLARGE}
+              style={ButtonStyle.BASIC}
+            >
               Continue
             </Button>
           ) : (
             <Button
               external
               link="https://www.youtube.com/watch?v=eX2qFMC8cFo"
-              size={ButtonSize.BIG}
+              size={ButtonSize.XLARGE}
               style={ButtonStyle.BASIC}
             >
               Go to Youtube{' '}

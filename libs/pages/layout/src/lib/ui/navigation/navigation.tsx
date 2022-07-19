@@ -5,7 +5,7 @@ import { INFRA_LOGS_URL, ORGANIZATION_URL } from '@console/shared/router'
 import {
   Avatar,
   ButtonIcon,
-  ButtonIconSize,
+  ButtonSize,
   ButtonIconStyle,
   Icon,
   Menu,
@@ -85,7 +85,7 @@ export function Navigation(props: NavigationProps) {
             <ButtonIcon
               icon="icon-solid-layer-group"
               style={ButtonIconStyle.ALT}
-              size={ButtonIconSize.BIG}
+              size={ButtonSize.XLARGE}
               link={`https://console.qovery.com/platform/organization/${organizationId}/projects`}
               external
             />
@@ -93,7 +93,7 @@ export function Navigation(props: NavigationProps) {
             <ButtonIcon
               icon="icon-solid-layer-group"
               style={ButtonIconStyle.ALT}
-              size={ButtonIconSize.BIG}
+              size={ButtonSize.XLARGE}
               link={ORGANIZATION_URL(organizationId)}
             />
           )}
@@ -101,10 +101,10 @@ export function Navigation(props: NavigationProps) {
           <ButtonIcon
             icon="icon-solid-gauge-high"
             style={ButtonIconStyle.ALT}
-            size={ButtonIconSize.BIG}
+            size={ButtonSize.XLARGE}
             active={true}
           />
-          <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.ALT} size={ButtonIconSize.BIG} />
+          <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
           */}
         </div>
         <div>
@@ -112,13 +112,13 @@ export function Navigation(props: NavigationProps) {
             <ButtonIcon
               icon="icon-solid-wheel"
               style={ButtonIconStyle.ALT}
-              size={ButtonIconSize.BIG}
+              size={ButtonSize.XLARGE}
               link={`https://console.qovery.com/platform/organization/${organizationId}/settings/general`}
               external
             />
             <Menu
               trigger={
-                <ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} size={ButtonIconSize.BIG} />
+                <ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
               }
               direction={MenuDirection.RIGHT}
               arrowAlign={MenuAlign.END}

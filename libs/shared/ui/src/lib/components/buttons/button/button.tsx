@@ -3,8 +3,9 @@ import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
 
 export enum ButtonSize {
-  BIG = 'big',
-  NORMAL = 'normal',
+  XLARGE = 'xlarge',
+  LARGE = 'large',
+  REGULAR = 'regular',
   SMALL = 'small',
   TINY = 'tiny',
 }
@@ -35,7 +36,7 @@ export interface ButtonProps {
 export function Button(props: ButtonProps) {
   const {
     children,
-    size = ButtonSize.NORMAL,
+    size = ButtonSize.REGULAR,
     style = ButtonStyle.BASIC,
     iconLeft,
     iconRight,

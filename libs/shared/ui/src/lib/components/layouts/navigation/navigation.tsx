@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
 import { SETTINGS_URL } from '@console/shared/router'
 import { Avatar } from '../../avatar/avatar'
-import { ButtonIcon, ButtonIconSize, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
+import { ButtonIcon, ButtonIconStyle } from '../../buttons/button-icon/button-icon'
+import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import Menu, { MenuAlign, MenuDirection } from '../../menu/menu'
 import Modal from '../../modal/modal'
@@ -73,26 +74,21 @@ export function Navigation(props: NavigationProps) {
 
       <div className="flex flex-col justify-between h-[calc(100%-8rem)] px-2.5 py-5">
         <div className="flex flex-col gap-3">
-          <ButtonIcon
-            icon="icon-solid-gauge-high"
-            style={ButtonIconStyle.ALT}
-            size={ButtonIconSize.BIG}
-            active={true}
-          />
-          <ButtonIcon icon="icon-solid-layer-group" style={ButtonIconStyle.ALT} size={ButtonIconSize.BIG} />
-          <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.ALT} size={ButtonIconSize.BIG} />
+          <ButtonIcon icon="icon-solid-gauge-high" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} active={true} />
+          <ButtonIcon icon="icon-solid-layer-group" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
+          <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
         </div>
         <div>
           <div className="flex flex-col gap-3">
             <ButtonIcon
               icon="icon-solid-wheel"
               style={ButtonIconStyle.ALT}
-              size={ButtonIconSize.BIG}
+              size={ButtonSize.XLARGE}
               onClick={() => navigate(SETTINGS_URL(organizationId))}
             />
             <Menu
               trigger={
-                <ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} size={ButtonIconSize.BIG} />
+                <ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
               }
               direction={MenuDirection.RIGHT}
               arrowAlign={MenuAlign.END}

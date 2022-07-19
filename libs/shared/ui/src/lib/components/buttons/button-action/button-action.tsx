@@ -1,5 +1,5 @@
 import { IconEnum } from '@console/shared/enums'
-import { Icon, StatusMenuAction, StatusMenuActions, StatusMenuInformation } from '@console/shared/ui'
+import { Icon, StatusMenuAction, StatusMenuActions, StatusMenuInformation, ButtonSize } from '@console/shared/ui'
 import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -11,11 +11,6 @@ export enum ButtonActionStyle {
   RAISED = 'raised',
   STROKED = 'stroked',
   FLAT = 'flat',
-}
-
-export enum ButtonActionSize {
-  NORMAL = 'normal',
-  LARGE = 'large',
 }
 
 export interface ButtonActionProps {
@@ -33,7 +28,7 @@ export interface ButtonActionProps {
     actions: StatusMenuActions[]
     information: StatusMenuInformation
   }
-  size?: ButtonActionSize
+  size?: ButtonSize
 }
 
 export function ButtonAction(props: ButtonActionProps) {
@@ -48,17 +43,12 @@ export function ButtonAction(props: ButtonActionProps) {
     onClick,
     menus = [],
     statusActions,
-    size = ButtonActionSize.NORMAL,
+    size = ButtonSize.REGULAR,
   } = props
 
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const btnSize = {
-    [ButtonActionSize.NORMAL]: 'h-9',
-    [ButtonActionSize.LARGE]: 'h-10',
-  }
-
-  const defineClass = `btn-action ${btnSize[size]} ${style ? `btn-action--${style}` : ''} ${
+  const defineClass = `btn-action btn--${size} ${style ? `btn-action--${style}` : ''} ${
     disabled ? 'btn-action--disabled' : ''
   } ${className}`
 

@@ -42,7 +42,7 @@ describe('Button', () => {
 
     const button = screen.getByRole('button')
 
-    expect(button.className).toBe('btn btn--normal btn--basic btn--disabled')
+    expect(button.className).toBe('btn btn--regular btn--basic btn--disabled')
   })
 
   it('should return a link instead of a button', () => {
