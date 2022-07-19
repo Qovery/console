@@ -75,6 +75,14 @@
   }
 }
 
+.btn--error {
+  color: theme('colors.text.100');
+  background-color: theme('colors.error.600');
+  &:hover {
+    background-color: theme('colors.error.700');
+  }
+}
+
 // state
 .btn--disabled {
   @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;

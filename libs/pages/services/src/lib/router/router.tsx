@@ -13,6 +13,7 @@ import PageGeneralFeature from '../feature/page-general-feature/page-general-fea
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
+import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_SERVICES: Route[] = [
@@ -45,7 +46,7 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
   },
   {
     path: SERVICES_SETTINGS_DANGER_ZONE_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsDangerZoneFeature />,
   },
   {
     path: SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,

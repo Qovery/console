@@ -1,8 +1,8 @@
 export * from './lib/components/navigation-left/navigation-left'
 export * from './lib/components/block-content/block-content'
+export * from './lib/components/block-content-delete/block-content-delete'
 export * from './lib/components/copy-to-clipboard/copy-to-clipboard'
 export * from './lib/components/warning-screen-mobile/warning-screen-mobile'
-// components
 export * from './lib/components/icon/icon'
 export * from './lib/components/icon-fa/icon-fa'
 export * from './lib/components/inputs/input-select/input-select'

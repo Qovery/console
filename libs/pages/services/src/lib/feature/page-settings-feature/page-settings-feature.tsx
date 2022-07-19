@@ -1,11 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { Navigate, Route, Routes, useNavigate } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
 import {
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
   SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_DEPLOYMENT_URL,
-  SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
   SERVICES_SETTINGS_DANGER_ZONE_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
 } from '@console/shared/router'
@@ -15,7 +14,6 @@ import { ROUTER_ENVIRONMENTS_SETTINGS } from '../../router/router'
 
 export function PageSettingsFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const navigate = useNavigate()
 
   useDocumentTitle('Services - Settings')
 
@@ -31,26 +29,11 @@ export function PageSettingsFeature() {
       title: 'Deployment',
       icon: 'icon-solid-cart-flatbed',
       url: pathSettings + SERVICES_SETTINGS_DEPLOYMENT_URL,
-      subLinks: [
-        {
-          title: 'General',
-          onClick: () => navigate(pathSettings + SERVICES_SETTINGS_DEPLOYMENT_URL),
-        },
-        {
-          title: 'Restrictions',
-          onClick: () => navigate(pathSettings + SERVICES_SETTINGS_DEPLOYMENT_URL),
-        },
-      ],
     },
     {
       title: 'Preview Environments',
       icon: 'icon-solid-eye',
       url: pathSettings + SERVICES_SETTINGS_PREVIEW_ENV_URL,
-    },
-    {
-      title: 'Advanced settings',
-      icon: 'icon-solid-gears',
-      url: pathSettings + SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
     },
     {
       title: 'Danger zone',
@@ -61,7 +44,7 @@ export function PageSettingsFeature() {
 
   return (
     <div className="bg-white flex mt-2 min-h-[calc(100%-200px)] rounded-sm">
-      <div className="w-72 pt-6 border-r border-element-light-lighter-400">
+      <div className="w-72 shrink-0 pt-6 border-r border-element-light-lighter-400">
         <NavigationLeft links={links} />
       </div>
       <Routes>
