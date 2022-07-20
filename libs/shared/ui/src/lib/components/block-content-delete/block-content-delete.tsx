@@ -18,12 +18,14 @@ export interface BlockContentDeleteProps {
   }[]
   ctaLabel?: string
   callback?: () => void
+  customSize?: string
 }
 
 export function BlockContentDelete(props: BlockContentDeleteProps) {
   const {
     title,
     className = '',
+    customSize = 'w-[580px]',
     description = 'All your data above are going to be deleted. Use it carefully this action is irreversible.',
     ctaLabel = 'Delete',
     callback,
@@ -34,7 +36,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
   const { setModalConfirmation } = useModalConfirmation()
 
   return (
-    <div className={`border border-error-300 bg-error-50 rounded ${className}`}>
+    <div className={`border border-error-300 bg-error-50 rounded ${className} ${customSize}`}>
       <div className="flex items-center justify-between h-9 px-4 border-b border-error-300">
         <h2 className="font-medium text-text-600 text-ssm">{title}</h2>
       </div>

@@ -13,7 +13,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
     <div className="flex flex-col justify-between w-full">
       <div className="p-8">
         <BlockContentDelete
-          className="w-[580px]"
           title="Delete Environment"
           list={[
             {
