@@ -13,13 +13,14 @@ import {
 import { timeAgo } from '@console/shared/utils'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import { RunningStatus } from '@console/shared/enums'
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 
 export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
   dataHead: TableHeadProps[]
   link: string
   buttonActions: StatusMenuActions[]
-  removeEnvironment?: (environmentId: string) => void
+  removeEnvironment?: (environmentId: string, mode: EnvironmentModeEnum, name: string) => void
   columnsWidth?: string
 }
 
@@ -52,7 +53,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
               {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeEnvironment(data.id),
+                onClick: () => removeEnvironment(data.id, data.mode, data.name),
               },
             ],
           },

@@ -1,0 +1,58 @@
+import { act, renderHook } from '@testing-library/react'
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import ModalProvider from '../../../modal/modal-root'
+import useModalConfirmation, { UseModalConfirmationProps } from './use-modal-confirmation'
+
+const mockSetOpenModal = jest.fn()
+const mockSetContentModal = jest.fn()
+
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useContext: () => ({ setOpenModal: mockSetOpenModal, setContentModal: mockSetContentModal }),
+}))
+
+describe('useModalConfirmation', () => {
+  it('should render successfully', () => {
+    const { result } = renderHook(() => useModalConfirmation())
+    expect(result).toBeTruthy()
+  })
+
+  it('should run action with preview mode', () => {
+    const action = jest.fn()
+
+    const myInitialState: UseModalConfirmationProps = {
+      mode: EnvironmentModeEnum.PREVIEW,
+      title: 'my-title',
+      description: 'my-description',
+      name: 'test',
+      action: action,
+    }
+    const { result } = renderHook(useModalConfirmation)
+
+    act(() => {
+      result.current.setModalConfirmation(myInitialState)
+    })
+
+    expect(action).toHaveBeenCalled()
+  })
+
+  it('should run action with production mode (display modal)', () => {
+    const action = jest.fn()
+
+    const myInitialState: UseModalConfirmationProps = {
+      mode: EnvironmentModeEnum.PRODUCTION,
+      title: 'my-title',
+      description: 'my-description',
+      name: 'test',
+      action: action,
+    }
+    const { result } = renderHook(useModalConfirmation, { wrapper: ModalProvider })
+
+    act(() => {
+      result.current.setModalConfirmation(myInitialState)
+    })
+
+    expect(mockSetOpenModal).toHaveBeenCalled()
+    expect(mockSetContentModal).toHaveBeenCalled()
+  })
+})

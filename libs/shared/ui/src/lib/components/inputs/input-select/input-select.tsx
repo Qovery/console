@@ -22,7 +22,6 @@ export function InputSelect(props: InputSelectProps) {
     <div className={`input input--select ${hasError} ${disabled ? '!bg-element-light-lighter-200' : ''} ${className}`}>
       <ListboxInput key={label} onChange={onChange} disabled={disabled}>
         <ListboxButton
-          onClick={() => console.log('hello')}
           className={`input__button ${value !== undefined ? 'input__button--focused' : ''} ${
             disabled ? '!border-element-light-lighter-500' : ''
           }`}

@@ -1,7 +1,7 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { EnvironmentModeEnum, StateEnum } from 'qovery-typescript-axios'
-import { useState, useEffect, useContext } from 'react'
-import { Icon, ModalContext, ModalConfirmation } from '@console/shared/ui'
+import { StateEnum } from 'qovery-typescript-axios'
+import { useState, useEffect } from 'react'
+import { Icon, useModalConfirmation } from '@console/shared/ui'
 import { isCancelBuildAvailable, isDeployAvailable, isRestartAvailable, isStopAvailable } from '@console/shared/utils'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
 
@@ -53,29 +53,20 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
   const [topMenu, setTopMenu] = useState<StatusMenuActionItem[]>([])
   const [bottomMenu, setBottomMenu] = useState<StatusMenuActionItem[]>([])
 
-  const { setOpenModal, setContentModal } = useContext(ModalContext)
+  const { setModalConfirmation } = useModalConfirmation()
 
   const onClickAction = (name: string, titleModal: string, descriptionModal: string) => {
     const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === name)
     const actionDeploy = () =>
       currentAction && statusActions.information && currentAction.action(statusActions.information?.id || '')
 
-    if (
-      statusActions?.information?.mode === EnvironmentModeEnum.PRODUCTION ||
-      statusActions?.information?.mode === EnvironmentModeEnum.STAGING
-    ) {
-      setOpenModal(true)
-      setContentModal(
-        <ModalConfirmation
-          title={titleModal}
-          description={descriptionModal}
-          name={statusActions.information?.name}
-          callback={() => actionDeploy()}
-        />
-      )
-    } else {
-      actionDeploy()
-    }
+    setModalConfirmation({
+      mode: statusActions?.information?.mode,
+      title: titleModal,
+      description: descriptionModal,
+      name: name,
+      action: () => actionDeploy(),
+    })
   }
 
   const deployButton = {

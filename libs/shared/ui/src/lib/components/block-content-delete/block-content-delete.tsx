@@ -1,8 +1,15 @@
 import Button, { ButtonStyle } from '../buttons/button/button'
 import Icon from '../icon/icon'
+import useModalConfirmation from '../modals/modal-confirmation/use-modal-confirmation/use-modal-confirmation'
 
 export interface BlockContentDeleteProps {
   title: string
+  modalConfirmation: {
+    title: string
+    description: string
+    name?: string
+    mode?: string
+  }
   description?: string
   className?: string
   list?: {
@@ -21,7 +28,10 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
     ctaLabel = 'Delete',
     callback,
     list,
+    modalConfirmation,
   } = props
+
+  const { setModalConfirmation } = useModalConfirmation()
 
   return (
     <div className={`border border-error-300 bg-error-50 rounded ${className}`}>
@@ -37,7 +47,19 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
           </p>
         ))}
         <div className="flex justify-end">
-          <Button className="mt-3 ml-auto" onClick={callback} style={ButtonStyle.ERROR}>
+          <Button
+            className="mt-3 ml-auto"
+            onClick={() => {
+              setModalConfirmation({
+                mode: modalConfirmation.mode,
+                title: modalConfirmation.title,
+                description: modalConfirmation.description,
+                name: modalConfirmation.name,
+                action: () => callback,
+              })
+            }}
+            style={ButtonStyle.ERROR}
+          >
             {ctaLabel}
           </Button>
         </div>

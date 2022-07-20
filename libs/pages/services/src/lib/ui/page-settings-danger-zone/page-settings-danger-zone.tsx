@@ -1,11 +1,13 @@
+import { EnvironmentEntity } from '@console/shared/interfaces'
 import { BlockContentDelete, HelpSection } from '@console/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteEnvironment: () => void
+  environment?: EnvironmentEntity
 }
 
 export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
-  const { deleteEnvironment } = props
+  const { deleteEnvironment, environment } = props
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -23,6 +25,12 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           ]}
           ctaLabel="Delete environment"
           callback={deleteEnvironment}
+          modalConfirmation={{
+            mode: environment?.mode,
+            title: 'Delete environment',
+            description: 'To confirm the deletion of your environment, please type the name of the environment:',
+            name: environment?.name,
+          }}
         />
       </div>
       <HelpSection

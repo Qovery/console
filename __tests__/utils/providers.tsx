@@ -7,6 +7,7 @@ import { Auth0Provider } from '@auth0/auth0-react'
 import { IntercomProvider } from 'react-use-intercom'
 import posthog from 'posthog-js'
 import { RootState } from '@console/store/data'
+import { ModalProvider } from '@console/shared/ui'
 
 type Params = {
   Component: ComponentType<any>
@@ -35,7 +36,9 @@ export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootSta
     <IntercomProvider appId="__test__app__id__" autoBoot={false}>
       <Auth0Provider clientId="__test_client_id__" domain="__test_domain__">
         <Provider store={store}>
-          <MemoryRouter>{children}</MemoryRouter>
+          <ModalProvider>
+            <MemoryRouter>{children}</MemoryRouter>
+          </ModalProvider>
         </Provider>
       </Auth0Provider>
     </IntercomProvider>
