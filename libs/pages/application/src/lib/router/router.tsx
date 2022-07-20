@@ -34,3 +34,26 @@ export const ROUTER_APPLICATION: Route[] = [
     component: <PageSettingsFeature />,
   },
 ]
+
+export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
+  // {
+  //   path: 'SERVICES_SETTINGS_GENERAL_URL',
+  //   component: <PageSettingsGeneralFeature />,
+  // },
+  // {
+  //   path: 'SERVICES_SETTINGS_DEPLOYMENT_URL',
+  //   component: <PageSettingsV2 />,
+  // },
+  // {
+  //   path: 'SERVICES_SETTINGS_PREVIEW_ENV_URL',
+  //   component: <PageSettingsV2 />,
+  // },
+  // {
+  //   path: 'SERVICES_SETTINGS_DANGER_ZONE_URL',
+  //   component: <PageSettingsV2 />,
+  // },
+  // {
+  //   path: 'SERVICES_SETTINGS_ADVANCED_SETTINGS_URL',
+  //   component: <PageSettingsV2 />,
+  // },
+]
