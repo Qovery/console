@@ -2,7 +2,7 @@ import { render } from '__tests__/utils/setup-jest'
 import PageSettingsDangerZone, { PageSettingsDangerZoneProps } from './page-settings-danger-zone'
 
 const props: PageSettingsDangerZoneProps = {
-  deleteEnvironment: jest.fn(),
+  deleteApplication: jest.fn(),
 }
 
 describe('PageSettingsDangerZone', () => {
