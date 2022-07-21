@@ -5,7 +5,7 @@ import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 import { toast, ToastEnum } from '@console/shared/toast'
 
-export const DEPLOYMENTRULES_FEATURE_KEY = 'deploymentRules'
+export const DEPLOYMENT_RULES_FEATURE_KEY = 'deploymentRules'
 
 const deploymentRulesApi = new ProjectDeploymentRuleApi()
 
@@ -73,7 +73,7 @@ export const initialDeploymentRulesState: DeploymentRuleState = deploymentRulesA
 })
 
 export const deploymentRulesSlice = createSlice({
-  name: DEPLOYMENTRULES_FEATURE_KEY,
+  name: DEPLOYMENT_RULES_FEATURE_KEY,
   initialState: initialDeploymentRulesState,
   reducers: {
     addDeploymentRule: deploymentRulesAdapter.addOne,
@@ -200,7 +200,7 @@ export const { addDeploymentRule, removeDeploymentRule } = deploymentRulesSlice.
 const { selectAll, selectEntities } = deploymentRulesAdapter.getSelectors()
 
 export const getDeploymentRulesState = (rootState: RootState): DeploymentRuleState =>
-  rootState.entities.project[DEPLOYMENTRULES_FEATURE_KEY]
+  rootState.entities.project[DEPLOYMENT_RULES_FEATURE_KEY]
 
 export const deploymentRulesLoadingStatus = (state: RootState): LoadingStatus =>
   getDeploymentRulesState(state).loadingStatus
