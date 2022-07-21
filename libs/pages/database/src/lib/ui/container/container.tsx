@@ -145,9 +145,9 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
-      active:
-        location.pathname ===
-        DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_SETTINGS_URL,
+      active: location.pathname.includes(
+        DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_SETTINGS_URL
+      ),
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_SETTINGS_URL,
     },
   ]

@@ -1,20 +1,20 @@
-import { Button } from '@console/shared/ui'
-import { useParams } from 'react-router'
+import { NavigationLeft, NavigationLeftLinkProps } from '@console/shared/ui'
+import { ReactNode } from 'react'
 
-export function PageSettings() {
-  const { organizationId, projectId, environmentId, databaseId } = useParams()
+export interface PageSettingsProps {
+  links: NavigationLeftLinkProps[]
+  children: ReactNode
+}
+
+export function PageSettings(props: PageSettingsProps) {
+  const { links, children } = props
 
   return (
-    <div className="bg-white flex-grow mt-2 flex justify-center items-center flex-col gap-3 rounded-b-sm">
-      <h2 className="text-text-500 text-base font-medium">
-        This feature is not available yet. Please continue your action on the V2
-      </h2>
-      <Button
-        external
-        link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/databases/${databaseId}/summary`}
-      >
-        Go to V2
-      </Button>
+    <div className="bg-white flex mt-2 min-h-[calc(100%-200px)] rounded-sm">
+      <div className="w-72 pt-6 border-r border-element-light-lighter-400">
+        <NavigationLeft links={links} />
+      </div>
+      {children}
     </div>
   )
 }

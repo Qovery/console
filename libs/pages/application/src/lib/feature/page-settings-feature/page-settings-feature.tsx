@@ -34,7 +34,7 @@ export function PageSettingsFeature() {
       url: pathSettings + APPLICATION_SETTINGS_GENERAL_URL,
     },
     {
-      title: 'Ressources',
+      title: 'Resources',
       icon: 'icon-solid-chart-bullet',
       url: pathSettings + APPLICATION_SETTINGS_RESOURCES_URL,
     },
