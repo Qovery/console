@@ -24,7 +24,6 @@ export function PageVariablesMemo(props: PageVariablesProps) {
         setFilterData={setFilterData}
         className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
         columnsWidth={columnsWidth}
-        autoscrollToNew={true}
       >
         <>
           {filterData.map((envVariable) => (
