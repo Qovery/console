@@ -11,7 +11,9 @@ import {
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
+import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
+
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_DATABASE: Route[] = [
@@ -44,6 +46,6 @@ export const ROUTER_DATABASE_SETTINGS: Route[] = [
   },
   {
     path: DATABASE_SETTINGS_DANGER_ZONE_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsDangerZoneFeature />,
   },
 ]

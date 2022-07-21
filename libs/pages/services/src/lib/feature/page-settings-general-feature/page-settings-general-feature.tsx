@@ -14,7 +14,9 @@ export function PageSettingsGeneralFeature() {
   const { organizationId = '', environmentId = '' } = useParams()
   useDocumentTitle('Environment General - Settings - Qovery')
   const dispatch = useDispatch<AppDispatch>()
-  const methods = useForm()
+  const methods = useForm({
+    mode: 'onChange',
+  })
 
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
