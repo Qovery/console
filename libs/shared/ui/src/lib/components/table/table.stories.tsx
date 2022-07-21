@@ -4,7 +4,7 @@ import { Table, TableProps } from './table'
 import { TableRow } from './table-row/table-row'
 import { useState } from 'react'
 import Button from '../buttons/button/button'
-import { EnvironmentEntity } from '../../../../../interfaces/src'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 
 export default {
   component: Table,
@@ -35,7 +35,7 @@ const Template: Story<TableProps> = (args) => {
       <Table {...args} defaultData={data} setFilterData={setData}>
         <>
           {data.map((currentData, index) => (
-            <TableRow key={index} columnsWidth={args.columnsWidth} anchorForScroll={currentData.id} link="/">
+            <TableRow key={index} columnsWidth={args.columnsWidth} link="/">
               <>
                 <div className="px-2 text-sm text-text-500">
                   {currentData.name} - {currentData.status?.state}
@@ -87,5 +87,4 @@ Primary.args = {
   dataHead: dataHead,
   className: 'bg-white rounded-sm',
   columnsWidth: '33% 33% 33%',
-  autoscrollToNew: true,
 }

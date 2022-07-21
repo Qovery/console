@@ -132,9 +132,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       },
     ]
 
-    const theScope = environmentScopes.find((s) => {
-      return s.name === props?.variable?.scope
-    })
+    const theScope = environmentScopes.find((s) => s.name === props?.variable?.scope)
 
     return environmentScopes
       .filter((scope) => {

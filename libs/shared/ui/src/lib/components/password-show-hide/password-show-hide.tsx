@@ -43,7 +43,7 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
           ) : (
             <input
               type={visible ? 'text' : 'password'}
-              value={'Ōtsuka Station 2018 lets go yes'}
+              value={'Ōtsuka Station 2019 lets go yes'}
               className={`inline-flex bg-transparent outline-0 border-0 overflow-hidden text-ellipsis`}
               readOnly
               disabled={!visible}
