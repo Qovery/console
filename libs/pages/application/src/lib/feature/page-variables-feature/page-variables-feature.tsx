@@ -1,27 +1,33 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
+  environmentVariableFactoryMock,
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
+  getEnvironmentVariablesState,
+  getSecretEnvironmentVariablesState,
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@console/domains/environment-variable'
 import { useParams } from 'react-router'
-import { BaseLink, TableHeadProps } from '@console/shared/ui'
+import { TableHeadProps } from '@console/shared/ui'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
+  LoadingStatus,
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
 import { useDocumentTitle } from '@console/shared/utils'
 import PageVariables from '../../ui/page-variables/page-variables'
+import { sortVariable } from './utils/sort-variable'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
   const dispatch = useDispatch<AppDispatch>()
   const { applicationId = '' } = useParams()
-  const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>([])
+  const [placeholder] = useState(environmentVariableFactoryMock(5))
+  const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>(placeholder)
 
   const environmentVariables = useSelector<RootState, EnvironmentVariableEntity[]>(
     (state) => selectEnvironmentVariablesByApplicationId(state, applicationId),
@@ -32,14 +38,46 @@ export function PageVariablesFeature() {
     shallowEqual
   )
 
+  const environmentVariablesLoadinStatus = useSelector<RootState, LoadingStatus>(
+    (state) => getEnvironmentVariablesState(state).loadingStatus
+  )
+
+  const sortVariableMemo = useMemo(
+    () => sortVariable(environmentVariables, secretEnvironmentVariables),
+    [environmentVariables, secretEnvironmentVariables]
+  )
+
+  const isPublicEnvVariableLoading = useSelector<RootState, LoadingStatus>(
+    (state) => getEnvironmentVariablesState(state).loadingStatus
+  )
+  const isSecretEnvVariableLoading = useSelector<RootState, LoadingStatus>(
+    (state) => getSecretEnvironmentVariablesState(state).loadingStatus
+  )
+  const [isLoading, setLoading] = useState(false)
+
   useEffect(() => {
     dispatch(fetchEnvironmentVariables(applicationId))
     dispatch(fetchSecretEnvironmentVariables(applicationId))
   }, [dispatch, applicationId])
 
   useEffect(() => {
-    setData([...environmentVariables, ...secretEnvironmentVariables])
-  }, [environmentVariables, secretEnvironmentVariables])
+    setLoading(!(isPublicEnvVariableLoading === 'loaded' || isSecretEnvVariableLoading === 'loaded'))
+  }, [isPublicEnvVariableLoading, isSecretEnvVariableLoading])
+
+  useEffect(() => {
+    if (!isLoading) {
+      setData(sortVariableMemo)
+    } else {
+      setData(placeholder)
+    }
+  }, [
+    environmentVariables,
+    secretEnvironmentVariables,
+    sortVariableMemo,
+    placeholder,
+    isLoading,
+    environmentVariablesLoadinStatus,
+  ])
 
   const tableHead: TableHeadProps[] = [
     {
@@ -74,21 +112,14 @@ export function PageVariablesFeature() {
     },
   ]
 
-  const listHelpfulLinks: BaseLink[] = [
-    {
-      link: '#',
-      linkLabel: 'How to configure my environment variables',
-      external: true,
-    },
-  ]
-
   return (
     <PageVariables
       tableHead={tableHead}
-      variables={[...environmentVariables, ...secretEnvironmentVariables]}
+      variables={!isLoading ? sortVariableMemo : placeholder}
       setFilterData={setData}
       filterData={data}
-      listHelpfulLinks={listHelpfulLinks}
+      loadingStatus={environmentVariablesLoadinStatus}
+      isLoading={isLoading}
     />
   )
 }

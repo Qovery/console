@@ -76,13 +76,13 @@ export function Button(props: ButtonProps) {
     )
   }
 
-  const defineClass = `btn ${size ? `btn--${size}` : ''} ${style ? `btn--${style}` : ''} ${
-    disabled ? 'btn--disabled' : ''
-  }${className}`
+  const defineClass = `btn${size ? ` btn--${size}` : ''}${style ? ` btn--${style}` : ''}${
+    disabled ? ' btn--disabled' : ''
+  }${className ? ' ' + className : ''}`
 
   if (!link) {
     return (
-      <button className={defineClass} onClick={onClick} type={type}>
+      <button className={defineClass} onClick={onClick} type={type} disabled={disabled}>
         {content()}
       </button>
     )

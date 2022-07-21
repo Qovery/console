@@ -24,19 +24,11 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
           data-testid="toggle-button"
           className="flex items-center mr-3 text-text-500"
           onClick={() => {
-            if (!visible) {
-              setVisible(!visible)
-            } else {
-              !canCopy && setVisible(!visible)
-            }
+            setVisible(!visible)
           }}
         >
           {visible ? (
-            !canCopy ? (
-              <Icon className="text-xs" name="icon-solid-eye-slash" />
-            ) : (
-              <CopyToClipboard data-testid="copy" content={value} />
-            )
+            <Icon className="text-xs" name="icon-solid-eye-slash" />
           ) : (
             <Icon className="text-xs" name="icon-solid-eye" />
           )}
@@ -51,7 +43,7 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
         ) : (
           <input
             type={visible ? 'text' : 'password'}
-            value={isSecret ? 'Ōtsuka Station' : value}
+            value={'Ōtsuka Station 2018'}
             className={`bg-transparent outline-0 w-full border-0 overflow-hidden text-ellipsis`}
             readOnly
             disabled={!visible}
@@ -59,6 +51,7 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
           />
         )}
       </Tooltip>
+      {visible && canCopy && <CopyToClipboard className="ml-2" data-testid="copy" content={value} />}
     </div>
   )
 }

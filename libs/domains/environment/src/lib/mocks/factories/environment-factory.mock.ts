@@ -1,9 +1,9 @@
 import { Chance } from 'chance'
 import {
-  EnvironmentModeEnum,
-  StateEnum,
-  ServiceDeploymentStatusEnum,
   DeploymentHistoryStatusEnum,
+  EnvironmentModeEnum,
+  ServiceDeploymentStatusEnum,
+  StateEnum,
 } from 'qovery-typescript-axios'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 
@@ -38,7 +38,7 @@ const deployment = {
 
 export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): Environments[] =>
   Array.from({ length: howMany }).map((_, index) => ({
-    id: `${index}`,
+    id: `${(index + 1) * Math.random()}`,
     created_at: chance.date().toString(),
     updated_at: chance.date().toString(),
     name: chance.name(),

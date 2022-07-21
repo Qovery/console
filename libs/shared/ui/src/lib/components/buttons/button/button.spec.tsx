@@ -2,8 +2,7 @@ import React from 'react'
 import { render } from '__tests__/utils/setup-jest'
 import { screen } from '@testing-library/react'
 
-import Button, { ButtonStyle } from './button'
-import { ButtonProps, ButtonSize } from './button'
+import Button, { ButtonProps, ButtonSize, ButtonStyle } from './button'
 
 import { Chance } from 'chance'
 

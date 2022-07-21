@@ -70,6 +70,14 @@ const FaIcons = [
   'icon-solid-skull',
   'icon-solid-gears',
   'icon-solid-cart-flatbed',
+  'icon-solid-cloud-arrow-up',
+  'icon-solid-cloud-arrow-down',
+  'icon-solid-pen-line',
+  'icon-solid-pen-swirl',
+  'icon-solid-plug',
+  'icon-solid-earth-americas',
+  'icon-solid-hard-drive',
+  'icon-solid-chart-bullet',
   // schema: favicons name
 ]
 

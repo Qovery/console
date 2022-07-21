@@ -1,4 +1,4 @@
-import { IconEnum, RunningStatus } from '@console/shared/enums'
+import { IconEnum } from '@console/shared/enums'
 import {
   Button,
   ButtonIconAction,
@@ -10,23 +10,15 @@ import {
   MenuData,
   MenuItemProps,
   Skeleton,
-  StatusChip,
   StatusMenuActions,
-  Tabs,
   Tag,
   TagMode,
   TagSize,
 } from '@console/shared/ui'
-import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_GENERAL_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-  APPLICATION_VARIABLES_URL,
-} from '@console/shared/router'
-import { Environment, StateEnum } from 'qovery-typescript-axios'
-import { useLocation, useParams } from 'react-router'
+import { Environment } from 'qovery-typescript-axios'
+import { useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
+import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 //import { ClickEvent } from '@szhsin/react-menu'
 
@@ -41,7 +33,6 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { application, environment, children, statusActions, removeApplication } = props
   const { organizationId, projectId, environmentId, applicationId } = useParams()
-  const location = useLocation()
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${applicationId}`
 
@@ -183,66 +174,6 @@ export function Container(props: ContainerProps) {
     </>
   )
 
-  const tabsItems = [
-    {
-      icon: (
-        <StatusChip
-          status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
-          appendTooltipMessage={
-            application?.running_status?.state === RunningStatus.ERROR
-              ? application.running_status.pods[0]?.state_message
-              : ''
-          }
-        />
-      ),
-      name: 'Overview',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
-    },
-    {
-      icon: (
-        <Skeleton show={application?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip
-            mustRenameStatus
-            status={(application?.status && application?.status.state) || StateEnum.STOPPED}
-            appendTooltipMessage={application?.status && application.status.message ? application.status.message : ''}
-          />
-        </Skeleton>
-      ),
-      name: 'Deployments',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-    },
-    {
-      icon: <Icon name="icon-solid-wheel" />,
-      name: 'Settings',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
-    },
-    /*{
-      icon: <Icon name="icon-solid-chart-area" />,
-      name: 'Metrics',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_METRICS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_METRICS_URL,
-    },*/
-    {
-      icon: <Icon name="icon-solid-wheel" />,
-      name: 'Variables',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
-    },
-  ]
-
   return (
     <>
       <Header
@@ -253,7 +184,7 @@ export function Container(props: ContainerProps) {
         copyContent={copyContent}
         actions={headerActions}
       />
-      <Tabs items={tabsItems} />
+      <TabsFeature />
       {children}
     </>
   )

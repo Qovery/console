@@ -1,6 +1,7 @@
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useEffect } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
+
 import { SerializedError } from '@reduxjs/toolkit'
 
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
