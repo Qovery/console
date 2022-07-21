@@ -74,6 +74,10 @@ const FaIcons = [
   'icon-solid-cloud-arrow-down',
   'icon-solid-pen-line',
   'icon-solid-pen-swirl',
+  'icon-solid-plug',
+  'icon-solid-earth-americas',
+  'icon-solid-hard-drive',
+  'icon-solid-chart-bullet',
   // schema: favicons name
 ]
 
