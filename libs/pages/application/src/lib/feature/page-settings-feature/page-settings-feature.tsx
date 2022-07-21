@@ -1,61 +1,67 @@
 import { useParams } from 'react-router-dom'
-import { Navigate, Route, Routes, useNavigate } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
 import {
-  SERVICES_SETTINGS_URL,
-  SERVICES_URL,
-  SERVICES_SETTINGS_GENERAL_URL,
-  SERVICES_SETTINGS_DEPLOYMENT_URL,
-  SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
-  SERVICES_SETTINGS_DANGER_ZONE_URL,
-  SERVICES_SETTINGS_PREVIEW_ENV_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_SETTINGS_GENERAL_URL,
+  APPLICATION_SETTINGS_STORAGE_URL,
+  APPLICATION_SETTINGS_RESSOURCES_URL,
+  APPLICATION_URL,
+  APPLICATION_SETTINGS_DANGER_ZONE_URL,
+  APPLICATION_SETTINGS_PORT_URL,
+  APPLICATION_SETTINGS_DOMAIN_URL,
+  APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
 } from '@console/shared/router'
 import { NavigationLeft } from '@console/shared/ui'
 import { useDocumentTitle } from '@console/shared/utils'
-import { ROUTER_ENVIRONMENTS_SETTINGS } from '../../router/router'
+import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
 
 export function PageSettingsFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const navigate = useNavigate()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
-  useDocumentTitle('Services - Settings')
+  useDocumentTitle('Application - Settings')
 
-  const pathSettings = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`
+  const pathSettings = `${APPLICATION_URL(
+    organizationId,
+    projectId,
+    environmentId,
+    applicationId
+  )}${APPLICATION_SETTINGS_URL}`
 
   const links = [
     {
       title: 'General',
       icon: 'icon-solid-wheel',
-      url: pathSettings + SERVICES_SETTINGS_GENERAL_URL,
+      url: pathSettings + APPLICATION_SETTINGS_GENERAL_URL,
     },
     {
-      title: 'Deployment',
-      icon: 'icon-solid-cart-flatbed',
-      url: pathSettings + SERVICES_SETTINGS_DEPLOYMENT_URL,
-      subLinks: [
-        {
-          title: 'General',
-          onClick: () => navigate(pathSettings + SERVICES_SETTINGS_DEPLOYMENT_URL),
-        },
-        {
-          title: 'Restrictions',
-          onClick: () => navigate(pathSettings + SERVICES_SETTINGS_DEPLOYMENT_URL),
-        },
-      ],
-    },
-    {
-      title: 'Preview Environments',
+      title: 'Ressources',
       icon: 'icon-solid-eye',
-      url: pathSettings + SERVICES_SETTINGS_PREVIEW_ENV_URL,
+      url: pathSettings + APPLICATION_SETTINGS_RESSOURCES_URL,
+    },
+    {
+      title: 'Storage',
+      icon: 'icon-solid-gears',
+      url: pathSettings + APPLICATION_SETTINGS_STORAGE_URL,
+    },
+    {
+      title: 'Domain',
+      icon: 'icon-solid-gears',
+      url: pathSettings + APPLICATION_SETTINGS_DOMAIN_URL,
+    },
+    {
+      title: 'Port',
+      icon: 'icon-solid-gears',
+      url: pathSettings + APPLICATION_SETTINGS_PORT_URL,
     },
     {
       title: 'Advanced settings',
       icon: 'icon-solid-gears',
-      url: pathSettings + SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
+      url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
     },
     {
       title: 'Danger zone',
       icon: 'icon-solid-skull',
-      url: pathSettings + SERVICES_SETTINGS_DANGER_ZONE_URL,
+      url: pathSettings + APPLICATION_SETTINGS_DANGER_ZONE_URL,
     },
   ]
 
@@ -65,10 +71,10 @@ export function PageSettingsFeature() {
         <NavigationLeft links={links} />
       </div>
       <Routes>
-        {ROUTER_ENVIRONMENTS_SETTINGS.map((route) => (
+        {ROUTER_APPLICATION_SETTINGS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
-        <Route path="*" element={<Navigate replace to={pathSettings + SERVICES_SETTINGS_GENERAL_URL} />} />
+        <Route path="*" element={<Navigate replace to={pathSettings + APPLICATION_SETTINGS_GENERAL_URL} />} />
       </Routes>
     </div>
   )
