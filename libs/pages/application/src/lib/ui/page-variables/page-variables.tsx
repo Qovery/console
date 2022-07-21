@@ -1,6 +1,6 @@
 import { HelpSection, Table, TableHeadProps } from '@console/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
-import { EnvironmentVariableSecretOrPublic, LoadingStatus } from '@console/shared/interfaces'
+import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
 import React, { Dispatch, SetStateAction } from 'react'
 
 export interface PageVariablesProps {
@@ -8,7 +8,6 @@ export interface PageVariablesProps {
   variables: EnvironmentVariableSecretOrPublic[]
   setFilterData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   filterData: EnvironmentVariableSecretOrPublic[]
-  loadingStatus?: LoadingStatus
   isLoading: boolean
 }
 
@@ -17,42 +16,39 @@ export function PageVariablesMemo(props: PageVariablesProps) {
   const columnsWidth = '30% 20% 25% 10% 15%'
 
   return (
-    <>
-      <Table
-        dataHead={tableHead}
-        defaultData={variables}
-        filterData={filterData}
-        setFilterData={setFilterData}
-        className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
-        columnsWidth={columnsWidth}
-        autoscrollToNew={true}
-      >
-        <>
-          {filterData.map((envVariable) => (
-            <TableRowEnvironmentVariableFeature
-              key={envVariable.id}
-              variable={envVariable}
-              dataHead={tableHead}
-              columnsWidth={columnsWidth}
-              isLoading={props.isLoading}
-            />
-          ))}
+    <Table
+      dataHead={tableHead}
+      defaultData={variables}
+      filterData={filterData}
+      setFilterData={setFilterData}
+      className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
+      columnsWidth={columnsWidth}
+    >
+      <>
+        {filterData.map((envVariable) => (
+          <TableRowEnvironmentVariableFeature
+            key={envVariable.id}
+            variable={envVariable}
+            dataHead={tableHead}
+            columnsWidth={columnsWidth}
+            isLoading={props.isLoading}
+          />
+        ))}
 
-          <div className="bg-white rounded-b flex flex-grow flex-col justify-end">
-            <HelpSection
-              description="Need help? You may find these links useful"
-              links={[
-                {
-                  link: '#',
-                  linkLabel: 'How to configure my environment variables',
-                  external: true,
-                },
-              ]}
-            />
-          </div>
-        </>
-      </Table>
-    </>
+        <div className="bg-white rounded-b flex flex-col justify-end">
+          <HelpSection
+            description="Need help? You may find these links useful"
+            links={[
+              {
+                link: '#',
+                linkLabel: 'How to configure my environment variables',
+                external: true,
+              },
+            ]}
+          />
+        </div>
+      </>
+    </Table>
   )
 }
 

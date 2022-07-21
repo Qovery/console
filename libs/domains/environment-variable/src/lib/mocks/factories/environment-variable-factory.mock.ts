@@ -12,7 +12,7 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
     ? {
         id: chance.integer().toString(),
         key: chance.word().toString(),
-        scope: EnvironmentVariableScopeEnum.BUILT_IN,
+        scope: EnvironmentVariableScopeEnum.PROJECT,
         value: chance.word().toString(),
       }
     : undefined,
@@ -20,7 +20,7 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
     ? {
         id: chance.integer().toString(),
         key: chance.word().toString(),
-        scope: EnvironmentVariableScopeEnum.BUILT_IN,
+        scope: EnvironmentVariableScopeEnum.PROJECT,
         value: chance.word().toString(),
       }
     : undefined,
@@ -28,7 +28,7 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
   service_name: chance.name().toString(),
   key: chance.word().toString(),
   value: chance.word().toString(),
-  scope: EnvironmentVariableScopeEnum.BUILT_IN,
+  scope: EnvironmentVariableScopeEnum.PROJECT,
 })
 
 export const mockSecretEnvironmentVariable = (
@@ -42,19 +42,19 @@ export const mockSecretEnvironmentVariable = (
     ? {
         id: chance.integer().toString(),
         key: chance.word().toString(),
-        scope: EnvironmentVariableScopeEnum.BUILT_IN,
+        scope: EnvironmentVariableScopeEnum.PROJECT,
       }
     : undefined,
   overridden_secret: isOverride
     ? {
         id: chance.integer().toString(),
         key: chance.word().toString(),
-        scope: EnvironmentVariableScopeEnum.BUILT_IN,
+        scope: EnvironmentVariableScopeEnum.PROJECT,
       }
     : undefined,
   variable_type: 'secret',
   key: chance.word().toString(),
-  scope: EnvironmentVariableScopeEnum.BUILT_IN,
+  scope: EnvironmentVariableScopeEnum.PROJECT,
 })
 
 export const environmentVariableFactoryMock = (

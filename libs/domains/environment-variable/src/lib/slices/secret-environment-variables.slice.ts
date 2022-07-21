@@ -11,7 +11,7 @@ import { RootState } from '@console/store/data'
 import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { Key } from 'qovery-typescript-axios/api'
-import { errorToaster, toast, ToastEnum } from '@console/shared/toast'
+import { toast, ToastEnum, toastError } from '@console/shared/toast'
 
 export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'
 
@@ -261,7 +261,7 @@ export const secretEnvironmentVariablesSlice = createSlice({
       })
       .addCase(createSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         state.error = action.error.message
-        errorToaster(action.error)
+        toastError(action.error)
       })
       .addCase(createAliasSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         addSecretToStore(state, action)
@@ -276,7 +276,7 @@ export const secretEnvironmentVariablesSlice = createSlice({
         )
       })
       .addCase(createAliasSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
-        errorToaster(action.error)
+        toastError(action.error)
         state.error = action.error.message
       })
       .addCase(createOverrideSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
@@ -292,7 +292,7 @@ export const secretEnvironmentVariablesSlice = createSlice({
         )
       })
       .addCase(createOverrideSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
-        errorToaster(action.error)
+        toastError(action.error)
         state.error = null
         state.error = action.error.message
       })
@@ -317,7 +317,7 @@ export const secretEnvironmentVariablesSlice = createSlice({
       })
       .addCase(editSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         state.error = action.error.message
-        errorToaster(action.error)
+        toastError(action.error)
       })
       .addCase(deleteSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         let name = state.entities[action.meta.arg.environmentVariableId]?.key
@@ -330,7 +330,7 @@ export const secretEnvironmentVariablesSlice = createSlice({
       })
       .addCase(deleteSecret.rejected, (state: SecretEnvironmentVariablesState, action) => {
         state.error = action.error.message
-        errorToaster(action.error)
+        toastError(action.error)
       })
   },
 })
@@ -342,6 +342,7 @@ const addSecretToStore = (state: SecretEnvironmentVariablesState, action: any) =
     ...action.payload,
     variable_type: 'secret',
     service_name: action.payload.service_name || '',
+    is_new: true,
   }
   secretEnvironmentVariablesAdapter.addOne(state, extendedEnv)
 

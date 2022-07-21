@@ -20,6 +20,13 @@ export interface CrudEnvironmentVariableModalProps {
 export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModalProps) {
   const { control, formState } = useFormContext()
 
+  const validationRuleForValue: { required?: string } =
+    props.type === EnvironmentVariableType.ALIAS
+      ? {}
+      : {
+          required: 'Please enter a value.',
+        }
+
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{props.title}</h2>
@@ -46,9 +53,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         <Controller
           name="value"
           control={control}
-          rules={{
-            required: 'Please enter a value.',
-          }}
+          rules={validationRuleForValue}
           render={({ field, fieldState: { error } }) => (
             <InputTextArea
               className="mb-6"
@@ -56,6 +61,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
               onChange={field.onChange}
               value={field.value}
               label="Value"
+              error={error?.message}
               disabled={props.type === EnvironmentVariableType.ALIAS}
             />
           )}
