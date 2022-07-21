@@ -8,9 +8,9 @@ import {
   SERVICES_SETTINGS_DANGER_ZONE_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
 } from '@console/shared/router'
-import { NavigationLeft } from '@console/shared/ui'
 import { useDocumentTitle } from '@console/shared/utils'
 import { ROUTER_ENVIRONMENTS_SETTINGS } from '../../router/router'
+import PageSettings from '../../ui/page-settings/page-settings'
 
 export function PageSettingsFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
@@ -43,17 +43,14 @@ export function PageSettingsFeature() {
   ]
 
   return (
-    <div className="bg-white flex mt-2 min-h-[calc(100%-200px)] rounded-sm">
-      <div className="w-72 shrink-0 pt-6 border-r border-element-light-lighter-400">
-        <NavigationLeft links={links} />
-      </div>
+    <PageSettings links={links}>
       <Routes>
         {ROUTER_ENVIRONMENTS_SETTINGS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
         <Route path="*" element={<Navigate replace to={pathSettings + SERVICES_SETTINGS_GENERAL_URL} />} />
       </Routes>
-    </div>
+    </PageSettings>
   )
 }
 
