@@ -10,10 +10,11 @@ export interface InputSelectProps {
   onChange?: () => void
   error?: string
   disabled?: boolean
+  portal?: boolean
 }
 
 export function InputSelect(props: InputSelectProps) {
-  const { label, value, items, className = '', onChange, error, disabled = false } = props
+  const { label, value, items, className = '', onChange, error, disabled = false, portal = true } = props
 
   const selectedLabel = value && items.find((item) => item.value === value)?.label
   const hasError = error && error.length > 0 ? 'input--error' : ''
@@ -32,7 +33,7 @@ export function InputSelect(props: InputSelectProps) {
           </div>
           {value && <div className="input__value">{selectedLabel}</div>}
         </ListboxButton>
-        <ListboxPopover className="input__list">
+        <ListboxPopover className={`input__list ${!portal ? 'absolute' : ''}`} portal={portal}>
           <ListboxList>
             <ListboxOption label="Hidden" className="hidden" value="hidden"></ListboxOption>
             {items.map((currentItem, index) => (

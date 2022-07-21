@@ -1,6 +1,7 @@
 import { ToastEnum } from '@console/shared/toast'
-import { screen, render } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import ToastBehavior, { ToastContent, ToastProps } from './toast'
+import { act } from '@testing-library/react'
 
 let props: ToastProps
 props = {
@@ -46,5 +47,38 @@ describe('Toast', () => {
     const toastTitle = screen.queryByTestId('toast-description') as HTMLParagraphElement
 
     expect(toastTitle?.textContent).toBe('my-description')
+  })
+
+  it('should render with a label and no icon', () => {
+    props.description = 'my-description'
+    props.externalLink = 'https://my-link.com'
+    props.actionLabel = 'my-label'
+
+    const spy = jest.fn()
+    window.open = jest.fn((url: string, target: string) => ({}))
+
+    render(
+      ToastContent(
+        props.status,
+        undefined,
+        '',
+        props.description,
+        spy,
+        undefined,
+        props.actionLabel,
+        props.externalLink
+      )
+    )
+
+    const labelActionButton = screen.queryByTestId('label-action') as HTMLElement
+
+    expect(labelActionButton.textContent).toBe('my-label')
+
+    act(() => {
+      labelActionButton.click()
+    })
+
+    expect(spy).toHaveBeenCalled()
+    expect(window.open).toHaveBeenCalledWith('https://my-link.com', '_blank')
   })
 })

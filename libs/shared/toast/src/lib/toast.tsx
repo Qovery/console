@@ -7,8 +7,18 @@ export enum ToastEnum {
   WARNING = 'WARNING',
 }
 
-export const toast = (status: ToastEnum, title: string, description?: string, callback?: () => void) => {
-  return toastAction.success((options: Toast) => ToastContent(status, options, title, description, callback))
+export const toast = (
+  status: ToastEnum,
+  title: string,
+  description?: string,
+  callback?: () => void,
+  iconAction?: string,
+  labelAction?: string,
+  externalLink?: string
+) => {
+  return toastAction.success((options: Toast) =>
+    ToastContent(status, options, title, description, callback, iconAction, labelAction, externalLink)
+  )
 }
 
 export default toast

@@ -8,7 +8,7 @@ import {
   TableRow,
   Tooltip,
 } from '@console/shared/ui'
-import { timeAgo } from '@console/shared/utils'
+import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@console/shared/utils'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -28,11 +28,11 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
   const { variable, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, rowActions } = props
 
   return (
-    <TableRow columnsWidth={columnsWidth}>
+    <TableRow columnsWidth={columnsWidth} anchorForScroll={variable.id}>
       <>
-        <div className="flex items-center px-4">
+        <div onClick={() => console.log(props.variable)} className="flex items-center px-4">
           <div className="mx-3 w-full">
-            <Skeleton show={isLoading} width={16} height={16}>
+            <Skeleton show={isLoading} width={250} height={16}>
               <div className="cursor-pointer w-full mt-0.5 text-text-600 text-ssm font-medium flex items-center">
                 {' '}
                 {(variable as EnvironmentVariableEntity).aliased_variable ||
@@ -65,9 +65,17 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
-                <span className="text-xs text-text-300 mx-3 font-medium">
-                  {timeAgo(variable.updated_at ? new Date(variable.updated_at) : new Date(variable.created_at))} ago
-                </span>
+                <Tooltip
+                  content={
+                    variable.updated_at
+                      ? dateYearMonthDayHourMinuteSecond(new Date(variable.updated_at))
+                      : dateYearMonthDayHourMinuteSecond(new Date(variable.created_at))
+                  }
+                >
+                  <span className="text-xs text-text-300 mx-3 font-medium">
+                    {timeAgo(variable.updated_at ? new Date(variable.updated_at) : new Date(variable.created_at))} ago
+                  </span>
+                </Tooltip>
               </p>
               <ButtonIconAction actions={rowActions} />
             </div>
@@ -88,9 +96,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
             </div>
           </Skeleton>
         </div>
-        <div className="text-text-600 text-ssm font-medium px-4">
-          {variable.variable_type === 'public' ? (variable as EnvironmentVariableEntity).service_name : ''}
-        </div>
+        <div className="text-text-600 text-ssm font-medium px-4">{variable.service_name}</div>
         <div className="text-text-600 text-ssm capitalize font-medium px-4 ">{variable.scope.toLowerCase()}</div>
       </>
     </TableRow>
