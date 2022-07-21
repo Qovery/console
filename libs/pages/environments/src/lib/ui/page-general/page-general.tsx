@@ -5,13 +5,12 @@ import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 import { isDeleteAvailable } from '@console/shared/utils'
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 
 export interface PageGeneralProps {
   environments: EnvironmentEntity[]
   buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
-  removeEnvironment: (environmentId: string, mode: EnvironmentModeEnum, name: string) => void
+  removeEnvironment: (environmentId: string, name: string) => void
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {

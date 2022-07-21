@@ -56,3 +56,24 @@ describe('useModalConfirmation', () => {
     expect(mockSetContentModal).toHaveBeenCalled()
   })
 })
+
+it('should run action with delete props (display modal)', () => {
+  const action = jest.fn()
+
+  const myInitialState: UseModalConfirmationProps = {
+    mode: EnvironmentModeEnum.PREVIEW,
+    title: 'my-title',
+    description: 'my-description',
+    name: 'test',
+    action: action,
+    isDelete: true,
+  }
+  const { result } = renderHook(useModalConfirmation, { wrapper: ModalProvider })
+
+  act(() => {
+    result.current.setModalConfirmation(myInitialState)
+  })
+
+  expect(mockSetOpenModal).toHaveBeenCalled()
+  expect(mockSetContentModal).toHaveBeenCalled()
+})

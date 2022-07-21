@@ -3,7 +3,6 @@ import {
   ENVIRONMENTS_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
-  ENVIRONMENTS_SETTINGS_URL,
 } from '@console/shared/router'
 import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
@@ -41,12 +40,6 @@ export function Container(props: ContainerProps) {
       name: 'Deployment Rules',
       active: isDeploymentRulesTab,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
-    },
-    {
-      icon: <Icon name="icon-solid-wheel" className="text-sm text-inherit" />,
-      name: 'Settings',
-      active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_SETTINGS_URL}`,
-      link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_SETTINGS_URL}`,
     },
   ]
 

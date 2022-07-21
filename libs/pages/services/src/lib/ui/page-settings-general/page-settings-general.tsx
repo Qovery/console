@@ -25,10 +25,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
       label: 'Staging',
       value: 'STAGING',
     },
-    {
-      label: 'Preview',
-      value: 'PREVIEW',
-    },
   ]
 
   const clustersList: Value[] = clusters

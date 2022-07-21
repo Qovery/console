@@ -18,7 +18,6 @@ import { AppDispatch, RootState } from '@console/store/data'
 import { BaseLink, StatusMenuActions, useModalConfirmation } from '@console/shared/ui'
 import { PageGeneral } from '../../ui/page-general/page-general'
 import { useDocumentTitle } from '@console/shared/utils'
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 
 export function PageGeneralFeature() {
   useDocumentTitle('Environments - Qovery')
@@ -58,12 +57,12 @@ export function PageGeneralFeature() {
     },
   ]
 
-  const removeEnvironment = async (environmentId: string, mode: EnvironmentModeEnum, name: string) => {
+  const removeEnvironment = async (environmentId: string, name: string) => {
     setModalConfirmation({
-      mode: mode,
       title: 'Delete environment',
       description: 'To confirm the deletion of your environment, please type the name of the environment:',
       name: name,
+      isDelete: true,
       action: async () => {
         await dispatch(
           deleteEnvironmentAction({
