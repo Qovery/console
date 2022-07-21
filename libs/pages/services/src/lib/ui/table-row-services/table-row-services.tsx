@@ -26,8 +26,8 @@ export interface TableRowServicesProps {
   link: string
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
-  removeApplication?: (serviceId: string) => void
-  removeDatabase?: (serviceId: string) => void
+  removeApplication?: (applicationId: string, name?: string) => void
+  removeDatabase?: (databaseId: string, name?: string) => void
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -79,7 +79,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeApplication(data.id),
+                onClick: () => removeApplication(data.id, data.name),
               },
             ],
           },
@@ -107,7 +107,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeDatabase(data.id),
+                onClick: () => removeDatabase(data.id, data.name),
               },
             ],
           },

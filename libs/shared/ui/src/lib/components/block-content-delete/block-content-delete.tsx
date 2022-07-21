@@ -58,6 +58,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
                 description: modalConfirmation.description,
                 name: modalConfirmation.name,
                 action: () => callback && callback(),
+                isDelete: true,
               })
             }}
             style={ButtonStyle.ERROR}

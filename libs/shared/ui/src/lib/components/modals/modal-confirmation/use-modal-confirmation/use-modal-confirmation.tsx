@@ -9,6 +9,7 @@ export interface UseModalConfirmationProps {
   action: () => void
   name?: string
   mode?: EnvironmentModeEnum | string | undefined
+  isDelete?: boolean
 }
 
 export function useModalConfirmation() {
@@ -17,6 +18,7 @@ export function useModalConfirmation() {
 
   useEffect(() => {
     if (
+      modalConfirmation?.isDelete ||
       modalConfirmation?.mode === EnvironmentModeEnum.PRODUCTION ||
       modalConfirmation?.mode === EnvironmentModeEnum.STAGING
     ) {

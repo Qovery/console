@@ -23,12 +23,15 @@ import { ROUTER_SERVICES } from './router/router'
 import { useEffect } from 'react'
 import Container from './ui/container/container'
 import { EnvironmentEntity } from '@console/shared/interfaces'
+import { useModalConfirmation } from '@console/shared/ui'
 
 export function PageServices() {
   useDocumentTitle('Services - Qovery')
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
+
+  const { setModalConfirmation } = useModalConfirmation()
 
   const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
@@ -96,14 +99,22 @@ export function PageServices() {
   ]
 
   const removeEnvironment = async () => {
-    await dispatch(
-      deleteEnvironmentAction({
-        projectId,
-        environmentId,
-      })
-    )
-    await dispatch(fetchEnvironments({ projectId: projectId }))
-    await navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
+    setModalConfirmation({
+      title: 'Delete environment',
+      description: 'To confirm the deletion of your environment, please type the name of the environment:',
+      name: environment?.name,
+      isDelete: true,
+      action: async () => {
+        await dispatch(
+          deleteEnvironmentAction({
+            projectId,
+            environmentId,
+          })
+        )
+        await dispatch(fetchEnvironments({ projectId: projectId }))
+        await navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
+      },
+    })
   }
 
   return (
