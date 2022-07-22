@@ -3,7 +3,14 @@ import {
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
-import { ButtonIconActionElementProps, Icon, MenuItemProps, ModalContext, TableHeadProps } from '@console/shared/ui'
+import {
+  ButtonIconActionElementProps,
+  Icon,
+  MenuItemProps,
+  ModalContext,
+  TableHeadProps,
+  useModalConfirmation,
+} from '@console/shared/ui'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
 import { useContext } from 'react'
 import CrudEnvironmentVariableModalFeature, {
@@ -27,6 +34,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const { variable, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
   const { setOpenModal, setContentModal } = useContext(ModalContext)
   const { applicationId = '', projectId = '', environmentId = '' } = useParams()
+  const { setModalConfirmation } = useModalConfirmation()
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -128,33 +136,41 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
           name: 'Delete',
           textClassName: '!text-error-600',
           onClick: () => {
-            let entityId: string
-            switch (variable.scope) {
-              case EnvironmentVariableScopeEnum.ENVIRONMENT:
-                entityId = environmentId
-                break
-              case EnvironmentVariableScopeEnum.PROJECT:
-                entityId = projectId
-                break
-              case EnvironmentVariableScopeEnum.APPLICATION:
-              default:
-                entityId = applicationId
-                break
-            }
+            setModalConfirmation({
+              title: 'Delete variable',
+              description: 'To confirm the deletion of your variable, please type the name of the variable:',
+              name: variable?.key,
+              isDelete: true,
+              action: () => {
+                let entityId: string
+                switch (variable.scope) {
+                  case EnvironmentVariableScopeEnum.ENVIRONMENT:
+                    entityId = environmentId
+                    break
+                  case EnvironmentVariableScopeEnum.PROJECT:
+                    entityId = projectId
+                    break
+                  case EnvironmentVariableScopeEnum.APPLICATION:
+                  default:
+                    entityId = applicationId
+                    break
+                }
 
-            if (variable.variable_type === 'public') {
-              dispatch(
-                deleteEnvironmentVariable({ entityId, environmentVariableId: variable.id, scope: variable.scope })
-              )
-            } else {
-              dispatch(
-                deleteSecret({
-                  entityId,
-                  environmentVariableId: variable.id,
-                  scope: variable.scope,
-                })
-              )
-            }
+                if (variable.variable_type === 'public') {
+                  dispatch(
+                    deleteEnvironmentVariable({ entityId, environmentVariableId: variable.id, scope: variable.scope })
+                  )
+                } else {
+                  dispatch(
+                    deleteSecret({
+                      entityId,
+                      environmentVariableId: variable.id,
+                      scope: variable.scope,
+                    })
+                  )
+                }
+              },
+            })
           },
           contentLeft: <Icon name="icon-solid-trash" className="text-sm text-error-600" />,
         },

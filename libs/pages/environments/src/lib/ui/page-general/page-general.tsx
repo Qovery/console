@@ -62,7 +62,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
     },
   ]
 
-  const columnWidth = '35% 15% 25% 25%'
+  const columnWidth = '35% 25% 25% 15%'
 
   return (
     <>

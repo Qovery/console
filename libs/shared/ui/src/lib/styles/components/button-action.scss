@@ -8,7 +8,8 @@
 }
 
 .btn-action__trigger {
-  @apply h-full flex justify-center items-center px-4 bg-brand-500 hover:bg-brand-600 border-r border-brand-400 text-white transition ease-in-out duration-150 cursor-pointer;
+  @apply h-full flex justify-center items-center px-4 bg-brand-500 hover:bg-brand-600 border-r border-brand-400 text-white cursor-pointer;
+  transition: 0.25s all $timing-cubic;
 }
 
 .btn-action__content {

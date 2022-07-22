@@ -76,7 +76,9 @@
   @apply relative flex w-full h-full min-h-[52px] px-4 py-2 flex-col cursor-pointer border rounded outline-none focus-visible:outline-none;
   transition: 120ms all $timing-cubic;
 
-  &:hover {
+  &:hover,
+  &:focus,
+  &[aria-expanded='true'] {
     @apply border-brand-500;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   }
