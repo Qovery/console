@@ -32,6 +32,8 @@ export function TabsLogs(props: TabsLogsProps) {
 
   const [section, setSection] = useState(errors && errors?.length > 0 ? TabsLogsSection.ERROR : defaultSection)
 
+  const [displayFullError, setDisplayFullError] = useState(false)
+
   const items = [
     {
       name: 'Information',
@@ -52,6 +54,10 @@ export function TabsLogs(props: TabsLogsProps) {
     },
   ]
 
+  const currentError = errors && errors.length > 0 && errors[errors.length - 1].error
+  const truncateErrorMessage =
+    currentError && currentError.underlying_error?.message?.slice(0, !displayFullError ? 240 : Infinity)
+
   return (
     <div className="w-[360px] shrink-0 border-l border-t border-element-light-darker-100">
       <div className="py-2 px-5">
@@ -60,16 +66,16 @@ export function TabsLogs(props: TabsLogsProps) {
           {section === TabsLogsSection.INFORMATION && tabInformation}
           {section === TabsLogsSection.ERROR && (
             <>
-              {errors && errors.length > 0 && errors[errors.length - 1].error ? (
+              {currentError ? (
                 <>
                   <div className="flex items-center">
                     <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-error-500 mr-3">
                       <Icon name="icon-solid-triangle-exclamation" className="text-text-100" />
                     </div>
                     <div>
-                      <Tooltip content={errors[errors.length - 1].error.tag || ''}>
+                      <Tooltip content={currentError.tag || ''}>
                         <p className="text-text-100 font-medium">
-                          <Truncate text={errors[errors.length - 1].error.tag || ''} truncateLimit={28} />
+                          <Truncate text={currentError.tag || ''} truncateLimit={28} />
                         </p>
                       </Tooltip>
                       <span data-testid="error-line" className="text-text-400 text-xs">
@@ -78,7 +84,17 @@ export function TabsLogs(props: TabsLogsProps) {
                       </span>
                     </div>
                   </div>
-                  <div className="bg-element-light-darker-500 mt-4 p-2 rounded ml-8">
+                  <div
+                    className={`bg-element-light-darker-500 mt-4 p-2 rounded ml-8 ${
+                      (currentError.underlying_error?.message || '').length > 240
+                        ? 'cursor-pointer select-none hover:bg-element-light-darker-400 transition-all ease-in-out duration-150'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      (errors[0].error.underlying_error?.message || '')?.length > 240 &&
+                      setDisplayFullError(!displayFullError)
+                    }
+                  >
                     <div className="flex items-center justify-between mb-1">
                       <p className="text-error-500 text-xs font-medium">Full error</p>
                       <div className="flex text-xs">
@@ -87,7 +103,7 @@ export function TabsLogs(props: TabsLogsProps) {
                           className="transition-colors cursor-pointer text-error-500 hover:text-error-600 font-bold mr-2.5"
                         >
                           <span className="text-xxs relative -top-px mr-1">{errors[errors.length - 1].index}</span>
-                          <Icon name="icon-solid-arrow-circle-right" className=" cursor-pointer" />
+                          <Icon name="icon-solid-arrow-circle-right" className="cursor-pointer" />
                         </p>
                         <CopyToClipboard
                           className="text-text-300 hover:text-text-100"
@@ -95,16 +111,19 @@ export function TabsLogs(props: TabsLogsProps) {
                         />
                       </div>
                     </div>
-                    <p data-testid="error-msg" className="text-text-200 text-xs">
-                      Transmitter: {errors[errors.length - 1].error.event_details?.transmitter?.name} -{' '}
-                      {errors[errors.length - 1].error.underlying_error?.message}
+                    <p data-testid="error-msg" className="relative text-text-200 text-xs">
+                      Transmitter: {currentError.event_details?.transmitter?.name} - {truncateErrorMessage}
+                      {(truncateErrorMessage || '')?.length < 240 ? '...' : ''}
+                      {!displayFullError && (currentError.underlying_error?.message || '').length > 240 && (
+                        <Icon name="icon-solid-angle-down" className="absolute right-0 bottom-0" />
+                      )}
                     </p>
                   </div>
-                  {errors[errors.length - 1].error.hint_message && (
+                  {currentError.hint_message && (
                     <div className="bg-element-light-darker-300 mt-3 p-2 rounded ml-8">
                       <p className="text-xs text-accent2-400 font-medium mb-1">Solution</p>
                       <p data-testid="solution-msg" className="text-text-100 text-xs mb-2">
-                        {errors[errors.length - 1].error.hint_message}
+                        {currentError.hint_message}
                       </p>
                       <Button
                         className="mr-2"
@@ -116,11 +135,11 @@ export function TabsLogs(props: TabsLogsProps) {
                       >
                         Cluster settings
                       </Button>
-                      {errors[errors.length - 1].error.link && (
+                      {currentError.link && (
                         <Button
                           iconLeft="icon-solid-book"
                           external={true}
-                          link={errors[errors.length - 1].error.link}
+                          link={currentError.link}
                           style={ButtonStyle.STROKED}
                           size={ButtonSize.TINY}
                         >
