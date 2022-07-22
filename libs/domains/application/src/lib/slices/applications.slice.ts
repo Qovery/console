@@ -100,7 +100,6 @@ export const fetchApplicationDeployments = createAsyncThunk<
   return response.data.results as DeploymentHistoryApplication[]
 })
 
-
 export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string }>(
   'application/status',
   async (data) => {
@@ -388,7 +387,6 @@ export const getApplicationsState = (rootState: RootState): ApplicationsState =>
   rootState['entities'][APPLICATIONS_FEATURE_KEY]
 
 export const selectAllApplications = createSelector(getApplicationsState, selectAll)
-export const selectAllApplicationsByEnv = () => createSelector(getApplicationsState, selectAll)
 
 export const selectApplicationsEntities = createSelector(getApplicationsState, selectEntities)
 

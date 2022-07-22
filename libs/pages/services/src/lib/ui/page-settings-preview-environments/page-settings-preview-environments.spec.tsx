@@ -1,10 +1,12 @@
+import { applicationDeploymentsFactoryMock } from '@console/domains/application'
 import { render } from '__tests__/utils/setup-jest'
 import PageSettingsPreviewEnvironments, {
   PageSettingsPreviewEnvironmentsProps,
 } from './page-settings-preview-environments'
 
 const props: PageSettingsPreviewEnvironmentsProps = {
-  deleteEnvironment: jest.fn(),
+  onSubmit: jest.fn(),
+  applications: applicationDeploymentsFactoryMock(3),
 }
 
 describe('PageSettingsPreviewEnvironments', () => {

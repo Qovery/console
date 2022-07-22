@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 export interface InputToggleProps {
   small?: boolean
   value?: boolean
   onChange?: (e: boolean) => void
-  title?: string
+  title?: string | ReactNode
   description?: string
   className?: string
   dataTestId?: string
