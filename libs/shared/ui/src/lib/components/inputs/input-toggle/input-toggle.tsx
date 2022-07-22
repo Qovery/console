@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 export interface InputToggleProps {
   small?: boolean
   value?: boolean
   onChange?: (e: boolean) => void
-  title?: string
+  title?: string | ReactNode
   description?: string
   className?: string
 }
@@ -28,7 +28,11 @@ export function InputToggle(props: InputToggleProps) {
 
   return (
     <div className={`flex items-start ${className}`}>
-      <div aria-label="toggle-btn" className="inline-flex justify-between items-center" onClick={changeToggle}>
+      <div
+        aria-label="toggle-btn"
+        className="inline-flex justify-between items-center cursor-pointer"
+        onClick={changeToggle}
+      >
         <div
           aria-label="bg"
           className={`${toggleSizeBg} flex items-center rounded-full p-0.5 duration-300 ease-in-out ${
@@ -45,7 +49,7 @@ export function InputToggle(props: InputToggleProps) {
           />
         </div>
       </div>
-      <div onClick={changeToggle} className="ml-3 cursor-pointer">
+      <div onClick={changeToggle} className="ml-3 cursor-pointer select-none">
         {title && <p className={`text-text-600 text-ssm font-medium ${description ? 'mb-1' : ''}`}>{title}</p>}
         {description && <p className="text-xs text-text-400">{description}</p>}
       </div>
