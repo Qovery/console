@@ -6,6 +6,7 @@ import TabsLogs, { TabsLogsProps, TabsLogsSection } from './tabs-logs'
 describe('TabsLogs', () => {
   const props: TabsLogsProps = {
     tabInformation: <div>hello</div>,
+    scrollToError: jest.fn(),
     errors: [
       {
         index: 1,

@@ -113,9 +113,11 @@ export function TabsLogs(props: TabsLogsProps) {
                     </div>
                     <p data-testid="error-msg" className="relative text-text-200 text-xs">
                       Transmitter: {currentError.event_details?.transmitter?.name} - {truncateErrorMessage}
-                      {(truncateErrorMessage || '')?.length < 240 ? '...' : ''}
                       {!displayFullError && (currentError.underlying_error?.message || '').length > 240 && (
-                        <Icon name="icon-solid-angle-down" className="absolute right-0 bottom-0" />
+                        <>
+                          ...
+                          <Icon name="icon-solid-angle-down" className="absolute right-0 bottom-0" />
+                        </>
                       )}
                     </p>
                   </div>
