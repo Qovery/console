@@ -15,32 +15,6 @@
   }
 }
 
-// size
-.btn--tiny {
-  height: theme('spacing.7');
-  @apply text-xs px-[10px];
-}
-
-.btn--small {
-  height: theme('spacing.8');
-  @apply text-xs;
-}
-
-.btn--regular {
-  height: theme('spacing.9');
-  @apply text-ssm;
-}
-
-.btn--large {
-  height: theme('spacing.10');
-  @apply text-sm;
-}
-
-.btn--xlarge {
-  height: theme('spacing.11');
-  @apply text-sm;
-}
-
 // color
 .btn--raised {
   @apply bg-brand-100 text-brand-300 hover:bg-brand-200;
@@ -154,4 +128,30 @@
   &.btn.is-active {
     @apply text-text-400 bg-element-light-lighter-400 hover:text-text-400 hover:bg-element-light-lighter-500;
   }
+}
+
+// size
+.btn--tiny {
+  height: theme('spacing.7');
+  @apply text-xs px-[10px];
+}
+
+.btn--small {
+  height: theme('spacing.8');
+  @apply text-xs;
+}
+
+.btn--regular {
+  height: theme('spacing.9');
+  @apply text-ssm;
+}
+
+.btn--large {
+  height: theme('spacing.10');
+  @apply text-sm;
+}
+
+.btn--xlarge {
+  height: theme('spacing.11');
+  @apply text-sm;
 }

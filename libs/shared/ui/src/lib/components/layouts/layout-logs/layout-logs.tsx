@@ -114,14 +114,14 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
           <ButtonIcon
             icon="icon-solid-arrow-up-to-line"
             className="mr-px !rounded-tr-none !rounded-br-none"
-            size={ButtonSize.SMALL}
+            size={ButtonSize.TINY}
             style={ButtonIconStyle.DARK}
             onClick={() => forcedScroll()}
           />
           <ButtonIcon
             icon="icon-solid-arrow-down-to-line"
             className="mr-2 !rounded-tl-none !rounded-bl-none"
-            size={ButtonSize.SMALL}
+            size={ButtonSize.TINY}
             style={ButtonIconStyle.DARK}
             onClick={() => forcedScroll(true)}
           />
