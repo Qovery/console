@@ -13,7 +13,12 @@ import {
 } from '@console/domains/projects'
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
 import { applications, initialApplicationsState } from '@console/domains/application'
-import { environments, initialEnvironmentsState } from '@console/domains/environment'
+import {
+  environments,
+  initialEnvironmentsState,
+  environmentDeploymentRulesReducer,
+  initialEnvironmentDeploymentRulesState,
+} from '@console/domains/environment'
 import { databases, initialDatabasesState } from '@console/domains/database'
 import {
   environmentVariables,
@@ -31,6 +36,10 @@ export const projectReducer = combineReducers({
   deploymentRules: deploymentRulesReducer,
 })
 
+export const environmentReducer = combineReducers({
+  environmentDeploymentRules: environmentDeploymentRulesReducer,
+})
+
 export const environmentVariable = combineReducers({
   public: environmentVariables,
   secret: secretEnvironmentVariables,
@@ -42,6 +51,7 @@ export const entitiesReducer = combineReducers({
   projects: projects,
   project: projectReducer,
   environments: environments,
+  environment: environmentReducer,
   applications: applications,
   databases: databases,
   environmentVariable,
@@ -73,11 +83,14 @@ export const initialRootState = (): RootState => ({
       deploymentRules: initialDeploymentRulesState,
     },
     environments: initialEnvironmentsState,
-    applications: initialApplicationsState,
-    databases: initialDatabasesState,
+    environment: {
+      environmentDeploymentRules: initialEnvironmentDeploymentRulesState,
+    },
     environmentVariable: {
       public: initialEnvironmentVariablesState,
       secret: initialSecretEnvironmentVariablesState,
     },
+    applications: initialApplicationsState,
+    databases: initialDatabasesState,
   },
 })
