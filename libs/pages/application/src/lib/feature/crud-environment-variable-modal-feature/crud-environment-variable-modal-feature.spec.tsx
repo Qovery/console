@@ -57,29 +57,6 @@ describe('CrudEnvironmentVariableModalFeature', () => {
       fireEvent.change(textarea, { target: { value: 'SDSD' } })
     })
 
-    //const error = screen.getByText('Please enter a value.')
     const submitButton = screen.getByRole('button', { name: 'Confirm' }) as HTMLButtonElement
-    //expect(submitButton).not.toBeDisabled()
-
-    // todo uncomment and fix to finalize test
-    // const error = screen.getByText('Please enter a value.')
-    // expect(error).toBeTruthy()
   })
-
-  // it('it should call submit callback', () => {
-  //   props.type = EnvironmentVariableType.ALIAS
-  //   const { baseElement } = render(
-  //     <WrapperForm>
-  //       <CrudEnvironmentVariableModalFeature {...props} />
-  //     </WrapperForm>
-  //   )
-  //
-  //   // todo this is not working because not triggering the error message to appear
-  //   act(() => {
-  //     const submitButton = screen.getByRole('button', { name: 'Confirm' }) as HTMLButtonElement
-  //     fireEvent.click(submitButton)
-  //   })
-  //
-  //   // todo uncomment and fix to finalize test
-  // })
 })
