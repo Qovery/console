@@ -40,12 +40,126 @@ describe('Handle Submit Environment Variable', () => {
     mockSetClosing = jest.fn()
   })
 
-  describe('with selected scope equal environment', () => {
-    data.scope = EnvironmentVariableScopeEnum.ENVIRONMENT
-    describe('with public context', () => {
+  describe('with public context', () => {
+    beforeEach(() => {
       data.isSecret = false
+    })
 
-      it('should ', async () => {
+    describe('with selected scope equal environment', () => {
+      data.scope = EnvironmentVariableScopeEnum.ENVIRONMENT
+
+      it('should dispatch set loading and trigger the closing', async () => {
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+    })
+
+    it('should dispatch edit', async () => {
+      props.mode = EnvironmentVariableCrudMode.EDITION
+      await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+      expect(mockDispatch).toHaveBeenCalled()
+      expect(mockSetLoading).toHaveBeenCalled()
+      expect(mockSetClosing).toHaveBeenCalled()
+    })
+
+    describe('with selected scope equal project', () => {
+      data.scope = EnvironmentVariableScopeEnum.PROJECT
+
+      it('should dispatch set loading and trigger the closing', async () => {
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+    })
+
+    describe('with selected scope equal application', () => {
+      data.scope = EnvironmentVariableScopeEnum.APPLICATION
+
+      it('should dispatch set loading and trigger the closing', async () => {
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+
+      it('should dispatch the override action', async () => {
+        props.type = EnvironmentVariableType.OVERRIDE
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+
+      it('should dispatch the alias action', async () => {
+        props.type = EnvironmentVariableType.ALIAS
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+    })
+  })
+
+  describe('with secret context', () => {
+    beforeEach(() => {
+      data.isSecret = true
+    })
+
+    describe('with selected scope equal environment', () => {
+      data.scope = EnvironmentVariableScopeEnum.ENVIRONMENT
+
+      it('should dispatch set loading and trigger the closing', async () => {
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+    })
+
+    describe('with selected scope equal project', () => {
+      data.scope = EnvironmentVariableScopeEnum.PROJECT
+
+      it('should dispatch set loading and trigger the closing', async () => {
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+    })
+
+    describe('with selected scope equal application', () => {
+      data.scope = EnvironmentVariableScopeEnum.APPLICATION
+
+      it('should dispatch set loading and trigger the closing', async () => {
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+
+      it('should dispatch the override action', async () => {
+        props.type = EnvironmentVariableType.OVERRIDE
+        await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
+
+        expect(mockDispatch).toHaveBeenCalled()
+        expect(mockSetLoading).toHaveBeenCalled()
+        expect(mockSetClosing).toHaveBeenCalled()
+      })
+
+      it('should dispatch the alias action', async () => {
+        props.type = EnvironmentVariableType.ALIAS
         await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
 
         expect(mockDispatch).toHaveBeenCalled()
