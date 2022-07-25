@@ -1,13 +1,12 @@
 import CrudEnvironmentVariableModalFeature, {
   CrudEnvironmentVariableModalFeatureProps,
-  DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from './crud-environment-variable-modal-feature'
 import { render } from '__tests__/utils/setup-jest'
 import { mockEnvironmentVariable } from '@console/domains/environment-variable'
-import { FormProvider, useForm } from 'react-hook-form'
 import { act, fireEvent, screen } from '@testing-library/react'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 
 const props: CrudEnvironmentVariableModalFeatureProps = {
   mode: EnvironmentVariableCrudMode.CREATION,
@@ -19,36 +18,28 @@ const props: CrudEnvironmentVariableModalFeatureProps = {
   setOpen: jest.fn(),
 }
 
-const WrapperForm = ({ children }) => {
-  const methods = useForm<DataFormEnvironmentVariableInterface>({
-    defaultValues: {
+describe('CrudEnvironmentVariableModalFeature', () => {
+  let baseElement: any
+  let defaultValues: any
+
+  beforeEach(() => {
+    defaultValues = {
       key: '',
       scope: '',
       value: '',
       isSecret: false,
-    },
-    mode: 'onChange',
+    }
   })
-  return <FormProvider {...methods}>{children}</FormProvider>
-}
 
-describe('CrudEnvironmentVariableModalFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
-      <WrapperForm>
-        <CrudEnvironmentVariableModalFeature {...props} />
-      </WrapperForm>
-    )
+    baseElement = render(wrapWithReactHookForm(<CrudEnvironmentVariableModalFeature {...props} />, { defaultValues }))
+
     expect(baseElement).toBeTruthy()
   })
 
   it('it should remove required for value if type is alias', async () => {
     props.type = EnvironmentVariableType.OVERRIDE
-    const { baseElement } = render(
-      <WrapperForm>
-        <CrudEnvironmentVariableModalFeature {...props} />
-      </WrapperForm>
-    )
+    render(wrapWithReactHookForm(<CrudEnvironmentVariableModalFeature {...props} />, { defaultValues }))
 
     const textarea = screen.getByLabelText('Value') as HTMLTextAreaElement
 
