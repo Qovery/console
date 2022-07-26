@@ -1,0 +1,141 @@
+import ImportEnvironmentVariableModal, {
+  ImportEnvironmentVariableModalProps,
+} from './import-environment-variable-modal'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
+import {
+  act,
+  findAllByTestId,
+  fireEvent,
+  getByRole,
+  queryByText,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect'
+import React from 'react'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+
+describe('ImportEnvironmentVariableModal', () => {
+  const props: ImportEnvironmentVariableModalProps = {
+    onSubmit: jest.fn(),
+    setOpen: jest.fn(),
+    triggerToggleAll: jest.fn(),
+    toggleAll: false,
+  }
+
+  it('should render successfully', () => {
+    const { baseElement } = render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />))
+    expect(baseElement).toBeTruthy()
+  })
+
+  describe('with a lot of entries', function () {
+    it('should loop and print forms line', async () => {
+      const json = JSON.stringify({
+        key1: 'value1',
+        key2: 'value2',
+        key3: 'value3',
+        keyEmpty: '',
+      })
+      const defaultValues = jsonToForm(json)
+      props.keys = Object.keys(JSON.parse(json))
+
+      const { baseElement } = render(
+        wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues })
+      )
+
+      const formRows = await findAllByTestId(baseElement, 'form-row')
+      expect(formRows).toHaveLength(props.keys.length)
+    })
+  })
+
+  describe('with only one entry', () => {
+    let defaultValues: any
+
+    beforeEach(() => {
+      const json = JSON.stringify({
+        key1: 'value1',
+      })
+      defaultValues = jsonToForm(json)
+      props.keys = Object.keys(JSON.parse(json))
+    })
+
+    it('should render row with correct form inputs', async () => {
+      const { baseElement } = render(
+        wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues })
+      )
+
+      const formRows = await findAllByTestId(baseElement, 'form-row')
+      expect(formRows[0].querySelectorAll('input')).toHaveLength(2)
+      expect(formRows[0].querySelectorAll('select')).toHaveLength(1)
+      expect(formRows[0].querySelectorAll('[data-testid="input-toggle"]')).toHaveLength(1)
+    })
+
+    it('should disabled button if form is not well filled up', async () => {
+      const { baseElement } = render(
+        wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues })
+      )
+
+      await act(() => {
+        const input = screen.getByLabelText('key1_key')
+        fireEvent.input(input, { target: { value: 'sdfasdf' } })
+      })
+
+      expect(queryByText(baseElement, 'Please enter a value.')).toBeNull()
+
+      await act(() => {
+        const input = screen.getByLabelText('key1_key')
+        fireEvent.input(input, { target: { value: '' } })
+      })
+
+      screen.getByText('Please enter a value.')
+
+      await waitFor(async () => {
+        const button = await getByRole(baseElement, 'button', { name: 'Confirm' })
+        expect(button).toBeDisabled()
+      })
+    })
+
+    it('should close the modal on cancel', async () => {
+      const spy = jest.fn()
+      render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} setOpen={spy} />, { defaultValues }))
+
+      await act(() => {
+        screen.getByRole('button', { name: 'Cancel' }).click()
+      })
+
+      expect(spy).toHaveBeenCalled()
+    })
+
+    it('should change the scope for all on select change', async () => {
+      const spy = jest.fn()
+      render(
+        wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} changeScopeForAll={spy} />, { defaultValues })
+      )
+
+      await act(() => {
+        const select = screen.getByTestId('select-scope-for-all')
+        fireEvent.change(select, { target: { value: EnvironmentVariableScopeEnum.ENVIRONMENT } })
+      })
+
+      expect(spy).toHaveBeenCalledWith(EnvironmentVariableScopeEnum.ENVIRONMENT)
+    })
+
+    it('should toggle all on click on secret toggle', async () => {
+      const spy = jest.fn()
+      render(
+        wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} triggerToggleAll={spy} toggleAll={true} />, {
+          defaultValues,
+        })
+      )
+
+      await act(() => {
+        const toggle = screen.getByTestId('toggle-for-all')
+        fireEvent.click(toggle)
+      })
+
+      expect(spy).toHaveBeenCalledWith(false)
+    })
+  })
+})

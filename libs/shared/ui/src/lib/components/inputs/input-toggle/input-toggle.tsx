@@ -7,6 +7,7 @@ export interface InputToggleProps {
   title?: string
   description?: string
   className?: string
+  dataTestId?: string
 }
 
 export function InputToggle(props: InputToggleProps) {
@@ -27,8 +28,13 @@ export function InputToggle(props: InputToggleProps) {
   }
 
   return (
-    <div className={`flex items-start ${className}`}>
-      <div aria-label="toggle-btn" className="inline-flex justify-between items-center" onClick={changeToggle}>
+    <div data-testid="input-toggle" className={`flex items-start ${className}`}>
+      <div
+        data-testid={props.dataTestId || 'input-toggle-button'}
+        aria-label="toggle-btn"
+        className="inline-flex justify-between items-center"
+        onClick={changeToggle}
+      >
         <div
           aria-label="bg"
           className={`${toggleSizeBg} flex items-center rounded-full p-0.5 duration-300 ease-in-out ${

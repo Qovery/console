@@ -6,7 +6,8 @@ import {
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { act, fireEvent, queryByText, render, screen } from '@testing-library/react'
+import { act, fireEvent, getByRole, queryByText, render, screen, waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect'
 
 const props: CrudEnvironmentVariableModalProps = {
   mode: EnvironmentVariableCrudMode.CREATION,
@@ -61,7 +62,7 @@ describe('CrudEnvironmentVariableModal', () => {
 
   describe('with bad form data', () => {
     it('should show required error message under value textarea if not Alias context', async () => {
-      render(
+      const { baseElement } = render(
         <WrapperForm>
           <CrudEnvironmentVariableModal {...props} />
         </WrapperForm>
@@ -69,12 +70,16 @@ describe('CrudEnvironmentVariableModal', () => {
 
       await act(() => {
         const textarea = screen.getByLabelText('Value') as HTMLTextAreaElement
-        fireEvent.change(textarea, { target: { value: 'a' } })
         fireEvent.change(textarea, { target: { value: '' } })
       })
 
       const error = screen.getByText('Please enter a value.')
       expect(error).toBeTruthy()
+
+      await waitFor(async () => {
+        const button = await getByRole(baseElement, 'button', { name: 'Confirm' })
+        expect(button).toBeDisabled()
+      })
     })
 
     it('should not show required error message under value textarea if Alias context', async () => {
