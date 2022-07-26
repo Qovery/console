@@ -6,6 +6,7 @@ export interface InputTextSmallProps {
   placeholder?: string
   error?: string
   className?: string
+  label?: string
 }
 
 export function InputTextSmall(props: InputTextSmallProps) {
@@ -17,6 +18,9 @@ export function InputTextSmall(props: InputTextSmallProps) {
   return (
     <div className={className}>
       <div data-testid="input" className={`input input--small ${hasError} ${hasValue}`}>
+        <label className="hidden" htmlFor={props.label}>
+          {props.label}
+        </label>
         <input
           className="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-4"
           name={name}
@@ -24,6 +28,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           placeholder={placeholder}
           defaultValue={value}
           onChange={onChange}
+          id={props.label}
         />
       </div>
       {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}

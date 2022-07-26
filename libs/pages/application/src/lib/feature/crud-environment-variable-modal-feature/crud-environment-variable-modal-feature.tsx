@@ -4,9 +4,9 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
 import { getEnvironmentVariablesState } from '@console/domains/environment-variable'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'
+import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
@@ -101,46 +101,6 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     }
   }
 
-  const computeAvailableScope = (): EnvironmentVariableScopeEnum[] => {
-    if (!props.variable) {
-      return [
-        EnvironmentVariableScopeEnum.PROJECT,
-        EnvironmentVariableScopeEnum.ENVIRONMENT,
-        EnvironmentVariableScopeEnum.APPLICATION,
-      ]
-    }
-
-    const environmentScopes: {
-      name: EnvironmentVariableScopeEnum
-      hierarchy: number
-    }[] = [
-      {
-        name: EnvironmentVariableScopeEnum.BUILT_IN,
-        hierarchy: -1,
-      },
-      {
-        name: EnvironmentVariableScopeEnum.PROJECT,
-        hierarchy: 1,
-      },
-      {
-        name: EnvironmentVariableScopeEnum.ENVIRONMENT,
-        hierarchy: 2,
-      },
-      {
-        name: EnvironmentVariableScopeEnum.APPLICATION,
-        hierarchy: 3,
-      },
-    ]
-
-    const theScope = environmentScopes.find((s) => s.name === props?.variable?.scope)
-
-    return environmentScopes
-      .filter((scope) => {
-        return scope.hierarchy >= (theScope?.hierarchy || -1) && scope.hierarchy >= 0
-      })
-      .map((scope) => scope.name)
-  }
-
   return (
     <FormProvider {...methods}>
       <CrudEnvironmentVariableModal
@@ -150,7 +110,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         onSubmit={onSubmit}
         closeModal={props.closeModal}
         type={props.type}
-        availableScopes={computeAvailableScope()}
+        availableScopes={computeAvailableScope(variable)}
         loading={loading}
       />
     </FormProvider>
