@@ -16,12 +16,12 @@ describe('ImportEnvironmentVariableModalFeature', () => {
     setOpen: jest.fn(),
   }
 
-  it('should render successfully', async () => {
-    const { baseElement, debug } = render(<ImportEnvironmentVariableModalFeature {...props} />)
+  it('should render successfully and show dropzone', async () => {
+    const { baseElement } = render(<ImportEnvironmentVariableModalFeature {...props} />)
 
-    await waitFor(() => {
+    await waitFor(async () => {
       expect(baseElement).toBeTruthy()
-      debug()
+      expect(await screen.getByTestId('drop-input')).toBeTruthy()
     })
   })
 
@@ -29,6 +29,7 @@ describe('ImportEnvironmentVariableModalFeature', () => {
     const { baseElement } = render(<ImportEnvironmentVariableModalFeature {...props} />)
     const inputEl = screen.getByTestId('drop-input')
     const str = JSON.stringify(envVariableFile)
+    console.log(str)
     const blob = new Blob([str])
     const file = new File([blob], 'values.json', {
       type: 'application/JSON',

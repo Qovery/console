@@ -19,6 +19,7 @@ import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
+import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
 export function TabsFeature() {
   const { organizationId, projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -107,7 +108,12 @@ export function TabsFeature() {
         items: [
           {
             name: 'Import variables',
-            onClick: (e: ClickEvent) => console.log(e, 'Deploy'),
+            onClick: (e: ClickEvent) => {
+              setOpenModal(true)
+              setContentModal(
+                <ImportEnvironmentVariableModalFeature setOpen={setOpenModal} applicationId={applicationId} />
+              )
+            },
             contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-400" />,
           },
           {

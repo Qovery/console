@@ -11,6 +11,7 @@ export interface InputSelectSmallProps {
   className?: string
   dataTestId?: string
   onChange?: (item: string | undefined) => void
+  defaultValue?: string
 }
 
 export function InputSelectSmall(props: InputSelectSmallProps) {
@@ -36,6 +37,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         value={item?.value}
         className="input input__select--small"
         onChange={(e) => onClickItem(e.target.value)}
+        defaultValue={props.defaultValue}
       >
         {items.map((item: Value, index: number) => (
           <option key={index} value={item.value}>
