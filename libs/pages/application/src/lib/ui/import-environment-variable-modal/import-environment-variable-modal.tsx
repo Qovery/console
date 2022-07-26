@@ -10,9 +10,9 @@ export interface ImportEnvironmentVariableModalProps {
   availableScopes: EnvironmentVariableScopeEnum[]
   setOpen: (b: boolean) => void
   loading: boolean
-  triggerToggleAll: () => void
+  triggerToggleAll: (b: boolean) => void
   toggleAll: boolean
-  changeScopeForAll: (value: string | undefined) => void
+  changeScopeForAll: (value: EnvironmentVariableScopeEnum | undefined) => void
 }
 
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {
@@ -29,7 +29,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
           dataTestId="select-scope-for-all"
           name="search"
           items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
-          onChange={props.changeScopeForAll}
+          onChange={(value?: string) => props.changeScopeForAll(value as EnvironmentVariableScopeEnum)}
         />
         <span>and</span>
         <div className="flex items-center gap-3 mb-8">

@@ -25,9 +25,12 @@ describe('ImportEnvironmentVariableModal', () => {
     toggleAll: false,
   }
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />))
-    expect(baseElement).toBeTruthy()
+
+    await waitFor(() => {
+      expect(baseElement).toBeTruthy()
+    })
   })
 
   describe('with a lot of entries', function () {
@@ -46,7 +49,9 @@ describe('ImportEnvironmentVariableModal', () => {
       )
 
       const formRows = await findAllByTestId(baseElement, 'form-row')
-      expect(formRows).toHaveLength(props.keys.length)
+      await waitFor(() => {
+        expect(formRows).toHaveLength(props.keys.length)
+      })
     })
   })
 
