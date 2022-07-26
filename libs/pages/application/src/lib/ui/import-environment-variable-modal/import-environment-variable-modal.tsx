@@ -23,8 +23,8 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
     <div className="p-6">
       <h2 className="h4 text-text-600 mb-2 max-w-sm">Import variables</h2>
 
-      <div className="flex items-center">
-        <p className="">Preset all variables with scope</p>
+      <div className="flex items-center bg-element-light-lighter-400 rounded-sm justify-between px-4 py-2 my-6">
+        <p className="font-medium text-element-light-lighter-800 text-sm">Preset all variables with scope</p>
         <InputSelectSmall
           dataTestId="select-scope-for-all"
           name="search"
@@ -32,7 +32,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
           onChange={(value?: string) => props.changeScopeForAll(value as EnvironmentVariableScopeEnum)}
         />
         <span>and</span>
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-1">
           <InputToggle dataTestId="toggle-for-all" value={props.toggleAll} onChange={props.triggerToggleAll} />
           <p className="text-text-500 text-sm font-medium">Secret</p>
         </div>
@@ -40,7 +40,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
       <form onSubmit={props.onSubmit}>
         {keys?.map((key) => (
-          <div key={key} data-testid="form-row">
+          <div key={key} data-testid="form-row" className="flex mb-3">
             <Controller
               name={key + '_key'}
               control={control}
@@ -49,7 +49,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="mb-6"
+                  className="shrink-0 grow mr-3"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value}
@@ -67,7 +67,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
-                  className="mb-6"
+                  className="shrink-0 grow mr-3"
                   data-testid="value"
                   name={field.name}
                   onChange={field.onChange}
@@ -83,22 +83,25 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               render={({ field, fieldState: { error } }) => (
                 <InputSelectSmall
                   data-testid="scope"
-                  className="mb-6"
+                  className="shrink-0 grow mr-3"
                   name={field.name}
+                  defaultValue={field.value}
                   items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
                 />
               )}
             />
 
-            <Controller
-              name="isSecret"
-              control={control}
-              render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
-            />
+            <div className="flex items-center">
+              <Controller
+                name={key + '_secret'}
+                control={control}
+                render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
+              />
+            </div>
           </div>
         ))}
 
-        <div className="flex gap-3 justify-end">
+        <div className="flex gap-3 justify-end mt-6">
           <Button
             className="btn--no-min-w"
             style={ButtonStyle.STROKED}
