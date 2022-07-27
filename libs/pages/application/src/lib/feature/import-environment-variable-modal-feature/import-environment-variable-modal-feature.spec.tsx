@@ -4,11 +4,10 @@ import ImportEnvironmentVariableModalFeature, {
 import { findAllByTestId, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
-const envVariableFile = {
-  key1: 'value1',
-  key2: 'value2',
-  key3: 'value3',
-}
+const envText = `
+QOVERY_BUILD_TIME=hello
+variable_denv=hey
+`
 
 describe('ImportEnvironmentVariableModalFeature', () => {
   const props: ImportEnvironmentVariableModalFeatureProps = {
@@ -28,11 +27,10 @@ describe('ImportEnvironmentVariableModalFeature', () => {
   it('should read file dropped and show table of inputs', async () => {
     const { baseElement } = render(<ImportEnvironmentVariableModalFeature {...props} />)
     const inputEl = screen.getByTestId('drop-input')
-    const str = JSON.stringify(envVariableFile)
-    console.log(str)
-    const blob = new Blob([str])
+
+    const blob = new Blob([envText])
     const file = new File([blob], 'values.json', {
-      type: 'application/JSON',
+      type: 'application/text',
     })
 
     fireEvent.change(inputEl, {
@@ -43,7 +41,7 @@ describe('ImportEnvironmentVariableModalFeature', () => {
 
     await waitFor(async () => {
       const formRows = await findAllByTestId(baseElement, 'form-row')
-      expect(formRows).toHaveLength(Object.keys(envVariableFile).length)
+      expect(formRows).toHaveLength(2)
     })
   })
 })

@@ -24,9 +24,10 @@ import ScalewayGrayIcon from './icons/scaleway-gray'
 import DOGrayIcon from './icons/do-gray'
 import DatabaseIcon from './icons/database'
 import ChildrenArrow from './icons/children-arrow'
+import { IconAwesomeEnum } from './icon-awesome.enum'
 
 export interface IconProps {
-  name: IconEnum | string
+  name: IconEnum | IconAwesomeEnum | string
   width?: string
   height?: string
   viewBox?: string

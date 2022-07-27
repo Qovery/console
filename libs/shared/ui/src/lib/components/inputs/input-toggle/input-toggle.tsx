@@ -16,7 +16,7 @@ export function InputToggle(props: InputToggleProps) {
   const [toggleActive, setToggleActive] = useState(value)
 
   useEffect(() => {
-    value && setToggleActive(value)
+    setToggleActive(value)
   }, [value])
 
   const toggleSizeBg = small ? 'w-8 h-4.5' : 'w-12 h-6'
