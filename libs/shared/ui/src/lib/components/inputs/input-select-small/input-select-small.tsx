@@ -1,5 +1,5 @@
 import { Value } from '@console/shared/interfaces'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputSelectSmallProps {
@@ -7,26 +7,34 @@ export interface InputSelectSmallProps {
   label?: string
   items: Value[]
   getValue?: (name: string, value: Value | null) => void
-  defaultItem?: Value
   className?: string
   dataTestId?: string
   onChange?: (item: string | undefined) => void
   defaultValue?: string
+  isValid?: boolean
 }
 
 export function InputSelectSmall(props: InputSelectSmallProps) {
-  const { name, label, items, defaultItem, className = '', getValue } = props
+  const { name, label, items, defaultValue, className = '', getValue } = props
 
-  const [item, setItem] = useState(defaultItem || null)
+  const [value, setValue] = useState(defaultValue)
 
   const onClickItem = (value: string) => {
     const selectedItem = items.find((i) => i.value === value) || null
-    if (selectedItem !== defaultItem) {
-      setItem(selectedItem)
-      props.onChange && props.onChange(selectedItem?.value)
+    if (!selectedItem) return
+
+    if (value !== defaultValue) {
+      setValue(selectedItem.value)
+      props.onChange && props.onChange(selectedItem.value)
     }
     if (getValue) getValue(name, selectedItem)
   }
+
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue)
+    }
+  }, [defaultValue])
 
   return (
     <div className={`${className} relative flex gap-4 items-center`}>
@@ -34,10 +42,9 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
       <select
         data-testid={props.dataTestId || 'input-select-small'}
         name={name}
-        value={item?.value}
-        className="input input__select--small"
+        value={value}
+        className={`input input__select--small ${props.isValid ? 'input--focused' : ''}`}
         onChange={(e) => onClickItem(e.target.value)}
-        defaultValue={props.defaultValue}
       >
         {items.map((item: Value, index: number) => (
           <option key={index} value={item.value}>

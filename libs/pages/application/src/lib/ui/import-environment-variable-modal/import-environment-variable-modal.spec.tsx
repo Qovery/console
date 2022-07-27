@@ -23,6 +23,10 @@ describe('ImportEnvironmentVariableModal', () => {
     setOpen: jest.fn(),
     triggerToggleAll: jest.fn(),
     toggleAll: false,
+    showDropzone: false,
+    dropzoneGetInputProps: jest.fn(),
+    dropzoneGetRootProps: jest.fn(),
+    dropzoneIsDragActive: false,
   }
 
   it('should render successfully', async () => {
@@ -57,8 +61,10 @@ describe('ImportEnvironmentVariableModal', () => {
 
   describe('with only one entry', () => {
     let defaultValues: any
+    let baseElement: any
 
     beforeEach(() => {
+      baseElement = null
       const json = JSON.stringify({
         key1: 'value1',
       })
@@ -67,14 +73,18 @@ describe('ImportEnvironmentVariableModal', () => {
     })
 
     it('should render row with correct form inputs', async () => {
-      const { baseElement } = render(
-        wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues })
-      )
+      await act(() => {
+        baseElement = render(
+          wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues })
+        ).baseElement
+      })
 
-      const formRows = await findAllByTestId(baseElement, 'form-row')
-      expect(formRows[0].querySelectorAll('input')).toHaveLength(2)
-      expect(formRows[0].querySelectorAll('select')).toHaveLength(1)
-      expect(formRows[0].querySelectorAll('[data-testid="input-toggle"]')).toHaveLength(1)
+      await waitFor(async () => {
+        const formRows = await findAllByTestId(baseElement, 'form-row')
+        expect(formRows[0].querySelectorAll('input')).toHaveLength(2)
+        expect(formRows[0].querySelectorAll('select')).toHaveLength(1)
+        expect(formRows[0].querySelectorAll('[data-testid="input-toggle"]')).toHaveLength(1)
+      })
     })
 
     it('should disabled button if form is not well filled up', async () => {
@@ -141,6 +151,18 @@ describe('ImportEnvironmentVariableModal', () => {
       })
 
       expect(spy).toHaveBeenCalledWith(false)
+    })
+  })
+
+  describe('dropzone test', () => {
+    beforeEach(() => {
+      props.showDropzone = true
+    })
+
+    it('should render dropzone', async () => {
+      const defaultValues = {}
+      render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues }))
+      expect(await screen.getByTestId('drop-input')).toBeTruthy()
     })
   })
 })
