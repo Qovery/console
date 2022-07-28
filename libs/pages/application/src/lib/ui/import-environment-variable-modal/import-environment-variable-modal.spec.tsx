@@ -3,7 +3,7 @@ import ImportEnvironmentVariableModal, {
 } from './import-environment-variable-modal'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
-import { act, findAllByTestId, fireEvent, getByRole, render, screen, waitFor } from '@testing-library/react'
+import { act, findAllByTestId, fireEvent, getByTestId, render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
@@ -18,6 +18,7 @@ describe('ImportEnvironmentVariableModal', () => {
     dropzoneGetInputProps: jest.fn(),
     dropzoneGetRootProps: jest.fn(),
     dropzoneIsDragActive: false,
+    existingVarNames: [],
   }
 
   it('should render successfully', async () => {
@@ -97,7 +98,7 @@ describe('ImportEnvironmentVariableModal', () => {
       expect(warningIcon).toBeInTheDocument()
 
       await waitFor(async () => {
-        const button = await getByRole(baseElement, 'button', { name: 'Confirm' })
+        const button = await getByTestId(baseElement, 'submit-button')
         expect(button).toBeDisabled()
       })
     })

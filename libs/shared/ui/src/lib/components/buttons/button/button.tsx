@@ -32,6 +32,7 @@ export interface ButtonProps {
   type?: 'button' | 'submit' | 'reset' | undefined
   external?: boolean
   loading?: boolean
+  dataTestId?: string
 }
 
 export function Button(props: ButtonProps) {
@@ -82,7 +83,13 @@ export function Button(props: ButtonProps) {
 
   if (!link) {
     return (
-      <button className={defineClass} onClick={onClick} type={type} disabled={disabled}>
+      <button
+        data-testid={props.dataTestId || ''}
+        className={defineClass}
+        onClick={onClick}
+        type={type}
+        disabled={disabled}
+      >
         {content()}
       </button>
     )

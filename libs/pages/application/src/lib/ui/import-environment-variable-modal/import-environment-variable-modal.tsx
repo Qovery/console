@@ -5,6 +5,7 @@ import {
   ButtonStyle,
   Dropzone,
   Icon,
+  IconAwesomeEnum,
   InputSelectSmall,
   InputTextSmall,
   InputToggle,
@@ -13,7 +14,6 @@ import {
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { DropzoneRootProps } from 'react-dropzone'
-import { IconAwesomeEnum } from '../../../../../../shared/ui/src/lib/components/icon/icon-awesome.enum'
 
 export interface ImportEnvironmentVariableModalProps {
   onSubmit: () => void
@@ -194,7 +194,13 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               >
                 Cancel
               </Button>
-              <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={loading}>
+              <Button
+                dataTestId="submit-button"
+                className="btn--no-min-w"
+                type="submit"
+                disabled={!formState.isValid}
+                loading={loading}
+              >
                 Import {keys.length - props.numberOverride} & override {props.numberOverride} variables
               </Button>
             </div>

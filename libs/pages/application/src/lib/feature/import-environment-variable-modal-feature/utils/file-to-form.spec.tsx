@@ -14,19 +14,19 @@ describe('fileToForm Function', () => {
       key1_key: 'key1',
       key1_value: 'value1',
       key1_scope: EnvironmentVariableScopeEnum.PROJECT,
-      key1_secret: 'true',
+      key1_secret: '',
       key2_key: 'key2',
       key2_value: 'value2',
       key2_scope: EnvironmentVariableScopeEnum.PROJECT,
-      key2_secret: 'true',
+      key2_secret: '',
       key3_key: 'key3',
       key3_value: 'value3',
       key3_scope: EnvironmentVariableScopeEnum.PROJECT,
-      key3_secret: 'true',
+      key3_secret: '',
       keyEmpty_key: 'keyEmpty',
       keyEmpty_value: '',
       keyEmpty_scope: EnvironmentVariableScopeEnum.PROJECT,
-      keyEmpty_secret: 'true',
+      keyEmpty_secret: '',
     })
   })
 })
