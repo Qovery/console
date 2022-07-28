@@ -3,11 +3,19 @@ import ImportEnvironmentVariableModalFeature, {
 } from './import-environment-variable-modal-feature'
 import { findAllByTestId, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
+import { configureStore } from '@reduxjs/toolkit'
+import { initialRootState, rootReducer } from '@console/store/data'
+import { Provider } from 'react-redux'
 
 const envText = `
 QOVERY_BUILD_TIME=hello
 variable_denv=hey
 `
+
+const store = configureStore({
+  reducer: rootReducer,
+  preloadedState: initialRootState(),
+})
 
 describe('ImportEnvironmentVariableModalFeature', () => {
   const props: ImportEnvironmentVariableModalFeatureProps = {
@@ -16,7 +24,11 @@ describe('ImportEnvironmentVariableModalFeature', () => {
   }
 
   it('should render successfully and show dropzone', async () => {
-    const { baseElement } = render(<ImportEnvironmentVariableModalFeature {...props} />)
+    const { baseElement } = render(
+      <Provider store={store}>
+        <ImportEnvironmentVariableModalFeature {...props} />
+      </Provider>
+    )
 
     await waitFor(async () => {
       expect(baseElement).toBeTruthy()
@@ -25,7 +37,11 @@ describe('ImportEnvironmentVariableModalFeature', () => {
   })
 
   it('should read file dropped and show table of inputs', async () => {
-    const { baseElement } = render(<ImportEnvironmentVariableModalFeature {...props} />)
+    const { baseElement } = render(
+      <Provider store={store}>
+        <ImportEnvironmentVariableModalFeature {...props} />
+      </Provider>
+    )
     const inputEl = screen.getByTestId('drop-input')
 
     const blob = new Blob([envText])
