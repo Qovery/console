@@ -19,6 +19,7 @@ import {
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@console/domains/environment-variable'
 import { countOverride } from './utils/count-override'
+import { deleteEntry } from './utils/delete-entry'
 
 export interface ImportEnvironmentVariableModalFeatureProps {
   applicationId: string
@@ -27,7 +28,6 @@ export interface ImportEnvironmentVariableModalFeatureProps {
 
 export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVariableModalFeatureProps) {
   const methods = useForm({ mode: 'all' })
-
   const [fileParsed, setFileParsed] = useState<{ [key: string]: string } | undefined>(undefined)
   const [keys, setKeys] = useState<string[]>([])
   const [numberOverride, setNumberOverride] = useState<number>(0)
@@ -99,6 +99,9 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         dropzoneIsDragActive={isDragActive}
         existingVarNames={existingEnvVarNames}
         numberOverride={numberOverride}
+        deleteKey={(key) => {
+          deleteEntry(key, setKeys, keys, methods.unregister)
+        }}
       />
     </FormProvider>
   )

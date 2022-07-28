@@ -4,6 +4,7 @@ import {
   Button,
   ButtonStyle,
   Dropzone,
+  Icon,
   InputSelectSmall,
   InputTextSmall,
   InputToggle,
@@ -12,6 +13,7 @@ import {
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { DropzoneRootProps } from 'react-dropzone'
+import { IconAwesomeEnum } from '../../../../../../shared/ui/src/lib/components/icon/icon-awesome.enum'
 
 export interface ImportEnvironmentVariableModalProps {
   onSubmit: () => void
@@ -28,6 +30,7 @@ export interface ImportEnvironmentVariableModalProps {
   dropzoneIsDragActive: boolean
   existingVarNames: (string | undefined)[]
   numberOverride: number
+  deleteKey: (key: string) => void
 }
 
 const validateKey = (value: string): string | boolean => {
@@ -89,7 +92,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
           </div>
 
           <form onSubmit={props.onSubmit}>
-            <div className="grid mb-3" style={{ gridTemplateColumns: '30% 30% 30% 10%' }}>
+            <div className="grid mb-3" style={{ gridTemplateColumns: '30% 30% 25% 10% 5%' }}>
               <span className="text-xs text-text-600 font-medium">Variable</span>
               <span className="text-xs text-text-600 font-medium">Value</span>
               <span className="text-xs text-text-600 font-medium">Scope</span>
@@ -100,7 +103,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 key={key}
                 data-testid="form-row"
                 className="grid mb-3"
-                style={{ gridTemplateColumns: '30% 30% 30% 10%' }}
+                style={{ gridTemplateColumns: '30% 30% 25% 10% 5%' }}
               >
                 <Controller
                   name={key + '_key'}
@@ -168,6 +171,15 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                     control={control}
                     render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
                   />
+                </div>
+
+                <div className="flex items-center h-full w-full grow">
+                  <button
+                    className="btn-icon-action justify-center items-center w-full"
+                    onClick={() => props.deleteKey(key)}
+                  >
+                    <Icon className="text-xs text-text-400" name={IconAwesomeEnum.CROSS} />
+                  </button>
                 </div>
               </div>
             ))}

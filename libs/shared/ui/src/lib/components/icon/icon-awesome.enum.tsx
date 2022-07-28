@@ -69,5 +69,6 @@ export enum IconAwesomeEnum {
   CHART_BULLET = 'icon-solid-chart-bullet',
   FILE_ARROW_DOWN = 'icon-solid-file-arrow-down',
   FILE_ARROW_UP = 'icon-solid-file-arrow-up',
+  CROSS = 'icon-solid-xmark',
   // schema: favicons name
 }
