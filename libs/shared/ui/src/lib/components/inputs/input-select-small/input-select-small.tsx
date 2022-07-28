@@ -1,5 +1,5 @@
 import { Value } from '@console/shared/interfaces'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputSelectSmallProps {
@@ -7,28 +7,42 @@ export interface InputSelectSmallProps {
   label?: string
   items: Value[]
   getValue?: (name: string, value: Value | null) => void
-  defaultItem?: Value
   className?: string
+  dataTestId?: string
+  onChange?: (item: string | undefined) => void
+  defaultValue?: string
+  isValid?: boolean
 }
 
 export function InputSelectSmall(props: InputSelectSmallProps) {
-  const { name, label, items, defaultItem, className = '', getValue } = props
+  const { name, label, items, defaultValue, className = '', getValue } = props
 
-  const [item, setItem] = useState(defaultItem || null)
+  const [value, setValue] = useState(defaultValue)
 
   const onClickItem = (value: string) => {
     const selectedItem = items.find((i) => i.value === value) || null
-    if (selectedItem !== defaultItem) setItem(selectedItem)
+    if (!selectedItem) return
+    if (value !== defaultValue) {
+      setValue(value)
+      props.onChange && props.onChange(value)
+    }
     if (getValue) getValue(name, selectedItem)
   }
+
+  useEffect(() => {
+    if (defaultValue) {
+      setValue(defaultValue)
+    }
+  }, [defaultValue])
 
   return (
     <div className={`${className} relative flex gap-4 items-center`}>
       {label && <label className="text-sm shrink-0">{label}</label>}
       <select
+        data-testid={props.dataTestId || 'input-select-small'}
         name={name}
-        value={item?.value}
-        className="input input__select--small"
+        value={value}
+        className={`input input__select--small ${props.isValid ? 'input--focused' : ''}`}
         onChange={(e) => onClickItem(e.target.value)}
       >
         {items.map((item: Value, index: number) => (
@@ -37,7 +51,10 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
           </option>
         ))}
       </select>
-      <Icon name="icon-solid-angle-down" className="absolute top-3 right-4 text-sm text-text-500 leading-3 translate-y-0.5" />
+      <Icon
+        name="icon-solid-angle-down"
+        className="absolute top-3 right-4 text-sm text-text-500 leading-3 translate-y-0.5"
+      />
     </div>
   )
 }

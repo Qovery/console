@@ -47,4 +47,50 @@ describe('InputTextSmall', () => {
 
     expect((input as HTMLInputElement).value).toBe('some new text value')
   })
+
+  describe('with error on left', () => {
+    beforeEach(() => {
+      props.error = 'some error'
+      props.errorMessagePosition = 'left'
+    })
+
+    it('should render the error icon and not print the bottom error', () => {
+      render(<InputTextSmall {...props} />)
+
+      const warningIcon = screen.getByTestId('warning-icon-left')
+      expect(warningIcon).toBeTruthy()
+
+      expect(screen.getByTestId('input').className).toContain('input--error')
+      expect(screen.queryByText('some error')).toBeNull()
+      expect(screen.getByTestId('input-small-wrapper')).toHaveClass('flex')
+    })
+  })
+
+  describe('with warning on left', () => {
+    beforeEach(() => {
+      props.warning = 'some warning'
+      props.errorMessagePosition = 'left'
+    })
+
+    it('should render the error icon and not print the bottom error', () => {
+      render(<InputTextSmall {...props} />)
+
+      const warningIcon = screen.getByTestId('warning-icon-left')
+      expect(warningIcon).toBeTruthy()
+
+      expect(screen.getByTestId('input').className).not.toContain('input--error')
+      expect(screen.queryByText('some error')).toBeNull()
+      expect(screen.getByTestId('input-small-wrapper')).toHaveClass('flex')
+    })
+  })
+
+  it('should render icon', async () => {
+    render(<InputTextSmall {...props} />)
+
+    const input = screen.getByRole('textbox')
+
+    fireEvent.change(input, { target: { value: 'some new text value' } })
+
+    expect((input as HTMLInputElement).value).toBe('some new text value')
+  })
 })
