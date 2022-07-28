@@ -5,7 +5,6 @@ export function triggerToggleAll(
   setValue: UseFormSetValue<{ [key: string]: string | boolean }>,
   keys: string[]
 ): void {
-  console.log(value)
   keys.forEach((key) => {
     setValue(key + '_secret', value)
   })
