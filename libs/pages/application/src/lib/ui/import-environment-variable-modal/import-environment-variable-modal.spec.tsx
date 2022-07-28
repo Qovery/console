@@ -3,16 +3,7 @@ import ImportEnvironmentVariableModal, {
 } from './import-environment-variable-modal'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
-import {
-  act,
-  findAllByTestId,
-  fireEvent,
-  getByRole,
-  queryByText,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react'
+import { act, findAllByTestId, fireEvent, getByRole, render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import React from 'react'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
@@ -94,17 +85,16 @@ describe('ImportEnvironmentVariableModal', () => {
 
       await act(() => {
         const input = screen.getByLabelText('key1_key')
-        fireEvent.input(input, { target: { value: 'sdfasdf' } })
+        fireEvent.input(input, { target: { value: 'asdfasf' } })
       })
-
-      expect(queryByText(baseElement, 'Please enter a value.')).toBeNull()
 
       await act(() => {
         const input = screen.getByLabelText('key1_key')
         fireEvent.input(input, { target: { value: '' } })
       })
 
-      screen.getByText('Please enter a value.')
+      const warningIcon = screen.getByTestId('warning-icon-left')
+      expect(warningIcon).toBeInTheDocument()
 
       await waitFor(async () => {
         const button = await getByRole(baseElement, 'button', { name: 'Confirm' })
@@ -151,6 +141,26 @@ describe('ImportEnvironmentVariableModal', () => {
       })
 
       expect(spy).toHaveBeenCalledWith(false)
+    })
+
+    it('should show a warning icon if variable name begins with QOVERY', async () => {
+      const json = JSON.stringify({
+        key1: 'value1',
+      })
+      const defaultValues = jsonToForm(json)
+      props.keys = Object.keys(JSON.parse(json))
+
+      render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues }))
+
+      await act(() => {
+        const input = screen.getByLabelText('key1_key')
+        fireEvent.input(input, { target: { value: 'QOVERY_OIUSOD' } })
+      })
+
+      await waitFor(() => {
+        const warningIcon = screen.getByTestId('warning-icon-left')
+        expect(warningIcon).toBeInTheDocument()
+      })
     })
   })
 

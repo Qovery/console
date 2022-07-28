@@ -17,7 +17,7 @@ export interface ImportEnvironmentVariableModalFeatureProps {
 }
 
 export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVariableModalFeatureProps) {
-  const methods = useForm({ defaultValues: {}, mode: 'onChange' })
+  const methods = useForm({ mode: 'all' })
 
   const [fileParsed, setFileParsed] = useState<{ [key: string]: string } | undefined>(undefined)
   const [keys, setKeys] = useState<string[]>([])
@@ -34,7 +34,8 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   )
 
   useEffect(() => {
-    methods.reset(fileParsed)
+    methods.reset(fileParsed, { keepErrors: true, keepDirtyValues: true })
+    methods.trigger()
   }, [fileParsed, methods])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

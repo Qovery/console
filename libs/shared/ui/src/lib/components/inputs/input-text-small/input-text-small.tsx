@@ -34,7 +34,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
   return (
     <div data-testid="input-small-wrapper" className={`${className} ${classNameError}`}>
       {error && errorMessagePosition === 'left' && (
-        <Tooltip content={error} align="center">
+        <Tooltip content={error} align="center" side="top">
           <div data-testid="warning-icon-left" className="flex item-center">
             <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="block text-warning-500 text-md" />
           </div>
@@ -50,7 +50,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           type={type}
           placeholder={placeholder}
           defaultValue={value}
-          onChange={onChange}
+          onInput={onChange}
           id={props.label}
         />
       </div>

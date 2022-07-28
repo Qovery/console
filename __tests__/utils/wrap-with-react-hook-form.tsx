@@ -10,7 +10,7 @@ import React from 'react'
  */
 export function wrapWithReactHookForm(ui: React.ReactElement, { defaultValues = {} } = {}) {
   const Wrapper = ({ children }: { children: React.ReactElement }) => {
-    const methods = useForm({ defaultValues, mode: 'onChange' })
+    const methods = useForm({ defaultValues, mode: 'all' })
     return <FormProvider {...methods}>{children}</FormProvider>
   }
 
