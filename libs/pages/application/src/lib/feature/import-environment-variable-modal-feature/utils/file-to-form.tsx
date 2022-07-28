@@ -10,8 +10,8 @@ export function parsedToForm(parsed: { [key: string]: string }): { [key: string]
   Object.keys(parsed).forEach((key) => {
     defaultValues[key + '_key'] = key
     defaultValues[key + '_value'] = parsed[key]
-    defaultValues[key + '_scope'] = EnvironmentVariableScopeEnum.BUILT_IN
-    defaultValues[key + '_secret'] = 'true'
+    defaultValues[key + '_scope'] = EnvironmentVariableScopeEnum.PROJECT
+    defaultValues[key + '_secret'] = ''
   })
 
   return defaultValues

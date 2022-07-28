@@ -9,6 +9,7 @@ export interface InputTextSmallProps {
   value?: string
   placeholder?: string
   error?: string
+  warning?: string
   className?: string
   label?: string
   errorMessagePosition?: 'left' | 'bottom'
@@ -20,6 +21,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
     value,
     placeholder,
     error,
+    warning,
     onChange,
     type = 'text',
     className = '',
@@ -33,8 +35,8 @@ export function InputTextSmall(props: InputTextSmallProps) {
 
   return (
     <div data-testid="input-small-wrapper" className={`${className} ${classNameError}`}>
-      {error && errorMessagePosition === 'left' && (
-        <Tooltip content={error} align="center" side="top">
+      {(error || warning) && errorMessagePosition === 'left' && (
+        <Tooltip content={error || warning || ''} align="center" side="top">
           <div data-testid="warning-icon-left" className="flex item-center">
             <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="block text-warning-500 text-md" />
           </div>

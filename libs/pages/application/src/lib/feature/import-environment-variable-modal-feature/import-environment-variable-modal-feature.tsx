@@ -10,6 +10,15 @@ import { computeAvailableScope } from '../../utils/compute-available-environment
 import { useDropzone } from 'react-dropzone'
 import { parseEnvText } from '@console/shared/utils'
 import { onDrop } from './utils/on-drop'
+import { EnvironmentVariableEntity, LoadingStatus, SecretEnvironmentVariableEntity } from '@console/shared/interfaces'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@console/store/data'
+import {
+  getEnvironmentVariablesState,
+  selectEnvironmentVariablesByApplicationId,
+  selectSecretEnvironmentVariablesByApplicationId,
+} from '@console/domains/environment-variable'
+import { countOverride } from './utils/count-override'
 
 export interface ImportEnvironmentVariableModalFeatureProps {
   applicationId: string
@@ -21,6 +30,29 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
 
   const [fileParsed, setFileParsed] = useState<{ [key: string]: string } | undefined>(undefined)
   const [keys, setKeys] = useState<string[]>([])
+  const [numberOverride, setNumberOverride] = useState<number>(0)
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const environmentVariables: EnvironmentVariableEntity[] = useSelector<RootState, EnvironmentVariableEntity[]>(
+    (state) => selectEnvironmentVariablesByApplicationId(state, props.applicationId)
+  )
+  const loadingStatus: LoadingStatus = useSelector<RootState, LoadingStatus>(
+    (state) => getEnvironmentVariablesState(state).loadingStatus
+  )
+  const secretEnvironmentVariables: SecretEnvironmentVariableEntity[] = useSelector<
+    RootState,
+    SecretEnvironmentVariableEntity[]
+  >((state) => selectSecretEnvironmentVariablesByApplicationId(state, props.applicationId))
+
+  const [existingEnvVarNames, setExistingEnvVarNames] = useState<(string | undefined)[]>([])
+
+  useEffect(() => {
+    setExistingEnvVarNames([
+      ...environmentVariables.map((el) => el.key),
+      ...secretEnvironmentVariables.map((el) => el.key),
+    ])
+  }, [environmentVariables, secretEnvironmentVariables])
 
   const handleData = useCallback(
     async (data: string) => {
@@ -42,6 +74,10 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
     onDrop: (acceptedFiles, fileRejections, event) => onDrop(acceptedFiles, handleData),
   })
 
+  methods.watch((data) => {
+    setNumberOverride(countOverride(data, existingEnvVarNames))
+  })
+
   return (
     <FormProvider {...methods}>
       <ImportEnvironmentVariableModal
@@ -52,13 +88,17 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         }
         keys={keys}
         setOpen={props.setOpen}
-        loading={false}
+        loading={loadingStatus === 'loading'}
         availableScopes={computeAvailableScope(undefined, true)}
-        onSubmit={methods.handleSubmit(() => handleSubmit(methods.getValues()))}
+        onSubmit={methods.handleSubmit(() =>
+          handleSubmit(methods.getValues(), props.applicationId, keys, dispatch, props.setOpen)
+        )}
         showDropzone={!fileParsed}
         dropzoneGetInputProps={getInputProps}
         dropzoneGetRootProps={getRootProps}
         dropzoneIsDragActive={isDragActive}
+        existingVarNames={existingEnvVarNames}
+        numberOverride={numberOverride}
       />
     </FormProvider>
   )

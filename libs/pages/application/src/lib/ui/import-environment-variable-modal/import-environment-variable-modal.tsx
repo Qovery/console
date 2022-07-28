@@ -26,13 +26,23 @@ export interface ImportEnvironmentVariableModalProps {
   dropzoneGetRootProps: <T extends DropzoneRootProps>(props?: T) => T
   dropzoneGetInputProps: <T extends DropzoneRootProps>(props?: T) => T
   dropzoneIsDragActive: boolean
+  existingVarNames: (string | undefined)[]
+  numberOverride: number
 }
 
-const validateDoesNotBeginsWithQovery = (value: string) => {
+const validateKey = (value: string): string | boolean => {
   if (value.toLowerCase().startsWith('qovery')) {
     return 'Variable name cannot begin with "QOVERY"'
   }
   return true
+}
+
+const isAnOverride = (value: string, existingVarNames: (string | undefined)[]): string | undefined => {
+  if (existingVarNames.indexOf(value) !== -1) {
+    return 'This variable name already exist and will be overwritten'
+  }
+
+  return undefined
 }
 
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {
@@ -52,7 +62,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
             className="mb-6"
             message="You are about to import environment variables into your environment. Please note that if you import a variable with the same name as an existing variable, it will be overwritten."
           />
-          <div {...props.dropzoneGetRootProps({ className: 'dropzone' })} className="flex h-[200px]">
+          <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
             <input data-testid="drop-input" {...props.dropzoneGetInputProps()} />
             <Dropzone isDragActive={props.dropzoneIsDragActive} />
           </div>
@@ -101,7 +111,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       value: pattern,
                       message: 'Variable name cannot contain spaces.',
                     },
-                    validate: validateDoesNotBeginsWithQovery,
+                    validate: (value) => validateKey(value),
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputTextSmall
@@ -110,6 +120,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       onChange={field.onChange}
                       value={field.value}
                       error={error?.message}
+                      warning={isAnOverride(field.value, props.existingVarNames)}
                       label={key + '_key'}
                       errorMessagePosition="left"
                     />
@@ -172,7 +183,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 Cancel
               </Button>
               <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={loading}>
-                Confirm
+                Import {keys.length - props.numberOverride} & override {props.numberOverride} variables
               </Button>
             </div>
           </form>
