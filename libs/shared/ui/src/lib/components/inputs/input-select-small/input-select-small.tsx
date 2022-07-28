@@ -22,10 +22,9 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
   const onClickItem = (value: string) => {
     const selectedItem = items.find((i) => i.value === value) || null
     if (!selectedItem) return
-
     if (value !== defaultValue) {
-      setValue(selectedItem.value)
-      props.onChange && props.onChange(selectedItem.value)
+      setValue(value)
+      props.onChange && props.onChange(value)
     }
     if (getValue) getValue(name, selectedItem)
   }

@@ -28,9 +28,19 @@ export interface ImportEnvironmentVariableModalProps {
   dropzoneIsDragActive: boolean
 }
 
+const validateDoesNotBeginsWithQovery = (value: string) => {
+  if (value.toLowerCase().startsWith('qovery')) {
+    return 'Variable name cannot begin with "QOVERY"'
+  }
+  return true
+}
+
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {
   const { control, formState } = useFormContext()
   const { keys = [], loading = false, availableScopes = computeAvailableScope(undefined, true) } = props
+
+  // write a regex pattern that rejects spaces
+  const pattern = /^[^\s]+$/
 
   return (
     <div className="p-6">
@@ -61,7 +71,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
               onChange={(value?: string) => props.changeScopeForAll(value as EnvironmentVariableScopeEnum)}
             />
-            <span>and</span>
+            <span className="font-medium text-element-light-lighter-800 text-sm">and</span>
             <div className="flex items-center gap-1">
               <InputToggle dataTestId="toggle-for-all" value={props.toggleAll} onChange={props.triggerToggleAll} />
               <p className="text-text-500 text-sm font-medium">Secret</p>
@@ -87,6 +97,11 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   control={control}
                   rules={{
                     required: 'Please enter a value.',
+                    pattern: {
+                      value: pattern,
+                      message: 'Variable name cannot contain spaces.',
+                    },
+                    validate: validateDoesNotBeginsWithQovery,
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputTextSmall
@@ -96,6 +111,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       value={field.value}
                       error={error?.message}
                       label={key + '_key'}
+                      errorMessagePosition="left"
                     />
                   )}
                 />
@@ -114,6 +130,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       onChange={field.onChange}
                       value={field.value}
                       error={error?.message}
+                      errorMessagePosition="left"
                     />
                   )}
                 />
@@ -128,6 +145,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       name={field.name}
                       defaultValue={field.value}
                       isValid={!error}
+                      onChange={field.onChange}
                       items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
                     />
                   )}
