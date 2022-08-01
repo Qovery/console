@@ -15585,10 +15585,10 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==
 
-qovery-typescript-axios@1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.8.tgz#c31bbaecae52abe52ee151cc58a398b2dcf36ab6"
-  integrity sha512-2GSKuW6pulTbP1DH1HfPasLJwlj4peFiNJbRIC5NJUNzWFDHDy2DmKIjsC8dcY5JUKsoMfODnwZlQq7WgczXNA==
+qovery-typescript-axios@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.9.tgz#42a42f242e6c14804bcd3b26a6024c9100313d69"
+  integrity sha512-OUK3QWigO2TCGeGm2wl9+pMlCrSFHV8a1s6uGXuxNdakqcB7LkdO61TFI+73lhgra+bN1fxetr6Lec8QZQfrvQ==
   dependencies:
     axios "^0.21.4"
 
@@ -17717,7 +17717,7 @@ tailwindcss@^3.0.24:
     postcss "^8.4.14"
     postcss-import "^14.1.0"
     postcss-js "^4.0.0"
-    postcss-load-config "^4.0.1"
+    postcss-load-config "^3.1.4"
     postcss-nested "5.0.6"
     postcss-selector-parser "^6.0.10"
     postcss-value-parser "^4.2.0"

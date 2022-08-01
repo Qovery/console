@@ -1,5 +1,5 @@
 import { ClusterEntity } from '@console/shared/interfaces'
-import { Icon, StatusChip, CopyToClipboard } from '@console/shared/ui'
+import { CopyToClipboard, Icon, StatusChip } from '@console/shared/ui'
 
 export interface CardClusterProps {
   cluster?: ClusterEntity
