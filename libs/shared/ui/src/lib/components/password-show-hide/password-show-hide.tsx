@@ -34,7 +34,7 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
           )}
         </button>
       )}
-      <div className="flex grow">
+      <div className="flex grow  text-ellipsis overflow-hidden">
         <Tooltip content={value}>
           {visible ? (
             <div data-testid="visible_value" className="truncate text-text-600">

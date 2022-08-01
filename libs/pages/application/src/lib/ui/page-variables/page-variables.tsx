@@ -13,7 +13,7 @@ export interface PageVariablesProps {
 
 export function PageVariablesMemo(props: PageVariablesProps) {
   const { tableHead, variables, setFilterData, filterData } = props
-  const columnsWidth = '30% 20% 25% 10% 15%'
+  const columnsWidth = '30% 20% 22% 13% 15%'
 
   return (
     <Table

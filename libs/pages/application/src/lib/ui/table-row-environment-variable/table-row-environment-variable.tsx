@@ -16,6 +16,10 @@ import {
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
 import { IconEnum } from '@console/shared/enums'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { NavLink } from 'react-router-dom'
+import { APPLICATION_URL } from '@console/shared/router'
+import { useParams } from 'react-router'
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
@@ -27,6 +31,7 @@ export interface TableRowEnvironmentVariableProps {
 
 export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariableProps) {
   const { variable, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, rowActions } = props
+  const { projectId = '', environmentId = '', organizationId = '' } = useParams()
 
   return (
     <>
@@ -99,7 +104,28 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               </div>
             </Skeleton>
           </div>
-          <div className="text-text-600 text-ssm font-medium px-4">{variable.service_name}</div>
+          <div className="text-text-600 text-ssm font-medium px-4">
+            {variable.variable_type === 'public' &&
+            variable.scope === EnvironmentVariableScopeEnum.BUILT_IN &&
+            (variable as EnvironmentVariableEntity).service_type ? (
+              <NavLink
+                className="flex gap-2 items-center"
+                to={
+                  APPLICATION_URL(
+                    organizationId,
+                    projectId,
+                    environmentId,
+                    (variable as EnvironmentVariableEntity).service_id
+                  ) + '/general'
+                }
+              >
+                <Icon name={(variable as EnvironmentVariableEntity).service_type?.toString() || ''} className="w-4" />
+                {variable.service_name}
+              </NavLink>
+            ) : (
+              ''
+            )}
+          </div>
           <div className="text-text-600 text-ssm capitalize font-medium px-4 ">{variable.scope.toLowerCase()}</div>
         </>
       </TableRow>

@@ -50,7 +50,7 @@ const isAnOverride = (value: string, existingVarNames: (string | undefined)[]): 
 
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {
   const { control, formState } = useFormContext()
-  const { keys = [], loading = false, availableScopes = computeAvailableScope(undefined, true) } = props
+  const { keys = [], loading = false, availableScopes = computeAvailableScope(undefined, false) } = props
 
   // write a regex pattern that rejects spaces
   const pattern = /^[^\s]+$/

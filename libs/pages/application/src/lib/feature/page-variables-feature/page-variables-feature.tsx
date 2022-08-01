@@ -105,6 +105,12 @@ export function PageVariablesFeature() {
     },
     {
       title: 'Service link',
+      filter: [
+        {
+          title: 'Sort by service',
+          key: 'service_name',
+        },
+      ],
     },
     {
       title: 'Scope',

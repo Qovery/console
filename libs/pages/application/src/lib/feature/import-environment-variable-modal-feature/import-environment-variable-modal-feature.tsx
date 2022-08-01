@@ -89,7 +89,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         keys={keys}
         setOpen={props.setOpen}
         loading={loadingStatus === 'loading'}
-        availableScopes={computeAvailableScope(undefined, true)}
+        availableScopes={computeAvailableScope(undefined, false)}
         onSubmit={methods.handleSubmit(() =>
           handleSubmit(methods.getValues(), props.applicationId, keys, dispatch, props.setOpen)
         )}

@@ -9,6 +9,8 @@ import {
   createSecret,
   editEnvironmentVariables,
   editSecret,
+  fetchEnvironmentVariables,
+  fetchSecretEnvironmentVariables,
 } from '@console/domains/environment-variable'
 import {
   CrudEnvironmentVariableModalFeatureProps,
@@ -122,7 +124,8 @@ export function handleSubmitForEnvSecretCreation(
             toasterCallback,
           })
         )
-          .then(() => {
+          .then(async () => {
+            await dispatch(fetchEnvironmentVariables(props.applicationId)).unwrap()
             setClosing(true)
           })
           .finally(() => {
@@ -206,7 +209,8 @@ export function handleSubmitForEnvSecretCreation(
             toasterCallback,
           })
         )
-          .then(() => {
+          .then(async () => {
+            await dispatch(fetchSecretEnvironmentVariables(props.applicationId)).unwrap()
             setClosing(true)
           })
           .finally(() => {
