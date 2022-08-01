@@ -1,5 +1,6 @@
-import { Cluster, ClusterLogs, ClusterStatus } from 'qovery-typescript-axios'
+import { Cluster, ClusterLogs, ClusterStatusGet } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../..'
+
 export interface ClusterEntity extends Cluster {
   logs?: {
     loadingStatus: LoadingStatus
@@ -7,6 +8,6 @@ export interface ClusterEntity extends Cluster {
   }
   extendedStatus?: {
     loadingStatus: LoadingStatus
-    status?: ClusterStatus
+    status?: ClusterStatusGet
   }
 }
