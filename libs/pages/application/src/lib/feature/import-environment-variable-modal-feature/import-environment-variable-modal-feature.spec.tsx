@@ -12,6 +12,8 @@ QOVERY_BUILD_TIME=hello
 variable_denv=hey
 `
 
+// I had to mock the store myself because we can't use our custon render here because there is an issue
+// with intercom. I don't know why yet.
 const store = configureStore({
   reducer: rootReducer,
   preloadedState: initialRootState(),
