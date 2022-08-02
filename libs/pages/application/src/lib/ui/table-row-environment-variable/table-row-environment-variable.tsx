@@ -105,21 +105,12 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
             </Skeleton>
           </div>
           <div className="text-text-600 text-ssm font-medium px-4">
-            {variable.variable_type === 'public' &&
-            variable.scope === EnvironmentVariableScopeEnum.BUILT_IN &&
-            (variable as EnvironmentVariableEntity).service_type ? (
+            {variable.scope === EnvironmentVariableScopeEnum.BUILT_IN && variable.service_type ? (
               <NavLink
                 className="flex gap-2 items-center"
-                to={
-                  APPLICATION_URL(
-                    organizationId,
-                    projectId,
-                    environmentId,
-                    (variable as EnvironmentVariableEntity).service_id
-                  ) + '/general'
-                }
+                to={APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) + '/general'}
               >
-                <Icon name={(variable as EnvironmentVariableEntity).service_type?.toString() || ''} className="w-4" />
+                <Icon name={variable.service_type?.toString() || ''} className="w-4" />
                 {variable.service_name}
               </NavLink>
             ) : (

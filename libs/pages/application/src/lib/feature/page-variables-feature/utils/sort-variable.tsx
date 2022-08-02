@@ -3,6 +3,7 @@ import {
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 
 export function sortVariable(
   variables: EnvironmentVariableEntity[],
@@ -20,6 +21,15 @@ export function sortVariable(
     )
     .sort((a, b) => {
       let serviceNameSorting = 0
+      let scopeOrdering = 0
+      if (a.scope === EnvironmentVariableScopeEnum.BUILT_IN && b.scope !== EnvironmentVariableScopeEnum.BUILT_IN) {
+        scopeOrdering = -1
+      }
+
+      if (a.scope !== EnvironmentVariableScopeEnum.BUILT_IN && b.scope === EnvironmentVariableScopeEnum.BUILT_IN) {
+        scopeOrdering = 1
+      }
+
       if ((a as EnvironmentVariableEntity).service_name && (b as EnvironmentVariableEntity).service_name) {
         serviceNameSorting = (a as EnvironmentVariableEntity).service_name.localeCompare(
           (b as EnvironmentVariableEntity).service_name
@@ -35,15 +45,17 @@ export function sortVariable(
       }
 
       let keySorting = 0
-      if (!a.key || !b.key) {
-        keySorting = 0
-      } else if (a.key.toLowerCase() < b.key.toLowerCase()) {
+      if (a.key && b.key) {
+        keySorting = a.key.localeCompare(b.key)
+      }
+      if (a.key && !b.key) {
         keySorting = -1
-      } else if (a.key.toLowerCase() > b.key.toLowerCase()) {
+      }
+      if (!a.key && b.key) {
         keySorting = 1
       }
 
-      return serviceNameSorting || keySorting
+      return scopeOrdering || serviceNameSorting || keySorting
     })
 
   const withAliasOrOverride = merged.filter(

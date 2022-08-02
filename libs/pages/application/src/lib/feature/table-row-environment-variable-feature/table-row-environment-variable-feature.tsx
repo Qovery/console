@@ -37,7 +37,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const edit = {
+  const edit = (type: EnvironmentVariableType) => ({
     name: 'Edit',
     onClick: () => {
       openModal({
@@ -49,13 +49,13 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             applicationId={applicationId}
             projectId={projectId}
             environmentId={environmentId}
-            type={EnvironmentVariableType.NORMAL}
+            type={type}
           />
         ),
       })
     },
     contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-500" />,
-  }
+  })
 
   const createOverride = {
     name: 'Create override',
@@ -99,8 +99,21 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
   const computeMenuActions = (): MenuItemProps[] => {
     const menu = []
+    let variableType: EnvironmentVariableType = EnvironmentVariableType.NORMAL
 
-    if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) menu.push(edit)
+    if (
+      (variable as EnvironmentVariableEntity).overridden_variable ||
+      (variable as SecretEnvironmentVariableEntity).overridden_secret
+    ) {
+      variableType = EnvironmentVariableType.OVERRIDE
+    } else if (
+      (variable as EnvironmentVariableEntity).aliased_variable ||
+      (variable as SecretEnvironmentVariableEntity).aliased_secret
+    ) {
+      variableType = EnvironmentVariableType.ALIAS
+    }
+
+    if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) menu.push(edit(variableType))
 
     if (
       !(
