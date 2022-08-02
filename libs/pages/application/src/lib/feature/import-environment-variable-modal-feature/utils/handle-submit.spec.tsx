@@ -46,7 +46,8 @@ describe('handleSubmit()', () => {
     }
     const keys = ['key', 'key2']
     await handleSubmit(data, applicationId, keys, dispatch, modalClose)
-    expect(dispatch).toHaveBeenCalled()
+    // called three times: one to dispatch the import and two times to fetch secrets and env variables
+    expect(dispatch).toHaveBeenCalledTimes(3)
     expect(modalClose).toHaveBeenCalledWith(false)
   })
 })
