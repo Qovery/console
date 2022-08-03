@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard'
@@ -12,8 +12,12 @@ export interface PasswordShowHideProps {
 }
 
 export function PasswordShowHide(props: PasswordShowHideProps) {
-  const { value = '', isSecret = false, className = '', canCopy = false } = props
-  const [visible, setVisible] = useState<boolean>(props.defaultVisible)
+  const { value = '', isSecret = false, className = '', canCopy = false, defaultVisible = false } = props
+  const [visible, setVisible] = useState<boolean>(defaultVisible)
+
+  useEffect(() => {
+    setVisible(defaultVisible)
+  }, [defaultVisible])
 
   return (
     <div className={`flex items-center text-xs text-text-400 ${className}`}>

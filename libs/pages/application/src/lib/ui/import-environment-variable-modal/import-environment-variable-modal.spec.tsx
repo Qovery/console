@@ -18,7 +18,7 @@ describe('ImportEnvironmentVariableModal', () => {
     dropzoneGetInputProps: jest.fn(),
     dropzoneGetRootProps: jest.fn(),
     dropzoneIsDragActive: false,
-    existingVarNames: [],
+    existingVars: [],
   }
 
   it('should render successfully', async () => {

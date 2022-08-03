@@ -21,6 +21,7 @@ import {
 import { useDocumentTitle } from '@console/shared/utils'
 import PageVariables from '../../ui/page-variables/page-variables'
 import { sortVariable } from './utils/sort-variable'
+import { environmentVariableUiActions } from '@console/pages/application'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
@@ -57,6 +58,7 @@ export function PageVariablesFeature() {
   const [isLoading, setLoading] = useState(false)
 
   useEffect(() => {
+    dispatch(environmentVariableUiActions.toggleShowAll(false))
     dispatch(fetchEnvironmentVariables(applicationId))
     dispatch(fetchSecretEnvironmentVariables(applicationId))
   }, [dispatch, applicationId])

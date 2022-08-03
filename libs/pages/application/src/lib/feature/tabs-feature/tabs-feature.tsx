@@ -1,4 +1,15 @@
-import { ButtonAction, Icon, MenuItemProps, Skeleton, StatusChip, Tabs, TabsItem, useModal } from '@console/shared/ui'
+import {
+  ButtonAction,
+  ButtonStyle,
+  Button,
+  Icon, IconAwesomeEnum,
+  MenuItemProps,
+  Skeleton,
+  StatusChip,
+  Tabs,
+  TabsItem,
+  useModal
+} from '@console/shared/ui'
 import { ReactNode } from 'react'
 import { RunningStatus } from '@console/shared/enums'
 import {
@@ -10,8 +21,8 @@ import {
 } from '@console/shared/router'
 import { StateEnum } from 'qovery-typescript-axios'
 import { matchPath, useLocation, useParams } from 'react-router'
-import { useSelector } from 'react-redux'
-import { RootState } from '@console/store/data'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '@console/store/data'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { getApplicationsState } from '@console/domains/application'
 import { ClickEvent } from '@szhsin/react-menu'
@@ -20,6 +31,7 @@ import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
+import { environmentVariableUiActions, getEnvironmentVariableUiState } from '@console/pages/application'
 
 export function TabsFeature() {
   const { organizationId, projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -28,6 +40,10 @@ export function TabsFeature() {
   )
   const location = useLocation()
   const { openModal, closeModal } = useModal()
+
+  const globalShowHideValue = useSelector<RootState, boolean>((state) => getEnvironmentVariableUiState(state).showAll)
+
+  const dispatch = useDispatch<AppDispatch>()
 
   const items: TabsItem[] = [
     {
@@ -109,10 +125,9 @@ export function TabsFeature() {
           {
             name: 'Import variables',
             onClick: (e: ClickEvent) => {
-              setOpenModal(true)
-              setContentModal(
-                <ImportEnvironmentVariableModalFeature setOpen={setOpenModal} applicationId={applicationId} />
-              )
+              openModal({
+                content: (<ImportEnvironmentVariableModalFeature closeModal={closeModal} applicationId={applicationId} />)
+              })
             },
             contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-400" />,
           },
@@ -127,26 +142,38 @@ export function TabsFeature() {
   }
 
   const contentRight: ReactNode = matchEnvVariableRoute && (
+    <>
+      <Button
+        className="mr-2"
+        style={ButtonStyle.FLAT}
+        iconLeft={!globalShowHideValue ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH}
+        onClick={() => {
+          dispatch(environmentVariableUiActions.toggleShowAll(!globalShowHideValue))
+        }}
+      >
+        {globalShowHideValue ? 'Hide all' : 'Show all'}
+      </Button>
     <ButtonAction
       onClick={() => {
-        openModal({
-          content: (
-            <CrudEnvironmentVariableModalFeature
+        openModal(
+          {
+            content: (<CrudEnvironmentVariableModalFeature
               closeModal={closeModal}
               type={EnvironmentVariableType.NORMAL}
               mode={EnvironmentVariableCrudMode.CREATION}
               applicationId={applicationId}
               environmentId={environmentId}
               projectId={projectId}
-            />
-          ),
-        })
+            />)
+          }
+        )
       }}
       iconRight="icon-solid-plus"
       menus={menuForContentRight}
     >
       New variable
     </ButtonAction>
+      </>
   )
 
   return <Tabs items={items} contentRight={<div className="px-5">{contentRight}</div>} />

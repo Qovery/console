@@ -27,10 +27,18 @@ export interface TableRowEnvironmentVariableProps {
   rowActions: ButtonIconActionElementProps[]
   columnsWidth?: string
   isLoading: boolean
+  defaultShowHidePassword?: boolean
 }
 
 export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariableProps) {
-  const { variable, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, isLoading, rowActions } = props
+  const {
+    variable,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    isLoading,
+    rowActions,
+    defaultShowHidePassword = false,
+  } = props
   const { projectId = '', environmentId = '', organizationId = '' } = useParams()
 
   return (
@@ -95,7 +103,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                 {variable.variable_type === 'public' ? (
                   <PasswordShowHide
                     value={(variable as EnvironmentVariableEntity).value}
-                    defaultVisible={false}
+                    defaultVisible={defaultShowHidePassword}
                     canCopy={true}
                   />
                 ) : (

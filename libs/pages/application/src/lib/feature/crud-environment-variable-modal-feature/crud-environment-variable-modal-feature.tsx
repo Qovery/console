@@ -110,7 +110,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         onSubmit={onSubmit}
         closeModal={props.closeModal}
         type={props.type}
-        availableScopes={computeAvailableScope(variable)}
+        availableScopes={computeAvailableScope(variable?.scope)}
         loading={loading}
       />
     </FormProvider>

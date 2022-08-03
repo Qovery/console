@@ -9,17 +9,19 @@ import {
   InputSelectSmall,
   InputTextSmall,
   InputToggle,
-  WarningBox,
+  Tooltip,
 } from '@console/shared/ui'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { DropzoneRootProps } from 'react-dropzone'
+import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
+import { validateKey, warningMessage } from '../../feature/import-environment-variable-modal-feature/utils/form-check'
 
 export interface ImportEnvironmentVariableModalProps {
   onSubmit: () => void
   keys?: string[]
   availableScopes: EnvironmentVariableScopeEnum[]
-  setOpen: (b: boolean) => void
+  closeModal: () => void
   loading: boolean
   triggerToggleAll: (b: boolean) => void
   toggleAll: boolean
@@ -28,28 +30,14 @@ export interface ImportEnvironmentVariableModalProps {
   dropzoneGetRootProps: <T extends DropzoneRootProps>(props?: T) => T
   dropzoneGetInputProps: <T extends DropzoneRootProps>(props?: T) => T
   dropzoneIsDragActive: boolean
-  existingVarNames: (string | undefined)[]
-  numberOverride: number
+  existingVars: EnvironmentVariableSecretOrPublic[]
   deleteKey: (key: string) => void
-}
-
-const validateKey = (value: string): string | boolean => {
-  if (value.toLowerCase().startsWith('qovery')) {
-    return 'Variable name cannot begin with "QOVERY"'
-  }
-  return true
-}
-
-const isAnOverride = (value: string, existingVarNames: (string | undefined)[]): string | undefined => {
-  if (existingVarNames.indexOf(value) !== -1) {
-    return 'This variable name already exist and will be overwritten'
-  }
-
-  return undefined
+  overwriteEnabled: boolean
+  setOverwriteEnabled: (b: boolean) => void
 }
 
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {
-  const { control, formState } = useFormContext()
+  const { control, formState, getValues, trigger } = useFormContext()
   const { keys = [], loading = false, availableScopes = computeAvailableScope(undefined, false) } = props
 
   // write a regex pattern that rejects spaces
@@ -61,10 +49,6 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
       {props.showDropzone ? (
         <>
-          <WarningBox
-            className="mb-6"
-            message="You are about to import environment variables into your environment. Please note that if you import a variable with the same name as an existing variable, it will be overwritten."
-          />
           <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
             <input data-testid="drop-input" {...props.dropzoneGetInputProps()} />
             <Dropzone isDragActive={props.dropzoneIsDragActive} />
@@ -72,38 +56,54 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
         </>
       ) : (
         <>
-          <WarningBox
-            className="mb-6"
-            message="You are about to import environment variables into your environment. Please note that 3 variables with the same name as an existing variable and will be overwritten"
-          />
-          <div className="flex items-center bg-element-light-lighter-400 rounded-sm justify-between px-4 py-2 my-6">
-            <p className="font-medium text-element-light-lighter-800 text-sm">Preset all variables with scope</p>
-            <InputSelectSmall
-              dataTestId="select-scope-for-all"
-              name="search"
-              items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
-              onChange={(value?: string) => props.changeScopeForAll(value as EnvironmentVariableScopeEnum)}
+          <div className="flex gap-2 items-center mb-6">
+            <InputToggle
+              dataTestId="overwrite-enabled"
+              value={props.overwriteEnabled}
+              onChange={props.setOverwriteEnabled}
             />
-            <span className="font-medium text-element-light-lighter-800 text-sm">and</span>
-            <div className="flex items-center gap-1">
-              <InputToggle dataTestId="toggle-for-all" value={props.toggleAll} onChange={props.triggerToggleAll} />
-              <p className="text-text-500 text-sm font-medium">Secret</p>
-            </div>
+            <p className="text-text-500 text-sm font-medium flex items-center gap-2">
+              Enable overwrite
+              <Tooltip content={'If enabled, existing variables will be overwritten.'}>
+                <div>
+                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                </div>
+              </Tooltip>
+            </p>
           </div>
 
           <form onSubmit={props.onSubmit}>
-            <div className="grid mb-3" style={{ gridTemplateColumns: '30% 30% 25% 10% 5%' }}>
+            <div className="grid mb-3" style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}>
               <span className="text-xs text-text-600 font-medium">Variable</span>
               <span className="text-xs text-text-600 font-medium">Value</span>
               <span className="text-xs text-text-600 font-medium">Scope</span>
               <span className="text-xs text-text-600 font-medium">Secret</span>
+            </div>
+
+            <div className="flex items-center bg-element-light-lighter-400 rounded-sm justify-between px-4 py-2 mb-3">
+              <p className="font-medium text-element-light-lighter-800 text-sm">Apply for all</p>
+              <div className="flex gap-4">
+                <InputSelectSmall
+                  className="w-[188px]"
+                  dataTestId="select-scope-for-all"
+                  name="search"
+                  items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
+                  onChange={(value?: string) => {
+                    props.changeScopeForAll(value as EnvironmentVariableScopeEnum)
+                    trigger().then()
+                  }}
+                />
+                <div className="flex items-center mr-6">
+                  <InputToggle dataTestId="toggle-for-all" value={props.toggleAll} onChange={props.triggerToggleAll} />
+                </div>
+              </div>
             </div>
             {keys?.map((key) => (
               <div
                 key={key}
                 data-testid="form-row"
                 className="grid mb-3"
-                style={{ gridTemplateColumns: '30% 30% 25% 10% 5%' }}
+                style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}
               >
                 <Controller
                   name={key + '_key'}
@@ -114,7 +114,8 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       value: pattern,
                       message: 'Variable name cannot contain spaces.',
                     },
-                    validate: (value) => validateKey(value),
+                    validate: (value) =>
+                      validateKey(value, props.existingVars, getValues(key + '_scope') as EnvironmentVariableScopeEnum),
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputTextSmall
@@ -123,7 +124,12 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       onChange={field.onChange}
                       value={field.value}
                       error={error?.message}
-                      warning={isAnOverride(field.value, props.existingVarNames)}
+                      warning={warningMessage(
+                        field.value,
+                        props.existingVars,
+                        getValues(key + '_scope') as EnvironmentVariableScopeEnum,
+                        props.overwriteEnabled
+                      )}
                       label={key + '_key'}
                       errorMessagePosition="left"
                     />
@@ -155,11 +161,14 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   render={({ field, fieldState: { error } }) => (
                     <InputSelectSmall
                       data-testid="scope"
-                      className="shrink-0 grow flex-1 mr-3"
+                      className="w-[188px]"
                       name={field.name}
                       defaultValue={field.value}
                       isValid={!error}
-                      onChange={field.onChange}
+                      onChange={(e) => {
+                        field.onChange(e)
+                        trigger(key + '_key').then()
+                      }}
                       items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
                     />
                   )}
@@ -189,7 +198,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 className="btn--no-min-w"
                 style={ButtonStyle.STROKED}
                 onClick={() => {
-                  props.setOpen(false)
+                  props.closeModal()
                 }}
               >
                 Cancel
@@ -201,7 +210,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 disabled={!formState.isValid}
                 loading={loading}
               >
-                Import {keys.length - props.numberOverride} & override {props.numberOverride} variables
+                Import
               </Button>
             </div>
           </form>

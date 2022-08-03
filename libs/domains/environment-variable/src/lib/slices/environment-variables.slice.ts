@@ -34,9 +34,9 @@ export const fetchEnvironmentVariables = createAsyncThunk(
 
 export const importEnvironmentVariables = createAsyncThunk(
   'environmentVariables/import',
-  async (payload: { applicationId: string; vars: VariableImportRequestVars[] }) => {
+  async (payload: { applicationId: string; vars: VariableImportRequestVars[]; overwriteEnabled: boolean }) => {
     const response = await applicationEnvironmentVariableApi.importEnvironmentVariable(payload.applicationId, {
-      overwrite: true,
+      overwrite: payload.overwriteEnabled,
       vars: payload.vars,
     })
 

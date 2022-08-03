@@ -10,7 +10,12 @@ import { computeAvailableScope } from '../../utils/compute-available-environment
 import { useDropzone } from 'react-dropzone'
 import { parseEnvText } from '@console/shared/utils'
 import { onDrop } from './utils/on-drop'
-import { EnvironmentVariableEntity, LoadingStatus, SecretEnvironmentVariableEntity } from '@console/shared/interfaces'
+import {
+  EnvironmentVariableEntity,
+  EnvironmentVariableSecretOrPublic,
+  LoadingStatus,
+  SecretEnvironmentVariableEntity,
+} from '@console/shared/interfaces'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
 import {
@@ -18,19 +23,18 @@ import {
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@console/domains/environment-variable'
-import { countOverride } from './utils/count-override'
 import { deleteEntry } from './utils/delete-entry'
 
 export interface ImportEnvironmentVariableModalFeatureProps {
   applicationId: string
-  setOpen: (b: boolean) => void
+  closeModal: () => void
 }
 
 export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVariableModalFeatureProps) {
   const methods = useForm({ mode: 'all' })
   const [fileParsed, setFileParsed] = useState<{ [key: string]: string } | undefined>(undefined)
   const [keys, setKeys] = useState<string[]>([])
-  const [numberOverride, setNumberOverride] = useState<number>(0)
+  const [overwriteEnabled, setOverwriteEnabled] = useState<boolean>(false)
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -45,13 +49,11 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
     SecretEnvironmentVariableEntity[]
   >((state) => selectSecretEnvironmentVariablesByApplicationId(state, props.applicationId))
 
-  const [existingEnvVarNames, setExistingEnvVarNames] = useState<(string | undefined)[]>([])
+  const [existingEnvVars, setExistingEnvVars] = useState<EnvironmentVariableSecretOrPublic[]>([])
 
   useEffect(() => {
-    setExistingEnvVarNames([
-      ...environmentVariables.map((el) => el.key),
-      ...secretEnvironmentVariables.map((el) => el.key),
-    ])
+    setExistingEnvVars([...environmentVariables, ...secretEnvironmentVariables])
+    console.log(JSON.stringify(existingEnvVars))
   }, [environmentVariables, secretEnvironmentVariables])
 
   const handleData = useCallback(
@@ -74,10 +76,6 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
     onDrop: (acceptedFiles, fileRejections, event) => onDrop(acceptedFiles, handleData),
   })
 
-  methods.watch((data) => {
-    setNumberOverride(countOverride(data, existingEnvVarNames))
-  })
-
   return (
     <FormProvider {...methods}>
       <ImportEnvironmentVariableModal
@@ -91,17 +89,18 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         loading={loadingStatus === 'loading'}
         availableScopes={computeAvailableScope(undefined, false)}
         onSubmit={methods.handleSubmit(() =>
-          handleSubmit(methods.getValues(), props.applicationId, keys, dispatch, props.setOpen)
+          handleSubmit(methods.getValues(), props.applicationId, keys, dispatch, props.setOpen, overwriteEnabled)
         )}
         showDropzone={!fileParsed}
         dropzoneGetInputProps={getInputProps}
         dropzoneGetRootProps={getRootProps}
         dropzoneIsDragActive={isDragActive}
-        existingVarNames={existingEnvVarNames}
-        numberOverride={numberOverride}
+        existingVars={existingEnvVars}
         deleteKey={(key) => {
           deleteEntry(key, setKeys, keys, methods.unregister)
         }}
+        overwriteEnabled={overwriteEnabled}
+        setOverwriteEnabled={setOverwriteEnabled}
       />
     </FormProvider>
   )
