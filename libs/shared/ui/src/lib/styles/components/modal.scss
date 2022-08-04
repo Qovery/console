@@ -6,7 +6,6 @@
   opacity: 0;
   transform-origin: left;
   transform: scale(0.95) translateX(-50%);
-  width: 750px !important; //todo remove
 }
 
 .modal__content[data-state='open'] {

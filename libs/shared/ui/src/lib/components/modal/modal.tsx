@@ -43,6 +43,7 @@ export const Modal = (props: ModalProps) => {
           style={{ width: `${width}px` }}
           className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] z-40 ${className}`}
         >
+          F
           {cloneElement(children, {
             setOpen: setExternalOpen ? setExternalOpen : setOpen,
           })}
