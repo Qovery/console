@@ -31,7 +31,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   const { data, environmentMode, dataHead } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
-  const { setModalConfirmation } = useModalConfirmation()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const isDatabase = !(data as ApplicationEntity).build_mode
   const type = isDatabase ? ServicesEnum.DATABASE : ServicesEnum.APPLICATION
@@ -72,7 +72,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   ]
 
   const removeApplication = (applicationId: string, name?: string) => {
-    setModalConfirmation({
+    openModalConfirmation({
       title: 'Delete application',
       description: 'To confirm the deletion of your application, please type the name of the application:',
       name: name,
@@ -84,7 +84,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   }
 
   const removeDatabase = (databaseId: string, name?: string) => {
-    setModalConfirmation({
+    openModalConfirmation({
       title: 'Delete database',
       description: 'To confirm the deletion of your database, please type the name of the database:',
       name: name,

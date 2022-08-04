@@ -31,7 +31,7 @@ export function PageServices() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { setModalConfirmation } = useModalConfirmation()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
@@ -99,7 +99,7 @@ export function PageServices() {
   ]
 
   const removeEnvironment = async () => {
-    setModalConfirmation({
+    openModalConfirmation({
       title: 'Delete environment',
       description: 'To confirm the deletion of your environment, please type the name of the environment:',
       name: environment?.name,

@@ -9,7 +9,7 @@ export interface UseModalProps {
 }
 
 export function useModal() {
-  const [modal, setModal] = useState<UseModalProps>()
+  const [modal, openModal] = useState<UseModalProps>()
   const { setOpenModal, setContentModal, setOptionsModal } = useContext(ModalContext)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export function useModal() {
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 
-  return { setModal, setOpenModal }
+  return { openModal, closeModal: setOpenModal(false) }
 }
 
 export default useModal

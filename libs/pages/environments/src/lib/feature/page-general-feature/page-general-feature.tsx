@@ -23,7 +23,7 @@ export function PageGeneralFeature() {
   useDocumentTitle('Environments - Qovery')
   const { projectId = '' } = useParams()
   const loadingEnvironments = environmentFactoryMock(3, true)
-  const { setModalConfirmation } = useModalConfirmation()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const loadingStatus = useSelector(environmentsLoadingStatus)
 
@@ -58,7 +58,7 @@ export function PageGeneralFeature() {
   ]
 
   const removeEnvironment = async (environmentId: string, name: string) => {
-    setModalConfirmation({
+    openModalConfirmation({
       title: 'Delete environment',
       description: 'To confirm the deletion of your environment, please type the name of the environment:',
       name: name,

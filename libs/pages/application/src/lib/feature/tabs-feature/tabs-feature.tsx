@@ -26,7 +26,7 @@ export function TabsFeature() {
     (state) => getApplicationsState(state).entities[applicationId]
   )
   const location = useLocation()
-  const { setModal, setOpenModal } = useModal()
+  const { openModal, closeModal } = useModal()
 
   const items: TabsItem[] = [
     {
@@ -123,10 +123,10 @@ export function TabsFeature() {
   const contentRight: ReactNode = matchEnvVariableRoute && (
     <ButtonAction
       onClick={() => {
-        setModal({
+        openModal({
           content: (
             <CrudEnvironmentVariableModalFeature
-              setOpen={setOpenModal}
+              closeModal={() => closeModal}
               type={EnvironmentVariableType.NORMAL}
               mode={EnvironmentVariableCrudMode.CREATION}
               applicationId={applicationId}

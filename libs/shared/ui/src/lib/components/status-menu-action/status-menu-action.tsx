@@ -53,14 +53,14 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
   const [topMenu, setTopMenu] = useState<StatusMenuActionItem[]>([])
   const [bottomMenu, setBottomMenu] = useState<StatusMenuActionItem[]>([])
 
-  const { setModalConfirmation } = useModalConfirmation()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const onClickAction = (name: string, titleModal: string, descriptionModal: string) => {
     const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === name)
     const actionDeploy = () =>
       currentAction && statusActions.information && currentAction.action(statusActions.information?.id || '')
 
-    setModalConfirmation({
+    openModalConfirmation({
       mode: statusActions?.information?.mode,
       title: titleModal,
       description: descriptionModal,

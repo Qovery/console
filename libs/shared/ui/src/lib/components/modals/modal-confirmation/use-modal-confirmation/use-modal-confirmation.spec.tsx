@@ -30,7 +30,7 @@ describe('useModalConfirmation', () => {
     const { result } = renderHook(useModalConfirmation)
 
     act(() => {
-      result.current.setModalConfirmation(myInitialState)
+      result.current.openModalConfirmation(myInitialState)
     })
 
     expect(action).toHaveBeenCalled()
@@ -49,7 +49,7 @@ describe('useModalConfirmation', () => {
     const { result } = renderHook(useModalConfirmation, { wrapper: ModalProvider })
 
     act(() => {
-      result.current.setModalConfirmation(myInitialState)
+      result.current.openModalConfirmation(myInitialState)
     })
 
     expect(mockSetOpenModal).toHaveBeenCalled()
@@ -71,7 +71,7 @@ it('should run action with delete props (display modal)', () => {
   const { result } = renderHook(useModalConfirmation, { wrapper: ModalProvider })
 
   act(() => {
-    result.current.setModalConfirmation(myInitialState)
+    result.current.openModalConfirmation(myInitialState)
   })
 
   expect(mockSetOpenModal).toHaveBeenCalled()

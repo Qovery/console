@@ -31,19 +31,19 @@ export interface TableRowEnvironmentVariableFeatureProps {
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
   const { variable, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
-  const { setModal, setOpenModal } = useModal()
+  const { openModal, closeModal } = useModal()
   const { applicationId = '', projectId = '', environmentId = '' } = useParams()
-  const { setModalConfirmation } = useModalConfirmation()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const dispatch = useDispatch<AppDispatch>()
 
   const edit = {
     name: 'Edit',
     onClick: () => {
-      setModal({
+      openModal({
         content: (
           <CrudEnvironmentVariableModalFeature
-            setOpen={setOpenModal}
+            closeModal={() => closeModal}
             variable={variable}
             mode={EnvironmentVariableCrudMode.EDITION}
             applicationId={applicationId}
@@ -60,10 +60,10 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const createOverride = {
     name: 'Create override',
     onClick: () => {
-      setModal({
+      openModal({
         content: (
           <CrudEnvironmentVariableModalFeature
-            setOpen={setOpenModal}
+            closeModal={() => closeModal}
             variable={variable}
             type={EnvironmentVariableType.OVERRIDE}
             mode={EnvironmentVariableCrudMode.CREATION}
@@ -80,10 +80,10 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const createAlias = {
     name: 'Create alias',
     onClick: () => {
-      setModal({
+      openModal({
         content: (
           <CrudEnvironmentVariableModalFeature
-            setOpen={setOpenModal}
+            closeModal={() => closeModal}
             variable={variable}
             type={EnvironmentVariableType.ALIAS}
             mode={EnvironmentVariableCrudMode.CREATION}
@@ -138,7 +138,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
           name: 'Delete',
           textClassName: '!text-error-600',
           onClick: () => {
-            setModalConfirmation({
+            openModalConfirmation({
               title: 'Delete variable',
               description: 'To confirm the deletion of your variable, please type the name of the variable:',
               name: variable?.key,

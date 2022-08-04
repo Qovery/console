@@ -13,8 +13,8 @@ export interface UseModalConfirmationProps {
 }
 
 export function useModalConfirmation() {
-  const [modalConfirmation, setModalConfirmation] = useState<UseModalConfirmationProps>()
-  const { setModal } = useModal()
+  const [modalConfirmation, openModalConfirmation] = useState<UseModalConfirmationProps>()
+  const { openModal } = useModal()
 
   useEffect(() => {
     if (
@@ -22,7 +22,7 @@ export function useModalConfirmation() {
       modalConfirmation?.mode === EnvironmentModeEnum.PRODUCTION ||
       modalConfirmation?.mode === EnvironmentModeEnum.STAGING
     ) {
-      setModal({
+      openModal({
         content: (
           <ModalConfirmation
             title={modalConfirmation.title}
@@ -35,9 +35,9 @@ export function useModalConfirmation() {
     } else {
       modalConfirmation?.action()
     }
-  }, [modalConfirmation, setModal])
+  }, [modalConfirmation, openModal])
 
-  return { setModalConfirmation }
+  return { openModalConfirmation }
 }
 
 export default useModalConfirmation

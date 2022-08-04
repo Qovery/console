@@ -33,7 +33,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
     modalConfirmation,
   } = props
 
-  const { setModalConfirmation } = useModalConfirmation()
+  const { openModalConfirmation } = useModalConfirmation()
 
   return (
     <div className={`border border-error-300 bg-error-50 rounded ${className} ${customWidth}`}>
@@ -52,7 +52,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
           <Button
             className="mt-3 ml-auto"
             onClick={() => {
-              setModalConfirmation({
+              openModalConfirmation({
                 mode: modalConfirmation.mode,
                 title: modalConfirmation.title,
                 description: modalConfirmation.description,
