@@ -126,7 +126,7 @@ export function TabsFeature() {
         openModal({
           content: (
             <CrudEnvironmentVariableModalFeature
-              closeModal={() => closeModal}
+              closeModal={closeModal}
               type={EnvironmentVariableType.NORMAL}
               mode={EnvironmentVariableCrudMode.CREATION}
               applicationId={applicationId}

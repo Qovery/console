@@ -12,7 +12,7 @@ export interface CrudEnvironmentVariableModalProps {
   title: string
   description: string
   onSubmit: () => void
-  setOpen: (open: boolean) => void
+  closeModal: () => void
   availableScopes: EnvironmentVariableScopeEnum[]
   loading: boolean
 }
@@ -96,13 +96,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         )}
 
         <div className="flex gap-3 justify-end">
-          <Button
-            className="btn--no-min-w"
-            style={ButtonStyle.STROKED}
-            onClick={() => {
-              props.setOpen(false)
-            }}
-          >
+          <Button className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => props.closeModal()}>
             Cancel
           </Button>
           <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={props.loading}>

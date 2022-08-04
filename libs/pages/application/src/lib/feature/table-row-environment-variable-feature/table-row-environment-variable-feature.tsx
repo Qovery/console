@@ -63,7 +63,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       openModal({
         content: (
           <CrudEnvironmentVariableModalFeature
-            closeModal={() => closeModal}
+            closeModal={closeModal}
             variable={variable}
             type={EnvironmentVariableType.OVERRIDE}
             mode={EnvironmentVariableCrudMode.CREATION}
@@ -83,7 +83,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       openModal({
         content: (
           <CrudEnvironmentVariableModalFeature
-            closeModal={() => closeModal}
+            closeModal={closeModal}
             variable={variable}
             type={EnvironmentVariableType.ALIAS}
             mode={EnvironmentVariableCrudMode.CREATION}

@@ -148,7 +148,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         title={computeTitle()}
         description={computeDescription()}
         onSubmit={onSubmit}
-        setOpen={props.setOpen}
+        closeModal={props.closeModal}
         type={props.type}
         availableScopes={computeAvailableScope()}
         loading={loading}

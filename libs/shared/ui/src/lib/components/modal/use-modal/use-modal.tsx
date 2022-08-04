@@ -20,7 +20,7 @@ export function useModal() {
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 
-  return { openModal, closeModal: setOpenModal(false) }
+  return { openModal, closeModal: () => setOpenModal(false) }
 }
 
 export default useModal
