@@ -28,7 +28,7 @@ export function InputToggle(props: InputToggleProps) {
   }
 
   return (
-    <div data-testid="input-toggle" className={`flex items-start ${className}`}>
+    <div data-testid="input-toggle" className={`flex ${description ? 'items-center' : 'items-start'} ${className}`}>
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
         aria-label="toggle-btn"
@@ -53,7 +53,7 @@ export function InputToggle(props: InputToggleProps) {
       </div>
       <div onClick={changeToggle} className="ml-3 cursor-pointer">
         {title && <p className={`text-text-600 text-ssm font-medium ${description ? 'mb-1' : ''}`}>{title}</p>}
-        {description && <p className="text-xs text-text-400">{description}</p>}
+        {description && <div className="text-xs text-text-400">{description}</div>}
       </div>
     </div>
   )

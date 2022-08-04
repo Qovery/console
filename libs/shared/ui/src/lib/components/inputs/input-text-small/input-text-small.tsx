@@ -47,7 +47,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           {props.label}
         </label>
         <input
-          className="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-4"
+          className="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-2"
           name={name}
           type={type}
           placeholder={placeholder}

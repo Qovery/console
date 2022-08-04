@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   Button,
@@ -9,7 +8,6 @@ import {
   InputSelectSmall,
   InputTextSmall,
   InputToggle,
-  Tooltip,
 } from '@console/shared/ui'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
@@ -56,20 +54,14 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
         </>
       ) : (
         <>
-          <div className="flex gap-2 items-center mb-6">
+          <div className="mb-6">
             <InputToggle
               dataTestId="overwrite-enabled"
               value={props.overwriteEnabled}
               onChange={props.setOverwriteEnabled}
+              title="Enable overwrite"
+              description="If enabled, existing variables will be overwritten."
             />
-            <div className="text-text-500 text-sm font-medium flex items-center gap-2">
-              Enable overwrite
-              <Tooltip content={'If enabled, existing variables will be overwritten.'}>
-                <div>
-                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
-                </div>
-              </Tooltip>
-            </div>
           </div>
 
           <form onSubmit={props.onSubmit}>

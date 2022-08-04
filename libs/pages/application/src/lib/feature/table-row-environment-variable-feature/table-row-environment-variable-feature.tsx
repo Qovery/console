@@ -19,9 +19,10 @@ import CrudEnvironmentVariableModalFeature, {
 import { useParams } from 'react-router'
 import { deleteEnvironmentVariable, deleteSecret } from '@console/domains/environment-variable'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
-import { getEnvironmentVariableUiState } from '@console/pages/application'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '@console/store/data'
+import { useContext } from 'react'
+import { ApplicationContext } from '../../ui/container/container'
 
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
@@ -35,7 +36,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const { openModal, closeModal } = useModal()
   const { applicationId = '', projectId = '', environmentId = '' } = useParams()
   const { openModalConfirmation } = useModalConfirmation()
-  const defaultShowHideValue = useSelector<RootState, boolean>((state) => getEnvironmentVariableUiState(state).showAll)
+  const { showHideAllEnvironmentVariablesValues: defaultShowHideValue } = useContext(ApplicationContext)
 
   const dispatch = useDispatch<AppDispatch>()
 

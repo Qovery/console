@@ -21,12 +21,10 @@ import {
   initialSecretEnvironmentVariablesState,
   secretEnvironmentVariables,
 } from '@console/domains/environment-variable'
-import { environmentVariableUi, initialEnvironmentVariableUiState } from '@console/pages/application'
 
 export const uiReducer = combineReducers({
   user: user,
   userSignUp: userSignUp,
-  environmentVariable: environmentVariableUi,
 })
 
 export const projectReducer = combineReducers({
@@ -66,7 +64,6 @@ export const initialRootState = (): RootState => ({
   ui: {
     user: initialUserState,
     userSignUp: initialUserSignUpState,
-    environmentVariable: initialEnvironmentVariableUiState,
   },
   entities: {
     organization: initialOrganizationState,

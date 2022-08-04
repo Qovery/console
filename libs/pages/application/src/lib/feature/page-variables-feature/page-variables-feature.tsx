@@ -1,6 +1,6 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import {
   environmentVariableFactoryMock,
   fetchEnvironmentVariables,
@@ -21,7 +21,7 @@ import {
 import { useDocumentTitle } from '@console/shared/utils'
 import PageVariables from '../../ui/page-variables/page-variables'
 import { sortVariable } from './utils/sort-variable'
-import { environmentVariableUiActions } from '@console/pages/application'
+import { ApplicationContext } from '../../ui/container/container'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
@@ -57,8 +57,10 @@ export function PageVariablesFeature() {
   const [data, setData] = useState<EnvironmentVariableSecretOrPublic[]>(sortVariableMemo || placeholder)
   const [isLoading, setLoading] = useState(false)
 
+  const { setShowHideAllEnvironmentVariablesValues } = useContext(ApplicationContext)
+
   useEffect(() => {
-    dispatch(environmentVariableUiActions.toggleShowAll(false))
+    setShowHideAllEnvironmentVariablesValues(false)
     dispatch(fetchEnvironmentVariables(applicationId))
     dispatch(fetchSecretEnvironmentVariables(applicationId))
   }, [dispatch, applicationId])

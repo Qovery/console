@@ -72,7 +72,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   }, [fileParsed, methods])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles, fileRejections, event) => onDrop(acceptedFiles, handleData),
+    onDrop: (acceptedFiles) => onDrop(acceptedFiles, handleData),
   })
 
   return (

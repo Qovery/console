@@ -11,7 +11,7 @@ import {
   TabsItem,
   useModal,
 } from '@console/shared/ui'
-import { ReactNode } from 'react'
+import { ReactNode, useContext } from 'react'
 import { RunningStatus } from '@console/shared/enums'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -22,8 +22,8 @@ import {
 } from '@console/shared/router'
 import { StateEnum } from 'qovery-typescript-axios'
 import { matchPath, useLocation, useParams } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
+import { useSelector } from 'react-redux'
+import { RootState } from '@console/store/data'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { getApplicationsState } from '@console/domains/application'
 import { ClickEvent } from '@szhsin/react-menu'
@@ -32,7 +32,7 @@ import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
-import { environmentVariableUiActions, getEnvironmentVariableUiState } from '@console/pages/application'
+import { ApplicationContext } from '../../ui/container/container'
 
 export function TabsFeature() {
   const { organizationId, projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -42,9 +42,8 @@ export function TabsFeature() {
   const location = useLocation()
   const { openModal, closeModal } = useModal()
 
-  const globalShowHideValue = useSelector<RootState, boolean>((state) => getEnvironmentVariableUiState(state).showAll)
-
-  const dispatch = useDispatch<AppDispatch>()
+  const { showHideAllEnvironmentVariablesValues: globalShowHideValue, setShowHideAllEnvironmentVariablesValues } =
+    useContext(ApplicationContext)
 
   const items: TabsItem[] = [
     {
@@ -137,11 +136,6 @@ export function TabsFeature() {
             },
             contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-400" />,
           },
-          {
-            name: 'Export Terraform file',
-            onClick: (e: ClickEvent) => console.log(e, 'Stop'),
-            contentLeft: <Icon name="icon-solid-cloud-arrow-down" className="text-sm text-brand-400" />,
-          },
         ],
       },
     ]
@@ -154,7 +148,7 @@ export function TabsFeature() {
         style={ButtonStyle.FLAT}
         iconLeft={!globalShowHideValue ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH}
         onClick={() => {
-          dispatch(environmentVariableUiActions.toggleShowAll(!globalShowHideValue))
+          setShowHideAllEnvironmentVariablesValues(!globalShowHideValue)
         }}
       >
         {globalShowHideValue ? 'Hide all' : 'Show all'}
