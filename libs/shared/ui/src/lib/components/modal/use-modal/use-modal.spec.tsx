@@ -31,7 +31,7 @@ describe('useModal', () => {
     const { result } = renderHook(useModal, { wrapper: ModalProvider })
 
     act(() => {
-      result.current.setModal(myInitialState)
+      result.current.openModal(myInitialState)
     })
 
     expect(mockSetOpenModal).toHaveBeenCalled()
@@ -46,7 +46,7 @@ describe('useModal', () => {
     const { result } = renderHook(useModal, { wrapper: ModalProvider })
 
     act(() => {
-      result.current.setModal(myInitialState)
+      result.current.openModal(myInitialState)
     })
 
     expect(mockSetOpenModal).toHaveBeenCalled()
