@@ -12,7 +12,7 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
   mode: EnvironmentVariableCrudMode
   type?: EnvironmentVariableType
-  setOpen: (open: boolean) => void
+  closeModal: () => void
   applicationId: string
   environmentId: string
   projectId: string
@@ -46,7 +46,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (closing && !errorEnvironmentVariable) props.setOpen(false)
+    if (closing && !errorEnvironmentVariable) props.closeModal()
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])
 
@@ -148,7 +148,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         title={computeTitle()}
         description={computeDescription()}
         onSubmit={onSubmit}
-        setOpen={props.setOpen}
+        closeModal={props.closeModal}
         type={props.type}
         availableScopes={computeAvailableScope()}
         loading={loading}

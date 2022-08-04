@@ -1,14 +1,5 @@
-import {
-  ButtonAction,
-  Icon,
-  MenuItemProps,
-  ModalContext,
-  Skeleton,
-  StatusChip,
-  Tabs,
-  TabsItem,
-} from '@console/shared/ui'
-import { ReactNode, useContext } from 'react'
+import { ButtonAction, Icon, MenuItemProps, Skeleton, StatusChip, Tabs, TabsItem, useModal } from '@console/shared/ui'
+import { ReactNode } from 'react'
 import { RunningStatus } from '@console/shared/enums'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -35,7 +26,7 @@ export function TabsFeature() {
     (state) => getApplicationsState(state).entities[applicationId]
   )
   const location = useLocation()
-  const { setOpenModal, setContentModal } = useContext(ModalContext)
+  const { openModal, closeModal } = useModal()
 
   const items: TabsItem[] = [
     {
@@ -132,17 +123,18 @@ export function TabsFeature() {
   const contentRight: ReactNode = matchEnvVariableRoute && (
     <ButtonAction
       onClick={() => {
-        setOpenModal(true)
-        setContentModal(
-          <CrudEnvironmentVariableModalFeature
-            setOpen={setOpenModal}
-            type={EnvironmentVariableType.NORMAL}
-            mode={EnvironmentVariableCrudMode.CREATION}
-            applicationId={applicationId}
-            environmentId={environmentId}
-            projectId={projectId}
-          />
-        )
+        openModal({
+          content: (
+            <CrudEnvironmentVariableModalFeature
+              closeModal={closeModal}
+              type={EnvironmentVariableType.NORMAL}
+              mode={EnvironmentVariableCrudMode.CREATION}
+              applicationId={applicationId}
+              environmentId={environmentId}
+              projectId={projectId}
+            />
+          ),
+        })
       }}
       iconRight="icon-solid-plus"
       menus={menuForContentRight}
