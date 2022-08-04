@@ -1,14 +1,15 @@
 import {
+  Button,
   ButtonAction,
   ButtonStyle,
-  Button,
-  Icon, IconAwesomeEnum,
+  Icon,
+  IconAwesomeEnum,
   MenuItemProps,
   Skeleton,
   StatusChip,
   Tabs,
   TabsItem,
-  useModal
+  useModal,
 } from '@console/shared/ui'
 import { ReactNode } from 'react'
 import { RunningStatus } from '@console/shared/enums'
@@ -126,7 +127,12 @@ export function TabsFeature() {
             name: 'Import variables',
             onClick: (e: ClickEvent) => {
               openModal({
-                content: (<ImportEnvironmentVariableModalFeature closeModal={closeModal} applicationId={applicationId} />)
+                content: (
+                  <ImportEnvironmentVariableModalFeature closeModal={closeModal} applicationId={applicationId} />
+                ),
+                options: {
+                  width: 750,
+                },
               })
             },
             contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-400" />,
@@ -153,27 +159,27 @@ export function TabsFeature() {
       >
         {globalShowHideValue ? 'Hide all' : 'Show all'}
       </Button>
-    <ButtonAction
-      onClick={() => {
-        openModal(
-          {
-            content: (<CrudEnvironmentVariableModalFeature
-              closeModal={closeModal}
-              type={EnvironmentVariableType.NORMAL}
-              mode={EnvironmentVariableCrudMode.CREATION}
-              applicationId={applicationId}
-              environmentId={environmentId}
-              projectId={projectId}
-            />)
-          }
-        )
-      }}
-      iconRight="icon-solid-plus"
-      menus={menuForContentRight}
-    >
-      New variable
-    </ButtonAction>
-      </>
+      <ButtonAction
+        onClick={() => {
+          openModal({
+            content: (
+              <CrudEnvironmentVariableModalFeature
+                closeModal={closeModal}
+                type={EnvironmentVariableType.NORMAL}
+                mode={EnvironmentVariableCrudMode.CREATION}
+                applicationId={applicationId}
+                environmentId={environmentId}
+                projectId={projectId}
+              />
+            ),
+          })
+        }}
+        iconRight="icon-solid-plus"
+        menus={menuForContentRight}
+      >
+        New variable
+      </ButtonAction>
+    </>
   )
 
   return <Tabs items={items} contentRight={<div className="px-5">{contentRight}</div>} />

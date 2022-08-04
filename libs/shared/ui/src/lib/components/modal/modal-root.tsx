@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useState } from 'react'
-import { Modal } from '@console/shared/ui'
+import Modal from './modal'
 
 interface ModalOptions {
   width: number

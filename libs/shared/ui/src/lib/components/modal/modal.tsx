@@ -43,17 +43,18 @@ export const Modal = (props: ModalProps) => {
           style={{ width: `${width}px` }}
           className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] z-40 ${className}`}
         >
-          F
-          {cloneElement(children, {
-            setOpen: setExternalOpen ? setExternalOpen : setOpen,
-          })}
-          {buttonClose && (
-            <Dialog.Close className="absolute top-4 right-4">
-              <span className="flex w-7 h-7 items-center justify-center bg-element-light-lighter-400 text-text-400 hover:text-text-500 hover:bg-element-light-lighter-500 ease-out duration-300 rounded-full">
-                <Icon name="icon-solid-xmark" />
-              </span>
-            </Dialog.Close>
-          )}
+          <div className="max-h-[80vh] overflow-auto">
+            {cloneElement(children, {
+              setOpen: setExternalOpen ? setExternalOpen : setOpen,
+            })}
+            {buttonClose && (
+              <Dialog.Close className="absolute top-4 right-4">
+                <span className="flex w-7 h-7 items-center justify-center bg-element-light-lighter-400 text-text-400 hover:text-text-500 hover:bg-element-light-lighter-500 ease-out duration-300 rounded-full">
+                  <Icon name="icon-solid-xmark" />
+                </span>
+              </Dialog.Close>
+            )}
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

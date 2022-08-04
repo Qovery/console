@@ -62,14 +62,14 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               value={props.overwriteEnabled}
               onChange={props.setOverwriteEnabled}
             />
-            <p className="text-text-500 text-sm font-medium flex items-center gap-2">
+            <div className="text-text-500 text-sm font-medium flex items-center gap-2">
               Enable overwrite
               <Tooltip content={'If enabled, existing variables will be overwritten.'}>
                 <div>
                   <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
                 </div>
               </Tooltip>
-            </p>
+            </div>
           </div>
 
           <form onSubmit={props.onSubmit}>

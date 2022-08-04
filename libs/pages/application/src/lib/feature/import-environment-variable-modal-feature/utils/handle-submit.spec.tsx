@@ -48,6 +48,6 @@ describe('handleSubmit()', () => {
     await handleSubmit(data, applicationId, keys, dispatch, modalClose)
     // called three times: one to dispatch the import and two times to fetch secrets and env variables
     expect(dispatch).toHaveBeenCalledTimes(3)
-    expect(modalClose).toHaveBeenCalledWith(false)
+    expect(modalClose).toHaveBeenCalledWith()
   })
 })

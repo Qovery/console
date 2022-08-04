@@ -27,12 +27,12 @@ export function handleSubmit(
   applicationId: string,
   keys: string[],
   dispatch: ThunkDispatch<RootState, any, any>,
-  setModalOpen: (b: boolean) => void,
+  closeModal: () => void,
   overwriteEnabled = false
 ): void {
   const vars = formatData(data, keys)
   dispatch(importEnvironmentVariables({ applicationId, vars, overwriteEnabled })).then(() => {
-    setModalOpen(false)
+    closeModal()
     dispatch(fetchEnvironmentVariables(applicationId))
     dispatch(fetchSecretEnvironmentVariables(applicationId))
   })

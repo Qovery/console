@@ -11,7 +11,7 @@ import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 describe('ImportEnvironmentVariableModal', () => {
   const props: ImportEnvironmentVariableModalProps = {
     onSubmit: jest.fn(),
-    setOpen: jest.fn(),
+    closeModal: jest.fn(),
     triggerToggleAll: jest.fn(),
     toggleAll: false,
     showDropzone: false,
@@ -105,7 +105,7 @@ describe('ImportEnvironmentVariableModal', () => {
 
     it('should close the modal on cancel', async () => {
       const spy = jest.fn()
-      render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} setOpen={spy} />, { defaultValues }))
+      render(wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} closeModal={spy} />, { defaultValues }))
 
       await act(() => {
         screen.getByRole('button', { name: 'Cancel' }).click()

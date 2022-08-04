@@ -84,11 +84,11 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
           changeScopeForAll(scope as EnvironmentVariableScopeEnum, methods.setValue, keys, methods.getValues)
         }
         keys={keys}
-        setOpen={props.setOpen}
+        closeModal={props.closeModal}
         loading={loadingStatus === 'loading'}
         availableScopes={computeAvailableScope(undefined, false)}
         onSubmit={methods.handleSubmit(() =>
-          handleSubmit(methods.getValues(), props.applicationId, keys, dispatch, props.setOpen, overwriteEnabled)
+          handleSubmit(methods.getValues(), props.applicationId, keys, dispatch, props.closeModal, overwriteEnabled)
         )}
         showDropzone={!fileParsed}
         dropzoneGetInputProps={getInputProps}
