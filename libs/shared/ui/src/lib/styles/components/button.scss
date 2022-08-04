@@ -122,14 +122,6 @@
   @apply bg-element-light-darker-100 text-text-100 hover:bg-element-light-darker-200;
 }
 
-.btn-icon--circle {
-  @apply w-4 h-4 rounded-full flex items-center justify-center text-text-400 hover:text-text-400 hover:bg-element-light-lighter-400;
-
-  &.btn.is-active {
-    @apply text-text-400 bg-element-light-lighter-400 hover:text-text-400 hover:bg-element-light-lighter-500;
-  }
-}
-
 // size
 .btn--tiny {
   height: theme('spacing.7');
@@ -154,4 +146,12 @@
 .btn--xlarge {
   height: theme('spacing.11');
   @apply text-sm;
+}
+
+.btn-icon--circle {
+  @apply w-4 h-4 rounded-full flex items-center justify-center text-text-400 hover:text-text-400 hover:bg-element-light-lighter-400;
+
+  &.btn.is-active {
+    @apply text-text-400 bg-element-light-lighter-400 hover:text-text-400 hover:bg-element-light-lighter-500;
+  }
 }
