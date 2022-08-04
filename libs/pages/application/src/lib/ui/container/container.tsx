@@ -19,8 +19,17 @@ import { Environment } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
+import { createContext, useState } from 'react'
 
 //import { ClickEvent } from '@szhsin/react-menu'
+
+export const ApplicationContext = createContext<{
+  showHideAllEnvironmentVariablesValues: boolean
+  setShowHideAllEnvironmentVariablesValues: (b: boolean) => void
+}>({
+  showHideAllEnvironmentVariablesValues: false,
+  setShowHideAllEnvironmentVariablesValues: (b: boolean) => {},
+})
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]
@@ -33,6 +42,7 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { application, environment, children, statusActions, removeApplication } = props
   const { organizationId, projectId, environmentId, applicationId } = useParams()
+  const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${applicationId}`
 
@@ -175,7 +185,9 @@ export function Container(props: ContainerProps) {
   )
 
   return (
-    <>
+    <ApplicationContext.Provider
+      value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
+    >
       <Header
         title={application?.name}
         icon={IconEnum.APPLICATION}
@@ -186,7 +198,7 @@ export function Container(props: ContainerProps) {
       />
       <TabsFeature />
       {children}
-    </>
+    </ApplicationContext.Provider>
   )
 }
 

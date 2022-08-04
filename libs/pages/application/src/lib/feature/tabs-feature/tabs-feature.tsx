@@ -1,5 +1,17 @@
-import { ButtonAction, Icon, MenuItemProps, Skeleton, StatusChip, Tabs, TabsItem, useModal } from '@console/shared/ui'
-import { ReactNode } from 'react'
+import {
+  Button,
+  ButtonAction,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  MenuItemProps,
+  Skeleton,
+  StatusChip,
+  Tabs,
+  TabsItem,
+  useModal,
+} from '@console/shared/ui'
+import { ReactNode, useContext } from 'react'
 import { RunningStatus } from '@console/shared/enums'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -19,6 +31,8 @@ import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
+import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
+import { ApplicationContext } from '../../ui/container/container'
 
 export function TabsFeature() {
   const { organizationId, projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -27,6 +41,9 @@ export function TabsFeature() {
   )
   const location = useLocation()
   const { openModal, closeModal } = useModal()
+
+  const { showHideAllEnvironmentVariablesValues: globalShowHideValue, setShowHideAllEnvironmentVariablesValues } =
+    useContext(ApplicationContext)
 
   const items: TabsItem[] = [
     {
@@ -107,13 +124,17 @@ export function TabsFeature() {
         items: [
           {
             name: 'Import variables',
-            onClick: (e: ClickEvent) => console.log(e, 'Deploy'),
+            onClick: (e: ClickEvent) => {
+              openModal({
+                content: (
+                  <ImportEnvironmentVariableModalFeature closeModal={closeModal} applicationId={applicationId} />
+                ),
+                options: {
+                  width: 750,
+                },
+              })
+            },
             contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-400" />,
-          },
-          {
-            name: 'Export Terraform file',
-            onClick: (e: ClickEvent) => console.log(e, 'Stop'),
-            contentLeft: <Icon name="icon-solid-cloud-arrow-down" className="text-sm text-brand-400" />,
           },
         ],
       },
@@ -121,26 +142,38 @@ export function TabsFeature() {
   }
 
   const contentRight: ReactNode = matchEnvVariableRoute && (
-    <ButtonAction
-      onClick={() => {
-        openModal({
-          content: (
-            <CrudEnvironmentVariableModalFeature
-              closeModal={closeModal}
-              type={EnvironmentVariableType.NORMAL}
-              mode={EnvironmentVariableCrudMode.CREATION}
-              applicationId={applicationId}
-              environmentId={environmentId}
-              projectId={projectId}
-            />
-          ),
-        })
-      }}
-      iconRight="icon-solid-plus"
-      menus={menuForContentRight}
-    >
-      New variable
-    </ButtonAction>
+    <>
+      <Button
+        className="mr-2"
+        style={ButtonStyle.FLAT}
+        iconLeft={!globalShowHideValue ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH}
+        onClick={() => {
+          setShowHideAllEnvironmentVariablesValues(!globalShowHideValue)
+        }}
+      >
+        {globalShowHideValue ? 'Hide all' : 'Show all'}
+      </Button>
+      <ButtonAction
+        onClick={() => {
+          openModal({
+            content: (
+              <CrudEnvironmentVariableModalFeature
+                closeModal={closeModal}
+                type={EnvironmentVariableType.NORMAL}
+                mode={EnvironmentVariableCrudMode.CREATION}
+                applicationId={applicationId}
+                environmentId={environmentId}
+                projectId={projectId}
+              />
+            ),
+          })
+        }}
+        iconRight="icon-solid-plus"
+        menus={menuForContentRight}
+      >
+        New variable
+      </ButtonAction>
+    </>
   )
 
   return <Tabs items={items} contentRight={<div className="px-5">{contentRight}</div>} />

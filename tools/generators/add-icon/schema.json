@@ -5,6 +5,14 @@
   "type": "object",
   "title": "Adding an icon to the project scss file and in the storybook",
   "properties": {
+    "enum": {
+      "type": "string",
+      "description": "Enum name uppercase with underscore",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      }
+    },
     "name": {
       "type": "string",
       "description": "Icon name",

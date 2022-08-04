@@ -6592,6 +6592,11 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+attr-accept@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-2.2.2.tgz#646613809660110749e92f2c10833b70968d929b"
+  integrity sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==
+
 autoprefixer@^10.2.5, autoprefixer@^10.4.2:
   version "10.4.7"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-10.4.7.tgz#1db8d195f41a52ca5069b7593be167618edbbedf"
@@ -9910,6 +9915,13 @@ file-loader@^6.2.0:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
+
+file-selector@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/file-selector/-/file-selector-0.6.0.tgz#fa0a8d9007b829504db4d07dd4de0310b65287dc"
+  integrity sha512-QlZ5yJC0VxHxQQsQhXvBaC7VRJ2uaxTf+Tfpu4Z/OcVQJVpZO+DGU0rkoVW5ce2SccxugvpBJoMvUs59iILYdw==
+  dependencies:
+    tslib "^2.4.0"
 
 file-system-cache@^1.0.5:
   version "1.1.0"
@@ -15743,10 +15755,10 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==
 
-qovery-typescript-axios@^1.1.9:
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.9.tgz#42a42f242e6c14804bcd3b26a6024c9100313d69"
-  integrity sha512-OUK3QWigO2TCGeGm2wl9+pMlCrSFHV8a1s6uGXuxNdakqcB7LkdO61TFI+73lhgra+bN1fxetr6Lec8QZQfrvQ==
+qovery-typescript-axios@^1.1.10:
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.10.tgz#9399ff47551ce2d8edbf1733f156dec003e6de07"
+  integrity sha512-OP/g7XmhiJ5/SqugrbhiaO02cTnek8dWaiW90kC451mgPVBiN0Ipd00I5ON4ik+GXzecdcQkohr7UeP9wk3PUA==
   dependencies:
     axios "^0.21.4"
 
@@ -15915,6 +15927,15 @@ react-draggable@^4.4.3:
   integrity sha512-OMHzJdyJbYTZo4uQE393fHcqqPYsEtkjfMgvCHr6rejT+Ezn4OZbNyGH50vv+SunC1RMvwOTSWkEODQLzw1M9g==
   dependencies:
     clsx "^1.1.1"
+    prop-types "^15.8.1"
+
+react-dropzone@^14.2.2:
+  version "14.2.2"
+  resolved "https://registry.yarnpkg.com/react-dropzone/-/react-dropzone-14.2.2.tgz#a75a0676055fe9e2cb78578df4dedb4c42b54f98"
+  integrity sha512-5oyGN/B5rNhop2ggUnxztXBQ6q6zii+OMEftPzsxAR2hhpVWz0nAV+3Ktxo2h5bZzdcCKrpd8bfWAVsveIBM+w==
+  dependencies:
+    attr-accept "^2.2.2"
+    file-selector "^0.6.0"
     prop-types "^15.8.1"
 
 react-error-boundary@^3.1.0:
@@ -17875,7 +17896,7 @@ tailwindcss@^3.0.24:
     postcss "^8.4.14"
     postcss-import "^14.1.0"
     postcss-js "^4.0.0"
-    postcss-load-config "^4.0.1"
+    postcss-load-config "^3.1.4"
     postcss-nested "5.0.6"
     postcss-selector-parser "^6.0.10"
     postcss-value-parser "^4.2.0"

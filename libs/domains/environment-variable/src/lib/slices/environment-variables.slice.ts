@@ -6,6 +6,8 @@ import {
   EnvironmentVariableScopeEnum,
   ProjectEnvironmentVariableApi,
   Value,
+  VariableImport,
+  VariableImportRequestVars,
 } from 'qovery-typescript-axios'
 
 import { RootState } from '@console/store/data'
@@ -27,6 +29,18 @@ export const fetchEnvironmentVariables = createAsyncThunk(
     const response = await applicationEnvironmentVariableApi.listApplicationEnvironmentVariable(applicationId)
 
     return response.data.results as EnvironmentVariableEntity[]
+  }
+)
+
+export const importEnvironmentVariables = createAsyncThunk(
+  'environmentVariables/import',
+  async (payload: { applicationId: string; vars: VariableImportRequestVars[]; overwriteEnabled: boolean }) => {
+    const response = await applicationEnvironmentVariableApi.importEnvironmentVariable(payload.applicationId, {
+      overwrite: payload.overwriteEnabled,
+      vars: payload.vars,
+    })
+
+    return response.data as VariableImport
   }
 )
 
@@ -350,6 +364,24 @@ export const environmentVariablesSlice = createSlice({
       .addCase(deleteEnvironmentVariable.rejected, (state: EnvironmentVariablesState, action) => {
         state.error = action.error.message
         toastError(action.error)
+      })
+      .addCase(importEnvironmentVariables.pending, (state: EnvironmentVariablesState, action) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(importEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
+        state.error = null
+        state.loadingStatus = 'loaded'
+        const nbSuccess = action.payload.successful_imported_variables.length
+        const nbTotal = action.payload.total_variables_to_import
+        toast(
+          ToastEnum.SUCCESS,
+          'Creation success',
+          `${nbSuccess} out of ${nbTotal} variables have been imported successfully`
+        )
+      })
+      .addCase(importEnvironmentVariables.rejected, (state: EnvironmentVariablesState, action) => {
+        toastError(action.error)
+        state.error = action.error.message
       })
   },
 })

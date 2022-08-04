@@ -7,6 +7,8 @@ import { mockSecretEnvironmentVariable } from '@console/domains/environment-vari
 const props: TableRowEnvironmentVariableFeatureProps = {
   variable: mockSecretEnvironmentVariable(false, false),
   dataHead: [],
+  columnsWidth: '',
+  isLoading: false,
 }
 
 describe('TableRowEnvironmentVariableFeature', () => {
