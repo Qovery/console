@@ -7,12 +7,11 @@ import {
   ButtonIconActionElementProps,
   Icon,
   MenuItemProps,
-  ModalContext,
   TableHeadProps,
+  useModal,
   useModalConfirmation,
 } from '@console/shared/ui'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
-import { useContext } from 'react'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
@@ -32,7 +31,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
   const { variable, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
-  const { setOpenModal, setContentModal } = useContext(ModalContext)
+  const { setModal, setOpenModal } = useModal()
   const { applicationId = '', projectId = '', environmentId = '' } = useParams()
   const { setModalConfirmation } = useModalConfirmation()
 
@@ -41,18 +40,19 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const edit = {
     name: 'Edit',
     onClick: () => {
-      setOpenModal(true)
-      setContentModal(
-        <CrudEnvironmentVariableModalFeature
-          setOpen={setOpenModal}
-          variable={variable}
-          mode={EnvironmentVariableCrudMode.EDITION}
-          applicationId={applicationId}
-          projectId={projectId}
-          environmentId={environmentId}
-          type={EnvironmentVariableType.NORMAL}
-        />
-      )
+      setModal({
+        content: (
+          <CrudEnvironmentVariableModalFeature
+            setOpen={setOpenModal}
+            variable={variable}
+            mode={EnvironmentVariableCrudMode.EDITION}
+            applicationId={applicationId}
+            projectId={projectId}
+            environmentId={environmentId}
+            type={EnvironmentVariableType.NORMAL}
+          />
+        ),
+      })
     },
     contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-500" />,
   }
@@ -60,18 +60,19 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const createOverride = {
     name: 'Create override',
     onClick: () => {
-      setOpenModal(true)
-      setContentModal(
-        <CrudEnvironmentVariableModalFeature
-          setOpen={setOpenModal}
-          variable={variable}
-          type={EnvironmentVariableType.OVERRIDE}
-          mode={EnvironmentVariableCrudMode.CREATION}
-          applicationId={applicationId}
-          projectId={projectId}
-          environmentId={environmentId}
-        />
-      )
+      setModal({
+        content: (
+          <CrudEnvironmentVariableModalFeature
+            setOpen={setOpenModal}
+            variable={variable}
+            type={EnvironmentVariableType.OVERRIDE}
+            mode={EnvironmentVariableCrudMode.CREATION}
+            applicationId={applicationId}
+            projectId={projectId}
+            environmentId={environmentId}
+          />
+        ),
+      })
     },
     contentLeft: <Icon name="icon-solid-pen-line" className="text-sm text-brand-500" />,
   }
@@ -79,18 +80,19 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   const createAlias = {
     name: 'Create alias',
     onClick: () => {
-      setOpenModal(true)
-      setContentModal(
-        <CrudEnvironmentVariableModalFeature
-          setOpen={setOpenModal}
-          variable={variable}
-          type={EnvironmentVariableType.ALIAS}
-          mode={EnvironmentVariableCrudMode.CREATION}
-          applicationId={applicationId}
-          projectId={projectId}
-          environmentId={environmentId}
-        />
-      )
+      setModal({
+        content: (
+          <CrudEnvironmentVariableModalFeature
+            setOpen={setOpenModal}
+            variable={variable}
+            type={EnvironmentVariableType.ALIAS}
+            mode={EnvironmentVariableCrudMode.CREATION}
+            applicationId={applicationId}
+            projectId={projectId}
+            environmentId={environmentId}
+          />
+        ),
+      })
     },
     contentLeft: <Icon name="icon-solid-pen-swirl" className="text-sm text-brand-500" />,
   }

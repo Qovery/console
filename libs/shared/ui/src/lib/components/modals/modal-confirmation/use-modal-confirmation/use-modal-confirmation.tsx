@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { ModalContext } from '../../../modal/modal-root'
 import { ModalConfirmation } from '../modal-confirmation'
+import useModal from '../../../modal/use-modal/use-modal'
 
 export interface UseModalConfirmationProps {
   title: string
@@ -14,7 +14,7 @@ export interface UseModalConfirmationProps {
 
 export function useModalConfirmation() {
   const [modalConfirmation, setModalConfirmation] = useState<UseModalConfirmationProps>()
-  const { setOpenModal, setContentModal } = useContext(ModalContext)
+  const { setModal } = useModal()
 
   useEffect(() => {
     if (
@@ -22,19 +22,20 @@ export function useModalConfirmation() {
       modalConfirmation?.mode === EnvironmentModeEnum.PRODUCTION ||
       modalConfirmation?.mode === EnvironmentModeEnum.STAGING
     ) {
-      setOpenModal(true)
-      setContentModal(
-        <ModalConfirmation
-          title={modalConfirmation.title}
-          description={modalConfirmation.description}
-          name={modalConfirmation.name}
-          callback={modalConfirmation.action}
-        />
-      )
+      setModal({
+        content: (
+          <ModalConfirmation
+            title={modalConfirmation.title}
+            description={modalConfirmation.description}
+            name={modalConfirmation.name}
+            callback={modalConfirmation.action}
+          />
+        ),
+      })
     } else {
       modalConfirmation?.action()
     }
-  }, [modalConfirmation, setContentModal, setOpenModal])
+  }, [modalConfirmation, setModal])
 
   return { setModalConfirmation }
 }
