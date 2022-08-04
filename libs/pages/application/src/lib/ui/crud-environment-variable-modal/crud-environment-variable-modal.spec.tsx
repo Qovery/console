@@ -44,7 +44,7 @@ describe('CrudEnvironmentVariableModal', () => {
 
   it('should close on cancel', async () => {
     const spy = jest.fn()
-    props.setOpen = spy
+    props.closeModal = spy
     render(
       <WrapperForm>
         <CrudEnvironmentVariableModal {...props} />
@@ -56,7 +56,7 @@ describe('CrudEnvironmentVariableModal', () => {
       fireEvent.click(button)
     })
 
-    expect(spy).toHaveBeenCalledWith(false)
+    expect(spy).toBeCalled()
   })
 
   describe('with bad form data', () => {

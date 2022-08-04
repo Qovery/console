@@ -15,7 +15,7 @@ describe('Handle Submit Environment Variable', () => {
     variable: mockEnvironmentVariable(false, false),
     mode: EnvironmentVariableCrudMode.CREATION,
     type: EnvironmentVariableType.NORMAL,
-    setOpen: mockSetOpen,
+    closeModal: mockSetOpen,
     applicationId: '123',
     environmentId: '456',
     projectId: '789',
