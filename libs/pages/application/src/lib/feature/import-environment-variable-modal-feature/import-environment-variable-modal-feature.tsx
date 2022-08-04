@@ -53,7 +53,6 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
 
   useEffect(() => {
     setExistingEnvVars([...environmentVariables, ...secretEnvironmentVariables])
-    console.log(JSON.stringify(existingEnvVars))
   }, [environmentVariables, secretEnvironmentVariables])
 
   const handleData = useCallback(
