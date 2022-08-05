@@ -8,10 +8,11 @@ export interface InputToggleProps {
   description?: string
   className?: string
   dataTestId?: string
+  forcedItemStart?: boolean
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const { small, value = false, onChange, description, title, className = '' } = props
+  const { small, value = false, onChange, description, title, className = '', forcedItemStart = false } = props
 
   const [toggleActive, setToggleActive] = useState(value)
 
@@ -28,7 +29,10 @@ export function InputToggle(props: InputToggleProps) {
   }
 
   return (
-    <div data-testid="input-toggle" className={`flex  ${description ? 'items-center' : 'items-start'} ${className}`}>
+    <div
+      data-testid="input-toggle"
+      className={`flex  ${description && !forcedItemStart ? 'items-center' : 'items-start'} ${className}`}
+    >
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
         aria-label="toggle-btn"

@@ -1,10 +1,10 @@
 import {
+  PayloadAction,
+  Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
-  PayloadAction,
-  Update,
 } from '@reduxjs/toolkit'
 import {
   Application,
@@ -18,8 +18,9 @@ import {
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation, shortToLongId } from '@console/shared/utils'
 import { ApplicationEntity, ApplicationsState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation, shortToLongId } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
@@ -56,6 +57,32 @@ export const fetchApplication = createAsyncThunk<Application, { applicationId: s
   'application/fetch',
   async (data) => {
     const response = await applicationMainCallsApi.getApplication(data.applicationId)
+    return response.data as Application
+  }
+)
+
+export const editApplication = createAsyncThunk(
+  'application/edit',
+  async (payload: { applicationId: string; data: Application }) => {
+    const cloneApplication = Object.assign({}, payload.data as any)
+    delete cloneApplication['id']
+    delete cloneApplication['created_at']
+    delete cloneApplication['updated_at']
+    delete cloneApplication['buildpack_language']
+    delete cloneApplication['environment']
+    delete cloneApplication['status']
+    delete cloneApplication['storage']
+    delete cloneApplication['running_status']
+    delete cloneApplication['maximum_cpu']
+    delete cloneApplication['maximum_memory']
+
+    cloneApplication.git_repository = {
+      url: cloneApplication.git_repository.url,
+      branch: cloneApplication.git_repository.branch,
+      root_path: cloneApplication.git_repository.root_path,
+    }
+
+    const response = await applicationMainCallsApi.editApplication(payload.applicationId, cloneApplication)
     return response.data as Application
   }
 )
@@ -165,6 +192,7 @@ export const applicationsSlice = createSlice({
       .addCase(fetchApplications.pending, (state: ApplicationsState) => {
         state.loadingStatus = 'loading'
       })
+      // fetch applications
       .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<Application[]>) => {
         applicationsAdapter.upsertMany(state, action.payload)
         action.payload.forEach((app) => {
@@ -176,6 +204,7 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      // fetch application
       .addCase(fetchApplication.pending, (state: ApplicationsState) => {
         state.loadingStatus = 'loading'
       })
@@ -187,7 +216,28 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
-      // get environments status
+      // edit application
+      .addCase(editApplication.pending, (state: ApplicationsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(editApplication.fulfilled, (state: ApplicationsState, action) => {
+        const update: Update<Application> = {
+          id: action.meta.arg.applicationId,
+          changes: {
+            ...action.payload,
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, `Your application ${action.payload.name} is updated`)
+      })
+      .addCase(editApplication.rejected, (state: ApplicationsState, action) => {
+        state.loadingStatus = 'error'
+        toastError(action.error)
+        state.error = action.error.message
+      })
+      // get applications status
       .addCase(fetchApplicationsStatus.pending, (state: ApplicationsState) => {
         state.statusLoadingStatus = 'loading'
       })
