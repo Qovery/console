@@ -1,18 +1,20 @@
 import { Controller, useFormContext } from 'react-hook-form'
+import { DropzoneRootProps } from 'react-dropzone'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import {
   Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
   ButtonStyle,
   Dropzone,
-  Icon,
   IconAwesomeEnum,
   InputSelectSmall,
   InputTextSmall,
   InputToggle,
 } from '@console/shared/ui'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
-import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
-import { DropzoneRootProps } from 'react-dropzone'
 import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
+import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { validateKey, warningMessage } from '../../feature/import-environment-variable-modal-feature/utils/form-check'
 
 export interface ImportEnvironmentVariableModalProps {
@@ -46,17 +48,16 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
       <h2 className="h4 text-text-600 mb-6 max-w-sm">Import variables</h2>
 
       {props.showDropzone ? (
-        <>
-          <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
-            <input data-testid="drop-input" {...props.dropzoneGetInputProps()} />
-            <Dropzone isDragActive={props.dropzoneIsDragActive} />
-          </div>
-        </>
+        <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
+          <input data-testid="drop-input" {...props.dropzoneGetInputProps()} />
+          <Dropzone isDragActive={props.dropzoneIsDragActive} />
+        </div>
       ) : (
         <>
           <div className="mb-6">
             <InputToggle
               dataTestId="overwrite-enabled"
+              small
               value={props.overwriteEnabled}
               onChange={props.setOverwriteEnabled}
               title="Enable overwrite"
@@ -66,14 +67,14 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
           <form onSubmit={props.onSubmit}>
             <div className="grid mb-3" style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}>
-              <span className="text-xs text-text-600 font-medium">Variable</span>
-              <span className="text-xs text-text-600 font-medium">Value</span>
-              <span className="text-xs text-text-600 font-medium">Scope</span>
-              <span className="text-xs text-text-600 font-medium">Secret</span>
+              <span className="text-sm text-text-600 font-medium">Variable</span>
+              <span className="text-sm text-text-600 font-medium">Value</span>
+              <span className="text-sm text-text-600 font-medium">Scope</span>
+              <span className="text-sm text-text-600 font-medium pl-1.5">Secret</span>
             </div>
 
-            <div className="flex items-center bg-element-light-lighter-400 rounded-sm justify-between px-4 py-2 mb-3">
-              <p className="font-medium text-element-light-lighter-800 text-sm">Apply for all</p>
+            <div className="flex items-center bg-element-light-lighter-400 rounded justify-between px-4 py-2 mb-3">
+              <p className="font-medium text-text-600 text-ssm">Apply for all</p>
               <div className="flex gap-4">
                 <InputSelectSmall
                   className="w-[188px]"
@@ -85,8 +86,13 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                     trigger().then()
                   }}
                 />
-                <div className="flex items-center mr-6">
-                  <InputToggle dataTestId="toggle-for-all" value={props.toggleAll} onChange={props.triggerToggleAll} />
+                <div className="flex items-center justify-center mr-6 w-14 ml-1">
+                  <InputToggle
+                    dataTestId="toggle-for-all"
+                    small
+                    value={props.toggleAll}
+                    onChange={props.triggerToggleAll}
+                  />
                 </div>
               </div>
             </div>
@@ -166,21 +172,23 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   )}
                 />
 
-                <div className="flex items-center">
+                <div className="flex items-center justify-center w-14 ml-1">
                   <Controller
                     name={key + '_secret'}
                     control={control}
-                    render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
+                    render={({ field }) => <InputToggle small value={field.value} onChange={field.onChange} />}
                   />
                 </div>
 
                 <div className="flex items-center h-full w-full grow">
-                  <button
-                    className="btn-icon-action justify-center items-center w-full"
+                  <ButtonIcon
+                    icon={IconAwesomeEnum.CROSS}
+                    style={ButtonIconStyle.STROKED}
+                    size={ButtonSize.TINY}
                     onClick={() => props.deleteKey(key)}
-                  >
-                    <Icon className="text-xs text-text-400" name={IconAwesomeEnum.CROSS} />
-                  </button>
+                    className="text-text-400 hover:text-text-500 !w-8 !h-8"
+                    iconClassName="!text-xs"
+                  />
                 </div>
               </div>
             ))}
@@ -189,9 +197,8 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               <Button
                 className="btn--no-min-w"
                 style={ButtonStyle.STROKED}
-                onClick={() => {
-                  props.closeModal()
-                }}
+                size={ButtonSize.XLARGE}
+                onClick={() => props.closeModal()}
               >
                 Cancel
               </Button>
@@ -199,6 +206,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 dataTestId="submit-button"
                 className="btn--no-min-w"
                 type="submit"
+                size={ButtonSize.XLARGE}
                 disabled={!formState.isValid}
                 loading={loading}
               >

@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react'
 import { ButtonIcon, ButtonIconProps } from '../button-icon/button-icon'
-import { ButtonSize } from '../button/button'
+import { ButtonSize, ButtonStyle } from '../button/button'
 
 export default {
   component: ButtonIcon,
@@ -8,6 +8,10 @@ export default {
   argTypes: {
     size: {
       options: Object.values(ButtonSize).filter((x) => typeof x === 'string'),
+      control: { type: 'select' },
+    },
+    style: {
+      options: Object.values(ButtonStyle).filter((x) => typeof x === 'string'),
       control: { type: 'select' },
     },
   },

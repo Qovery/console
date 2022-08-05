@@ -15,7 +15,7 @@ export function Tooltip(props: TooltipProps) {
   const { children, content, open, defaultOpen, onOpenChange, side = 'top', align = 'center' } = props
 
   return (
-    <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={300}>
+    <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={0}>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
       <TooltipPrimitive.Content
         className="bg-element-dark-400 text-text-100 rounded-sm px-2 py-1 text-xs font-medium"

@@ -31,14 +31,14 @@ export function InputTextSmall(props: InputTextSmallProps) {
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const hasValue = value && value.length > 0 ? 'input--focused' : ''
 
-  const classNameError = errorMessagePosition === 'left' ? 'flex gap-2 items-center' : ''
+  const classNameError = errorMessagePosition === 'left' ? 'flex gap-3 items-center' : ''
 
   return (
     <div data-testid="input-small-wrapper" className={`${className} ${classNameError}`}>
       {(error || warning) && errorMessagePosition === 'left' && (
         <Tooltip content={error || warning || ''} align="center" side="top">
           <div data-testid="warning-icon-left" className="flex item-center">
-            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="block text-warning-500 text-md" />
+            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="block text-warning-500 text-sm" />
           </div>
         </Tooltip>
       )}

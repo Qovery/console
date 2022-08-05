@@ -53,7 +53,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
       </select>
       <Icon
         name="icon-solid-angle-down"
-        className="absolute top-3 right-4 text-sm text-text-500 leading-3 translate-y-0.5"
+        className="absolute top-3 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
       />
     </div>
   )
