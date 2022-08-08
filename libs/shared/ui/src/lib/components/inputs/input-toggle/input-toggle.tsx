@@ -39,6 +39,12 @@ export function InputToggle(props: InputToggleProps) {
         className="inline-flex justify-between items-center cursor-pointer"
         onClick={changeToggle}
       >
+        <input
+          type="checkbox"
+          defaultChecked={toggleActive}
+          defaultValue={toggleActive.toString()}
+          className="hidden"
+        />
         <div
           aria-label="bg"
           className={`${toggleSizeBg} flex items-center rounded-full p-0.5 duration-300 ease-in-out ${

@@ -65,9 +65,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   useEffect(() => {
     // set all preview applications "true" when env preview is true
-    if (watchEnvPreview === true) {
-      applications?.forEach((application) => methods.setValue(application.id, true))
-    }
+    applications?.forEach((application) => methods.setValue(application.id, watchEnvPreview))
   }, [watchEnvPreview, methods, applications])
 
   useEffect(() => {

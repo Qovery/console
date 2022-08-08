@@ -22,6 +22,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               control={control}
               render={({ field }) => (
                 <InputToggle
+                  dataTestId="toggle-all"
                   value={field.value}
                   onChange={field.onChange}
                   title="Activate preview environment for all applications"
@@ -31,7 +32,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                 />
               )}
             />
-            <div className={applications && applications.length > 0 ? 'mt-5' : ''}>
+            <div data-testid="toggles" className={applications && applications.length > 0 ? 'mt-5' : ''}>
               {applications?.map((application: ApplicationEntity) => (
                 <div key={application.id} className="h-9 flex items-center">
                   <Controller
@@ -39,6 +40,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                     control={control}
                     render={({ field }) => (
                       <InputToggle
+                        dataTestId={`toggle-${application.id}`}
                         value={field.value}
                         onChange={field.onChange}
                         title={
