@@ -5,7 +5,7 @@ import { StorageTypeEnum } from 'qovery-typescript-axios'
 export interface PageSettingsDomainsProps {
   keys: string[]
   onAddStorage: () => void
-  onRemove: () => void
+  onRemove: (key: string) => void
 }
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
