@@ -10,6 +10,7 @@ export interface PageSettingsDomainsProps {
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   const { control } = useFormContext()
+
   return (
     <div className="flex flex-col justify-between w-full">
       <div>
@@ -18,7 +19,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
           Add Storage
         </Button>
       </div>
-      {props.keys.length > 0 ? (
+      {props.keys?.length > 0 ? (
         props.keys.map((key, i) => (
           <div key={key} className="flex flex-col justify-between w-full" data-testid="form-row">
             <Controller

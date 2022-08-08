@@ -3,30 +3,42 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { onAddStorage, onRemove } from './utils/utils'
-import { LoadingStatus } from '@console/shared/interfaces'
-import { fetchApplication } from '@console/domains/application'
+import { useEffect, useState } from 'react'
+import { addStorage, initStorage, onRemove } from './utils/utils'
+import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { fetchApplication, selectApplicationById } from '@console/domains/application'
 
 export function PageSettingsDomainsFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
-  const methods = useForm({ defaultValues: {} })
+  const methods = useForm({ defaultValues: {}, mode: 'all' })
 
   const [keys, setKeys] = useState<string[]>([])
 
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => state.entities.applications.loadingStatus)
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
+    (state) => selectApplicationById(state, applicationId),
+    (a, b) => {
+      return a?.id === b?.id
+    }
+  )
 
   if (loadingStatus === 'not loaded') {
     dispatch(fetchApplication({ applicationId }))
   }
+
+  useEffect(() => {
+    if (application) {
+      setKeys(initStorage(methods.register, application.storage || []))
+    }
+  }, [application, setKeys, methods.register])
 
   return (
     <FormProvider {...methods}>
       <PageSettingsDomains
         keys={keys}
         onRemove={(key) => setKeys(onRemove(key, methods.unregister, keys))}
-        onAddStorage={() => setKeys(onAddStorage(methods.register, keys))}
+        onAddStorage={() => setKeys(addStorage(methods.register, keys))}
       />
     </FormProvider>
   )
