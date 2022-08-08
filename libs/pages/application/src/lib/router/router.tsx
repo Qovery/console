@@ -52,11 +52,11 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   },
   {
     path: APPLICATION_SETTINGS_RESOURCES_URL,
-    component: <PageSettingsDomainsFeature />,
+    component: <PageSettingsV2 />,
   },
   {
     path: APPLICATION_SETTINGS_STORAGE_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsDomainsFeature />,
   },
   {
     path: APPLICATION_SETTINGS_PORT_URL,
