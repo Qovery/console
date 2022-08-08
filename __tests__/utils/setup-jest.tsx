@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { cleanup, render, RenderOptions } from '@testing-library/react'
 import React from 'react'
 import { server } from '../server'
-import { Wrapper } from './providers'
+import { Props, Wrapper } from './providers'
 
 beforeAll(() =>
   server.listen({
@@ -22,7 +22,7 @@ afterEach(() => {
 afterAll(() => server.close())
 
 type CustomRenderOptions = {
-  wrapperProps?: {}
+  wrapperProps?: Props
 } & Omit<RenderOptions, 'wrapper'>
 
 const customRender = (ui: React.ReactElement, options?: CustomRenderOptions) =>

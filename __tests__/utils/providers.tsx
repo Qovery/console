@@ -9,14 +9,14 @@ import { RootState } from '@console/store/data'
 import { ModalProvider } from '@console/shared/ui'
 
 type Params = {
-  Component: ComponentType<any>
+  Component?: ComponentType<any>
   compProps?: Record<string, unknown>
   reduxState?: Partial<RootState>
   route?: string
 }
 
-type Props = {
-  children: ReactNode
+export type Props = {
+  children?: ReactNode
 } & Omit<Params, 'Component'>
 
 export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootState(), route = '/' }) => {
