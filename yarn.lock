@@ -2143,6 +2143,16 @@
     semver "7.3.4"
     tslib "^2.3.0"
 
+"@nrwl/devkit@14.5.4":
+  version "14.5.4"
+  resolved "https://registry.yarnpkg.com/@nrwl/devkit/-/devkit-14.5.4.tgz#f6e5d1b9cc998f231a8ea0a149793dd11bd3b9e6"
+  integrity sha512-9UFoQb6HdEkvZlOZIZgTAPR5oagc1V72OdBgtiM0ZK5cHm9sSSTv7FrVlyxy+WWYZhy/orUm5eSChO/yNM/pZg==
+  dependencies:
+    ejs "^3.1.7"
+    ignore "^5.0.4"
+    semver "7.3.4"
+    tslib "^2.3.0"
+
 "@nrwl/eslint-plugin-nx@14.3.6":
   version "14.3.6"
   resolved "https://registry.yarnpkg.com/@nrwl/eslint-plugin-nx/-/eslint-plugin-nx-14.3.6.tgz#8fbfabb76a35241a188fd5dc2dcf16b25718e6dc"
@@ -2217,6 +2227,25 @@
     "@jest/reporters" "27.5.1"
     "@jest/test-result" "27.5.1"
     "@nrwl/devkit" "14.5.1"
+    "@phenomnomnominal/tsquery" "4.1.1"
+    chalk "4.1.0"
+    dotenv "~10.0.0"
+    identity-obj-proxy "3.0.0"
+    jest-config "27.5.1"
+    jest-resolve "27.5.1"
+    jest-util "27.5.1"
+    resolve.exports "1.1.0"
+    rxjs "^6.5.4"
+    tslib "^2.3.0"
+
+"@nrwl/jest@14.5.4":
+  version "14.5.4"
+  resolved "https://registry.yarnpkg.com/@nrwl/jest/-/jest-14.5.4.tgz#f5bdecc831ab53399fd3536ee20035bf84b6a13f"
+  integrity sha512-3C6xag040Ey4CtX9ItbPPNffUbqaYDBUdsKnoGH+s9mH/JmEKDvNZVMhAGOmHxHB5nlSr09E6jfzcqsXbSCHAQ==
+  dependencies:
+    "@jest/reporters" "27.5.1"
+    "@jest/test-result" "27.5.1"
+    "@nrwl/devkit" "14.5.4"
     "@phenomnomnominal/tsquery" "4.1.1"
     chalk "4.1.0"
     dotenv "~10.0.0"
@@ -15180,21 +15209,13 @@ postcss-js@^4.0.0:
   dependencies:
     camelcase-css "^2.0.1"
 
-postcss-load-config@^3.0.0:
+postcss-load-config@^3.0.0, postcss-load-config@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/postcss-load-config/-/postcss-load-config-3.1.4.tgz#1ab2571faf84bb078877e1d07905eabe9ebda855"
   integrity sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==
   dependencies:
     lilconfig "^2.0.5"
     yaml "^1.10.2"
-
-postcss-load-config@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/postcss-load-config/-/postcss-load-config-4.0.1.tgz#152383f481c2758274404e4962743191d73875bd"
-  integrity sha512-vEJIc8RdiBRu3oRAI0ymerOn+7rPuMvRXslTvZUKZonDHFIczxztIyJ1urxM1x9JXEikvpWWTUUqal5j/8QgvA==
-  dependencies:
-    lilconfig "^2.0.5"
-    yaml "^2.1.1"
 
 postcss-loader@^4.2.0:
   version "4.3.0"
