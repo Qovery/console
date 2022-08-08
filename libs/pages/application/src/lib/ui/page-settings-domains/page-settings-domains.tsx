@@ -66,7 +66,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
             />
 
             <Controller
-              name={'path_' + key}
+              name={'type_' + key}
               control={control}
               rules={{
                 required: 'Please enter a value.',
@@ -83,7 +83,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
               )}
             />
 
-            <ButtonIcon onClick={() => props.onRemove()} dataTestId="remove" icon={IconAwesomeEnum.TRASH} />
+            <ButtonIcon onClick={() => props.onRemove(key)} dataTestId="remove" icon={IconAwesomeEnum.TRASH} />
           </div>
         ))
       ) : (
