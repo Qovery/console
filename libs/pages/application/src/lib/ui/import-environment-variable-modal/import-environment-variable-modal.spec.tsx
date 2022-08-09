@@ -1,12 +1,12 @@
+import '@testing-library/jest-dom/extend-expect'
+import { act, findAllByTestId, fireEvent, getByTestId, render, screen, waitFor } from '@testing-library/react'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import React from 'react'
+import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
 import ImportEnvironmentVariableModal, {
   ImportEnvironmentVariableModalProps,
 } from './import-environment-variable-modal'
-import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
-import { act, findAllByTestId, fireEvent, getByTestId, render, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
-import React from 'react'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 
 describe('ImportEnvironmentVariableModal', () => {
   const props: ImportEnvironmentVariableModalProps = {
@@ -73,7 +73,7 @@ describe('ImportEnvironmentVariableModal', () => {
 
       await waitFor(async () => {
         const formRows = await findAllByTestId(baseElement, 'form-row')
-        expect(formRows[0].querySelectorAll('input')).toHaveLength(2)
+        expect(formRows[0].querySelectorAll('input')).toHaveLength(3)
         expect(formRows[0].querySelectorAll('select')).toHaveLength(1)
         expect(formRows[0].querySelectorAll('[data-testid="input-toggle"]')).toHaveLength(1)
       })

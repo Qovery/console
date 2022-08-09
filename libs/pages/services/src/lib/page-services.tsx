@@ -1,5 +1,6 @@
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
+import equal from 'fast-deep-equal'
 import {
   APPLICATION_GENERAL_URL,
   ENVIRONMENTS_GENERAL_URL,
@@ -33,8 +34,9 @@ export function PageServices() {
 
   const { openModalConfirmation } = useModalConfirmation()
 
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
+  const environment = useSelector<RootState, EnvironmentEntity | undefined>(
+    (state) => selectEnvironmentById(state, environmentId),
+    equal
   )
 
   const dispatch = useDispatch<AppDispatch>()

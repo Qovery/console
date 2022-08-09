@@ -39,7 +39,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 w-[580px]">
+      <div className="p-8">
         <form onSubmit={onSubmit}>
           <BlockContent title="General informations">
             <Controller
