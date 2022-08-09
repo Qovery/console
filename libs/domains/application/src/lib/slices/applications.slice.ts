@@ -1,10 +1,10 @@
 import {
-  PayloadAction,
-  Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
+  PayloadAction,
+  Update,
 } from '@reduxjs/toolkit'
 import {
   Application,
@@ -19,7 +19,7 @@ import {
   Status,
 } from 'qovery-typescript-axios'
 import { ApplicationEntity, ApplicationsState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { toast, ToastEnum, toastError } from '@console/shared/toast'
 import {
   addOneToManyRelation,
   getEntitiesByIds,
@@ -69,7 +69,7 @@ export const fetchApplication = createAsyncThunk<Application, { applicationId: s
 
 export const editApplication = createAsyncThunk(
   'application/edit',
-  async (payload: { applicationId: string; data: Application }) => {
+  async (payload: { applicationId: string; data: Partial<ApplicationEntity> }) => {
     const cloneApplication = Object.assign({}, refactoApplicationPayload(payload.data) as any)
 
     const response = await applicationMainCallsApi.editApplication(payload.applicationId, cloneApplication)

@@ -45,7 +45,7 @@ export function PageSettingsStorageFeature() {
       }}
       onAddStorage={() => {
         openModal({
-          content: <StorageModalFeature onClose={closeModal} applicationId={applicationId} />,
+          content: <StorageModalFeature onClose={closeModal} applicationId={applicationId} application={application} />,
         })
       }}
     />
