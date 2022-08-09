@@ -2,13 +2,13 @@ import { Button, ButtonIcon, HelpSection, IconAwesomeEnum, InputSelect, InputTex
 import { Controller, useFormContext } from 'react-hook-form'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 
-export interface PageSettingsDomainsProps {
+export interface PageSettingsStorageProps {
   keys: string[]
   onAddStorage: () => void
   onRemove: (key: string) => void
 }
 
-export function PageSettingsDomains(props: PageSettingsDomainsProps) {
+export function PageSettingsStorage(props: PageSettingsStorageProps) {
   const { control } = useFormContext()
 
   return (
@@ -112,4 +112,4 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   )
 }
 
-export default PageSettingsDomains
+export default PageSettingsStorage

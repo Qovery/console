@@ -1,4 +1,3 @@
-import PageSettingsDomains, { PageSettingsDomainsProps } from './page-settings-domains'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import {
@@ -13,8 +12,9 @@ import {
   render,
   waitFor,
 } from '@testing-library/react'
+import { PageSettingsStorage, PageSettingsStorageProps } from './page-settings-storage'
 
-const props: PageSettingsDomainsProps = {
+const props: PageSettingsStorageProps = {
   keys: ['123', '456'],
   onAddStorage: jest.fn(),
   onRemove: jest.fn(),
@@ -37,14 +37,14 @@ describe('PageSettingsDangerZone', () => {
 
   it('should render successfully', () => {
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
     expect(baseElement).toBeTruthy()
   })
 
   it('should have two rows of fields', async () => {
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     await waitFor(async () => {
@@ -55,7 +55,7 @@ describe('PageSettingsDangerZone', () => {
 
   it('a row should have 2 inputs 1 select and 1 delete button', async () => {
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     await waitFor(async () => {
@@ -68,7 +68,7 @@ describe('PageSettingsDangerZone', () => {
 
   it('row should initialize with good values', async () => {
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     await waitFor(async () => {
@@ -82,7 +82,7 @@ describe('PageSettingsDangerZone', () => {
 
   it('size in GB should have a maximum and a minimum', async () => {
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     const formRows = await findAllByTestId(baseElement, 'form-row')
@@ -106,7 +106,7 @@ describe('PageSettingsDangerZone', () => {
 
   it('should have an help section', async () => {
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     await findByTestId(baseElement, 'help-section')
@@ -116,7 +116,7 @@ describe('PageSettingsDangerZone', () => {
     const spy = jest.fn()
     props.onAddStorage = spy
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     const button = await findByText(baseElement, 'Add Storage')
@@ -132,7 +132,7 @@ describe('PageSettingsDangerZone', () => {
     const spy = jest.fn()
     props.onRemove = spy
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     const removeButton = await findAllByTestId(baseElement, 'remove')
@@ -148,7 +148,7 @@ describe('PageSettingsDangerZone', () => {
     initialFormValues = {}
     props.keys = []
     const { baseElement } = render(
-      wrapWithReactHookForm(<PageSettingsDomains {...props} />, { defaultValues: initialFormValues })
+      wrapWithReactHookForm(<PageSettingsStorage {...props} />, { defaultValues: initialFormValues })
     )
 
     await findByText(baseElement, 'No storage are set')

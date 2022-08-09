@@ -1,14 +1,14 @@
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
-import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
 import { addStorage, initStorage, onRemove } from './utils/utils'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { fetchApplication, selectApplicationById } from '@console/domains/application'
+import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 
-export function PageSettingsDomainsFeature() {
+export function PageSettingsStorageFeature() {
   const { applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({ defaultValues: {}, mode: 'all' })
@@ -35,7 +35,7 @@ export function PageSettingsDomainsFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsDomains
+      <PageSettingsStorage
         keys={keys}
         onRemove={(key) => setKeys(onRemove(key, methods.unregister, keys))}
         onAddStorage={() => setKeys(addStorage(methods.register, keys))}
@@ -44,4 +44,4 @@ export function PageSettingsDomainsFeature() {
   )
 }
 
-export default PageSettingsDomainsFeature
+export default PageSettingsStorageFeature

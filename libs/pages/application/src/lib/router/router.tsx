@@ -20,7 +20,7 @@ import PageVariablesFeature from '../feature/page-variables-feature/page-variabl
 import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
-import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature/page-settings-domains-feature'
+import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
 
 export const ROUTER_APPLICATION: Route[] = [
   {
@@ -56,7 +56,7 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   },
   {
     path: APPLICATION_SETTINGS_STORAGE_URL,
-    component: <PageSettingsDomainsFeature />,
+    component: <PageSettingsStorageFeature />,
   },
   {
     path: APPLICATION_SETTINGS_PORT_URL,

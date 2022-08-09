@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
-import PageSettingsDomainsFeature from './page-settings-domains-feature'
 import * as redux from 'react-redux'
 import { applicationFactoryMock } from '@console/domains/application'
 import { findByTestId, waitFor } from '@testing-library/react'
+import PageSettingsStorageFeature from './page-settings-storage-feature'
 
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
@@ -12,7 +12,7 @@ jest.mock('react-redux', () => ({
 
 describe('PageSettingsDomainsFeature', () => {
   it('should render successfully', async () => {
-    const { baseElement } = render(<PageSettingsDomainsFeature />)
+    const { baseElement } = render(<PageSettingsStorageFeature />)
 
     expect(baseElement).toBeTruthy()
   })
@@ -25,7 +25,7 @@ describe('PageSettingsDomainsFeature', () => {
     const useSelectorSpy = jest.spyOn(redux, 'useSelector')
     useSelectorSpy.mockReturnValueOnce('not loaded').mockReturnValue('loaded')
 
-    const { baseElement } = render(<PageSettingsDomainsFeature />)
+    const { baseElement } = render(<PageSettingsStorageFeature />)
 
     expect(mockDispatchFn).toHaveBeenCalled()
   })
@@ -34,7 +34,7 @@ describe('PageSettingsDomainsFeature', () => {
     const useSelectorSpy = jest.spyOn(redux, 'useSelector')
     useSelectorSpy.mockReturnValueOnce('loaded').mockReturnValue(applicationFactoryMock(1)[0])
 
-    const { baseElement } = render(<PageSettingsDomainsFeature />)
+    const { baseElement } = render(<PageSettingsStorageFeature />)
 
     await waitFor(async () => {
       const row = await findByTestId(baseElement, 'form-row')
