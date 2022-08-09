@@ -6,6 +6,7 @@ describe('environments reducer', () => {
       loadingStatus: 'not loaded',
       loadingEnvironmentStatus: 'not loaded',
       loadingEnvironmentDeployments: 'not loaded',
+      loadingEnvironmentDeploymentRules: 'not loaded',
       error: null,
       joinProjectEnvironments: {},
     })
