@@ -1,4 +1,4 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 import { ProjectsState } from '@console/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
@@ -81,7 +81,8 @@ export const projectsActions = projectsSlice.actions
 
 const { selectAll, selectEntities } = projectsAdapter.getSelectors()
 
-export const getProjectsState = (rootState: RootState): ProjectsState => rootState.entities[PROJECTS_FEATURE_KEY]
+export const getProjectsState = (rootState: RootState): ProjectsState =>
+  rootState.entities.project[PROJECTS_FEATURE_KEY]
 
 export const selectAllProjects = createSelector(getProjectsState, selectAll)
 

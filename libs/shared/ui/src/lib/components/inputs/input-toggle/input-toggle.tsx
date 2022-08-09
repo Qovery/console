@@ -8,11 +8,11 @@ export interface InputToggleProps {
   description?: string
   className?: string
   dataTestId?: string
-  forcedItemStart?: boolean
+  forceAlignTop?: boolean
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const { small, value = false, onChange, description, title, className = '', forcedItemStart = false } = props
+  const { small, value = false, onChange, description, title, className = '', forceAlignTop = false } = props
 
   const [toggleActive, setToggleActive] = useState(value)
 
@@ -31,7 +31,7 @@ export function InputToggle(props: InputToggleProps) {
   return (
     <div
       data-testid="input-toggle"
-      className={`flex  ${description && !forcedItemStart ? 'items-center' : 'items-start'} ${className}`}
+      className={`flex  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className}`}
     >
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
@@ -61,7 +61,10 @@ export function InputToggle(props: InputToggleProps) {
           />
         </div>
       </div>
-      <div onClick={changeToggle} className="ml-3 cursor-pointer">
+      <div
+        onClick={changeToggle}
+        className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 cursor-pointer`}
+      >
         {title && <p className="text-text-600 text-ssm font-medium">{title}</p>}
         {description && <div className="text-xs text-text-400">{description}</div>}
       </div>

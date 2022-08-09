@@ -1,4 +1,13 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
+import { applications, initialApplicationsState } from '@console/domains/application'
+import { databases, initialDatabasesState } from '@console/domains/database'
+import { environments, initialEnvironmentsState } from '@console/domains/environment'
+import {
+  environmentVariables,
+  initialEnvironmentVariablesState,
+  initialSecretEnvironmentVariablesState,
+  secretEnvironmentVariables,
+} from '@console/domains/environment-variable'
 import {
   clusterReducer,
   initialClusterState,
@@ -12,20 +21,6 @@ import {
   projects,
 } from '@console/domains/projects'
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
-import { applications, initialApplicationsState } from '@console/domains/application'
-import {
-  environments,
-  initialEnvironmentsState,
-  environmentDeploymentRulesReducer,
-  initialEnvironmentDeploymentRulesState,
-} from '@console/domains/environment'
-import { databases, initialDatabasesState } from '@console/domains/database'
-import {
-  environmentVariables,
-  initialEnvironmentVariablesState,
-  initialSecretEnvironmentVariablesState,
-  secretEnvironmentVariables,
-} from '@console/domains/environment-variable'
 
 export const uiReducer = combineReducers({
   user: user,
@@ -33,11 +28,12 @@ export const uiReducer = combineReducers({
 })
 
 export const projectReducer = combineReducers({
+  projects: projects,
   deploymentRules: deploymentRulesReducer,
 })
 
 export const environmentReducer = combineReducers({
-  environmentDeploymentRules: environmentDeploymentRulesReducer,
+  environments: environments,
 })
 
 export const environmentVariable = combineReducers({
@@ -48,9 +44,7 @@ export const environmentVariable = combineReducers({
 export const entitiesReducer = combineReducers({
   organization: organization,
   cluster: clusterReducer,
-  projects: projects,
   project: projectReducer,
-  environments: environments,
   environment: environmentReducer,
   applications: applications,
   databases: databases,
@@ -78,13 +72,12 @@ export const initialRootState = (): RootState => ({
   entities: {
     organization: initialOrganizationState,
     cluster: initialClusterState,
-    projects: initialProjectsState,
     project: {
+      projects: initialProjectsState,
       deploymentRules: initialDeploymentRulesState,
     },
-    environments: initialEnvironmentsState,
     environment: {
-      environmentDeploymentRules: initialEnvironmentDeploymentRulesState,
+      environments: initialEnvironmentsState,
     },
     environmentVariable: {
       public: initialEnvironmentVariablesState,

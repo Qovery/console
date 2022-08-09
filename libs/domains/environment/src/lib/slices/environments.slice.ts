@@ -1,29 +1,33 @@
 import {
+  PayloadAction,
+  Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
-  PayloadAction,
-  Update,
 } from '@reduxjs/toolkit'
 import {
   DeploymentHistoryEnvironment,
   Environment,
   EnvironmentDeploymentHistoryApi,
+  EnvironmentDeploymentRule,
+  EnvironmentDeploymentRuleApi,
   EnvironmentEditRequest,
   EnvironmentMainCallsApi,
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
-import { toast, ToastEnum } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
+
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
+const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
@@ -64,10 +68,33 @@ export const updateEnvironment = createAsyncThunk(
   }
 )
 
+export const fetchEnvironmentDeploymentRules = createAsyncThunk(
+  'environment-deployment-rules/fetch',
+  async (environmentId: string) => {
+    const response = await environmentDeploymentRulesApi.getEnvironmentDeploymentRule(environmentId)
+    return response.data as EnvironmentDeploymentRule
+  }
+)
+
+export const editEnvironmentDeploymentRules = createAsyncThunk(
+  'environment-deployment-rules/edit',
+  async (payload: { environmentId: string; deploymentRuleId: string; data: EnvironmentDeploymentRule }) => {
+    const cloneEnvironmentDeploymentRules = Object.assign({}, refactoPayload(payload.data) as any)
+
+    const response = await environmentDeploymentRulesApi.editEnvironmentDeploymentRule(
+      payload.environmentId,
+      payload.deploymentRuleId,
+      cloneEnvironmentDeploymentRules
+    )
+    return response.data as EnvironmentDeploymentRule
+  }
+)
+
 export const initialEnvironmentsState: EnvironmentsState = environmentsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   loadingEnvironmentStatus: 'not loaded',
   loadingEnvironmentDeployments: 'not loaded',
+  loadingEnvironmentDeploymentRules: 'not loaded',
   error: null,
   joinProjectEnvironments: {},
 })
@@ -189,8 +216,48 @@ export const environmentsSlice = createSlice({
       })
       .addCase(updateEnvironment.rejected, (state: EnvironmentsState, action) => {
         state.loadingStatus = 'error'
-        // @todo fix with toastError
-        toast(ToastEnum.ERROR, action.error.message || `Your environment isn't updated`)
+        toastError(action.error)
+        state.error = action.error.message
+      })
+      // fetch environment deployment rules
+      .addCase(fetchEnvironmentDeploymentRules.pending, (state: EnvironmentsState) => {
+        state.loadingEnvironmentDeploymentRules = 'loading'
+      })
+      .addCase(fetchEnvironmentDeploymentRules.fulfilled, (state: EnvironmentsState, action) => {
+        const update: Update<EnvironmentEntity> = {
+          id: action.meta.arg,
+          changes: {
+            deploymentRules: action.payload,
+          },
+        }
+        environmentsAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingStatus = 'loaded'
+        state.loadingEnvironmentDeploymentRules = 'loaded'
+      })
+      .addCase(fetchEnvironmentDeploymentRules.rejected, (state: EnvironmentsState, action) => {
+        state.loadingEnvironmentDeploymentRules = 'error'
+        state.error = action.error.message
+      })
+      // update environment deployment rules
+      .addCase(editEnvironmentDeploymentRules.pending, (state: EnvironmentsState) => {
+        state.loadingEnvironmentDeploymentRules = 'loading'
+      })
+      .addCase(editEnvironmentDeploymentRules.fulfilled, (state: EnvironmentsState, action) => {
+        const update: Update<EnvironmentEntity> = {
+          id: action.meta.arg.environmentId,
+          changes: {
+            deploymentRules: action.payload,
+          },
+        }
+        environmentsAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingEnvironmentDeploymentRules = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Your environment deployment rules is updated')
+      })
+      .addCase(editEnvironmentDeploymentRules.rejected, (state: EnvironmentsState, action) => {
+        state.loadingEnvironmentDeploymentRules = 'error'
+        toastError(action.error)
         state.error = action.error.message
       })
   },
@@ -203,7 +270,7 @@ export const environmentsActions = environmentsSlice.actions
 const { selectAll, selectEntities } = environmentsAdapter.getSelectors()
 
 export const getEnvironmentsState = (rootState: RootState): EnvironmentsState =>
-  rootState.entities[ENVIRONMENTS_FEATURE_KEY]
+  rootState.entities.environment[ENVIRONMENTS_FEATURE_KEY]
 
 export const selectAllEnvironments = createSelector(getEnvironmentsState, selectAll)
 
@@ -249,3 +316,13 @@ export const environmentsLoadingEnvironmentStatus = (state: RootState): string |
 
 export const environmentsLoadingEnvironmentDeployments = (state: RootState): string | undefined =>
   getEnvironmentsState(state).loadingEnvironmentDeployments
+
+export const environmentsLoadingEnvironmentDeploymentRules = (state: RootState): string | undefined =>
+  getEnvironmentsState(state).loadingEnvironmentDeploymentRules
+
+export const selectEnvironmentDeploymentRulesByEnvId = (
+  state: RootState,
+  environmentId: string
+): EnvironmentDeploymentRule | undefined => {
+  return getEnvironmentsState(state).entities[environmentId]?.deploymentRules
+}

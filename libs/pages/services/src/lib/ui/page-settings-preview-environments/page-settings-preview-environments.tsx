@@ -27,7 +27,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                   onChange={field.onChange}
                   title="Activate preview environment for all applications"
                   description="Automatically create a preview environment when a merge/pull request is submitted on one of your applications."
-                  forcedItemStart
+                  forceAlignTop
                   small
                 />
               )}

@@ -20,7 +20,13 @@ import {
 } from 'qovery-typescript-axios'
 import { ApplicationEntity, ApplicationsState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation, shortToLongId } from '@console/shared/utils'
+import {
+  addOneToManyRelation,
+  getEntitiesByIds,
+  refactoApplicationPayload,
+  removeOneToManyRelation,
+  shortToLongId,
+} from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
@@ -64,17 +70,7 @@ export const fetchApplication = createAsyncThunk<Application, { applicationId: s
 export const editApplication = createAsyncThunk(
   'application/edit',
   async (payload: { applicationId: string; data: Application }) => {
-    const cloneApplication = Object.assign({}, payload.data as any)
-    delete cloneApplication['id']
-    delete cloneApplication['created_at']
-    delete cloneApplication['updated_at']
-    delete cloneApplication['buildpack_language']
-    delete cloneApplication['environment']
-    delete cloneApplication['status']
-    delete cloneApplication['storage']
-    delete cloneApplication['running_status']
-    delete cloneApplication['maximum_cpu']
-    delete cloneApplication['maximum_memory']
+    const cloneApplication = Object.assign({}, refactoApplicationPayload(payload.data) as any)
 
     cloneApplication.git_repository = {
       url: cloneApplication.git_repository.url,
@@ -230,7 +226,7 @@ export const applicationsSlice = createSlice({
         applicationsAdapter.updateOne(state, update)
         state.error = null
         state.loadingStatus = 'loaded'
-        toast(ToastEnum.SUCCESS, `Your application ${action.payload.name} is updated`)
+        toast(ToastEnum.SUCCESS, `Your application ${action.payload.name} has been updated`)
       })
       .addCase(editApplication.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'
