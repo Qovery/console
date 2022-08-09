@@ -10,10 +10,15 @@ export function refactoApplicationPayload(response: any) {
   delete response['buildpack_language']
   delete response['environment']
   delete response['status']
-  delete response['storage']
   delete response['running_status']
   delete response['maximum_cpu']
   delete response['maximum_memory']
+
+  response.git_repository = {
+    url: response.git_repository.url,
+    branch: response.git_repository.branch,
+    root_path: response.git_repository.root_path,
+  }
 
   return refactoPayload(response)
 }

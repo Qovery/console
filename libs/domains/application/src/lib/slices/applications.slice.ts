@@ -72,12 +72,6 @@ export const editApplication = createAsyncThunk(
   async (payload: { applicationId: string; data: Application }) => {
     const cloneApplication = Object.assign({}, refactoApplicationPayload(payload.data) as any)
 
-    cloneApplication.git_repository = {
-      url: cloneApplication.git_repository.url,
-      branch: cloneApplication.git_repository.branch,
-      root_path: cloneApplication.git_repository.root_path,
-    }
-
     const response = await applicationMainCallsApi.editApplication(payload.applicationId, cloneApplication)
     return response.data as Application
   }
