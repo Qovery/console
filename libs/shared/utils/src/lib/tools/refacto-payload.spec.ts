@@ -39,6 +39,9 @@ describe('testing payload refactoring', () => {
       },
       name: 'hello-2',
       test: 'test',
+      commits: [],
+      links: [],
+      instances: [],
     }
 
     expect(refactoApplicationPayload(response)).toEqual({

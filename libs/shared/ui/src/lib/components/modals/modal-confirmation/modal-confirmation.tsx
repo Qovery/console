@@ -30,6 +30,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
   const onSubmit = handleSubmit((data) => {
     if (data) {
       setOpen && setOpen(false)
+      console.log('callback', callback)
       callback()
     }
   })

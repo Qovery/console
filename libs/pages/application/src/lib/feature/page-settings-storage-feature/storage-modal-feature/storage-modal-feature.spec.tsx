@@ -1,13 +1,18 @@
-import { render } from '@testing-library/react'
-
-import StorageModalFeature, { handleSubmit } from './storage-modal-feature'
+import StorageModalFeature, { handleSubmit, StorageModalFeatureProps } from './storage-modal-feature'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { applicationFactoryMock } from '@console/domains/application'
+import { render } from '__tests__/utils/setup-jest'
+
+const props: StorageModalFeatureProps = {
+  onClose: jest.fn(),
+  application: applicationFactoryMock(1)[0],
+  applicationId: '1',
+}
 
 describe('StorageModalFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<StorageModalFeature />)
+    const { baseElement } = render(<StorageModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

@@ -29,11 +29,11 @@ export function StorageModal(props: StorageModalProps) {
             required: 'Please enter a value.',
             max: {
               value: 512,
-              message: 'The hard disk space must be between 32 and 512 GB.',
+              message: 'The hard disk space must be between 4 and 512 GB.',
             },
             min: {
-              value: 32,
-              message: 'The hard disk space must be between 32 and 512 GB.',
+              value: 4,
+              message: 'The hard disk space must be between 4 and 512 GB.',
             },
           }}
           render={({ field, fieldState: { error } }) => (
@@ -54,6 +54,10 @@ export function StorageModal(props: StorageModalProps) {
           control={control}
           rules={{
             required: 'Please enter a value.',
+            pattern: {
+              value: /^\/[a-zA-Z0-9]+$/i,
+              message: 'The mount point must start with a slash',
+            },
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -81,6 +85,7 @@ export function StorageModal(props: StorageModalProps) {
               error={error?.message}
               items={Object.values(StorageTypeEnum).map((s) => ({ value: s, label: s }))}
               label="Type"
+              disabled
             />
           )}
         />
