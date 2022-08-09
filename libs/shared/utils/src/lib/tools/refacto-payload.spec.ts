@@ -1,3 +1,4 @@
+import { StorageTypeEnum } from 'qovery-typescript-axios'
 import { refactoApplicationPayload, refactoPayload } from './refacto-payload'
 
 describe('testing payload refactoring', () => {
@@ -20,14 +21,35 @@ describe('testing payload refactoring', () => {
       buildpack_language: '',
       environment: '',
       status: '',
-      storage: '',
+      storage: [
+        {
+          id: '1',
+          mount_point: '',
+          size: 4,
+          type: StorageTypeEnum.FAST_SSD,
+        },
+      ],
       running_status: '',
       maximum_cpu: '',
       maximum_memory: '',
+      git_repository: {
+        url: '',
+        branch: '',
+        root_path: '',
+      },
       name: 'hello-2',
       test: 'test',
     }
 
-    expect(refactoApplicationPayload(response)).toEqual({ name: 'hello-2', test: 'test' })
+    expect(refactoApplicationPayload(response)).toEqual({
+      name: 'hello-2',
+      test: 'test',
+      storage: [{ mount_point: '', size: 4, type: StorageTypeEnum.FAST_SSD }],
+      git_repository: {
+        url: '',
+        branch: '',
+        root_path: '',
+      },
+    })
   })
 })
