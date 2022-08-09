@@ -1,103 +1,102 @@
-import { Button, ButtonIcon, HelpSection, IconAwesomeEnum, InputSelect, InputText } from '@console/shared/ui'
-import { Controller, useFormContext } from 'react-hook-form'
-import { StorageTypeEnum } from 'qovery-typescript-axios'
+import {
+  BlockContent,
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  HelpSection,
+  IconAwesomeEnum,
+  InputSelect,
+  InputText,
+} from '@console/shared/ui'
+import { ApplicationStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 
 export interface PageSettingsStorageProps {
-  keys: string[]
+  storages: ApplicationStorageStorage[]
   onAddStorage: () => void
   onRemove: (key: string) => void
+  onEdit: (storage: ApplicationStorageStorage) => void
 }
 
 export function PageSettingsStorage(props: PageSettingsStorageProps) {
-  const { control } = useFormContext()
-
   return (
     <div className="flex flex-col justify-between w-full">
-      <div>
-        <p>Add persistent local storage for your application.</p>
-        <Button onClick={() => props.onAddStorage()} iconRight={IconAwesomeEnum.PLUS}>
-          Add Storage
-        </Button>
-      </div>
-      {props.keys?.length > 0 ? (
-        props.keys.map((key, i) => (
-          <div key={key} className="flex flex-col justify-between w-full" data-testid="form-row">
-            <Controller
-              name={'size_' + key}
-              control={control}
-              rules={{
-                required: 'Please enter a value.',
-                max: {
-                  value: 512,
-                  message: 'The hard disk space must be between 32 and 512 GB.',
-                },
-                min: {
-                  value: 32,
-                  message: 'The hard disk space must be between 32 and 512 GB.',
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
+      <div className="p-8  max-w-max-width-content-with-navigation-left">
+        <div className="flex justify-between mb-8">
+          <div>
+            <h1 className="h5 text-text-700 mb-2">Storage</h1>
+            <p className="text-sm text-text-500">Add persistent local storage for your application.</p>
+          </div>
+
+          <Button onClick={() => props.onAddStorage()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+            Add Storage
+          </Button>
+        </div>
+
+        {props.storages?.length > 0 ? (
+          <BlockContent title="Storage">
+            {props.storages.map((storage, i) => (
+              <div
+                key={storage.id}
+                className="flex justify-between w-full items-center gap-3 mb-5"
+                data-testid="form-row"
+              >
                 <InputText
-                  className="shrink-0 grow flex-1 mr-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
+                  name={'size_' + storage.id}
+                  className="shrink-0 grow flex-1"
+                  value={storage.size.toString()}
                   label="Size in GB"
+                  disabled
                 />
-              )}
-            />
 
-            <Controller
-              name={'path_' + key}
-              control={control}
-              rules={{
-                required: 'Please enter a value.',
-              }}
-              render={({ field, fieldState: { error } }) => (
                 <InputText
-                  className="shrink-0 grow flex-1 mr-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
+                  name={'path_' + storage.id}
+                  className="shrink-0 grow flex-1"
+                  value={storage.mount_point}
                   label="Path"
+                  disabled
                 />
-              )}
-            />
 
-            <Controller
-              name={'type_' + key}
-              control={control}
-              rules={{
-                required: 'Please enter a value.',
-              }}
-              render={({ field, fieldState: { error } }) => (
                 <InputSelect
-                  className="shrink-0 grow flex-1 mr-3"
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
+                  className="shrink-0 grow flex-1"
+                  value={storage.type}
                   items={Object.values(StorageTypeEnum).map((s) => ({ value: s, label: s }))}
                   label="Type"
+                  disabled
                 />
-              )}
+
+                <ButtonIcon
+                  iconClassName="text-text-500"
+                  onClick={() => props.onRemove(storage.id || '')}
+                  dataTestId="remove"
+                  icon={IconAwesomeEnum.TRASH}
+                  style={ButtonIconStyle.FLAT}
+                />
+                <ButtonIcon
+                  iconClassName="text-text-500"
+                  style={ButtonIconStyle.FLAT}
+                  onClick={() => props.onEdit(storage)}
+                  dataTestId="edit"
+                  icon={IconAwesomeEnum.PEN}
+                />
+              </div>
+            ))}
+          </BlockContent>
+        ) : (
+          <div className="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-10">
+            <img
+              className="w-[48px] pointer-events-none user-none mb-5"
+              src="/assets/images/event-placeholder-light.svg"
+              alt="Event placeholder"
             />
-
-            <ButtonIcon onClick={() => props.onRemove(key)} dataTestId="remove" icon={IconAwesomeEnum.TRASH} />
+            <p className="text-text-600 font-medium mb-1">No storage are set</p>
+            <p className="text-sm text-text-400">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda deserunt dolorem et facere
+              inventore ipsam iure labore nisi praesentium quaerat quidem quisquam recusandae reprehenderit rerum, sunt
+              suscipit unde vero.
+            </p>
           </div>
-        ))
-      ) : (
-        <div>
-          <h3>No storage are set</h3>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda deserunt dolorem et facere
-            inventore ipsam iure labore nisi praesentium quaerat quidem quisquam recusandae reprehenderit rerum, sunt
-            suscipit unde vero.
-          </p>
-        </div>
-      )}
-
+        )}
+      </div>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[

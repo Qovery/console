@@ -1,19 +1,18 @@
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@console/store/data'
-import { FormProvider, useForm } from 'react-hook-form'
-import { useEffect, useState } from 'react'
-import { addStorage, initStorage, onRemove } from './utils/utils'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { fetchApplication, selectApplicationById } from '@console/domains/application'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
+import { useModal, useModalConfirmation } from '@console/shared/ui'
+import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
+import { ApplicationStorageStorage } from 'qovery-typescript-axios'
 
 export function PageSettingsStorageFeature() {
   const { applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
-  const methods = useForm({ defaultValues: {}, mode: 'all' })
-
-  const [keys, setKeys] = useState<string[]>([])
+  const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => state.entities.applications.loadingStatus)
   const application = useSelector<RootState, ApplicationEntity | undefined>(
@@ -27,20 +26,29 @@ export function PageSettingsStorageFeature() {
     dispatch(fetchApplication({ applicationId }))
   }
 
-  useEffect(() => {
-    if (application) {
-      setKeys(initStorage(methods.register, application.storage || []))
-    }
-  }, [application, setKeys, methods.register])
-
   return (
-    <FormProvider {...methods}>
-      <PageSettingsStorage
-        keys={keys}
-        onRemove={(key) => setKeys(onRemove(key, methods.unregister, keys))}
-        onAddStorage={() => setKeys(addStorage(methods.register, keys))}
-      />
-    </FormProvider>
+    <PageSettingsStorage
+      storages={application?.storage || []}
+      onRemove={() => {
+        openModalConfirmation({
+          title: 'Delete Storage',
+          description: 'To confirm the deletion of this storage, please type the name of the application',
+          name: application?.name,
+          isDelete: true,
+          action: async () => {},
+        })
+      }}
+      onEdit={(storage?: ApplicationStorageStorage) => {
+        openModal({
+          content: <StorageModalFeature onClose={closeModal} storage={storage} applicationId={applicationId} />,
+        })
+      }}
+      onAddStorage={() => {
+        openModal({
+          content: <StorageModalFeature onClose={closeModal} applicationId={applicationId} />,
+        })
+      }}
+    />
   )
 }
 
