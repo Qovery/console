@@ -1,4 +1,4 @@
-import { Application } from 'qovery-typescript-axios'
+import { Application, BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,12 +19,21 @@ export function PageSettingsGeneralFeature() {
     mode: 'onChange',
   })
 
-  // const watchEnvPreview = methods.watch('buildpacks')
+  const watchBuildMode = methods.watch('build_mode')
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data) {
       const cloneApplication = Object.assign({}, application as Application)
       cloneApplication.name = data['name']
+      cloneApplication.build_mode = data['build_mode']
+
+      if (data['build_mode'] === BuildModeEnum.DOCKER) {
+        cloneApplication.dockerfile_path = data['dockerfile_path']
+        cloneApplication.buildpack_language = null
+      } else {
+        cloneApplication.buildpack_language = data['buildpack_language']
+        cloneApplication.dockerfile_path = null
+      }
 
       dispatch(
         editApplication({
@@ -36,12 +45,32 @@ export function PageSettingsGeneralFeature() {
   })
 
   useEffect(() => {
+    if (watchBuildMode === BuildModeEnum.DOCKER) {
+      methods.setValue('dockerfile_path', 'Dockerfile')
+    } else {
+      methods.setValue('buildpack_language', BuildPackLanguageEnum.PYTHON)
+    }
+  }, [watchBuildMode, methods])
+
+  useEffect(() => {
     methods.setValue('name', application?.name)
-  }, [methods, application?.name])
+    methods.setValue('build_mode', application?.build_mode)
+    methods.setValue(
+      'buildpack_language',
+      application?.buildpack_language ? application?.buildpack_language : BuildPackLanguageEnum.PYTHON
+    )
+    methods.setValue('dockerfile_path', application?.dockerfile_path ? application?.dockerfile_path : 'Dockerfile')
+  }, [
+    methods,
+    application?.name,
+    application?.build_mode,
+    application?.buildpack_language,
+    application?.dockerfile_path,
+  ])
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} />
+      <PageSettingsGeneral onSubmit={onSubmit} watchBuildMode={watchBuildMode} />
     </FormProvider>
   )
 }

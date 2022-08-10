@@ -9,7 +9,6 @@ export function refactoPayload(response: any) {
 }
 
 export function refactoApplicationPayload(response: any) {
-  delete response['buildpack_language']
   delete response['environment']
   delete response['status']
   delete response['running_status']

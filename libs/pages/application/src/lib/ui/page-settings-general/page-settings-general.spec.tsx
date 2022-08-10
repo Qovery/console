@@ -1,44 +1,83 @@
-import { act, fireEvent, queryByText, render, screen, waitFor } from '@testing-library/react'
+import { act, findByTestId, render, waitFor } from '@testing-library/react'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { FormProvider, useForm } from 'react-hook-form'
+import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { upperCaseFirstLetter } from '@console/shared/utils'
 import PageSettingsGeneral, { PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
   const props: PageSettingsGeneralProps = {
-    onSubmit: jest.fn(),
+    watchBuildMode: BuildModeEnum.DOCKER,
+    onSubmit: jest.fn((e) => e.preventDefault()),
   }
 
-  const WrapperForm = ({ children }) => {
-    const methods = useForm({
-      defaultValues: {
-        name: 'hello',
-      },
-      mode: 'onChange',
-    })
-
-    return <FormProvider {...methods}>{children}</FormProvider>
-  }
-  it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
-
-    await waitFor(() => {
-      expect(baseElement).toBeTruthy()
-    })
+  const defaultValues = (mode = BuildModeEnum.DOCKER) => ({
+    name: 'hello-world',
+    build_mode: mode,
+    buildpack_language: BuildPackLanguageEnum.CLOJURE,
+    dockerfile_path: 'Dockerfile',
   })
 
-  it('should edit the name', async () => {
+  it('should render successfully', async () => {
+    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
+    expect(baseElement).toBeTruthy()
+  })
+
+  it('should render the form with docker section', async () => {
     const { baseElement } = render(
-      <WrapperForm>
-        <PageSettingsGeneral {...props} />
-      </WrapperForm>
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
+        defaultValues: defaultValues(),
+      })
     )
 
-    await act(() => {
-      const inputName = screen.getByTestId('input-name')
-      fireEvent.change(inputName, { target: { value: 'aaa' } })
-      fireEvent.change(inputName, { target: { value: '' } })
+    let name: any, buildMode: any, dockerfile: any
+    await act(async () => {
+      name = await findByTestId(baseElement, 'input-name')
+      buildMode = await findByTestId(baseElement, 'input-select-mode')
+      dockerfile = await findByTestId(baseElement, 'input-text-dockerfile')
     })
+    expect(name.getAttribute('value')).toBe('hello-world')
+    expect(buildMode.querySelector('.input__value')?.textContent).toContain(upperCaseFirstLetter(BuildModeEnum.DOCKER))
+    expect(dockerfile.getAttribute('value')).toBe('Dockerfile')
+  })
 
-    expect(queryByText(baseElement, 'Please enter a name.')).toBeNull()
+  it('should render the form with buildpack section', async () => {
+    props.watchBuildMode = BuildModeEnum.BUILDPACKS
+
+    const { baseElement } = render(
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
+        defaultValues: defaultValues(BuildModeEnum.BUILDPACKS),
+      })
+    )
+
+    let name: any, buildMode: any, language: any
+    await act(async () => {
+      name = await findByTestId(baseElement, 'input-name')
+      buildMode = await findByTestId(baseElement, 'input-select-mode')
+      language = await findByTestId(baseElement, 'input-select-language')
+    })
+    expect(name.getAttribute('value')).toBe('hello-world')
+    expect(buildMode.querySelector('.input__value')?.textContent).toContain(
+      upperCaseFirstLetter(BuildModeEnum.BUILDPACKS)
+    )
+    expect(language.querySelector('.input__value')?.textContent).toContain(
+      upperCaseFirstLetter(BuildPackLanguageEnum.CLOJURE)
+    )
+  })
+
+  it('should submit the form', async () => {
+    const spy = jest.fn((e) => e.preventDefault())
+    props.onSubmit = spy
+    const { baseElement } = render(
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
+        defaultValues: defaultValues(),
+      })
+    )
+
+    const button = await findByTestId(baseElement, 'submit-button')
+
+    await waitFor(() => {
+      button.click()
+      expect(spy).toHaveBeenCalled()
+    })
   })
 })

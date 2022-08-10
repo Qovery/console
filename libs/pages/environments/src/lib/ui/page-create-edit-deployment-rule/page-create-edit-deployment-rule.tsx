@@ -1,13 +1,15 @@
-import { useNavigate, useParams } from 'react-router-dom'
-import { Control, Controller, FieldValues } from 'react-hook-form'
-import { useEffect, useState } from 'react'
 import { Cluster } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
+import { Control, Controller, FieldValues } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router-dom'
+import { Value } from '@console/shared/interfaces'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import {
   BaseLink,
+  BlockContent,
   Button,
   ButtonSize,
   ButtonStyle,
-  BlockContent,
   HelpSection,
   Icon,
   InputSelect,
@@ -16,9 +18,7 @@ import {
   InputTextArea,
   InputToggle,
 } from '@console/shared/ui'
-import { Value } from '@console/shared/interfaces'
 import HelpSidebar from '../help-sidebar/help-sidebar'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 
 export interface PageCreateEditDeploymentRuleProps {
   title: string
@@ -339,10 +339,11 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     />
                   </div>
                 </BlockContent>
-
-                <Button className="mb-14" size={ButtonSize.REGULAR} style={ButtonStyle.BASIC} type="submit">
-                  {btnLabel}
-                </Button>
+                <div className="flex justify-end">
+                  <Button className="mb-14" size={ButtonSize.LARGE} style={ButtonStyle.BASIC} type="submit">
+                    {btnLabel}
+                  </Button>
+                </div>
               </form>
             </div>
           </div>

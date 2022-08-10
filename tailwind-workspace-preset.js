@@ -9,7 +9,7 @@ module.exports = {
         'page-container': 'calc(100vh - theme(spacing.navbar-height))',
       },
       maxWidth: {
-        'max-width-content-with-navigation-left': '42.5rem',
+        'content-with-navigation-left': '42.5rem',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],

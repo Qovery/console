@@ -11,16 +11,18 @@ export interface InputSelectProps {
   error?: string
   disabled?: boolean
   portal?: boolean
+  dataTestId?: string
 }
 
 export function InputSelect(props: InputSelectProps) {
-  const { label, value, items, className = '', onChange, error, disabled = false, portal = true } = props
+  const { label, value, items, className = '', onChange, error, dataTestId, disabled = false, portal = true } = props
 
   const selectedLabel = value && items.find((item) => item.value === value)?.label
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
   return (
     <div
+      data-testid={dataTestId || 'input-select'}
       className={`input input--select ${hasError} ${
         disabled ? '!bg-element-light-lighter-200 pointer-events-none' : ''
       } ${className}`}
