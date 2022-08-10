@@ -1,17 +1,17 @@
-import { useParams } from 'react-router-dom'
+import { ApplicationStorageStorage } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { useParams } from 'react-router-dom'
 import {
   editApplication,
   fetchApplication,
   getApplicationsState,
   selectApplicationById,
 } from '@console/domains/application'
-import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
+import { ApplicationEntity } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
+import { AppDispatch, RootState } from '@console/store/data'
+import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
-import { ApplicationStorageStorage } from 'qovery-typescript-axios'
 
 export const removeStorage = (storage: ApplicationStorageStorage, application: ApplicationEntity) => {
   const app = { ...application }

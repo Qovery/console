@@ -1,3 +1,4 @@
+import { ApplicationStorageStorage } from 'qovery-typescript-axios'
 import {
   BlockContent,
   Button,
@@ -5,10 +6,8 @@ import {
   ButtonIconStyle,
   HelpSection,
   IconAwesomeEnum,
-  InputSelect,
   InputText,
 } from '@console/shared/ui'
-import { ApplicationStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 
 export interface PageSettingsStorageProps {
   storages: ApplicationStorageStorage[]
@@ -56,10 +55,10 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                   disabled
                 />
 
-                <InputSelect
+                <InputText
+                  name={'type_' + storage.id}
                   className="shrink-0 grow flex-1"
                   value={storage.type}
-                  items={Object.values(StorageTypeEnum).map((s) => ({ value: s, label: s }))}
                   label="Type"
                   disabled
                 />

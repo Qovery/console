@@ -1,10 +1,10 @@
 import { ApplicationStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
 import { useDispatch, useSelector } from 'react-redux'
 import { editApplication, getApplicationsState } from '@console/domains/application'
+import { ApplicationEntity } from '@console/shared/interfaces'
+import { AppDispatch, RootState } from '@console/store/data'
+import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
 
 export interface StorageModalFeatureProps {
   storage?: ApplicationStorageStorage

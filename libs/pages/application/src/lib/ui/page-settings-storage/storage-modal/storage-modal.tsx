@@ -1,7 +1,7 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler, useEffect } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 
 export interface StorageModalProps {
   onClose: () => void
