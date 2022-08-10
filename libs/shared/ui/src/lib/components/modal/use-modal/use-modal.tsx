@@ -1,5 +1,5 @@
 import { ReactNode, useContext, useEffect, useState } from 'react'
-import { ModalContext } from '../modal-root'
+import { ModalContext, defaultModalOptions } from '../modal-root'
 
 export interface UseModalProps {
   content: ReactNode
@@ -15,7 +15,8 @@ export function useModal() {
   useEffect(() => {
     if (modal) {
       setOpenModal(true)
-      if (modal.options) setOptionsModal(modal.options)
+      setOptionsModal({ ...defaultModalOptions, ...modal.options })
+
       setContentModal(modal.content)
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
