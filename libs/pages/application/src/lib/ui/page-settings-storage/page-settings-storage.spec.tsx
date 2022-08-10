@@ -8,8 +8,8 @@ import {
   render,
   waitFor,
 } from '@testing-library/react'
-import { PageSettingsStorage, PageSettingsStorageProps } from './page-settings-storage'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
+import { PageSettingsStorage, PageSettingsStorageProps } from './page-settings-storage'
 
 const props: PageSettingsStorageProps = {
   storages: [
@@ -38,14 +38,14 @@ describe('PageSettingsDangerZone', () => {
     })
   })
 
-  it('a row should have 2 inputs 1 select and 1 delete button', async () => {
+  it('a row should have 3 inputs 1 delete button and 1 edit', async () => {
     const { baseElement } = render(<PageSettingsStorage {...props} />)
 
     await waitFor(async () => {
       const formRows = await findAllByTestId(baseElement, 'form-row')
-      expect(formRows[0].querySelectorAll('input')).toHaveLength(2)
-      expect(formRows[0].querySelectorAll('.input.input--select')).toHaveLength(1)
+      expect(formRows[0].querySelectorAll('input')).toHaveLength(3)
       expect(formRows[0].querySelectorAll('[data-testid="remove"]')).toHaveLength(1)
+      expect(formRows[0].querySelectorAll('[data-testid="edit"]')).toHaveLength(1)
     })
   })
 

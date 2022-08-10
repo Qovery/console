@@ -1,8 +1,8 @@
-import StorageModal, { StorageModalProps } from './storage-modal'
+import { findByLabelText, findByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { findByLabelText, findByTestId, waitFor } from '@testing-library/react'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
+import StorageModal, { StorageModalProps } from './storage-modal'
 
 const props: StorageModalProps = {
   onClose: jest.fn(),
@@ -37,7 +37,7 @@ describe('StorageModal', () => {
     props.onSubmit = spy
     const { baseElement } = render(
       wrapWithReactHookForm(<StorageModal {...props} />, {
-        defaultValues: { size: '54', type: StorageTypeEnum.FAST_SSD, mount_point: '/test' },
+        defaultValues: { size: 54, type: StorageTypeEnum.FAST_SSD, mount_point: '/test' },
       })
     )
 
