@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from 'react'
+import { ReactNode, createContext, useState } from 'react'
 import Modal from './modal'
 
 interface ModalOptions {
@@ -13,14 +13,16 @@ interface DefaultContextProps {
   optionsModal: ModalOptions
 }
 
+export const defaultModalOptions: ModalOptions = {
+  width: 488,
+}
+
 const defaultContext = {
   openModal: false,
   setOpenModal: () => true,
   setContentModal: () => <></>,
   setOptionsModal: () => {},
-  optionsModal: {
-    width: 488,
-  },
+  optionsModal: defaultModalOptions,
 }
 
 export const ModalContext = createContext<DefaultContextProps>(defaultContext)
@@ -32,9 +34,7 @@ interface ModalProviderProps {
 export const ModalProvider = (props: ModalProviderProps) => {
   const [openModal, setOpenModal] = useState(false)
   const [contentModal, setContentModal] = useState(<></>)
-  const [optionsModal, setOptionsModal] = useState({
-    width: 488,
-  })
+  const [optionsModal, setOptionsModal] = useState(defaultModalOptions)
 
   return (
     <ModalContext.Provider value={{ openModal, setOpenModal, setContentModal, setOptionsModal, optionsModal }}>

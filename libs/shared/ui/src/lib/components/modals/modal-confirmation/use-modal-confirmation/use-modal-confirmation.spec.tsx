@@ -5,10 +5,15 @@ import useModalConfirmation, { UseModalConfirmationProps } from './use-modal-con
 
 const mockSetOpenModal = jest.fn()
 const mockSetContentModal = jest.fn()
+const mockSetOptionsModal = jest.fn()
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
-  useContext: () => ({ setOpenModal: mockSetOpenModal, setContentModal: mockSetContentModal }),
+  useContext: () => ({
+    setOpenModal: mockSetOpenModal,
+    setContentModal: mockSetContentModal,
+    setOptionsModal: mockSetOptionsModal,
+  }),
 }))
 
 describe('useModalConfirmation', () => {
@@ -76,4 +81,5 @@ it('should run action with delete props (display modal)', () => {
 
   expect(mockSetOpenModal).toHaveBeenCalled()
   expect(mockSetContentModal).toHaveBeenCalled()
+  expect(mockSetOptionsModal).toHaveBeenCalled()
 })
