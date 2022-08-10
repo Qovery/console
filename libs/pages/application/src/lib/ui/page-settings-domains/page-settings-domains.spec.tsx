@@ -65,16 +65,16 @@ describe('PagesSettingsDomains', () => {
   })
 
   it('should render a form row with one edit and one delete button', async () => {
-    props.domains = [
-      {
-        id: '1',
-        domain: 'example.com',
-        status: CustomDomainStatusEnum.VALIDATION_PENDING,
-        validation_domain: 'example.com',
-        updated_at: '2020-01-01T00:00:00Z',
-        created_at: '2020-01-01T00:00:00Z',
-      },
-    ]
+    const customDomain = {
+      id: '1',
+      domain: 'example.com',
+      status: CustomDomainStatusEnum.VALIDATION_PENDING,
+      validation_domain: 'example.com',
+      updated_at: '2020-01-01T00:00:00Z',
+      created_at: '2020-01-01T00:00:00Z',
+    }
+
+    props.domains = [customDomain]
     const spyEdit = jest.fn()
     props.onEdit = spyEdit
 
@@ -91,7 +91,7 @@ describe('PagesSettingsDomains', () => {
       deleteButton.click()
     })
 
-    expect(spyEdit).toHaveBeenCalledWith('1')
-    expect(spyDelete).toHaveBeenCalledWith('1')
+    expect(spyEdit).toHaveBeenCalledWith(customDomain)
+    expect(spyDelete).toHaveBeenCalledWith(customDomain)
   })
 })

@@ -14,8 +14,8 @@ import {
 export interface PageSettingsDomainsProps {
   application?: ApplicationEntity
   onAddDomain: () => void
-  onEdit: (link: string) => void
-  onDelete: (link: string) => void
+  onEdit: (customDomain: CustomDomain) => void
+  onDelete: (customDomain: CustomDomain) => void
   domains?: CustomDomain[]
 }
 
@@ -55,7 +55,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
 
                   <ButtonIcon
                     iconClassName="text-text-500 hover:text-text-700"
-                    onClick={() => props.onDelete(customDomain.id)}
+                    onClick={() => props.onDelete(customDomain)}
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.FLAT}
@@ -63,7 +63,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                   <ButtonIcon
                     iconClassName="text-text-500 hover:text-text-700"
                     style={ButtonIconStyle.FLAT}
-                    onClick={() => props.onEdit(customDomain.id)}
+                    onClick={() => props.onEdit(customDomain)}
                     dataTestId="edit-button"
                     icon={IconAwesomeEnum.PEN}
                   />

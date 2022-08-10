@@ -1,5 +1,10 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import { applications, initialApplicationsState } from '@console/domains/application'
+import {
+  applications,
+  customDomainReducer,
+  initialApplicationsState,
+  initialCustomDomainState,
+} from '@console/domains/application'
 import { databases, initialDatabasesState } from '@console/domains/database'
 import { environments, initialEnvironmentsState } from '@console/domains/environment'
 import {
@@ -41,14 +46,19 @@ export const environmentVariable = combineReducers({
   secret: secretEnvironmentVariables,
 })
 
+export const applicationReducer = combineReducers({
+  applications: applications,
+  customDomains: customDomainReducer,
+})
+
 export const entitiesReducer = combineReducers({
   organization: organization,
   cluster: clusterReducer,
   project: projectReducer,
   environment: environmentReducer,
-  applications: applications,
   databases: databases,
   environmentVariable,
+  application: applicationReducer,
 })
 
 export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
@@ -83,7 +93,10 @@ export const initialRootState = (): RootState => ({
       public: initialEnvironmentVariablesState,
       secret: initialSecretEnvironmentVariablesState,
     },
-    applications: initialApplicationsState,
     databases: initialDatabasesState,
+    application: {
+      applications: initialApplicationsState,
+      customDomains: initialCustomDomainState,
+    },
   },
 })

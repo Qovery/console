@@ -13,6 +13,7 @@ export * from './lib/states/environment-variables.interface'
 export * from './lib/states/secret-environment-variables.interface'
 export * from './lib/common/detect-new-row.interface'
 export * from './lib/states/environment-deployment-rules.interface'
+export * from './lib/states/custom-domains-state.interface'
 
 export * from './lib/domain/application.entity'
 export * from './lib/domain/database.entity'
