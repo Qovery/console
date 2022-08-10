@@ -63,8 +63,6 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
 
   const isLoading = !data.status?.id
 
-  console.log(data)
-
   return (
     <TableRow columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
