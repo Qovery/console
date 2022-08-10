@@ -19,6 +19,8 @@ export function PageSettingsGeneralFeature() {
     mode: 'onChange',
   })
 
+  // const watchEnvPreview = methods.watch('buildpacks')
+
   const onSubmit = methods.handleSubmit((data) => {
     if (data) {
       const cloneApplication = Object.assign({}, application as Application)

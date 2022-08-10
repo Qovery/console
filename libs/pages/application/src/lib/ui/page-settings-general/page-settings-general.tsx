@@ -1,9 +1,21 @@
+import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BlockContent, Button, HelpSection, InputText } from '@console/shared/ui'
+import { BlockContent, Button, HelpSection, InputSelect, InputText } from '@console/shared/ui'
+import { upperCaseFirstLetter } from '@console/shared/utils'
 
 export interface PageSettingsGeneralProps {
   onSubmit: () => void
 }
+
+export const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
+  label: upperCaseFirstLetter(value) || '',
+  value: value,
+}))
+
+export const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
+  label: upperCaseFirstLetter(value) || '',
+  value: value,
+}))
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   const { onSubmit } = props
@@ -26,6 +38,47 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   onChange={field.onChange}
                   value={field.value}
                   label="Application name"
+                  error={error?.message}
+                />
+              )}
+            />
+          </BlockContent>
+          <BlockContent title="Build mode">
+            <Controller
+              name="buildmode"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  label="Mode"
+                  items={buildModeItems}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="language"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  label="Language framework"
+                  items={languageItems}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="dockerfile_path"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Dockerfile path"
                   error={error?.message}
                 />
               )}
