@@ -6,7 +6,7 @@ export interface BlockContentProps {
 }
 
 export function BlockContent(props: BlockContentProps) {
-  const { children, className = '', title, customWidth = 'w-[580px]' } = props
+  const { children, className = '', title, customWidth = 'w-full' } = props
 
   return (
     <div

@@ -1,24 +1,14 @@
 import ImportEnvironmentVariableModalFeature, {
   ImportEnvironmentVariableModalFeatureProps,
 } from './import-environment-variable-modal-feature'
-import { findAllByTestId, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { findAllByTestId, fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
-import { configureStore } from '@reduxjs/toolkit'
-import { initialRootState, rootReducer } from '@console/store/data'
-import { Provider } from 'react-redux'
+import { render } from '__tests__/utils/setup-jest'
 
 const envText = `
 QOVERY_BUILD_TIME=hello
 variable_denv=hey
 `
-
-// I had to mock the store myself because we can't use our custon render here because there is an issue
-// with intercom. I don't know why yet.
-const store = configureStore({
-  reducer: rootReducer,
-  preloadedState: initialRootState(),
-})
-
 describe('ImportEnvironmentVariableModalFeature', () => {
   const props: ImportEnvironmentVariableModalFeatureProps = {
     applicationId: '123',
@@ -26,11 +16,7 @@ describe('ImportEnvironmentVariableModalFeature', () => {
   }
 
   it('should render successfully and show dropzone', async () => {
-    const { baseElement } = render(
-      <Provider store={store}>
-        <ImportEnvironmentVariableModalFeature {...props} />
-      </Provider>
-    )
+    const { baseElement } = render(<ImportEnvironmentVariableModalFeature {...props} />)
 
     await waitFor(async () => {
       expect(baseElement).toBeTruthy()
@@ -39,11 +25,7 @@ describe('ImportEnvironmentVariableModalFeature', () => {
   })
 
   it('should read file dropped and show table of inputs', async () => {
-    const { baseElement } = render(
-      <Provider store={store}>
-        <ImportEnvironmentVariableModalFeature {...props} />
-      </Provider>
-    )
+    const { baseElement } = render(<ImportEnvironmentVariableModalFeature {...props} />)
     const inputEl = screen.getByTestId('drop-input')
 
     const blob = new Blob([envText])

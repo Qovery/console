@@ -4,7 +4,7 @@ import Icon from '../../icon/icon'
 export interface InputTextProps {
   name: string
   label: string
-  value?: string | undefined
+  value?: string | number | undefined
   type?: string
   className?: string
   onChange?: () => void
@@ -18,13 +18,13 @@ export function InputText(props: InputTextProps) {
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
 
-  const hasFocus = focused || (value && value.length > 0)
+  const hasFocus = focused || (value?.toString() && value?.toString().length > 0)
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
   const inputActions = hasFocus
     ? 'input--focused'
-    : value && value.length > 0
+    : value?.toString() && value.toString().length > 0
     ? 'input--success'
     : disabled
     ? 'input--disabled'

@@ -4,20 +4,19 @@ import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { initialRootState, rootReducer } from '../../libs/store/data/src'
 import { Auth0Provider } from '@auth0/auth0-react'
-import { IntercomProvider } from 'react-use-intercom'
 import posthog from 'posthog-js'
 import { RootState } from '@console/store/data'
 import { ModalProvider } from '@console/shared/ui'
 
 type Params = {
-  Component: ComponentType<any>
+  Component?: ComponentType<any>
   compProps?: Record<string, unknown>
   reduxState?: Partial<RootState>
   route?: string
 }
 
-type Props = {
-  children: ReactNode
+export type Props = {
+  children?: ReactNode
 } & Omit<Params, 'Component'>
 
 export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootState(), route = '/' }) => {
@@ -33,14 +32,12 @@ export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootSta
   })
 
   return (
-    <IntercomProvider appId="__test__app__id__" autoBoot={false}>
-      <Auth0Provider clientId="__test_client_id__" domain="__test_domain__">
-        <Provider store={store}>
-          <ModalProvider>
-            <MemoryRouter>{children}</MemoryRouter>
-          </ModalProvider>
-        </Provider>
-      </Auth0Provider>
-    </IntercomProvider>
+    <Auth0Provider clientId="__test_client_id__" domain="__test_domain__">
+      <Provider store={store}>
+        <ModalProvider>
+          <MemoryRouter>{children}</MemoryRouter>
+        </ModalProvider>
+      </Provider>
+    </Auth0Provider>
   )
 }

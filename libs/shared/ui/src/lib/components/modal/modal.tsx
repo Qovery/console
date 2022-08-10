@@ -1,5 +1,5 @@
-import { cloneElement, ReactElement, ReactNode, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
+import { ReactElement, ReactNode, cloneElement, useState } from 'react'
 import { Icon } from '../icon/icon'
 
 export interface ModalProps {

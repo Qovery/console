@@ -25,6 +25,7 @@ export interface ButtonIconProps {
   active?: boolean
   iconClassName?: string
   external?: boolean
+  dataTestId?: string
 }
 
 export function ButtonIcon(props: ButtonIconProps) {
@@ -51,7 +52,7 @@ export function ButtonIcon(props: ButtonIconProps) {
     return (
       <>
         {!link && (
-          <button className={defineClass} onClick={(e) => onClick && onClick(e)}>
+          <button data-testid={props.dataTestId} className={defineClass} onClick={(e) => onClick && onClick(e)}>
             {notification && (
               <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
             )}
@@ -60,7 +61,7 @@ export function ButtonIcon(props: ButtonIconProps) {
         )}
 
         {link && !external && (
-          <Link to={link} className={defineClass} onClick={onClick}>
+          <Link data-testid={props.dataTestId} to={link} className={defineClass} onClick={onClick}>
             {notification && (
               <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
             )}
@@ -69,7 +70,14 @@ export function ButtonIcon(props: ButtonIconProps) {
         )}
 
         {link && external && (
-          <a href={link} target="_blank" rel="noreferrer" className={defineClass} onClick={onClick}>
+          <a
+            data-testid={props.dataTestId}
+            href={link}
+            target="_blank"
+            rel="noreferrer"
+            className={defineClass}
+            onClick={onClick}
+          >
             {notification && (
               <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
             )}

@@ -36,6 +36,7 @@
 
 .input--disabled {
   @apply bg-element-light-lighter-200 border-element-light-lighter-500 pointer-events-none;
+  box-shadow: none !important;
 
   label {
     @apply text-text-400;
@@ -118,5 +119,15 @@ input[type='date'],
 input[type='datetime'] {
   &::-webkit-calendar-picker-indicator {
     background: none;
+  }
+}
+
+input[type='number'] {
+  // remove the chrome widget for number input
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
   }
 }
