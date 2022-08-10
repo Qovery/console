@@ -1,3 +1,5 @@
+import { RunningStatus } from '@console/shared/enums'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
@@ -11,8 +13,6 @@ import {
   Tooltip,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
-import { EnvironmentEntity } from '@console/shared/interfaces'
-import { RunningStatus } from '@console/shared/enums'
 
 export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
@@ -74,9 +74,9 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             content={
               <p className="flex">
                 {data.cloud_provider.provider && (
-                  <Icon className="mr-3" name={`${data.cloud_provider.provider}_GRAY`} width="16" />
+                  <Icon className="mr-2" name={`${data.cloud_provider.provider}_GRAY`} width="16" />
                 )}
-                ({data.cloud_provider.cluster})
+                {data.cluster_name} ({data.cloud_provider.cluster})
               </p>
             }
           >
