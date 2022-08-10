@@ -1,13 +1,13 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { FormEventHandler, useEffect } from 'react'
 
 export interface StorageModalProps {
   onClose: () => void
   isEdit?: boolean
   loading?: boolean
-  onSubmit: () => void
+  onSubmit: FormEventHandler<HTMLFormElement>
 }
 
 export function StorageModal(props: StorageModalProps) {
