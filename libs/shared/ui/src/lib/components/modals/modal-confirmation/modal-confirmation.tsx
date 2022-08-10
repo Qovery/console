@@ -1,7 +1,7 @@
 import { Controller, useForm } from 'react-hook-form'
 import Button, { ButtonStyle } from '../../buttons/button/button'
-import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import { Icon } from '../../icon/icon'
+import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import { Tooltip } from '../../tooltip/tooltip'
 
 export interface ModalConfirmationProps {
@@ -30,7 +30,6 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
   const onSubmit = handleSubmit((data) => {
     if (data) {
       setOpen && setOpen(false)
-      console.log('callback', callback)
       callback()
     }
   })

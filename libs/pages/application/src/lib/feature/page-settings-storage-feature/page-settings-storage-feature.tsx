@@ -1,12 +1,7 @@
 import { ApplicationStorageStorage } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  editApplication,
-  fetchApplication,
-  getApplicationsState,
-  selectApplicationById,
-} from '@console/domains/application'
+import { editApplication, getApplicationsState, selectApplicationById } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -24,19 +19,12 @@ export function PageSettingsStorageFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
   const error = useSelector((state: RootState) => getApplicationsState(state).error)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
-    (a, b) => {
-      return a?.id === b?.id && JSON.stringify(a?.storage) === JSON.stringify(b?.storage)
-    }
+    (a, b) => a?.id === b?.id && JSON.stringify(a?.storage) === JSON.stringify(b?.storage)
   )
-
-  if (loadingStatus === 'not loaded') {
-    dispatch(fetchApplication({ applicationId }))
-  }
 
   return (
     <PageSettingsStorage

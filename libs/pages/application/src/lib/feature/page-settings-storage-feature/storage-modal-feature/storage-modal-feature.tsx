@@ -44,7 +44,6 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
   })
 
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
-  // const error = useSelector((state: RootState) => getApplicationsState(state).error)
   const dispatch = useDispatch<AppDispatch>()
 
   const onSubmit = methods.handleSubmit((data) => {

@@ -7,6 +7,7 @@ import {
   HelpSection,
   IconAwesomeEnum,
   InputText,
+  PlaceholderSettings,
 } from '@console/shared/ui'
 
 export interface PageSettingsStorageProps {
@@ -81,27 +82,18 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
             ))}
           </BlockContent>
         ) : (
-          <div className="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-10">
-            <img
-              className="w-[48px] pointer-events-none user-none mb-5"
-              src="/assets/images/event-placeholder-light.svg"
-              alt="Event placeholder"
-            />
-            <p className="text-text-600 font-medium mb-1">No storage are set</p>
-            <p className="text-sm text-text-400">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Animi assumenda deserunt dolorem et facere
-              inventore ipsam iure labore nisi praesentium quaerat quidem quisquam recusandae reprehenderit rerum, sunt
-              suscipit unde vero.
-            </p>
-          </div>
+          <PlaceholderSettings
+            title="No storage are set"
+            description="Qovery applications can use storage to store data that persists across deploys and restarts, making it easy to deploy stateful applications"
+          />
         )}
       </div>
       <HelpSection
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#delete-an-application',
-            linkLabel: 'How to delete my application',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#storage',
+            linkLabel: 'How to configure my application',
             external: true,
           },
         ]}

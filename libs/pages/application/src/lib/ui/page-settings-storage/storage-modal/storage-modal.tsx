@@ -50,7 +50,7 @@ export function StorageModal(props: StorageModalProps) {
         />
 
         <Controller
-          name={'mount_point'}
+          name="mount_point"
           control={control}
           rules={{
             required: 'Please enter a value.',
@@ -72,7 +72,7 @@ export function StorageModal(props: StorageModalProps) {
         />
 
         <Controller
-          name={'type'}
+          name="type"
           control={control}
           rules={{
             required: 'Please enter a value.',
