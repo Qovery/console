@@ -37,7 +37,9 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
             {props.storages.map((storage, i) => (
               <div
                 key={storage.id}
-                className="flex justify-between w-full items-center gap-3 mb-5"
+                className={`flex justify-between w-full items-center gap-3 ${
+                  props.storages.length !== i + 1 ? 'mb-5' : ''
+                }`}
                 data-testid="form-row"
               >
                 <InputText
