@@ -25,7 +25,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
   const {
     title,
     className = '',
-    customWidth = 'w-[580px]',
+    customWidth = 'w-full',
     description = 'All your data are going to be deleted. Use it carefully this action is irreversible.',
     ctaLabel = 'Delete',
     callback,

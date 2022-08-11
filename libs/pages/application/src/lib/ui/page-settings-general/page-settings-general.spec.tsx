@@ -1,4 +1,4 @@
-import { act, findByTestId, render, waitFor } from '@testing-library/react'
+import { getByTestId, render, screen, waitFor } from '@testing-library/react'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { upperCaseFirstLetter } from '@console/shared/utils'
@@ -23,39 +23,33 @@ describe('PageSettingsGeneral', () => {
   })
 
   it('should render the form with docker section', async () => {
-    const { baseElement } = render(
+    render(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValues(),
       })
     )
 
-    let name: any, buildMode: any, dockerfile: any
-    await act(async () => {
-      name = await findByTestId(baseElement, 'input-name')
-      buildMode = await findByTestId(baseElement, 'input-select-mode')
-      dockerfile = await findByTestId(baseElement, 'input-text-dockerfile')
-    })
-    expect(name.getAttribute('value')).toBe('hello-world')
+    const buildMode = screen.getByTestId('input-select-mode')
+    const dockerfile = screen.getByTestId('input-text-dockerfile')
+
+    screen.getByDisplayValue('hello-world')
     expect(buildMode.querySelector('.input__value')?.textContent).toContain(upperCaseFirstLetter(BuildModeEnum.DOCKER))
     expect(dockerfile.getAttribute('value')).toBe('Dockerfile')
   })
 
-  it('should render the form with buildpack section', async () => {
+  it('should render the form with buildpack section', () => {
     props.watchBuildMode = BuildModeEnum.BUILDPACKS
 
-    const { baseElement } = render(
+    render(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValues(BuildModeEnum.BUILDPACKS),
       })
     )
 
-    let name: any, buildMode: any, language: any
-    await act(async () => {
-      name = await findByTestId(baseElement, 'input-name')
-      buildMode = await findByTestId(baseElement, 'input-select-mode')
-      language = await findByTestId(baseElement, 'input-select-language')
-    })
-    expect(name.getAttribute('value')).toBe('hello-world')
+    const buildMode = screen.getByTestId('input-select-mode')
+    const language = screen.getByTestId('input-select-language')
+
+    screen.getByDisplayValue('hello-world')
     expect(buildMode.querySelector('.input__value')?.textContent).toContain(
       upperCaseFirstLetter(BuildModeEnum.BUILDPACKS)
     )
@@ -73,7 +67,7 @@ describe('PageSettingsGeneral', () => {
       })
     )
 
-    const button = await findByTestId(baseElement, 'submit-button')
+    const button = getByTestId(baseElement, 'submit-button')
 
     await waitFor(() => {
       button.click()

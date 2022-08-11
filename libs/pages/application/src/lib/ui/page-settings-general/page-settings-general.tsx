@@ -7,6 +7,7 @@ import { upperCaseFirstLetter } from '@console/shared/utils'
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   watchBuildMode: BuildModeEnum
+  loading?: boolean
 }
 
 const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
@@ -20,7 +21,7 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
 }))
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { onSubmit, watchBuildMode } = props
+  const { onSubmit, watchBuildMode, loading } = props
 
   const { control, formState } = useFormContext()
 
@@ -107,6 +108,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               style={ButtonStyle.BASIC}
               type="submit"
               disabled={!formState.isValid}
+              loading={loading}
             >
               Save
             </Button>

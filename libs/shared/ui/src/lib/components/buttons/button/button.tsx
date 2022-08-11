@@ -1,6 +1,6 @@
-import Icon from '../../icon/icon'
-import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
+import { IconEnum } from '@console/shared/enums'
+import Icon from '../../icon/icon'
 
 export enum ButtonSize {
   XLARGE = 'xlarge',
@@ -79,7 +79,7 @@ export function Button(props: ButtonProps) {
 
   const defineClass = `btn${size ? ` btn--${size}` : ''}${style ? ` btn--${style}` : ''}${
     disabled ? ' btn--disabled' : ''
-  }${className ? ' ' + className : ''}`
+  }${className ? ' ' + className : ''} ${loading ? 'pointer-events-none cursor-default' : ''}`
 
   if (!link) {
     return (
