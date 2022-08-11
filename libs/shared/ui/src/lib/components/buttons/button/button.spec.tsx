@@ -42,6 +42,16 @@ describe('Button', () => {
     expect(button.className).toBe('btn btn--regular btn--basic btn--disabled ')
   })
 
+  it('should apply the loading class', () => {
+    props.loading = true
+
+    render(<Button {...props} />)
+
+    const button = screen.getByRole('button')
+
+    expect(button.className).toBe('btn btn--regular btn--basic pointer-events-none cursor-default')
+  })
+
   it('should return a link instead of a button', () => {
     props.link = chance.url()
 
