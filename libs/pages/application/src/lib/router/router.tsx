@@ -65,7 +65,7 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   },
   {
     path: APPLICATION_SETTINGS_DOMAIN_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsDomainsFeature />,
   },
   {
     path: APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,

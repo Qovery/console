@@ -1,10 +1,10 @@
 import {
+  PayloadAction,
+  Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
-  PayloadAction,
-  Update,
 } from '@reduxjs/toolkit'
 import {
   Application,
@@ -19,7 +19,7 @@ import {
   Status,
 } from 'qovery-typescript-axios'
 import { ApplicationEntity, ApplicationsState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { toast, ToastEnum, toastError } from '@console/shared/toast'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
 import {
   addOneToManyRelation,
   getEntitiesByIds,
@@ -424,7 +424,7 @@ export const applicationsActions = applicationsSlice.actions
 const { selectAll, selectEntities, selectById } = applicationsAdapter.getSelectors()
 
 export const getApplicationsState = (rootState: RootState): ApplicationsState =>
-  rootState['entities'][APPLICATIONS_FEATURE_KEY]
+  rootState.entities.application[APPLICATIONS_FEATURE_KEY]
 
 export const selectAllApplications = createSelector(getApplicationsState, selectAll)
 

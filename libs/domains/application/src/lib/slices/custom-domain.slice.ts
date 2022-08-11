@@ -1,7 +1,7 @@
-import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { CustomDomain, CustomDomainApi } from 'qovery-typescript-axios'
 import { CustomDomainsState } from '@console/shared/interfaces'
-import { getEntitiesByIds } from '@console/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const CUSTOM_DOMAIN_FEATURE_KEY = 'customDomains'
@@ -14,7 +14,7 @@ export const fetchCustomDomains = createAsyncThunk(
   'customDomains/fetch',
   async (payload: { applicationId: string }, thunkAPI) => {
     const response = await customDomainApi.listApplicationCustomDomain(payload.applicationId)
-    return response.data as CustomDomain[]
+    return response.data.results as CustomDomain[]
   }
 )
 
@@ -27,18 +27,20 @@ export const initialCustomDomainState: CustomDomainsState = customDomainAdapter.
 export const customDomainSlice = createSlice({
   name: CUSTOM_DOMAIN_FEATURE_KEY,
   initialState: initialCustomDomainState,
-  reducers: {
-    add: customDomainAdapter.addOne,
-    remove: customDomainAdapter.removeOne,
-    // ...
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchCustomDomains.pending, (state: CustomDomainsState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(fetchCustomDomains.fulfilled, (state: CustomDomainsState, action: PayloadAction<CustomDomain[]>) => {
-        customDomainAdapter.setAll(state, action.payload)
+      .addCase(fetchCustomDomains.fulfilled, (state: CustomDomainsState, action) => {
+        customDomainAdapter.upsertMany(state, action.payload)
+        console.log(action.payload)
+        action.payload.forEach((customDomain: CustomDomain) => {
+          state.joinApplicationCustomDomain = addOneToManyRelation(action.meta.arg.applicationId, customDomain.id, {
+            ...state.joinApplicationCustomDomain,
+          })
+        })
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchCustomDomains.rejected, (state: CustomDomainsState, action) => {
