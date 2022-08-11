@@ -95,7 +95,7 @@
 }
 
 .input__item {
-  @apply text-sm text-text-600 font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
+  @apply text-sm text-text-600 cursor-pointer font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
 
   &.is-active,
   &[data-current-selected],

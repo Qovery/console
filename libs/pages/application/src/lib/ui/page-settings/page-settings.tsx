@@ -1,5 +1,5 @@
-import { NavigationLeft, NavigationLeftLinkProps } from '@console/shared/ui'
 import { ReactNode } from 'react'
+import { NavigationLeft, NavigationLeftLinkProps } from '@console/shared/ui'
 
 export interface PageSettingsProps {
   links: NavigationLeftLinkProps[]
@@ -10,9 +10,9 @@ export function PageSettings(props: PageSettingsProps) {
   const { links, children } = props
 
   return (
-    <div className="bg-white flex mt-2 min-h-[calc(100%-200px)] rounded-sm">
-      <div className="w-72 pt-6 border-r border-element-light-lighter-400">
-        <NavigationLeft links={links} />
+    <div className="bg-white flex mt-2 h-full rounded-sm">
+      <div className="w-72 border-r border-element-light-lighter-400 relative min-h-[calc(100%-200px)] pb-10">
+        <NavigationLeft className="sticky top-14 pt-6" links={links} />
       </div>
       {children}
     </div>

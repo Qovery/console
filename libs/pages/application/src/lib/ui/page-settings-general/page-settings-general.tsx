@@ -1,7 +1,16 @@
-import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@console/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  HelpSection,
+  Icon,
+  InputSelect,
+  InputText,
+} from '@console/shared/ui'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 
 export interface PageSettingsGeneralProps {
@@ -18,6 +27,12 @@ const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
 const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
   label: upperCaseFirstLetter(value) || '',
   value: value,
+}))
+
+const gitItems = Object.values(GitProviderEnum).map((value) => ({
+  label: upperCaseFirstLetter(value) || '',
+  value: value,
+  icon: <Icon name={value} width="16px" height="16px" />,
 }))
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
@@ -42,6 +57,67 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   onChange={field.onChange}
                   value={field.value}
                   label="Application name"
+                  error={error?.message}
+                />
+              )}
+            />
+          </BlockContent>
+          <BlockContent title="Git repository">
+            <Controller
+              name="git_provider"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  dataTestId="input-provider"
+                  label="Git repository"
+                  className="mb-3"
+                  items={gitItems}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="repository"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-repository"
+                  label="Repository"
+                  className="mb-3"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="branch"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-branch"
+                  label="Branch"
+                  className="mb-3"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="path"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-branch"
+                  label="Root application path"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
                   error={error?.message}
                 />
               )}

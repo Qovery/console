@@ -17,7 +17,7 @@ export interface InputSelectProps {
 export function InputSelect(props: InputSelectProps) {
   const { label, value, items, className = '', onChange, error, dataTestId, disabled = false, portal = true } = props
 
-  const selectedLabel = value && items.find((item) => item.value === value)?.label
+  const selectedValue = value && items.find((item) => item.value === value)
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
   return (
@@ -34,10 +34,23 @@ export function InputSelect(props: InputSelectProps) {
           }`}
           arrow={<Icon name="icon-solid-angle-down" className="input__arrow" />}
         >
-          <div className="input__label">
-            <label>{label}</label>
+          <div className="flex">
+            {selectedValue && selectedValue.icon ? (
+              <span className="mr-3 w-4 h-4 mt-[10px]">{selectedValue.icon}</span>
+            ) : (
+              ''
+            )}
+            <div>
+              <div className="input__label">
+                <label>{label}</label>
+              </div>
+              {value && (
+                <div className={`input__value ${selectedValue && selectedValue.icon ? 'pl-11' : ''}`}>
+                  {selectedValue ? selectedValue.label : ''}
+                </div>
+              )}
+            </div>
           </div>
-          {value && <div className="input__value">{selectedLabel}</div>}
         </ListboxButton>
         <ListboxPopover className={`input__list ${!portal ? 'absolute' : ''}`} portal={portal}>
           <ListboxList>
