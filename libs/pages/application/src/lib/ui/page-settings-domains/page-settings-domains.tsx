@@ -1,5 +1,5 @@
 import { CustomDomain } from 'qovery-typescript-axios'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -9,8 +9,8 @@ import {
   IconAwesomeEnum,
   InputText,
   PlaceholderSettings,
+  Spinner,
 } from '@console/shared/ui'
-import { InputApprovalBadge } from './input-approval-badge/input-approval-badge'
 
 export interface PageSettingsDomainsProps {
   application?: ApplicationEntity
@@ -18,6 +18,7 @@ export interface PageSettingsDomainsProps {
   onEdit: (customDomain: CustomDomain) => void
   onDelete: (customDomain: CustomDomain) => void
   domains?: CustomDomain[]
+  loading?: LoadingStatus
 }
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
@@ -35,24 +36,27 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
           </Button>
         </div>
 
-        {props.domains && props.domains.length > 0 ? (
+        {(props.loading === 'not loaded' || props.loading === 'loading') && props.domains?.length === 0 ? (
+          <div className="flex justify-center">
+            <Spinner className="w-6"></Spinner>
+          </div>
+        ) : props.domains && props.domains.length > 0 ? (
           <BlockContent title="Configured domains">
             {props.domains &&
               props.domains.map((customDomain, i) => (
                 <div
-                  key={i}
+                  key={`domain-${customDomain.domain}-${customDomain.id}`}
                   className={`flex justify-between w-full items-center gap-3 ${
                     props.domains && props.domains.length !== i + 1 ? 'mb-5' : ''
                   }`}
                   data-testid="form-row"
                 >
                   <InputText
-                    name={'link_' + i}
+                    name={`domain-${customDomain.domain}-${customDomain.id}`}
                     className="shrink-0 grow flex-1"
                     value={customDomain.domain}
                     label="Default Domain"
                     disabled
-                    rightFloatingComponent={<InputApprovalBadge status={customDomain.status} />}
                   />
 
                   <ButtonIcon

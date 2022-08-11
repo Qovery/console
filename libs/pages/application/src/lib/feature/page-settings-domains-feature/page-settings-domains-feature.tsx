@@ -3,14 +3,17 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import {
+  deleteCustomDomain,
   fetchCustomDomains,
   getApplicationsState,
+  getCustomDomainsState,
   selectCustomDomainsByApplicationId,
 } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
+import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function PageSettingsDomainsFeature() {
   const dispatch = useDispatch<AppDispatch>()
@@ -26,7 +29,11 @@ export function PageSettingsDomainsFeature() {
     selectCustomDomainsByApplicationId(state, applicationId)
   )
 
-  const { openModal } = useModal()
+  const customDomainsLoadingStatus = useSelector<RootState, LoadingStatus>(
+    (state) => getCustomDomainsState(state).loadingStatus
+  )
+
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
   useEffect(() => {
@@ -38,11 +45,14 @@ export function PageSettingsDomainsFeature() {
   return (
     <PageSettingsDomains
       domains={customDomains}
+      loading={customDomainsLoadingStatus}
       onAddDomain={() => {
-        openModal({ content: <h1>Hello</h1> })
+        openModal({ content: <CrudModalFeature onClose={closeModal} application={application} /> })
       }}
       onEdit={(customDomain) => {
-        openModal({ content: <h1>Edit</h1> })
+        openModal({
+          content: <CrudModalFeature onClose={closeModal} application={application} customDomain={customDomain} />,
+        })
       }}
       onDelete={(customDomain) => {
         openModalConfirmation({
@@ -51,7 +61,7 @@ export function PageSettingsDomainsFeature() {
           description: 'Are you sure you want to delete this custom domain?',
           name: customDomain.domain,
           action: () => {
-            console.log('delete')
+            dispatch(deleteCustomDomain({ applicationId, customDomain }))
           },
         })
       }}

@@ -1,4 +1,4 @@
-import { act, findByText, getByDisplayValue, getByRole, getByTestId } from '@testing-library/react'
+import { act, findByText, getByDisplayValue, getByRole, getByTestId, queryByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@console/domains/application'
@@ -93,5 +93,23 @@ describe('PagesSettingsDomains', () => {
 
     expect(spyEdit).toHaveBeenCalledWith(customDomain)
     expect(spyDelete).toHaveBeenCalledWith(customDomain)
+  })
+
+  it('should show a loader', async () => {
+    props.domains = []
+    props.loading = 'not loaded'
+
+    const { baseElement } = render(<PageSettingsDomains {...props} />)
+
+    getByTestId(baseElement, 'spinner')
+  })
+
+  it('should not show a loader', async () => {
+    props.domains = []
+    props.loading = 'loaded'
+
+    const { baseElement } = render(<PageSettingsDomains {...props} />)
+
+    expect(queryByTestId(baseElement, 'spinner')).toBeNull()
   })
 })

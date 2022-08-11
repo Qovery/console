@@ -61,7 +61,7 @@ describe('PageSettingsDomainsFeature', () => {
     ]
 
     beforeEach(() => {
-      useDispatchSpy = jest.spyOn(redux, 'useDispatch')
+      useDispatchSpy = jest.spyOn(redux, 'useDispatch').mockReturnValue(jest.fn())
       application = applicationFactoryMock(1)[0]
       application.id = '1'
       useSelectorSpy = jest.spyOn(redux, 'useSelector')
@@ -82,7 +82,7 @@ describe('PageSettingsDomainsFeature', () => {
         editButton.click()
       })
 
-      expect(mockOpenModal).toHaveBeenCalledWith({ content: <h1>Edit</h1> })
+      expect(mockOpenModal).toHaveBeenCalled()
     })
 
     it('should dispatch open confirmation modal if click on delete', async () => {
