@@ -17,6 +17,7 @@ import PageDeploymentsFeature from '../feature/page-deployments-feature/page-dep
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageMetricsFeature from '../feature/page-metrics-feature/page-metrics-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
+import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature/page-settings-domains-feature'
 import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
