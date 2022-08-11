@@ -1,6 +1,6 @@
-import { IconEnum } from '@console/shared/enums'
 import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
+import { IconEnum } from '@console/shared/enums'
 import Icon, { IconProps } from './icon'
 import { IconAwesomeEnum } from './icon-awesome.enum'
 
@@ -22,6 +22,9 @@ const Template: Story<IconProps> = () => (
       <h2 className="w-full mb-2">SVG Icons</h2>
       <button onClick={() => copyName(IconEnum.GITHUB)}>
         <Icon name={IconEnum.GITHUB} />
+      </button>
+      <button onClick={() => copyName(IconEnum.GITHUB_WHITE)}>
+        <Icon name={IconEnum.GITHUB_WHITE} />
       </button>
       <button onClick={() => copyName(IconEnum.GITLAB)}>
         <Icon name={IconEnum.GITLAB} />

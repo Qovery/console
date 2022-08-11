@@ -1,6 +1,7 @@
-import { Icon } from '@console/shared/ui'
 import { AuthEnum } from '@console/shared/auth'
 import { IconEnum } from '@console/shared/enums'
+import { Icon } from '@console/shared/ui'
+
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
   githubType: AuthEnum
@@ -25,7 +26,7 @@ export function Login(props: ILoginProps) {
             .
           </p>
           <button className="btn-login btn-login--github mb-3" onClick={() => onClickAuthLogin(githubType)}>
-            <Icon className="absolute left-3" width="20" name={IconEnum.GITHUB} />
+            <Icon className="absolute left-3" width="20" name={IconEnum.GITHUB_WHITE} />
             Sign in with Github
           </button>
           <button className="btn-login btn-login--default mb-3" onClick={() => onClickAuthLogin(gitlabType)}>

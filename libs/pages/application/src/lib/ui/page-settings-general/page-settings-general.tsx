@@ -64,7 +64,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           </BlockContent>
           <BlockContent title="Git repository">
             <Controller
-              name="git_provider"
+              name="provider"
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
@@ -109,7 +109,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
             <Controller
-              name="path"
+              name="root_path"
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputText

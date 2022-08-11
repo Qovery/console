@@ -61,6 +61,10 @@ export function PageSettingsGeneralFeature() {
 
   useEffect(() => {
     methods.setValue('name', application?.name)
+    methods.setValue('provider', application?.git_repository?.provider)
+    methods.setValue('repository', application?.git_repository?.url)
+    methods.setValue('branch', application?.git_repository?.branch)
+    methods.setValue('root_path', application?.git_repository?.root_path)
     methods.setValue('build_mode', application?.build_mode)
     methods.setValue(
       'buildpack_language',
@@ -73,6 +77,7 @@ export function PageSettingsGeneralFeature() {
     application?.build_mode,
     application?.buildpack_language,
     application?.dockerfile_path,
+    application?.git_repository,
   ])
 
   return (

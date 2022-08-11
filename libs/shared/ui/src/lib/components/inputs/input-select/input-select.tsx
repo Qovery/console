@@ -45,7 +45,7 @@ export function InputSelect(props: InputSelectProps) {
                 <label>{label}</label>
               </div>
               {value && (
-                <div className={`input__value ${selectedValue && selectedValue.icon ? 'pl-11' : ''}`}>
+                <div className={`input__value ${selectedValue && selectedValue.icon ? '!pl-11' : ''}`}>
                   {selectedValue ? selectedValue.label : ''}
                 </div>
               )}
