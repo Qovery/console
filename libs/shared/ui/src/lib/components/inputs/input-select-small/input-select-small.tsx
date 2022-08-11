@@ -1,5 +1,5 @@
-import { Value } from '@console/shared/interfaces'
 import { useEffect, useState } from 'react'
+import { Value } from '@console/shared/interfaces'
 import Icon from '../../icon/icon'
 
 export interface InputSelectSmallProps {
@@ -15,7 +15,7 @@ export interface InputSelectSmallProps {
 }
 
 export function InputSelectSmall(props: InputSelectSmallProps) {
-  const { name, label, items, defaultValue, className = '', getValue } = props
+  const { name, label, items, defaultValue, className = '', onChange, getValue, dataTestId, isValid } = props
 
   const [value, setValue] = useState(defaultValue)
 
@@ -24,7 +24,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
     if (!selectedItem) return
     if (value !== defaultValue) {
       setValue(value)
-      props.onChange && props.onChange(value)
+      onChange && onChange(value)
     }
     if (getValue) getValue(name, selectedItem)
   }
@@ -39,10 +39,10 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
     <div className={`${className} relative flex gap-4 items-center`}>
       {label && <label className="text-sm shrink-0">{label}</label>}
       <select
-        data-testid={props.dataTestId || 'input-select-small'}
+        data-testid={dataTestId || 'input-select-small'}
         name={name}
         value={value}
-        className={`input input__select--small ${props.isValid ? 'input--focused' : ''}`}
+        className={`input input__select--small ${isValid ? 'input--focused' : ''}`}
         onChange={(e) => onClickItem(e.target.value)}
       >
         {items.map((item: Value, index: number) => (

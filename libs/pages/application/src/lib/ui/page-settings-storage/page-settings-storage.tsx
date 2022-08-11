@@ -20,7 +20,7 @@ export interface PageSettingsStorageProps {
 export function PageSettingsStorage(props: PageSettingsStorageProps) {
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8  max-w-max-width-content-with-navigation-left">
+      <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
             <h1 className="h5 text-text-700 mb-2">Storage</h1>

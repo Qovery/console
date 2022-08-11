@@ -13,14 +13,15 @@ import {
   APPLICATION_VARIABLES_URL,
   Route,
 } from '@console/shared/router'
-import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
+import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageMetricsFeature from '../feature/page-metrics-feature/page-metrics-feature'
-import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
-import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
-import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
+import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
+import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
+import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
+import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_APPLICATION: Route[] = [
   {
@@ -48,7 +49,7 @@ export const ROUTER_APPLICATION: Route[] = [
 export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   {
     path: APPLICATION_SETTINGS_GENERAL_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsGeneralFeature />,
   },
   {
     path: APPLICATION_SETTINGS_RESOURCES_URL,

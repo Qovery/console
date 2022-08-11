@@ -18,7 +18,6 @@ describe('testing payload refactoring', () => {
       id: '1',
       created_at: new Date(),
       updated_at: new Date(),
-      buildpack_language: '',
       environment: '',
       status: '',
       storage: [

@@ -21,9 +21,7 @@ const props: PageSettingsStorageProps = {
   onEdit: jest.fn(),
 }
 
-describe('PageSettingsDangerZone', () => {
-  beforeEach(() => {})
-
+describe('PageSettingsStorage', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<PageSettingsStorage {...props} />)
     expect(baseElement).toBeTruthy()

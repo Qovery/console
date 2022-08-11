@@ -14,7 +14,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8">
+      <div className="p-8 max-w-content-with-navigation-left">
         <form onSubmit={onSubmit}>
           <BlockContent title="General">
             <Controller
@@ -56,15 +56,17 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               ))}
             </div>
           </BlockContent>
-          <Button
-            className="mb-6"
-            disabled={!formState.isValid}
-            size={ButtonSize.REGULAR}
-            style={ButtonStyle.BASIC}
-            type="submit"
-          >
-            Save
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              className="mb-6 btn--no-min-w"
+              disabled={!formState.isValid}
+              size={ButtonSize.LARGE}
+              style={ButtonStyle.BASIC}
+              type="submit"
+            >
+              Save
+            </Button>
+          </div>
         </form>
       </div>
       <HelpSection

@@ -10,10 +10,11 @@ export interface InputTextProps {
   onChange?: () => void
   error?: string
   disabled?: boolean
+  dataTestId?: string
 }
 
 export function InputText(props: InputTextProps) {
-  const { name, label, value, onChange, type = 'text', error, className = '', disabled } = props
+  const { name, label, value, onChange, type = 'text', error, dataTestId, className = '', disabled } = props
 
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
@@ -49,6 +50,7 @@ export function InputText(props: InputTextProps) {
           {label}
         </label>
         <input
+          data-testid={dataTestId || 'input-text'}
           name={name}
           id={label}
           className="input__value"

@@ -1,3 +1,18 @@
+import { ClickEvent } from '@szhsin/react-menu'
+import { StateEnum } from 'qovery-typescript-axios'
+import { ReactNode, useContext } from 'react'
+import { useSelector } from 'react-redux'
+import { matchPath, useLocation, useParams } from 'react-router'
+import { getApplicationsState } from '@console/domains/application'
+import { RunningStatus } from '@console/shared/enums'
+import { ApplicationEntity } from '@console/shared/interfaces'
+import {
+  APPLICATION_DEPLOYMENTS_URL,
+  APPLICATION_GENERAL_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+  APPLICATION_VARIABLES_URL,
+} from '@console/shared/router'
 import {
   Button,
   ButtonAction,
@@ -11,28 +26,13 @@ import {
   TabsItem,
   useModal,
 } from '@console/shared/ui'
-import { ReactNode, useContext } from 'react'
-import { RunningStatus } from '@console/shared/enums'
-import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_GENERAL_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-  APPLICATION_VARIABLES_URL,
-} from '@console/shared/router'
-import { StateEnum } from 'qovery-typescript-axios'
-import { matchPath, useLocation, useParams } from 'react-router'
-import { useSelector } from 'react-redux'
 import { RootState } from '@console/store/data'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { getApplicationsState } from '@console/domains/application'
-import { ClickEvent } from '@szhsin/react-menu'
+import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
-import { ApplicationContext } from '../../ui/container/container'
 
 export function TabsFeature() {
   const { organizationId, projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -82,9 +82,9 @@ export function TabsFeature() {
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
+      active: location.pathname.includes(
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL
+      ),
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
     },
     /*{

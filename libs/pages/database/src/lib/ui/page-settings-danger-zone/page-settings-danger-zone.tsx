@@ -1,6 +1,6 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { BlockContentDelete, HelpSection } from '@console/shared/ui'
 import { DatabaseEntity } from '@console/shared/interfaces'
+import { BlockContentDelete, HelpSection } from '@console/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteDatabase: () => void
@@ -12,7 +12,7 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
   const { deleteDatabase, database, environmentMode } = props
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8">
+      <div className="p-8 max-w-content-with-navigation-left">
         <BlockContentDelete
           title="Delete database"
           ctaLabel="Delete database"
