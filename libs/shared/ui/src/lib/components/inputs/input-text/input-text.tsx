@@ -11,10 +11,11 @@ export interface InputTextProps {
   error?: string
   disabled?: boolean
   dataTestId?: string
+  rightFloatingComponent?: React.ReactNode
 }
 
 export function InputText(props: InputTextProps) {
-  const { name, label, value, onChange, type = 'text', error, dataTestId, className = '', disabled } = props
+  const { name, label, value, onChange, type = 'text', error, className = '', disabled, rightFloatingComponent, dataTestId } = props
 
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
@@ -45,25 +46,34 @@ export function InputText(props: InputTextProps) {
       className={className}
       onClick={() => (isInputDate ? displayPicker() : inputRef.current?.querySelector('input')?.focus())}
     >
-      <div aria-label="input-container" className={`input ${inputActions} ${isDisabled} ${hasError}`} ref={inputRef}>
-        <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
-          {label}
-        </label>
-        <input
-          data-testid={dataTestId || 'input-text'}
-          name={name}
-          id={label}
-          className="input__value"
-          defaultValue={value}
-          type={type}
-          onChange={onChange}
-          disabled={disabled}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-        />
-        {isInputDate && (
-          <div className="absolute top-1/2 -translate-y-1/2 right-4">
-            <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+      <div className="relative">
+        <div aria-label="input-container" className={`input ${inputActions} ${isDisabled} ${hasError}`} ref={inputRef}>
+          <div className={`${disabled ? 'pointer-events-none' : ''}`}>
+            <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
+              {label}
+            </label>
+            <input
+              data-testid={dataTestId || 'input-text'}
+              name={name}
+              id={label}
+              className="input__value"
+              defaultValue={value}
+              type={type}
+              onChange={onChange}
+              disabled={disabled}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+            />
+            {isInputDate && (
+              <div className="absolute top-1/2 -translate-y-1/2 right-4">
+                <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+              </div>
+            )}
+          </div>
+        </div>
+        {!isInputDate && rightFloatingComponent && (
+          <div data-testid="right-floating-component" className="absolute top-1/2 -translate-y-1/2 right-4">
+            {rightFloatingComponent}
           </div>
         )}
       </div>

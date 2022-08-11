@@ -10,6 +10,7 @@ import {
   InputText,
   PlaceholderSettings,
 } from '@console/shared/ui'
+import { InputApprovalBadge } from './input-approval-badge/input-approval-badge'
 
 export interface PageSettingsDomainsProps {
   application?: ApplicationEntity
@@ -51,6 +52,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     value={customDomain.domain}
                     label="Default Domain"
                     disabled
+                    rightFloatingComponent={<InputApprovalBadge status={customDomain.status} />}
                   />
 
                   <ButtonIcon
