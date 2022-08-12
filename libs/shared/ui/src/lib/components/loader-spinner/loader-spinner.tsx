@@ -1,11 +1,11 @@
-export interface SpinnerProps {
+export interface LoaderSpinnerProps {
   className?: string
   classWidth?: string
   classBorder?: string
   theme?: 'dark' | 'light'
 }
 
-export function Spinner(props: SpinnerProps) {
+export function LoaderSpinner(props: LoaderSpinnerProps) {
   const { className = '', classWidth = 'w-4', classBorder = 'border-2', theme = 'light' } = props
   const themeClasses =
     theme === 'dark'
@@ -22,4 +22,4 @@ export function Spinner(props: SpinnerProps) {
   )
 }
 
-export default Spinner
+export default LoaderSpinner

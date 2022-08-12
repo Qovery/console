@@ -49,7 +49,7 @@ describe('InputText', () => {
   })
 
   it('should display a floating component on the right', async () => {
-    props.rightFloatingComponent = <div>GB</div>
+    props.rightElement = <div>GB</div>
     render(<InputText {...props} />)
 
     screen.getByText('GB')

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@console/shared/enums'
 import Icon from '../../icon/icon'
-import Spinner from '../../spinner/spinner'
+import LoaderSpinner from '../../loader-spinner/loader-spinner'
 
 export enum ButtonSize {
   XLARGE = 'xlarge',
@@ -60,7 +60,7 @@ export function Button(props: ButtonProps) {
         {iconRight && <Icon name={iconRight} />}
       </>
     ) : (
-      <Spinner theme="dark" />
+      <LoaderSpinner theme="dark" />
     )
   }
 

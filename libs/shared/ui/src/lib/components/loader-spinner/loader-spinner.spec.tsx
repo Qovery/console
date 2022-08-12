@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
-import Spinner from './spinner'
+import LoaderSpinner from './loader-spinner'
 
-describe('Spinner', () => {
+describe('LoaderSpinner', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Spinner />)
+    const { baseElement } = render(<LoaderSpinner />)
     expect(baseElement).toBeTruthy()
   })
 })

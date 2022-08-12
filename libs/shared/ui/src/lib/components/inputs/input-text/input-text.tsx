@@ -11,11 +11,22 @@ export interface InputTextProps {
   error?: string
   disabled?: boolean
   dataTestId?: string
-  rightFloatingComponent?: React.ReactNode
+  rightElement?: React.ReactNode
 }
 
 export function InputText(props: InputTextProps) {
-  const { name, label, value, onChange, type = 'text', error, className = '', disabled, rightFloatingComponent, dataTestId } = props
+  const {
+    name,
+    label,
+    value,
+    onChange,
+    type = 'text',
+    error,
+    className = '',
+    disabled,
+    rightElement,
+    dataTestId,
+  } = props
 
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
@@ -71,9 +82,9 @@ export function InputText(props: InputTextProps) {
             )}
           </div>
         </div>
-        {!isInputDate && rightFloatingComponent && (
+        {!isInputDate && rightElement && (
           <div data-testid="right-floating-component" className="absolute top-1/2 -translate-y-1/2 right-4">
-            {rightFloatingComponent}
+            {rightElement}
           </div>
         )}
       </div>
