@@ -1,6 +1,6 @@
 import { ApplicationGitRepository, Commit } from 'qovery-typescript-axios'
-import { Avatar, Skeleton, TagCommit } from '@console/shared/ui'
 import { LoadingStatus } from '@console/shared/interfaces'
+import { Avatar, Skeleton, TagCommit } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
 
 export interface LastCommitProps {
@@ -52,7 +52,12 @@ export function LastCommit(props: LastCommitProps) {
         </Skeleton>
       </div>
       {(commit as Commit)?.message && (
-        <Skeleton height={32} width={200} show={!loadingStatus || loadingStatus === 'loading'} className="mb-2">
+        <Skeleton
+          height={32}
+          width={200}
+          show={!loadingStatus || loadingStatus === 'loading'}
+          className="mb-2 overflow-hidden"
+        >
           <p className="text-text-500">{(commit as Commit)?.message}</p>
         </Skeleton>
       )}
