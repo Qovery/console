@@ -1,7 +1,7 @@
 import { StorageTypeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler, useEffect } from 'react'
+import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
+import { InputSelect, InputText, ModalCrud } from '@console/shared/ui'
 
 export interface StorageModalProps {
   onClose: () => void
@@ -11,19 +11,19 @@ export interface StorageModalProps {
 }
 
 export function StorageModal(props: StorageModalProps) {
-  const { control, formState, trigger } = useFormContext()
-
-  useEffect(() => {
-    if (props.isEdit) trigger().then()
-  }, [trigger, props.isEdit])
+  const { control } = useFormContext()
 
   return (
-    <div className="p-6">
-      <h2 className="h4 text-text-600 mb-6 max-w-sm">{props.isEdit ? 'Edit storage' : 'Create storage'}</h2>
-
-      <form onSubmit={props.onSubmit}>
+    <ModalCrud
+      title={props.isEdit ? 'Edit storage' : 'Create storage'}
+      isEdit={props.isEdit}
+      loading={props.loading}
+      onSubmit={props.onSubmit}
+      onClose={props.onClose}
+    >
+      <>
         <Controller
-          name={'size'}
+          name="size"
           control={control}
           rules={{
             required: 'Please enter a value.',
@@ -89,28 +89,8 @@ export function StorageModal(props: StorageModalProps) {
             />
           )}
         />
-        <div className="flex gap-3 justify-end mt-6">
-          <Button
-            className="btn--no-min-w"
-            style={ButtonStyle.STROKED}
-            size={ButtonSize.XLARGE}
-            onClick={() => props.onClose()}
-          >
-            Cancel
-          </Button>
-          <Button
-            dataTestId="submit-button"
-            className="btn--no-min-w"
-            type="submit"
-            size={ButtonSize.XLARGE}
-            disabled={!formState.isValid}
-            loading={props.loading}
-          >
-            {props.isEdit ? 'Edit' : 'Create'}
-          </Button>
-        </div>
-      </form>
-    </div>
+      </>
+    </ModalCrud>
   )
 }
 
