@@ -28,21 +28,13 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         editCustomDomain({ applicationId: props.application.id, customDomain: props.customDomain, domain: data.domain })
       )
         .unwrap()
-        .then(() => {
-          props.onClose()
-        })
-        .catch((e) => {
-          console.error(e)
-        })
+        .then(() => props.onClose())
+        .catch((e) => console.error(e))
     } else {
       dispatch(createCustomDomain({ applicationId: props.application.id, domain: data.domain }))
         .unwrap()
-        .then(() => {
-          props.onClose()
-        })
-        .catch((e) => {
-          console.error(e)
-        })
+        .then(() => props.onClose())
+        .catch((e) => console.error(e))
     }
   })
 

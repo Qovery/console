@@ -69,7 +69,7 @@ describe('PageSettingsDomainsFeature', () => {
     })
 
     it('should dispatch the custom domain fetch', async () => {
-      const { baseElement } = render(<PageSettingsDomainsFeature />)
+      render(<PageSettingsDomainsFeature />)
       expect(useDispatchSpy).toHaveBeenCalled()
     })
 
