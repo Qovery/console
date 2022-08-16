@@ -57,7 +57,6 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                   label="Path"
                   disabled
                 />
-
                 <InputText
                   name={'type_' + storage.id}
                   className="shrink-0 grow flex-1"
@@ -65,20 +64,19 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                   label="Type"
                   disabled
                 />
-
+                <ButtonIcon
+                  className="text-text-500"
+                  style={ButtonIconStyle.FLAT}
+                  onClick={() => props.onEdit(storage)}
+                  dataTestId="edit"
+                  icon={IconAwesomeEnum.WHEEL}
+                />
                 <ButtonIcon
                   className="text-text-500"
                   onClick={() => props.onRemove(storage)}
                   dataTestId="remove"
                   icon={IconAwesomeEnum.TRASH}
                   style={ButtonIconStyle.FLAT}
-                />
-                <ButtonIcon
-                  className="text-text-500"
-                  style={ButtonIconStyle.FLAT}
-                  onClick={() => props.onEdit(storage)}
-                  dataTestId="edit"
-                  icon={IconAwesomeEnum.PEN}
                 />
               </div>
             ))}

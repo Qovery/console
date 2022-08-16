@@ -58,20 +58,19 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     label="Default Domain"
                     disabled
                   />
-
+                  <ButtonIcon
+                    className="text-text-500 hover:text-text-700"
+                    style={ButtonIconStyle.FLAT}
+                    onClick={() => props.onEdit(customDomain)}
+                    dataTestId="edit-button"
+                    icon={IconAwesomeEnum.WHEEL}
+                  />
                   <ButtonIcon
                     className="text-text-500"
                     onClick={() => props.onDelete(customDomain)}
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.FLAT}
-                  />
-                  <ButtonIcon
-                    className="text-text-500 hover:text-text-700"
-                    style={ButtonIconStyle.FLAT}
-                    onClick={() => props.onEdit(customDomain)}
-                    dataTestId="edit-button"
-                    icon={IconAwesomeEnum.PEN}
                   />
                 </div>
               ))}

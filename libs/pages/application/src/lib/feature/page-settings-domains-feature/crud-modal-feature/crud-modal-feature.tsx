@@ -41,6 +41,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   return (
     <FormProvider {...methods}>
       <CrudModal
+        customDomain={props.customDomain}
         onSubmit={onSubmit}
         onClose={props.onClose}
         loading={loadingStatus === 'loading'}

@@ -1,6 +1,6 @@
 import { CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputText, ModalCrud } from '@console/shared/ui'
+import { CopyToClipboard, InputText, ModalCrud } from '@console/shared/ui'
 
 export interface CrudModalProps {
   customDomain?: CustomDomain
@@ -15,7 +15,8 @@ export function CrudModal(props: CrudModalProps) {
 
   return (
     <ModalCrud
-      title={props.isEdit ? 'Edit DNS configuration' : 'Set DNS configuration'}
+      title={props.isEdit ? `Domain: ${props.customDomain?.domain}` : 'Set DNS configuration'}
+      description="DNS configuration"
       onSubmit={props.onSubmit}
       onClose={props.onClose}
       loading={props.loading}
@@ -29,15 +30,41 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
-            className="mb-6"
+            className="mb-3"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
             label="Domain"
             error={error?.message}
+            rightElement={props.isEdit && <CopyToClipboard className="text-text-600 text-sm" content={field.value} />}
           />
         )}
       />
+      {props.isEdit && (
+        <>
+          <InputText
+            disabled
+            className="mb-3"
+            name="type"
+            value="CNAME"
+            label="Type"
+            rightElement={<CopyToClipboard className="text-text-600 text-sm" content="CNAME" />}
+          />
+          <InputText
+            disabled
+            className="mb-6"
+            name="type"
+            value={props.customDomain?.validation_domain}
+            label="Value"
+            rightElement={
+              <CopyToClipboard
+                className="text-text-600 text-sm"
+                content={props.customDomain?.validation_domain || ''}
+              />
+            }
+          />
+        </>
+      )}
     </ModalCrud>
   )
 }

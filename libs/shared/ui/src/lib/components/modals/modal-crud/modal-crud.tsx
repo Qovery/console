@@ -9,10 +9,11 @@ export interface ModalCrudProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   isEdit?: boolean
   loading?: boolean
+  description?: string
 }
 
 export function ModalCrud(props: ModalCrudProps) {
-  const { children, title, isEdit } = props
+  const { children, title, isEdit, description } = props
   const { formState, trigger } = useFormContext()
 
   useEffect(() => {
@@ -21,8 +22,8 @@ export function ModalCrud(props: ModalCrudProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-text-600 mb-6 max-w-sm">{title}</h2>
-
+      <h2 className={`h4 text-text-600 max-w-sm truncate ${description ? 'mb-1' : 'mb-6'}`}>{title}</h2>
+      {description && <p className="mb-6 text-text-400 text-sm">{description}</p>}
       <form onSubmit={props.onSubmit}>
         {children}
         <div className="flex gap-3 justify-end mt-6">
