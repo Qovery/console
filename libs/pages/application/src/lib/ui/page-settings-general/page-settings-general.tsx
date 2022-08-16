@@ -133,7 +133,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 className="btn--no-min-w"
                 size={ButtonSize.REGULAR}
                 style={ButtonStyle.STROKED}
-                loading={loading}
                 iconRight={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
                 iconRightClassName="text-warning-500 text-sm"
               >
