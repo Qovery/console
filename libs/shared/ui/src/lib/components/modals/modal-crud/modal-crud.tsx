@@ -27,6 +27,7 @@ export function ModalCrud(props: ModalCrudProps) {
         {children}
         <div className="flex gap-3 justify-end mt-6">
           <Button
+            dataTestId="cancel-button"
             className="btn--no-min-w"
             style={ButtonStyle.STROKED}
             size={ButtonSize.XLARGE}
@@ -42,7 +43,7 @@ export function ModalCrud(props: ModalCrudProps) {
             disabled={!formState.isValid}
             loading={props.loading}
           >
-            {isEdit ? 'Edit' : 'Create'}
+            {isEdit ? 'Confirm' : 'Create'}
           </Button>
         </div>
       </form>
