@@ -112,6 +112,13 @@
 
 .btn-icon--flat {
   @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
+
+  &.text-text-500 {
+    color: theme('colors.text.500');
+    &:hover {
+      color: theme('colors.text.700');
+    }
+  }
 }
 
 .btn-icon--alt {
