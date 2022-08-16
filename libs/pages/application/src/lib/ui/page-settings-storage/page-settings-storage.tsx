@@ -67,14 +67,14 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
                 />
 
                 <ButtonIcon
-                  iconClassName="text-text-500 hover:text-text-700"
+                  className="text-text-500"
                   onClick={() => props.onRemove(storage)}
                   dataTestId="remove"
                   icon={IconAwesomeEnum.TRASH}
                   style={ButtonIconStyle.FLAT}
                 />
                 <ButtonIcon
-                  iconClassName="text-text-500 hover:text-text-700"
+                  className="text-text-500"
                   style={ButtonIconStyle.FLAT}
                   onClick={() => props.onEdit(storage)}
                   dataTestId="edit"

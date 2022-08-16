@@ -60,14 +60,14 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                   />
 
                   <ButtonIcon
-                    iconClassName="text-text-500 hover:text-text-700"
+                    className="text-text-500"
                     onClick={() => props.onDelete(customDomain)}
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.FLAT}
                   />
                   <ButtonIcon
-                    iconClassName="text-text-500 hover:text-text-700"
+                    className="text-text-500 hover:text-text-700"
                     style={ButtonIconStyle.FLAT}
                     onClick={() => props.onEdit(customDomain)}
                     dataTestId="edit-button"

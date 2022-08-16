@@ -53,12 +53,8 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
     const app = handleSubmit(data, props.application, props.storage)
     dispatch(editApplication({ data: app, applicationId: app.id }))
       .unwrap()
-      .then(() => {
-        props.onClose()
-      })
-      .catch((e) => {
-        console.error(e)
-      })
+      .then(() => props.onClose())
+      .catch((e) => console.error(e))
   })
 
   return (
