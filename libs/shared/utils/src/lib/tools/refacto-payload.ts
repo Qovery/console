@@ -17,6 +17,7 @@ export function refactoApplicationPayload(response: any) {
   delete response['commits']
   delete response['links']
   delete response['instances']
+  delete response['deployments']
 
   // refacto because we can't send all git data
   response.git_repository = {

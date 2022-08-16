@@ -96,7 +96,7 @@ export function TabsFeature() {
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_METRICS_URL,
     },*/
     {
-      icon: <Icon name="icon-solid-wheel" />,
+      icon: <Icon name="icon-solid-key" />,
       name: 'Variables',
       active:
         location.pathname ===

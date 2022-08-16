@@ -1,8 +1,17 @@
-import { useCallback, useEffect, useState } from 'react'
-import LogRocket from 'logrocket'
-import axios from 'axios'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
+import axios from 'axios'
+import LogRocket from 'logrocket'
+import posthog from 'posthog-js'
+import { useCallback, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { useIntercom } from 'react-use-intercom'
+import { selectUser } from '@console/domains/user'
+import { Layout } from '@console/pages/layout'
+import { PageLogin, PageLogoutFeature } from '@console/pages/login'
+import { PageOnboarding } from '@console/pages/onboarding'
+import { useAuth } from '@console/shared/auth'
+import { UserInterface } from '@console/shared/interfaces'
 import {
   BetaRoute,
   LOGIN_URL,
@@ -12,19 +21,10 @@ import {
   ONBOARDING_URL,
   ProtectedRoute,
 } from '@console/shared/router'
-import { useAuth } from '@console/shared/auth'
-import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { LoadingScreen } from '@console/shared/ui'
-import { PageOnboarding } from '@console/pages/onboarding'
+import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
 import { environment } from '../environments/environment'
-import { Layout } from '@console/pages/layout'
-import { useSelector } from 'react-redux'
-import { selectUser } from '@console/domains/user'
-import posthog from 'posthog-js'
 import { ROUTER } from './router/main.router'
-import { useIntercom } from 'react-use-intercom'
-import { UserInterface } from '@console/shared/interfaces'
-import { PageLogin, PageLogoutFeature } from '@console/pages/login'
 
 export function App() {
   useDocumentTitle('Loading...')

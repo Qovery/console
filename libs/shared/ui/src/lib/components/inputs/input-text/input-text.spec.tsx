@@ -1,6 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { fireEvent, screen } from '@testing-library/react'
-
+import { render } from '__tests__/utils/setup-jest'
 import InputText, { InputTextProps } from './input-text'
 
 describe('InputText', () => {
@@ -47,5 +46,15 @@ describe('InputText', () => {
     fireEvent.change(input, { target: { value: 'some new text value' } })
 
     expect((input as HTMLInputElement).value).toBe('some new text value')
+  })
+
+  it('should display a floating component on the right', async () => {
+    props.rightElement = <div>GB</div>
+    render(<InputText {...props} />)
+
+    screen.getByText('GB')
+
+    const wrapper = screen.getByTestId('right-floating-component')
+    expect(wrapper).toHaveClass('absolute top-1/2 -translate-y-1/2 right-4')
   })
 })
