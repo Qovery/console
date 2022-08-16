@@ -26,6 +26,7 @@ export interface ButtonProps {
   style?: ButtonStyle
   iconLeft?: IconEnum | string
   iconRight?: IconEnum | string
+  iconRightClassName?: string
   link?: string
   disabled?: boolean
   className?: string
@@ -50,6 +51,7 @@ export function Button(props: ButtonProps) {
     onClick,
     external = false,
     loading = false,
+    iconRightClassName = '',
   } = props
 
   function content() {
@@ -57,7 +59,7 @@ export function Button(props: ButtonProps) {
       <>
         {iconLeft && <Icon name={iconLeft} />}
         <span>{children}</span>
-        {iconRight && <Icon name={iconRight} />}
+        {iconRight && <Icon name={iconRight} className={iconRightClassName} />}
       </>
     ) : (
       <LoaderSpinner theme="dark" />

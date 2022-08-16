@@ -23,9 +23,7 @@ export function InputSelect(props: InputSelectProps) {
   return (
     <div
       data-testid={dataTestId || 'input-select'}
-      className={`input input--select ${hasError} ${
-        disabled ? '!bg-element-light-lighter-200 pointer-events-none' : ''
-      } ${className}`}
+      className={`input input--select ${hasError} ${disabled ? 'input--disabled' : ''} ${className}`}
     >
       <ListboxInput key={label} onChange={onChange} disabled={disabled}>
         <ListboxButton

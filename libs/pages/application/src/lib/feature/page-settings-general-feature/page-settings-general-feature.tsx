@@ -1,5 +1,5 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -31,6 +31,8 @@ export function PageSettingsGeneralFeature() {
     (state) => getApplicationsState(state).entities[applicationId]
   )
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
+
+  const [gitDisabled] = useState(true)
 
   const methods = useForm({
     mode: 'onChange',
@@ -82,7 +84,12 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} watchBuildMode={watchBuildMode} loading={loadingStatus === 'loading'} />
+      <PageSettingsGeneral
+        onSubmit={onSubmit}
+        watchBuildMode={watchBuildMode}
+        loading={loadingStatus === 'loading'}
+        gitDisabled={gitDisabled}
+      />
     </FormProvider>
   )
 }

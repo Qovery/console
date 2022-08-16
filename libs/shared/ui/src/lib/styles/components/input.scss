@@ -41,6 +41,10 @@
   label {
     @apply text-text-400;
   }
+
+  .input__button--focused {
+    box-shadow: none;
+  }
 }
 
 .input--error,

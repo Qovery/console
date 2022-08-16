@@ -8,6 +8,7 @@ import {
   ButtonStyle,
   HelpSection,
   Icon,
+  IconAwesomeEnum,
   InputSelect,
   InputText,
 } from '@console/shared/ui'
@@ -16,6 +17,7 @@ import { upperCaseFirstLetter } from '@console/shared/utils'
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   watchBuildMode: BuildModeEnum
+  gitDisabled: boolean
   loading?: boolean
 }
 
@@ -36,7 +38,7 @@ const gitItems = Object.values(GitProviderEnum).map((value) => ({
 }))
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { onSubmit, watchBuildMode, loading } = props
+  const { onSubmit, watchBuildMode, loading, gitDisabled } = props
 
   const { control, formState } = useFormContext()
 
@@ -75,6 +77,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
+                  disabled={gitDisabled}
                 />
               )}
             />
@@ -90,6 +93,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
+                  disabled={gitDisabled}
                 />
               )}
             />
@@ -105,6 +109,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
+                  disabled={gitDisabled}
                 />
               )}
             />
@@ -119,9 +124,22 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
+                  disabled={gitDisabled}
                 />
               )}
             />
+            <div className="flex justify-end mt-3">
+              <Button
+                className="btn--no-min-w"
+                size={ButtonSize.REGULAR}
+                style={ButtonStyle.STROKED}
+                loading={loading}
+                iconRight={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
+                iconRightClassName="text-warning-500 text-sm"
+              >
+                Edit
+              </Button>
+            </div>
           </BlockContent>
           <BlockContent title="Build mode">
             <Controller
