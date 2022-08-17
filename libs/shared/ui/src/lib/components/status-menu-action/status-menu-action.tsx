@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { StateEnum } from 'qovery-typescript-axios'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Icon, useModalConfirmation } from '@console/shared/ui'
 import { isCancelBuildAvailable, isDeployAvailable, isRestartAvailable, isStopAvailable } from '@console/shared/utils'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
@@ -55,8 +55,8 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
 
   const { openModalConfirmation } = useModalConfirmation()
 
-  const onClickAction = (name: string, titleModal: string, descriptionModal: string) => {
-    const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === name)
+  const onClickAction = (state: string, titleModal: string, descriptionModal: string) => {
+    const currentAction = statusActions.actions.find((action: StatusMenuActions) => action.name === state)
     const actionDeploy = () =>
       currentAction && statusActions.information && currentAction.action(statusActions.information?.id || '')
 
@@ -64,7 +64,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
       mode: statusActions?.information?.mode,
       title: titleModal,
       description: descriptionModal,
-      name: name,
+      name: statusActions?.information?.name,
       action: () => actionDeploy(),
     })
   }
