@@ -14,10 +14,16 @@ import {
   secretEnvironmentVariables,
 } from '@console/domains/environment-variable'
 import {
+  authProviderReducer,
+  branchReducer,
   clusterReducer,
+  initialAuthProviderState,
+  initialBranchState,
   initialClusterState,
   initialOrganizationState,
+  initialRepositoryState,
   organization,
+  repositoryReducer,
 } from '@console/domains/organization'
 import {
   deploymentRulesReducer,
@@ -30,6 +36,13 @@ import { initialUserSignUpState, initialUserState, user, userSignUp } from '@con
 export const uiReducer = combineReducers({
   user: user,
   userSignUp: userSignUp,
+})
+
+export const organizationReducer = combineReducers({
+  organizations: organization,
+  authProvider: authProviderReducer,
+  repository: repositoryReducer,
+  branch: branchReducer,
 })
 
 export const projectReducer = combineReducers({
@@ -52,7 +65,7 @@ export const applicationReducer = combineReducers({
 })
 
 export const entitiesReducer = combineReducers({
-  organization: organization,
+  organization: organizationReducer,
   cluster: clusterReducer,
   project: projectReducer,
   environment: environmentReducer,
@@ -80,7 +93,12 @@ export const initialRootState = (): RootState => ({
     userSignUp: initialUserSignUpState,
   },
   entities: {
-    organization: initialOrganizationState,
+    organization: {
+      organizations: initialOrganizationState,
+      authProvider: initialAuthProviderState,
+      repository: initialRepositoryState,
+      branch: initialBranchState,
+    },
     cluster: initialClusterState,
     project: {
       projects: initialProjectsState,

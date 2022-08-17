@@ -17,7 +17,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@console/domains/account": ["libs/domains/account/src/index.ts"],
       "@console/domains/application": ["libs/domains/application/src/index.ts"],
       "@console/domains/database": ["libs/domains/database/src/index.ts"],
       "@console/domains/environment": ["libs/domains/environment/src/index.ts"],

@@ -1,23 +1,30 @@
-import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { Value } from '@console/shared/interfaces'
 import {
   BlockContent,
   Button,
   ButtonSize,
   ButtonStyle,
   HelpSection,
-  Icon,
   IconAwesomeEnum,
   InputSelect,
   InputText,
+  useModal,
 } from '@console/shared/ui'
 import { upperCaseFirstLetter } from '@console/shared/utils'
+import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-modal'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   watchBuildMode: BuildModeEnum
   gitDisabled: boolean
+  setGitDisabled: (gitDisabled: boolean) => void
+  authProviders?: Value[]
+  repositories?: Value[]
+  branches?: Value[]
+  currentAuthProvider?: string
   loading?: boolean
 }
 
@@ -31,16 +38,21 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
   value: value,
 }))
 
-const gitItems = Object.values(GitProviderEnum).map((value) => ({
-  label: upperCaseFirstLetter(value) || '',
-  value: value,
-  icon: <Icon name={value} width="16px" height="16px" />,
-}))
-
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { onSubmit, watchBuildMode, loading, gitDisabled } = props
+  const {
+    onSubmit,
+    watchBuildMode,
+    loading,
+    gitDisabled,
+    setGitDisabled,
+    authProviders,
+    currentAuthProvider,
+    repositories,
+    branches,
+  } = props
 
   const { control, formState } = useFormContext()
+  const { openModal, closeModal } = useModal()
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -73,7 +85,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   dataTestId="input-provider"
                   label="Git repository"
                   className="mb-3"
-                  items={gitItems}
+                  items={authProviders || []}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
@@ -85,15 +97,16 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               name="repository"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <InputText
+                <InputSelect
                   dataTestId="input-repository"
                   label="Repository"
                   className="mb-3"
-                  name={field.name}
+                  items={repositories || []}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
                   disabled={gitDisabled}
+                  search
                 />
               )}
             />
@@ -101,15 +114,16 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               name="branch"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <InputText
+                <InputSelect
                   dataTestId="input-branch"
                   label="Branch"
                   className="mb-3"
-                  name={field.name}
+                  items={branches || []}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
                   disabled={gitDisabled}
+                  search
                 />
               )}
             />
@@ -135,6 +149,17 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 style={ButtonStyle.STROKED}
                 iconRight={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
                 iconRightClassName="text-warning-500 text-sm"
+                onClick={() =>
+                  openModal({
+                    content: (
+                      <ConfirmationGitModal
+                        currentAuthProvider={currentAuthProvider}
+                        onClose={closeModal}
+                        onSubmit={setGitDisabled}
+                      />
+                    ),
+                  })
+                }
               >
                 Edit
               </Button>

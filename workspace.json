@@ -4,7 +4,6 @@
     "console": "apps/console",
     "console-e2e": "apps/console-e2e",
     "design-system-e2e": "apps/design-system-e2e",
-    "domains-account": "libs/domains/account",
     "domains-application": "libs/domains/application",
     "domains-database": "libs/domains/database",
     "domains-environment": "libs/domains/environment",

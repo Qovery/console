@@ -18,7 +18,7 @@ export function WarningBox(props: WarningBoxProps) {
     >
       <Icon name={icon || IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="mr-3 text-warning-600 relative top-[2px]" />
       <div>
-        {title && <h5 className="text-sm text-text-600">{title}</h5>}
+        {title && <h5 className="text-sm text-text-600 mb-1">{title}</h5>}
         <p className="text-xs text-text-500">{message}</p>
       </div>
     </div>
