@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { GitAuthProvider, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
-import { AuthProviderState } from '@console/shared/interfaces'
+import { AuthProviderState, LoadingStatus } from '@console/shared/interfaces'
+import { toastError } from '@console/shared/toast'
 import { RootState } from '@console/store/data'
 
 export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
@@ -38,6 +39,7 @@ export const authProviderSlice = createSlice({
       .addCase(fetchAuthProvider.rejected, (state: AuthProviderState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+        toastError(action.error)
       })
   },
 })
@@ -54,3 +56,5 @@ export const getAuthProviderState = (rootState: RootState): AuthProviderState =>
 export const selectAllAuthProvider = createSelector(getAuthProviderState, selectAll)
 
 export const selectAuthProviderEntities = createSelector(getAuthProviderState, selectEntities)
+
+export const authProviderLoadingStatus = (state: RootState): LoadingStatus => getAuthProviderState(state).loadingStatus

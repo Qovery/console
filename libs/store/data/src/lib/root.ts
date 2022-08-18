@@ -15,10 +15,8 @@ import {
 } from '@console/domains/environment-variable'
 import {
   authProviderReducer,
-  branchReducer,
   clusterReducer,
   initialAuthProviderState,
-  initialBranchState,
   initialClusterState,
   initialOrganizationState,
   initialRepositoryState,
@@ -42,7 +40,6 @@ export const organizationReducer = combineReducers({
   organizations: organization,
   authProvider: authProviderReducer,
   repository: repositoryReducer,
-  branch: branchReducer,
 })
 
 export const projectReducer = combineReducers({
@@ -97,7 +94,6 @@ export const initialRootState = (): RootState => ({
       organizations: initialOrganizationState,
       authProvider: initialAuthProviderState,
       repository: initialRepositoryState,
-      branch: initialBranchState,
     },
     cluster: initialClusterState,
     project: {

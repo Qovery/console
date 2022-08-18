@@ -1,30 +1,13 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Value } from '@console/shared/interfaces'
-import {
-  BlockContent,
-  Button,
-  ButtonSize,
-  ButtonStyle,
-  HelpSection,
-  IconAwesomeEnum,
-  InputSelect,
-  InputText,
-  useModal,
-} from '@console/shared/ui'
+import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@console/shared/ui'
 import { upperCaseFirstLetter } from '@console/shared/utils'
-import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-modal'
+import GitRepositorySettingsFeature from '../../feature/git-repository-settings-feature/git-repository-settings-feature'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   watchBuildMode: BuildModeEnum
-  gitDisabled: boolean
-  setGitDisabled: (gitDisabled: boolean) => void
-  authProviders?: Value[]
-  repositories?: Value[]
-  branches?: Value[]
-  currentAuthProvider?: string
   loading?: boolean
 }
 
@@ -39,20 +22,9 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
 }))
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const {
-    onSubmit,
-    watchBuildMode,
-    loading,
-    gitDisabled,
-    setGitDisabled,
-    authProviders,
-    currentAuthProvider,
-    repositories,
-    branches,
-  } = props
+  const { onSubmit, watchBuildMode, loading } = props
 
   const { control, formState } = useFormContext()
-  const { openModal, closeModal } = useModal()
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -76,95 +48,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
-          <BlockContent title="Git repository">
-            <Controller
-              name="provider"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  dataTestId="input-provider"
-                  label="Git repository"
-                  className="mb-3"
-                  items={authProviders || []}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  disabled={gitDisabled}
-                />
-              )}
-            />
-            <Controller
-              name="repository"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  dataTestId="input-repository"
-                  label="Repository"
-                  className="mb-3"
-                  items={repositories || []}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  disabled={gitDisabled}
-                  search
-                />
-              )}
-            />
-            <Controller
-              name="branch"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  dataTestId="input-branch"
-                  label="Branch"
-                  className="mb-3"
-                  items={branches || []}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  disabled={gitDisabled}
-                  search
-                />
-              )}
-            />
-            <Controller
-              name="root_path"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-branch"
-                  label="Root application path"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  disabled={gitDisabled}
-                />
-              )}
-            />
-            <div className="flex justify-end mt-3">
-              <Button
-                className="btn--no-min-w"
-                size={ButtonSize.REGULAR}
-                style={ButtonStyle.STROKED}
-                iconRight={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
-                iconRightClassName="text-warning-500 text-sm"
-                onClick={() =>
-                  openModal({
-                    content: (
-                      <ConfirmationGitModal
-                        currentAuthProvider={currentAuthProvider}
-                        onClose={closeModal}
-                        onSubmit={setGitDisabled}
-                      />
-                    ),
-                  })
-                }
-              >
-                Edit
-              </Button>
-            </div>
-          </BlockContent>
+          <GitRepositorySettingsFeature />
           <BlockContent title="Build mode">
             <Controller
               name="build_mode"

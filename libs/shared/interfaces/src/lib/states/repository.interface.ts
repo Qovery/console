@@ -1,4 +1,4 @@
-import { GitRepository } from 'qovery-typescript-axios'
+import { RepositoryEntity } from '../domain/repository.entity'
 import { DefaultEntityState } from './default-entity-state.interface'
 
-export interface RepositoryState extends DefaultEntityState<GitRepository> {}
+export interface RepositoryState extends DefaultEntityState<RepositoryEntity> {}

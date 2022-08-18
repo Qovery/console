@@ -1,4 +1,3 @@
-export * from './lib/slices/branch.slice'
 export * from './lib/slices/repository.slice'
 export * from './lib/slices/auth-provider.slice'
 export * from './lib/slices/cluster.slice'
