@@ -8,6 +8,12 @@ import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
+export const buildGitRepoUrl = (provider: string, url: string): string => {
+  if (url.includes('http')) return url
+  const authProvider = provider.toLowerCase()
+  return `https://${authProvider}.com/${url}.git`
+}
+
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
   const cloneApplication = Object.assign({}, application as ApplicationEntity)
   cloneApplication.name = data['name']
@@ -20,6 +26,14 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
     cloneApplication.buildpack_language = data['buildpack_language']
     cloneApplication.dockerfile_path = null
   }
+
+  const git_repository = {
+    url: buildGitRepoUrl(data['provider'], data['repository']),
+    branch: data['branch'],
+    root_path: data['root_path'],
+  }
+
+  cloneApplication.git_repository = git_repository
 
   return cloneApplication
 }
@@ -42,7 +56,6 @@ export function PageSettingsGeneralFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     if (data && application) {
       const cloneApplication = handleSubmit(data, application)
-
       dispatch(
         editApplication({
           applicationId: applicationId,

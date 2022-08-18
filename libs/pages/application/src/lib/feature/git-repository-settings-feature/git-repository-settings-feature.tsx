@@ -53,7 +53,7 @@ export function GitRepositorySettingsFeature() {
   useEffect(() => {
     if (gitDisabled && application?.git_repository) {
       setValue('provider', `${application?.git_repository?.provider} (${application?.git_repository?.owner})`)
-      setValue('repository', application?.git_repository?.name)
+      setValue('repository', application?.git_repository?.url)
       setValue('branch', application?.git_repository?.branch)
       setValue('root_path', application?.git_repository?.root_path)
     }
@@ -115,7 +115,7 @@ export function GitRepositorySettingsFeature() {
           : [
               {
                 label: upperCaseFirstLetter(application?.git_repository?.name) || '',
-                value: application?.git_repository?.name || '',
+                value: application?.git_repository?.url || '',
               },
             ]
       }
