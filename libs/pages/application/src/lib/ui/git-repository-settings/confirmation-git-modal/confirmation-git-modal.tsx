@@ -20,8 +20,10 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
       <div className="relative flex w-full h-[52px] px-4 py-2 border rounded">
         <Icon name={GitProviderEnum.GITHUB} className="mr-3 w-4 h-4 mt-[10px]" width="16px" height="16px" />
         <div className="relative -top-[6px]">
-          <span className="text-xs text-text-500">{props.currentAuthProvider?.split(' ')[0]}</span>
-          <p className="text-sm text-text-600 relative -top-1">
+          <span data-testid="auth-provider-name" className="text-xs text-text-500">
+            {props.currentAuthProvider?.split(' ')[0]}
+          </span>
+          <p data-testid="auth-provider-owner" className="text-sm text-text-600 relative -top-1">
             {props.currentAuthProvider?.split(' ')[1].replace('(', '').replace(')', '')}
           </p>
         </div>
@@ -29,7 +31,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
       </div>
       <div className="flex gap-3 justify-end mt-6">
         <Button
-          // dataTestId="cancel-button"
+          dataTestId="cancel-button"
           className="btn--no-min-w"
           style={ButtonStyle.STROKED}
           size={ButtonSize.XLARGE}
@@ -38,7 +40,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
           Cancel
         </Button>
         <Button
-          // dataTestId="submit-button"
+          dataTestId="submit-button"
           size={ButtonSize.XLARGE}
           onClick={() => {
             props.onSubmit()

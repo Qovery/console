@@ -23,7 +23,6 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   const { onSubmit, watchBuildMode, loading } = props
-
   const { control, formState } = useFormContext()
 
   return (

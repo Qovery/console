@@ -1,6 +1,7 @@
-import { getByTestId, render, screen, waitFor } from '@testing-library/react'
+import { getByTestId, screen, waitFor } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 import PageSettingsGeneral, { PageSettingsGeneralProps } from './page-settings-general'
 
@@ -15,6 +16,10 @@ describe('PageSettingsGeneral', () => {
     build_mode: mode,
     buildpack_language: BuildPackLanguageEnum.CLOJURE,
     dockerfile_path: 'Dockerfile',
+    provider: GitProviderEnum.GITHUB,
+    repository: 'qovery/console',
+    branch: 'main',
+    root_path: '/',
   })
 
   it('should render successfully', async () => {

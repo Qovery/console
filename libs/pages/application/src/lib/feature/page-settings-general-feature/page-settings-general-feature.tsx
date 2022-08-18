@@ -8,10 +8,10 @@ import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const buildGitRepoUrl = (provider: string, url: string): string => {
-  if (url.includes('http')) return url
+export const buildGitRepoUrl = (provider: string, branch: string): string => {
+  if (branch.includes('http')) return branch
   const authProvider = provider.toLowerCase()
-  return `https://${authProvider}.com/${url}.git`
+  return `https://${authProvider}.com/${branch}.git`
 }
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
