@@ -23,6 +23,10 @@ describe('PageSettingsGeneralFeature', () => {
         build_mode: BuildModeEnum.DOCKER,
         buildpack_language: BuildPackLanguageEnum.GO,
         dockerfile_path: '/',
+        provider: GitProviderEnum.GITHUB,
+        repository: 'qovery/console',
+        branch: 'main',
+        root_path: '/',
       },
       application
     )
@@ -39,6 +43,10 @@ describe('PageSettingsGeneralFeature', () => {
         build_mode: BuildModeEnum.BUILDPACKS,
         buildpack_language: BuildPackLanguageEnum.GO,
         dockerfile_path: '/',
+        provider: GitProviderEnum.GITHUB,
+        repository: 'qovery/console',
+        branch: 'main',
+        root_path: '/',
       },
       application
     )

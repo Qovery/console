@@ -42,7 +42,12 @@ export function PageSettingsGeneralFeature() {
   const { applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId]
+    (state) => getApplicationsState(state).entities[applicationId],
+    (a, b) =>
+      a?.name === b?.name &&
+      a?.build_mode === b?.build_mode &&
+      a?.buildpack_language === b?.buildpack_language &&
+      a?.dockerfile_path === b?.dockerfile_path
   )
 
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)

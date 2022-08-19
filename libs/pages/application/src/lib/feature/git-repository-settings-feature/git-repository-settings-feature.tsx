@@ -32,8 +32,10 @@ export function GitRepositorySettingsFeature() {
   const dispatch = useDispatch<AppDispatch>()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId]
+    (state) => getApplicationsState(state).entities[applicationId],
+    (a, b) => JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository)
   )
+
   const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
   const repositories = useSelector<RootState, RepositoryEntity[]>(selectAllRepository)
   const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
@@ -81,7 +83,7 @@ export function GitRepositorySettingsFeature() {
     await dispatch(fetchAuthProvider({ organizationId }))
     if (application?.git_repository?.provider) {
       setValue('provider', application?.git_repository?.provider)
-      setValue('repository', null, { shouldValidate: false })
+      setValue('repository', undefined, { shouldValidate: false })
       await dispatch(fetchRepository({ organizationId, gitProvider: application?.git_repository?.provider }))
     }
   }
