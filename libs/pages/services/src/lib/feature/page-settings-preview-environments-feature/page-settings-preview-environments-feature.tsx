@@ -1,4 +1,3 @@
-import equal from 'fast-deep-equal'
 import { Application, EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -22,7 +21,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const environmentDeploymentRules = useSelector<RootState, EnvironmentDeploymentRule | undefined>(
     (state) => selectEnvironmentDeploymentRulesByEnvId(state, environmentId),
-    equal
+    (a, b) => a?.auto_preview === b?.auto_preview
   )
 
   const loadingStatusEnvironment = useSelector(environmentsLoadingStatus)
@@ -31,7 +30,9 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
     (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
-    equal
+    (a, b) =>
+      JSON.stringify(a?.map((application) => application.auto_preview)) ===
+      JSON.stringify(b?.map((application) => application.auto_preview))
   )
 
   const methods = useForm({

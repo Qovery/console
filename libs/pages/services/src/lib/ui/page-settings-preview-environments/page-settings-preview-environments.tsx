@@ -14,7 +14,12 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <div className="p-8  max-w-content-with-navigation-left">
+        <div className="flex justify-between mb-8">
+          <div>
+            <h2 className="h5 text-text-700 mb-2">Preview environments</h2>
+          </div>
+        </div>
         <form onSubmit={onSubmit}>
           <BlockContent title="General">
             <Controller
