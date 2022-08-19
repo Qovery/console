@@ -26,7 +26,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h2 className="h5 text-text-700 mb-2">Deployment</h2>
+            <h2 className="h5 text-text-700 mb-2">Deployment general</h2>
           </div>
         </div>
         <form onSubmit={onSubmit}>
