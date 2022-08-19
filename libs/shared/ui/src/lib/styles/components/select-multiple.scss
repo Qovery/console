@@ -91,6 +91,10 @@
   }
 }
 
+.input--select-multiple__placeholder {
+  display: none;
+}
+
 .input--select-multiple__option--is-focused,
 .input--select-multiple__option--is-focused.input--select-multiple__option--is-selected,
 .input--select-multiple__option--is-focused:hover {

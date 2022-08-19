@@ -10,13 +10,15 @@ import {
   InputText,
   InputToggle,
 } from '@console/shared/ui'
+import { timezoneValues, weekdaysValues } from '@console/shared/utils'
 
 export interface PageSettingsDeploymentProps {
   onSubmit: () => void
+  watchAutoStop: boolean
 }
 
 export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
-  const { onSubmit } = props
+  const { onSubmit, watchAutoStop } = props
   const { control, formState } = useFormContext()
 
   return (
@@ -61,7 +63,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
               )}
             />
           </BlockContent>
-          <BlockContent title="Setup to apply - Start & stop">
+          <BlockContent title="Start & stop">
             <div className="flex items-center gap-3">
               <Controller
                 name="auto_stop"
@@ -69,86 +71,83 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                 render={({ field }) => (
                   <InputToggle
                     value={field.value}
-                    onChange={(e) => {
-                      // field.onChange(e)
-                      // setAutoStop(e)
-                    }}
-                    className="mb-5"
+                    onChange={field.onChange}
                     title="Deploy on specific timeframe"
-                    description="Specify a timeframe to automatically start & stop your environment."
+                    description="Your environment will be automatically started and stopped on a specific timeframe."
+                    forceAlignTop
                     small
                   />
                 )}
               />
             </div>
-            <Controller
-              name="weekdays"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelectMultiple
-                  label="Which days"
-                  value={field.value}
-                  // options={weekdaysSelection}
-                  options={[]}
-                  error={error?.message}
-                  onChange={field.onChange}
-                  className="mb-3"
-                  // disabled={!autoStop}
+            {watchAutoStop && (
+              <>
+                <Controller
+                  name="weekdays"
+                  control={control}
+                  rules={{ required: 'Please enter minimum one day.' }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputSelectMultiple
+                      label="Which days"
+                      value={field.value}
+                      options={weekdaysValues}
+                      error={error?.message}
+                      onChange={field.onChange}
+                      className="mb-3 mt-5"
+                    />
+                  )}
                 />
-              )}
-            />
-            <Controller
-              name="timezone"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  label="Timezone"
-                  // items={timezoneSelection}
-                  items={[]}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  className="mb-3"
-                  disabled
+                <Controller
+                  name="timezone"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputSelect
+                      label="Timezone"
+                      items={timezoneValues}
+                      onChange={field.onChange}
+                      value={field.value}
+                      error={error?.message}
+                      className="mb-3"
+                      disabled
+                    />
+                  )}
                 />
-              )}
-            />
-            <div className="flex w-full gap-3">
-              <Controller
-                name="start_time"
-                control={control}
-                rules={{ required: 'Please enter a start time.' }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    name={field.name}
-                    type="time"
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    label="Start time"
-                    className="flex-grow"
-                    // disabled={!autoStop}
+                <div className="flex w-full gap-3">
+                  <Controller
+                    name="start_time"
+                    control={control}
+                    rules={{ required: 'Please enter a start time.' }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        name={field.name}
+                        type="time"
+                        onChange={field.onChange}
+                        value={field.value}
+                        error={error?.message}
+                        label="Start time"
+                        className="flex-grow"
+                      />
+                    )}
                   />
-                )}
-              />
-              <Controller
-                name="stop_time"
-                control={control}
-                rules={{ required: 'Please enter a stop time.' }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    name={field.name}
-                    type="time"
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    label="Stop time"
-                    className="flex-grow"
-                    // disabled={!autoStop}
+                  <Controller
+                    name="stop_time"
+                    control={control}
+                    rules={{ required: 'Please enter a stop time.' }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        name={field.name}
+                        type="time"
+                        onChange={field.onChange}
+                        value={field.value}
+                        error={error?.message}
+                        label="Stop time"
+                        className="flex-grow"
+                      />
+                    )}
                   />
-                )}
-              />
-            </div>
+                </div>
+              </>
+            )}
           </BlockContent>
           <div className="flex justify-end">
             <Button

@@ -3,12 +3,12 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
-import { AppDispatch, RootState } from '@console/store/data'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { postDeploymentRule } from '@console/domains/projects'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
-import { useDocumentTitle } from '@console/shared/utils'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
+import { useDocumentTitle, weekdaysValues } from '@console/shared/utils'
+import { AppDispatch, RootState } from '@console/store/data'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
 export function PageCreateDeploymentRuleFeature() {
@@ -27,29 +27,6 @@ export function PageCreateDeploymentRuleFeature() {
   useEffect(() => {
     dispatch(fetchClusters({ organizationId }))
 
-    const weekdaysSelection = [
-      {
-        label: 'Monday',
-        value: 'MONDAY',
-      },
-      {
-        label: 'Tuesday',
-        value: 'TUESDAY',
-      },
-      {
-        label: 'Wednesday',
-        value: 'WEDNESDAY',
-      },
-      {
-        label: 'Thursday',
-        value: 'THURSDAY',
-      },
-      {
-        label: 'Friday',
-        value: 'FRIDAY',
-      },
-    ]
-
     setValue('timezone', 'UTC')
     setValue('start_time', '08:00')
     setValue('stop_time', '19:00')
@@ -57,7 +34,7 @@ export function PageCreateDeploymentRuleFeature() {
     setValue('auto_deploy', false)
     setValue('auto_delete', false)
     setValue('auto_stop', false)
-    setValue('weekdays', weekdaysSelection)
+    setValue('weekdays', weekdaysValues)
   }, [setValue, dispatch, organizationId])
 
   const onSubmit = handleSubmit((data) => {

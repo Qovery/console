@@ -1,6 +1,6 @@
-import Select, { components, GroupBase, MultiValue, MultiValueProps, OptionProps } from 'react-select'
-import { Value } from '@console/shared/interfaces'
 import { useEffect, useState } from 'react'
+import Select, { GroupBase, MultiValue, MultiValueProps, OptionProps, components } from 'react-select'
+import { Value } from '@console/shared/interfaces'
 import Icon from '../../icon/icon'
 
 export interface InputSelectMultipleProps {
@@ -61,32 +61,35 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
       : ''
 
   return (
-    <div
-      className={`input input--select-multiple ${inputActions} ${className} ${
-        disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
-      }`}
-      data-testid="select-multiple"
-    >
-      <label htmlFor={label} className={`${hasFocus ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`}>
-        {label}
-      </label>
-      <Select
-        options={options}
-        isMulti
-        components={{ Option, MultiValue }}
-        closeMenuOnSelect={false}
-        onChange={handleChange}
-        classNamePrefix="input--select-multiple"
-        hideSelectedOptions={false}
-        isSearchable={false}
-        isClearable={false}
-        isDisabled={disabled}
-        value={selected}
-        onFocus={() => setFocused(true)}
-      />
-      <div className="absolute top-1/2 -translate-y-1/2 right-4">
-        <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+    <div className={className}>
+      <div
+        className={`input input--select-multiple ${inputActions} ${
+          disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
+        }`}
+        data-testid="select-multiple"
+      >
+        <label htmlFor={label} className={`${hasFocus ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`}>
+          {label}
+        </label>
+        <Select
+          options={options}
+          isMulti
+          components={{ Option, MultiValue }}
+          closeMenuOnSelect={false}
+          onChange={handleChange}
+          classNamePrefix="input--select-multiple"
+          hideSelectedOptions={false}
+          isSearchable={false}
+          isClearable={false}
+          isDisabled={disabled}
+          value={selected}
+          onFocus={() => setFocused(true)}
+        />
+        <div className="absolute top-1/2 -translate-y-1/2 right-4">
+          <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+        </div>
       </div>
+      {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}
     </div>
   )
 }

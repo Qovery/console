@@ -18,6 +18,7 @@ import {
   InputTextArea,
   InputToggle,
 } from '@console/shared/ui'
+import { environmentModeValues, timezoneValues, weekdaysValues } from '@console/shared/utils'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PageCreateEditDeploymentRuleProps {
@@ -37,59 +38,6 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
   useEffect(() => {
     setAutoStop(defaultAutoStop)
   }, [defaultAutoStop])
-
-  const modeSelection = [
-    {
-      label: 'Development',
-      value: 'DEVELOPMENT',
-    },
-    {
-      label: 'Production',
-      value: 'PRODUCTION',
-    },
-    {
-      label: 'Staging',
-      value: 'STAGING',
-    },
-  ]
-
-  const timezoneSelection = [
-    {
-      label: 'UTC',
-      value: 'UTC',
-    },
-  ]
-
-  const weekdaysSelection = [
-    {
-      label: 'Monday',
-      value: 'MONDAY',
-    },
-    {
-      label: 'Tuesday',
-      value: 'TUESDAY',
-    },
-    {
-      label: 'Wednesday',
-      value: 'WEDNESDAY',
-    },
-    {
-      label: 'Thursday',
-      value: 'THURSDAY',
-    },
-    {
-      label: 'Friday',
-      value: 'FRIDAY',
-    },
-    {
-      label: 'Saturday',
-      value: 'SATURDAY',
-    },
-    {
-      label: 'Sunday',
-      value: 'SUNDAY',
-    },
-  ]
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -197,7 +145,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     render={({ field, fieldState: { error } }) => (
                       <InputSelect
                         label="Mode"
-                        items={modeSelection}
+                        items={environmentModeValues}
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
@@ -279,7 +227,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                       <InputSelectMultiple
                         label="Which days"
                         value={field.value}
-                        options={weekdaysSelection}
+                        options={weekdaysValues}
                         error={error?.message}
                         onChange={field.onChange}
                         className="mb-3"
@@ -293,7 +241,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     render={({ field, fieldState: { error } }) => (
                       <InputSelect
                         label="Timezone"
-                        items={timezoneSelection}
+                        items={timezoneValues}
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
