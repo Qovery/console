@@ -102,7 +102,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                 control={control}
                 render={({ field, fieldState: { error } }) => (
                   <InputText
-                    dataTestId="input-branch"
+                    dataTestId="input-root-path"
                     label="Root application path"
                     name={field.name}
                     onChange={field.onChange}
@@ -115,19 +115,20 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
             </>
           )}
           {loadingStatusBranches === 'loading' && !gitDisabled && (
-            <div className="flex justify-center mt-4">
+            <div data-testid="loader-branch" className="flex justify-center mt-4">
               <LoaderSpinner />
             </div>
           )}
         </>
       ) : (
-        <div className="flex justify-center mt-4">
+        <div data-testid="loader-repository" className="flex justify-center mt-4">
           <LoaderSpinner />
         </div>
       )}
       {gitDisabled && (
         <div className="flex justify-end mt-3">
           <Button
+            dataTestId="button-edit"
             className="btn--no-min-w"
             size={ButtonSize.REGULAR}
             style={ButtonStyle.STROKED}
