@@ -1,7 +1,7 @@
-import React, { ReactNode, MouseEvent, useRef, useEffect } from 'react'
 import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-typescript-axios'
-import { ButtonIcon, ButtonSize, ButtonIconStyle, Icon } from '@console/shared/ui'
+import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react'
 import { LoadingStatus } from '@console/shared/interfaces'
+import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon } from '@console/shared/ui'
 import { dateDifferenceMinutes, scrollParentToChild } from '@console/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
@@ -97,7 +97,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
   }
 
   return (
-    <div className="overflow-hidden flex relative h-full">
+    <div className="overflow-hidden flex relative h-full bg-element-light-darker-600">
       <div className="absolute z-20 left-0 w-[calc(100%-360px)] flex justify-end items-center h-9 bg-element-light-darker-200 px-5">
         {realErrors && realErrors.length > 0 && (
           <p
