@@ -1,4 +1,3 @@
-// import { act, render } from '@testing-library/react'
 import { act, render, screen } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum } from 'qovery-typescript-axios'
