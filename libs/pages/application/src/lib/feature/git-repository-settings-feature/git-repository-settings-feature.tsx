@@ -53,6 +53,12 @@ export function GitRepositorySettingsFeature() {
   const currentRepository = repositories.find((repository) => repository.name === watchRepository)
 
   useEffect(() => {
+    if (watchAuthProvider) {
+      dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider }))
+    }
+  }, [dispatch, organizationId, watchAuthProvider])
+
+  useEffect(() => {
     if (gitDisabled && application?.git_repository) {
       setValue('provider', `${application?.git_repository?.provider} (${application?.git_repository?.owner})`)
       setValue('repository', application?.git_repository?.url)
@@ -77,14 +83,13 @@ export function GitRepositorySettingsFeature() {
     }
   }, [dispatch, organizationId, watchRepository, watchAuthProvider, loadingStatusRepositories, setValue])
 
-  // submit for modal with the dispatchs authProvider and repositories
-  const editGitSettings = async () => {
+  // submit for modal with the dispatchs authProvider
+  const editGitSettings = () => {
     setGitDisabled(false)
-    await dispatch(fetchAuthProvider({ organizationId }))
+    dispatch(fetchAuthProvider({ organizationId }))
     if (application?.git_repository?.provider) {
       setValue('provider', application?.git_repository?.provider)
       setValue('repository', undefined, { shouldValidate: false })
-      await dispatch(fetchRepository({ organizationId, gitProvider: application?.git_repository?.provider }))
     }
   }
 

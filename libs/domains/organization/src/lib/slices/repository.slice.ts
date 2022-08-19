@@ -85,6 +85,9 @@ export const repositorySlice = createSlice({
       .addCase(fetchRepository.rejected, (state: RepositoryState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+        // reset repository
+        repositoryAdapter.setAll(state, [])
+        toastError(action.error)
       })
       // fetch branches by repository
       .addCase(fetchBranches.pending, (state: RepositoryState, action) => {
