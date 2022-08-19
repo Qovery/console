@@ -15,7 +15,7 @@ export function LayoutPage(props: LayoutPageProps) {
   return (
     <>
       <WarningScreenMobile />
-      <main className={`${darkMode ? 'bg-element-light-darker-600' : 'bg-element-light-lighter-400'}`}>
+      <main className={`${darkMode ? 'bg-element-light-darker-600 h-screen' : 'bg-element-light-lighter-400'}`}>
         <Navigation darkMode={darkMode} firstName={user?.first_name} lastName={user?.last_name} />
         <TopBar darkMode={darkMode} />
         <div
