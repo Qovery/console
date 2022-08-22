@@ -1,41 +1,64 @@
-import { render, screen } from '__tests__/utils/setup-jest'
+import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { timezoneValues, weekdaysValues } from '@console/shared/utils'
+import { WeekdayEnum } from 'qovery-typescript-axios'
+import { timezoneValues } from '@console/shared/utils'
 import PageSettingsDeployment, { PageSettingsDeploymentProps } from './page-settings-deployment'
 
 describe('PageSettingsDeployment', () => {
   const props: PageSettingsDeploymentProps = {
     watchAutoStop: false,
     onSubmit: jest.fn(),
+    loading: false,
   }
 
   const defaultValues = {
     auto_deploy: true,
     auto_delete: false,
     auto_stop: true,
-    weekdays: weekdaysValues.map((day) => day.value),
+    weekdays: [WeekdayEnum.MONDAY, WeekdayEnum.FRIDAY],
     timezone: timezoneValues[0].value,
     start_time: `1970-01-01T09:00:00.000Z`,
     stop_time: `1970-01-01T19:00:00.000Z`,
   }
 
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = render(wrapWithReactHookForm(<PageSettingsDeployment {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the form with docker section', async () => {
-    render(
+  it('should not render the form with auto stop fields', async () => {
+    props.watchAutoStop = false
+
+    const { queryByTestId } = render(
       wrapWithReactHookForm(<PageSettingsDeployment {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    // const buildMode = screen.getByTestId('input-select-mode')
-    // const dockerfile = screen.getByTestId('input-text-dockerfile')
+    expect(queryByTestId('auto-deploy')).toBeVisible()
+    expect(queryByTestId('auto-delete')).toBeVisible()
+    expect(queryByTestId('auto-stop')).toBeVisible()
+    expect(queryByTestId('weekdays')).not.toBeInTheDocument()
+    expect(queryByTestId('timezone')).not.toBeInTheDocument()
+    expect(queryByTestId('start-time')).not.toBeInTheDocument()
+    expect(queryByTestId('stop-time')).not.toBeInTheDocument()
+  })
 
-    screen.getByDisplayValue('hello-world')
-    // expect(buildMode.querySelector('.input__value')?.textContent).toContain(upperCaseFirstLetter(BuildModeEnum.DOCKER))
-    // expect(dockerfile.getAttribute('value')).toBe('Dockerfile')
+  it('should render the form with auto stop fields', async () => {
+    props.watchAutoStop = true
+
+    const { queryByTestId } = render(
+      wrapWithReactHookForm(<PageSettingsDeployment {...props} />, {
+        defaultValues: defaultValues,
+      })
+    )
+
+    expect(queryByTestId('auto-deploy')).toBeVisible()
+    expect(queryByTestId('auto-delete')).toBeVisible()
+    expect(queryByTestId('auto-stop')).toBeVisible()
+    expect(queryByTestId('weekdays')).toBeVisible()
+    expect(queryByTestId('timezone')).toBeVisible()
+    expect(queryByTestId('start-time')).toBeVisible()
+    expect(queryByTestId('stop-time')).toBeVisible()
   })
 })

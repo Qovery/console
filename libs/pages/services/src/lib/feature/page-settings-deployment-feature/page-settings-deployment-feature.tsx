@@ -1,5 +1,5 @@
 import { EnvironmentDeploymentRule } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -30,6 +30,7 @@ export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: Env
 export function PageSettingsDeploymentFeature() {
   const { environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
+  const [loading, setLoading] = useState(false)
 
   const loadingStatusEnvironment = useSelector(environmentsLoadingStatus)
 
@@ -61,23 +62,26 @@ export function PageSettingsDeploymentFeature() {
     methods.setValue('weekdays', weekdaysValues)
   }, [methods, environmentDeploymentRules])
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data && environmentDeploymentRules) {
+      setLoading(true)
+
       const cloneEnvironmentDeploymentRules = handleSubmit(data, environmentDeploymentRules)
 
-      dispatch(
+      await dispatch(
         editEnvironmentDeploymentRules({
           environmentId,
           deploymentRuleId: environmentDeploymentRules?.id || '',
           data: cloneEnvironmentDeploymentRules,
         })
       )
+      setLoading(false)
     }
   })
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsDeployment onSubmit={onSubmit} watchAutoStop={watchAutoStop} />
+      <PageSettingsDeployment onSubmit={onSubmit} watchAutoStop={watchAutoStop} loading={loading} />
     </FormProvider>
   )
 }

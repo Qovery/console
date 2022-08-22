@@ -15,10 +15,11 @@ import { timezoneValues, weekdaysValues } from '@console/shared/utils'
 export interface PageSettingsDeploymentProps {
   onSubmit: () => void
   watchAutoStop: boolean
+  loading: boolean
 }
 
 export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
-  const { onSubmit, watchAutoStop } = props
+  const { onSubmit, watchAutoStop, loading } = props
   const { control, formState } = useFormContext()
 
   return (
@@ -70,6 +71,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                 control={control}
                 render={({ field }) => (
                   <InputToggle
+                    dataTestId="auto-stop"
                     value={field.value}
                     onChange={field.onChange}
                     title="Deploy on specific timeframe"
@@ -83,11 +85,13 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
             {watchAutoStop && (
               <>
                 <Controller
+                  key="weekdays"
                   name="weekdays"
                   control={control}
                   rules={{ required: 'Please enter minimum one day.' }}
                   render={({ field, fieldState: { error } }) => (
                     <InputSelectMultiple
+                      dataTestId="weekdays"
                       label="Which days"
                       value={field.value}
                       options={weekdaysValues}
@@ -98,10 +102,12 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                   )}
                 />
                 <Controller
+                  key="timezone"
                   name="timezone"
                   control={control}
                   render={({ field, fieldState: { error } }) => (
                     <InputSelect
+                      dataTestId="timezone"
                       label="Timezone"
                       items={timezoneValues}
                       onChange={field.onChange}
@@ -119,6 +125,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                     rules={{ required: 'Please enter a start time.' }}
                     render={({ field, fieldState: { error } }) => (
                       <InputText
+                        dataTestId="start-time"
                         name={field.name}
                         type="time"
                         onChange={field.onChange}
@@ -135,6 +142,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                     rules={{ required: 'Please enter a stop time.' }}
                     render={({ field, fieldState: { error } }) => (
                       <InputText
+                        dataTestId="stop-time"
                         name={field.name}
                         type="time"
                         onChange={field.onChange}
@@ -155,6 +163,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
               disabled={!formState.isValid}
               size={ButtonSize.LARGE}
               style={ButtonStyle.BASIC}
+              loading={loading}
               type="submit"
             >
               Save

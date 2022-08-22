@@ -11,10 +11,11 @@ export interface InputSelectMultipleProps {
   disabled?: boolean
   error?: string
   onChange?: (values: MultiValue<Value>) => void
+  dataTestId?: string
 }
 
 export function InputSelectMultiple(props: InputSelectMultipleProps) {
-  const { className = '', label, value, options, disabled, error = false, onChange } = props
+  const { className = '', label, value, options, disabled, error = false, onChange, dataTestId } = props
   const [focused, setFocused] = useState(false)
   const [selected, setSelected] = useState<MultiValue<Value>>([])
 
@@ -32,14 +33,12 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
   }, [value])
 
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
-    <div>
-      <components.Option {...props}>
-        <span className="input--select-multiple__checkbox">
-          {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
-        </span>
-        <label className="ml-2">{props.label}</label>
-      </components.Option>
-    </div>
+    <components.Option {...props}>
+      <span className="input--select-multiple__checkbox">
+        {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
+      </span>
+      <label className="ml-2">{props.label}</label>
+    </components.Option>
   )
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
@@ -66,7 +65,7 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
         className={`input input--select-multiple ${inputActions} ${
           disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
         }`}
-        data-testid="select-multiple"
+        data-testid={dataTestId || 'select-multiple'}
       >
         <label htmlFor={label} className={`${hasFocus ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`}>
           {label}

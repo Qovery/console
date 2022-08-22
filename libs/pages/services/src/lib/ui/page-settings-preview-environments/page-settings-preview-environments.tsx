@@ -5,11 +5,12 @@ import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, Icon, Input
 
 export interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
+  loading: boolean
   applications?: ApplicationEntity[]
 }
 
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
-  const { onSubmit, applications } = props
+  const { onSubmit, applications, loading } = props
   const { control, formState } = useFormContext()
 
   return (
@@ -67,6 +68,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               disabled={!formState.isValid}
               size={ButtonSize.LARGE}
               style={ButtonStyle.BASIC}
+              loading={loading}
               type="submit"
             >
               Save
