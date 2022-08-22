@@ -1,4 +1,7 @@
+import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
+import { IconEnum, RunningStatus } from '@console/shared/enums'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 import {
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
@@ -7,9 +10,7 @@ import {
 } from '@console/shared/router'
 import {
   ButtonAction,
-  //ButtonIcon,
   ButtonIconAction,
-  //ButtonIconStyle,
   Header,
   Icon,
   Skeleton,
@@ -20,9 +21,6 @@ import {
   TagMode,
   TagSize,
 } from '@console/shared/ui'
-import { IconEnum, RunningStatus } from '@console/shared/enums'
-import { EnvironmentEntity } from '@console/shared/interfaces'
-import { StateEnum } from 'qovery-typescript-axios'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]
@@ -132,7 +130,7 @@ export function Container(props: ContainerProps) {
           status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
         />
       ),
-      name: 'Overview',
+      name: 'Services',
       active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
     },
