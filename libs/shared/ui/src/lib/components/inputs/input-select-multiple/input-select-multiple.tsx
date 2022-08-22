@@ -51,8 +51,6 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
   const inputActions =
     hasFocus && !disabled
       ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)]'
-      : value && value.length > 0
-      ? 'input--success'
       : disabled
       ? '!bg-element-light-lighter-200 !border-element-light-lighter-500 !pointer-events-none'
       : hasError

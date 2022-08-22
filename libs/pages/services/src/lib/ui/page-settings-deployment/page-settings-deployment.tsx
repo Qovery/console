@@ -85,7 +85,6 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
             {watchAutoStop && (
               <>
                 <Controller
-                  key="weekdays"
                   name="weekdays"
                   control={control}
                   rules={{ required: 'Please enter minimum one day.' }}
@@ -102,7 +101,6 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                   )}
                 />
                 <Controller
-                  key="timezone"
                   name="timezone"
                   control={control}
                   render={({ field, fieldState: { error } }) => (
