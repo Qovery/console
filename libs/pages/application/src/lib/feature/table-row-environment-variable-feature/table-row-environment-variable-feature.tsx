@@ -1,3 +1,8 @@
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { useContext } from 'react'
+import { useDispatch } from 'react-redux'
+import { useParams } from 'react-router'
+import { deleteEnvironmentVariable, deleteSecret } from '@console/domains/environment-variable'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -11,18 +16,13 @@ import {
   useModal,
   useModalConfirmation,
 } from '@console/shared/ui'
+import { AppDispatch } from '@console/store/data'
+import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
-import { useParams } from 'react-router'
-import { deleteEnvironmentVariable, deleteSecret } from '@console/domains/environment-variable'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from '@console/store/data'
-import { useContext } from 'react'
-import { ApplicationContext } from '../../ui/container/container'
 
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
@@ -46,7 +46,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       openModal({
         content: (
           <CrudEnvironmentVariableModalFeature
-            closeModal={() => closeModal}
+            closeModal={closeModal}
             variable={variable}
             mode={EnvironmentVariableCrudMode.EDITION}
             applicationId={applicationId}
