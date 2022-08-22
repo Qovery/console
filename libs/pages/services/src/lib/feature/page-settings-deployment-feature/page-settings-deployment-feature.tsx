@@ -14,7 +14,7 @@ import { dateToHours, weekdaysValues } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsDeployment from '../../ui/page-settings-deployment/page-settings-deployment'
 
-export const handleSubmit = (data: FieldValues, environmentDeploymentRules: EnvironmentDeploymentRule) => {
+export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: EnvironmentDeploymentRule) => {
   const cloneEnvironmentDeploymentRules = Object.assign({}, environmentDeploymentRules)
   cloneEnvironmentDeploymentRules.auto_deploy = data['auto_deploy']
   cloneEnvironmentDeploymentRules.auto_delete = data['auto_delete']
