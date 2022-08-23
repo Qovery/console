@@ -77,19 +77,19 @@ export function InputSelect(props: InputSelectProps) {
           </div>
         </ListboxButton>
         <ListboxPopover className={`input__list ${!portal ? 'absolute' : ''}`} portal={portal}>
-          <ListboxList>
+          <ListboxList className="relative">
             {search && (
               <InputSearch
                 autofocus
                 placeholder="Search"
-                className="mb-3"
+                className="mb-3 sticky top-0"
                 onChange={(value: string) => filterData(value)}
                 isEmpty={currentItems.length === 0}
                 customSize="h-9 text-sm"
               />
             )}
             <ListboxOption label="Hidden" className="hidden" value="hidden"></ListboxOption>
-            {currentItems.map((currentItem, index) => (
+            {currentItems.map((currentItem) => (
               <ListboxOption
                 key={currentItem.value}
                 className={`input__item ${value === currentItem.value ? 'is-active' : ''}`}

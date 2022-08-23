@@ -25,6 +25,7 @@ export interface ButtonProps {
   size?: ButtonSize
   style?: ButtonStyle
   iconLeft?: IconEnum | string
+  iconLeftClassName?: string
   iconRight?: IconEnum | string
   iconRightClassName?: string
   link?: string
@@ -52,12 +53,13 @@ export function Button(props: ButtonProps) {
     external = false,
     loading = false,
     iconRightClassName = '',
+    iconLeftClassName = '',
   } = props
 
   function content() {
     return !loading ? (
       <>
-        {iconLeft && <Icon name={iconLeft} />}
+        {iconLeft && <Icon name={iconLeft} className={iconLeftClassName} />}
         <span>{children}</span>
         {iconRight && <Icon name={iconRight} className={iconRightClassName} />}
       </>
