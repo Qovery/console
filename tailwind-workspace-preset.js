@@ -11,6 +11,9 @@ module.exports = {
       maxWidth: {
         'content-with-navigation-left': '42.5rem',
       },
+      minHeight: {
+        'height-with-navigation-left': 'min-h-[calc(100vh-270px)]',
+      },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
         code: ['Hack', 'sans-serif'],
