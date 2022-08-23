@@ -53,5 +53,5 @@ export function refactoApplicationPayload(application: Partial<ApplicationEntity
     min_running_instances: application.min_running_instances,
   }
 
-  return refactoPayload(applicationRequestPayload)
+  return applicationRequestPayload
 }
