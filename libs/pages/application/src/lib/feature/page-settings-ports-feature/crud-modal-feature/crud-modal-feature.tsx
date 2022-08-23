@@ -1,40 +1,80 @@
-import { CustomDomain } from 'qovery-typescript-axios'
-import { FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
-import { getApplicationsState } from '@console/domains/application'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
-import { RootState } from '@console/store/data'
-import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
+import { ServicePortPorts } from 'qovery-typescript-axios'
+import { useState } from 'react'
+import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { editApplication } from '@console/domains/application'
+import { ApplicationEntity } from '@console/shared/interfaces'
+import { AppDispatch } from '@console/store/data'
+import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
-  customDomain?: CustomDomain
+  port?: ServicePortPorts
   application?: ApplicationEntity
   onClose: () => void
 }
 
+export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
+  const cloneApplication = Object.assign({}, application as ApplicationEntity)
+
+  const ports: ServicePortPorts[] = application.ports || []
+  ports.push({
+    internal_port: parseInt(data['internal_port'], 10),
+    external_port: parseInt(data['external_port'], 10),
+    publicly_accessible: data['publicly_accessible'],
+  })
+
+  cloneApplication.ports = ports
+
+  return cloneApplication
+}
+
 export function CrudModalFeature(props: CrudModalFeatureProps) {
+  const { applicationId = '' } = useParams()
+
+  const [loading, setLoading] = useState(false)
+
   const methods = useForm({
-    defaultValues: { domain: props.customDomain ? props.customDomain.domain : '' },
+    defaultValues: {
+      internal_port: props.port ? props.port.internal_port : null,
+      external_port: props.port ? props.port.external_port : 443,
+      publicly_accessible: props.port ? props.port.publicly_accessible : true,
+    },
     mode: 'onChange',
   })
-  // const dispatch = useDispatch<AppDispatch>()
-  const loadingStatus = useSelector<RootState, LoadingStatus>((state) => getApplicationsState(state).loadingStatus)
+  const dispatch = useDispatch<AppDispatch>()
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!props.application) return
 
-    // return
-    // dispatch()
+    setLoading(true)
+    const cloneApplication = handleSubmit(data, props.application)
+
+    dispatch(
+      editApplication({
+        applicationId: applicationId,
+        data: cloneApplication,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        setLoading(false)
+        props.onClose()
+      })
+      .catch((e) => {
+        setLoading(false)
+        console.error(e)
+      })
   })
 
   return (
     <FormProvider {...methods}>
       <CrudModal
-        customDomain={props.customDomain}
+        port={props.port}
         onSubmit={onSubmit}
         onClose={props.onClose}
-        loading={loadingStatus === 'loading'}
-        isEdit={!!props.customDomain}
+        loading={loading}
+        isEdit={!!props.port}
       />
     </FormProvider>
   )

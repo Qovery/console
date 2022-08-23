@@ -1,4 +1,4 @@
-import { ServicePortPorts } from 'qovery-typescript-axios'
+import { ServicePortPorts, ServicePortRequestPorts } from 'qovery-typescript-axios'
 import { LoadingStatus } from '@console/shared/interfaces'
 import {
   BlockContent,
@@ -8,6 +8,7 @@ import {
   HelpSection,
   IconAwesomeEnum,
   InputText,
+  InputToggle,
   LoaderSpinner,
   PlaceholderSettings,
 } from '@console/shared/ui'
@@ -15,7 +16,8 @@ import {
 export interface PageSettingsPortsProps {
   ports?: ServicePortPorts[]
   onAddPort: () => void
-  onEdit: (customPort: any) => void
+  onEdit: (customPort: ServicePortPorts) => void
+  onDelete: (customPort: ServicePortRequestPorts) => void
   loading?: LoadingStatus
 }
 
@@ -47,19 +49,37 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
             {props.ports &&
               props.ports.map((customPort, i) => (
                 <div
-                  key={`port-${customPort.name}-${customPort.id}`}
+                  key={`port-${customPort.id}`}
                   className={`flex justify-between w-full items-center gap-3 ${
                     props.ports && props.ports.length !== i + 1 ? 'mb-5' : ''
                   }`}
                   data-testid="form-row"
                 >
                   <InputText
-                    name={`port-${customPort.name}-${customPort.id}`}
+                    name={`port-${customPort.internal_port}-${customPort.id}`}
                     className="shrink-0 grow flex-1"
                     value={customPort.internal_port}
                     label="Application port"
                     disabled
                   />
+                  <InputText
+                    name={`port-${customPort.external_port}-${customPort.id}`}
+                    className="shrink-0 grow flex-1"
+                    value={customPort.external_port}
+                    label="Application port (Secure)"
+                    disabled
+                  />
+                  <div className="flex items-center ml-1 mr-4">
+                    <InputToggle
+                      className="shrink-0 grow flex-1"
+                      value={customPort.publicly_accessible}
+                      disabled
+                      small
+                    />
+                    <span className="text-text-600 text-ssm font-medium">
+                      {customPort.publicly_accessible ? 'Public' : 'Private'}
+                    </span>
+                  </div>
                   <ButtonIcon
                     className="text-text-500 hover:text-text-700"
                     style={ButtonIconStyle.FLAT}
@@ -67,13 +87,13 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
                     dataTestId="edit-button"
                     icon={IconAwesomeEnum.WHEEL}
                   />
-                  {/* <ButtonIcon
+                  <ButtonIcon
                     className="text-text-500"
                     onClick={() => props.onDelete(customPort)}
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.FLAT}
-                  /> */}
+                  />
                 </div>
               ))}
           </BlockContent>
