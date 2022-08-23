@@ -5,16 +5,22 @@ import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, Icon, Input
 
 export interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
+  loading: boolean
   applications?: ApplicationEntity[]
 }
 
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
-  const { onSubmit, applications } = props
+  const { onSubmit, applications, loading } = props
   const { control, formState } = useFormContext()
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <div className="p-8  max-w-content-with-navigation-left">
+        <div className="flex justify-between mb-8">
+          <div>
+            <h2 className="h5 text-text-700 mb-2">Preview environments</h2>
+          </div>
+        </div>
         <form onSubmit={onSubmit}>
           <BlockContent title="General">
             <Controller
@@ -62,6 +68,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
               disabled={!formState.isValid}
               size={ButtonSize.LARGE}
               style={ButtonStyle.BASIC}
+              loading={loading}
               type="submit"
             >
               Save

@@ -4,12 +4,11 @@ import {
   EnvironmentModeEnum,
   ServiceDeploymentStatusEnum,
   StateEnum,
+  WeekdayEnum,
 } from 'qovery-typescript-axios'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 
 const chance = new Chance()
-
-type Environments = EnvironmentEntity
 
 const service = {
   id: chance.integer().toString(),
@@ -36,7 +35,21 @@ const deployment = {
   databases: [database, database, database],
 }
 
-export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): Environments[] =>
+const deploymentRules = {
+  id: chance.guid(),
+  created_at: chance.date().toString(),
+  updated_at: chance.date().toString(),
+  auto_deploy: true,
+  auto_stop: true,
+  auto_delete: true,
+  auto_preview: true,
+  timezone: 'UTC',
+  start_time: chance.date().toString(),
+  stop_time: chance.date().toString(),
+  weekdays: [chance.pickone(Object.values(WeekdayEnum))],
+}
+
+export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): EnvironmentEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${(index + 1) * Math.random()}`,
     created_at: chance.date().toString(),
@@ -60,4 +73,5 @@ export const environmentFactoryMock = (howMany: number, noStatus = false, noDepl
         }
       : undefined,
     deployments: !noDeployments ? [deployment, deployment, deployment] : undefined,
+    deploymentRules: deploymentRules,
   }))

@@ -2,6 +2,7 @@ import { Cluster } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Value } from '@console/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@console/shared/ui'
+import { environmentModeValues } from '@console/shared/utils'
 
 export interface PageSettingsGeneralProps {
   onSubmit: () => void
@@ -11,21 +12,6 @@ export interface PageSettingsGeneralProps {
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   const { clusters, onSubmit } = props
   const { control, formState } = useFormContext()
-
-  const modeSelection = [
-    {
-      label: 'Development',
-      value: 'DEVELOPMENT',
-    },
-    {
-      label: 'Production',
-      value: 'PRODUCTION',
-    },
-    {
-      label: 'Staging',
-      value: 'STAGING',
-    },
-  ]
 
   const clustersList: Value[] = clusters
     ? clusters?.map((cluster) => {
@@ -39,7 +25,12 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
 
   return (
     <div className="flex flex-col justify-between w-full">
-      <div className="p-8 max-w-content-with-navigation-left">
+      <div className="p-8  max-w-content-with-navigation-left">
+        <div className="flex justify-between mb-8">
+          <div>
+            <h2 className="h5 text-text-700 mb-2">General</h2>
+          </div>
+        </div>
         <form onSubmit={onSubmit}>
           <BlockContent title="General informations">
             <Controller
@@ -64,7 +55,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
                   label="Mode"
-                  items={modeSelection}
+                  items={environmentModeValues}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}

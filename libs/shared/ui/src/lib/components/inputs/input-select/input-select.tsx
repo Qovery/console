@@ -42,9 +42,9 @@ export function InputSelect(props: InputSelectProps) {
         <ListboxPopover className={`input__list ${!portal ? 'absolute' : ''}`} portal={portal}>
           <ListboxList>
             <ListboxOption label="Hidden" className="hidden" value="hidden"></ListboxOption>
-            {items.map((currentItem, index) => (
+            {items.map((currentItem) => (
               <ListboxOption
-                key={index}
+                key={currentItem.value}
                 className={`input__item ${value === currentItem.value ? 'is-active' : ''}`}
                 value={currentItem.value}
               >
