@@ -44,14 +44,20 @@ describe('testing payload refactoring', () => {
     }
 
     expect(refactoApplicationPayload(response)).toEqual({
-      name: 'hello-2',
-      test: 'test',
-      storage: [{ mount_point: '', size: 4, type: StorageTypeEnum.FAST_SSD }],
+      storage: [
+        {
+          id: '1',
+          mount_point: '',
+          size: 4,
+          type: StorageTypeEnum.FAST_SSD,
+        },
+      ],
       git_repository: {
         url: '',
         branch: '',
         root_path: '',
       },
+      name: 'hello-2',
     })
   })
 })
