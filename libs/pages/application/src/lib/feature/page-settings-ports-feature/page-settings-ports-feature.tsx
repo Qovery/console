@@ -30,16 +30,11 @@ export function PageSettingsPortsFeature() {
       onAddPort={() => {
         openModal({ content: <CrudModalFeature onClose={closeModal} application={application} /> })
       }}
-      onEdit={
-        (port: ServicePortPorts) => {
-          console.log(port)
-        }
-
-        // (port: ServicePortPorts) => {
-        // openModal({
-        //   content: <CrudModalFeature onClose={closeModal} application={application} port={port} />,
-        // })
-      }
+      onEdit={(port: ServicePortPorts) => {
+        openModal({
+          content: <CrudModalFeature onClose={closeModal} application={application} port={port} />,
+        })
+      }}
       onDelete={(port: ServicePortPorts) => {
         console.log(port)
         // openModalConfirmation({

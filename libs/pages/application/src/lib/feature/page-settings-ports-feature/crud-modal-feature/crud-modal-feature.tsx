@@ -2,7 +2,6 @@ import { ServicePortPorts } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { useParams } from 'react-router-dom'
 import { editApplication } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch } from '@console/store/data'
@@ -17,27 +16,27 @@ export interface CrudModalFeatureProps {
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
   const cloneApplication = Object.assign({}, application as ApplicationEntity)
 
-  const ports: ServicePortPorts[] = application.ports || []
-  ports.push({
-    internal_port: parseInt(data['internal_port'], 10),
-    external_port: parseInt(data['external_port'], 10),
-    publicly_accessible: data['publicly_accessible'],
-  })
+  const ports: ServicePortPorts[] | [] = cloneApplication.ports || []
 
-  cloneApplication.ports = ports
+  cloneApplication.ports = [
+    ...ports,
+    {
+      internal_port: parseInt(data['internal_port'], 10),
+      external_port: parseInt(data['external_port'], 10),
+      publicly_accessible: data['publicly_accessible'],
+    },
+  ]
 
   return cloneApplication
 }
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
-  const { applicationId = '' } = useParams()
-
   const [loading, setLoading] = useState(false)
 
   const methods = useForm({
     defaultValues: {
       internal_port: props.port ? props.port.internal_port : null,
-      external_port: props.port ? props.port.external_port : 443,
+      external_port: props.port ? props.port.external_port : null,
       publicly_accessible: props.port ? props.port.publicly_accessible : true,
     },
     mode: 'onChange',
@@ -52,7 +51,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
 
     dispatch(
       editApplication({
-        applicationId: applicationId,
+        applicationId: props.application.id,
         data: cloneApplication,
       })
     )

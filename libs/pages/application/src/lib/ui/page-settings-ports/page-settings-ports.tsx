@@ -22,6 +22,8 @@ export interface PageSettingsPortsProps {
 }
 
 export function PageSettingsPorts(props: PageSettingsPortsProps) {
+  console.log(props.ports)
+
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8  max-w-content-with-navigation-left">
@@ -42,7 +44,7 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
 
         {(props.loading === 'not loaded' || props.loading === 'loading') && props.ports?.length === 0 ? (
           <div className="flex justify-center">
-            <LoaderSpinner className="w-6"></LoaderSpinner>
+            <LoaderSpinner className="w-6" />
           </div>
         ) : props.ports && props.ports.length > 0 ? (
           <BlockContent title="Configured ports">

@@ -49,7 +49,6 @@ export function CrudModal(props: CrudModalProps) {
         name="external_port"
         control={control}
         rules={{
-          required: 'Please enter an external port.',
           pattern: pattern,
         }}
         render={({ field, fieldState: { error } }) => (
