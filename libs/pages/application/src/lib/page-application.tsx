@@ -1,10 +1,9 @@
-import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
-import { Route, Routes, useParams } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
+import equal from 'fast-deep-equal'
 import { Environment } from 'qovery-typescript-axios'
-import { selectEnvironmentById } from '@console/domains/environment'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Route, Routes, useParams } from 'react-router'
+import { useLocation } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   deleteApplicationAction,
@@ -17,12 +16,14 @@ import {
   postApplicationActionsStop,
   selectApplicationById,
 } from '@console/domains/application'
-import { useEffect } from 'react'
-import { StatusMenuActions } from '@console/shared/ui'
-import Container from './ui/container/container'
-import { ROUTER_APPLICATION } from './router/router'
-import { useLocation } from 'react-router-dom'
+import { selectEnvironmentById } from '@console/domains/environment'
+import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@console/shared/router'
+import { StatusMenuActions } from '@console/shared/ui'
+import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
+import { AppDispatch, RootState } from '@console/store/data'
+import { ROUTER_APPLICATION } from './router/router'
+import Container from './ui/container/container'
 
 export function PageApplication() {
   useDocumentTitle('Application - Qovery')
@@ -31,8 +32,9 @@ export function PageApplication() {
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
-  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
-    selectApplicationById(state, applicationId)
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
+    (state) => selectApplicationById(state, applicationId),
+    equal
   )
 
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))

@@ -3,6 +3,7 @@ import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@console/shared/ui'
 import { upperCaseFirstLetter } from '@console/shared/utils'
+import GitRepositorySettingsFeature from '../../feature/git-repository-settings-feature/git-repository-settings-feature'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -22,7 +23,6 @@ const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
   const { onSubmit, watchBuildMode, loading } = props
-
   const { control, formState } = useFormContext()
 
   return (
@@ -47,6 +47,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
+          <GitRepositorySettingsFeature />
           <BlockContent title="Build mode">
             <Controller
               name="build_mode"

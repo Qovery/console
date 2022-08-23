@@ -1,9 +1,9 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
 import { OrganizationState } from '@console/shared/interfaces'
 import { RootState } from '@console/store/data'
 
-export const ORGANIZATION_KEY = 'organization'
+export const ORGANIZATION_KEY = 'organizations'
 
 const organizationMainCalls = new OrganizationMainCallsApi()
 
@@ -73,7 +73,8 @@ export const { addOrganization, removeOrganization } = organizationSlice.actions
 
 const { selectAll } = organizationAdapter.getSelectors()
 
-export const getOrganizationState = (rootState: RootState): OrganizationState => rootState.entities[ORGANIZATION_KEY]
+export const getOrganizationState = (rootState: RootState): OrganizationState =>
+  rootState.entities.organization[ORGANIZATION_KEY]
 
 export const selectAllOrganization = createSelector(getOrganizationState, selectAll)
 

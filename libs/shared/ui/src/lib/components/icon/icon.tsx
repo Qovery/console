@@ -1,30 +1,30 @@
 import { IconEnum } from '@console/shared/enums'
 import IconFa from '../icon-fa/icon-fa'
-import GithubIcon from './icons-git/github'
-import GitlabIcon from './icons-git/gitlab'
+import { IconAwesomeEnum } from './icon-awesome.enum'
 import BitbucketIcon from './icons-git/bitbucket'
-import EnvironmentIcon from './icons/environment'
-import AWSIcon from './icons/aws'
-import ApplicationIcon from './icons/application'
-import SuccessIcon from './icons-status/success'
+import { GithubIcon, GithubWhiteIcon } from './icons-git/github'
+import GitlabIcon from './icons-git/gitlab'
+import DeleteIcon from './icons-status/delete'
 import ErrorIcon from './icons-status/error'
 import PauseIcon from './icons-status/pause'
-import DeleteIcon from './icons-status/delete'
 import ProgressIcon from './icons-status/progress'
-import ScalewayIcon from './icons/scaleway'
-import DOIcon from './icons/do'
-import DockerIcon from './icons/docker'
-import PostgresqlIcon from './icons/postgresql'
-import RedisIcon from './icons/redis'
+import SuccessIcon from './icons-status/success'
+import ApplicationIcon from './icons/application'
+import AWSIcon from './icons/aws'
+import AWSGrayIcon from './icons/aws-gray'
 import BuildpacksIcon from './icons/buildpacks'
+import ChildrenArrow from './icons/children-arrow'
+import DatabaseIcon from './icons/database'
+import DOIcon from './icons/do'
+import DOGrayIcon from './icons/do-gray'
+import DockerIcon from './icons/docker'
+import EnvironmentIcon from './icons/environment'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
-import AWSGrayIcon from './icons/aws-gray'
+import PostgresqlIcon from './icons/postgresql'
+import RedisIcon from './icons/redis'
+import ScalewayIcon from './icons/scaleway'
 import ScalewayGrayIcon from './icons/scaleway-gray'
-import DOGrayIcon from './icons/do-gray'
-import DatabaseIcon from './icons/database'
-import ChildrenArrow from './icons/children-arrow'
-import { IconAwesomeEnum } from './icon-awesome.enum'
 
 export interface IconProps {
   name: IconEnum | IconAwesomeEnum | string
@@ -45,6 +45,8 @@ export function Icon(props: IconProps) {
   switch (props.name) {
     case IconEnum.GITHUB:
       return <GithubIcon {...formattedProps} />
+    case IconEnum.GITHUB_WHITE:
+      return <GithubWhiteIcon {...formattedProps} />
     case IconEnum.CHILDREN_ARROW:
       return <ChildrenArrow {...formattedProps} />
     case IconEnum.GITLAB:
