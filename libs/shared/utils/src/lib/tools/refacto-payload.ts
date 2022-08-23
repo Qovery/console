@@ -1,4 +1,9 @@
-import { ApplicationStorageStorage } from 'qovery-typescript-axios'
+import {
+  ApplicationEditRequest,
+  ApplicationGitRepositoryRequest,
+  ApplicationStorageStorage,
+} from 'qovery-typescript-axios'
+import { ApplicationEntity } from '@console/shared/interfaces'
 
 export function refactoPayload(response: any) {
   delete response['id']
@@ -8,33 +13,45 @@ export function refactoPayload(response: any) {
   return response
 }
 
-export function refactoApplicationPayload(response: any) {
-  delete response['environment']
-  delete response['status']
-  delete response['running_status']
-  delete response['maximum_cpu']
-  delete response['maximum_memory']
-  delete response['commits']
-  delete response['links']
-  delete response['instances']
-  delete response['deployments']
-
+export function refactoApplicationPayload(application: Partial<ApplicationEntity>) {
   // refacto because we can't send all git data
-  response.git_repository = {
-    url: response.git_repository.url,
-    branch: response.git_repository.branch,
-    root_path: response.git_repository.root_path,
+  if (application.git_repository) {
+    application.git_repository = {
+      url: application.git_repository.url,
+      branch: application.git_repository.branch,
+      root_path: application.git_repository.root_path,
+    }
   }
 
   // refacto to remove the id by storage
-  response.storage =
-    response.storage.length > 0
-      ? response.storage.map((storage: ApplicationStorageStorage) => ({
-          mount_point: storage.mount_point,
-          size: storage.size,
-          type: storage.type,
-        }))
-      : []
+  if (application.storage) {
+    application.storage =
+      application.storage.length > 0
+        ? application.storage.map((storage: ApplicationStorageStorage) => ({
+            mount_point: storage.mount_point,
+            size: storage.size,
+            type: storage.type,
+            id: storage.id,
+          }))
+        : []
+  }
 
-  return refactoPayload(response)
+  const applicationRequestPayload: ApplicationEditRequest = {
+    name: application.name,
+    storage: application.storage,
+    cpu: application.cpu,
+    git_repository: application.git_repository as ApplicationGitRepositoryRequest,
+    build_mode: application.build_mode,
+    description: application.description || undefined,
+    memory: application.memory,
+    auto_preview: application.auto_preview,
+    ports: application.ports,
+    dockerfile_path: application.dockerfile_path || undefined,
+    healthcheck: application.healthcheck,
+    buildpack_language: application.buildpack_language,
+    max_running_instances: application.max_running_instances,
+    min_running_instances: application.min_running_instances,
+  }
+
+  return refactoPayload(applicationRequestPayload)
 }
