@@ -1,4 +1,12 @@
-import { Application, Commit, DeploymentHistoryApplication, Instance, Link, Status } from 'qovery-typescript-axios'
+import {
+  Application,
+  ApplicationAdvancedSettings,
+  Commit,
+  DeploymentHistoryApplication,
+  Instance,
+  Link,
+  Status,
+} from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
 import { ServiceRunningStatus } from './service-running-status.interface'
 
@@ -20,5 +28,10 @@ export interface ApplicationEntity extends Application {
   deployments?: {
     loadingStatus: LoadingStatus
     items: DeploymentHistoryApplication[]
+  }
+  advanced_settings?: {
+    loadingStatus: LoadingStatus
+    default_settings: ApplicationAdvancedSettings
+    current_settings: ApplicationAdvancedSettings
   }
 }
