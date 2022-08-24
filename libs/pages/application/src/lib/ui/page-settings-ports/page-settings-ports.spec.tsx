@@ -24,12 +24,6 @@ describe('PageSettingsPorts', () => {
           external_port: 433,
           publicly_accessible: true,
         },
-        {
-          id: '2',
-          internal_port: 81,
-          external_port: 431,
-          publicly_accessible: false,
-        },
       ],
       loading: 'loaded',
     }
@@ -40,6 +34,20 @@ describe('PageSettingsPorts', () => {
   })
 
   it('should have two rows of fields', async () => {
+    props.ports = [
+      {
+        id: '1',
+        internal_port: 80,
+        external_port: 433,
+        publicly_accessible: true,
+      },
+      {
+        id: '2',
+        internal_port: 81,
+        external_port: 431,
+        publicly_accessible: false,
+      },
+    ]
     const { findAllByTestId } = render(<PageSettingsPorts {...props} />)
 
     await waitFor(async () => {
@@ -60,15 +68,6 @@ describe('PageSettingsPorts', () => {
   })
 
   it('row should initialize with good values', async () => {
-    props.ports = [
-      {
-        id: '1',
-        internal_port: 80,
-        external_port: 433,
-        publicly_accessible: true,
-      },
-    ]
-
     const { baseElement } = render(<PageSettingsPorts {...props} />)
 
     await waitFor(async () => {
@@ -102,14 +101,6 @@ describe('PageSettingsPorts', () => {
   it('should have an edit button and a click handler', async () => {
     const spy = jest.fn()
     props.onEdit = spy
-    props.ports = [
-      {
-        id: '1',
-        internal_port: 80,
-        external_port: 433,
-        publicly_accessible: true,
-      },
-    ]
     const { findByTestId } = render(<PageSettingsPorts {...props} />)
 
     const button = await findByTestId('edit-button')
@@ -126,16 +117,16 @@ describe('PageSettingsPorts', () => {
     props.onDelete = spy
     const { findByTestId } = render(<PageSettingsPorts {...props} />)
 
-    const removeButton = await findByTestId('delete-button')
+    const deleteButton = await findByTestId('delete-button')
 
     await act(() => {
-      fireEvent.click(removeButton)
+      fireEvent.click(deleteButton)
     })
 
     expect(spy).toHaveBeenCalled()
   })
 
-  it('should have a placeholder if no storage yet', async () => {
+  it('should have a placeholder if no port yet', async () => {
     props.ports = []
     const { baseElement } = render(<PageSettingsPorts {...props} />)
 
