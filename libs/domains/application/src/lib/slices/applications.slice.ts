@@ -387,7 +387,19 @@ export const applicationsSlice = createSlice({
         applicationsAdapter.updateOne(state, update)
       })
       // edit application advanced Settings
-
+      .addCase(editApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loading',
+              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
       .addCase(editApplicationAdvancedSettings.fulfilled, (state: ApplicationsState, action) => {
         const applicationId = action.meta.arg.applicationId
         const update: Update<ApplicationEntity> = {
