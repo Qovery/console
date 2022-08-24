@@ -51,7 +51,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           name={name}
           type={type}
           placeholder={placeholder}
-          defaultValue={value}
+          value={value}
           onInput={onChange}
           id={props.label}
         />

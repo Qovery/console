@@ -8,6 +8,8 @@ import {
 } from '@reduxjs/toolkit'
 import {
   Application,
+  ApplicationAdvancedSettings,
+  ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
   ApplicationMainCallsApi,
   ApplicationMetricsApi,
@@ -37,6 +39,7 @@ const applicationsApi = new ApplicationsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const applicationMetricsApi = new ApplicationMetricsApi()
+const applicationConfigurationApi = new ApplicationConfigurationApi()
 
 export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
   'applications/fetch',
@@ -125,11 +128,39 @@ export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: 
   }
 )
 
+export const fetchApplicationAdvancedSettings = createAsyncThunk<
+  ApplicationAdvancedSettings,
+  { applicationId: string }
+>('application/advancedSettings', async (data) => {
+  const response = await applicationConfigurationApi.getAdvancedSettings(data.applicationId)
+  return response.data as ApplicationAdvancedSettings
+})
+
+export const editApplicationAdvancedSettings = createAsyncThunk<
+  ApplicationAdvancedSettings,
+  { applicationId: string; settings: ApplicationAdvancedSettings }
+>('application/advancedSettings/edit', async (data) => {
+  const response = await applicationConfigurationApi.editAdvancedSettings(data.applicationId, data.settings)
+  return response.data as ApplicationAdvancedSettings
+})
+
+export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<ApplicationAdvancedSettings>(
+  'application/defaultAdvancedSettings',
+  async () => {
+    const response = await applicationsApi.getDefaultApplicationAdvancedSettings()
+    return response.data as ApplicationAdvancedSettings
+  }
+)
+
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
   joinEnvApplication: {},
   statusLoadingStatus: 'not loaded',
+  defaultApplicationAdvancedSettings: {
+    loadingStatus: 'not loaded',
+    settings: undefined,
+  },
 })
 
 export const applicationsSlice = createSlice({
@@ -315,6 +346,79 @@ export const applicationsSlice = createSlice({
         }
         applicationsAdapter.updateOne(state, update)
       })
+      // fetch application advanced Settings
+      .addCase(fetchApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loading',
+              current_settings: undefined,
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationAdvancedSettings.fulfilled, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loaded',
+              current_settings: action.payload,
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchApplicationAdvancedSettings.rejected, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'error',
+              current_settings: undefined,
+            },
+          },
+        }
+        applicationsAdapter.updateOne(state, update)
+      })
+      // edit application advanced Settings
+
+      .addCase(editApplicationAdvancedSettings.fulfilled, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loaded',
+              current_settings: action.payload,
+            },
+          },
+        }
+        toast(ToastEnum.SUCCESS, `Your application advanced settings have been updated`)
+        applicationsAdapter.updateOne(state, update)
+      })
+      .addCase(editApplicationAdvancedSettings.rejected, (state: ApplicationsState, action) => {
+        const applicationId = action.meta.arg.applicationId
+        const update: Update<ApplicationEntity> = {
+          id: applicationId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'error',
+              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
+            },
+          },
+        }
+        toast(
+          ToastEnum.ERROR,
+          `Your advanced settings have not been updated. Something must be wrong with the values provided`
+        )
+        applicationsAdapter.updateOne(state, update)
+      })
       .addCase(fetchApplicationCommits.pending, (state: ApplicationsState, action) => {
         const applicationId = action.meta.arg.applicationId
         const update: Update<ApplicationEntity> = {
@@ -413,6 +517,16 @@ export const applicationsSlice = createSlice({
       })
       .addCase(fetchApplicationStatus.rejected, (state: ApplicationsState, action) => {
         state.statusLoadingStatus = 'error'
+      })
+      .addCase(fetchDefaultApplicationAdvancedSettings.pending, (state: ApplicationsState, action) => {
+        state.defaultApplicationAdvancedSettings.settings = action.payload
+      })
+      .addCase(fetchDefaultApplicationAdvancedSettings.fulfilled, (state: ApplicationsState, action) => {
+        state.defaultApplicationAdvancedSettings.settings = action.payload
+        state.defaultApplicationAdvancedSettings.loadingStatus = 'loaded'
+      })
+      .addCase(fetchDefaultApplicationAdvancedSettings.rejected, (state: ApplicationsState, action) => {
+        state.defaultApplicationAdvancedSettings.loadingStatus = 'error'
       })
   },
 })

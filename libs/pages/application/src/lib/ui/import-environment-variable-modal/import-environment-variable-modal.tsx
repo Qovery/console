@@ -1,6 +1,7 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { DropzoneRootProps } from 'react-dropzone'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { DropzoneRootProps } from 'react-dropzone'
+import { Controller, useFormContext } from 'react-hook-form'
+import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
 import {
   Button,
   ButtonIcon,
@@ -13,9 +14,8 @@ import {
   InputTextSmall,
   InputToggle,
 } from '@console/shared/ui'
-import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
-import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { validateKey, warningMessage } from '../../feature/import-environment-variable-modal-feature/utils/form-check'
+import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 
 export interface ImportEnvironmentVariableModalProps {
   onSubmit: () => void
@@ -106,6 +106,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 <Controller
                   name={key + '_key'}
                   control={control}
+                  defaultValue=""
                   rules={{
                     required: 'Please enter a value.',
                     pattern: {
@@ -137,6 +138,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 <Controller
                   name={key + '_value'}
                   control={control}
+                  defaultValue=""
                   rules={{
                     required: 'Please enter a value.',
                   }}

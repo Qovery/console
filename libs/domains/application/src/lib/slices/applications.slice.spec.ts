@@ -7,6 +7,10 @@ describe('applications reducer', () => {
       error: null,
       joinEnvApplication: {},
       statusLoadingStatus: 'not loaded',
+      defaultApplicationAdvancedSettings: {
+        loadingStatus: 'not loaded',
+        settings: undefined,
+      },
     })
 
     expect(applications(undefined, { type: '' })).toEqual(expected)
