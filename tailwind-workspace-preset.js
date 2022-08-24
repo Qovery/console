@@ -12,7 +12,7 @@ module.exports = {
         'content-with-navigation-left': '46.5rem',
       },
       minHeight: {
-        'height-with-navigation-left': 'min-h-[calc(100vh-270px)]',
+        'height-with-navigation-left': 'calc(100vh - 270px)',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
