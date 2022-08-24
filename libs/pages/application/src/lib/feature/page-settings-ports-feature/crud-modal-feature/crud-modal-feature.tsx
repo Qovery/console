@@ -13,19 +13,28 @@ export interface CrudModalFeatureProps {
   onClose: () => void
 }
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
-  const cloneApplication = Object.assign({}, application as ApplicationEntity)
+export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePortPorts) => {
+  const cloneApplication = Object.assign({}, application)
 
   const ports: ServicePortPorts[] | [] = cloneApplication.ports || []
 
-  cloneApplication.ports = [
-    ...ports,
-    {
-      internal_port: parseInt(data['internal_port'], 10),
-      external_port: parseInt(data['external_port'], 10),
-      publicly_accessible: data['publicly_accessible'],
-    },
-  ]
+  const port = {
+    internal_port: parseInt(data['internal_port'], 10),
+    external_port: parseInt(data['external_port'], 10),
+    publicly_accessible: data['publicly_accessible'],
+  }
+
+  if (currentPort) {
+    cloneApplication.ports = application.ports?.map((p: ServicePortPorts) => {
+      if (p.id === currentPort.id) {
+        return port
+      } else {
+        return p
+      }
+    })
+  } else {
+    cloneApplication.ports = [...ports, port]
+  }
 
   return cloneApplication
 }
@@ -37,7 +46,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     defaultValues: {
       internal_port: props.port ? props.port.internal_port : null,
       external_port: props.port ? props.port.external_port : null,
-      publicly_accessible: props.port ? props.port.publicly_accessible : true,
+      publicly_accessible: props.port ? props.port.publicly_accessible : false,
     },
     mode: 'onChange',
   })
@@ -47,7 +56,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     if (!props.application) return
 
     setLoading(true)
-    const cloneApplication = handleSubmit(data, props.application)
+    const cloneApplication = handleSubmit(data, props.application, props.port)
 
     dispatch(
       editApplication({

@@ -1,20 +1,16 @@
-import { act, findByTestId, getByDisplayValue, waitFor } from '@testing-library/react'
+import { act, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import CrudModal, { CrudModalProps } from './crud-modal'
 
 const props: CrudModalProps = {
   loading: false,
   onSubmit: jest.fn(),
   onClose: jest.fn(),
-  customDomain: {
-    id: 'ae20a043-12d3-4e46-89f3-a665f3e486fe',
-    created_at: '2022-08-10T14:55:21.382761Z',
-    updated_at: '2022-08-10T14:55:21.382762Z',
-    domain: 'test.qovery.com',
-    validation_domain: 'test.qovery.com.zc531a994.rustrocks.cloud',
-    status: CustomDomainStatusEnum.VALIDATION_PENDING,
+  port: {
+    internal_port: 80,
+    external_port: 433,
+    publicly_accessible: false,
   },
 }
 
@@ -25,26 +21,28 @@ describe('CrudModal', () => {
   })
 
   it('should render the form', async () => {
-    const { baseElement } = render(
+    const { getByDisplayValue } = render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
-        defaultValues: { domain: 'test.qovery.com' },
+        defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },
       })
     )
     await act(() => {
-      getByDisplayValue(baseElement, 'test.qovery.com')
+      getByDisplayValue(99)
+      getByDisplayValue(420)
+      getByDisplayValue('true')
     })
   })
 
   it('should submit the form', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
-    const { baseElement } = render(
+    const { findByTestId } = render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
-        defaultValues: { domain: 'test.qovery.com' },
+        defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },
       })
     )
 
-    const button = await findByTestId(baseElement, 'submit-button')
+    const button = await findByTestId('submit-button')
 
     await waitFor(() => {
       button.click()

@@ -1,19 +1,13 @@
 import { act } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@console/domains/application'
-import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
+import CrudModalFeature, { CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'
+
+const application = applicationFactoryMock(1)[0]
 
 const props: CrudModalFeatureProps = {
-  customDomain: {
-    id: '1',
-    domain: 'example.com',
-    status: CustomDomainStatusEnum.VALIDATION_PENDING,
-    validation_domain: 'example.com',
-    updated_at: '2020-01-01T00:00:00Z',
-    created_at: '2020-01-01T00:00:00Z',
-  },
-  application: applicationFactoryMock(1)[0],
+  port: application.ports?.[0],
+  application: application,
   onClose: jest.fn(),
 }
 
@@ -23,5 +17,19 @@ describe('CrudModalFeature', () => {
     await act(() => {
       expect(baseElement).toBeTruthy()
     })
+  })
+
+  it('should submit a new port', () => {
+    const app = handleSubmit({ internal_port: '520', external_port: '340', publicly_accessible: false }, application)
+    expect(app.ports).toHaveLength(2)
+  })
+
+  it('should submit a edit port', () => {
+    const app = handleSubmit(
+      { internal_port: '52', external_port: '340', publicly_accessible: false },
+      application,
+      application.ports?.[0]
+    )
+    expect(app.ports).toHaveLength(1)
   })
 })

@@ -22,8 +22,6 @@ export interface PageSettingsPortsProps {
 }
 
 export function PageSettingsPorts(props: PageSettingsPortsProps) {
-  console.log(props.ports)
-
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8  max-w-content-with-navigation-left">
@@ -37,7 +35,7 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
             </p>
           </div>
 
-          <Button onClick={() => props.onAddPort()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button dataTestId="add-button" onClick={() => props.onAddPort()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add Port
           </Button>
         </div>
@@ -67,7 +65,7 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
                   <InputText
                     name={`port-${customPort.external_port}-${customPort.id}`}
                     className="shrink-0 grow flex-1"
-                    value={customPort.external_port}
+                    value={customPort.external_port || '-'}
                     label="Application port (Secure)"
                     disabled
                   />
@@ -100,7 +98,7 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
               ))}
           </BlockContent>
         ) : (
-          <PlaceholderSettings title="No ports are set" description="Define a custom port for your application" />
+          <PlaceholderSettings title="No port are set" description="Define a custom port for your application" />
         )}
       </div>
       <HelpSection
