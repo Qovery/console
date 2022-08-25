@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationById } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
-import { convertMemory } from '@console/shared/utils'
+// import { convertMemory } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
@@ -28,8 +28,8 @@ export function PageSettingsResourcesFeature() {
     mode: 'onChange',
   })
 
-  const watchMemory = methods.watch('memory')
-  const watchMemoryUnit: string = methods.watch('memory_size')
+  // const watchMemory = methods.watch('memory')
+  // const watchMemoryUnit: string = methods.watch('memory_size')
 
   useEffect(() => {
     if (application) {
@@ -37,14 +37,18 @@ export function PageSettingsResourcesFeature() {
     }
   }, [application, methods])
 
-  useEffect(() => {
-    if (watchMemoryUnit === 'GB') {
-      console.log(convertMemory(watchMemory, 'GB'))
-      methods.setValue('memory', convertMemory(watchMemory, 'GB'))
-    } else {
-      methods.setValue('memory', watchMemory)
-    }
-  }, [methods, watchMemoryUnit])
+  const handleChangeMemoryUnit = () => {
+    console.log('hello')
+  }
+
+  // useEffect(() => {
+  //   if (watchMemoryUnit === 'GB') {
+  //     console.log(convertMemory(watchMemory, 'GB'))
+  //     methods.setValue('memory', convertMemory(watchMemory, 'GB'))
+  //   } else {
+  //     methods.setValue('memory', (watchMemory || 0) / 1024)
+  //   }
+  // }, [methods, watchMemoryUnit])
 
   const onSubmit = methods.handleSubmit((data) => {
     setLoading(true)
@@ -55,7 +59,12 @@ export function PageSettingsResourcesFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsResources onSubmit={onSubmit} loading={loading} />
+      <PageSettingsResources
+        onSubmit={onSubmit}
+        loading={loading}
+        memory={application?.memory}
+        handleChangeMemoryUnit={handleChangeMemoryUnit}
+      />
     </FormProvider>
   )
 }
