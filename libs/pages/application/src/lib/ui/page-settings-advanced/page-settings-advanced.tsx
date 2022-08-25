@@ -25,7 +25,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
   const { control, formState } = useFormContext()
 
   return (
-    <div className="flex flex-col justify-between w-full overflow-auto">
+    <div className="flex flex-col justify-between w-full">
       <div className="p-8 ">
         <div className="flex justify-between mb-8">
           <div>
