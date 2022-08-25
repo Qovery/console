@@ -1,13 +1,16 @@
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@console/shared/interfaces'
 import {
   Button,
   ButtonSize,
   ButtonStyle,
+  CopyToClipboard,
   HelpSection,
   IconAwesomeEnum,
   InputTextSmall,
+  InputToggle,
   LoaderSpinner,
   Tooltip,
 } from '@console/shared/ui'
@@ -23,11 +26,12 @@ export interface PageSettingsAdvancedProps {
 
 export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
   const { control, formState } = useFormContext()
+  const [showOverriddenOnly, toggleShowOverriddenOnly] = useState(false)
 
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 ">
-        <div className="flex justify-between mb-8">
+        <div className="flex justify-between mb-4">
           <div>
             <h1 className="h5 text-text-700 mb-2">Advanced Settings</h1>
             <p className="text-sm text-text-500 max-w-content-with-navigation-left">
@@ -36,6 +40,14 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             </p>
           </div>
         </div>
+
+        <InputToggle
+          className="mb-4"
+          dataTestId="auto-delete"
+          value={showOverriddenOnly}
+          onChange={toggleShowOverriddenOnly}
+          title="Show only overridden settings"
+        />
 
         <form onSubmit={props.onSubmit}>
           <div className="relative">
@@ -49,11 +61,11 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   <div className="flex-[3] border-element-light-lighter-400 border-solid border-r text-sm font-medium text-text-500 items-center flex px-4 py-2">
                     Settings
                   </div>
-                  <div className="flex-[1] border-element-light-lighter-400 border-solid font-medium border-r min-w-0 flex items-center text-text-500 px-4 text-ssm">
+                  <div className="flex-[3] border-element-light-lighter-400 border-solid font-medium border-r min-w-0 flex items-center text-text-500 px-4 text-ssm">
                     Default Value
                   </div>
 
-                  <div className="flex-[4] flex items-center px-1 font-medium text-sm text-text-500">
+                  <div className="flex-[3] flex items-center px-1 font-medium text-sm text-text-500">
                     <span className="px-3">Value</span>
                   </div>
                 </div>
@@ -61,13 +73,23 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   <div
                     className={`flex h-10 border-solid border-element-light-lighter-400 hover:bg-element-light-lighter-200 ${
                       props.keys && props.keys.length - 1 !== index ? 'border-b' : ''
+                    } ${
+                      showOverriddenOnly &&
+                      props.defaultAdvancedSettings &&
+                      props.advancedSettings &&
+                      props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString() ===
+                        props.advancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()
+                        ? 'hidden'
+                        : ''
                     }`}
                     key={key}
                   >
                     <div className="flex-[3] border-element-light-lighter-400 border-solid border-r text-sm font-medium text-text-500 items-center flex px-4 py-2">
-                      {key}
+                      <Tooltip content={key}>
+                        <div>{key}</div>
+                      </Tooltip>
                     </div>
-                    <div className="flex-[1] border-element-light-lighter-400 border-solid border-r min-w-0 flex items-center text-text-500 px-4 text-ssm">
+                    <div className="group flex-[3] border-element-light-lighter-400 border-solid border-r min-w-0 flex items-center text-text-500 px-4 text-ssm">
                       <Tooltip
                         content={
                           (props.defaultAdvancedSettings &&
@@ -80,9 +102,17 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                             props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()}
                         </div>
                       </Tooltip>
+                      <CopyToClipboard
+                        className="ml-2 text-text-300 invisible group-hover:visible"
+                        content={
+                          (props.defaultAdvancedSettings &&
+                            props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()) ||
+                          ''
+                        }
+                      />
                     </div>
 
-                    <div className="flex-[4] flex items-center px-1">
+                    <div className="flex-[3] flex items-center px-1">
                       <Controller
                         name={key}
                         control={control}
@@ -99,6 +129,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                             value={field.value}
                             error={error?.message}
                             errorMessagePosition="left"
+                            transparentBorderOnValid={true}
                           />
                         )}
                       />
@@ -115,9 +146,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
               <Button
                 size={ButtonSize.XLARGE}
                 style={ButtonStyle.STROKED}
-                onClick={() => {
-                  props.discardChanges()
-                }}
+                onClick={props.discardChanges}
                 iconLeft={IconAwesomeEnum.CROSS}
               >
                 Discard Changes

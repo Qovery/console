@@ -79,14 +79,6 @@ export function TabsFeature() {
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
     },
-    {
-      icon: <Icon name="icon-solid-wheel" />,
-      name: 'Settings',
-      active: location.pathname.includes(
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL
-      ),
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
-    },
     /*{
       icon: <Icon name="icon-solid-chart-area" />,
       name: 'Metrics',
@@ -102,6 +94,14 @@ export function TabsFeature() {
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
+    },
+    {
+      icon: <Icon name="icon-solid-wheel" />,
+      name: 'Settings',
+      active: location.pathname.includes(
+        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL
+      ),
+      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
     },
   ]
 

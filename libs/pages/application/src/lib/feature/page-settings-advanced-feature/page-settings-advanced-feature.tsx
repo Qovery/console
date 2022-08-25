@@ -119,6 +119,7 @@ export function PageSettingsAdvancedFeature() {
     <FormProvider {...methods}>
       <PageSettingsAdvanced
         defaultAdvancedSettings={defaultSettings}
+        advancedSettings={application?.advanced_settings?.current_settings}
         loading={application?.advanced_settings?.loadingStatus}
         keys={keys}
         discardChanges={() => {
