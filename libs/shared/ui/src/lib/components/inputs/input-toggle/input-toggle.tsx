@@ -43,7 +43,7 @@ export function InputToggle(props: InputToggleProps) {
     <div
       data-testid="input-toggle"
       className={`flex  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className} ${
-        disabled ? 'opacity-75' : ''
+        disabled ? 'opacity-50' : ''
       }`}
     >
       <div

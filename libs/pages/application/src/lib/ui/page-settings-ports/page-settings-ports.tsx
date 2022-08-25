@@ -66,7 +66,7 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
                     name={`port-${customPort.external_port}-${customPort.id}`}
                     className="shrink-0 grow flex-1"
                     value={customPort.external_port || '-'}
-                    label="Application port (Secure)"
+                    label="External port"
                     disabled
                   />
                   <div className="flex items-center ml-1 mr-4">
@@ -76,9 +76,7 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
                       disabled
                       small
                     />
-                    <span className="text-text-600 text-ssm font-medium">
-                      {customPort.publicly_accessible ? 'Public' : 'Private'}
-                    </span>
+                    <span className="text-text-600 text-ssm font-medium">Publicly exposed</span>
                   </div>
                   <ButtonIcon
                     className="text-text-500 hover:text-text-700"
