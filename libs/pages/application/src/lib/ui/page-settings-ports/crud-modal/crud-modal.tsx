@@ -11,7 +11,9 @@ export interface CrudModalProps {
 }
 
 export function CrudModal(props: CrudModalProps) {
-  const { control } = useFormContext()
+  const { control, watch, setValue } = useFormContext()
+
+  const watchPublicly = watch('publicly_accessible')
 
   const pattern = {
     value: /^[0-9]+$/,
@@ -46,9 +48,11 @@ export function CrudModal(props: CrudModalProps) {
         )}
       />
       <Controller
+        key={`port-${watchPublicly}`}
         name="external_port"
         control={control}
         rules={{
+          required: watchPublicly ? 'Please enter an external port.' : undefined,
           pattern: pattern,
         }}
         render={({ field, fieldState: { error } }) => (
@@ -58,8 +62,9 @@ export function CrudModal(props: CrudModalProps) {
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="Application port (Secure)"
+            label="External port"
             error={error?.message}
+            disabled={!watchPublicly}
           />
         )}
       />
@@ -67,11 +72,15 @@ export function CrudModal(props: CrudModalProps) {
         name="publicly_accessible"
         control={control}
         render={({ field }) => (
-          <div onClick={() => field.onChange(!field.value)} className="flex items-center mr-4 mb-2">
+          <div
+            onClick={() => {
+              field.onChange(!field.value)
+              field.value && setValue('external_port', null)
+            }}
+            className="flex items-center mr-4 mb-2"
+          >
             <InputToggle onChange={field.onChange} value={field.value} title={field.value} small />
-            <span className="text-text-600 text-ssm font-medium cursor-pointer">
-              {field.value ? 'Public' : 'Private'}
-            </span>
+            <span className="text-text-600 text-ssm font-medium cursor-pointer">Publicly exposed</span>
           </div>
         )}
       />
