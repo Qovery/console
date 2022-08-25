@@ -1,7 +1,16 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
-import { BlockContent, Button, ButtonSize, ButtonStyle, InputSelect, InputText, Slider } from '@console/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  HelpSection,
+  InputSelect,
+  InputText,
+  Slider,
+} from '@console/shared/ui'
 import { convertCpuToVCpu } from '@console/shared/utils'
 
 export interface PageSettingsResourcesProps {
@@ -124,6 +133,16 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           </div>
         </form>
       </div>
+      <HelpSection
+        description="Need help? You may find these links useful"
+        links={[
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#resources',
+            linkLabel: 'How to configure my application',
+            external: true,
+          },
+        ]}
+      />
     </div>
   )
 }
