@@ -1,7 +1,7 @@
 import { PlanEnum } from 'qovery-typescript-axios'
 import { OrganizationPlan } from '@console/domains/organization'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/router'
 import { Button, ButtonSize, ButtonStyle, Icon, Slider } from '@console/shared/ui'
-import { ONBOARDING_URL, ONBOARDING_PROJECT_URL } from '@console/shared/router'
 import { PlanCard } from '../plan-card/plan-card'
 
 export interface StepPricingProps {
@@ -76,8 +76,8 @@ export function StepPricing(props: StepPricingProps) {
             step={100}
             label="Number of deployments needed"
             valueLabel="/month"
-            defaultValue={currentDeploy}
-            getValue={(value: number) => chooseDeploy(value)}
+            defaultValue={[currentDeploy]}
+            getValue={(value: number[]) => chooseDeploy(value[0])}
           />
         </div>
 

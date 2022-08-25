@@ -1,13 +1,14 @@
-import { render } from '__tests__/utils/setup-jest'
-import { act, fireEvent, screen } from '@testing-library/react'
-import { Simulate } from 'react-dom/test-utils'
+import { act, render, screen } from '@testing-library/react'
+import { ResizeObserver } from '__tests__/utils/resize-observer'
 import { Slider, SliderProps } from './slider'
 
 describe('Slider', () => {
   let props: SliderProps
+  window.ResizeObserver = ResizeObserver
 
   beforeEach(() => {
     props = {
+      defaultValue: [10],
       min: 10,
       max: 100,
       step: 10,
@@ -29,30 +30,19 @@ describe('Slider', () => {
     expect(label?.textContent).toBe('my label')
   })
 
-  it('should set the value when the input event is emitted', () => {
-    render(<Slider {...props} />)
-
-    const input = screen.queryByTestId('input-range') as HTMLInputElement
-
-    fireEvent.change(input, { target: { value: '10' } })
-
-    expect(input.value).toBe('10')
-  })
-
-  it('should have callback and return value', () => {
-    const getValue = jest.fn()
-
-    props.getValue = getValue
+  it('should set a default values with correct attributes', () => {
+    props.defaultValue = [20, 30]
 
     render(<Slider {...props} />)
 
-    const input = screen.queryByTestId('input-range') as HTMLInputElement
+    const input = screen.getAllByRole('slider') as HTMLSpanElement[]
 
     act(() => {
-      input.value = '100'
-      Simulate.change(input)
+      input[0].setAttribute('aria-valuenow', '25')
+      input[1].setAttribute('aria-valuenow', '35')
     })
 
-    expect(getValue).toHaveBeenCalledWith(100)
+    expect(input[0].getAttribute('aria-valuenow')).toBe('25')
+    expect(input[1].getAttribute('aria-valuenow')).toBe('35')
   })
 })
