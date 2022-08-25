@@ -9,10 +9,20 @@ export interface InputToggleProps {
   className?: string
   dataTestId?: string
   forceAlignTop?: boolean
+  disabled?: boolean
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const { small, value = false, onChange, description, title, className = '', forceAlignTop = false } = props
+  const {
+    small,
+    value = false,
+    onChange,
+    description,
+    title,
+    className = '',
+    forceAlignTop = false,
+    disabled = false,
+  } = props
 
   const [toggleActive, setToggleActive] = useState(value)
 
@@ -24,6 +34,7 @@ export function InputToggle(props: InputToggleProps) {
   const toggleSizeCircle = small ? 'w-3.5 h-3.5' : 'w-5 h-5'
 
   const changeToggle = () => {
+    if (disabled) return
     onChange && onChange(!toggleActive)
     setToggleActive(!toggleActive)
   }
@@ -31,12 +42,14 @@ export function InputToggle(props: InputToggleProps) {
   return (
     <div
       data-testid="input-toggle"
-      className={`flex  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className}`}
+      className={`flex  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className} ${
+        disabled ? 'opacity-75' : ''
+      }`}
     >
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
         aria-label="toggle-btn"
-        className="inline-flex justify-between items-center cursor-pointer"
+        className={`inline-flex justify-between items-center ${!disabled ? 'cursor-pointer' : ''}`}
         onClick={changeToggle}
       >
         <input
@@ -44,6 +57,7 @@ export function InputToggle(props: InputToggleProps) {
           defaultChecked={toggleActive}
           defaultValue={toggleActive.toString()}
           className="hidden"
+          disabled={disabled}
         />
         <div
           aria-label="bg"
@@ -63,7 +77,7 @@ export function InputToggle(props: InputToggleProps) {
       </div>
       <div
         onClick={changeToggle}
-        className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 cursor-pointer`}
+        className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''}`}
       >
         {title && <p className="text-text-600 text-ssm font-medium">{title}</p>}
         {description && <div className="text-xs text-text-400">{description}</div>}
