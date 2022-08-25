@@ -1,5 +1,5 @@
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
@@ -66,9 +66,34 @@ export function PageSettingsAdvancedFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({ mode: 'onChange' })
 
-  const initForm = useCallback(() => {
-    const values: { [key: string]: string } = {}
+  // at the init fetch the default settings advanced settings
+  useEffect(() => {
+    dispatch(fetchDefaultApplicationAdvancedSettings())
+  }, [dispatch])
+
+  // when application is ready, and advanced setting has never been fetched before
+  useEffect(() => {
+    if (application && !application.advanced_settings?.loadingStatus) {
+      dispatch(fetchApplicationAdvancedSettings({ applicationId }))
+    }
+  }, [dispatch, application, applicationId])
+
+  // init the keys when application is updated
+  useEffect(() => {
     if (application) {
+      if (
+        application.advanced_settings?.current_settings &&
+        application.advanced_settings?.loadingStatus === 'loaded'
+      ) {
+        setKeys(Object.keys(application.advanced_settings.current_settings).sort(sortAlphabetically))
+      }
+    }
+  }, [application])
+
+  // init form
+  useEffect(() => {
+    const values: { [key: string]: string } = {}
+    if (application && application.advanced_settings?.loadingStatus === 'loaded') {
       keys.forEach((key) => {
         if (application.advanced_settings?.current_settings) {
           values[key] =
@@ -79,28 +104,6 @@ export function PageSettingsAdvancedFeature() {
       methods.reset(values)
     }
   }, [application, keys, methods])
-
-  useEffect(() => {
-    dispatch(fetchDefaultApplicationAdvancedSettings())
-  }, [dispatch])
-
-  useEffect(() => {
-    if (application && !application.advanced_settings?.loadingStatus) {
-      dispatch(fetchApplicationAdvancedSettings({ applicationId }))
-    }
-  }, [dispatch, application, applicationId])
-
-  useEffect(() => {
-    if (application) {
-      if (application.advanced_settings?.current_settings) {
-        setKeys(Object.keys(application.advanced_settings.current_settings).sort(sortAlphabetically))
-      }
-    }
-  }, [application])
-
-  useEffect(() => {
-    initForm()
-  }, [initForm])
 
   const onSubmit = methods.handleSubmit((data) => {
     let dataFormatted = { ...data }
