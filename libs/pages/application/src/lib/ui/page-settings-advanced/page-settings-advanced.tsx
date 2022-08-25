@@ -3,15 +3,14 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@console/shared/interfaces'
 import {
-  Button,
-  ButtonSize,
-  ButtonStyle,
   CopyToClipboard,
+  EditionTable,
+  EditionTableRow,
   HelpSection,
-  IconAwesomeEnum,
   InputTextSmall,
   InputToggle,
   LoaderSpinner,
+  StickyActionFormToaster,
   Tooltip,
 } from '@console/shared/ui'
 
@@ -27,6 +26,104 @@ export interface PageSettingsAdvancedProps {
 export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
   const { control, formState } = useFormContext()
   const [showOverriddenOnly, toggleShowOverriddenOnly] = useState(false)
+
+  let table: EditionTableRow[] = [
+    {
+      cells: [
+        {
+          content: 'Settings',
+        },
+        {
+          content: 'Default Value',
+        },
+        {
+          content: <span className="px-3">Value</span>,
+          className: '!p-1',
+        },
+      ],
+      className: 'font-medium',
+    },
+  ]
+
+  const tableBody: EditionTableRow[] = props.keys
+    ? props.keys?.map((key) => {
+        return {
+          className: `${
+            showOverriddenOnly &&
+            props.defaultAdvancedSettings &&
+            props.advancedSettings &&
+            props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString() ===
+              props.advancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()
+              ? 'hidden'
+              : ''
+          }`,
+          cells: [
+            {
+              content: (
+                <Tooltip content={key}>
+                  <div>{key}</div>
+                </Tooltip>
+              ),
+              className: 'font-medium vis',
+            },
+            {
+              content: (
+                <>
+                  <Tooltip
+                    content={
+                      (props.defaultAdvancedSettings &&
+                        props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()) ||
+                      ''
+                    }
+                  >
+                    <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">
+                      {props.defaultAdvancedSettings &&
+                        props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()}
+                    </div>
+                  </Tooltip>
+                  <CopyToClipboard
+                    className="ml-2 text-text-300 invisible group-hover:visible"
+                    content={
+                      (props.defaultAdvancedSettings &&
+                        props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()) ||
+                      ''
+                    }
+                  />
+                </>
+              ),
+              className: 'group',
+            },
+            {
+              className: '!p-1',
+              content: (
+                <Controller
+                  name={key}
+                  control={control}
+                  rules={{
+                    required: 'Please enter a value.',
+                  }}
+                  defaultValue=""
+                  render={({ field, fieldState: { error } }) => (
+                    <InputTextSmall
+                      className="shrink-0 grow flex-1"
+                      data-testid="value"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      error={error?.message}
+                      errorMessagePosition="left"
+                      transparentBorderOnValid={true}
+                    />
+                  )}
+                />
+              ),
+            },
+          ],
+        }
+      })
+    : []
+
+  table = [...table, ...tableBody]
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -56,104 +153,10 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                 <LoaderSpinner className="w-6"></LoaderSpinner>
               </div>
             ) : (
-              <div className="border border-solid border-element-light-lighter-400 rounded">
-                <div className={`flex h-10 border-solid border-element-light-lighter-400 border-t-0 border-b`}>
-                  <div className="flex-[3] border-element-light-lighter-400 border-solid border-r text-sm font-medium text-text-500 items-center flex px-4 py-2">
-                    Settings
-                  </div>
-                  <div className="flex-[3] border-element-light-lighter-400 border-solid font-medium border-r min-w-0 flex items-center text-text-500 px-4 text-ssm">
-                    Default Value
-                  </div>
-
-                  <div className="flex-[3] flex items-center px-1 font-medium text-sm text-text-500">
-                    <span className="px-3">Value</span>
-                  </div>
-                </div>
-                {props.keys?.map((key, index) => (
-                  <div
-                    className={`flex h-10 border-solid border-element-light-lighter-400 hover:bg-element-light-lighter-200 ${
-                      props.keys && props.keys.length - 1 !== index ? 'border-b' : ''
-                    } ${
-                      showOverriddenOnly &&
-                      props.defaultAdvancedSettings &&
-                      props.advancedSettings &&
-                      props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString() ===
-                        props.advancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()
-                        ? 'hidden'
-                        : ''
-                    }`}
-                    key={key}
-                  >
-                    <div className="flex-[3] border-element-light-lighter-400 border-solid border-r text-sm font-medium text-text-500 items-center flex px-4 py-2">
-                      <Tooltip content={key}>
-                        <div>{key}</div>
-                      </Tooltip>
-                    </div>
-                    <div className="group flex-[3] border-element-light-lighter-400 border-solid border-r min-w-0 flex items-center text-text-500 px-4 text-ssm">
-                      <Tooltip
-                        content={
-                          (props.defaultAdvancedSettings &&
-                            props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()) ||
-                          ''
-                        }
-                      >
-                        <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">
-                          {props.defaultAdvancedSettings &&
-                            props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()}
-                        </div>
-                      </Tooltip>
-                      <CopyToClipboard
-                        className="ml-2 text-text-300 invisible group-hover:visible"
-                        content={
-                          (props.defaultAdvancedSettings &&
-                            props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()) ||
-                          ''
-                        }
-                      />
-                    </div>
-
-                    <div className="flex-[3] flex items-center px-1">
-                      <Controller
-                        name={key}
-                        control={control}
-                        rules={{
-                          required: 'Please enter a value.',
-                        }}
-                        defaultValue=""
-                        render={({ field, fieldState: { error } }) => (
-                          <InputTextSmall
-                            className="shrink-0 grow flex-1"
-                            data-testid="value"
-                            name={field.name}
-                            onChange={field.onChange}
-                            value={field.value}
-                            error={error?.message}
-                            errorMessagePosition="left"
-                            transparentBorderOnValid={true}
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <EditionTable tableBody={table} />
             )}
-            <div
-              className={`mt-10 p-4 float-right inline-flex justify-center gap-4  sticky bottom-10 bg-white mx-auto rounded shadow ${
-                formState.isDirty ? 'visible' : 'hidden'
-              }`}
-            >
-              <Button
-                size={ButtonSize.XLARGE}
-                style={ButtonStyle.STROKED}
-                onClick={props.discardChanges}
-                iconLeft={IconAwesomeEnum.CROSS}
-              >
-                Discard Changes
-              </Button>
-              <Button size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} type="submit">
-                Save Changes
-              </Button>
+            <div className={`sticky bottom-10 mt-10 flex justify-center ${formState.isDirty ? 'visible' : 'hidden'}`}>
+              <StickyActionFormToaster onSubmit={props.onSubmit} onReset={props.discardChanges} />
             </div>
           </div>
         </form>

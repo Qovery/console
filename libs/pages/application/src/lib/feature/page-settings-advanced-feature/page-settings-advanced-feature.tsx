@@ -125,7 +125,9 @@ export function PageSettingsAdvancedFeature() {
         discardChanges={() => {
           methods.reset()
         }}
-        onSubmit={onSubmit}
+        onSubmit={() => {
+          onSubmit().then()
+        }}
       />
     </FormProvider>
   )

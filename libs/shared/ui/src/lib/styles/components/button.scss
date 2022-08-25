@@ -57,6 +57,14 @@
   }
 }
 
+.btn--confirm {
+  color: white;
+  background-color: theme('colors.success.600');
+  &:hover {
+    background-color: theme('colors.success.700');
+  }
+}
+
 // state
 .btn--disabled {
   @apply cursor-default pointer-events-none bg-brand-100 text-brand-300 border-0;
