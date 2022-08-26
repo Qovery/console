@@ -7,9 +7,13 @@ import {
   ButtonSize,
   ButtonStyle,
   HelpSection,
+  Icon,
+  IconAwesomeEnum,
   InputSelect,
   InputText,
   Slider,
+  WarningBox,
+  WarningBoxEnum,
 } from '@console/shared/ui'
 import { convertCpuToVCpu } from '@console/shared/utils'
 
@@ -19,17 +23,20 @@ export interface PageSettingsResourcesProps {
   memorySize: MemorySizeEnum
   application?: ApplicationEntity
   loading?: boolean
-  memory?: number
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, memory, handleChangeMemoryUnit, application, memorySize } = props
+  const { onSubmit, loading, handleChangeMemoryUnit, application, memorySize } = props
   const { control, formState, watch } = useFormContext()
 
   const pattern = {
     value: /^[0-9]+$/,
     message: 'Please enter a number.',
   }
+
+  const displayWarningCpu: boolean = watch('cpu')[0] > (application?.cpu || 0) / 1000
+  const maxMemoryBySize =
+    memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -38,10 +45,18 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <form onSubmit={onSubmit}>
           <p className="text-text-500 text-xs mb-3">Adapt the application's consumption accordingly</p>
           <BlockContent title="vCPU">
-            <p className="text-text-600 mb-3 font-medium">{watch('cpu')}</p>
+            <p className="flex items-center text-text-600 mb-3 font-medium">
+              {watch('cpu')}
+              {displayWarningCpu && (
+                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="ml-1 text-error-500 text-sm" />
+              )}
+            </p>
             <Controller
               name="cpu"
               control={control}
+              rules={{
+                max: (application?.cpu || 0) / 1000,
+              }}
               render={({ field }) => (
                 <Slider
                   dataTestId="input-cpu"
@@ -56,14 +71,27 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             <p className="text-text-400 text-xs mt-3">
               Max consumption by node accordingly to your cluster: {convertCpuToVCpu(application?.maximum_cpu)} vCPU
             </p>
+            {displayWarningCpu && (
+              <WarningBox
+                className="mt-3"
+                title="Your cluster will be overused"
+                message="Your application may crash, increase the capacity of your cluster or reduce consumption."
+                type={WarningBoxEnum.ERROR}
+              />
+            )}
           </BlockContent>
-          <BlockContent title="RAM">
+          <BlockContent title="RAM" key={`memory-${memorySize}`}>
             <div className="flex w-full gap-3">
               <div className="w-full">
                 <Controller
                   name="memory"
                   control={control}
-                  rules={{ required: 'Please enter a size.', pattern: pattern }}
+                  rules={{
+                    required: 'Please enter a size.',
+                    validate: (value: number) => value <= maxMemoryBySize,
+                    max: maxMemoryBySize,
+                    pattern: pattern,
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
                       dataTestId="input-size"
@@ -72,14 +100,24 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                       onChange={field.onChange}
                       value={field.value}
                       label="Size"
-                      error={error?.message}
+                      error={
+                        error?.type === 'required'
+                          ? 'Please enter a size.'
+                          : error?.type === 'max'
+                          ? `Maximum allowed memory is: ${maxMemoryBySize} ${memorySize}.`
+                          : undefined
+                      }
                     />
                   )}
                 />
                 <p className="text-text-400 text-xs mt-1">
                   Current consumption:{' '}
-                  {memory &&
-                    `${memory < 1024 ? memory + ` ${MemorySizeEnum.MB}` : memory / 1024 + ` ${MemorySizeEnum.GB}`}`}
+                  {application?.memory &&
+                    `${
+                      application?.memory < 1024
+                        ? application?.memory + ` ${MemorySizeEnum.MB}`
+                        : application?.memory / 1024 + ` ${MemorySizeEnum.GB}`
+                    }`}
                 </p>
               </div>
               <InputSelect
@@ -96,9 +134,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             </div>
           </BlockContent>
           <BlockContent title="Instances">
-            <p className="text-text-600 mb-3 font-medium">
-              {watch('instances') && watch('instances')[0] - watch('instances')[1]}
-            </p>
+            <p className="text-text-600 mb-3 font-medium">{`${watch('instances')[0]} - ${watch('instances')[1]}`}</p>
             <Controller
               name="instances"
               control={control}
@@ -114,6 +150,12 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               )}
             />
             <p className="text-text-400 text-xs mt-3">
+              {application?.instances?.items && (
+                <span className="flex mb-1">
+                  Current consumption: {application.instances.items.length} instance
+                  {application.instances.items.length > 1 ? 's' : ''}
+                </span>
+              )}
               Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
               CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
             </p>

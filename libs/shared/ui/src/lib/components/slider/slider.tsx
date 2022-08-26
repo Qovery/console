@@ -5,7 +5,7 @@ export interface SliderProps {
   min: number
   max: number
   step: number
-  defaultValue: number[]
+  defaultValue?: number[]
   label?: string
   valueLabel?: string
   className?: string
@@ -16,10 +16,9 @@ export interface SliderProps {
 
 export function Slider(props: SliderProps) {
   const { min, max, step, defaultValue, label, valueLabel, className = '', getValue, onChange, dataTestId } = props
-  const [value, setValue] = useState(defaultValue)
+  const [value, setValue] = useState(defaultValue || [])
 
   const handleChange = (value: number[]) => {
-    console.log(value)
     setValue(value)
     if (getValue) getValue(value)
     if (onChange) onChange(value)
@@ -57,7 +56,7 @@ export function Slider(props: SliderProps) {
         {defaultValue?.map((value, index) => (
           <Thumb
             key={`${value}-${index}`}
-            className="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full"
+            className="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
           />
         ))}
       </Root>
