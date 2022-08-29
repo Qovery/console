@@ -20,7 +20,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
   } = props
   return (
     <div
-      className={`rounded bg-element-light-darker-100 shadow-xl text-white ${className} inline-flex items-center p-2 gap-10`}
+      className={`rounded bg-element-light-darker-100 shadow-xl text-white ${className} inline-flex items-center pl-4 p-2 gap-10`}
     >
       {description && <span className="font-medium text-white text-sm">{description}</span>}
       <div className="flex gap-5">
