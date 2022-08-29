@@ -12,6 +12,7 @@ describe('Slider', () => {
       min: 10,
       max: 100,
       step: 10,
+      onChange: jest.fn(),
     }
   })
 

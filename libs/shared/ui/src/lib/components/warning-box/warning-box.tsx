@@ -12,14 +12,15 @@ export interface WarningBoxProps {
   title?: string
   className?: string
   type?: WarningBoxEnum
+  dataTestId?: string
 }
 
 export function WarningBox(props: WarningBoxProps) {
-  const { icon, title, message, className = '', type = WarningBoxEnum.WARNING } = props
+  const { icon, title, message, className = '', type = WarningBoxEnum.WARNING, dataTestId } = props
 
   return (
     <div
-      data-testid="warning-box"
+      data-testid={'warning-box' || dataTestId}
       className={`border ${
         type === WarningBoxEnum.WARNING ? 'bg-warning-50 border-warning-500' : 'bg-error-50 border-error-500'
       } px-4 py-3 rounded flex ${className}`}

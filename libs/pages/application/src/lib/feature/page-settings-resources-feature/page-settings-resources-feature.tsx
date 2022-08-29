@@ -87,6 +87,8 @@ export function PageSettingsResourcesFeature() {
       .catch(() => setLoading(false))
   })
 
+  const displayWarningCpu: boolean = methods.watch('cpu')[0] > (application?.cpu || 0) / 1000
+
   return (
     <FormProvider {...methods}>
       <PageSettingsResources
@@ -95,6 +97,7 @@ export function PageSettingsResourcesFeature() {
         application={application}
         memorySize={memorySize}
         handleChangeMemoryUnit={handleChangeMemoryUnit}
+        displayWarningCpu={displayWarningCpu}
       />
     </FormProvider>
   )

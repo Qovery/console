@@ -21,12 +21,13 @@ export interface PageSettingsResourcesProps {
   onSubmit: () => void
   handleChangeMemoryUnit: () => void
   memorySize: MemorySizeEnum
+  displayWarningCpu: boolean
   application?: ApplicationEntity
   loading?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, handleChangeMemoryUnit, application, memorySize } = props
+  const { onSubmit, loading, handleChangeMemoryUnit, application, memorySize, displayWarningCpu } = props
   const { control, formState, watch } = useFormContext()
 
   const pattern = {
@@ -34,7 +35,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
     message: 'Please enter a number.',
   }
 
-  const displayWarningCpu: boolean = watch('cpu')[0] > (application?.cpu || 0) / 1000
   const maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
 
@@ -59,7 +59,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               }}
               render={({ field }) => (
                 <Slider
-                  dataTestId="input-cpu"
                   min={0}
                   max={convertCpuToVCpu(application?.maximum_cpu)}
                   step={0.25}
@@ -73,6 +72,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             </p>
             {displayWarningCpu && (
               <WarningBox
+                dataTestId="warning-box"
                 className="mt-3"
                 title="Your cluster will be overused"
                 message="Your application may crash, increase the capacity of your cluster or reduce consumption."
@@ -94,7 +94,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
-                      dataTestId="input-size"
                       type="number"
                       name={field.name}
                       onChange={field.onChange}
@@ -110,7 +109,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                     />
                   )}
                 />
-                <p className="text-text-400 text-xs mt-1 ml-4">
+                <p data-testid="current-consumption" className="text-text-400 text-xs mt-1 ml-4">
                   Current consumption:{' '}
                   {application?.memory &&
                     `${
@@ -121,7 +120,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                 </p>
               </div>
               <InputSelect
-                dataTestId="input-memory-unit"
                 className="w-full h-full"
                 onChange={handleChangeMemoryUnit}
                 items={Object.values(MemorySizeEnum).map((size) => ({
@@ -138,16 +136,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             <Controller
               name="instances"
               control={control}
-              render={({ field }) => (
-                <Slider
-                  dataTestId="input-instances"
-                  min={0}
-                  max={50}
-                  step={1}
-                  onChange={field.onChange}
-                  value={field.value}
-                />
-              )}
+              render={({ field }) => <Slider min={0} max={50} step={1} onChange={field.onChange} value={field.value} />}
             />
             <p className="text-text-400 text-xs mt-3">
               {application?.instances?.items && (
