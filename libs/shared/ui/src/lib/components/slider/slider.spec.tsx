@@ -8,7 +8,7 @@ describe('Slider', () => {
 
   beforeEach(() => {
     props = {
-      defaultValue: [10],
+      value: [10],
       min: 10,
       max: 100,
       step: 10,
@@ -31,7 +31,7 @@ describe('Slider', () => {
   })
 
   it('should set a default values with correct attributes', () => {
-    props.defaultValue = [20, 30]
+    props.value = [20, 30]
 
     render(<Slider {...props} />)
 

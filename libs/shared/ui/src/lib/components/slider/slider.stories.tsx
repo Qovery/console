@@ -10,10 +10,11 @@ const Template: Story<SliderProps> = (args) => <Slider {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
-  defaultValue: [100],
+  value: [100],
   min: 100,
   max: 4000,
   step: 100,
   label: 'Number of deployments needed',
   valueLabel: '/month',
+  onChange: (value: number[]) => console.log(value),
 }

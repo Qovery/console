@@ -64,7 +64,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   max={convertCpuToVCpu(application?.maximum_cpu)}
                   step={0.25}
                   onChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 />
               )}
             />
@@ -110,7 +110,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                     />
                   )}
                 />
-                <p className="text-text-400 text-xs mt-1">
+                <p className="text-text-400 text-xs mt-1 ml-4">
                   Current consumption:{' '}
                   {application?.memory &&
                     `${
@@ -145,7 +145,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   max={50}
                   step={1}
                   onChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 />
               )}
             />

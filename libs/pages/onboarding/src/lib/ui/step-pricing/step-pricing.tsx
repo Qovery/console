@@ -76,8 +76,8 @@ export function StepPricing(props: StepPricingProps) {
             step={100}
             label="Number of deployments needed"
             valueLabel="/month"
-            defaultValue={[currentDeploy]}
-            getValue={(value: number[]) => chooseDeploy(value[0])}
+            value={[currentDeploy]}
+            onChange={(value: number[]) => chooseDeploy(value[0])}
           />
         </div>
 

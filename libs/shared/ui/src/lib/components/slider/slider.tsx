@@ -1,26 +1,21 @@
 import { Range, Root, Thumb, Track } from '@radix-ui/react-slider'
-import { useState } from 'react'
 
 export interface SliderProps {
   min: number
   max: number
   step: number
-  defaultValue?: number[]
+  value: number[]
+  onChange: (value: number[]) => void
   label?: string
   valueLabel?: string
   className?: string
-  getValue?: (value: number[]) => void
-  onChange?: (value: number[]) => void
   dataTestId?: string
 }
 
 export function Slider(props: SliderProps) {
-  const { min, max, step, defaultValue, label, valueLabel, className = '', getValue, onChange, dataTestId } = props
-  const [value, setValue] = useState(defaultValue || [])
+  const { min, max, step, value, label, valueLabel, className = '', onChange, dataTestId } = props
 
   const handleChange = (value: number[]) => {
-    setValue(value)
-    if (getValue) getValue(value)
     if (onChange) onChange(value)
   }
 
@@ -44,7 +39,6 @@ export function Slider(props: SliderProps) {
       <Root
         onValueChange={(value) => handleChange(value)}
         className="relative flex w-full h-1 bg-element-light-lighter-600 rounded cursor-pointer"
-        defaultValue={defaultValue}
         value={value}
         min={min}
         max={max}
@@ -53,9 +47,9 @@ export function Slider(props: SliderProps) {
         <Track className="relative flex flex-grow h-1 bg-element-light-lighter-600 rounded-full">
           <Range className="absolute bg-brand-500 rounded-full h-full" />
         </Track>
-        {defaultValue?.map((value, index) => (
+        {value?.map((v, index) => (
           <Thumb
-            key={`${value}-${index}`}
+            key={index}
             className="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
           />
         ))}
