@@ -113,6 +113,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                       error={error?.message}
                       errorMessagePosition="left"
                       transparentBorderOnValid={true}
+                      label={field.name}
                     />
                   )}
                 />
@@ -140,7 +141,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
 
         <InputToggle
           className="mb-4"
-          dataTestId="auto-delete"
+          dataTestId="show-overriden-only-toggle"
           value={showOverriddenOnly}
           onChange={toggleShowOverriddenOnly}
           title="Show only overridden settings"
@@ -155,8 +156,15 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             ) : (
               <EditionTable tableBody={table} />
             )}
-            <div className={`sticky bottom-10 mt-10 flex justify-center ${formState.isDirty ? 'visible' : 'hidden'}`}>
-              <StickyActionFormToaster onSubmit={props.onSubmit} onReset={props.discardChanges} />
+            <div
+              className={`sticky bottom-10 mt-10 flex justify-center ${formState.isDirty ? 'visible' : 'hidden'}`}
+              data-testid={'sticky-action-form-toaster'}
+            >
+              <StickyActionFormToaster
+                onSubmit={props.onSubmit}
+                onReset={props.discardChanges}
+                disabledValidation={!formState.isValid}
+              />
             </div>
           </div>
         </form>

@@ -11,43 +11,10 @@ import {
   selectApplicationById,
 } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
+import { objectFlattener } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
-
-export function sortAlphabetically(a: string, b: string): number {
-  if (a < b) {
-    return -1
-  }
-  if (a > b) {
-    return 1
-  }
-  return 0
-}
-
-export function flattenObject(ob: any): { [key: string]: string } {
-  const toReturn: { [key: string]: string } = {}
-
-  for (const i in ob) {
-    if (!Object.prototype.hasOwnProperty.call(ob, i)) continue
-
-    if (typeof ob[i] == 'object' && ob[i] !== null) {
-      const flatObject = flattenObject(ob[i])
-      for (const x in flatObject) {
-        if (!Object.prototype.hasOwnProperty.call(flatObject, x)) continue
-
-        // converting string to boolean or number if it's boolean or number
-        try {
-          toReturn[i + '.' + x] = JSON.parse(flatObject[x])
-        } catch (e) {
-          toReturn[i + '.' + x] = flatObject[x]
-        }
-      }
-    } else {
-      toReturn[i] = ob[i]
-    }
-  }
-  return toReturn
-}
+import { initFormValues } from './utils'
 
 export function PageSettingsAdvancedFeature() {
   const { applicationId = '' } = useParams()
@@ -85,23 +52,15 @@ export function PageSettingsAdvancedFeature() {
         application.advanced_settings?.current_settings &&
         application.advanced_settings?.loadingStatus === 'loaded'
       ) {
-        setKeys(Object.keys(application.advanced_settings.current_settings).sort(sortAlphabetically))
+        setKeys(Object.keys(application.advanced_settings.current_settings).sort())
       }
     }
   }, [application])
 
   // init form
   useEffect(() => {
-    const values: { [key: string]: string } = {}
     if (application && application.advanced_settings?.loadingStatus === 'loaded') {
-      keys.forEach((key) => {
-        if (application.advanced_settings?.current_settings) {
-          values[key] =
-            application.advanced_settings.current_settings[key as keyof ApplicationAdvancedSettings]?.toString() || ''
-        }
-      })
-
-      methods.reset(values)
+      methods.reset(initFormValues(keys, application))
     }
   }, [application, keys, methods])
 
@@ -114,7 +73,7 @@ export function PageSettingsAdvancedFeature() {
       }
     })
 
-    dataFormatted = flattenObject(dataFormatted)
+    dataFormatted = objectFlattener(dataFormatted)
     dispatch(editApplicationAdvancedSettings({ applicationId, settings: dataFormatted }))
   })
 

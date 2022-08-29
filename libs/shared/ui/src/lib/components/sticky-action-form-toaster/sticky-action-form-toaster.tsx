@@ -7,6 +7,7 @@ export interface StickyActionFormToasterProps {
   onSubmit?: () => void
   submitLabel?: string
   className?: string
+  disabledValidation?: boolean
 }
 
 export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
@@ -30,7 +31,13 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
           </button>
         )}
         {submitLabel && onSubmit && (
-          <Button style={ButtonStyle.CONFIRM} className="" onClick={() => onSubmit()}>
+          <Button
+            style={ButtonStyle.CONFIRM}
+            className=""
+            onClick={() => onSubmit()}
+            disabled={props.disabledValidation}
+            dataTestId={'submit-button'}
+          >
             {submitLabel}
           </Button>
         )}

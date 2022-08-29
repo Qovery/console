@@ -13,4 +13,7 @@ Primary.args = {
   description: 'Warning, there are still unsaved changes!',
   resetLabel: '',
   submitLabel: 'Save modifications',
+  onSubmit: () => {},
+  onReset: () => {},
+  disabledValidation: false,
 }

@@ -39,4 +39,13 @@ describe('StickyActionFormToaster', () => {
 
     expect(spy).toHaveBeenCalled()
   })
+
+  it('should disabled button', async () => {
+    const spy = jest.fn()
+    props.onSubmit = spy
+    props.disabledValidation = true
+    const { getByTestId } = render(<StickyActionFormToaster {...props} />)
+
+    expect(getByTestId('submit-button')).toBeDisabled()
+  })
 })
