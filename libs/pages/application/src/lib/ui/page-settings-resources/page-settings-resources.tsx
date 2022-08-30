@@ -1,3 +1,4 @@
+import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
@@ -18,7 +19,7 @@ import {
 import { convertCpuToVCpu } from '@console/shared/utils'
 
 export interface PageSettingsResourcesProps {
-  onSubmit: () => void
+  onSubmit: FormEventHandler<HTMLFormElement>
   handleChangeMemoryUnit: () => void
   memorySize: MemorySizeEnum
   displayWarningCpu: boolean

@@ -82,7 +82,7 @@ describe('PageSettingsResources', () => {
   })
 
   it('should submit the form', async () => {
-    const spy = jest.fn()
+    const spy = jest.fn((e) => e.preventDefault())
     props.onSubmit = spy
     props.loading = false
 
