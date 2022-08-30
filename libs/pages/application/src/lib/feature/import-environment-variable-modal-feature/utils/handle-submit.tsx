@@ -1,11 +1,11 @@
-import { EnvironmentVariableScopeEnum, VariableImportRequestVars } from 'qovery-typescript-axios'
 import { ThunkDispatch } from '@reduxjs/toolkit'
-import { RootState } from '@console/store/data'
+import { EnvironmentVariableScopeEnum, VariableImportRequestVars } from 'qovery-typescript-axios'
 import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
   importEnvironmentVariables,
 } from '@console/domains/environment-variable'
+import { RootState } from '@console/store/data'
 
 export function formatData(data: { [key: string]: string }, keys: string[]) {
   const vars: VariableImportRequestVars[] = []

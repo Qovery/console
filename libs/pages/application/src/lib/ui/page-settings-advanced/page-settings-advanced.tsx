@@ -4,13 +4,13 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@console/shared/interfaces'
 import {
   CopyToClipboard,
-  EditionTable,
-  EditionTableRow,
   HelpSection,
   InputTextSmall,
   InputToggle,
   LoaderSpinner,
   StickyActionFormToaster,
+  TableEdition,
+  TableEditionRow,
   Tooltip,
 } from '@console/shared/ui'
 
@@ -27,7 +27,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
   const { control, formState } = useFormContext()
   const [showOverriddenOnly, toggleShowOverriddenOnly] = useState(false)
 
-  let table: EditionTableRow[] = [
+  let table: TableEditionRow[] = [
     {
       cells: [
         {
@@ -45,7 +45,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
     },
   ]
 
-  const tableBody: EditionTableRow[] = props.keys
+  const tableBody: TableEditionRow[] = props.keys
     ? props.keys?.map((key) => {
         return {
           className: `${
@@ -140,7 +140,8 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
         </div>
 
         <InputToggle
-          className="mb-4"
+          small
+          className="mb-6"
           dataTestId="show-overriden-only-toggle"
           value={showOverriddenOnly}
           onChange={toggleShowOverriddenOnly}
@@ -154,7 +155,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                 <LoaderSpinner className="w-6"></LoaderSpinner>
               </div>
             ) : (
-              <EditionTable tableBody={table} />
+              <TableEdition tableBody={table} />
             )}
             <div
               className={`sticky bottom-10 mt-10 flex justify-center ${formState.isDirty ? 'visible' : 'hidden'}`}
@@ -164,6 +165,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                 onSubmit={props.onSubmit}
                 onReset={props.discardChanges}
                 disabledValidation={!formState.isValid}
+                loading={props.loading === 'loading'}
               />
             </div>
           </div>

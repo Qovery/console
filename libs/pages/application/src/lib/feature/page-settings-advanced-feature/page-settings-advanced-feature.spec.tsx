@@ -58,7 +58,6 @@ describe('PageSettingsAdvancedFeature', () => {
   let promise: Promise
 
   beforeEach(() => {
-    //useDispatchSpy = jest.spyOn(redux, 'useDispatch').mockReturnValue(jest.fn())
     mockApplication.advanced_settings = {
       loadingStatus: 'not loaded',
       current_settings: mockAdvancedSettings,

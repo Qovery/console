@@ -1,19 +1,19 @@
-export interface EditionTableCell {
+export interface TableEditionCell {
   content?: React.ReactNode
   className?: string
 }
 
-export interface EditionTableRow {
-  cells: EditionTableCell[]
+export interface TableEditionRow {
+  cells: TableEditionCell[]
   className?: string
 }
 
-export interface EditionTableProps {
-  tableBody: EditionTableRow[]
+export interface TableEditionProps {
+  tableBody: TableEditionRow[]
   className?: string
 }
 
-export function EditionTable(props: EditionTableProps) {
+export function TableEdition(props: TableEditionProps) {
   return (
     <div
       className={`border border-solid border-element-light-lighter-400 rounded text-sm text-text-500  ${props.className}`}
@@ -43,4 +43,4 @@ export function EditionTable(props: EditionTableProps) {
   )
 }
 
-export default EditionTable
+export default TableEdition

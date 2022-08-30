@@ -1,29 +1,29 @@
-import { FormProvider, useForm } from 'react-hook-form'
-import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
-import { useCallback, useEffect, useState } from 'react'
 import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
-import { parsedToForm } from './utils/file-to-form'
-import { triggerToggleAll } from './utils/trigger-toggle-all'
-import { changeScopeForAll } from './utils/change-scope-all'
-import { handleSubmit } from './utils/handle-submit'
-import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
+import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { parseEnvText } from '@console/shared/utils'
-import { onDrop } from './utils/on-drop'
+import { FormProvider, useForm } from 'react-hook-form'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  getEnvironmentVariablesState,
+  selectEnvironmentVariablesByApplicationId,
+  selectSecretEnvironmentVariablesByApplicationId,
+} from '@console/domains/environment-variable'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   LoadingStatus,
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
-import { useDispatch, useSelector } from 'react-redux'
+import { parseEnvText } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
-import {
-  getEnvironmentVariablesState,
-  selectEnvironmentVariablesByApplicationId,
-  selectSecretEnvironmentVariablesByApplicationId,
-} from '@console/domains/environment-variable'
+import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
+import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
+import { changeScopeForAll } from './utils/change-scope-all'
 import { deleteEntry } from './utils/delete-entry'
+import { parsedToForm } from './utils/file-to-form'
+import { handleSubmit } from './utils/handle-submit'
+import { onDrop } from './utils/on-drop'
+import { triggerToggleAll } from './utils/trigger-toggle-all'
 
 export interface ImportEnvironmentVariableModalFeatureProps {
   applicationId: string
@@ -59,7 +59,9 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
     async (data: string) => {
       const parsed = parseEnvText(data)
       if (parsed) {
-        setFileParsed(parsedToForm(parsed))
+        const fileParsedd = parsedToForm(parsed)
+        setFileParsed(fileParsedd)
+        methods.reset(fileParsedd, { keepErrors: true, keepDirtyValues: true })
         setKeys(Object.keys(parsed))
       }
     },
@@ -67,7 +69,6 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   )
 
   useEffect(() => {
-    methods.reset(fileParsed, { keepErrors: true, keepDirtyValues: true })
     methods.trigger()
   }, [fileParsed, methods])
 
@@ -80,9 +81,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
       <ImportEnvironmentVariableModal
         toggleAll={false}
         triggerToggleAll={(b) => triggerToggleAll(b, methods.setValue, keys)}
-        changeScopeForAll={(scope) =>
-          changeScopeForAll(scope as EnvironmentVariableScopeEnum, methods.setValue, keys, methods.getValues)
-        }
+        changeScopeForAll={(scope) => changeScopeForAll(scope as EnvironmentVariableScopeEnum, methods.setValue, keys)}
         keys={keys}
         closeModal={props.closeModal}
         loading={loadingStatus === 'loading'}

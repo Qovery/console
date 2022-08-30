@@ -58,7 +58,7 @@
 }
 
 .btn--confirm {
-  color: white;
+  color: theme('colors.text.100');
   background-color: theme('colors.success.600');
   &:hover {
     background-color: theme('colors.success.700');

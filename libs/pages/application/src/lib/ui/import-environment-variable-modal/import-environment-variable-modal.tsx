@@ -106,7 +106,6 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 <Controller
                   name={key + '_key'}
                   control={control}
-                  defaultValue=""
                   rules={{
                     required: 'Please enter a value.',
                     pattern: {
@@ -138,7 +137,6 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 <Controller
                   name={key + '_value'}
                   control={control}
-                  defaultValue=""
                   rules={{
                     required: 'Please enter a value.',
                   }}
