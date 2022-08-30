@@ -38,6 +38,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
 
+  if (!application) return null
+
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
@@ -95,6 +97,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   render={({ field, fieldState: { error } }) => (
                     <InputText
                       type="number"
+                      dataTestId="input-memory"
                       name={field.name}
                       onChange={field.onChange}
                       value={field.value}

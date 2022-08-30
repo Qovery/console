@@ -49,12 +49,16 @@ export function PageSettingsResourcesFeature() {
   const [memorySize, setMemorySize] = useState<MemorySizeEnum>(MemorySizeEnum.MB)
 
   useEffect(() => {
-    if (application) {
-      methods.setValue('memory', application?.memory)
-      methods.setValue('cpu', [convertCpuToVCpu(application?.cpu)])
-      methods.setValue('instances', [application?.min_running_instances || 1, application?.max_running_instances || 1])
-    }
-  }, [application, methods])
+    methods.setValue('memory', application?.memory)
+    methods.setValue('cpu', [convertCpuToVCpu(application?.cpu)])
+    methods.setValue('instances', [application?.min_running_instances || 1, application?.max_running_instances || 1])
+  }, [
+    methods,
+    application?.memory,
+    application?.cpu,
+    application?.min_running_instances,
+    application?.max_running_instances,
+  ])
 
   const handleChangeMemoryUnit = () => {
     const watchMemory = methods.watch('memory')

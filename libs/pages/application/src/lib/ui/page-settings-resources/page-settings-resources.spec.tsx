@@ -1,6 +1,5 @@
-import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 import ResizeObserver from '__tests__/utils/resize-observer'
-import { render } from '__tests__/utils/setup-jest'
+import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { applicationFactoryMock } from '@console/domains/application'
 import { MemorySizeEnum } from '@console/shared/enums'
@@ -22,7 +21,9 @@ jest.mock('react-hook-form', () => ({
   ...jest.requireActual('react-hook-form'),
   useFormContext: () => ({
     watch: () => jest.fn(),
-    formState: () => jest.fn(),
+    formState: {
+      isValid: true,
+    },
   }),
 }))
 
@@ -80,24 +81,23 @@ describe('PageSettingsResources', () => {
     expect(getByTestId('current-consumption').textContent).toBe('Current consumption: 100 MB')
   })
 
-  // it('should submit the form', async () => {
-  //   const spy = jest.fn()
-  //   props.onSubmit = spy
+  it('should submit the form', async () => {
+    const spy = jest.fn()
+    props.onSubmit = spy
+    props.loading = false
 
-  //   const { getByTestId } = render(
-  //     wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-  //       defaultValues: { cpu: [0.5], instances: [1, 1], memory: 512 },
-  //     })
-  //   )
+    render(
+      wrapWithReactHookForm(<PageSettingsResources {...props} />, {
+        defaultValues: { cpu: [0.25], instances: [1, 1], memory: 512 },
+      })
+    )
 
-  //   const button = getByTestId('submit-button')
+    const button = screen.getByTestId('submit-button')
 
-  //   console.log(button)
-
-  //   await waitFor(() => {
-  //     button.click()
-  //     // expect(button).not.toBeDisabled()
-  //     expect(spy).toHaveBeenCalled()
-  //   })
-  // })
+    await waitFor(() => {
+      button.click()
+      expect(button).not.toBeDisabled()
+      expect(spy).toHaveBeenCalled()
+    })
+  })
 })
