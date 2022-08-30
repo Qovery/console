@@ -56,6 +56,7 @@ describe('PageSettingsResourcesFeature', () => {
     await act(() => {
       const input = getByTestId('input-memory')
       fireEvent.input(input, { target: { value: 63 } })
+      console.log(input)
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()

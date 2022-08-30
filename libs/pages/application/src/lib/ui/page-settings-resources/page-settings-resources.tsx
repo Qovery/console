@@ -49,10 +49,10 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           <p className="text-text-500 text-xs mb-3">Adapt the application's consumption accordingly</p>
           <BlockContent title="vCPU">
             <p className="flex items-center text-text-600 mb-3 font-medium">
-              {watch('cpu')}
               {displayWarningCpu && (
-                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="ml-1 text-error-500 text-sm" />
+                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="mr-1.5 text-error-500 text-sm" />
               )}
+              {watch('cpu')}
             </p>
             <Controller
               name="cpu"
