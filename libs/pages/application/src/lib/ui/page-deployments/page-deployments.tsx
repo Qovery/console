@@ -1,6 +1,6 @@
-import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
 import { DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import React, { useEffect, useState } from 'react'
+import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
 
 export interface PageDeploymentsProps {
   applicationId?: string
@@ -90,12 +90,8 @@ export function Deployments(props: PageDeploymentsProps) {
 }
 
 export const PageDeployments = React.memo(Deployments, (prevProps, nextProps) => {
-  // Stringify is necessary to avoid Redux selector behavior
-  const isEqual = JSON.stringify(prevProps.deployments?.length) === JSON.stringify(nextProps.deployments?.length)
+  const prevDeploymentIds = prevProps.deployments?.map((deployment) => deployment.id)
+  const nextDeploymentIds = nextProps.deployments?.map((deployment) => deployment.id)
 
-  if (isEqual) {
-    return true
-  }
-
-  return false
+  return JSON.stringify(prevDeploymentIds) === JSON.stringify(nextDeploymentIds)
 })

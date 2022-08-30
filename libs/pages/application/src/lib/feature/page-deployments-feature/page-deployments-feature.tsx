@@ -1,5 +1,4 @@
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import {
@@ -8,8 +7,9 @@ import {
   fetchApplicationDeployments,
   getApplicationsState,
 } from '@console/domains/application'
+import { ApplicationEntity } from '@console/shared/interfaces'
 import { BaseLink } from '@console/shared/ui'
-import { useEffect } from 'react'
+import { AppDispatch, RootState } from '@console/store/data'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
@@ -35,11 +35,12 @@ export function PageDeploymentsFeature() {
   ]
 
   useEffect(() => {
-    const fetchApp = () => {
+    if (
+      application &&
+      (!application.deployments?.loadingStatus || application.deployments.loadingStatus === 'not loaded')
+    ) {
       dispatch(fetchApplicationDeployments({ applicationId }))
     }
-
-    !application?.deployments && fetchApp()
 
     const pullDeployments = setInterval(
       () => dispatch(fetchApplicationDeployments({ applicationId, silently: true })),

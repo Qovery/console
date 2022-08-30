@@ -1,13 +1,10 @@
-import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
 import {
+  PayloadAction,
+  Update,
   createAsyncThunk,
   createEntityAdapter,
   createSelector,
   createSlice,
-  PayloadAction,
-  Update,
 } from '@reduxjs/toolkit'
 import {
   Credentials,
@@ -20,6 +17,9 @@ import {
   DeploymentHistoryDatabase,
   Status,
 } from 'qovery-typescript-axios'
+import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
+import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
+import { RootState } from '@console/store/data'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 
@@ -66,14 +66,14 @@ export const fetchDatabaseMetrics = createAsyncThunk<DatabaseCurrentMetric, { da
   }
 )
 
-export const fetchDatabaseDeployments = createAsyncThunk<DeploymentHistoryDatabase[], { databaseId: string }>(
-  'database/deployments',
-  async (data) => {
-    // @todo remove response any update documentation
-    const response: any = await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)
-    return response.data.results as DeploymentHistoryDatabase[]
-  }
-)
+export const fetchDatabaseDeployments = createAsyncThunk<
+  DeploymentHistoryDatabase[],
+  { databaseId: string; silently?: boolean }
+>('database/deployments', async (data) => {
+  // @todo remove response any update documentation
+  const response: any = await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)
+  return response.data.results as DeploymentHistoryDatabase[]
+})
 
 export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { databaseId: string }>(
   'database/credentials',
@@ -231,7 +231,7 @@ export const databasesSlice = createSlice({
           changes: {
             deployments: {
               ...state.entities[action.meta.arg.databaseId]?.deployments,
-              loadingStatus: 'loading',
+              loadingStatus: action.meta.arg.silently ? 'loaded' : 'loading',
             },
           },
         }
