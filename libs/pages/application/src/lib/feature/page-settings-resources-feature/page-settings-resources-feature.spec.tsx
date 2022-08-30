@@ -1,10 +1,22 @@
 import { ResizeObserver } from '__tests__/utils/resize-observer'
-import { render } from '__tests__/utils/setup-jest'
-import { applicationFactoryMock } from '@console/domains/application'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import * as storeApplication from '@console/domains/application'
 import { MemorySizeEnum } from '@console/shared/enums'
+import { ApplicationEntity } from '@console/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
-const application = applicationFactoryMock(1)[0]
+import SpyInstance = jest.SpyInstance
+
+const application: ApplicationEntity = storeApplication.applicationFactoryMock(1)[0]
+
+jest.mock('@console/domains/application', () => {
+  return {
+    ...jest.requireActual('@console/domains/application'),
+    editApplication: jest.fn(),
+    selectApplicationById: () => jest.fn(),
+  }
+})
+
 describe('PageSettingsResourcesFeature', () => {
   window.ResizeObserver = ResizeObserver
   it('should render successfully', () => {
@@ -34,5 +46,32 @@ describe('PageSettingsResourcesFeature', () => {
     expect(app.max_running_instances).toBe(10)
     expect(app.cpu).toBe(cpu * 1000)
     expect(app.memory).toBe(memory)
+  })
+
+  it('should dispatch editApplication if form is submitted', async () => {
+    const editApplication: SpyInstance = jest.spyOn(storeApplication, 'editApplication')
+
+    const { getByTestId } = render(<PageSettingsResourcesFeature />)
+
+    await act(() => {
+      const input = getByTestId('input-memory')
+      fireEvent.input(input, { target: { value: 63 } })
+    })
+
+    expect(getByTestId('submit-button')).not.toBeDisabled()
+
+    await act(() => {
+      getByTestId('submit-button').click()
+      expect(editApplication).toHaveBeenCalledWith({
+        applicationId: application.id,
+        data: {
+          ...application,
+          memory: 63,
+          cpu: 10,
+          min_running_instances: 1,
+          max_running_instances: 1,
+        },
+      })
+    })
   })
 })
