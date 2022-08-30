@@ -12,6 +12,7 @@ import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
 } from '@console/domains/environment-variable'
+import { SecretEnvironmentVariableEntity } from '@console/shared/interfaces'
 import {
   CrudEnvironmentVariableModalFeatureProps,
   DataFormEnvironmentVariableInterface,
@@ -203,7 +204,7 @@ export function handleSubmitForEnvSecretCreation(
             environmentVariableId: props.variable?.id || '',
             environmentVariableRequest: {
               key: data.key,
-              value: data.value,
+              value: (props.variable as SecretEnvironmentVariableEntity).aliased_secret?.key || data.value || '',
             },
             scope: data.scope as EnvironmentVariableScopeEnum,
             toasterCallback,
