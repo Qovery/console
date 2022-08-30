@@ -7,15 +7,38 @@ import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-reso
 
 import SpyInstance = jest.SpyInstance
 
-const application: ApplicationEntity = storeApplication.applicationFactoryMock(1)[0]
+const mockApplication: ApplicationEntity = storeApplication.applicationFactoryMock(1)[0]
 
 jest.mock('@console/domains/application', () => {
   return {
     ...jest.requireActual('@console/domains/application'),
     editApplication: jest.fn(),
-    selectApplicationById: () => jest.fn(),
+    getApplicationsState: () => ({
+      loadingStatus: 'loaded',
+      ids: [mockApplication.id],
+      entities: {
+        [mockApplication.id]: mockApplication,
+      },
+      error: null,
+    }),
+    selectApplicationById: () => mockApplication,
   }
 })
+
+jest.mock('react-hook-form', () => ({
+  ...jest.requireActual('react-hook-form'),
+  useFormContext: () => ({
+    watch: () => jest.fn(),
+    formState: {
+      isValid: true,
+    },
+  }),
+}))
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => jest.fn(),
+}))
 
 describe('PageSettingsResourcesFeature', () => {
   window.ResizeObserver = ResizeObserver
@@ -28,7 +51,7 @@ describe('PageSettingsResourcesFeature', () => {
     const size = MemorySizeEnum.GB
     const cpu = 3400
     const memory = 16
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, application, size)
+    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
 
     expect(app.min_running_instances).toBe(1)
     expect(app.max_running_instances).toBe(10)
@@ -40,7 +63,7 @@ describe('PageSettingsResourcesFeature', () => {
     const size = MemorySizeEnum.MB
     const cpu = 3400
     const memory = 512
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, application, size)
+    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
 
     expect(app.min_running_instances).toBe(1)
     expect(app.max_running_instances).toBe(10)
@@ -49,29 +72,28 @@ describe('PageSettingsResourcesFeature', () => {
   })
 
   it('should dispatch editApplication if form is submitted', async () => {
-    const editApplication: SpyInstance = jest.spyOn(storeApplication, 'editApplication')
+    const editApplicationSpy: SpyInstance = jest.spyOn(storeApplication, 'editApplication')
 
     const { getByTestId } = render(<PageSettingsResourcesFeature />)
 
     await act(() => {
       const input = getByTestId('input-memory')
-      fireEvent.input(input, { target: { value: 63 } })
-      console.log(input)
+      fireEvent.input(input, { target: { value: 512 } })
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
     await act(() => {
       getByTestId('submit-button').click()
-      expect(editApplication).toHaveBeenCalledWith({
-        applicationId: application.id,
-        data: {
-          ...application,
-          memory: 63,
-          cpu: 10,
-          min_running_instances: 1,
-          max_running_instances: 1,
-        },
+      const cloneApplication = handleSubmit(
+        { memory: 512, cpu: [3400], instances: [1, 1] },
+        mockApplication,
+        MemorySizeEnum.MB
+      )
+
+      expect(editApplicationSpy).toHaveBeenCalledWith({
+        applicationId: mockApplication.id,
+        data: cloneApplication,
       })
     })
   })
