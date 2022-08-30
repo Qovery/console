@@ -1,8 +1,8 @@
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@console/shared/ui'
+import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
-import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 
 export interface PageGeneralProps {
   application?: ApplicationEntity
@@ -55,7 +55,7 @@ export function PageGeneral(props: PageGeneralProps) {
               </span>
             </div>
           </div>
-          {application?.instances && application?.instances.items?.length && (
+          {application?.instances?.items && application.instances.items.length > 0 && (
             <InstancesTable instances={application?.instances.items} />
           )}
         </div>
