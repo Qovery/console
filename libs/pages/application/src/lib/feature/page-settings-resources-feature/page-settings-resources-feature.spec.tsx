@@ -7,13 +7,13 @@ import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-reso
 
 import SpyInstance = jest.SpyInstance
 
-const application: ApplicationEntity = storeApplication.applicationFactoryMock(1)[0]
+const mockApplication: ApplicationEntity = storeApplication.applicationFactoryMock(1)[0]
 
 jest.mock('@console/domains/application', () => {
   return {
     ...jest.requireActual('@console/domains/application'),
     editApplication: jest.fn(),
-    selectApplicationById: () => jest.fn(),
+    selectApplicationById: () => mockApplication,
   }
 })
 
@@ -28,7 +28,7 @@ describe('PageSettingsResourcesFeature', () => {
     const size = MemorySizeEnum.GB
     const cpu = 3400
     const memory = 16
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, application, size)
+    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
 
     expect(app.min_running_instances).toBe(1)
     expect(app.max_running_instances).toBe(10)
@@ -40,7 +40,7 @@ describe('PageSettingsResourcesFeature', () => {
     const size = MemorySizeEnum.MB
     const cpu = 3400
     const memory = 512
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, application, size)
+    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
 
     expect(app.min_running_instances).toBe(1)
     expect(app.max_running_instances).toBe(10)
@@ -51,21 +51,22 @@ describe('PageSettingsResourcesFeature', () => {
   it('should dispatch editApplication if form is submitted', async () => {
     const editApplication: SpyInstance = jest.spyOn(storeApplication, 'editApplication')
 
-    const { getByTestId } = render(<PageSettingsResourcesFeature />)
+    const { getByTestId, debug } = render(<PageSettingsResourcesFeature />)
 
     await act(() => {
       const input = getByTestId('input-memory')
       fireEvent.input(input, { target: { value: 63 } })
     })
 
+    debug()
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
     await act(() => {
       getByTestId('submit-button').click()
       expect(editApplication).toHaveBeenCalledWith({
-        applicationId: application.id,
+        applicationId: mockApplication.id,
         data: {
-          ...application,
+          ...mockApplication,
           memory: 63,
           cpu: 10,
           min_running_instances: 1,
