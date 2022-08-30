@@ -15,6 +15,8 @@ export * from './lib/tools/rename-status'
 export * from './lib/tools/scroll-parent-to-child'
 export * from './lib/tools/parse-dotenv'
 export * from './lib/tools/refacto-payload'
+export * from './lib/tools/convert-memory-size'
+export * from './lib/tools/convert-cpu-to-vcpu'
 // constants
 export * from './lib/constants/environment-mode-values'
 export * from './lib/constants/timezone-values'

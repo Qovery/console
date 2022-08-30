@@ -1,43 +1,26 @@
-import { useRef, useState } from 'react'
+import { Range, Root, Thumb, Track } from '@radix-ui/react-slider'
 
 export interface SliderProps {
   min: number
   max: number
   step: number
-  defaultValue?: number
+  value: number[]
+  onChange: (value: number[]) => void
   label?: string
   valueLabel?: string
   className?: string
-  getValue?: (value: number) => void
-  brandColor?: string
-  grayColor?: string
+  dataTestId?: string
 }
 
 export function Slider(props: SliderProps) {
-  const {
-    min,
-    max,
-    step,
-    defaultValue,
-    label,
-    valueLabel,
-    className = '',
-    getValue,
-    brandColor = '#5b50d6',
-    grayColor = '#C6D3E7',
-  } = props
-  const [value, setValue] = useState(defaultValue || min)
+  const { min, max, step, value, label, valueLabel, className = '', onChange, dataTestId } = props
 
-  const inputEl = useRef(null)
-
-  const handleChange = (value: string) => {
-    const valueInt = parseInt(value, 10)
-    setValue(valueInt)
-    if (getValue) getValue(valueInt)
+  const handleChange = (value: number[]) => {
+    if (onChange) onChange(value)
   }
 
   return (
-    <div className={`slider w-full ${className}`}>
+    <div data-testid={dataTestId || 'input-slider'} className={`w-full ${className}`}>
       {label && (
         <div className="flex justify-between items-center mb-2">
           {label && (
@@ -47,27 +30,30 @@ export function Slider(props: SliderProps) {
           )}
           {valueLabel && (
             <p className="text-brand-500 font-medium">
-              {value}
+              {value.map((currentValue, index) => `${currentValue}${index < value.length - 1 ? ', ' : ''}`)}
               {valueLabel}
             </p>
           )}
         </div>
       )}
-      <input
-        data-testid="input-range"
-        style={{
-          background: `linear-gradient(to right, ${brandColor} 0%, ${brandColor} ${
-            ((value - min) / (max - min)) * 100
-          }%, ${grayColor} ${((value - min) / (max - min)) * 100}%, ${grayColor} 100%)`,
-        }}
-        ref={inputEl}
-        type="range"
+      <Root
+        onValueChange={(value) => handleChange(value)}
+        className="relative flex w-full h-1 bg-element-light-lighter-600 rounded cursor-pointer"
+        value={value}
         min={min}
         max={max}
-        value={value}
         step={step}
-        onChange={(event) => handleChange(event.target.value)}
-      />
+      >
+        <Track className="relative flex flex-grow h-1 bg-element-light-lighter-600 rounded-full">
+          <Range className="absolute bg-brand-500 rounded-full h-full" />
+        </Track>
+        {value?.map((v, index) => (
+          <Thumb
+            key={index}
+            className="block h-4 w-4 -mt-1.5 bg-brand-500 transition-all ease-in-out duration-600 hover:bg-brand-600 focus:shadow-2xl focus-visible:outline-none rounded-full cursor-grab focus-visible:cursor-grabbing"
+          />
+        ))}
+      </Root>
     </div>
   )
 }
