@@ -25,19 +25,15 @@ jest.mock('@console/domains/application', () => {
   }
 })
 
-jest.mock('react-hook-form', () => ({
-  ...jest.requireActual('react-hook-form'),
-  useFormContext: () => ({
-    watch: () => jest.fn(),
-    formState: {
-      isValid: true,
-    },
-  }),
-}))
-
+const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
+  useDispatch: () => mockDispatch,
+}))
+
+jest.mock('react-router', () => ({
+  ...(jest.requireActual('react-router') as any),
+  useParams: () => ({ applicationId: '0' }),
 }))
 
 describe('PageSettingsResourcesFeature', () => {
@@ -73,28 +69,35 @@ describe('PageSettingsResourcesFeature', () => {
 
   it('should dispatch editApplication if form is submitted', async () => {
     const editApplicationSpy: SpyInstance = jest.spyOn(storeApplication, 'editApplication')
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve({
+          data: {},
+        }),
+    }))
 
     const { getByTestId } = render(<PageSettingsResourcesFeature />)
 
     await act(() => {
       const input = getByTestId('input-memory')
-      fireEvent.input(input, { target: { value: 512 } })
+      fireEvent.input(input, { target: { value: 9 } })
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
     await act(() => {
       getByTestId('submit-button').click()
-      const cloneApplication = handleSubmit(
-        { memory: 512, cpu: [3400], instances: [1, 1] },
-        mockApplication,
-        MemorySizeEnum.MB
-      )
+    })
 
-      expect(editApplicationSpy).toHaveBeenCalledWith({
-        applicationId: mockApplication.id,
-        data: cloneApplication,
-      })
+    const cloneApplication = handleSubmit(
+      { memory: 9, cpu: [1], instances: [1, 3] },
+      mockApplication,
+      MemorySizeEnum.MB
+    )
+
+    expect(editApplicationSpy).toHaveBeenCalledWith({
+      applicationId: mockApplication.id,
+      data: cloneApplication,
     })
   })
 })
