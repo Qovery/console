@@ -196,14 +196,5 @@ module.exports = {
   variants: {
     extend: {},
   },
-  safelist: [
-    {
-      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter|accent)(-\w+\d+)*/,
-      variants: ['focus', 'hover'],
-    },
-    {
-      pattern: /(w|h)-(\w+\d+)*/,
-    },
-  ],
   plugins: [],
 }
