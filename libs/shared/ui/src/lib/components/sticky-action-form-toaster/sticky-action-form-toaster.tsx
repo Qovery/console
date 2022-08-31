@@ -44,7 +44,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     >
       <div
         className={`rounded bg-element-light-darker-100 shadow-xl text-white inline-flex items-center pl-4 p-2 gap-10 ${
-          visible ? 'animate-toaster-in' : 'animate-toaster-out'
+          visible ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
         } ${visibleState ? 'visible' : 'hidden'}`}
       >
         {description && <span className="font-medium text-white text-sm">{description}</span>}
