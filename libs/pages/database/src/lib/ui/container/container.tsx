@@ -1,4 +1,13 @@
+import { Environment } from 'qovery-typescript-axios'
+import { useLocation, useParams } from 'react-router'
 import { IconEnum, RunningStatus } from '@console/shared/enums'
+import { DatabaseEntity } from '@console/shared/interfaces'
+import {
+  DATABASE_DEPLOYMENTS_URL,
+  DATABASE_GENERAL_URL, //DATABASE_METRICS_URL,
+  DATABASE_SETTINGS_URL,
+  DATABASE_URL, //DATABASE_VARIABLES_URL,
+} from '@console/shared/router'
 import {
   ButtonIconAction,
   Header,
@@ -11,17 +20,7 @@ import {
   TagMode,
   TagSize,
 } from '@console/shared/ui'
-import {
-  DATABASE_DEPLOYMENTS_URL,
-  DATABASE_GENERAL_URL,
-  //DATABASE_METRICS_URL,
-  DATABASE_SETTINGS_URL,
-  DATABASE_URL,
-  //DATABASE_VARIABLES_URL,
-} from '@console/shared/router'
-import { Environment } from 'qovery-typescript-axios'
-import { useLocation, useParams } from 'react-router'
-import { DatabaseEntity } from '@console/shared/interfaces'
+import { copyToClipboard } from '@console/shared/utils'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]
@@ -59,6 +58,11 @@ export function Container(props: ContainerProps) {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
                 onClick: () => removeDatabase(databaseId ? databaseId : ''),
+              },
+              {
+                name: 'Copy identifiers',
+                contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
+                onClick: () => copyToClipboard(copyContent),
               },
             ],
           },
@@ -154,13 +158,7 @@ export function Container(props: ContainerProps) {
 
   return (
     <>
-      <Header
-        title={database?.name}
-        icon={IconEnum.DATABASE}
-        copyTitle
-        copyContent={copyContent}
-        actions={headerActions}
-      />
+      <Header title={database?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
       {children}
     </>

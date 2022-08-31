@@ -1,5 +1,5 @@
 import { IconEnum } from '@console/shared/enums'
-import { CopyToClipboard, Skeleton, Truncate } from '@console/shared/ui'
+import { Skeleton, Truncate } from '@console/shared/ui'
 import Icon from '../icon/icon'
 
 export interface HeaderProps {
@@ -12,7 +12,7 @@ export interface HeaderProps {
 }
 
 export function Header(props: HeaderProps) {
-  const { title, icon, buttons, copyTitle = false, copyContent = '', actions } = props
+  const { title, icon, buttons, actions } = props
 
   return (
     <div className="flex h-32 border-b border-element-light-lighter-400 items-center justify-between bg-white rounded-t p-5 shrink-0">
@@ -25,7 +25,6 @@ export function Header(props: HeaderProps) {
                 {title && <Truncate text={title} truncateLimit={50} />}
               </h1>
             </Skeleton>
-            {copyTitle && <CopyToClipboard className="text-text-400 text-base ml-2" content={copyContent} />}
           </div>
           {actions && <div className="flex gap-3 items-start">{actions}</div>}
         </div>
