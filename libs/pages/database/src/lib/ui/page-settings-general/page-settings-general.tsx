@@ -121,7 +121,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               name="accessibility"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <div>
+                <>
                   <InputSelect
                     dataTestId="input-select-accessibility"
                     label="Accessibility"
@@ -137,7 +137,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                     iconRight="icon-solid-arrow-up-right-from-square text-xxs"
                     external
                   />
-                </div>
+                </>
               )}
             />
           </BlockContent>
