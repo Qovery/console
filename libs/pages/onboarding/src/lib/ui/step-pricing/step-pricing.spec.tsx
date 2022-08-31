@@ -1,19 +1,20 @@
-import { OrganizationPlanType } from '@console/domains/organization'
+import { ResizeObserver } from '__tests__/utils/resize-observer'
 import { render } from '__tests__/utils/setup-jest'
-
+import { PlanEnum } from 'qovery-typescript-axios'
 import StepPricing from './step-pricing'
 import { StepPricingProps } from './step-pricing'
 
 describe('StepPricing', () => {
   let props: StepPricingProps
+  window.ResizeObserver = ResizeObserver
 
   beforeEach(() => {
     props = {
-      selectPlan: OrganizationPlanType.BUSINESS,
+      selectPlan: PlanEnum.BUSINESS,
       setSelectPlan: jest.fn(),
       plans: [
         {
-          name: OrganizationPlanType.BUSINESS,
+          name: PlanEnum.BUSINESS,
           title: 'some-title',
           text: 'bla bla',
           price: 49,
@@ -21,7 +22,7 @@ describe('StepPricing', () => {
         },
       ],
       chooseDeploy: jest.fn(),
-      currentValue: { [OrganizationPlanType.BUSINESS]: { disable: false, number: '1' } },
+      currentValue: { [PlanEnum.BUSINESS]: { disable: false, number: '1' } },
       currentDeploy: 100,
       onSubmit: jest.fn(),
       loading: false,

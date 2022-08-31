@@ -1,13 +1,13 @@
+import '@testing-library/jest-dom/extend-expect'
+import { act, findAllByTestId, fireEvent, getByTestId, screen, waitFor } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import React from 'react'
+import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
 import ImportEnvironmentVariableModal, {
   ImportEnvironmentVariableModalProps,
 } from './import-environment-variable-modal'
-import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
-import { act, findAllByTestId, fireEvent, getByTestId, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
-import React from 'react'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
-import { render } from '__tests__/utils/setup-jest'
 
 describe('ImportEnvironmentVariableModal', () => {
   const props: ImportEnvironmentVariableModalProps = {

@@ -25,7 +25,7 @@
 
 First use
 
-    yarn setup
+    yarn && yarn setup
 
 Start the project on http://localhost:4200
 

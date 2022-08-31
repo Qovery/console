@@ -1,16 +1,15 @@
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
-import { store } from '@console/store/data'
-import { ModalProvider, ToastBehavior } from '@console/shared/ui'
 import { createBrowserHistory } from 'history'
+import posthog from 'posthog-js'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
+import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@console/shared/router'
+import { ModalProvider, ToastBehavior } from '@console/shared/ui'
+import { store } from '@console/store/data'
 import App from './app/app'
 import { environment } from './environments/environment'
-import './styles.scss'
-import posthog from 'posthog-js'
-import { createRoot } from 'react-dom/client'
-import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@console/shared/router'
 
 export const history = createBrowserHistory()
 

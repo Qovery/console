@@ -1,16 +1,16 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { DatabaseEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
 import {
   databaseDeploymentsFactoryMock,
   databasesLoadingStatus,
   fetchDatabaseDeployments,
   getDatabasesState,
 } from '@console/domains/database'
+import { DatabaseEntity } from '@console/shared/interfaces'
 import { BaseLink } from '@console/shared/ui'
 import { useDocumentTitle } from '@console/shared/utils'
+import { AppDispatch, RootState } from '@console/store/data'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
@@ -38,10 +38,13 @@ export function PageDeploymentsFeature() {
   ]
 
   useEffect(() => {
-    const fetchDatabase = () => {
+    if (database && (!database.deployments?.loadingStatus || database.deployments.loadingStatus === 'not loaded')) {
       dispatch(fetchDatabaseDeployments({ databaseId }))
     }
-    !database?.deployments && fetchDatabase()
+
+    const pullDeployments = setInterval(() => dispatch(fetchDatabaseDeployments({ databaseId, silently: true })), 2500)
+
+    return () => clearInterval(pullDeployments)
   }, [dispatch, databaseId, database])
 
   return (

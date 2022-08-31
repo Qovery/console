@@ -69,7 +69,7 @@ export function GitRepositorySettingsFeature() {
 
   // fetch branches by repository and set default branch
   useEffect(() => {
-    if (watchRepository && loadingStatusRepositories === 'loaded') {
+    if (!gitDisabled && watchRepository && loadingStatusRepositories === 'loaded') {
       const currentRepository = repositories?.find((repository) => repository.name === watchRepository)
       dispatch(
         fetchBranches({
@@ -81,7 +81,7 @@ export function GitRepositorySettingsFeature() {
       )
       setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
     }
-  }, [dispatch, organizationId, watchRepository, watchAuthProvider, loadingStatusRepositories, setValue])
+  }, [dispatch, gitDisabled, organizationId, watchRepository, watchAuthProvider, loadingStatusRepositories, setValue])
 
   // submit for modal with the dispatchs authProvider
   const editGitSettings = () => {
