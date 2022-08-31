@@ -190,19 +190,24 @@ module.exports = {
           },
         },
       },
+      animation: {
+        'toaster-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards toasterIn',
+        'toaster-out': '0.4s cubic-bezier(0.06, 0.71, 0.55, 1) 0s 1 normal forwards toasterOut',
+      },
+      keyframes: {
+        toasterIn: {
+          '0%': { transform: 'translate3d(0,200%,0) scale(.6)', opacity: '.5' },
+          '100%': { transform: 'translate3d(0,0,0) scale(1)', opacity: '1' },
+        },
+        toasterOut: {
+          '0%': { transform: 'translate3d(0,0,-1px) scale(1)', opacity: '1' },
+          '100%': { transform: 'translate3d(0,150%,-1px) scale(.6)', opacity: '0' },
+        },
+      },
     },
   },
   variants: {
     extend: {},
   },
-  safelist: [
-    {
-      pattern: /(bg|border|text|fill)-(violet|red|brand|error|success|bg-element-light-lighter|accent)(-\w+\d+)*/,
-      variants: ['focus', 'hover'],
-    },
-    {
-      pattern: /(w|h)-(\w+\d+)*/,
-    },
-  ],
   plugins: [],
 }
