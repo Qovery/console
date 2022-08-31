@@ -157,17 +157,13 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             ) : (
               <TableEdition tableBody={table} />
             )}
-            <div
-              className={`sticky bottom-10 mt-10 flex justify-center ${formState.isDirty ? 'visible' : 'hidden'}`}
-              data-testid={'sticky-action-form-toaster'}
-            >
-              <StickyActionFormToaster
-                onSubmit={props.onSubmit}
-                onReset={props.discardChanges}
-                disabledValidation={!formState.isValid}
-                loading={props.loading === 'loading'}
-              />
-            </div>
+            <StickyActionFormToaster
+              visible={formState.isDirty}
+              onSubmit={props.onSubmit}
+              onReset={props.discardChanges}
+              disabledValidation={!formState.isValid}
+              loading={props.loading === 'loading'}
+            />
           </div>
         </form>
       </div>
