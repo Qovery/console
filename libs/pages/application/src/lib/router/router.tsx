@@ -25,7 +25,6 @@ import PageSettingsPortsFeature from '../feature/page-settings-ports-feature/pag
 import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
 import PageSettingsStorageFeature from '../feature/page-settings-storage-feature/page-settings-storage-feature'
 import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
-import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_APPLICATION: Route[] = [
   {
