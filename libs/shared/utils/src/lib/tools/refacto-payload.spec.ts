@@ -1,4 +1,6 @@
-import { StorageTypeEnum } from 'qovery-typescript-axios'
+import { DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { databaseFactoryMock } from '@console/domains/database'
+import { refactoDatabasePayload } from '@console/shared/utils'
 import { refactoApplicationPayload, refactoPayload } from './refacto-payload'
 
 describe('testing payload refactoring', () => {
@@ -58,6 +60,25 @@ describe('testing payload refactoring', () => {
         root_path: '',
       },
       name: 'hello-2',
+    })
+  })
+
+  it('should remove database values', () => {
+    let response = databaseFactoryMock(2)[0]
+    response.name = 'hello'
+    response.version = '12'
+    response.accessibility = DatabaseAccessibilityEnum.PRIVATE
+    response.cpu = 1024
+    response.memory = 1024
+    response.storage = 1024
+
+    expect(refactoDatabasePayload(response)).toEqual({
+      name: 'hello',
+      version: '12',
+      accessibility: DatabaseAccessibilityEnum.PRIVATE,
+      cpu: 1024,
+      memory: 1024,
+      storage: 1024,
     })
   })
 })

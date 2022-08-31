@@ -1,13 +1,36 @@
-import { render } from '__tests__/utils/setup-jest'
-import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import PageSettingsGeneralFeature, { buildGitRepoUrl, handleSubmit } from './page-settings-general-feature'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import { DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
+import * as storeDatabase from '@console/domains/database'
+import { DatabaseEntity } from '@console/shared/interfaces'
+import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
+
+import SpyInstance = jest.SpyInstance
+
+const mockDatabase: DatabaseEntity = storeDatabase.databaseFactoryMock(1)[0]
+
+jest.mock('@console/domains/application', () => {
+  return {
+    ...jest.requireActual('@console/domains/application'),
+    editDatabase: jest.fn(),
+    selectDatabaseById: () => mockDatabase,
+  }
+})
+
+const mockDispatch = jest.fn()
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}))
+
+jest.mock('react-router', () => ({
+  ...(jest.requireActual('react-router') as any),
+  useParams: () => ({ databaseId: '0' }),
+}))
 
 describe('PageSettingsGeneralFeature', () => {
-  let application: ApplicationEntity
+  let database: DatabaseEntity
   beforeEach(() => {
-    application = applicationFactoryMock(1)[0]
+    database = mockDatabase
   })
 
   it('should render successfully', () => {
@@ -15,68 +38,51 @@ describe('PageSettingsGeneralFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should update the application with Docker', () => {
-    application.buildpack_language = BuildPackLanguageEnum.GO
-    const app = handleSubmit(
+  it('should update the database with git repository', () => {
+    const db = handleSubmit(
       {
         name: 'hello',
-        build_mode: BuildModeEnum.DOCKER,
-        buildpack_language: BuildPackLanguageEnum.GO,
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
+        accessibility: DatabaseAccessibilityEnum.PRIVATE,
       },
-      application
-    )
-    expect(app.name).toBe('hello')
-    expect(app.buildpack_language).toBe(null)
-    expect(app.dockerfile_path).toBe('/')
-  })
-
-  it('should update the application with Buildpack', () => {
-    application.dockerfile_path = 'Dockerfile'
-    const app = handleSubmit(
-      {
-        name: 'hello',
-        build_mode: BuildModeEnum.BUILDPACKS,
-        buildpack_language: BuildPackLanguageEnum.GO,
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-      application
-    )
-    expect(app.name).toBe('hello')
-    expect(app.dockerfile_path).toBe(null)
-    expect(app.buildpack_language).toBe(BuildPackLanguageEnum.GO)
-  })
-
-  it('should update the application with git repository', () => {
-    const app = handleSubmit(
-      {
-        name: 'hello',
-        build_mode: BuildModeEnum.BUILDPACKS,
-        buildpack_language: BuildPackLanguageEnum.GO,
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-      application
+      database
     )
 
-    expect(app.git_repository?.branch).toBe('main')
-    expect(app.git_repository?.root_path).toBe('/')
-    expect(app.git_repository?.url).toBe('https://github.com/qovery/console.git')
+    expect(db.name).toBe('hello')
+    expect(db.accessibility).toBe(DatabaseAccessibilityEnum.PRIVATE)
   })
 
-  it('should have function to build git url', () => {
-    const provider = GitProviderEnum.GITHUB
-    expect(buildGitRepoUrl(provider, 'qovery/console')).toBe('https://github.com/qovery/console.git')
+  it('should dispatch editDatabase if form is submitted', async () => {
+    const editDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'editDatabase')
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve({
+          data: {},
+        }),
+    }))
+
+    const { getByTestId } = render(<PageSettingsGeneralFeature />)
+
+    await act(() => {
+      const input = getByTestId('input-name')
+      fireEvent.input(input, { target: { value: 'hello' } })
+    })
+
+    expect(getByTestId('submit-button')).not.toBeDisabled()
+
+    await act(() => {
+      getByTestId('submit-button').click()
+    })
+
+    console.log(getByTestId('submit-button'))
+
+    const cloneApplication = handleSubmit(
+      { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE },
+      mockDatabase
+    )
+
+    expect(editDatabaseSpy).toHaveBeenCalledWith({
+      databaseId: mockDatabase.id,
+      data: cloneApplication,
+    })
   })
 })
