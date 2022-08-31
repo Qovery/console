@@ -1,10 +1,6 @@
-import { render, screen } from '__tests__/utils/setup-jest'
-
-import CopyToClipboard, { CopyToClipboardProps } from './copy-to-clipboard'
-import { copyToClipboard } from './utils/copy-to-clipboard'
 import { act } from '@testing-library/react'
-
-jest.mock('./utils/copy-to-clipboard')
+import { render, screen } from '__tests__/utils/setup-jest'
+import CopyToClipboard, { CopyToClipboardProps } from './copy-to-clipboard'
 
 let props: CopyToClipboardProps
 beforeEach(() => {
@@ -34,13 +30,19 @@ describe('CopyToClipboard', () => {
   })
 
   it('should call the copy function on click', () => {
+    props.content = 'copy'
     render(<CopyToClipboard {...props} />)
-    copyToClipboard.mockImplementation(jest.fn())
+
+    Object.assign(window.navigator, {
+      clipboard: {
+        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+      },
+    })
 
     act(() => {
       screen.getByTestId('copy-container').click()
     })
 
-    expect(copyToClipboard).toHaveBeenCalledWith('text to copy')
+    expect(window.navigator.clipboard.writeText).toHaveBeenCalledWith('copy')
   })
 })
