@@ -201,7 +201,7 @@ module.exports = {
         },
         toasterOut: {
           '0%': { transform: 'translate3d(0,0,-1px) scale(1)', opacity: '1' },
-          '100%': { transform: 'translate3d(0,30%,-1px) scale(.8)', opacity: '0' },
+          '100%': { transform: 'translate3d(0,50%,-1px) scale(.8)', opacity: '0' },
         },
       },
     },
