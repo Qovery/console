@@ -57,9 +57,9 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             <Controller
               name="cpu"
               control={control}
-              rules={{
-                max: (application?.cpu || 0) / 1000,
-              }}
+              // rules={{
+              //   max: (application?.cpu || 0) / 1000,
+              // }}
               render={({ field }) => (
                 <Slider
                   min={0}
@@ -140,7 +140,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             <Controller
               name="instances"
               control={control}
-              render={({ field }) => <Slider min={0} max={50} step={1} onChange={field.onChange} value={field.value} />}
+              render={({ field }) => <Slider min={1} max={50} step={1} onChange={field.onChange} value={field.value} />}
             />
             <p className="text-text-400 text-xs mt-3">
               {application?.instances?.items && (

@@ -38,7 +38,7 @@ describe('PageSettingsResources', () => {
   it('should render the form', async () => {
     const { getByDisplayValue } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [0.5], instances: [0, 1], memory: 323 },
+        defaultValues: { cpu: [0.5], instances: [1, 1], memory: 323 },
       })
     )
 
@@ -47,7 +47,7 @@ describe('PageSettingsResources', () => {
     await act(() => {
       getByDisplayValue(323)
       expect(inputs[0].getAttribute('aria-valuenow')).toBe('0.5')
-      expect(inputs[1].getAttribute('aria-valuenow')).toBe('0')
+      expect(inputs[1].getAttribute('aria-valuenow')).toBe('1')
       expect(inputs[2].getAttribute('aria-valuenow')).toBe('1')
     })
   })
@@ -57,7 +57,7 @@ describe('PageSettingsResources', () => {
 
     const { getByTestId, getAllByRole } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [10], instances: [0, 1], memory: 323 },
+        defaultValues: { cpu: [10], instances: [1, 1], memory: 323 },
       })
     )
 

@@ -42,7 +42,7 @@ export function PageSettingsResourcesFeature() {
     defaultValues: {
       memory: application?.memory,
       cpu: [convertCpuToVCpu(application?.cpu)],
-      instances: [application?.min_running_instances || 0, application?.max_running_instances || 1],
+      instances: [application?.min_running_instances || 1, application?.max_running_instances || 1],
     },
   })
 
@@ -91,7 +91,9 @@ export function PageSettingsResourcesFeature() {
       .catch(() => setLoading(false))
   })
 
-  const displayWarningCpu: boolean = methods.watch('cpu')[0] > (application?.cpu || 0) / 1000
+  // @todo hide display warning for now, waiting right condition
+  // const displayWarningCpu: boolean = methods.watch('cpu')[0] > (application?.cpu || 0) / 1000
+  const displayWarningCpu = false
 
   return (
     <FormProvider {...methods}>
