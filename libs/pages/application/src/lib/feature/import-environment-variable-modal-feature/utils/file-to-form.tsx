@@ -8,8 +8,8 @@ export function jsonToForm(json: string): { [key: string]: string } {
 export function parsedToForm(parsed: { [key: string]: string }): { [key: string]: string } {
   const defaultValues: { [key: string]: string } = {}
   Object.keys(parsed).forEach((key) => {
-    defaultValues[key + '_key'] = key
-    defaultValues[key + '_value'] = parsed[key]
+    defaultValues[key + '_key'] = key || ''
+    defaultValues[key + '_value'] = parsed[key] || ''
     defaultValues[key + '_scope'] = EnvironmentVariableScopeEnum.PROJECT
     defaultValues[key + '_secret'] = ''
   })

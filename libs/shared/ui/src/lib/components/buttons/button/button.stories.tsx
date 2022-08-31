@@ -1,5 +1,5 @@
-import { Button, ButtonProps, ButtonSize, ButtonStyle } from './button'
 import { Meta, Story } from '@storybook/react'
+import { Button, ButtonProps, ButtonSize, ButtonStyle } from './button'
 
 export default {
   component: Button,

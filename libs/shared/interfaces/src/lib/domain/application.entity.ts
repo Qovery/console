@@ -31,7 +31,10 @@ export interface ApplicationEntity extends Application {
   }
   advanced_settings?: {
     loadingStatus: LoadingStatus
-    default_settings: ApplicationAdvancedSettings
-    current_settings: ApplicationAdvancedSettings
+    current_settings?: ApplicationAdvancedSettings
+  }
+  default_advanced_settings?: {
+    loadingStatus: LoadingStatus
+    default_settings?: ApplicationAdvancedSettings
   }
 }

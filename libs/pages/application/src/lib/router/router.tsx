@@ -16,6 +16,7 @@ import {
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageMetricsFeature from '../feature/page-metrics-feature/page-metrics-feature'
+import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature/page-settings-domains-feature'
 import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
@@ -72,7 +73,7 @@ export const ROUTER_APPLICATION_SETTINGS: Route[] = [
   },
   {
     path: APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsAdvancedFeature />,
   },
   {
     path: APPLICATION_SETTINGS_DANGER_ZONE_URL,

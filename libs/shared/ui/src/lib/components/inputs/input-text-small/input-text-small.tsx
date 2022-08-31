@@ -13,6 +13,7 @@ export interface InputTextSmallProps {
   className?: string
   label?: string
   errorMessagePosition?: 'left' | 'bottom'
+  transparentBorderOnValid?: boolean
 }
 
 export function InputTextSmall(props: InputTextSmallProps) {
@@ -26,10 +27,11 @@ export function InputTextSmall(props: InputTextSmallProps) {
     type = 'text',
     className = '',
     errorMessagePosition = 'bottom',
+    transparentBorderOnValid,
   } = props
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
-  const hasValue = value && value.length > 0 ? 'input--focused' : ''
+  const hasValue = value && value.length > 0 && !transparentBorderOnValid ? 'input--focused' : ''
 
   const classNameError = errorMessagePosition === 'left' ? 'flex gap-3 items-center' : ''
 
@@ -51,7 +53,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           name={name}
           type={type}
           placeholder={placeholder}
-          defaultValue={value}
+          value={value}
           onInput={onChange}
           id={props.label}
         />

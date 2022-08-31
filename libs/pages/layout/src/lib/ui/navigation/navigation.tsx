@@ -1,13 +1,14 @@
-import { Link } from 'react-router-dom'
 import { matchPath, useLocation, useParams } from 'react-router'
+import { Link } from 'react-router-dom'
 import { IconEnum } from '@console/shared/enums'
 import { INFRA_LOGS_URL, ORGANIZATION_URL } from '@console/shared/router'
 import {
   Avatar,
   ButtonIcon,
-  ButtonSize,
   ButtonIconStyle,
+  ButtonSize,
   Icon,
+  IconAwesomeEnum,
   Menu,
   MenuAlign,
   MenuDirection,
@@ -40,6 +41,22 @@ export function Navigation(props: NavigationProps) {
             external: true,
           },
           contentLeft: <Icon name="icon-solid-book" className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Community Forum',
+          link: {
+            url: 'https://discuss.qovery.com/',
+            external: true,
+          },
+          contentLeft: <Icon name={IconAwesomeEnum.PEOPLE} className="text-sm text-brand-400" />,
+        },
+        {
+          name: 'Roadmap',
+          link: {
+            url: 'https://roadmap.qovery.com/b/5m13y5v6/feature-ideas',
+            external: true,
+          },
+          contentLeft: <Icon name={IconAwesomeEnum.ROAD} className="text-sm text-brand-400" />,
         },
         {
           name: 'Join Discord',
