@@ -192,7 +192,7 @@ module.exports = {
       },
       animation: {
         'toaster-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards toasterIn',
-        'toaster-out': '0.4s cubic-bezier(0.06, 0.71, 0.55, 1) 0s 1 normal forwards toasterOut',
+        'toaster-out': '0.2s cubic-bezier(0.06, 0.71, 0.55, 1) 0s 1 normal forwards toasterOut',
       },
       keyframes: {
         toasterIn: {
@@ -201,7 +201,7 @@ module.exports = {
         },
         toasterOut: {
           '0%': { transform: 'translate3d(0,0,-1px) scale(1)', opacity: '1' },
-          '100%': { transform: 'translate3d(0,150%,-1px) scale(.6)', opacity: '0' },
+          '100%': { transform: 'translate3d(0,30%,-1px) scale(.8)', opacity: '0' },
         },
       },
     },

@@ -33,19 +33,19 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
       // we want to give the animation the time to play before removing the bloc from the flow with a display none
       setTimeout(() => {
         setVisibleState(false)
-      }, 350)
+      }, 500)
     }
   }, [visible])
 
   return (
     <div
-      className={`sticky bottom-4 flex justify-center ${className} ${visibleState ? 'visible' : 'hidden'}`}
+      className={`sticky bottom-4 flex justify-center ${className} ${!visibleState ? 'mb-[52px]' : ''}`}
       data-testid={'sticky-action-form-toaster'}
     >
       <div
         className={`rounded bg-element-light-darker-100 shadow-xl text-white inline-flex items-center pl-4 p-2 gap-10 ${
           visible ? 'animate-toaster-in' : 'animate-toaster-out'
-        }`}
+        } ${visibleState ? 'visible' : 'hidden'}`}
       >
         {description && <span className="font-medium text-white text-sm">{description}</span>}
         <div className="flex gap-5">

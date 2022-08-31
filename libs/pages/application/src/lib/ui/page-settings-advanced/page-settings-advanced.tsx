@@ -152,7 +152,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
           <div className="relative">
             {(!props.loading || props.loading === 'loading') && props.keys?.length === 0 ? (
               <div className="flex justify-center">
-                <LoaderSpinner className="w-6"></LoaderSpinner>
+                <LoaderSpinner className="w-6" />
               </div>
             ) : (
               <TableEdition tableBody={table} />

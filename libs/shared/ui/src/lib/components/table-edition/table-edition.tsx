@@ -16,7 +16,9 @@ export interface TableEditionProps {
 export function TableEdition(props: TableEditionProps) {
   return (
     <div
-      className={`border border-solid border-element-light-lighter-400 rounded text-sm text-text-500  ${props.className}`}
+      className={`border border-solid border-element-light-lighter-400 rounded text-sm text-text-500  ${
+        props.className || ''
+      }`}
     >
       {props.tableBody?.map((row, index) => (
         <div
