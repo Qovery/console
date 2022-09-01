@@ -1,8 +1,7 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { CloneRequest, EnvironmentModeEnum, EnvironmentRequest } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
 import { cloneEnvironment, createEnvironment } from '@console/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { ClusterEntity, EnvironmentEntity } from '@console/shared/interfaces'
@@ -12,26 +11,47 @@ import CreateCloneEnvironmentModal from '../../ui/create-clone-environment-modal
 export interface CreateCloneEnvironmentModalFeatureProps {
   environmentToClone?: EnvironmentEntity
   onClose: () => void
+  projectId: string
+  organizationId: string
 }
 
 export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironmentModalFeatureProps) {
-  const { organizationId = '', projectId = '' } = useParams()
   const [loading, setLoading] = useState(false)
 
   const clusters = useSelector<RootState, ClusterEntity[]>((state) =>
-    selectClustersEntitiesByOrganizationId(state, organizationId)
+    selectClustersEntitiesByOrganizationId(state, props.organizationId)
   )
+
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: { name: '', cluster_id: '', mode: EnvironmentModeEnum.STAGING },
+    defaultValues: {
+      name: props.environmentToClone?.name ? props.environmentToClone?.name + '-clone' : '',
+      cluster: 'automatic',
+      mode: 'automatic',
+    },
   })
 
   const dispatch = useDispatch<AppDispatch>()
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    const dataFormatted: { name: string; cluster?: string; mode?: string } = {
+      name: data.name,
+      cluster: data.cluster,
+      mode: data.mode,
+    }
+
+    if (dataFormatted.cluster === 'automatic') delete dataFormatted.cluster
+
+    if (dataFormatted.mode === 'automatic') delete dataFormatted.mode
+
     setLoading(true)
     if (props.environmentToClone) {
-      dispatch(cloneEnvironment({ environmentId: props.environmentToClone.id, cloneRequest: { ...data } }))
+      const cloneRequest: CloneRequest = {
+        name: dataFormatted.name,
+        mode: dataFormatted.mode as EnvironmentModeEnum,
+        cluster_id: dataFormatted.cluster,
+      }
+      dispatch(cloneEnvironment({ environmentId: props.environmentToClone.id, cloneRequest }))
         .unwrap()
         .then(() => {
           setLoading(false)
@@ -42,7 +62,12 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
           console.error(e)
         })
     } else {
-      dispatch(createEnvironment({ projectId, environmentRequest: { ...data } }))
+      const environmentRequest: EnvironmentRequest = {
+        name: dataFormatted.name,
+        mode: dataFormatted.mode as EnvironmentModeEnum,
+        cluster: dataFormatted.cluster,
+      }
+      dispatch(createEnvironment({ projectId: props.projectId, environmentRequest }))
         .unwrap()
         .then(() => {
           setLoading(false)

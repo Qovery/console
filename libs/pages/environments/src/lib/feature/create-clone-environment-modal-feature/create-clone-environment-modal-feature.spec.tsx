@@ -1,7 +1,8 @@
-import { act, fireEvent, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import * as storeEnvironment from '@console/domains/environment'
+import { environmentFactoryMock } from '@console/domains/environment'
 import { clusterFactoryMock } from '@console/domains/organization'
 import { changeSelectValueByLabel } from '@console/shared/ui'
 import CreateCloneEnvironmentModalFeature, {
@@ -38,6 +39,8 @@ describe('CreateCloneEnvironmentModalFeature', () => {
     props = {
       onClose: jest.fn(),
       environmentToClone: undefined,
+      organizationId: '0',
+      projectId: '1',
     }
   })
 
@@ -71,6 +74,7 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       })
 
       await changeSelectValueByLabel(baseElement, 'input-select-cluster', mockClusters[2].name)
+      await changeSelectValueByLabel(baseElement, 'input-select-mode', 'Staging')
 
       const submitButton = getByTestId(baseElement, 'submit-button')
       await act(async () => {
@@ -80,6 +84,45 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       expect(spy).toHaveBeenCalledWith({
         projectId: '1',
         environmentRequest: {
+          cluster: mockClusters[2].id,
+          mode: EnvironmentModeEnum.STAGING,
+          name: 'test',
+        },
+      })
+    })
+  })
+
+  describe('cloning mode', function () {
+    it('should submit form on click on button', async () => {
+      // mock the dispatched function
+      const spy = jest.spyOn(storeEnvironment, 'cloneEnvironment')
+      mockDispatch.mockImplementation(() => ({
+        unwrap: () =>
+          Promise.resolve({
+            data: {},
+          }),
+      }))
+
+      const mockEnv = environmentFactoryMock(1)[0]
+      const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} environmentToClone={mockEnv} />)
+
+      const inputs = getAllByTestId(baseElement, 'input-text')
+
+      await act(async () => {
+        fireEvent.input(inputs[1], { target: { value: 'test' } })
+      })
+
+      await changeSelectValueByLabel(baseElement, 'input-select-cluster', mockClusters[2].name)
+      await changeSelectValueByLabel(baseElement, 'input-select-mode', 'Staging')
+
+      const submitButton = getByTestId(baseElement, 'submit-button')
+      await act(async () => {
+        fireEvent.click(submitButton)
+      })
+
+      expect(spy).toHaveBeenCalledWith({
+        environmentId: mockEnv.id,
+        cloneRequest: {
           cluster_id: mockClusters[2].id,
           mode: EnvironmentModeEnum.STAGING,
           name: 'test',

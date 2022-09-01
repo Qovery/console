@@ -91,7 +91,7 @@ export function InputSelect(props: InputSelectProps) {
             </div>
           </div>
         </ListboxButton>
-        <ListboxPopover className={`input__list ${!portal ? 'absolute' : ''}`} portal={portal}>
+        <ListboxPopover className={`input__list ${!portal ? 'absolute z-10' : 'z-50'}`} portal={portal}>
           <ListboxList className="relative">
             {search && (
               <InputSearch

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { EnvironmentEntity } from '@console/shared/interfaces'
-import TableRowEnvironments from '../table-row-environments/table-row-environments'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
+import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
 import { isDeleteAvailable } from '@console/shared/utils'
+import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface PageGeneralProps {
   environments: EnvironmentEntity[]
@@ -41,7 +41,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
     },
     {
       title: 'Update',
-      className: 'px-4 text-center',
+      className: 'px-4 text-right',
       sort: {
         key: 'updated_at',
       },

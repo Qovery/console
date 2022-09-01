@@ -26,14 +26,14 @@ const props: CreateCloneEnvironmentModalProps = {
 describe('CreateCloneEnvironmentModal', () => {
   let defaultValues: {
     mode: EnvironmentModeEnum
-    cluster_id: string
+    cluster: string
     name: string
   }
 
   beforeEach(() => {
     defaultValues = {
       mode: EnvironmentModeEnum.PREVIEW,
-      cluster_id: mockClusters[0].id,
+      cluster: mockClusters[0].id,
       name: '',
     }
   })
@@ -45,6 +45,20 @@ describe('CreateCloneEnvironmentModal', () => {
       })
     )
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should reformat name by replacing special char by hyphens', async () => {
+    const { baseElement } = render(
+      wrapWithReactHookForm(<CreateCloneEnvironmentModal {...props} />, {
+        defaultValues,
+      })
+    )
+    const input = getByTestId(baseElement, 'input-text')
+    await act(() => {
+      fireEvent.input(input, { target: { value: 'ben et remi' } })
+    })
+
+    getByDisplayValue(baseElement, 'ben-et-remi')
   })
 
   it('should submit form on click on button', async () => {

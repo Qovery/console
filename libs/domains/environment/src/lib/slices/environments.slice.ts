@@ -186,10 +186,11 @@ export const environmentsSlice = createSlice({
         state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
           ...state.joinProjectEnvironments,
         })
+        toast(ToastEnum.SUCCESS, 'Your environment has been successfully created')
       })
       .addCase(createEnvironment.rejected, (state: EnvironmentsState, action) => {
-        state.loadingStatus = 'error'
         state.error = action.error.message
+        toast(ToastEnum.ERROR, 'Creation Error', state.error)
       })
       // clone environment
       .addCase(cloneEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
@@ -197,10 +198,11 @@ export const environmentsSlice = createSlice({
         state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
           ...state.joinProjectEnvironments,
         })
+        toast(ToastEnum.SUCCESS, 'Your environment has been successfully cloned')
       })
       .addCase(cloneEnvironment.rejected, (state: EnvironmentsState, action) => {
-        state.loadingStatus = 'error'
         state.error = action.error.message
+        toast(ToastEnum.ERROR, 'Cloning Error', state.error)
       })
       // get environments status
       .addCase(fetchEnvironmentsStatus.pending, (state: EnvironmentsState) => {
