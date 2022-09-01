@@ -3,7 +3,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import * as storeEnvironment from '@console/domains/environment'
 import { clusterFactoryMock } from '@console/domains/organization'
-import { changeSelectValueByLabel } from '../../../../../../shared/ui/src/lib/components/inputs/input-select/utils/change-select-value'
+import { changeSelectValueByLabel } from '@console/shared/ui'
 import CreateCloneEnvironmentModalFeature, {
   CreateCloneEnvironmentModalFeatureProps,
 } from './create-clone-environment-modal-feature'
