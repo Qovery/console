@@ -48,11 +48,13 @@ export function PageSettingsGeneralFeature() {
   })
 
   useEffect(() => {
-    methods.setValue('name', database?.name)
-    methods.setValue('type', database?.type)
-    methods.setValue('mode', database?.mode)
-    methods.setValue('version', database?.version)
-    methods.setValue('accessibility', database?.accessibility)
+    methods.reset({
+      name: database?.name,
+      type: database?.type,
+      mode: database?.mode,
+      version: database?.version,
+      accessibility: database?.accessibility,
+    })
   }, [methods, database?.name, database?.type, database?.mode, database?.version, database?.accessibility])
 
   return (
