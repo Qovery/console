@@ -8,9 +8,9 @@ import SpyInstance = jest.SpyInstance
 
 const mockDatabase: DatabaseEntity = storeDatabase.databaseFactoryMock(1)[0]
 
-jest.mock('@console/domains/application', () => {
+jest.mock('@console/domains/database', () => {
   return {
-    ...jest.requireActual('@console/domains/application'),
+    ...jest.requireActual('@console/domains/database'),
     editDatabase: jest.fn(),
     selectDatabaseById: () => mockDatabase,
   }
@@ -72,8 +72,6 @@ describe('PageSettingsGeneralFeature', () => {
     await act(() => {
       getByTestId('submit-button').click()
     })
-
-    console.log(getByTestId('submit-button'))
 
     const cloneApplication = handleSubmit(
       { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE },

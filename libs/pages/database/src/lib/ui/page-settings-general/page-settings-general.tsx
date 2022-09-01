@@ -67,7 +67,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
                   className="mb-3"
-                  dataTestId="input-select-type"
                   label="Type"
                   items={databasesType}
                   onChange={field.onChange}
@@ -83,7 +82,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <div className="mb-3">
                   <InputSelect
-                    dataTestId="input-select-mode"
                     label="Mode"
                     items={databasesMode}
                     onChange={field.onChange}
@@ -107,7 +105,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputText
                   className="mb-3"
-                  dataTestId="input-version"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value}
@@ -120,6 +117,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             <Controller
               name="accessibility"
               control={control}
+              rules={{ required: true }}
               render={({ field, fieldState: { error } }) => (
                 <>
                   <InputSelect

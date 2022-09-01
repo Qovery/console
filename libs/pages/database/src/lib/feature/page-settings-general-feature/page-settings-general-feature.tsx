@@ -24,6 +24,7 @@ export function PageSettingsGeneralFeature() {
 
   const methods = useForm({
     mode: 'onChange',
+    reValidateMode: 'onChange',
   })
 
   const onSubmit = methods.handleSubmit((data) => {
