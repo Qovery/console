@@ -7,13 +7,16 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import {
+  CloneRequest,
   DeploymentHistoryEnvironment,
   Environment,
+  EnvironmentActionsApi,
   EnvironmentDeploymentHistoryApi,
   EnvironmentDeploymentRule,
   EnvironmentDeploymentRuleApi,
   EnvironmentEditRequest,
   EnvironmentMainCallsApi,
+  EnvironmentRequest,
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
@@ -25,6 +28,7 @@ import { RootState } from '@console/store/data'
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
 const environmentsApi = new EnvironmentsApi()
+const environmentsActionsApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
@@ -87,6 +91,22 @@ export const editEnvironmentDeploymentRules = createAsyncThunk(
       cloneEnvironmentDeploymentRules
     )
     return response.data as EnvironmentDeploymentRule
+  }
+)
+
+export const createEnvironment = createAsyncThunk(
+  'environment/create',
+  async (payload: { projectId: string; environmentRequest: EnvironmentRequest }) => {
+    const response = await environmentsApi.createEnvironment(payload.projectId, payload.environmentRequest)
+    return response.data
+  }
+)
+
+export const cloneEnvironment = createAsyncThunk(
+  'environment/clone',
+  async (payload: { environmentId: string; cloneRequest: CloneRequest }) => {
+    const response = await environmentsActionsApi.cloneEnvironment(payload.environmentId, payload.cloneRequest)
+    return response.data
   }
 )
 
@@ -157,6 +177,28 @@ export const environmentsSlice = createSlice({
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchEnvironments.rejected, (state: EnvironmentsState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // create environment
+      .addCase(createEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
+        environmentsAdapter.addOne(state, action.payload)
+        state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
+          ...state.joinProjectEnvironments,
+        })
+      })
+      .addCase(createEnvironment.rejected, (state: EnvironmentsState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // clone environment
+      .addCase(cloneEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
+        environmentsAdapter.addOne(state, action.payload)
+        state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
+          ...state.joinProjectEnvironments,
+        })
+      })
+      .addCase(cloneEnvironment.rejected, (state: EnvironmentsState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
       })

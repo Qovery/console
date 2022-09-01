@@ -36,6 +36,16 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
       </h2>
       <p className="text-text-400 text-sm mb-6">You will have the possibility to modify the parameters once created</p>
       <form onSubmit={props.onSubmit}>
+        {props.environmentToClone && (
+          <InputText
+            className="mb-6"
+            name="clone"
+            value={props.environmentToClone.name}
+            label={props.environmentToClone.name ? 'New environment name' : 'Environment name'}
+            disabled={true}
+          />
+        )}
+
         <Controller
           name="name"
           control={control}
@@ -58,6 +68,7 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
           control={control}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
+              dataTestId="input-select-cluster"
               className="mb-6"
               onChange={field.onChange}
               value={field.value}
@@ -77,6 +88,7 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
             <InputSelect
               className="mb-6"
               portal={false}
+              dataTestId="input-select-mode"
               items={environmentModes}
               onChange={field.onChange}
               value={field.value}
@@ -89,7 +101,13 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
           <Button className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => props.closeModal()}>
             Cancel
           </Button>
-          <Button className="btn--no-min-w" type="submit" disabled={!formState.isValid} loading={props.loading}>
+          <Button
+            dataTestId="submit-button"
+            className="btn--no-min-w"
+            type="submit"
+            disabled={!formState.isValid}
+            loading={props.loading}
+          >
             {props.environmentToClone ? 'Clone' : 'Create'}
           </Button>
         </div>
