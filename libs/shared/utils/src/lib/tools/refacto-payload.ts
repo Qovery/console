@@ -2,8 +2,9 @@ import {
   ApplicationEditRequest,
   ApplicationGitRepositoryRequest,
   ApplicationStorageStorage,
+  DatabaseEditRequest,
 } from 'qovery-typescript-axios'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 
 export function refactoPayload(response: any) {
   delete response['id']
@@ -54,4 +55,17 @@ export function refactoApplicationPayload(application: Partial<ApplicationEntity
   }
 
   return applicationRequestPayload
+}
+
+export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
+  const databaseRequestPayload: DatabaseEditRequest = {
+    name: database.name,
+    version: database.version,
+    accessibility: database.accessibility,
+    cpu: database.cpu,
+    memory: database.memory,
+    storage: database.storage,
+  }
+
+  return databaseRequestPayload
 }

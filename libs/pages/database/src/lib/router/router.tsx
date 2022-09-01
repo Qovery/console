@@ -8,12 +8,12 @@ import {
   DATABASE_VARIABLES_URL,
   Route,
 } from '@console/shared/router'
-import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
-import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
+import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
-
+import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
+import PageVariablesFeature from '../feature/page-variables-feature/page-variables-feature'
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_DATABASE: Route[] = [
@@ -38,7 +38,7 @@ export const ROUTER_DATABASE: Route[] = [
 export const ROUTER_DATABASE_SETTINGS: Route[] = [
   {
     path: DATABASE_SETTINGS_GENERAL_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsGeneralFeature />,
   },
   {
     path: DATABASE_SETTINGS_RESOURCES_URL,

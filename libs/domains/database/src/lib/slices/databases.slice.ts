@@ -18,7 +18,8 @@ import {
   Status,
 } from 'qovery-typescript-axios'
 import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds, shortToLongId } from '@console/shared/utils'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, refactoDatabasePayload, shortToLongId } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const DATABASES_FEATURE_KEY = 'databases'
@@ -57,6 +58,16 @@ export const fetchDatabase = createAsyncThunk<Database, { databaseId: string }>(
 
   return response.data
 })
+
+export const editDatabase = createAsyncThunk(
+  'database/edit',
+  async (payload: { databaseId: string; data: DatabaseEntity }) => {
+    const cloneDatabase = Object.assign({}, refactoDatabasePayload(payload.data) as DatabaseEntity)
+
+    const response = await databaseMainCallsApi.editDatabase(payload.databaseId, cloneDatabase)
+    return response.data
+  }
+)
 
 export const fetchDatabaseMetrics = createAsyncThunk<DatabaseCurrentMetric, { databaseId: string }>(
   'database/instances',
@@ -137,6 +148,7 @@ export const databasesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // fetch all databases
       .addCase(fetchDatabases.pending, (state: DatabasesState) => {
         state.loadingStatus = 'loading'
       })
@@ -156,6 +168,7 @@ export const databasesSlice = createSlice({
       .addCase(fetchDatabase.pending, (state: DatabasesState) => {
         state.loadingStatus = 'loading'
       })
+      // fetch database
       .addCase(fetchDatabase.fulfilled, (state: DatabasesState, action: PayloadAction<Database>) => {
         databasesAdapter.upsertOne(state, action.payload)
         state.joinEnvDatabase = addOneToManyRelation(action.payload.environment?.id, action.payload.id, {
@@ -165,6 +178,27 @@ export const databasesSlice = createSlice({
       })
       .addCase(fetchDatabase.rejected, (state: DatabasesState, action) => {
         state.loadingStatus = 'error'
+        state.error = action.error.message
+      })
+      // edit database
+      .addCase(editDatabase.pending, (state: DatabasesState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(editDatabase.fulfilled, (state: DatabasesState, action) => {
+        const update: Update<Database> = {
+          id: action.meta.arg.databaseId,
+          changes: {
+            ...action.payload,
+          },
+        }
+        databasesAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, `Your database ${action.payload.name} has been updated`)
+      })
+      .addCase(editDatabase.rejected, (state: DatabasesState, action) => {
+        state.loadingStatus = 'error'
+        toastError(action.error)
         state.error = action.error.message
       })
       // get environments status
