@@ -9,7 +9,7 @@ export const urlCodeEditor = (git_repository?: ApplicationGitRepository) => {
     case GitProviderEnum.GITHUB:
       editorUrl = git_repository.url?.replace('github.com', 'github.dev')
       break
-    case GitProviderEnum.GITHUB:
+    case GitProviderEnum.GITLAB:
     case GitProviderEnum.BITBUCKET:
       editorUrl = 'https://gitpod.io/#' + git_repository?.url
       break
