@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { StateEnum } from 'qovery-typescript-axios'
-import { Menu, StatusMenuInformation, StatusMenuActions, MenuAlign } from '@console/shared/ui'
+import { useState } from 'react'
+import { Menu, MenuAlign, StatusMenuActions, StatusMenuInformation } from '@console/shared/ui'
 import { MenuItemProps } from '../../../menu/menu-item/menu-item'
 import StatusMenuAction from '../../../status-menu-action/status-menu-action'
 

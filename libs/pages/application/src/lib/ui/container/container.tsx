@@ -19,7 +19,7 @@ import {
   TagMode,
   TagSize,
 } from '@console/shared/ui'
-import { copyToClipboard } from '@console/shared/utils'
+import { copyToClipboard, urlCodeEditor } from '@console/shared/utils'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export const ApplicationContext = createContext<{
@@ -100,6 +100,14 @@ export function Container(props: ContainerProps) {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
                 onClick: () => removeApplication(applicationId ? applicationId : ''),
+              },
+              {
+                name: 'Edit code',
+                contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
+                link: {
+                  url: urlCodeEditor(application?.git_repository) || '',
+                  external: true,
+                },
               },
               {
                 name: 'Copy identifiers',

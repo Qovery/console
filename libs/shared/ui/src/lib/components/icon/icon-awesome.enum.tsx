@@ -72,5 +72,6 @@ export enum IconAwesomeEnum {
   CROSS = 'icon-solid-xmark',
   PEOPLE = 'icon-solid-people',
   ROAD = 'icon-solid-road',
+  CODE = 'icon-solid-code',
   // schema: favicons name
 }

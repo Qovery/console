@@ -1,8 +1,8 @@
 import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Truncate } from '../../truncate/truncate'
 import { CopyToClipboard } from '../../copy-to-clipboard/copy-to-clipboard'
+import { Truncate } from '../../truncate/truncate'
 
 export interface MenuItemProps {
   name: string
