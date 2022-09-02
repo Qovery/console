@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { convertMemory } from '@console/shared/utils'
@@ -7,10 +7,11 @@ import InputText from '../input-text/input-text'
 
 export interface InputSizeUnitProps {
   name: string
+  currentUnit?: string | MemorySizeEnum
   maxSize?: number
   minSize?: number
-  getUnit?: Dispatch<SetStateAction<MemorySizeEnum | string>>
   currentSize?: number
+  getUnit?: (value: string | MemorySizeEnum) => string
 }
 
 export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number | string) => {
@@ -22,10 +23,10 @@ export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number |
 }
 
 export function InputSizeUnit(props: InputSizeUnitProps) {
-  const { name, maxSize, minSize = 0, currentSize = 0, getUnit } = props
+  const { name, maxSize, minSize = 0, currentSize = 0, getUnit, currentUnit } = props
 
   const { control, watch, setValue } = useFormContext()
-  const [memorySize, setMemorySize] = useState<string | MemorySizeEnum>(MemorySizeEnum.MB)
+  const [memorySize, setMemorySize] = useState<string | MemorySizeEnum>(currentUnit || MemorySizeEnum.MB)
 
   const pattern = {
     value: /^[0-9]+$/,
@@ -36,12 +37,14 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
     getUnit && getUnit(size)
     setMemorySize(size)
 
-    const currentSizeByUnit = getSizeUnit(size, watch(name))
-    setValue(name, currentSizeByUnit)
+    if (size !== memorySize) {
+      const currentSizeByUnit = getSizeUnit(size, watch(name))
+      setValue(name, currentSizeByUnit)
+    }
   }
 
   return (
-    <div className="flex w-full gap-3">
+    <div key={`size-${name}-${memorySize}`} className="flex w-full gap-3">
       <div className="w-full">
         <Controller
           name={name}

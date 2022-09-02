@@ -10,8 +10,7 @@ import {
   HelpSection,
   Icon,
   IconAwesomeEnum,
-  InputSelect,
-  InputText,
+  InputSizeUnit,
   Slider,
   WarningBox,
   WarningBoxEnum,
@@ -20,21 +19,16 @@ import { convertCpuToVCpu } from '@console/shared/utils'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  handleChangeMemoryUnit: () => void
-  memorySize: MemorySizeEnum
+  getMemoryUnit: (value: string | MemorySizeEnum) => string
+  memorySize: MemorySizeEnum | string
   displayWarningCpu: boolean
   application?: ApplicationEntity
   loading?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, handleChangeMemoryUnit, application, memorySize, displayWarningCpu } = props
+  const { onSubmit, loading, getMemoryUnit, application, memorySize, displayWarningCpu } = props
   const { control, formState, watch } = useFormContext()
-
-  const pattern = {
-    value: /^[0-9]+$/,
-    message: 'Please enter a number.',
-  }
 
   const maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
@@ -83,57 +77,14 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               />
             )}
           </BlockContent>
-          <BlockContent title="RAM" key={`memory-${memorySize}`}>
-            <div className="flex w-full gap-3">
-              <div className="w-full">
-                <Controller
-                  name="memory"
-                  control={control}
-                  rules={{
-                    required: 'Please enter a size.',
-                    validate: (value: number) => value <= maxMemoryBySize,
-                    max: maxMemoryBySize,
-                    pattern: pattern,
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      type="number"
-                      dataTestId="input-memory"
-                      name={field.name}
-                      onChange={field.onChange}
-                      value={field.value}
-                      label="Size"
-                      error={
-                        error?.type === 'required'
-                          ? 'Please enter a size.'
-                          : error?.type === 'max'
-                          ? `Maximum allowed memory is: ${maxMemoryBySize} ${memorySize}.`
-                          : undefined
-                      }
-                    />
-                  )}
-                />
-                <p data-testid="current-consumption" className="text-text-400 text-xs mt-1 ml-4">
-                  Current consumption:{' '}
-                  {application?.memory &&
-                    `${
-                      application?.memory < 1024
-                        ? application?.memory + ` ${MemorySizeEnum.MB}`
-                        : application?.memory / 1024 + ` ${MemorySizeEnum.GB}`
-                    }`}
-                </p>
-              </div>
-              <InputSelect
-                className="w-full h-full"
-                onChange={handleChangeMemoryUnit}
-                items={Object.values(MemorySizeEnum).map((size) => ({
-                  label: size,
-                  value: size,
-                }))}
-                value={memorySize}
-                label="Unit"
-              />
-            </div>
+          <BlockContent title="RAM">
+            <InputSizeUnit
+              name="memory"
+              maxSize={maxMemoryBySize}
+              currentSize={application?.memory}
+              currentUnit={memorySize}
+              getUnit={getMemoryUnit}
+            />
           </BlockContent>
           <BlockContent title="Instances">
             <p className="text-text-600 mb-3 font-medium">{`${watch('instances')[0]} - ${watch('instances')[1]}`}</p>

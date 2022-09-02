@@ -1,4 +1,4 @@
-import { Dispatch, FormEventHandler, SetStateAction } from 'react'
+import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { DatabaseEntity } from '@console/shared/interfaces'
@@ -7,15 +7,16 @@ import { convertCpuToVCpu } from '@console/shared/utils'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
+  storageSize: MemorySizeEnum | string
   memorySize: MemorySizeEnum | string
-  setMemorySize: Dispatch<SetStateAction<MemorySizeEnum | string>>
-  setStorageSize: Dispatch<SetStateAction<MemorySizeEnum | string>>
+  getMemoryUnit: (value: string | MemorySizeEnum) => string
+  getStorageUnit: (value: string | MemorySizeEnum) => string
   database?: DatabaseEntity
   loading?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, database, memorySize, setMemorySize, setStorageSize } = props
+  const { onSubmit, loading, database, memorySize, getMemoryUnit, storageSize, getStorageUnit } = props
   const { control, formState, watch } = useFormContext()
 
   const maxMemoryBySize =
@@ -53,11 +54,17 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               name="memory"
               maxSize={maxMemoryBySize}
               currentSize={database?.memory}
-              getUnit={setMemorySize}
+              currentUnit={memorySize}
+              getUnit={getMemoryUnit}
             />
           </BlockContent>
           <BlockContent title="Storage">
-            <InputSizeUnit name="storage" currentSize={database?.storage} getUnit={setStorageSize} />
+            <InputSizeUnit
+              name="storage"
+              currentSize={database?.storage}
+              currentUnit={storageSize}
+              getUnit={getStorageUnit}
+            />
           </BlockContent>
           <div className="flex justify-end">
             <Button

@@ -11,7 +11,7 @@ const application = applicationFactoryMock(1)[0]
 const props: PageSettingsResourcesProps = {
   loading: false,
   onSubmit: () => jest.fn(),
-  handleChangeMemoryUnit: jest.fn(),
+  setMemorySize: jest.fn(),
   memorySize: MemorySizeEnum.MB,
   application: application,
   displayWarningCpu: true,
@@ -65,20 +65,6 @@ describe('PageSettingsResources', () => {
 
     getByTestId('warning-box')
     expect(img.classList.contains(IconAwesomeEnum.TRIANGLE_EXCLAMATION)).toBe(true)
-  })
-
-  it('should render current consumption for memory with GB', () => {
-    const { getByTestId } = render(wrapWithReactHookForm(<PageSettingsResources {...props} />))
-    expect(getByTestId('current-consumption').textContent).toBe('Current consumption: 1 GB')
-  })
-
-  it('should render current consumption for memory with MB', () => {
-    const newApp = props.application
-    if (newApp) newApp.memory = 100
-    props.application = newApp
-
-    const { getByTestId } = render(wrapWithReactHookForm(<PageSettingsResources {...props} />))
-    expect(getByTestId('current-consumption').textContent).toBe('Current consumption: 100 MB')
   })
 
   it('should submit the form', async () => {

@@ -46,6 +46,16 @@ export function PageSettingsResourcesFeature() {
   const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
   const [storageSize, setStorageSize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
 
+  const getMemoryUnit = (value: string) => {
+    setMemorySize(value)
+    return value
+  }
+
+  const getStorageUnit = (value: string) => {
+    setStorageSize(value)
+    return value
+  }
+
   useEffect(() => {
     methods.reset({
       memory: database?.memory,
@@ -77,9 +87,10 @@ export function PageSettingsResourcesFeature() {
         onSubmit={onSubmit}
         loading={loading}
         database={database}
+        storageSize={storageSize}
         memorySize={memorySize}
-        setMemorySize={setMemorySize}
-        setStorageSize={setStorageSize}
+        getMemoryUnit={getMemoryUnit}
+        getStorageUnit={getStorageUnit}
       />
     </FormProvider>
   )

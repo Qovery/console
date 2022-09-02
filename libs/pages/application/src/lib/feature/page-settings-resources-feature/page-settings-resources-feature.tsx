@@ -5,11 +5,15 @@ import { useParams } from 'react-router-dom'
 import { editApplication, selectApplicationById } from '@console/domains/application'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
-import { convertCpuToVCpu, convertMemory } from '@console/shared/utils'
+import { convertCpuToVCpu } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity, memorySize: MemorySizeEnum) => {
+export const handleSubmit = (
+  data: FieldValues,
+  application: ApplicationEntity,
+  memorySize: MemorySizeEnum | string
+) => {
   const cloneApplication = Object.assign({}, application)
   const currentMemory = Number(data['memory'])
 
@@ -46,12 +50,19 @@ export function PageSettingsResourcesFeature() {
     },
   })
 
-  const [memorySize, setMemorySize] = useState<MemorySizeEnum>(MemorySizeEnum.MB)
+  const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
+
+  const getMemoryUnit = (value: string) => {
+    setMemorySize(value)
+    return value
+  }
 
   useEffect(() => {
-    methods.setValue('memory', application?.memory)
-    methods.setValue('cpu', [convertCpuToVCpu(application?.cpu)])
-    methods.setValue('instances', [application?.min_running_instances || 1, application?.max_running_instances || 1])
+    methods.reset({
+      memory: application?.memory,
+      cpu: [convertCpuToVCpu(application?.cpu)],
+      instances: [application?.min_running_instances || 1, application?.max_running_instances || 1],
+    })
   }, [
     methods,
     application?.memory,
@@ -59,20 +70,6 @@ export function PageSettingsResourcesFeature() {
     application?.min_running_instances,
     application?.max_running_instances,
   ])
-
-  const handleChangeMemoryUnit = () => {
-    const watchMemory = methods.watch('memory')
-    const newMemorySize = memorySize === MemorySizeEnum.MB ? MemorySizeEnum.GB : MemorySizeEnum.MB
-    setMemorySize(newMemorySize)
-
-    if (newMemorySize === MemorySizeEnum.GB) {
-      const newMemory = convertMemory(Number(watchMemory), MemorySizeEnum.MB)
-      methods.setValue('memory', newMemory)
-    } else {
-      const newMemory = convertMemory(Number(watchMemory), MemorySizeEnum.GB)
-      methods.setValue('memory', newMemory)
-    }
-  }
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!application) return
@@ -102,7 +99,7 @@ export function PageSettingsResourcesFeature() {
         loading={loading}
         application={application}
         memorySize={memorySize}
-        handleChangeMemoryUnit={handleChangeMemoryUnit}
+        getMemoryUnit={getMemoryUnit}
         displayWarningCpu={displayWarningCpu}
       />
     </FormProvider>
