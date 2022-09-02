@@ -1,30 +1,36 @@
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-// import { editApplication } from '@console/domains/application'
-import { selectDatabaseById } from '@console/domains/database'
+import { editDatabase, selectDatabaseById } from '@console/domains/database'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { DatabaseEntity } from '@console/shared/interfaces'
-import { convertCpuToVCpu, convertMemory } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
+import { convertCpuToVCpu } from '@console/shared/utils'
+import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, application: DatabaseEntity, memorySize: MemorySizeEnum) => {
-  const cloneApplication = Object.assign({}, application)
+export const handleSubmit = (
+  data: FieldValues,
+  database: DatabaseEntity,
+  memorySize: MemorySizeEnum | string,
+  storageSize: MemorySizeEnum | string
+) => {
+  const cloneDatabase = Object.assign({}, database)
   const currentMemory = Number(data['memory'])
+  const currentStorage = Number(data['storage'])
 
-  cloneApplication.memory = memorySize === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
-  cloneApplication.cpu = convertCpuToVCpu(data['cpu'][0], true)
+  cloneDatabase.cpu = convertCpuToVCpu(data['cpu'][0], true)
+  cloneDatabase.memory = memorySize === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
+  cloneDatabase.storage = storageSize === MemorySizeEnum.GB ? currentStorage * 1024 : currentStorage
 
-  return cloneApplication
+  return cloneDatabase
 }
 
 export function PageSettingsResourcesFeature() {
   const { databaseId = '' } = useParams()
 
   const [loading, setLoading] = useState(false)
-  // const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>()
 
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
 
@@ -32,46 +38,37 @@ export function PageSettingsResourcesFeature() {
     mode: 'onChange',
     defaultValues: {
       memory: database?.memory,
+      storage: database?.storage,
       cpu: [convertCpuToVCpu(database?.cpu)],
     },
   })
 
-  const [memorySize, setMemorySize] = useState<MemorySizeEnum>(MemorySizeEnum.MB)
+  const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
+  const [storageSize, setStorageSize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
 
   useEffect(() => {
-    methods.setValue('memory', database?.memory)
-    methods.setValue('cpu', [convertCpuToVCpu(database?.cpu)])
-  }, [methods, database?.memory, database?.cpu])
-
-  const handleChangeMemoryUnit = () => {
-    const watchMemory = methods.watch('memory')
-    const newMemorySize = memorySize === MemorySizeEnum.MB ? MemorySizeEnum.GB : MemorySizeEnum.MB
-    setMemorySize(newMemorySize)
-
-    if (newMemorySize === MemorySizeEnum.GB) {
-      const newMemory = convertMemory(Number(watchMemory), MemorySizeEnum.MB)
-      methods.setValue('memory', newMemory)
-    } else {
-      const newMemory = convertMemory(Number(watchMemory), MemorySizeEnum.GB)
-      methods.setValue('memory', newMemory)
-    }
-  }
+    methods.reset({
+      memory: database?.memory,
+      storage: database?.storage,
+      cpu: [convertCpuToVCpu(database?.cpu)],
+    })
+  }, [methods, database?.memory, database?.storage, database?.cpu])
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!database) return
 
     setLoading(true)
-    // const cloneDatabase = handleSubmit(data, database, memorySize)
+    const cloneDatabase = handleSubmit(data, database, memorySize, storageSize)
 
-    // dispatch(
-    //   editApplication({
-    //     applicationId: applicationId,
-    //     data: cloneDatabase,
-    //   })
-    // )
-    //   .unwrap()
-    //   .then(() => setLoading(false))
-    //   .catch(() => setLoading(false))
+    dispatch(
+      editDatabase({
+        databaseId: databaseId,
+        data: cloneDatabase,
+      })
+    )
+      .unwrap()
+      .then(() => setLoading(false))
+      .catch(() => setLoading(false))
   })
 
   return (
@@ -81,7 +78,8 @@ export function PageSettingsResourcesFeature() {
         loading={loading}
         database={database}
         memorySize={memorySize}
-        handleChangeMemoryUnit={handleChangeMemoryUnit}
+        setMemorySize={setMemorySize}
+        setStorageSize={setStorageSize}
       />
     </FormProvider>
   )
