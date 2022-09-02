@@ -1,4 +1,8 @@
+import { Environment } from 'qovery-typescript-axios'
+import { createContext, useState } from 'react'
+import { useParams } from 'react-router'
 import { IconEnum } from '@console/shared/enums'
+import { ApplicationEntity } from '@console/shared/interfaces'
 import {
   Button,
   ButtonIconAction,
@@ -15,13 +19,8 @@ import {
   TagMode,
   TagSize,
 } from '@console/shared/ui'
-import { Environment } from 'qovery-typescript-axios'
-import { useParams } from 'react-router'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { copyToClipboard } from '@console/shared/utils'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
-import { createContext, useState } from 'react'
-
-//import { ClickEvent } from '@szhsin/react-menu'
 
 export const ApplicationContext = createContext<{
   showHideAllEnvironmentVariablesValues: boolean
@@ -101,6 +100,11 @@ export function Container(props: ContainerProps) {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
                 onClick: () => removeApplication(applicationId ? applicationId : ''),
+              },
+              {
+                name: 'Copy identifiers',
+                contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
+                onClick: () => copyToClipboard(copyContent),
               },
             ],
           },
@@ -188,14 +192,7 @@ export function Container(props: ContainerProps) {
     <ApplicationContext.Provider
       value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
     >
-      <Header
-        title={application?.name}
-        icon={IconEnum.APPLICATION}
-        buttons={headerButtons}
-        copyTitle
-        copyContent={copyContent}
-        actions={headerActions}
-      />
+      <Header title={application?.name} icon={IconEnum.APPLICATION} buttons={headerButtons} actions={headerActions} />
       <TabsFeature />
       {children}
     </ApplicationContext.Provider>

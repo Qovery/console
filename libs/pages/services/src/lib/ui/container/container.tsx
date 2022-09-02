@@ -21,6 +21,7 @@ import {
   TagMode,
   TagSize,
 } from '@console/shared/ui'
+import { copyToClipboard } from '@console/shared/utils'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]
@@ -64,6 +65,11 @@ export function Container(props: ContainerProps) {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
                 onClick: () => removeEnvironment(),
+              },
+              {
+                name: 'Copy identifiers',
+                contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
+                onClick: () => copyToClipboard(copyContent),
               },
             ],
           },
@@ -178,14 +184,7 @@ export function Container(props: ContainerProps) {
 
   return (
     <>
-      <Header
-        title={environment?.name}
-        icon={IconEnum.APPLICATION}
-        buttons={headerButtons}
-        copyTitle
-        copyContent={copyContent}
-        actions={headerActions}
-      />
+      <Header title={environment?.name} icon={IconEnum.APPLICATION} buttons={headerButtons} actions={headerActions} />
       <Tabs items={tabsItems} contentRight={contentTabs} />
       {children}
     </>
