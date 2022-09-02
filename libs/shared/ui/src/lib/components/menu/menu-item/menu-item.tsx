@@ -64,7 +64,10 @@ export function MenuItem(props: MenuItemProps) {
         data-testid="menuItem"
         target="_blank"
         rel="noopener noreferrer"
-        onClick={onClick}
+        onClick={(e: ClickEvent) => {
+          e.syntheticEvent.stopPropagation()
+          onClick && onClick(e)
+        }}
       >
         {itemContent}
       </Item>

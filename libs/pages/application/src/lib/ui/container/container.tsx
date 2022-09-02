@@ -97,11 +97,6 @@ export function Container(props: ContainerProps) {
           {
             items: [
               {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeApplication(applicationId ? applicationId : ''),
-              },
-              {
                 name: 'Edit code',
                 contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
                 link: {
@@ -113,6 +108,11 @@ export function Container(props: ContainerProps) {
                 name: 'Copy identifiers',
                 contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
                 onClick: () => copyToClipboard(copyContent),
+              },
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeApplication(applicationId ? applicationId : ''),
               },
             ],
           },

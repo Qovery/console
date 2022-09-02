@@ -23,9 +23,9 @@ describe('Build url for code editor', () => {
 
   it('should not generate an url for Bitbucket application', () => {
     gitRepository.provider = GitProviderEnum.BITBUCKET
-    gitRepository.url = 'https://bitbucket.org/remi_bonnet/my-test/src/master/'
+    gitRepository.url = 'https://bitbucket.org/remi_bonnet/my-test'
 
     const url = urlCodeEditor(gitRepository)
-    expect(url).toEqual(undefined)
+    expect(url).toEqual('https://gitpod.io/#https://bitbucket.org/remi_bonnet/my-test/tree/main')
   })
 })

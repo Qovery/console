@@ -77,17 +77,17 @@ export function TableRowServices(props: TableRowServicesProps) {
           {
             items: [
               {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeApplication(data.id, data.name),
-              },
-              {
                 name: 'Edit code',
                 contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
                 link: {
                   url: urlCodeEditor((data as ApplicationEntity).git_repository) || '',
                   external: true,
                 },
+              },
+              {
+                name: 'Remove',
+                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                onClick: () => removeApplication(data.id, data.name),
               },
             ],
           },
