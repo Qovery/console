@@ -1,11 +1,11 @@
-import { useEffect } from 'react'
-import { useAuth } from '@console/shared/auth'
 import { Organization, Project } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router'
 import { fetchOrganization } from '@console/domains/organization'
 import { fetchProjects } from '@console/domains/projects'
-import { ONBOARDING_URL, OVERVIEW_URL } from '@console/shared/router'
-import { useNavigate } from 'react-router'
-import { useDispatch } from 'react-redux'
+import { useAuth } from '@console/shared/auth'
+import { ONBOARDING_URL, ORGANIZATION_URL, OVERVIEW_URL } from '@console/shared/router'
 import { AppDispatch } from '@console/store/data'
 import {
   getCurrentOrganizationIdFromStorage,
@@ -35,6 +35,7 @@ export function useRedirectIfLogged() {
         const organizationId = organization[0].id
         const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
+        else navigate(ORGANIZATION_URL(organizationId))
       }
       if (isOnboarding && organization.length === 0) {
         navigate(ONBOARDING_URL)

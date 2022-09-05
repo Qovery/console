@@ -1,12 +1,12 @@
-import { NavLink, useParams } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch } from '@console/store/data'
-import { useEffect, useState } from 'react'
 import { Project } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { NavLink, useParams } from 'react-router-dom'
+import { fetchOrganization, selectAllOrganization } from '@console/domains/organization'
 import { fetchProjects } from '@console/domains/projects'
 import { ORGANIZATION_URL, OVERVIEW_URL } from '@console/shared/router'
 import { LoadingScreen } from '@console/shared/ui'
-import { fetchOrganization, selectAllOrganization } from '@console/domains/organization'
+import { AppDispatch } from '@console/store/data'
 
 export function RedirectOverview() {
   const { organizationId = '' } = useParams()
