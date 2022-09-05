@@ -77,8 +77,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               <WarningBox
                 dataTestId="warning-box"
                 className="mt-3"
-                title="Your cluster will be overused"
-                message="Your application may crash, increase the capacity of your cluster or reduce consumption."
+                title="Not enough resources"
+                message="Increase the capacity of your cluster nodes or reduce the service consumption."
                 type={WarningBoxEnum.ERROR}
               />
             )}

@@ -91,9 +91,7 @@ export function PageSettingsResourcesFeature() {
       .catch(() => setLoading(false))
   })
 
-  // @todo hide display warning for now, waiting right condition
-  // const displayWarningCpu: boolean = methods.watch('cpu')[0] > (application?.cpu || 0) / 1000
-  const displayWarningCpu = false
+  const displayWarningCpu: boolean = methods.watch('cpu')[0] > (application?.cpu || 0) / 1000
 
   return (
     <FormProvider {...methods}>
