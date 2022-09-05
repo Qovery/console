@@ -1,7 +1,12 @@
 import { ServicePortPorts } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { applicationsLoadingStatus, editApplication, selectApplicationById } from '@console/domains/application'
+import {
+  applicationsLoadingStatus,
+  editApplication,
+  postApplicationActionsRestart,
+  selectApplicationById,
+} from '@console/domains/application'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -17,7 +22,7 @@ export const deletePort = (application?: ApplicationEntity, portId?: string) => 
 export function PageSettingsPortsFeature() {
   const dispatch = useDispatch<AppDispatch>()
 
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
@@ -28,6 +33,10 @@ export function PageSettingsPortsFeature() {
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
+
+  const toasterCallback = () => {
+    dispatch(postApplicationActionsRestart({ applicationId: applicationId, environmentId: environmentId }))
+  }
 
   return (
     <PageSettingsPorts
@@ -53,6 +62,7 @@ export function PageSettingsPortsFeature() {
               editApplication({
                 applicationId: applicationId,
                 data: cloneApplication,
+                toasterCallback,
               })
             )
           },

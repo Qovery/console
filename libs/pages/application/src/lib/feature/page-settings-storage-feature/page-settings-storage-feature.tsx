@@ -1,7 +1,12 @@
 import { ApplicationStorageStorage } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, getApplicationsState, selectApplicationById } from '@console/domains/application'
+import {
+  editApplication,
+  getApplicationsState,
+  postApplicationActionsRestart,
+  selectApplicationById,
+} from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -15,7 +20,7 @@ export const removeStorage = (storage: ApplicationStorageStorage, application: A
 }
 
 export function PageSettingsStorageFeature() {
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -25,6 +30,10 @@ export function PageSettingsStorageFeature() {
     (state) => selectApplicationById(state, applicationId),
     (a, b) => a?.id === b?.id && JSON.stringify(a?.storage) === JSON.stringify(b?.storage)
   )
+
+  const toasterCallback = () => {
+    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+  }
 
   return (
     <PageSettingsStorage
@@ -38,7 +47,7 @@ export function PageSettingsStorageFeature() {
           action: async () => {
             if (!application) return
             const app = removeStorage(storage, application)
-            await dispatch(editApplication({ applicationId: app.id, data: app }))
+            await dispatch(editApplication({ applicationId: app.id, data: app, toasterCallback }))
 
             if (!error) {
               closeModal()

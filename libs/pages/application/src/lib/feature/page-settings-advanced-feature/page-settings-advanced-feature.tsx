@@ -8,6 +8,7 @@ import {
   fetchApplicationAdvancedSettings,
   fetchDefaultApplicationAdvancedSettings,
   getApplicationsState,
+  postApplicationActionsRestart,
   selectApplicationById,
 } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
@@ -17,7 +18,7 @@ import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-
 import { initFormValues } from './utils'
 
 export function PageSettingsAdvancedFeature() {
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
@@ -64,6 +65,10 @@ export function PageSettingsAdvancedFeature() {
     }
   }, [application, keys, methods])
 
+  const toasterCallback = () => {
+    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+  }
+
   const onSubmit = methods.handleSubmit((data) => {
     let dataFormatted = { ...data }
 
@@ -74,7 +79,7 @@ export function PageSettingsAdvancedFeature() {
     })
 
     dataFormatted = objectFlattener(dataFormatted)
-    dispatch(editApplicationAdvancedSettings({ applicationId, settings: dataFormatted }))
+    dispatch(editApplicationAdvancedSettings({ applicationId, settings: dataFormatted, toasterCallback }))
   })
 
   return (

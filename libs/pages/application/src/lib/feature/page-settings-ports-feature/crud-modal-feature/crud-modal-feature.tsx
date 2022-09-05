@@ -2,7 +2,7 @@ import { ServicePortPorts } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { editApplication } from '@console/domains/application'
+import { editApplication, postApplicationActionsRestart } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch } from '@console/store/data'
 import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
@@ -52,6 +52,15 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   })
   const dispatch = useDispatch<AppDispatch>()
 
+  const toasterCallback = () => {
+    dispatch(
+      postApplicationActionsRestart({
+        applicationId: props.application?.id || '',
+        environmentId: props.application?.environment?.id || '',
+      })
+    )
+  }
+
   const onSubmit = methods.handleSubmit((data) => {
     if (!props.application) return
 
@@ -62,6 +71,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
       editApplication({
         applicationId: props.application.id,
         data: cloneApplication,
+        toasterCallback,
       })
     )
       .unwrap()

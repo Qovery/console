@@ -21,7 +21,7 @@ export const fetchCustomDomains = createAsyncThunk(
 
 export const createCustomDomain = createAsyncThunk(
   'customDomains/create',
-  async (payload: { applicationId: string; domain: string }, thunkAPI) => {
+  async (payload: { applicationId: string; domain: string; toasterCallback: () => void }, thunkAPI) => {
     const response = await customDomainApi.createApplicationCustomDomain(payload.applicationId, {
       domain: payload.domain,
     })
@@ -31,7 +31,10 @@ export const createCustomDomain = createAsyncThunk(
 
 export const editCustomDomain = createAsyncThunk(
   'customDomains/edit',
-  async (payload: { applicationId: string; domain: string; customDomain: CustomDomain }, thunkAPI) => {
+  async (
+    payload: { applicationId: string; domain: string; customDomain: CustomDomain; toasterCallback: () => void },
+    thunkAPI
+  ) => {
     const response = await customDomainApi.editCustomDomain(payload.applicationId, payload.customDomain.id, {
       domain: payload.domain,
     })
@@ -86,7 +89,14 @@ export const customDomainSlice = createSlice({
 
         state.loadingStatus = 'loaded'
         state.error = null
-        toast(ToastEnum.SUCCESS, `Your domain has been created`)
+        toast(
+          ToastEnum.SUCCESS,
+          `Your domain has been created`,
+          'Application must be redeployed to apply the settings update',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(createCustomDomain.rejected, (state: CustomDomainsState, action) => {
         state.loadingStatus = 'error'
@@ -101,7 +111,14 @@ export const customDomainSlice = createSlice({
 
         state.loadingStatus = 'loaded'
         state.error = null
-        toast(ToastEnum.SUCCESS, `Your domain has been updated`)
+        toast(
+          ToastEnum.SUCCESS,
+          `Your domain has been updated`,
+          'Application must be redeployed to apply the settings update',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(editCustomDomain.rejected, (state: CustomDomainsState, action) => {
         state.loadingStatus = 'error'

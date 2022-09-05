@@ -1,7 +1,12 @@
 import { CustomDomain } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { createCustomDomain, editCustomDomain, getCustomDomainsState } from '@console/domains/application'
+import {
+  createCustomDomain,
+  editCustomDomain,
+  getCustomDomainsState,
+  postApplicationActionsRestart,
+} from '@console/domains/application'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
@@ -20,18 +25,32 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const dispatch = useDispatch<AppDispatch>()
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => getCustomDomainsState(state).loadingStatus)
 
+  const toasterCallback = () => {
+    dispatch(
+      postApplicationActionsRestart({
+        applicationId: props.application?.id || '',
+        environmentId: props.application?.environment?.id || '',
+      })
+    )
+  }
+
   const onSubmit = methods.handleSubmit((data) => {
     if (!props.application) return
 
     if (props.customDomain) {
       dispatch(
-        editCustomDomain({ applicationId: props.application.id, customDomain: props.customDomain, domain: data.domain })
+        editCustomDomain({
+          applicationId: props.application.id,
+          customDomain: props.customDomain,
+          domain: data.domain,
+          toasterCallback,
+        })
       )
         .unwrap()
         .then(() => props.onClose())
         .catch((e) => console.error(e))
     } else {
-      dispatch(createCustomDomain({ applicationId: props.application.id, domain: data.domain }))
+      dispatch(createCustomDomain({ applicationId: props.application.id, domain: data.domain, toasterCallback }))
         .unwrap()
         .then(() => props.onClose())
         .catch((e) => console.error(e))
