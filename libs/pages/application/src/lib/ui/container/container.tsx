@@ -1,6 +1,8 @@
-import { Environment } from 'qovery-typescript-axios'
+import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { createContext, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
+import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@console/domains/application'
 import { IconEnum } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import {
@@ -20,7 +22,9 @@ import {
   TagSize,
 } from '@console/shared/ui'
 import { copyToClipboard, urlCodeEditor } from '@console/shared/utils'
+import { AppDispatch } from '@console/store/data'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
+import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export const ApplicationContext = createContext<{
   showHideAllEnvironmentVariablesValues: boolean
@@ -40,8 +44,18 @@ export interface ContainerProps {
 
 export function Container(props: ContainerProps) {
   const { application, environment, children, statusActions, removeApplication } = props
-  const { organizationId, projectId, environmentId, applicationId } = useParams()
+  const { organizationId, projectId, environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const redeployApplication = () => {
+    if (application?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+      dispatch(postApplicationActionsDeploy({ environmentId, applicationId }))
+    } else {
+      dispatch(postApplicationActionsRestart({ environmentId, applicationId }))
+    }
+  }
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${applicationId}`
 
@@ -202,6 +216,9 @@ export function Container(props: ContainerProps) {
     >
       <Header title={application?.name} icon={IconEnum.APPLICATION} buttons={headerButtons} actions={headerActions} />
       <TabsFeature />
+      {application && application.status?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+        <NeedRedeployFlag application={application} onClickCTA={redeployApplication} />
+      )}
       {children}
     </ApplicationContext.Provider>
   )
