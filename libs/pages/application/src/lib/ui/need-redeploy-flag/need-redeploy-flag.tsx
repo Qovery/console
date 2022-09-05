@@ -23,6 +23,7 @@ export function NeedRedeployFlag(props: NeedRedeployFlagProps) {
           size={ButtonSize.TINY}
           onClick={props.onClickCTA}
           className="!text-warning-900"
+          iconRightClassName="!text-xxs"
         >
           {props.application.status?.service_deployment_status === ServiceDeploymentStatusEnum.OUT_OF_DATE
             ? 'Redeploy'
@@ -35,15 +36,3 @@ export function NeedRedeployFlag(props: NeedRedeployFlagProps) {
 }
 
 export default NeedRedeployFlag
-
-/*
-<qovery-announce icon="info" *ngIf="serviceDeploymentStatus === ServiceDeploymentStatus.OUT_OF_DATE">
-  <p>The {{ serviceType }} needs to be restarted to apply the setting update.</p>
-  <span class="q-link" (click)="redeploy.emit()">Redeploy</span>
-</qovery-announce>
-
-<qovery-announce icon="info" *ngIf="serviceDeploymentStatus === ServiceDeploymentStatus.NEVER_DEPLOYED">
-  <p>This service has been created but not yet deployed. Deploy it to access it.</p>
-  <span class="q-link" (click)="redeploy.emit()">Deploy</span>
-</qovery-announce>
-*/
