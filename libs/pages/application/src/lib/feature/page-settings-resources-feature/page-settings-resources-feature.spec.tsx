@@ -79,7 +79,7 @@ describe('PageSettingsResourcesFeature', () => {
     const { getByTestId } = render(<PageSettingsResourcesFeature />)
 
     await act(() => {
-      const input = getByTestId('input-memory')
+      const input = getByTestId('input-memory-memory')
       fireEvent.input(input, { target: { value: 9 } })
     })
 
