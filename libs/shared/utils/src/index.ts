@@ -19,6 +19,7 @@ export * from './lib/tools/object-flattener'
 export * from './lib/tools/convert-memory-size'
 export * from './lib/tools/convert-cpu-to-vcpu'
 export * from './lib/tools/copy-to-clipboard'
+export * from './lib/tools/url-code-editor'
 // constants
 export * from './lib/constants/environment-mode-values'
 export * from './lib/constants/timezone-values'

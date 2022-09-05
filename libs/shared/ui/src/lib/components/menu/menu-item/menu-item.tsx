@@ -1,8 +1,8 @@
 import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Truncate } from '../../truncate/truncate'
 import { CopyToClipboard } from '../../copy-to-clipboard/copy-to-clipboard'
+import { Truncate } from '../../truncate/truncate'
 
 export interface MenuItemProps {
   name: string
@@ -64,7 +64,10 @@ export function MenuItem(props: MenuItemProps) {
         data-testid="menuItem"
         target="_blank"
         rel="noopener noreferrer"
-        onClick={onClick}
+        onClick={(e: ClickEvent) => {
+          e.syntheticEvent.stopPropagation()
+          onClick && onClick(e)
+        }}
       >
         {itemContent}
       </Item>

@@ -1,4 +1,7 @@
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { useParams } from 'react-router'
 import { IconEnum, RunningStatus, ServicesEnum } from '@console/shared/enums'
+import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import {
   Avatar,
   AvatarStyle,
@@ -13,10 +16,7 @@ import {
   TagCommit,
   Tooltip,
 } from '@console/shared/ui'
-import { timeAgo, upperCaseFirstLetter } from '@console/shared/utils'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { useParams } from 'react-router'
+import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@console/shared/utils'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
@@ -77,6 +77,14 @@ export function TableRowServices(props: TableRowServicesProps) {
           {
             items: [
               {
+                name: 'Edit code',
+                contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
+                link: {
+                  url: urlCodeEditor((data as ApplicationEntity).git_repository) || '',
+                  external: true,
+                },
+              },
+              {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
                 onClick: () => removeApplication(data.id, data.name),
@@ -88,7 +96,7 @@ export function TableRowServices(props: TableRowServicesProps) {
     },
   ]
 
-  const buttonActionsDefaultDb = [
+  const buttonActionsDefaultDB = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
@@ -162,7 +170,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <ButtonIconAction
-                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp : buttonActionsDefaultDb}
+                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp : buttonActionsDefaultDB}
                   statusInformation={{
                     id: data.id,
                     name: data.name,
