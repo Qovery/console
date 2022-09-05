@@ -32,7 +32,7 @@ describe('CreateCloneEnvironmentModal', () => {
 
   beforeEach(() => {
     defaultValues = {
-      mode: EnvironmentModeEnum.PREVIEW,
+      mode: EnvironmentModeEnum.DEVELOPMENT,
       cluster: mockClusters[0].id,
       name: '',
     }

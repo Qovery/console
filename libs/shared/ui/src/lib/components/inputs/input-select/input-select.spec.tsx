@@ -1,7 +1,7 @@
 import { getByTestId } from '@testing-library/react'
+import { changeSelectValueByLabel } from '__tests__/utils/changes-select-value'
 import { render } from '__tests__/utils/setup-jest'
 import InputSelect, { InputSelectProps } from './input-select'
-import { changeSelectValueByLabel } from './utils/change-select-value'
 
 describe('InputSelect', () => {
   let props: InputSelectProps

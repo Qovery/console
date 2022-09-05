@@ -1,10 +1,10 @@
 import { act, fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
+import { changeSelectValueByLabel } from '__tests__/utils/changes-select-value'
 import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import * as storeEnvironment from '@console/domains/environment'
 import { environmentFactoryMock } from '@console/domains/environment'
 import { clusterFactoryMock } from '@console/domains/organization'
-import { changeSelectValueByLabel } from '@console/shared/ui'
 import CreateCloneEnvironmentModalFeature, {
   CreateCloneEnvironmentModalFeatureProps,
 } from './create-clone-environment-modal-feature'

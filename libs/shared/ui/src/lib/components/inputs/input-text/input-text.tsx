@@ -30,11 +30,11 @@ export function InputText(props: InputTextProps) {
 
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
-  const [_value, setValue] = useState(value)
+  const [currentValue, setCurrentValue] = useState(value)
 
   useEffect(() => {
-    if (value) setValue(value)
-  }, [value, setValue])
+    if (value) setCurrentValue(value)
+  }, [value, setCurrentValue])
 
   const hasFocus = focused || (value?.toString() && value?.toString().length > 0)
 
@@ -73,11 +73,11 @@ export function InputText(props: InputTextProps) {
               name={name}
               id={label}
               className="input__value"
-              value={_value}
+              value={currentValue}
               type={type}
               onChange={(e) => {
                 if (onChange) onChange(e)
-                setValue(e.currentTarget.value)
+                setCurrentValue(e.currentTarget.value)
               }}
               disabled={disabled}
               onFocus={() => setFocused(true)}

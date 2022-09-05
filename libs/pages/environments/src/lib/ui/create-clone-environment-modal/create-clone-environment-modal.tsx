@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { FormEvent, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -18,7 +17,6 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
 
   const [environmentModes] = useState<Value[]>([
     { value: 'automatic', label: 'Automatic' },
-    { value: EnvironmentModeEnum.PREVIEW, label: 'Preview' },
     { value: EnvironmentModeEnum.DEVELOPMENT, label: 'Development' },
     { value: EnvironmentModeEnum.STAGING, label: 'Staging' },
     { value: EnvironmentModeEnum.PRODUCTION, label: 'Production' },
