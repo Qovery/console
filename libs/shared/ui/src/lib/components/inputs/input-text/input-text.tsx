@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
@@ -7,7 +7,7 @@ export interface InputTextProps {
   value?: string | number | undefined
   type?: string
   className?: string
-  onChange?: () => void
+  onChange?: (e: FormEvent<HTMLInputElement>) => void
   error?: string
   disabled?: boolean
   dataTestId?: string
@@ -18,7 +18,7 @@ export function InputText(props: InputTextProps) {
   const {
     name,
     label,
-    value,
+    value = '',
     onChange,
     type = 'text',
     error,
@@ -30,6 +30,11 @@ export function InputText(props: InputTextProps) {
 
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
+  const [currentValue, setCurrentValue] = useState(value)
+
+  useEffect(() => {
+    if (value) setCurrentValue(value)
+  }, [value, setCurrentValue])
 
   const hasFocus = focused || (value?.toString() && value?.toString().length > 0)
 
@@ -68,9 +73,12 @@ export function InputText(props: InputTextProps) {
               name={name}
               id={label}
               className="input__value"
-              defaultValue={value}
+              value={currentValue}
               type={type}
-              onChange={onChange}
+              onChange={(e) => {
+                if (onChange) onChange(e)
+                setCurrentValue(e.currentTarget.value)
+              }}
               disabled={disabled}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}

@@ -1,8 +1,10 @@
+import { useParams } from 'react-router'
 import { RunningStatus } from '@console/shared/enums'
 import { EnvironmentEntity } from '@console/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
+  IconAwesomeEnum,
   Skeleton,
   StatusChip,
   StatusLabel,
@@ -11,8 +13,10 @@ import {
   TableRow,
   TagMode,
   Tooltip,
+  useModal,
 } from '@console/shared/ui'
 import { timeAgo } from '@console/shared/utils'
+import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
@@ -24,6 +28,8 @@ export interface TableRowEnvironmentsProps {
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
+  const { organizationId = '', projectId = '' } = useParams()
+
   const {
     data,
     dataHead,
@@ -32,6 +38,8 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     buttonActions,
     removeEnvironment,
   } = props
+
+  const { openModal, closeModal } = useModal()
 
   const buttonActionsDefault = [
     {
@@ -49,6 +57,21 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
         menus: [
           {
             items: [
+              {
+                name: 'Clone',
+                contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
+                onClick: () =>
+                  openModal({
+                    content: (
+                      <CreateCloneEnvironmentModalFeature
+                        onClose={closeModal}
+                        projectId={projectId}
+                        organizationId={organizationId}
+                        environmentToClone={data}
+                      />
+                    ),
+                  }),
+              },
               {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,

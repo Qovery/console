@@ -1,11 +1,12 @@
 import { useLocation, useParams } from 'react-router'
-import {
-  ENVIRONMENTS_URL,
-  ENVIRONMENTS_DEPLOYMENT_RULES_URL,
-  ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
-} from '@console/shared/router'
-import { ButtonIcon, ButtonIconStyle, Header, ButtonAction, Icon, Tabs } from '@console/shared/ui'
 import { IconEnum } from '@console/shared/enums'
+import {
+  ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
+  ENVIRONMENTS_DEPLOYMENT_RULES_URL,
+  ENVIRONMENTS_URL,
+} from '@console/shared/router'
+import { ButtonAction, ButtonIcon, ButtonIconStyle, Header, Icon, Tabs, useModal } from '@console/shared/ui'
+import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface ContainerProps {
   children: React.ReactNode
@@ -15,6 +16,7 @@ export function Container(props: ContainerProps) {
   const { children } = props
   const { organizationId, projectId } = useParams()
   const { pathname } = useLocation()
+  const { openModal, closeModal } = useModal()
 
   const headerButtons = (
     <div className="hidden">
@@ -47,8 +49,17 @@ export function Container(props: ContainerProps) {
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
       <ButtonAction
         iconRight="icon-solid-plus"
-        external
-        link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments`}
+        onClick={() => {
+          openModal({
+            content: (
+              <CreateCloneEnvironmentModalFeature
+                onClose={closeModal}
+                projectId={projectId || ''}
+                organizationId={organizationId || ''}
+              />
+            ),
+          })
+        }}
       >
         New environment
       </ButtonAction>

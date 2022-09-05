@@ -43,7 +43,7 @@ describe('InputText', () => {
 
     const input = screen.getByRole('textbox')
 
-    fireEvent.change(input, { target: { value: 'some new text value' } })
+    fireEvent.input(input, { target: { value: 'some new text value' } })
 
     expect((input as HTMLInputElement).value).toBe('some new text value')
   })

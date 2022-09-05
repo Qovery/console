@@ -9,7 +9,7 @@ export interface InputSelectProps {
   value?: string | undefined
   items: Value[]
   className?: string
-  onChange?: () => void
+  onChange?: (e: string) => void
   error?: string
   disabled?: boolean
   portal?: boolean
@@ -31,10 +31,14 @@ export function InputSelect(props: InputSelectProps) {
     search,
   } = props
 
-  const selectedValue = value && items.find((item) => item.value === value)
+  const [selectedValue, setSelectedValue] = useState(value && items.find((item) => item.value === value))
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
   const [currentItems, setCurrentItems] = useState(items)
+
+  useEffect(() => {
+    if (value) setSelectedValue(items.find((item) => item.value === value))
+  }, [value, items, setSelectedValue])
 
   useEffect(() => {
     setCurrentItems(items)
@@ -51,9 +55,17 @@ export function InputSelect(props: InputSelectProps) {
       data-testid={dataTestId || 'input-select'}
       className={`input input--select ${hasError} ${disabled ? 'input--disabled' : ''} ${className}`}
     >
-      <ListboxInput key={label} onChange={onChange} disabled={disabled}>
+      <ListboxInput
+        key={label}
+        onChange={(e) => {
+          if (onChange) onChange(e)
+          setSelectedValue(items.find((item) => item.value === e))
+        }}
+        disabled={disabled}
+      >
         <ListboxButton
-          className={`input__button ${value !== undefined ? 'input__button--focused' : ''} ${
+          data-testid={'input-select-button'}
+          className={`input__button ${selectedValue !== undefined ? 'input__button--focused' : ''} ${
             disabled ? '!border-element-light-lighter-500' : ''
           }`}
           arrow={<Icon name="icon-solid-angle-down" className="input__arrow" />}
@@ -68,15 +80,18 @@ export function InputSelect(props: InputSelectProps) {
               <div className="input__label">
                 <label>{label}</label>
               </div>
-              {value && (
-                <div className={`input__value ${selectedValue && selectedValue.icon ? '!pl-11' : ''}`}>
+              {selectedValue && (
+                <div
+                  data-testid="input-select-value"
+                  className={`input__value ${selectedValue && selectedValue.icon ? '!pl-11' : ''}`}
+                >
                   {selectedValue ? selectedValue.label : ''}
                 </div>
               )}
             </div>
           </div>
         </ListboxButton>
-        <ListboxPopover className={`input__list ${!portal ? 'absolute' : ''}`} portal={portal}>
+        <ListboxPopover className={`input__list ${!portal ? 'absolute z-10' : 'z-50'}`} portal={portal}>
           <ListboxList className="relative">
             {search && (
               <InputSearch

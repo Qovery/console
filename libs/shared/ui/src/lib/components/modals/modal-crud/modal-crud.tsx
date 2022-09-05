@@ -10,6 +10,7 @@ export interface ModalCrudProps {
   isEdit?: boolean
   loading?: boolean
   description?: string
+  submitLabel?: string
 }
 
 export function ModalCrud(props: ModalCrudProps) {
@@ -44,7 +45,7 @@ export function ModalCrud(props: ModalCrudProps) {
             disabled={!formState.isValid}
             loading={props.loading}
           >
-            {isEdit ? 'Confirm' : 'Create'}
+            {props.submitLabel || (isEdit ? 'Confirm' : 'Create')}
           </Button>
         </div>
       </form>
