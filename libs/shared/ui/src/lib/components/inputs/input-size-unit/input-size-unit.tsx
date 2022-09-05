@@ -11,7 +11,7 @@ export interface InputSizeUnitProps {
   maxSize?: number
   minSize?: number
   currentSize?: number
-  getUnit?: (value: string | MemorySizeEnum) => string
+  getUnit?: (value: string | MemorySizeEnum) => void
 }
 
 export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number | string) => {
@@ -59,7 +59,7 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
           render={({ field, fieldState: { error } }) => (
             <InputText
               type="number"
-              dataTestId="input-memory"
+              dataTestId={`input-memory-${name}`}
               name={field.name}
               onChange={field.onChange}
               value={field.value}

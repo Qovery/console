@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { Database, DatabaseTypeEnum, DatabaseModeEnum, DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
+import { Database, DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 
 const chance = new Chance()
 
@@ -13,7 +13,7 @@ export const databaseFactoryMock = (howMany: number): Database[] =>
     version: '12',
     mode: DatabaseModeEnum.CONTAINER,
     accessibility: DatabaseAccessibilityEnum.PRIVATE,
-    cpu: 1000,
+    cpu: 1,
     memory: 1024,
     storage: 1024,
     environment: {
@@ -21,7 +21,7 @@ export const databaseFactoryMock = (howMany: number): Database[] =>
     },
     host: chance.name(),
     port: 80,
-    maximum_cpu: 10,
-    maximum_memory: 10,
+    maximum_cpu: 5012,
+    maximum_memory: 5012,
     disk_encrypted: false,
   }))

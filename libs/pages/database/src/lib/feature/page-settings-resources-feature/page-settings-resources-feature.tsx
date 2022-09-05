@@ -39,28 +39,18 @@ export function PageSettingsResourcesFeature() {
     defaultValues: {
       memory: database?.memory,
       storage: database?.storage,
-      cpu: [convertCpuToVCpu(database?.cpu)],
+      cpu: [convertCpuToVCpu(database?.cpu) || 1],
     },
   })
 
   const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
   const [storageSize, setStorageSize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
 
-  const getMemoryUnit = (value: string) => {
-    setMemorySize(value)
-    return value
-  }
-
-  const getStorageUnit = (value: string) => {
-    setStorageSize(value)
-    return value
-  }
-
   useEffect(() => {
     methods.reset({
       memory: database?.memory,
       storage: database?.storage,
-      cpu: [convertCpuToVCpu(database?.cpu)],
+      cpu: [convertCpuToVCpu(database?.cpu) || 1],
     })
   }, [methods, database?.memory, database?.storage, database?.cpu])
 
@@ -89,8 +79,8 @@ export function PageSettingsResourcesFeature() {
         database={database}
         storageSize={storageSize}
         memorySize={memorySize}
-        getMemoryUnit={getMemoryUnit}
-        getStorageUnit={getStorageUnit}
+        getMemoryUnit={(value: string | MemorySizeEnum) => setMemorySize(value)}
+        getStorageUnit={(value: string | MemorySizeEnum) => setStorageSize(value)}
       />
     </FormProvider>
   )

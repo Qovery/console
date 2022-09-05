@@ -9,8 +9,8 @@ export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   storageSize: MemorySizeEnum | string
   memorySize: MemorySizeEnum | string
-  getMemoryUnit: (value: string | MemorySizeEnum) => string
-  getStorageUnit: (value: string | MemorySizeEnum) => string
+  getMemoryUnit: (value: string | MemorySizeEnum) => void
+  getStorageUnit: (value: string | MemorySizeEnum) => void
   database?: DatabaseEntity
   loading?: boolean
 }

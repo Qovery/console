@@ -11,7 +11,7 @@ const application = applicationFactoryMock(1)[0]
 const props: PageSettingsResourcesProps = {
   loading: false,
   onSubmit: () => jest.fn(),
-  setMemorySize: jest.fn(),
+  getMemoryUnit: jest.fn(),
   memorySize: MemorySizeEnum.MB,
   application: application,
   displayWarningCpu: true,

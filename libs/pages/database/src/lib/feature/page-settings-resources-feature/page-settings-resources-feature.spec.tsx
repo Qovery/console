@@ -1,27 +1,28 @@
 import { ResizeObserver } from '__tests__/utils/resize-observer'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeApplication from '@console/domains/application'
+import * as storeDatabase from '@console/domains/database'
+import { databaseFactoryMock } from '@console/domains/database'
 import { MemorySizeEnum } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { DatabaseEntity } from '@console/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockApplication: ApplicationEntity = storeApplication.applicationFactoryMock(1)[0]
+const mockDatabase: DatabaseEntity = databaseFactoryMock(1)[0]
 
-jest.mock('@console/domains/application', () => {
+jest.mock('@console/domains/database', () => {
   return {
-    ...jest.requireActual('@console/domains/application'),
-    editApplication: jest.fn(),
-    getApplicationsState: () => ({
+    ...jest.requireActual('@console/domains/database'),
+    editDatabase: jest.fn(),
+    getDatabasesState: () => ({
       loadingStatus: 'loaded',
-      ids: [mockApplication.id],
+      ids: [mockDatabase.id],
       entities: {
-        [mockApplication.id]: mockApplication,
+        [mockDatabase.id]: mockDatabase,
       },
       error: null,
     }),
-    selectApplicationById: () => mockApplication,
+    selectDatabaseById: () => mockDatabase,
   }
 })
 
@@ -33,42 +34,45 @@ jest.mock('react-redux', () => ({
 
 jest.mock('react-router', () => ({
   ...(jest.requireActual('react-router') as any),
-  useParams: () => ({ applicationId: '0' }),
+  useParams: () => ({ databaseId: '0' }),
 }))
 
 describe('PageSettingsResourcesFeature', () => {
   window.ResizeObserver = ResizeObserver
+
   it('should render successfully', () => {
     const { baseElement } = render(<PageSettingsResourcesFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should submit resources with converters with GB', () => {
-    const size = MemorySizeEnum.GB
+    const sizeMemory = MemorySizeEnum.GB
+    const sizeStorage = MemorySizeEnum.GB
     const cpu = 3400
     const memory = 16
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
+    const storage = 1024
+    const db = handleSubmit({ cpu: [cpu], memory: memory, storage: storage }, mockDatabase, sizeMemory, sizeStorage)
 
-    expect(app.min_running_instances).toBe(1)
-    expect(app.max_running_instances).toBe(10)
-    expect(app.cpu).toBe(cpu * 1000)
-    expect(app.memory).toBe(memory * 1024)
+    expect(db.cpu).toBe(cpu * 1000)
+    expect(db.memory).toBe(memory * 1024)
+    expect(db.storage).toBe(storage * 1024)
   })
 
   it('should submit resources with converters with MB', () => {
-    const size = MemorySizeEnum.MB
+    const sizeMemory = MemorySizeEnum.MB
+    const sizeStorage = MemorySizeEnum.MB
     const cpu = 3400
     const memory = 512
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
+    const storage = 1024
+    const db = handleSubmit({ cpu: [cpu], memory: memory, storage: storage }, mockDatabase, sizeMemory, sizeStorage)
 
-    expect(app.min_running_instances).toBe(1)
-    expect(app.max_running_instances).toBe(10)
-    expect(app.cpu).toBe(cpu * 1000)
-    expect(app.memory).toBe(memory)
+    expect(db.cpu).toBe(cpu * 1000)
+    expect(db.memory).toBe(memory)
+    expect(db.storage).toBe(storage)
   })
 
-  it('should dispatch editApplication if form is submitted', async () => {
-    const editApplicationSpy: SpyInstance = jest.spyOn(storeApplication, 'editApplication')
+  it('should dispatch editDatabase if form is submitted', async () => {
+    const editDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'editDatabase')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
@@ -79,8 +83,8 @@ describe('PageSettingsResourcesFeature', () => {
     const { getByTestId } = render(<PageSettingsResourcesFeature />)
 
     await act(() => {
-      const input = getByTestId('input-memory')
-      fireEvent.input(input, { target: { value: 9 } })
+      fireEvent.input(getByTestId('input-memory-memory'), { target: { value: 512 } })
+      fireEvent.input(getByTestId('input-memory-storage'), { target: { value: 512 } })
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
@@ -89,15 +93,16 @@ describe('PageSettingsResourcesFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    const cloneApplication = handleSubmit(
-      { memory: 9, cpu: [1], instances: [1, 3] },
-      mockApplication,
-      MemorySizeEnum.MB
-    )
-
-    expect(editApplicationSpy).toHaveBeenCalledWith({
-      applicationId: mockApplication.id,
-      data: cloneApplication,
+    expect(editDatabaseSpy).toHaveBeenCalledWith({
+      databaseId: mockDatabase.id,
+      data: {
+        ...mockDatabase,
+        ...{
+          memory: 512,
+          storage: 512,
+          cpu: 1,
+        },
+      },
     })
   })
 })
