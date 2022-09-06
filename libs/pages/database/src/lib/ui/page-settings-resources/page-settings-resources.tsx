@@ -1,40 +1,37 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { DatabaseEntity } from '@console/shared/interfaces'
 import {
   BlockContent,
   Button,
   ButtonSize,
   ButtonStyle,
   HelpSection,
-  Icon,
-  IconAwesomeEnum,
   InputSizeUnit,
   Slider,
-  WarningBox,
-  WarningBoxEnum,
   inputSizeUnitRules,
 } from '@console/shared/ui'
 import { convertCpuToVCpu } from '@console/shared/utils'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  getMemoryUnit: (value: string | MemorySizeEnum) => string
+  storageSize: MemorySizeEnum | string
   memorySize: MemorySizeEnum | string
-  displayWarningCpu: boolean
-  application?: ApplicationEntity
+  getMemoryUnit: (value: string | MemorySizeEnum) => void
+  getStorageUnit: (value: string | MemorySizeEnum) => void
+  database?: DatabaseEntity
   loading?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, getMemoryUnit, application, memorySize, displayWarningCpu } = props
+  const { onSubmit, loading, database, memorySize, getMemoryUnit, storageSize, getStorageUnit } = props
   const { control, formState, watch } = useFormContext()
 
   const maxMemoryBySize =
-    memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
+    memorySize === MemorySizeEnum.GB ? (database?.maximum_memory || 0) / 1024 : database?.maximum_memory || 0
 
-  if (!application) return null
+  if (!database) return null
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -43,22 +40,14 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <form onSubmit={onSubmit}>
           <p className="text-text-500 text-xs mb-3">Adapt the application's consumption accordingly</p>
           <BlockContent title="vCPU">
-            <p className="flex items-center text-text-600 mb-3 font-medium">
-              {displayWarningCpu && (
-                <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="mr-1.5 text-error-500 text-sm" />
-              )}
-              {watch('cpu')}
-            </p>
+            <p className="flex items-center text-text-600 mb-3 font-medium">{watch('cpu')}</p>
             <Controller
               name="cpu"
               control={control}
-              // rules={{
-              //   max: (application?.cpu || 0) / 1000,
-              // }}
               render={({ field }) => (
                 <Slider
                   min={0}
-                  max={convertCpuToVCpu(application?.maximum_cpu)}
+                  max={convertCpuToVCpu(database?.maximum_cpu)}
                   step={0.25}
                   onChange={field.onChange}
                   value={field.value}
@@ -66,17 +55,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               )}
             />
             <p className="text-text-400 text-xs mt-3">
-              Max consumption by node accordingly to your cluster: {convertCpuToVCpu(application?.maximum_cpu)} vCPU
+              Max consumption by node accordingly to your cluster: {convertCpuToVCpu(database?.maximum_cpu)} vCPU
             </p>
-            {displayWarningCpu && (
-              <WarningBox
-                dataTestId="warning-box"
-                className="mt-3"
-                title="Not enough resources"
-                message="Increase the capacity of your cluster nodes or reduce the service consumption."
-                type={WarningBoxEnum.ERROR}
-              />
-            )}
           </BlockContent>
           <BlockContent title="RAM">
             <Controller
@@ -90,30 +70,30 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   onChange={field.onChange}
                   maxSize={maxMemoryBySize}
                   error={error}
-                  currentSize={application?.memory}
+                  currentSize={database?.memory}
                   currentUnit={memorySize}
                   getUnit={getMemoryUnit}
                 />
               )}
             />
           </BlockContent>
-          <BlockContent title="Instances">
-            <p className="text-text-600 mb-3 font-medium">{`${watch('instances')[0]} - ${watch('instances')[1]}`}</p>
+          <BlockContent title="Storage">
             <Controller
-              name="instances"
+              name="storage"
               control={control}
-              render={({ field }) => <Slider min={1} max={50} step={1} onChange={field.onChange} value={field.value} />}
-            />
-            <p className="text-text-400 text-xs mt-3">
-              {application?.instances?.items && (
-                <span className="flex mb-1">
-                  Current consumption: {application.instances.items.length} instance
-                  {application.instances.items.length > 1 ? 's' : ''}
-                </span>
+              rules={inputSizeUnitRules(maxMemoryBySize)}
+              render={({ field, fieldState: { error } }) => (
+                <InputSizeUnit
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  currentSize={database?.storage}
+                  currentUnit={storageSize}
+                  getUnit={getStorageUnit}
+                  error={error}
+                />
               )}
-              Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
-              CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
-            </p>
+            />
           </BlockContent>
           <div className="flex justify-end">
             <Button
@@ -134,8 +114,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#resources',
-            linkLabel: 'How to configure my application',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#resources',
+            linkLabel: 'How to configure my database',
             external: true,
           },
         ]}

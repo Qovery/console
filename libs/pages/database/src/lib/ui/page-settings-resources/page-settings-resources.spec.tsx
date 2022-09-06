@@ -1,20 +1,20 @@
 import ResizeObserver from '__tests__/utils/resize-observer'
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { applicationFactoryMock } from '@console/domains/application'
+import { databaseFactoryMock } from '@console/domains/database'
 import { MemorySizeEnum } from '@console/shared/enums'
-import { IconAwesomeEnum } from '@console/shared/ui'
 import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
 
-const application = applicationFactoryMock(1)[0]
+const database = databaseFactoryMock(1)[0]
 
 const props: PageSettingsResourcesProps = {
-  loading: false,
   onSubmit: () => jest.fn(),
-  getMemoryUnit: jest.fn(),
+  loading: false,
   memorySize: MemorySizeEnum.MB,
-  application: application,
-  displayWarningCpu: true,
+  storageSize: MemorySizeEnum.MB,
+  getMemoryUnit: jest.fn(),
+  getStorageUnit: jest.fn(),
+  database: database,
 }
 
 jest.mock('react-hook-form', () => ({
@@ -38,33 +38,17 @@ describe('PageSettingsResources', () => {
   it('should render the form', async () => {
     const { getByDisplayValue } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [0.5], instances: [1, 1], memory: 323 },
+        defaultValues: { cpu: [0.25], storage: 512, memory: 1024 },
       })
     )
 
     const inputs = screen.getAllByRole('slider') as HTMLSpanElement[]
 
     await act(() => {
-      getByDisplayValue(323)
-      expect(inputs[0].getAttribute('aria-valuenow')).toBe('0.5')
-      expect(inputs[1].getAttribute('aria-valuenow')).toBe('1')
-      expect(inputs[2].getAttribute('aria-valuenow')).toBe('1')
+      getByDisplayValue(512)
+      getByDisplayValue(1024)
+      expect(inputs[0].getAttribute('aria-valuenow')).toBe('0.25')
     })
-  })
-
-  it('should render warning box and icon for cpu', () => {
-    props.displayWarningCpu = true
-
-    const { getByTestId, getAllByRole } = render(
-      wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [10], instances: [1, 1], memory: 323 },
-      })
-    )
-
-    const img = getAllByRole('img')[0]
-
-    getByTestId('warning-box')
-    expect(img.classList.contains(IconAwesomeEnum.TRIANGLE_EXCLAMATION)).toBe(true)
   })
 
   it('should submit the form', async () => {
@@ -74,7 +58,7 @@ describe('PageSettingsResources', () => {
 
     render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [0.25], instances: [1, 1], memory: 512 },
+        defaultValues: { cpu: [0.25], storage: 512, memory: 512 },
       })
     )
 
