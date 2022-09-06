@@ -138,13 +138,12 @@ describe('PageSettingsAdvancedFeature', () => {
     await act(() => {
       getByTestId('submit-button').click()
     })
-    expect(editApplicationAdvancedSettingsSpy).toHaveBeenCalledWith({
-      applicationId: mockApplication.id,
-      settings: {
-        'build.timeout_max_sec': 63,
-        'deployment.custom_domain_check_enabled': true,
-        'liveness_probe.http_get.path': '/',
-      },
+
+    expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
+    expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].settings).toStrictEqual({
+      'build.timeout_max_sec': 63,
+      'deployment.custom_domain_check_enabled': true,
+      'liveness_probe.http_get.path': '/',
     })
 
     await act(async () => {
