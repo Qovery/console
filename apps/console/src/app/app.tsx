@@ -30,8 +30,6 @@ export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
 
-  console.log('app init')
-
   const [, setBetaAccess] = useState(false)
 
   const gtmParams = { id: environment.gtm }
