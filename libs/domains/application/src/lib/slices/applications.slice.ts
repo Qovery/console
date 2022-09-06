@@ -72,7 +72,7 @@ export const fetchApplication = createAsyncThunk<Application, { applicationId: s
 
 export const editApplication = createAsyncThunk(
   'application/edit',
-  async (payload: { applicationId: string; data: Partial<ApplicationEntity> }) => {
+  async (payload: { applicationId: string; data: Partial<ApplicationEntity>; toasterCallback: () => void }) => {
     const cloneApplication = Object.assign({}, refactoApplicationPayload(payload.data) as any)
 
     const response = await applicationMainCallsApi.editApplication(payload.applicationId, cloneApplication)
@@ -138,7 +138,7 @@ export const fetchApplicationAdvancedSettings = createAsyncThunk<
 
 export const editApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,
-  { applicationId: string; settings: ApplicationAdvancedSettings }
+  { applicationId: string; settings: ApplicationAdvancedSettings; toasterCallback: () => void }
 >('application/advancedSettings/edit', async (data) => {
   const response = await applicationConfigurationApi.editAdvancedSettings(data.applicationId, data.settings)
   return response.data as ApplicationAdvancedSettings
@@ -251,7 +251,14 @@ export const applicationsSlice = createSlice({
         applicationsAdapter.updateOne(state, update)
         state.error = null
         state.loadingStatus = 'loaded'
-        toast(ToastEnum.SUCCESS, `Your application ${action.payload.name} has been updated`)
+        toast(
+          ToastEnum.SUCCESS,
+          `Application updated`,
+          'You must redeploy to apply the settings update',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(editApplication.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'
@@ -411,7 +418,14 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        toast(ToastEnum.SUCCESS, `Your application advanced settings have been updated`)
+        toast(
+          ToastEnum.SUCCESS,
+          `Application updated`,
+          'You must redeploy to apply the settings update',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
         applicationsAdapter.updateOne(state, update)
       })
       .addCase(editApplicationAdvancedSettings.rejected, (state: ApplicationsState, action) => {

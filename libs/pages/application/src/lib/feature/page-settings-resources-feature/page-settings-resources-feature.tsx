@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, selectApplicationById } from '@console/domains/application'
+import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@console/domains/application'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { convertCpuToVCpu } from '@console/shared/utils'
@@ -26,7 +26,7 @@ export const handleSubmit = (
 }
 
 export function PageSettingsResourcesFeature() {
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
 
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
@@ -71,6 +71,10 @@ export function PageSettingsResourcesFeature() {
     application?.max_running_instances,
   ])
 
+  const toasterCallback = () => {
+    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+  }
+
   const onSubmit = methods.handleSubmit((data) => {
     if (!application) return
 
@@ -81,6 +85,7 @@ export function PageSettingsResourcesFeature() {
       editApplication({
         applicationId: applicationId,
         data: cloneApplication,
+        toasterCallback,
       })
     )
       .unwrap()

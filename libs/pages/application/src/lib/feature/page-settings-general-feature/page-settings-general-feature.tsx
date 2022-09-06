@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, getApplicationsState } from '@console/domains/application'
+import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
@@ -39,7 +39,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
 }
 
 export function PageSettingsGeneralFeature() {
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
@@ -58,6 +58,10 @@ export function PageSettingsGeneralFeature() {
 
   const watchBuildMode = methods.watch('build_mode')
 
+  const toasterCallback = () => {
+    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+  }
+
   const onSubmit = methods.handleSubmit((data) => {
     if (data && application) {
       const cloneApplication = handleSubmit(data, application)
@@ -65,6 +69,7 @@ export function PageSettingsGeneralFeature() {
         editApplication({
           applicationId: applicationId,
           data: cloneApplication,
+          toasterCallback,
         })
       )
     }

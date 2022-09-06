@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, selectApplicationsEntitiesByEnvId } from '@console/domains/application'
+import {
+  editApplication,
+  postApplicationActionsRestart,
+  selectApplicationsEntitiesByEnvId,
+} from '@console/domains/application'
 import {
   editEnvironmentDeploymentRules,
   environmentsLoadingEnvironmentDeploymentRules,
@@ -16,7 +20,7 @@ import { AppDispatch, RootState } from '@console/store/data'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function PageSettingsPreviewEnvironmentsFeature() {
-  const { environmentId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
 
@@ -42,6 +46,10 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const watchEnvPreview = methods.watch('auto_preview')
 
+  const toasterCallback = () => {
+    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+  }
+
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
       setLoading(true)
@@ -65,6 +73,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
             editApplication({
               applicationId: application.id,
               data: cloneApplication,
+              toasterCallback,
             })
           )
         }

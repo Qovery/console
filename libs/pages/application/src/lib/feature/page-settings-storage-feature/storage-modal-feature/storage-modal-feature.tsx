@@ -1,7 +1,7 @@
 import { ApplicationStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { editApplication, getApplicationsState } from '@console/domains/application'
+import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@console/domains/application'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
@@ -43,6 +43,15 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
     mode: 'onChange',
   })
 
+  const toasterCallback = () => {
+    dispatch(
+      postApplicationActionsRestart({
+        applicationId: props.application?.id || '',
+        environmentId: props.application?.environment?.id || '',
+      })
+    )
+  }
+
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
   const dispatch = useDispatch<AppDispatch>()
 
@@ -51,7 +60,7 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
       return
     }
     const app = handleSubmit(data, props.application, props.storage)
-    dispatch(editApplication({ data: app, applicationId: app.id }))
+    dispatch(editApplication({ data: app, applicationId: app.id, toasterCallback }))
       .unwrap()
       .then(() => props.onClose())
       .catch((e) => console.error(e))

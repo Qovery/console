@@ -95,9 +95,7 @@ describe('PageSettingsResourcesFeature', () => {
       MemorySizeEnum.MB
     )
 
-    expect(editApplicationSpy).toHaveBeenCalledWith({
-      applicationId: mockApplication.id,
-      data: cloneApplication,
-    })
+    expect(editApplicationSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
+    expect(editApplicationSpy.mock.calls[0][0].data).toStrictEqual(cloneApplication)
   })
 })
