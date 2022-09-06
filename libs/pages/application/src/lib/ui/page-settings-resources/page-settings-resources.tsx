@@ -14,6 +14,7 @@ import {
   Slider,
   WarningBox,
   WarningBoxEnum,
+  inputSizeUnitRules,
 } from '@console/shared/ui'
 import { convertCpuToVCpu } from '@console/shared/utils'
 
@@ -28,7 +29,7 @@ export interface PageSettingsResourcesProps {
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { onSubmit, loading, getMemoryUnit, application, memorySize, displayWarningCpu } = props
-  const { control, formState, watch } = useFormContext()
+  const { control, formState, watch, setValue } = useFormContext()
 
   const maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
@@ -78,12 +79,23 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             )}
           </BlockContent>
           <BlockContent title="RAM">
-            <InputSizeUnit
+            <Controller
               name="memory"
-              maxSize={maxMemoryBySize}
-              currentSize={application?.memory}
-              currentUnit={memorySize}
-              getUnit={getMemoryUnit}
+              control={control}
+              rules={inputSizeUnitRules(maxMemoryBySize)}
+              render={({ field, fieldState: { error } }) => (
+                <InputSizeUnit
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  maxSize={maxMemoryBySize}
+                  error={error}
+                  currentSize={application?.memory}
+                  currentUnit={memorySize}
+                  getUnit={getMemoryUnit}
+                  setValue={setValue}
+                />
+              )}
             />
           </BlockContent>
           <BlockContent title="Instances">

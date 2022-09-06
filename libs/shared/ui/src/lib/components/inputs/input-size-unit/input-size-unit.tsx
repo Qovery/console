@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { FieldError, FieldValues, UseFormSetValue } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { convertMemory } from '@console/shared/utils'
 import InputSelect from '../input-select/input-select'
@@ -7,11 +7,15 @@ import InputText from '../input-text/input-text'
 
 export interface InputSizeUnitProps {
   name: string
+  value: number
   currentUnit?: string | MemorySizeEnum
   maxSize?: number
   minSize?: number
   currentSize?: number
   getUnit?: (value: string | MemorySizeEnum) => void
+  onChange?: () => void
+  error?: FieldError
+  setValue?: UseFormSetValue<FieldValues>
 }
 
 export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number | string) => {
@@ -23,56 +27,37 @@ export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number |
 }
 
 export function InputSizeUnit(props: InputSizeUnitProps) {
-  const { name, maxSize, minSize = 0, currentSize = 0, getUnit, currentUnit } = props
+  const { name, maxSize, currentSize = 0, getUnit, currentUnit, error, value, onChange, setValue } = props
 
-  const { control, watch, setValue } = useFormContext()
   const [memorySize, setMemorySize] = useState<string | MemorySizeEnum>(currentUnit || MemorySizeEnum.MB)
-
-  const pattern = {
-    value: /^[0-9]+$/,
-    message: 'Please enter a number.',
-  }
 
   const handleChangeMemoryUnit = (size: string | MemorySizeEnum) => {
     getUnit && getUnit(size)
     setMemorySize(size)
 
     if (size !== memorySize) {
-      const currentSizeByUnit = getSizeUnit(size, watch(name))
-      setValue(name, currentSizeByUnit)
+      const currentSizeByUnit = getSizeUnit(size, value)
+      setValue && setValue(name, currentSizeByUnit)
     }
   }
 
   return (
     <div key={`size-${name}-${memorySize}`} className="flex w-full gap-3">
       <div className="w-full">
-        <Controller
+        <InputText
+          type="number"
+          dataTestId={`input-memory-${name}`}
           name={name}
-          control={control}
-          rules={{
-            required: 'Please enter a size.',
-            validate: (value: number) => (maxSize ? value <= maxSize : undefined),
-            max: maxSize,
-            min: minSize,
-            pattern: pattern,
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              type="number"
-              dataTestId={`input-memory-${name}`}
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Size"
-              error={
-                error?.type === 'required'
-                  ? 'Please enter a size.'
-                  : error?.type === 'max'
-                  ? `Maximum allowed ${name} is: ${maxSize} ${memorySize}.`
-                  : undefined
-              }
-            />
-          )}
+          onChange={onChange}
+          value={value}
+          label="Size"
+          error={
+            error?.type === 'required'
+              ? 'Please enter a size.'
+              : error?.type === 'max'
+              ? `Maximum allowed ${name} is: ${maxSize} ${memorySize}.`
+              : undefined
+          }
         />
         <p data-testid="current-consumption" className="text-text-400 text-xs mt-1 ml-4">
           Current consumption:{' '}

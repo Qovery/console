@@ -2,7 +2,16 @@ import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { DatabaseEntity } from '@console/shared/interfaces'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSizeUnit, Slider } from '@console/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  HelpSection,
+  InputSizeUnit,
+  Slider,
+  inputSizeUnitRules,
+} from '@console/shared/ui'
 import { convertCpuToVCpu } from '@console/shared/utils'
 
 export interface PageSettingsResourcesProps {
@@ -17,7 +26,7 @@ export interface PageSettingsResourcesProps {
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { onSubmit, loading, database, memorySize, getMemoryUnit, storageSize, getStorageUnit } = props
-  const { control, formState, watch } = useFormContext()
+  const { control, formState, watch, setValue } = useFormContext()
 
   const maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (database?.maximum_memory || 0) / 1024 : database?.maximum_memory || 0
@@ -50,20 +59,42 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             </p>
           </BlockContent>
           <BlockContent title="RAM">
-            <InputSizeUnit
+            <Controller
               name="memory"
-              maxSize={maxMemoryBySize}
-              currentSize={database?.memory}
-              currentUnit={memorySize}
-              getUnit={getMemoryUnit}
+              control={control}
+              rules={inputSizeUnitRules(maxMemoryBySize)}
+              render={({ field, fieldState: { error } }) => (
+                <InputSizeUnit
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  maxSize={maxMemoryBySize}
+                  error={error}
+                  currentSize={database?.memory}
+                  currentUnit={memorySize}
+                  getUnit={getMemoryUnit}
+                  setValue={setValue}
+                />
+              )}
             />
           </BlockContent>
           <BlockContent title="Storage">
-            <InputSizeUnit
+            <Controller
               name="storage"
-              currentSize={database?.storage}
-              currentUnit={storageSize}
-              getUnit={getStorageUnit}
+              control={control}
+              rules={inputSizeUnitRules(maxMemoryBySize)}
+              render={({ field, fieldState: { error } }) => (
+                <InputSizeUnit
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  currentSize={database?.storage}
+                  currentUnit={storageSize}
+                  getUnit={getStorageUnit}
+                  error={error}
+                  setValue={setValue}
+                />
+              )}
             />
           </BlockContent>
           <div className="flex justify-end">
