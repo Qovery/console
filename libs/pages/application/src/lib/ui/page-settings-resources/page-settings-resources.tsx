@@ -29,7 +29,7 @@ export interface PageSettingsResourcesProps {
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { onSubmit, loading, getMemoryUnit, application, memorySize, displayWarningCpu } = props
-  const { control, formState, watch, setValue } = useFormContext()
+  const { control, formState, watch } = useFormContext()
 
   const maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
@@ -93,7 +93,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   currentSize={application?.memory}
                   currentUnit={memorySize}
                   getUnit={getMemoryUnit}
-                  setValue={setValue}
                 />
               )}
             />

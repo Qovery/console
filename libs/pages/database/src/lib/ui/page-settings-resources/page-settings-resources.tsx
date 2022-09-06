@@ -26,7 +26,7 @@ export interface PageSettingsResourcesProps {
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { onSubmit, loading, database, memorySize, getMemoryUnit, storageSize, getStorageUnit } = props
-  const { control, formState, watch, setValue } = useFormContext()
+  const { control, formState, watch } = useFormContext()
 
   const maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (database?.maximum_memory || 0) / 1024 : database?.maximum_memory || 0
@@ -73,7 +73,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   currentSize={database?.memory}
                   currentUnit={memorySize}
                   getUnit={getMemoryUnit}
-                  setValue={setValue}
                 />
               )}
             />
@@ -92,7 +91,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   currentUnit={storageSize}
                   getUnit={getStorageUnit}
                   error={error}
-                  setValue={setValue}
                 />
               )}
             />

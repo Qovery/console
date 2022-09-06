@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FieldError, FieldValues, UseFormSetValue } from 'react-hook-form'
+import { FieldError } from 'react-hook-form'
 import { MemorySizeEnum } from '@console/shared/enums'
 import { convertMemory } from '@console/shared/utils'
 import InputSelect from '../input-select/input-select'
@@ -13,9 +13,8 @@ export interface InputSizeUnitProps {
   minSize?: number
   currentSize?: number
   getUnit?: (value: string | MemorySizeEnum) => void
-  onChange?: () => void
+  onChange?: (...event: any[]) => void
   error?: FieldError
-  setValue?: UseFormSetValue<FieldValues>
 }
 
 export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number | string) => {
@@ -27,7 +26,7 @@ export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number |
 }
 
 export function InputSizeUnit(props: InputSizeUnitProps) {
-  const { name, maxSize, currentSize = 0, getUnit, currentUnit, error, value, onChange, setValue } = props
+  const { name, maxSize, currentSize = 0, getUnit, currentUnit, error, value, onChange } = props
 
   const [memorySize, setMemorySize] = useState<string | MemorySizeEnum>(currentUnit || MemorySizeEnum.MB)
 
@@ -37,7 +36,7 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
 
     if (size !== memorySize) {
       const currentSizeByUnit = getSizeUnit(size, value)
-      setValue && setValue(name, currentSizeByUnit)
+      onChange && onChange(currentSizeByUnit)
     }
   }
 
