@@ -50,19 +50,18 @@
               "with": "apps/console/src/environments/environment.prod.ts"
             }
           ],
-          "optimization": true,
-          "outputHashing": "all",
+          "extractLicenses": false,
+          "optimization": false,
           "sourceMap": true,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false
+          "vendorChunk": true
         }
       }
     },
     "serve": {
       "executor": "@nrwl/web:dev-server",
+      "defaultConfiguration": "staging",
       "options": {
-        "buildTarget": "console:build:development",
+        "buildTarget": "console:build",
         "hmr": true
       },
       "configurations": {

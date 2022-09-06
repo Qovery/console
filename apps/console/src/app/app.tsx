@@ -30,6 +30,8 @@ export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
 
+  console.log('app init')
+
   const [, setBetaAccess] = useState(false)
 
   const gtmParams = { id: environment.gtm }
@@ -45,9 +47,11 @@ export function App() {
         ...user,
       })
 
-      LogRocket.identify(user.sub, {
-        ...user,
-      })
+      if (process.env['NODE_ENV'] === 'production') {
+        LogRocket.identify(user.sub, {
+          ...user,
+        })
+      }
 
       updateIntercom({
         email: user.email,
@@ -77,7 +81,9 @@ export function App() {
     }
 
     // init logrocket
-    LogRocket.init(environment.logrocket)
+    if (process.env['NODE_ENV'] === 'production') {
+      LogRocket.init(environment.logrocket)
+    }
   }, [])
 
   useEffect(() => {
