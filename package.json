@@ -24,7 +24,7 @@
     "@nrwl/react": "14.3.6",
     "@nrwl/storybook": "14.5.8",
     "@nrwl/tao": "14.6.4",
-    "@nrwl/web": "14.3.6",
+    "@nrwl/web": "14.6.4",
     "@nrwl/workspace": "14.4.2",
     "@radix-ui/react-accordion": "^0.1.6",
     "@radix-ui/react-dialog": "^0.1.7",
