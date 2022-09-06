@@ -1,5 +1,6 @@
 export * from './lib/components/inputs/input-size-unit/input-size-unit'
 export * from './lib/components/inputs/input-size-unit/utils'
+export * from './lib/components/banner/banner'
 export * from './lib/components/placeholder-settings/placeholder-settings'
 export * from './lib/components/warning-box/warning-box'
 export * from './lib/components/dropzone/dropzone'

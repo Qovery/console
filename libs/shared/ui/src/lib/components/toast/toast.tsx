@@ -1,6 +1,6 @@
-import { Icon } from '../icon/icon'
-import { toast as toastAction, Toast, Toaster } from 'react-hot-toast'
+import { Toast, Toaster, toast as toastAction } from 'react-hot-toast'
 import { ToastEnum } from '@console/shared/toast'
+import { Icon } from '../icon/icon'
 
 export interface ToastProps {
   options?: Toast
@@ -45,14 +45,27 @@ export const ToastContent = (
         </div>
         <div className="toast__content">
           {title && (
-            <p data-testid="toast-title" className="text-sm text-white font-medium">
+            <p data-testid="toast-title" className="text-white font-medium">
               {title}
             </p>
           )}
           {description && (
-            <span data-testid="toast-description" className="block text-xs text-element-light-lighter-700 my-1">
+            <span
+              data-testid="toast-description"
+              className={`block text-sm text-text-300 font-medium ${!labelAction ? 'mb-1' : ''}`}
+            >
               {description}
             </span>
+          )}
+
+          {labelAction && (
+            <button
+              data-testid="label-action"
+              onClick={(e) => onLabelClick(e)}
+              className="cursor-pointer text-blue-400 font-medium text-sm -mt-1 mb-1"
+            >
+              {labelAction}
+            </button>
           )}
         </div>
         {!labelAction && options && callback && (
@@ -77,17 +90,6 @@ export const ToastContent = (
           </button>
         )}
       </div>
-      {labelAction && (
-        <div className="flex px-4 pb-2 justify-end w-full ">
-          <button
-            data-testid="label-action"
-            onClick={(e) => onLabelClick(e)}
-            className="cursor-pointer text-blue-400 font-medium text-xs -mt-1"
-          >
-            {labelAction}
-          </button>
-        </div>
-      )}
     </div>
   )
 }
@@ -99,7 +101,7 @@ export function ToastBehavior() {
       reverseOrder={false}
       gutter={4}
       toastOptions={{
-        duration: 5000,
+        duration: 25000,
         style: { background: 'transparent', boxShadow: 'initial', padding: 0 },
         icon: null,
       }}
