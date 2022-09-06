@@ -5,6 +5,7 @@
     "console-e2e": "apps/console-e2e",
     "design-system-e2e": "apps/design-system-e2e",
     "domains-application": "libs/domains/application",
+    "domains-container": "libs/domains/container",
     "domains-database": "libs/domains/database",
     "domains-environment": "libs/domains/environment",
     "domains-environment-variable": "libs/domains/environment-variable",

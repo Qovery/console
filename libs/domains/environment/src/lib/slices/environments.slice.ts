@@ -8,6 +8,7 @@ import {
 } from '@reduxjs/toolkit'
 import {
   CloneRequest,
+  ContainersApi,
   DeploymentHistoryEnvironment,
   Environment,
   EnvironmentActionsApi,
@@ -32,6 +33,7 @@ const environmentsActionsApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
+const environmentContainersApi = new ContainersApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
@@ -106,6 +108,14 @@ export const cloneEnvironment = createAsyncThunk(
   'environment/clone',
   async (payload: { environmentId: string; cloneRequest: CloneRequest }) => {
     const response = await environmentsActionsApi.cloneEnvironment(payload.environmentId, payload.cloneRequest)
+    return response.data
+  }
+)
+
+export const fetchEnvironmentContainers = createAsyncThunk(
+  'environment-containers/fetch',
+  async (payload: { environmentId: string }) => {
+    const response = await environmentContainersApi.listContainer(payload.environmentId)
     return response.data
   }
 )

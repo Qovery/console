@@ -18,6 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@console/domains/application": ["libs/domains/application/src/index.ts"],
+      "@console/domains/container": ["libs/domains/container/src/index.ts"],
       "@console/domains/database": ["libs/domains/database/src/index.ts"],
       "@console/domains/environment": ["libs/domains/environment/src/index.ts"],
       "@console/domains/environment-variable": ["libs/domains/environment-variable/src/index.ts"],
