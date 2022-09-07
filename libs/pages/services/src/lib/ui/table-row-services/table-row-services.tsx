@@ -25,8 +25,7 @@ export interface TableRowServicesProps {
   link: string
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
-  removeApplication?: (applicationId: string, name?: string) => void
-  removeDatabase?: (databaseId: string, name?: string) => void
+  removeService?: (applicationId: string, type: ServicesEnum, name?: string) => void
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -38,8 +37,7 @@ export function TableRowServices(props: TableRowServicesProps) {
     link,
     buttonActions,
     environmentMode,
-    removeApplication,
-    removeDatabase,
+    removeService,
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
@@ -55,7 +53,7 @@ export function TableRowServices(props: TableRowServicesProps) {
       ?.focus()
   }
 
-  const buttonActionsDefaultApp = [
+  const buttonActionsDefault = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
@@ -70,25 +68,34 @@ export function TableRowServices(props: TableRowServicesProps) {
       onClick: () => openLogs(),
     },
     {
-      ...(removeApplication && {
+      ...(removeService && {
         iconLeft: <Icon name="icon-solid-ellipsis-v" />,
         menus: [
           {
-            items: [
-              {
-                name: 'Edit code',
-                contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
-                link: {
-                  url: urlCodeEditor((data as ApplicationEntity).git_repository) || '',
-                  external: true,
-                },
-              },
-              {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeApplication(data.id, data.name),
-              },
-            ],
+            items:
+              type === ServicesEnum.APPLICATION
+                ? [
+                    {
+                      name: 'Edit code',
+                      contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
+                      link: {
+                        url: urlCodeEditor((data as ApplicationEntity).git_repository) || '',
+                        external: true,
+                      },
+                    },
+                    {
+                      name: 'Remove',
+                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                      onClick: () => removeService(data.id, ServicesEnum.APPLICATION, data.name),
+                    },
+                  ]
+                : [
+                    {
+                      name: 'Remove',
+                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                      onClick: () => removeService(data.id, ServicesEnum.CONTAINER, data.name),
+                    },
+                  ],
           },
         ],
       }),
@@ -99,14 +106,14 @@ export function TableRowServices(props: TableRowServicesProps) {
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
-      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
+      menusClassName: removeService ? 'border-r border-r-element-light-lighter-500' : '',
       statusActions: {
         status: data.status && data.status.state,
         actions: buttonActions,
       },
     },
     {
-      ...(removeDatabase && {
+      ...(removeService && {
         iconLeft: <Icon name="icon-solid-ellipsis-v" />,
         menus: [
           {
@@ -114,7 +121,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeDatabase(data.id, data.name),
+                onClick: () => removeService(data.id, ServicesEnum.DATABASE, data.name),
               },
             ],
           },
@@ -122,8 +129,6 @@ export function TableRowServices(props: TableRowServicesProps) {
       }),
     },
   ]
-
-  console.log(data)
 
   return (
     <TableRow columnsWidth={columnsWidth} link={link}>
@@ -171,7 +176,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <ButtonIconAction
-                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp : buttonActionsDefaultDB}
+                  actions={type === ServicesEnum.DATABASE ? buttonActionsDefaultDB : buttonActionsDefault}
                   statusInformation={{
                     id: data.id,
                     name: data.name,

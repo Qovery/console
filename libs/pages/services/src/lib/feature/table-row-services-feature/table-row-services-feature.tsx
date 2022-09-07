@@ -2,9 +2,13 @@ import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import {
   deleteApplicationAction,
+  deleteContainerAction,
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
+  postContainerActionsDeploy,
+  postContainerActionsRestart,
+  postContainerActionsStop,
 } from '@console/domains/application'
 import {
   deleteDatabaseAction,
@@ -72,31 +76,42 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     },
   ]
 
-  const removeApplication = (applicationId: string, name?: string) => {
+  const containerActions: StatusMenuActions[] = [
+    {
+      name: 'redeploy',
+      action: (applicationId: string) => dispatch(postContainerActionsRestart({ environmentId, applicationId })),
+    },
+    {
+      name: 'deploy',
+      action: (applicationId: string) => dispatch(postContainerActionsDeploy({ environmentId, applicationId })),
+    },
+    {
+      name: 'stop',
+      action: (applicationId: string) => dispatch(postContainerActionsStop({ environmentId, applicationId })),
+    },
+  ]
+
+  const removeService = (id: string, type: ServicesEnum, name?: string) => {
+    const currentType = type.toLocaleLowerCase()
     openModalConfirmation({
-      title: 'Delete application',
-      description: 'To confirm the deletion of your application, please type the name of the application:',
+      title: `Delete ${currentType}`,
+      description: `To confirm the deletion of your ${currentType}, please type the name of the ${currentType}:`,
       name: name,
       isDelete: true,
       action: () => {
-        dispatch(deleteApplicationAction({ environmentId, applicationId }))
+        if (type === ServicesEnum.APPLICATION) dispatch(deleteApplicationAction({ environmentId, applicationId: id }))
+        if (type === ServicesEnum.CONTAINER) dispatch(deleteContainerAction({ environmentId, applicationId: id }))
+        if (type === ServicesEnum.DATABASE) dispatch(deleteDatabaseAction({ environmentId, databaseId: id }))
       },
     })
   }
 
-  const removeDatabase = (databaseId: string, name?: string) => {
-    openModalConfirmation({
-      title: 'Delete database',
-      description: 'To confirm the deletion of your database, please type the name of the database:',
-      name: name,
-      isDelete: true,
-      action: () => {
-        dispatch(deleteDatabaseAction({ environmentId, databaseId }))
-      },
-    })
-  }
-
-  const actions = type === ServicesEnum.DATABASE ? databaseActions : applicationActions
+  const actions =
+    type === ServicesEnum.DATABASE
+      ? databaseActions
+      : type === ServicesEnum.APPLICATION
+      ? applicationActions
+      : containerActions
 
   return (
     <TableRowServices
@@ -107,16 +122,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       link={link}
       buttonActions={actions}
       columnsWidth="25% 25% 25% 10% 10%"
-      removeApplication={
-        !(type === ServicesEnum.DATABASE) && data.status && isDeleteAvailable(data.status.state)
-          ? removeApplication
-          : undefined
-      }
-      removeDatabase={
-        type === ServicesEnum.DATABASE && data.status && isDeleteAvailable(data.status.state)
-          ? removeDatabase
-          : undefined
-      }
+      removeService={data.status && isDeleteAvailable(data.status.state) ? removeService : undefined}
     />
   )
 }
