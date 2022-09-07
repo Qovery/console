@@ -18,6 +18,8 @@ export * from './lib/states/auth-provider.interface'
 export * from './lib/states/repository.interface'
 
 export * from './lib/domain/application.entity'
+export * from './lib/domain/container-application.entity'
+export * from './lib/domain/git-application.entity'
 export * from './lib/domain/database.entity'
 export * from './lib/domain/environment.entity'
 export * from './lib/domain/cluster.entity'

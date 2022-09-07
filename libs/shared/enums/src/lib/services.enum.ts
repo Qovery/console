@@ -1,4 +1,5 @@
 export enum ServicesEnum {
   DATABASE = 'DATABASE',
   APPLICATION = 'APPLICATION',
+  CONTAINER = 'CONTAINER',
 }

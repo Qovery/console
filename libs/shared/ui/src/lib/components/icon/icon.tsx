@@ -14,6 +14,7 @@ import AWSIcon from './icons/aws'
 import AWSGrayIcon from './icons/aws-gray'
 import BuildpacksIcon from './icons/buildpacks'
 import ChildrenArrow from './icons/children-arrow'
+import { ContainerIcon } from './icons/container'
 import DatabaseIcon from './icons/database'
 import DOIcon from './icons/do'
 import DOGrayIcon from './icons/do-gray'
@@ -71,6 +72,8 @@ export function Icon(props: IconProps) {
       return <ApplicationIcon {...formattedProps} />
     case IconEnum.DATABASE:
       return <DatabaseIcon {...formattedProps} />
+    case IconEnum.CONTAINER:
+      return <ContainerIcon {...formattedProps} />
     case IconEnum.SUCCESS:
       return <SuccessIcon {...formattedProps} />
     case IconEnum.ERROR:

@@ -1,8 +1,4 @@
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
-import { ServicesEnum } from '@console/shared/enums'
-import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@console/shared/ui'
-import TableRowServices from '../../ui/table-row-services/table-row-services'
-import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import {
   deleteApplicationAction,
@@ -10,15 +6,19 @@ import {
   postApplicationActionsRestart,
   postApplicationActionsStop,
 } from '@console/domains/application'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from '@console/store/data'
 import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@console/domains/database'
+import { ServicesEnum, getServiceType } from '@console/shared/enums'
+import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
+import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@console/shared/ui'
 import { isDeleteAvailable } from '@console/shared/utils'
+import { AppDispatch } from '@console/store/data'
+import TableRowServices from '../../ui/table-row-services/table-row-services'
 
 export interface TableRowServicesFeatureProps {
   data: ApplicationEntity | DatabaseEntity
@@ -33,11 +33,12 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
 
   const { openModalConfirmation } = useModalConfirmation()
 
-  const isDatabase = !(data as ApplicationEntity).build_mode
-  const type = isDatabase ? ServicesEnum.DATABASE : ServicesEnum.APPLICATION
-  const link = isDatabase
-    ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
-    : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
+  const type = getServiceType(data)
+
+  const link =
+    type === ServicesEnum.DATABASE
+      ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
+      : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -95,7 +96,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     })
   }
 
-  const actions = isDatabase ? databaseActions : applicationActions
+  const actions = type === ServicesEnum.DATABASE ? databaseActions : applicationActions
 
   return (
     <TableRowServices
@@ -107,9 +108,15 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       buttonActions={actions}
       columnsWidth="25% 25% 25% 10% 10%"
       removeApplication={
-        !isDatabase && data.status && isDeleteAvailable(data.status.state) ? removeApplication : undefined
+        !(type === ServicesEnum.DATABASE) && data.status && isDeleteAvailable(data.status.state)
+          ? removeApplication
+          : undefined
       }
-      removeDatabase={isDatabase && data.status && isDeleteAvailable(data.status.state) ? removeDatabase : undefined}
+      removeDatabase={
+        type === ServicesEnum.DATABASE && data.status && isDeleteAvailable(data.status.state)
+          ? removeDatabase
+          : undefined
+      }
     />
   )
 }

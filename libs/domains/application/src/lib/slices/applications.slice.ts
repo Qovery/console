@@ -15,20 +15,23 @@ import {
   ApplicationMetricsApi,
   ApplicationsApi,
   Commit,
+  ContainerResponse,
+  ContainersApi,
   DeploymentHistoryApplication,
   Instance,
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { ApplicationEntity, ApplicationsState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
 import {
-  addOneToManyRelation,
-  getEntitiesByIds,
-  refactoApplicationPayload,
-  removeOneToManyRelation,
-  shortToLongId,
-} from '@console/shared/utils'
+  ApplicationEntity,
+  ApplicationsState,
+  ContainerApplicationEntity,
+  GitApplicationEntity,
+  LoadingStatus,
+  ServiceRunningStatus,
+} from '@console/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, refactoApplicationPayload, shortToLongId } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
@@ -41,24 +44,37 @@ const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const applicationMetricsApi = new ApplicationMetricsApi()
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 
-export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
-  'applications/fetch',
-  async (data, thunkApi) => {
-    const response = await applicationsApi.listApplication(data.environmentId)
+const containersApi = new ContainersApi()
 
-    if (!data.withoutStatus) {
-      thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-    }
+export const fetchApplications = createAsyncThunk<
+  Application[] | ContainerResponse[],
+  { environmentId: string; withoutStatus?: boolean }
+>('applications/fetch', async (data, thunkApi) => {
+  // fetch Git applications
+  const responseApplication = (await applicationsApi.listApplication(data.environmentId)).data
+    .results as GitApplicationEntity[]
+  // fetch Container applications
+  const responseContainer = (await containersApi.listContainer(data.environmentId)).data
+    .results as ContainerApplicationEntity[]
 
-    return response.data.results as Application[]
+  if (!data.withoutStatus) {
+    thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
   }
-)
+
+  return [...responseApplication, ...responseContainer] as ApplicationEntity[]
+})
 
 export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
-    const response = await applicationsApi.getEnvironmentApplicationStatus(data.environmentId)
-    return response.data.results as Status[]
+    // fetch status Git applications
+    const responseApplication = (await applicationsApi.getEnvironmentApplicationStatus(data.environmentId)).data
+      .results as Status[]
+    // fetch status Container applications
+    const responseContainer = (await containersApi.getEnvironmentContainerStatus(data.environmentId)).data
+      .results as Status[]
+
+    return [...responseApplication, ...responseContainer] as Status[]
   }
 )
 
@@ -77,14 +93,6 @@ export const editApplication = createAsyncThunk(
 
     const response = await applicationMainCallsApi.editApplication(payload.applicationId, cloneApplication)
     return response.data as Application
-  }
-)
-
-export const removeOneApplication = createAsyncThunk<string, { applicationId: string }>(
-  'applications/remove',
-  async (data) => {
-    // const response = await applicationMainCallsApi.getApplication(data.applicationId)
-    return data.applicationId
   }
 )
 
@@ -284,10 +292,6 @@ export const applicationsSlice = createSlice({
       .addCase(fetchApplicationsStatus.rejected, (state: ApplicationsState, action) => {
         state.statusLoadingStatus = 'error'
         state.error = action.error.message
-      })
-      // remove application
-      .addCase(removeOneApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<string>) => {
-        state.joinEnvApplication = removeOneToManyRelation(action.payload, state.joinEnvApplication)
       })
       .addCase(fetchApplicationLinks.pending, (state: ApplicationsState, action) => {
         const applicationId = action.meta.arg.applicationId
