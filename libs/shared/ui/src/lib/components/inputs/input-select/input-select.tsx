@@ -79,10 +79,6 @@ export function InputSelect(props: InputSelectProps) {
     value && setSelectedValue(items.map((item) => item.value))
   }, [value, isMulti, options])
 
-  useEffect(() => {
-    setFocused(selectedValue.length !== 0)
-  }, [selectedValue])
-
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
     <components.Option {...props}>
       {isMulti ? (
@@ -113,12 +109,18 @@ export function InputSelect(props: InputSelectProps) {
 
   const inputActions =
     hasFocus && !disabled
-      ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)]'
+      ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
       : disabled
       ? '!bg-element-light-lighter-200 !border-element-light-lighter-500 !pointer-events-none'
       : hasError
       ? 'input--error'
       : ''
+
+  const [hasLabelUp, setHasLabelUp] = useState(value?.length !== 0 ? 'input--label-up' : '')
+
+  useEffect(() => {
+    setHasLabelUp(hasFocus || selectedValue.length !== 0 ? 'input--label-up' : '')
+  }, [hasFocus, selectedValue, setHasLabelUp])
 
   return (
     <div className={className}>
@@ -128,7 +130,10 @@ export function InputSelect(props: InputSelectProps) {
         }`}
         data-testid={dataTestId || 'select-multiple'}
       >
-        <label htmlFor={label} className={`${hasFocus ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`}>
+        <label
+          htmlFor={label}
+          className={`${hasLabelUp ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`}
+        >
           {label}
         </label>
         <Select
@@ -152,6 +157,7 @@ export function InputSelect(props: InputSelectProps) {
           value={selectedItems}
           menuPortalTarget={props.portal ? document.body : undefined}
           onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           styles={{ menuPortal: (base) => ({ ...base, zIndex: 50, pointerEvents: 'auto' }) }}
         />
         <input type="hidden" name={label} value={selectedValue} />

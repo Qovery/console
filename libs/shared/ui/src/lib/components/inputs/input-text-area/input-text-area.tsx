@@ -16,7 +16,8 @@ export function InputTextArea(props: InputTextAreaProps) {
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
 
-  const hasFocus = focused || (value && value.length > 0)
+  const hasFocus = focused
+  const hasLabelUp = hasFocus || (value && value.length > 0) ? 'input--label-up' : ''
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const inputActions = hasFocus ? 'input--focused' : ''
 
@@ -26,7 +27,7 @@ export function InputTextArea(props: InputTextAreaProps) {
     <div className={className} onClick={() => inputRef.current?.querySelector('textarea')?.focus()}>
       <div
         aria-label="textarea-container"
-        className={`input pb-0 pr-2 ${inputActions} ${hasError} ${isDisabled}`}
+        className={`input pb-0 pr-2 ${inputActions} ${hasError} ${isDisabled} ${hasLabelUp}`}
         ref={inputRef}
       >
         <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>

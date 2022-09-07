@@ -162,7 +162,6 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       className="w-[188px]"
                       name={field.name}
                       defaultValue={field.value}
-                      isValid={!error}
                       onChange={(e) => {
                         field.onChange(e)
                         trigger(key + '_key').then()

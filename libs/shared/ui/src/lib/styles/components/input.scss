@@ -6,9 +6,9 @@
     @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
   }
 
-  input,
-  textarea {
-    @apply focus:outline-none;
+  input:focus,
+  textarea:focus {
+    outline: none;
   }
 
   &:hover:not(.input--error),
@@ -16,6 +16,11 @@
   .input__button--focused {
     @apply border-brand-500;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+
+    input,
+    textarea {
+      outline: none !important;
+    }
   }
 }
 
@@ -29,6 +34,13 @@
 
 .input--focused,
 .input__button--focused {
+  outline: 1px solid theme('colors.brand.500') !important;
+  label {
+    @apply text-xs translate-y-0;
+  }
+}
+
+.input--label-up {
   label {
     @apply text-xs translate-y-0;
   }
@@ -51,9 +63,14 @@
 .input--error .input__button {
   @apply border-error-500;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+
   &:hover {
     @apply border-error-500;
   }
+}
+
+.input--error.input--focused {
+  outline: 1px solid theme('colors.error.500') !important;
 }
 
 .input--success {
@@ -114,6 +131,8 @@
 
 .input__select--small {
   @apply pl-2 pr-6 pt-2 pb-2 bg-element-light-lighter-200 border border-element-light-lighter-500 text-text-700 rounded text-sm appearance-none w-full min-h-0;
+
+  @apply focus:outline-brand-500 focus:border-0 focus:outline-2;
 }
 
 // time
