@@ -64,8 +64,10 @@ export function TableRowServices(props: TableRowServicesProps) {
       },
     },
     {
-      iconLeft: <Icon name="icon-solid-scroll" />,
-      onClick: () => openLogs(),
+      ...(type === ServicesEnum.APPLICATION && {
+        iconLeft: <Icon name="icon-solid-scroll" />,
+        onClick: () => openLogs(),
+      }),
     },
     {
       ...(removeService && {
