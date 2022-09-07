@@ -15,7 +15,12 @@
 .input--select-multiple__value-container {
   padding: 0 !important;
   cursor: pointer;
+  display: flex !important;
   @apply mt-2 top-1;
+}
+
+input--select-multiple__value-container.input--select-multiple__value-container--is-multi {
+  display: grid !important;
 }
 
 // state
@@ -68,7 +73,7 @@
   @apply items-center gap-2 rounded-sm;
 
   label {
-    @apply static translate-y-0 font-medium text-ssm text-text-400;
+    @apply static translate-y-0 font-medium text-ssm text-text-600;
   }
 
   .input--select-multiple__checkbox {

@@ -232,6 +232,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                         onChange={field.onChange}
                         className="mb-3"
                         disabled={!autoStop}
+                        isMulti={true}
                       />
                     )}
                   />

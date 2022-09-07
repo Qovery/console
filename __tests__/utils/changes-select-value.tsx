@@ -19,3 +19,19 @@ export async function changeSelectValueByLabel(
     fireEvent.click(itemToSelect)
   })
 }
+
+export async function changeSelectValue(
+  baseElement: HTMLElement,
+  selectTestId: string,
+  value: string
+): Promise<void> {
+  simulateSpaceKeyClick(getByTestId(getByTestId(baseElement, selectTestId), 'input-select-button'))
+
+  const itemToSelect = getByRole(baseElement, 'option', {
+    name: value,
+  })
+  await act(() => {
+    fireEvent.click(itemToSelect)
+  })
+}
+)

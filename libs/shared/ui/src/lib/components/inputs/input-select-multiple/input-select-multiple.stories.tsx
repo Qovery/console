@@ -1,5 +1,5 @@
+import { Meta, Story } from '@storybook/react'
 import { Value } from '@console/shared/interfaces'
-import { Story, Meta } from '@storybook/react'
 import { InputSelectMultiple, InputSelectMultipleProps } from './input-select-multiple'
 
 export default {
@@ -24,8 +24,17 @@ const options: Value[] = [
 
 const Template: Story<InputSelectMultipleProps> = (args) => <InputSelectMultiple {...args} />
 
-export const Primary = Template.bind({})
-Primary.args = {
+export const Single = Template.bind({})
+Single.args = {
+  label: 'Select',
+  options: options,
+  value: 'test1',
+}
+
+export const Multi = Template.bind({})
+Multi.args = {
   label: 'Select Multiple',
   options: options,
+  isMulti: true,
+  value: ['test1', 'test2'],
 }

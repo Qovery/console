@@ -97,6 +97,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                       error={error?.message}
                       onChange={field.onChange}
                       className="mb-3 mt-5"
+                      isMulti={true}
                     />
                   )}
                 />

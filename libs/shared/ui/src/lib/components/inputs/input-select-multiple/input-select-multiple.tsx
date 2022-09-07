@@ -1,42 +1,97 @@
 import { useEffect, useState } from 'react'
-import Select, { GroupBase, MultiValue, MultiValueProps, OptionProps, components } from 'react-select'
+import Select, {
+  GroupBase,
+  MultiValue,
+  MultiValueProps,
+  OptionProps,
+  SingleValue,
+  SingleValueProps,
+  components,
+} from 'react-select'
 import { Value } from '@console/shared/interfaces'
 import Icon from '../../icon/icon'
 
 export interface InputSelectMultipleProps {
   className?: string
   label: string
-  value?: Value[]
+  value?: string | string[]
   options: Value[]
   disabled?: boolean
   error?: string
-  onChange?: (values: MultiValue<Value>) => void
+  onChange?: (e: string | string[]) => void
   dataTestId?: string
+  isMulti?: true
+  portal?: boolean
 }
 
 export function InputSelectMultiple(props: InputSelectMultipleProps) {
-  const { className = '', label, value, options, disabled, error = false, onChange, dataTestId } = props
+  const {
+    className = '',
+    label,
+    value,
+    options,
+    disabled,
+    error = false,
+    onChange,
+    dataTestId,
+    isMulti = undefined,
+  } = props
   const [focused, setFocused] = useState(false)
-  const [selected, setSelected] = useState<MultiValue<Value>>([])
+  const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
+  const [selectedValue, setSelectedValue] = useState<string | string[]>([])
 
-  const hasFocus = focused || selected.length > 0
+  const hasFocus = focused
   const hasError = error ? 'input--select-multiple--error' : ''
 
-  const handleChange = (values: MultiValue<Value>) => {
-    setSelected(values)
-    onChange && onChange(values)
-    values.length === 0 && setFocused(false)
+  const handleChange = (values: MultiValue<Value> | SingleValue<Value>) => {
+    setSelectedItems(values)
+
+    if (isMulti) {
+      const vals = (values as MultiValue<Value>).map((value) => value.value)
+      onChange && onChange(vals)
+      setSelectedValue(vals)
+    } else {
+      if (values) {
+        onChange && onChange((values as Value).value)
+        setSelectedValue((values as Value).value)
+      }
+    }
   }
 
   useEffect(() => {
-    value && setSelected(value)
-  }, [value])
+    const items = options.filter((option) => {
+      if (isMulti) {
+        return (value as string[])?.includes(option.value)
+      } else {
+        if (Object.prototype.toString.call(value) === '[object Array]') {
+          return (value as string[])?.includes(option.value)
+        } else {
+          return option.value === (value as string)
+        }
+      }
+    })
+
+    value && items && setSelectedItems(items)
+    value && setSelectedValue(items.map((item) => item.value))
+  }, [value, isMulti, options])
+
+  useEffect(() => {
+    setFocused(selectedValue.length !== 0)
+  }, [selectedValue])
 
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
     <components.Option {...props}>
-      <span className="input--select-multiple__checkbox">
-        {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
-      </span>
+      {isMulti ? (
+        <span className="input--select-multiple__checkbox">
+          {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
+        </span>
+      ) : (
+        <Icon
+          name="icon-solid-check"
+          className={`text-success-500 ${props.isSelected ? 'opacity-100' : 'opacity-0'}`}
+        />
+      )}
+
       <label className="ml-2">{props.label}</label>
     </components.Option>
   )
@@ -44,8 +99,12 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
     <span className="text-sm text-text-600 mr-1">
       {props.data.label}
-      {props.index + 1 !== selected.length && ', '}
+      {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
+  )
+
+  const SingleValue = (props: SingleValueProps<Value>) => (
+    <span className="text-sm text-text-600 mr-1">{props.data.label}</span>
   )
 
   const inputActions =
@@ -70,18 +129,28 @@ export function InputSelectMultiple(props: InputSelectMultipleProps) {
         </label>
         <Select
           options={options}
-          isMulti
-          components={{ Option, MultiValue }}
-          closeMenuOnSelect={false}
+          isMulti={isMulti}
+          data-testid="select-react-select"
+          components={{
+            Option,
+            MultiValue,
+            SingleValue,
+          }}
+          name={label}
+          inputId={label}
+          closeMenuOnSelect={!isMulti}
           onChange={handleChange}
           classNamePrefix="input--select-multiple"
           hideSelectedOptions={false}
           isSearchable={false}
           isClearable={false}
           isDisabled={disabled}
-          value={selected}
+          value={selectedItems}
+          menuPortalTarget={props.portal ? document.body : undefined}
           onFocus={() => setFocused(true)}
+          styles={{ menuPortal: (base) => ({ ...base, zIndex: 50, pointerEvents: 'auto' }) }}
         />
+        <input type="hidden" name={label} value={selectedValue} />
         <div className="absolute top-1/2 -translate-y-1/2 right-4">
           <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
         </div>

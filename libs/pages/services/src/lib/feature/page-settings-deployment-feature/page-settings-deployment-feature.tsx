@@ -9,7 +9,6 @@ import {
   fetchEnvironmentDeploymentRules,
   selectEnvironmentDeploymentRulesByEnvId,
 } from '@console/domains/environment'
-import { Value } from '@console/shared/interfaces'
 import { dateToHours, weekdaysValues } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsDeployment from '../../ui/page-settings-deployment/page-settings-deployment'
@@ -20,7 +19,7 @@ export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: Env
   cloneEnvironmentDeploymentRules.auto_delete = data['auto_delete']
 
   cloneEnvironmentDeploymentRules.auto_stop = data['auto_stop']
-  cloneEnvironmentDeploymentRules.weekdays = data['weekdays'].map((day: Value) => day.value)
+  cloneEnvironmentDeploymentRules.weekdays = data['weekdays']
   cloneEnvironmentDeploymentRules.start_time = `1970-01-01T${data['start_time']}:00.000Z`
   cloneEnvironmentDeploymentRules.stop_time = `1970-01-01T${data['stop_time']}:00.000Z`
 
