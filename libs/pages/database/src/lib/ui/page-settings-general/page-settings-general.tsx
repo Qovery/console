@@ -68,7 +68,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 <InputSelect
                   className="mb-3"
                   label="Type"
-                  items={databasesType}
+                  options={databasesType}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
@@ -83,7 +83,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 <div className="mb-3">
                   <InputSelect
                     label="Mode"
-                    items={databasesMode}
+                    options={databasesMode}
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}
@@ -123,7 +123,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   <InputSelect
                     dataTestId="input-select-accessibility"
                     label="Accessibility"
-                    items={databasesAccessibility}
+                    options={databasesAccessibility}
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}

@@ -1,7 +1,7 @@
 import { Control, Controller } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@console/shared/ui'
-import { ONBOARDING_URL, ONBOARDING_PERSONALIZE_URL } from '@console/shared/router'
 import { Value } from '@console/shared/interfaces'
+import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@console/shared/router'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@console/shared/ui'
 
 export interface StepMoreProps {
   dataQuestions: Array<Value>
@@ -26,7 +26,7 @@ export function StepMore(props: StepMoreProps) {
             <InputSelect
               className="mb-3"
               label="Why do you want to use Qovery?"
-              items={dataQuestions}
+              options={dataQuestions}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}

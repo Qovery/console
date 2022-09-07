@@ -63,7 +63,7 @@ describe('PageSettingsDeploymentFeature', () => {
         auto_deploy: true,
         auto_delete: false,
         auto_stop: true,
-        weekdays: weekdaysValues,
+        weekdays: weekdaysValues.map((weekday) => weekday.value),
         start_time: startTime,
         stop_time: stopTime,
       },

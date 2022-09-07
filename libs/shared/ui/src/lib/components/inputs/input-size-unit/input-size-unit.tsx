@@ -65,8 +65,10 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
       </div>
       <InputSelect
         className="w-full h-full"
-        onChange={handleChangeMemoryUnit}
-        items={Object.values(MemorySizeEnum).map((size) => ({
+        onChange={(e) => {
+          handleChangeMemoryUnit(e as string)
+        }}
+        options={Object.values(MemorySizeEnum).map((size) => ({
           label: size,
           value: size,
         }))}

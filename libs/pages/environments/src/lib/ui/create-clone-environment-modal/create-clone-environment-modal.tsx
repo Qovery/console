@@ -1,7 +1,6 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { FormEvent, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import Select from 'react-select'
 import { ClusterEntity, EnvironmentEntity, Value } from '@console/shared/interfaces'
 import { InputSelect, InputText, ModalCrud } from '@console/shared/ui'
 
@@ -84,9 +83,10 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
             className="mb-6"
             onChange={field.onChange}
             value={field.value}
-            label="Value"
+            label="Cluster"
             error={error?.message}
-            items={clusterItems}
+            options={clusterItems}
+            portal={true}
           />
         )}
       />
@@ -100,22 +100,13 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
           <InputSelect
             className="mb-6"
             dataTestId="input-select-mode"
-            items={environmentModes}
+            options={environmentModes}
             onChange={field.onChange}
             value={field.value}
             label="Type"
+            portal={true}
           />
         )}
-      />
-
-      <Select
-        options={environmentModes}
-        hideSelectedOptions={false}
-        isSearchable={true}
-        isClearable={false}
-        isDisabled={false}
-        menuPortalTarget={document.body}
-        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999, pointerEvents: 'auto' }) }}
       />
     </ModalCrud>
   )

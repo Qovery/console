@@ -6,7 +6,6 @@ import {
   ButtonStyle,
   HelpSection,
   InputSelect,
-  InputSelectMultiple,
   InputText,
   InputToggle,
 } from '@console/shared/ui'
@@ -89,7 +88,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                   control={control}
                   rules={{ required: 'Please enter minimum one day.' }}
                   render={({ field, fieldState: { error } }) => (
-                    <InputSelectMultiple
+                    <InputSelect
                       dataTestId="weekdays"
                       label="Which days"
                       value={field.value}
@@ -108,7 +107,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                     <InputSelect
                       dataTestId="timezone"
                       label="Timezone"
-                      items={timezoneValues}
+                      options={timezoneValues}
                       onChange={field.onChange}
                       value={field.value}
                       error={error?.message}

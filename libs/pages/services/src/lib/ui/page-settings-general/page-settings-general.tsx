@@ -55,7 +55,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
                   label="Mode"
-                  items={environmentModeValues}
+                  options={environmentModeValues}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
@@ -70,7 +70,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputSelect
                   label="Cluster"
-                  items={clustersList}
+                  options={clustersList}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}

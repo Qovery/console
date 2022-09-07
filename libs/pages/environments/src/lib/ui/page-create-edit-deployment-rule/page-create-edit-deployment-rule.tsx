@@ -13,7 +13,6 @@ import {
   HelpSection,
   Icon,
   InputSelect,
-  InputSelectMultiple,
   InputText,
   InputTextArea,
   InputToggle,
@@ -145,7 +144,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     render={({ field, fieldState: { error } }) => (
                       <InputSelect
                         label="Mode"
-                        items={environmentModeValues}
+                        options={environmentModeValues}
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
@@ -160,7 +159,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     render={({ field, fieldState: { error } }) => (
                       <InputSelect
                         label="Cluster"
-                        items={clustersList}
+                        options={clustersList}
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
@@ -224,7 +223,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     name="weekdays"
                     control={control}
                     render={({ field, fieldState: { error } }) => (
-                      <InputSelectMultiple
+                      <InputSelect
                         label="Which days"
                         value={field.value}
                         options={weekdaysValues}
@@ -242,7 +241,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     render={({ field, fieldState: { error } }) => (
                       <InputSelect
                         label="Timezone"
-                        items={timezoneValues}
+                        options={timezoneValues}
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}

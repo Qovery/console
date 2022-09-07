@@ -1,10 +1,10 @@
-import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@console/shared/ui'
+import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
+import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@console/shared/ui'
 import {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 
 export interface CrudEnvironmentVariableModalProps {
   mode: EnvironmentVariableCrudMode
@@ -75,8 +75,8 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               className="mb-6"
-              portal={false}
-              items={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
+              portal={true}
+              options={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
               onChange={field.onChange}
               value={field.value}
               label="Scope"

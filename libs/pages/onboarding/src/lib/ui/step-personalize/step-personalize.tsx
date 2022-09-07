@@ -1,6 +1,6 @@
 import { Control, Controller } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 
 export interface StepPersonalizeProps {
   dataTypes: Array<Value>
@@ -70,7 +70,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               label="Type of use"
-              items={dataTypes}
+              options={dataTypes}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}

@@ -51,7 +51,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
             dataTestId="input-provider"
             label="Git repository"
             className="mb-3"
-            items={authProviders}
+            options={authProviders}
             onChange={field.onChange}
             value={field.value}
             error={error?.message}
@@ -69,12 +69,12 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                 dataTestId="input-repository"
                 label="Repository"
                 className="mb-3"
-                items={repositories}
+                options={repositories}
                 onChange={field.onChange}
                 value={field.value}
                 error={error?.message}
                 disabled={gitDisabled}
-                search
+                isSearchable={true}
               />
             )}
           />
@@ -88,12 +88,12 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                     dataTestId="input-branch"
                     label="Branch"
                     className="mb-3"
-                    items={branches}
+                    options={branches}
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}
                     disabled={gitDisabled}
-                    search
+                    isSearchable={true}
                   />
                 )}
               />
