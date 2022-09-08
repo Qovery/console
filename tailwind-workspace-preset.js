@@ -8,6 +8,7 @@ module.exports = {
         'page-container': 'calc(100vh - theme(spacing.navbar-height))',
       },
       maxWidth: {
+        'funnel-flow-body-content': '32rem',
         'content-with-navigation-left': '46.5rem',
       },
       minHeight: {
@@ -51,6 +52,12 @@ module.exports = {
           {
             lineHeight: '1.5rem',
             letterSpacing: '0.005em',
+          },
+        ],
+        lg: [
+          '1.25rem',
+          {
+            lineHeight: '1.75rem',
           },
         ],
       },

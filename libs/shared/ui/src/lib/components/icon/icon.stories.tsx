@@ -89,6 +89,9 @@ const Template: Story<IconProps> = () => (
       <button onClick={() => copyName(IconEnum.MONGODB)}>
         <Icon name={IconEnum.MONGODB} width="16" />
       </button>
+      <button onClick={() => copyName(IconEnum.INFORMATION)}>
+        <Icon name={IconEnum.INFORMATION} width="16" />
+      </button>
       <button onClick={() => copyName(IconEnum.MYSQL)}>
         <Icon name={IconEnum.MYSQL} width="20" />
       </button>

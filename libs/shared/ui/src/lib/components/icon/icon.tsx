@@ -20,6 +20,7 @@ import DOIcon from './icons/do'
 import DOGrayIcon from './icons/do-gray'
 import DockerIcon from './icons/docker'
 import EnvironmentIcon from './icons/environment'
+import InformationIcon from './icons/information'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
 import PostgresqlIcon from './icons/postgresql'
@@ -96,6 +97,8 @@ export function Icon(props: IconProps) {
       return <MongoDBIcon {...formattedProps} />
     case IconEnum.MYSQL:
       return <MysqlIcon {...formattedProps} />
+    case IconEnum.INFORMATION:
+      return <InformationIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

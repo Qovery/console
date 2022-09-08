@@ -1,4 +1,5 @@
 import {
+  APPLICATION_SETTINGS_GENERAL_URL,
   Route,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
@@ -10,7 +11,8 @@ import {
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_URL,
 } from '@console/shared/router'
-import PageApplicationCreateFeature from '../../../../application/src/lib/feature/page-application-create-feature/page-application-create-feature'
+import PageApplicationCreateFeature from '../feature/page-application-create-feature/page-application-create-feature'
+import PageApplicationCreateGeneralFeature from '../feature/page-application-create-feature/page-application-create-general-feature/page-application-create-general-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -34,7 +36,7 @@ export const ROUTER_SERVICES: Route[] = [
     component: <PageSettingsFeature />,
   },
   {
-    path: SERVICES_APPLICATION_CREATION_URL,
+    path: `${SERVICES_APPLICATION_CREATION_URL}/*`,
     component: <PageApplicationCreateFeature />,
   },
 ]
@@ -59,5 +61,12 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
   {
     path: SERVICES_SETTINGS_DANGER_ZONE_URL,
     component: <PageSettingsDangerZoneFeature />,
+  },
+]
+
+export const ROUTER_SERVICE_CREATION: Route[] = [
+  {
+    path: APPLICATION_SETTINGS_GENERAL_URL,
+    component: <PageApplicationCreateGeneralFeature />,
   },
 ]

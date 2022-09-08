@@ -17,3 +17,5 @@ export const APPLICATION_SETTINGS_DOMAIN_URL = '/domain'
 export const APPLICATION_SETTINGS_PORT_URL = '/port'
 export const APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL = '/advanced-settings'
 export const APPLICATION_SETTINGS_DANGER_ZONE_URL = '/danger-zone'
+
+export const SERVICE_CREATION_GENERAL_URL = '/general'
