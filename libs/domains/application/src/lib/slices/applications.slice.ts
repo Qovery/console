@@ -15,6 +15,8 @@ import {
   ApplicationMetricsApi,
   ApplicationsApi,
   Commit,
+  ContainerMainCallsApi,
+  ContainerMetricsApi,
   ContainerResponse,
   ContainersApi,
   DeploymentHistoryApplication,
@@ -22,6 +24,7 @@ import {
   Link,
   Status,
 } from 'qovery-typescript-axios'
+import { ServicesEnum } from '@console/shared/enums'
 import {
   ApplicationEntity,
   ApplicationsState,
@@ -45,7 +48,8 @@ const applicationMetricsApi = new ApplicationMetricsApi()
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 
 const containersApi = new ContainersApi()
-// const containerMainCallsApi = new ContainerMainCallsApi()
+const containerMainCallsApi = new ContainerMainCallsApi()
+const containerMetricsApi = new ContainerMetricsApi()
 
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
@@ -89,21 +93,33 @@ export const editApplication = createAsyncThunk(
   }
 )
 
-export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string }>(
+export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string; serviceType?: ServicesEnum }>(
   'application/links',
   async (data) => {
-    const response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
+    let response
+
+    if (data.serviceType === ServicesEnum.CONTAINER) {
+      response = await containerMainCallsApi.listContainerLinks(data.applicationId)
+    } else {
+      response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
+    }
     return response.data.results as Link[]
   }
 )
 
-export const fetchApplicationInstances = createAsyncThunk<Instance[], { applicationId: string }>(
-  'application/instances',
-  async (data) => {
-    const response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
-    return response.data.results as Instance[]
+export const fetchApplicationInstances = createAsyncThunk<
+  Instance[],
+  { applicationId: string; serviceType?: ServicesEnum }
+>('application/instances', async (data) => {
+  let response
+
+  if (data.serviceType === ServicesEnum.CONTAINER) {
+    response = await containerMetricsApi.getContainerCurrentInstance(data.applicationId)
+  } else {
+    response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
   }
-)
+  return response.data.results as Instance[]
+})
 
 export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationId: string }>(
   'application/commits',
@@ -121,10 +137,16 @@ export const fetchApplicationDeployments = createAsyncThunk<
   return response.data.results as DeploymentHistoryApplication[]
 })
 
-export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string }>(
+export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string; serviceType?: ServicesEnum }>(
   'application/status',
   async (data) => {
-    const response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
+    let response
+    if (data.serviceType === ServicesEnum.CONTAINER) {
+      response = await containerMainCallsApi.getContainerStatus(data.applicationId)
+    } else {
+      response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
+    }
+
     return response.data as Status
   }
 )
