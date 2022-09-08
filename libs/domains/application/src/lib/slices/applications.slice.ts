@@ -45,6 +45,7 @@ const applicationMetricsApi = new ApplicationMetricsApi()
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 
 const containersApi = new ContainersApi()
+// const containerMainCallsApi = new ContainerMainCallsApi()
 
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
@@ -75,14 +76,6 @@ export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentI
       .results as Status[]
 
     return [...responseApplication, ...responseContainer] as Status[]
-  }
-)
-
-export const fetchApplication = createAsyncThunk<Application, { applicationId: string }>(
-  'application/fetch',
-  async (data) => {
-    const response = await applicationMainCallsApi.getApplication(data.applicationId)
-    return response.data as Application
   }
 )
 
@@ -230,18 +223,6 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchApplications.rejected, (state: ApplicationsState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
-      })
-      // fetch application
-      .addCase(fetchApplication.pending, (state: ApplicationsState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(fetchApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<Application>) => {
-        applicationsAdapter.upsertOne(state, action.payload)
-        state.loadingStatus = 'loaded'
-      })
-      .addCase(fetchApplication.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
       })

@@ -1,5 +1,12 @@
-import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { ServicesEnum, getServiceType } from '@console/shared/enums'
+import {
+  ApplicationEntity,
+  ContainerApplicationEntity,
+  GitApplicationEntity,
+  LoadingStatus,
+} from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@console/shared/ui'
+import { timeAgo } from '@console/shared/utils'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
@@ -74,8 +81,24 @@ export function PageGeneral(props: PageGeneralProps) {
           buildMode={(application as GitApplicationEntity)?.build_mode}
           gitProvider={(application as GitApplicationEntity)?.git_repository?.provider}
           loadingStatus={loadingStatus}
+          type={getServiceType(application)}
         />
-        <LastCommitFeature />
+        {getServiceType(application) === ServicesEnum.APPLICATION ? (
+          <LastCommitFeature />
+        ) : (
+          <div className="py-6 px-10">
+            <div className="text-subtitle mb-3 text-text-600">Image information</div>
+            <div className="mb-3">
+              <p className="text-text-500 mb-2">Image name: {(application as ContainerApplicationEntity).image_name}</p>
+              <p className="text-text-500 mb-2">
+                Latest deployed tag: {(application as ContainerApplicationEntity).tag}
+              </p>
+              <p className="text-text-400 text-sm">
+                {timeAgo(new Date((application as ContainerApplicationEntity)?.updated_at || ''))}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -3,7 +3,7 @@ import { createContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@console/domains/application'
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum, ServicesEnum, getServiceType } from '@console/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@console/shared/interfaces'
 import {
   Button,
@@ -72,63 +72,74 @@ export function Container(props: ContainerProps) {
       },
     },
     {
-      iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
-      menus: [
-        {
-          items: [
-            {
-              name: 'Deployment logs',
-              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-              onClick: () =>
-                window
-                  .open(
-                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-                    '_blank'
-                  )
-                  ?.focus(),
-            },
-            {
-              name: 'Application logs',
-              contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-              onClick: () =>
-                window
-                  .open(
-                    `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
-                    '_blank'
-                  )
-                  ?.focus(),
-            },
-          ],
-        },
-      ],
+      ...(getServiceType(application) === ServicesEnum.APPLICATION && {
+        iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+        iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+        menusClassName: 'border-r border-r-element-light-lighter-500',
+        menus: [
+          {
+            items: [
+              {
+                name: 'Deployment logs',
+                contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+                onClick: () =>
+                  window
+                    .open(
+                      `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
+                      '_blank'
+                    )
+                    ?.focus(),
+              },
+              {
+                name: 'Application logs',
+                contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+                onClick: () =>
+                  window
+                    .open(
+                      `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
+                      '_blank'
+                    )
+                    ?.focus(),
+              },
+            ],
+          },
+        ],
+      }),
     },
     {
       ...(removeApplication && {
         iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
         menus: [
           {
-            items: [
-              {
-                name: 'Edit code',
-                contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
-                link: {
-                  url: urlCodeEditor((application as GitApplicationEntity)?.git_repository) || '',
-                  external: true,
-                },
-              },
-              {
-                name: 'Copy identifiers',
-                contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
-                onClick: () => copyToClipboard(copyContent),
-              },
-              {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeApplication(applicationId ? applicationId : ''),
-              },
-            ],
+            items:
+              getServiceType(application) === ServicesEnum.APPLICATION
+                ? [
+                    {
+                      name: 'Edit code',
+                      contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
+                      link: {
+                        url: urlCodeEditor((application as GitApplicationEntity)?.git_repository) || '',
+                        external: true,
+                      },
+                    },
+                    {
+                      name: 'Copy identifiers',
+                      contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
+                      onClick: () => copyToClipboard(copyContent),
+                    },
+                    {
+                      name: 'Remove',
+                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                      onClick: () => removeApplication(applicationId ? applicationId : ''),
+                    },
+                  ]
+                : [
+                    {
+                      name: 'Remove',
+                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                      onClick: () => removeApplication(applicationId ? applicationId : ''),
+                    },
+                  ],
           },
         ],
       }),
@@ -174,7 +185,7 @@ export function Container(props: ContainerProps) {
 
   const headerActions = (
     <>
-      <Skeleton width={150} height={24} show={!application?.status}>
+      <Skeleton width={150} height={32} show={!application?.status}>
         <div className="flex">
           {environment && application && application?.status && (
             <>
@@ -193,11 +204,16 @@ export function Container(props: ContainerProps) {
         </div>
       </Skeleton>
       {environment && (
-        <Skeleton width={80} height={24} show={!environment?.mode}>
+        <Skeleton width={80} height={32} show={!environment?.mode}>
           <TagMode size={TagSize.BIG} status={environment?.mode} />
         </Skeleton>
       )}
-      <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
+      <Skeleton width={40} height={32} show={!environment?.cloud_provider}>
+        <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
+          <Icon name={getServiceType(application)} width="16" height="16" />
+        </div>
+      </Skeleton>
+      <Skeleton width={100} height={32} show={!environment?.cloud_provider}>
         <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>

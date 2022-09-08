@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   deleteApplicationAction,
+  deleteContainerAction,
   fetchApplicationCommits,
   fetchApplicationInstances,
   fetchApplicationLinks,
@@ -14,6 +15,9 @@ import {
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
+  postContainerActionsDeploy,
+  postContainerActionsRestart,
+  postContainerActionsStop,
   selectApplicationById,
 } from '@console/domains/application'
 import { selectEnvironmentById } from '@console/domains/environment'
@@ -55,55 +59,63 @@ export function PageApplication() {
     return () => clearInterval(fetchApplicationStatusByInterval)
   }, [applicationId, loadingStatus, dispatch])
 
+  const payload = (applicationId: string) => ({
+    environmentId,
+    applicationId,
+    withDeployments:
+      pathname ===
+      APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+  })
+
   const statusActions: StatusMenuActions[] = [
     {
       name: 'redeploy',
-      action: (applicationId: string) =>
-        dispatch(
-          postApplicationActionsRestart({
-            environmentId,
-            applicationId,
-            withDeployments:
-              pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-          })
-        ),
+      action: (applicationId: string) => {
+        if (application as GitApplicationEntity) {
+          dispatch(postApplicationActionsRestart(payload(applicationId)))
+        } else {
+          dispatch(postContainerActionsRestart(payload(applicationId)))
+        }
+      },
     },
     {
       name: 'deploy',
-      action: (applicationId: string) =>
-        dispatch(
-          postApplicationActionsDeploy({
-            environmentId,
-            applicationId,
-            withDeployments:
-              pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-          })
-        ),
+      action: (applicationId: string) => {
+        if (application as GitApplicationEntity) {
+          dispatch(postApplicationActionsDeploy(payload(applicationId)))
+        } else {
+          dispatch(postContainerActionsDeploy(payload(applicationId)))
+        }
+      },
     },
     {
       name: 'stop',
-      action: (applicationId: string) =>
-        dispatch(
-          postApplicationActionsStop({
-            environmentId,
-            applicationId,
-            withDeployments:
-              pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-          })
-        ),
+      action: (applicationId: string) => {
+        if (application as GitApplicationEntity) {
+          dispatch(postApplicationActionsStop(payload(applicationId)))
+        } else {
+          dispatch(postContainerActionsStop(payload(applicationId)))
+        }
+      },
     },
   ]
 
   const removeApplication = (applicationId: string) => {
-    dispatch(
-      deleteApplicationAction({
-        environmentId,
-        applicationId,
-      })
-    )
+    if (application as GitApplicationEntity) {
+      dispatch(
+        deleteApplicationAction({
+          environmentId,
+          applicationId,
+        })
+      )
+    } else {
+      dispatch(
+        deleteContainerAction({
+          environmentId,
+          applicationId,
+        })
+      )
+    }
   }
 
   return (
