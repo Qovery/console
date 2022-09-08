@@ -41,7 +41,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         data-testid={dataTestId || 'input-select-small'}
         name={name}
         value={value}
-        className={`input input__select--small`}
+        className="input input__select--small"
         onChange={(e) => onClickItem(e.target.value)}
       >
         {items.map((item: Value, index: number) => (

@@ -45,7 +45,7 @@ export function InputSelect(props: InputSelectProps) {
   const [selectedValue, setSelectedValue] = useState<string | string[]>([])
 
   const hasFocus = focused
-  const hasError = error ? 'input--select-multiple--error' : ''
+  const hasError = error ? 'input--select--error' : ''
 
   const handleChange = (values: MultiValue<Value> | SingleValue<Value>) => {
     setSelectedItems(values)
@@ -67,7 +67,7 @@ export function InputSelect(props: InputSelectProps) {
       if (isMulti) {
         return (value as string[])?.includes(option.value)
       } else {
-        if (Object.prototype.toString.call(value) === '[object Array]') {
+        if (Array.isArray(value)) {
           return (value as string[])?.includes(option.value)
         } else {
           return option.value === (value as string)
@@ -82,7 +82,7 @@ export function InputSelect(props: InputSelectProps) {
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
     <components.Option {...props}>
       {isMulti ? (
-        <span className="input--select-multiple__checkbox">
+        <span className="input--select__checkbox">
           {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
         </span>
       ) : (
@@ -125,10 +125,10 @@ export function InputSelect(props: InputSelectProps) {
   return (
     <div className={className}>
       <div
-        className={`input input--select-multiple ${inputActions} ${
+        className={`input input--select ${inputActions} ${
           disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
         }`}
-        data-testid={dataTestId || 'select-multiple'}
+        data-testid={dataTestId || 'select'}
       >
         <label
           htmlFor={label}
@@ -149,7 +149,7 @@ export function InputSelect(props: InputSelectProps) {
           inputId={label}
           closeMenuOnSelect={!isMulti}
           onChange={handleChange}
-          classNamePrefix="input--select-multiple"
+          classNamePrefix="input--select"
           hideSelectedOptions={false}
           isSearchable={isSearchable}
           isClearable={isClearable}

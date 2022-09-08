@@ -23,14 +23,14 @@ describe('InputSelect', () => {
 
   it('should have a label', () => {
     render(<InputSelect {...props} />)
-    const label = screen.getByTestId('select-multiple').querySelector('label')
+    const label = screen.getByTestId('select').querySelector('label')
     expect(label).toBeTruthy()
   })
 
   it('should display an error', () => {
     props.error = 'Error'
     render(<InputSelect {...props} />)
-    const select = screen.getByTestId('select-multiple')
+    const select = screen.getByTestId('select')
     expect(select.classList.contains('input--error')).toBeTruthy()
   })
 
@@ -59,7 +59,7 @@ describe('InputSelect', () => {
   it('should be disabled', () => {
     props.disabled = true
     render(<InputSelect {...props} />)
-    const select = screen.getByTestId('select-multiple')
+    const select = screen.getByTestId('select')
     expect(select.classList.contains('!bg-element-light-lighter-200')).toBeTruthy()
   })
 })

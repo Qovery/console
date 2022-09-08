@@ -1,6 +1,6 @@
 .input {
   @apply relative min-h-[52px] px-4 py-2 rounded border border-element-light-lighter-500 bg-white cursor-pointer;
-  transition: 120ms all $timing-cubic;
+  transition: 120ms all $timing-cubic, 0 outline;
 
   label {
     @apply absolute ease-in-out duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
@@ -19,7 +19,7 @@
 
     input,
     textarea {
-      outline: none !important;
+      outline: none;
     }
   }
 }
@@ -34,7 +34,7 @@
 
 .input--focused,
 .input__button--focused {
-  outline: 1px solid theme('colors.brand.500') !important;
+  outline: 1px solid theme('colors.brand.500');
   label {
     @apply text-xs translate-y-0;
   }
@@ -70,7 +70,7 @@
 }
 
 .input--error.input--focused {
-  outline: 1px solid theme('colors.error.500') !important;
+  outline: 1px solid theme('colors.error.500');
 }
 
 .input--success {
@@ -80,18 +80,6 @@
 
 .input__label {
   @apply w-full h-full;
-}
-
-.input--select {
-  @apply relative p-0 border-0;
-
-  .input__value {
-    @apply translate-y-0;
-  }
-
-  &.input--error {
-    box-shadow: inherit;
-  }
 }
 
 .input__button {

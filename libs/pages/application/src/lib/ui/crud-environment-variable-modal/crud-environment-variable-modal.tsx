@@ -75,7 +75,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               className="mb-6"
-              portal={true}
+              portal
               options={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
               onChange={field.onChange}
               value={field.value}

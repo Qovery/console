@@ -74,7 +74,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                 value={field.value}
                 error={error?.message}
                 disabled={gitDisabled}
-                isSearchable={true}
+                isSearchable
               />
             )}
           />
@@ -93,7 +93,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                     value={field.value}
                     error={error?.message}
                     disabled={gitDisabled}
-                    isSearchable={true}
+                    isSearchable
                   />
                 )}
               />
