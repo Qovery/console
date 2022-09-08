@@ -1,7 +1,12 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
 import { IconEnum, RunningStatus, ServicesEnum } from '@console/shared/enums'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import {
+  ApplicationEntity,
+  ContainerApplicationEntity,
+  DatabaseEntity,
+  GitApplicationEntity,
+} from '@console/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
@@ -81,7 +86,7 @@ export function TableRowServices(props: TableRowServicesProps) {
                       name: 'Edit code',
                       contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
                       link: {
-                        url: urlCodeEditor((data as ApplicationEntity).git_repository) || '',
+                        url: urlCodeEditor((data as GitApplicationEntity).git_repository) || '',
                         external: true,
                       },
                     },
@@ -194,11 +199,11 @@ export function TableRowServices(props: TableRowServicesProps) {
             <Skeleton show={isLoading} width={160} height={16}>
               <div className="flex gap-2 items-center">
                 {type === ServicesEnum.APPLICATION && (
-                  <TagCommit commitId={(data as ApplicationEntity).git_repository?.deployed_commit_id} />
+                  <TagCommit commitId={(data as GitApplicationEntity).git_repository?.deployed_commit_id} />
                 )}
                 {type === ServicesEnum.CONTAINER && (
                   <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
-                    {(data as ApplicationEntity).image_name}
+                    {(data as ContainerApplicationEntity).image_name}
                   </Tag>
                 )}
               </div>
@@ -216,7 +221,7 @@ export function TableRowServices(props: TableRowServicesProps) {
                 </Tooltip>
               )}
               {type === ServicesEnum.APPLICATION && (
-                <Icon name={(data as ApplicationEntity).build_mode || ''} width="20" height="20" />
+                <Icon name={(data as GitApplicationEntity).build_mode || ''} width="20" height="20" />
               )}
               {type === ServicesEnum.CONTAINER && <Icon name={IconEnum.CONTAINER} width="20" height="20" />}
               {(data as DatabaseEntity).version && (

@@ -11,7 +11,7 @@ import {
   postApplicationActionsRestart,
   selectApplicationById,
 } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { GitApplicationEntity } from '@console/shared/interfaces'
 import { objectFlattener } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
@@ -20,7 +20,7 @@ import { initFormValues } from './utils'
 export function PageSettingsAdvancedFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
+  const application = useSelector<RootState, GitApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) => {
       return a?.id === b?.id && a?.advanced_settings?.loadingStatus === b?.advanced_settings?.loadingStatus

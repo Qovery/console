@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@console/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
 import { BaseLink, HelpSection, Table } from '@console/shared/ui'
 import TableRowServicesFeature from '../../feature/table-row-services-feature/table-row-services-feature'
@@ -64,7 +64,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
       >
         <>
           {data.map((currentData) => {
-            const isDatabase = !(currentData as ApplicationEntity).build_mode
+            const isDatabase = !(currentData as GitApplicationEntity).build_mode
             return (
               <TableRowServicesFeature
                 key={currentData.id}

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@console/domains/application'
 import { IconEnum } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { ApplicationEntity, GitApplicationEntity } from '@console/shared/interfaces'
 import {
   Button,
   ButtonIconAction,
@@ -114,7 +114,7 @@ export function Container(props: ContainerProps) {
                 name: 'Edit code',
                 contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
                 link: {
-                  url: urlCodeEditor(application?.git_repository) || '',
+                  url: urlCodeEditor((application as GitApplicationEntity)?.git_repository) || '',
                   external: true,
                 },
               },

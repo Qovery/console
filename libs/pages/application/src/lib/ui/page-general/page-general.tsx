@@ -1,4 +1,4 @@
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@console/shared/ui'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 import About from '../about/about'
@@ -65,14 +65,14 @@ export function PageGeneral(props: PageGeneralProps) {
       </div>
       <div className="w-right-help-sidebar py-10 border-l border-element-light-lighter-400">
         <About
-          description={application?.description || ''}
+          description={(application as GitApplicationEntity)?.description || ''}
           link={{
-            link: application?.git_repository?.url || '',
-            linkLabel: application?.git_repository?.provider,
+            link: (application as GitApplicationEntity)?.git_repository?.url || '',
+            linkLabel: (application as GitApplicationEntity)?.git_repository?.provider,
             external: true,
           }}
-          buildMode={application?.build_mode}
-          gitProvider={application?.git_repository?.provider}
+          buildMode={(application as GitApplicationEntity)?.build_mode}
+          gitProvider={(application as GitApplicationEntity)?.git_repository?.provider}
           loadingStatus={loadingStatus}
         />
         <LastCommitFeature />

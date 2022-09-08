@@ -4,7 +4,7 @@ import {
   ApplicationStorageStorage,
   DatabaseEditRequest,
 } from 'qovery-typescript-axios'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import { DatabaseEntity, GitApplicationEntity } from '@console/shared/interfaces'
 
 export function refactoPayload(response: any) {
   delete response['id']
@@ -14,7 +14,7 @@ export function refactoPayload(response: any) {
   return response
 }
 
-export function refactoApplicationPayload(application: Partial<ApplicationEntity>) {
+export function refactoApplicationPayload(application: Partial<GitApplicationEntity>) {
   // refacto because we can't send all git data
   if (application.git_repository) {
     application.git_repository = {

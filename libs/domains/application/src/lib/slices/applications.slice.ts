@@ -405,7 +405,8 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'loading',
-              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
+              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
+                ?.current_settings,
             },
           },
         }
@@ -439,7 +440,8 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'error',
-              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
+              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
+                ?.current_settings,
             },
           },
         }
@@ -455,7 +457,7 @@ export const applicationsSlice = createSlice({
           id: applicationId,
           changes: {
             commits: {
-              ...state.entities[applicationId]?.commits,
+              ...(state.entities[applicationId] as GitApplicationEntity)?.commits,
               loadingStatus: 'loading',
             },
           },
@@ -587,7 +589,7 @@ export const applicationsLoadingStatus = (state: RootState): LoadingStatus => ge
 export const getCountNewCommitsToDeploy = (applicationId: string) =>
   createSelector(
     (state: RootState) => {
-      return selectById(getApplicationsState(state), applicationId)
+      return selectById(getApplicationsState(state), applicationId) as GitApplicationEntity
     },
     (application): number => {
       const deployedCommit = application?.git_repository?.deployed_commit_id
