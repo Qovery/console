@@ -2,13 +2,9 @@ import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import {
   deleteApplicationAction,
-  deleteContainerAction,
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
-  postContainerActionsDeploy,
-  postContainerActionsRestart,
-  postContainerActionsStop,
 } from '@console/domains/application'
 import {
   deleteDatabaseAction,
@@ -49,15 +45,18 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   const applicationActions: StatusMenuActions[] = [
     {
       name: 'redeploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsRestart({ environmentId, applicationId })),
+      action: (applicationId: string) =>
+        dispatch(postApplicationActionsRestart({ environmentId, applicationId, serviceType: getServiceType(data) })),
     },
     {
       name: 'deploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsDeploy({ environmentId, applicationId })),
+      action: (applicationId: string) =>
+        dispatch(postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(data) })),
     },
     {
       name: 'stop',
-      action: (applicationId: string) => dispatch(postApplicationActionsStop({ environmentId, applicationId })),
+      action: (applicationId: string) =>
+        dispatch(postApplicationActionsStop({ environmentId, applicationId, serviceType: getServiceType(data) })),
     },
   ]
 
@@ -76,21 +75,6 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     },
   ]
 
-  const containerActions: StatusMenuActions[] = [
-    {
-      name: 'redeploy',
-      action: (applicationId: string) => dispatch(postContainerActionsRestart({ environmentId, applicationId })),
-    },
-    {
-      name: 'deploy',
-      action: (applicationId: string) => dispatch(postContainerActionsDeploy({ environmentId, applicationId })),
-    },
-    {
-      name: 'stop',
-      action: (applicationId: string) => dispatch(postContainerActionsStop({ environmentId, applicationId })),
-    },
-  ]
-
   const removeService = (id: string, type: ServicesEnum, name?: string) => {
     const currentType = type.toLocaleLowerCase()
     openModalConfirmation({
@@ -99,19 +83,16 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       name: name,
       isDelete: true,
       action: () => {
-        if (type === ServicesEnum.APPLICATION) dispatch(deleteApplicationAction({ environmentId, applicationId: id }))
-        if (type === ServicesEnum.CONTAINER) dispatch(deleteContainerAction({ environmentId, applicationId: id }))
-        if (type === ServicesEnum.DATABASE) dispatch(deleteDatabaseAction({ environmentId, databaseId: id }))
+        if (type === ServicesEnum.DATABASE) {
+          dispatch(deleteDatabaseAction({ environmentId, databaseId: id }))
+        } else {
+          dispatch(deleteApplicationAction({ environmentId, applicationId: id, serviceType: getServiceType(data) }))
+        }
       },
     })
   }
 
-  const actions =
-    type === ServicesEnum.DATABASE
-      ? databaseActions
-      : type === ServicesEnum.APPLICATION
-      ? applicationActions
-      : containerActions
+  const actions = type === ServicesEnum.DATABASE ? databaseActions : applicationActions
 
   return (
     <TableRowServices

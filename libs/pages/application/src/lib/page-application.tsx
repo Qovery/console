@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   deleteApplicationAction,
-  deleteContainerAction,
   fetchApplicationCommits,
   fetchApplicationInstances,
   fetchApplicationLinks,
@@ -15,9 +14,6 @@ import {
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
-  postContainerActionsDeploy,
-  postContainerActionsRestart,
-  postContainerActionsStop,
   selectApplicationById,
 } from '@console/domains/application'
 import { selectEnvironmentById } from '@console/domains/environment'
@@ -68,6 +64,7 @@ export function PageApplication() {
   const payload = (applicationId: string) => ({
     environmentId,
     applicationId,
+    serviceType: getServiceType(application),
     withDeployments:
       pathname ===
       APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
@@ -76,52 +73,26 @@ export function PageApplication() {
   const statusActions: StatusMenuActions[] = [
     {
       name: 'redeploy',
-      action: (applicationId: string) => {
-        if (application as GitApplicationEntity) {
-          dispatch(postApplicationActionsRestart(payload(applicationId)))
-        } else {
-          dispatch(postContainerActionsRestart(payload(applicationId)))
-        }
-      },
+      action: (applicationId: string) => dispatch(postApplicationActionsRestart(payload(applicationId))),
     },
     {
       name: 'deploy',
-      action: (applicationId: string) => {
-        if (application as GitApplicationEntity) {
-          dispatch(postApplicationActionsDeploy(payload(applicationId)))
-        } else {
-          dispatch(postContainerActionsDeploy(payload(applicationId)))
-        }
-      },
+      action: (applicationId: string) => dispatch(postApplicationActionsDeploy(payload(applicationId))),
     },
     {
       name: 'stop',
-      action: (applicationId: string) => {
-        if (application as GitApplicationEntity) {
-          dispatch(postApplicationActionsStop(payload(applicationId)))
-        } else {
-          dispatch(postContainerActionsStop(payload(applicationId)))
-        }
-      },
+      action: (applicationId: string) => dispatch(postApplicationActionsStop(payload(applicationId))),
     },
   ]
 
   const removeApplication = (applicationId: string) => {
-    if (getServiceType(application) === ServicesEnum.APPLICATION) {
-      dispatch(
-        deleteApplicationAction({
-          environmentId,
-          applicationId,
-        })
-      )
-    } else {
-      dispatch(
-        deleteContainerAction({
-          environmentId,
-          applicationId,
-        })
-      )
-    }
+    dispatch(
+      deleteApplicationAction({
+        environmentId,
+        applicationId,
+        serviceType: getServiceType(application),
+      })
+    )
   }
 
   return (
