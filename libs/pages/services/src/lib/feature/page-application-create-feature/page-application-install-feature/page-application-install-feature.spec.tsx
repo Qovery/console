@@ -1,18 +1,16 @@
-import ResizeObserver from '__tests__/utils/resize-observer'
 import { render } from '__tests__/utils/setup-jest'
-import { ApplicationContainerCreateContext } from 'libs/pages/services/src/lib/feature/page-application-create-feature/page-application-create-feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import PageApplicationCreateResourcesFeature from './page-application-create-resources-feature'
+import { ApplicationContainerCreateContext } from '../page-application-create-feature'
+import PageApplicationInstallFeature from './page-application-install-feature'
 
-describe('PageApplicationCreateResourcesFeature', () => {
+describe('InstallApplicationFeature', () => {
   it('should render successfully', () => {
-    window.ResizeObserver = ResizeObserver
     const { baseElement } = render(
       <ApplicationContainerCreateContext.Provider
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
+          generalData: { name: 'test', applicationSource: ServiceTypeEnum.APPLICATION },
           setGeneralData: jest.fn(),
           resourcesData: {
             memory: 512,
@@ -21,12 +19,21 @@ describe('PageApplicationCreateResourcesFeature', () => {
           },
           setResourcesData: jest.fn(),
           setPortData: jest.fn(),
-          portData: undefined,
+          portData: {
+            ports: [
+              {
+                application_port: 80,
+                external_port: 443,
+                is_public: true,
+              },
+            ],
+          },
         }}
       >
-        <PageApplicationCreateResourcesFeature />
+        <PageApplicationInstallFeature />
       </ApplicationContainerCreateContext.Provider>
     )
+
     expect(baseElement).toBeTruthy()
   })
 })

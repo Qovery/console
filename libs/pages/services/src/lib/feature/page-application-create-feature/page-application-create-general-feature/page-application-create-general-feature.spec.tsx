@@ -14,6 +14,8 @@ describe('PageApplicationCreateGeneralFeature', () => {
           setGeneralData: jest.fn(),
           resourcesData: undefined,
           setResourcesData: jest.fn(),
+          portData: undefined,
+          setPortData: jest.fn(),
         }}
       >
         <PageApplicationCreateGeneralFeature />
