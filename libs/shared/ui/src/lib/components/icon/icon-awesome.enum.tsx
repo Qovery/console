@@ -76,5 +76,6 @@ export enum IconAwesomeEnum {
   CREDIT_CARD = 'icon-solid-credit-card',
   USER_GROUP = 'icon-solid-user-group',
   CODE_BRANCH = 'icon-solid-code-branch',
+  DATABASE = 'icon-solid-database',
   // schema: favicons name
 }

@@ -1,5 +1,6 @@
 import {
   Route,
+  SERVICES_APPLICATION_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
@@ -8,7 +9,8 @@ import {
   SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_URL,
-} from '@qovery/shared/router'
+} from '@console/shared/router'
+import PageApplicationCreateFeature from '../../../../application/src/lib/feature/page-application-create-feature/page-application-create-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -30,6 +32,10 @@ export const ROUTER_SERVICES: Route[] = [
   {
     path: `${SERVICES_SETTINGS_URL}/*`,
     component: <PageSettingsFeature />,
+  },
+  {
+    path: SERVICES_APPLICATION_CREATION_URL,
+    component: <PageApplicationCreateFeature />,
   },
 ]
 

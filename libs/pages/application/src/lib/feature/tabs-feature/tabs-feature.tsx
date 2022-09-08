@@ -173,7 +173,7 @@ export function TabsFeature() {
             ),
           })
         }}
-        iconRight="icon-solid-plus"
+        iconRight={IconAwesomeEnum.CIRCLE_PLUS}
         menus={menuForContentRight}
       >
         New variable

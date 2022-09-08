@@ -1,18 +1,24 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { useLocation, useParams } from 'react-router'
-import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { useLocation, useNavigate, useParams } from 'react-router'
+import { IconEnum, RunningStatus } from '@console/shared/enums'
+import { EnvironmentEntity } from '@console/shared/interfaces'
 import {
+  SERVICES_APPLICATION_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@console/shared/router'
 import {
-  ButtonAction,
+  Button,
   ButtonIconAction,
+  ButtonSize,
   Header,
   Icon,
+  IconAwesomeEnum,
+  Menu,
+  MenuAlign,
+  MenuData,
   Skeleton,
   StatusChip,
   StatusMenuActions,
@@ -20,8 +26,8 @@ import {
   Tag,
   TagMode,
   TagSize,
-} from '@qovery/shared/ui'
-import { copyToClipboard } from '@qovery/shared/utils'
+} from '@console/shared/ui'
+import { copyToClipboard } from '@console/shared/utils'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]
@@ -34,6 +40,7 @@ export function Container(props: ContainerProps) {
   const { environment, children, statusActions, removeEnvironment } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
 
@@ -164,17 +171,52 @@ export function Container(props: ContainerProps) {
     },
   ]
 
+  const newServicesMenu: MenuData = [
+    {
+      items: [
+        {
+          name: 'Create app from Git Repository',
+          contentLeft: <Icon name={IconAwesomeEnum.LAYER_GROUP} className="text-brand-500 text-sm" />,
+          onClick: () => {
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
+          },
+        },
+        {
+          name: 'Create app from Image Registry',
+          contentLeft: <Icon name={IconAwesomeEnum.LAYER_GROUP} className="text-brand-500 text-sm" />,
+          link: {
+            url: `/`,
+          },
+        },
+        {
+          name: 'Create database',
+          contentLeft: <Icon name={IconAwesomeEnum.DATABASE} className="text-brand-500 text-sm" />,
+          link: {
+            url: `/`,
+          },
+        },
+      ],
+    },
+  ]
+
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
       <Skeleton width={154} height={32} show={!environment?.status}>
         {environment?.status ? (
-          <ButtonAction
-            iconRight="icon-solid-plus"
-            external
-            link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications`}
-          >
-            New service
-          </ButtonAction>
+          <Menu
+            trigger={
+              <Button
+                size={ButtonSize.LARGE}
+                iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+                iconLeft={IconAwesomeEnum.ANGLE_DOWN}
+                iconLeftClassName="!text-base"
+              >
+                New service
+              </Button>
+            }
+            menus={newServicesMenu}
+            arrowAlign={MenuAlign.START}
+          />
         ) : (
           <div />
         )}
