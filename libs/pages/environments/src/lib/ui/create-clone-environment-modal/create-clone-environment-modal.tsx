@@ -83,9 +83,10 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
             className="mb-6"
             onChange={field.onChange}
             value={field.value}
-            label="Value"
+            label="Cluster"
             error={error?.message}
-            items={clusterItems}
+            options={clusterItems}
+            portal={true}
           />
         )}
       />
@@ -99,10 +100,11 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
           <InputSelect
             className="mb-6"
             dataTestId="input-select-mode"
-            items={environmentModes}
+            options={environmentModes}
             onChange={field.onChange}
             value={field.value}
             label="Type"
+            portal={true}
           />
         )}
       />

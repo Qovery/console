@@ -36,17 +36,13 @@ export function InputText(props: InputTextProps) {
     if (value) setCurrentValue(value)
   }, [value, setCurrentValue])
 
-  const hasFocus = focused || (value?.toString() && value?.toString().length > 0)
+  const hasFocus = focused
+  const hasLabelUp =
+    hasFocus || (currentValue?.toString() && currentValue?.toString().length > 0) ? 'input--label-up' : ''
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
-  const inputActions = hasFocus
-    ? 'input--focused'
-    : value?.toString() && value.toString().length > 0
-    ? 'input--success'
-    : disabled
-    ? 'input--disabled'
-    : ''
+  const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
 
   const isDisabled = disabled ? 'input--disabled !border-element-light-lighter-500' : ''
 
@@ -63,7 +59,11 @@ export function InputText(props: InputTextProps) {
       onClick={() => (isInputDate ? displayPicker() : inputRef.current?.querySelector('input')?.focus())}
     >
       <div className="relative">
-        <div aria-label="input-container" className={`input ${inputActions} ${isDisabled} ${hasError}`} ref={inputRef}>
+        <div
+          aria-label="input-container"
+          className={`input ${inputActions} ${isDisabled} ${hasError} ${hasLabelUp} `}
+          ref={inputRef}
+        >
           <div className={`${disabled ? 'pointer-events-none' : ''}`}>
             <label htmlFor={label} className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>
               {label}

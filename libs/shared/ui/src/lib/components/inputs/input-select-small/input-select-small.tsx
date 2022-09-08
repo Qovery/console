@@ -11,11 +11,10 @@ export interface InputSelectSmallProps {
   dataTestId?: string
   onChange?: (item: string | undefined) => void
   defaultValue?: string
-  isValid?: boolean
 }
 
 export function InputSelectSmall(props: InputSelectSmallProps) {
-  const { name, label, items, defaultValue, className = '', onChange, getValue, dataTestId, isValid } = props
+  const { name, label, items, defaultValue, className = '', onChange, getValue, dataTestId } = props
 
   const [value, setValue] = useState(defaultValue)
 
@@ -42,7 +41,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         data-testid={dataTestId || 'input-select-small'}
         name={name}
         value={value}
-        className={`input input__select--small ${isValid ? 'input--focused' : ''}`}
+        className="input input__select--small"
         onChange={(e) => onClickItem(e.target.value)}
       >
         {items.map((item: Value, index: number) => (

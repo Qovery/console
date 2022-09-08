@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 import { Control, Controller } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 import { Value } from '@console/shared/interfaces'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
 
 export interface StepCompanyProps {
   dataSize: Array<Value>
@@ -42,7 +42,7 @@ export function StepCompany(props: StepCompanyProps) {
             <InputSelect
               className="mb-3"
               label="Company size"
-              items={dataSize}
+              options={dataSize}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
@@ -57,7 +57,7 @@ export function StepCompany(props: StepCompanyProps) {
             <InputSelect
               className="mb-3"
               label="Role"
-              items={dataRole}
+              options={dataRole}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}

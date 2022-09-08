@@ -83,7 +83,7 @@ export function StorageModal(props: StorageModalProps) {
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
-              items={Object.values(StorageTypeEnum).map((s) => ({ value: s, label: s }))}
+              options={Object.values(StorageTypeEnum).map((s) => ({ value: s, label: s }))}
               label="Type"
               disabled
             />

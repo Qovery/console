@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Tooltip from '../../tooltip/tooltip'
@@ -13,7 +14,6 @@ export interface InputTextSmallProps {
   className?: string
   label?: string
   errorMessagePosition?: 'left' | 'bottom'
-  transparentBorderOnValid?: boolean
 }
 
 export function InputTextSmall(props: InputTextSmallProps) {
@@ -27,11 +27,12 @@ export function InputTextSmall(props: InputTextSmallProps) {
     type = 'text',
     className = '',
     errorMessagePosition = 'bottom',
-    transparentBorderOnValid,
   } = props
 
+  const [focused, setFocused] = useState(false)
+
   const hasError = error && error.length > 0 ? 'input--error' : ''
-  const hasValue = value && value.length > 0 && !transparentBorderOnValid ? 'input--focused' : ''
+  const hasFocus = focused ? 'input--focused' : ''
 
   const classNameError = errorMessagePosition === 'left' ? 'flex gap-3 items-center' : ''
 
@@ -44,7 +45,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           </div>
         </Tooltip>
       )}
-      <div data-testid="input" className={`input input--small flex-grow ${hasError} ${hasValue}`}>
+      <div data-testid="input" className={`input input--small flex-grow ${hasError} ${hasFocus}`}>
         <label className="hidden" htmlFor={props.label}>
           {props.label}
         </label>
@@ -56,6 +57,8 @@ export function InputTextSmall(props: InputTextSmallProps) {
           value={value}
           onInput={onChange}
           id={props.label}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
         />
       </div>
       {error && errorMessagePosition === 'bottom' && (

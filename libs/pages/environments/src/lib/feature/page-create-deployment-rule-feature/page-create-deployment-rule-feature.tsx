@@ -1,11 +1,10 @@
-import { Cluster, ProjectDeploymentRuleRequest, WeekdayEnum } from 'qovery-typescript-axios'
+import { Cluster, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 import { postDeploymentRule } from '@console/domains/projects'
-import { Value } from '@console/shared/interfaces'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
 import { useDocumentTitle, weekdaysValues } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -43,12 +42,7 @@ export function PageCreateDeploymentRuleFeature() {
       fields.start_time = `1970-01-01T${fields.start_time}:00.000Z`
       fields.stop_time = `1970-01-01T${fields.stop_time}:00.000Z`
 
-      const weekdaysList: WeekdayEnum[] = []
-      data['weekdays'].forEach((day: Value) => {
-        weekdaysList.push(day.value as WeekdayEnum)
-      })
-
-      fields.weekdays = weekdaysList
+      fields.weekdays = data['weekdays']
 
       dispatch(postDeploymentRule({ projectId, data: fields })).then(() => {
         navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)

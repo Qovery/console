@@ -57,7 +57,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   dataTestId="input-select-mode"
                   label="Mode"
                   className="mb-3"
-                  items={buildModeItems}
+                  options={buildModeItems}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
@@ -76,7 +76,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   <InputSelect
                     dataTestId="input-select-language"
                     label="Language framework"
-                    items={languageItems}
+                    options={languageItems}
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}

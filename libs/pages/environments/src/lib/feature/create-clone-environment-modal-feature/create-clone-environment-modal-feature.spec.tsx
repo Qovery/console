@@ -1,7 +1,7 @@
-import { act, fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
-import { changeSelectValueByLabel } from '__tests__/utils/changes-select-value'
+import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import * as storeEnvironment from '@console/domains/environment'
 import { environmentFactoryMock } from '@console/domains/environment'
 import { clusterFactoryMock } from '@console/domains/organization'
@@ -73,8 +73,12 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         fireEvent.input(input, { target: { value: 'test' } })
       })
 
-      await changeSelectValueByLabel(baseElement, 'input-select-cluster', mockClusters[2].name)
-      await changeSelectValueByLabel(baseElement, 'input-select-mode', 'Staging')
+      await act(() => {
+        selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
+          container: document.body,
+        })
+        selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
+      })
 
       const submitButton = getByTestId(baseElement, 'submit-button')
       await act(async () => {
@@ -112,8 +116,12 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         fireEvent.input(inputs[1], { target: { value: 'test' } })
       })
 
-      await changeSelectValueByLabel(baseElement, 'input-select-cluster', mockClusters[2].name)
-      await changeSelectValueByLabel(baseElement, 'input-select-mode', 'Staging')
+      await act(() => {
+        selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
+          container: document.body,
+        })
+        selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
+      })
 
       const submitButton = getByTestId(baseElement, 'submit-button')
       await act(async () => {

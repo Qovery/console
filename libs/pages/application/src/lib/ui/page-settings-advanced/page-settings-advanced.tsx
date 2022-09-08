@@ -112,7 +112,6 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                       value={field.value}
                       error={error?.message}
                       errorMessagePosition="left"
-                      transparentBorderOnValid={true}
                       label={field.name}
                     />
                   )}
