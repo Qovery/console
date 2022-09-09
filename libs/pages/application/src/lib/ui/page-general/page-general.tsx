@@ -80,7 +80,6 @@ export function PageGeneral(props: PageGeneralProps) {
           }}
           buildMode={(application as GitApplicationEntity)?.build_mode}
           gitProvider={(application as GitApplicationEntity)?.git_repository?.provider}
-          registry={(application as ContainerApplicationEntity)?.registry}
           loadingStatus={loadingStatus}
           type={getServiceType(application)}
         />

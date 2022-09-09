@@ -1,3 +1,14 @@
+import { configureStore } from '@reduxjs/toolkit'
+import {
+  ApplicationEnvironmentVariableApi,
+  EnvironmentVariableApi,
+  EnvironmentVariableScopeEnum,
+  ProjectEnvironmentVariableApi,
+} from 'qovery-typescript-axios'
+import { ServicesEnum } from '@console/shared/enums'
+import { EnvironmentVariablesState } from '@console/shared/interfaces'
+import { toast } from '@console/shared/toast'
+import { mockEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
 import {
   addVariableToStore,
   createAliasEnvironmentVariables,
@@ -11,16 +22,6 @@ import {
   environmentVariablesAdapter,
   fetchEnvironmentVariables,
 } from './environment-variables.slice'
-import { mockEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
-import {
-  ApplicationEnvironmentVariableApi,
-  EnvironmentVariableApi,
-  EnvironmentVariableScopeEnum,
-  ProjectEnvironmentVariableApi,
-} from 'qovery-typescript-axios'
-import { EnvironmentVariablesState } from '@console/shared/interfaces'
-import { toast } from '@console/shared/toast'
-import { configureStore } from '@reduxjs/toolkit'
 
 jest.mock('@console/shared/toast')
 
@@ -39,7 +40,9 @@ describe('environmentVariables reducer', () => {
   })
 
   it('should handle fetchEnvironmentVariabless', () => {
-    let state = environmentVariables(undefined, fetchEnvironmentVariables.pending(null, null))
+    const applicationId = '123'
+    const serviceType = ServicesEnum.APPLICATION
+    let state = environmentVariables(undefined, fetchEnvironmentVariables.pending('', { applicationId, serviceType }))
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -50,9 +53,11 @@ describe('environmentVariables reducer', () => {
       })
     )
 
-    const applicationId = '123'
     const environmentVariable = mockEnvironmentVariable(false, false)
-    state = environmentVariables(state, fetchEnvironmentVariables.fulfilled([environmentVariable], null, applicationId))
+    state = environmentVariables(
+      state,
+      fetchEnvironmentVariables.fulfilled([environmentVariable], '', { applicationId, serviceType })
+    )
 
     expect(state).toEqual(
       expect.objectContaining({
@@ -66,7 +71,7 @@ describe('environmentVariables reducer', () => {
 
     expect(state.entities[environmentVariable.id]).toStrictEqual(environmentVariable)
 
-    state = environmentVariables(state, fetchEnvironmentVariables.rejected(new Error('Uh oh'), null, null))
+    state = environmentVariables(state, fetchEnvironmentVariables.rejected(new Error('Uh oh'), '', null))
 
     expect(state).toEqual(
       expect.objectContaining({
