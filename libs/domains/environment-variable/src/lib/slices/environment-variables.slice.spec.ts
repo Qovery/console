@@ -39,7 +39,7 @@ describe('environmentVariables reducer', () => {
     expect(environmentVariables(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchEnvironmentVariabless', () => {
+  it('should handle fetchEnvironmentVariables', () => {
     const applicationId = '123'
     const serviceType = ServicesEnum.APPLICATION
     let state = environmentVariables(undefined, fetchEnvironmentVariables.pending('', { applicationId, serviceType }))

@@ -1,3 +1,4 @@
+import { ServicesEnum } from '@console/shared/enums'
 import { mockSecretEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
 import {
   fetchSecretEnvironmentVariables,
@@ -30,9 +31,11 @@ describe('secretEnvironmentVariables reducer', () => {
 
     const applicationId = '123'
     const secretEnv = mockSecretEnvironmentVariable(false, false)
+    const serviceType = ServicesEnum.APPLICATION
+
     state = secretEnvironmentVariables(
       state,
-      fetchSecretEnvironmentVariables.fulfilled([secretEnv], null, applicationId)
+      fetchSecretEnvironmentVariables.fulfilled([secretEnv], null, { applicationId, serviceType })
     )
 
     expect(state).toEqual(
