@@ -1,6 +1,7 @@
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router'
+import { selectApplicationById } from '@console/domains/application'
 import {
   environmentVariableFactoryMock,
   fetchEnvironmentVariables,
@@ -10,24 +11,32 @@ import {
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@console/domains/environment-variable'
-import { useParams } from 'react-router'
-import { TableHeadProps } from '@console/shared/ui'
+import { getServiceType } from '@console/shared/enums'
 import {
+  ApplicationEntity,
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   LoadingStatus,
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
+import { TableHeadProps } from '@console/shared/ui'
 import { useDocumentTitle } from '@console/shared/utils'
+import { AppDispatch, RootState } from '@console/store/data'
+import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'
 import { sortVariable } from './utils/sort-variable'
-import { ApplicationContext } from '../../ui/container/container'
 
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
   const dispatch = useDispatch<AppDispatch>()
   const { applicationId = '' } = useParams()
   const [placeholder] = useState(environmentVariableFactoryMock(5))
+
+  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
+    selectApplicationById(state, applicationId)
+  )
+
+  const serviceType = getServiceType(application)
 
   const environmentVariables = useSelector<RootState, EnvironmentVariableEntity[]>(
     (state) => selectEnvironmentVariablesByApplicationId(state, applicationId),
@@ -61,9 +70,9 @@ export function PageVariablesFeature() {
 
   useEffect(() => {
     setShowHideAllEnvironmentVariablesValues(false)
-    dispatch(fetchEnvironmentVariables(applicationId))
-    dispatch(fetchSecretEnvironmentVariables(applicationId))
-  }, [dispatch, applicationId])
+    dispatch(fetchEnvironmentVariables({ applicationId, serviceType }))
+    dispatch(fetchSecretEnvironmentVariables({ applicationId, serviceType }))
+  }, [dispatch, applicationId, serviceType])
 
   useEffect(() => {
     setLoading(
@@ -134,6 +143,7 @@ export function PageVariablesFeature() {
       setFilterData={setData}
       filterData={data}
       isLoading={isLoading}
+      serviceType={serviceType}
     />
   )
 }

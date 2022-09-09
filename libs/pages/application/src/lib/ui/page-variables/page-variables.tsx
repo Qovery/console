@@ -1,7 +1,8 @@
+import React, { Dispatch, SetStateAction } from 'react'
+import { ServicesEnum } from '@console/shared/enums'
+import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
 import { HelpSection, Table, TableHeadProps } from '@console/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
-import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
-import React, { Dispatch, SetStateAction } from 'react'
 
 export interface PageVariablesProps {
   tableHead: TableHeadProps[]
@@ -9,6 +10,7 @@ export interface PageVariablesProps {
   setFilterData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   filterData: EnvironmentVariableSecretOrPublic[]
   isLoading: boolean
+  serviceType: ServicesEnum
 }
 
 export function PageVariablesMemo(props: PageVariablesProps) {
@@ -32,6 +34,7 @@ export function PageVariablesMemo(props: PageVariablesProps) {
             dataHead={tableHead}
             columnsWidth={columnsWidth}
             isLoading={props.isLoading}
+            serviceType={props.serviceType}
           />
         ))}
 

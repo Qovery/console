@@ -5,6 +5,7 @@ import {
   fetchSecretEnvironmentVariables,
   importEnvironmentVariables,
 } from '@console/domains/environment-variable'
+import { ServicesEnum } from '@console/shared/enums'
 import { RootState } from '@console/store/data'
 
 export function formatData(data: { [key: string]: string }, keys: string[]) {
@@ -28,12 +29,13 @@ export function handleSubmit(
   keys: string[],
   dispatch: ThunkDispatch<RootState, any, any>,
   closeModal: () => void,
-  overwriteEnabled = false
+  overwriteEnabled = false,
+  serviceType: ServicesEnum
 ): void {
   const vars = formatData(data, keys)
-  dispatch(importEnvironmentVariables({ applicationId, vars, overwriteEnabled })).then(() => {
+  dispatch(importEnvironmentVariables({ applicationId, vars, overwriteEnabled, serviceType })).then(() => {
     closeModal()
-    dispatch(fetchEnvironmentVariables(applicationId))
-    dispatch(fetchSecretEnvironmentVariables(applicationId))
+    dispatch(fetchEnvironmentVariables({ applicationId, serviceType }))
+    dispatch(fetchSecretEnvironmentVariables({ applicationId, serviceType }))
   })
 }

@@ -1,6 +1,7 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import {
   ApplicationEnvironmentVariableApi,
+  ContainerEnvironmentVariableApi,
   EnvironmentVariableApi,
   EnvironmentVariableRequest,
   EnvironmentVariableScopeEnum,
@@ -9,24 +10,30 @@ import {
   VariableImport,
   VariableImportRequestVars,
 } from 'qovery-typescript-axios'
-
-import { RootState } from '@console/store/data'
-import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
-import { toast, ToastEnum, toastError } from '@console/shared/toast'
 import { Key } from 'qovery-typescript-axios/api'
+import { ServicesEnum } from '@console/shared/enums'
+import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@console/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
+import { RootState } from '@console/store/data'
 
 export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'public'
 export const environmentVariablesAdapter = createEntityAdapter<EnvironmentVariableEntity>()
 
 const applicationEnvironmentVariableApi = new ApplicationEnvironmentVariableApi()
+const containerEnvironmentVariableApi = new ContainerEnvironmentVariableApi()
 const environmentEnvironmentVariableApi = new EnvironmentVariableApi()
 const projectEnvironmentVariableApi = new ProjectEnvironmentVariableApi()
 
 export const fetchEnvironmentVariables = createAsyncThunk(
   'environmentVariables/list',
-  async (applicationId: string) => {
-    const response = await applicationEnvironmentVariableApi.listApplicationEnvironmentVariable(applicationId)
+  async (payload: { applicationId: string; serviceType: ServicesEnum }) => {
+    let response
+    if (payload.serviceType === ServicesEnum.CONTAINER) {
+      response = await containerEnvironmentVariableApi.listContainerEnvironmentVariable(payload.applicationId)
+    } else {
+      response = await applicationEnvironmentVariableApi.listApplicationEnvironmentVariable(payload.applicationId)
+    }
 
     return response.data.results as EnvironmentVariableEntity[]
   }
@@ -34,11 +41,24 @@ export const fetchEnvironmentVariables = createAsyncThunk(
 
 export const importEnvironmentVariables = createAsyncThunk(
   'environmentVariables/import',
-  async (payload: { applicationId: string; vars: VariableImportRequestVars[]; overwriteEnabled: boolean }) => {
-    const response = await applicationEnvironmentVariableApi.importEnvironmentVariable(payload.applicationId, {
-      overwrite: payload.overwriteEnabled,
-      vars: payload.vars,
-    })
+  async (payload: {
+    applicationId: string
+    vars: VariableImportRequestVars[]
+    overwriteEnabled: boolean
+    serviceType: ServicesEnum
+  }) => {
+    let response
+    if (payload.serviceType === ServicesEnum.CONTAINER) {
+      response = await containerEnvironmentVariableApi.importContainerEnvironmentVariable(payload.applicationId, {
+        overwrite: payload.overwriteEnabled,
+        vars: payload.vars,
+      })
+    } else {
+      response = await applicationEnvironmentVariableApi.importEnvironmentVariable(payload.applicationId, {
+        overwrite: payload.overwriteEnabled,
+        vars: payload.vars,
+      })
+    }
 
     return response.data as VariableImport
   }
@@ -49,6 +69,7 @@ export const createEnvironmentVariablePayloadCreator = async (payload: {
   applicationId: string
   environmentVariableRequest: EnvironmentVariableRequest
   scope: EnvironmentVariableScopeEnum
+  serviceType: ServicesEnum
   toasterCallback?: () => void
 }) => {
   let response
@@ -88,6 +109,7 @@ export const createOverrideEnvironmentVariablesPayloadCreator = async (payload: 
   environmentVariableId: string
   environmentVariableRequest: Value
   scope: EnvironmentVariableScopeEnum
+  serviceType: ServicesEnum
   toasterCallback?: () => void
 }) => {
   const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -133,6 +155,7 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Key
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServicesEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -173,6 +196,7 @@ export const editEnvironmentVariables = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServicesEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -268,7 +292,7 @@ export const environmentVariablesSlice = createSlice({
         })
         environmentVariablesAdapter.setAll(state, extendedEnvs)
         action.payload.forEach((secret) => {
-          state.joinApplicationEnvironmentVariable = addOneToManyRelation(action.meta.arg, secret.id, {
+          state.joinApplicationEnvironmentVariable = addOneToManyRelation(action.meta.arg.applicationId, secret.id, {
             ...state.joinApplicationEnvironmentVariable,
           })
         })

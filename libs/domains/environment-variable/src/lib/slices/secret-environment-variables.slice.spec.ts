@@ -1,9 +1,9 @@
+import { mockSecretEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
 import {
   fetchSecretEnvironmentVariables,
   secretEnvironmentVariables,
   secretEnvironmentVariablesAdapter,
 } from './secret-environment-variables.slice'
-import { mockSecretEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
 
 describe('secretEnvironmentVariables reducer', () => {
   it('should handle initial state', () => {
@@ -16,7 +16,7 @@ describe('secretEnvironmentVariables reducer', () => {
     expect(secretEnvironmentVariables(undefined, { type: '' })).toEqual(expected)
   })
 
-  it('should handle fetchSecretEnvironmentVariabless', () => {
+  it('should handle fetchSecretEnvironmentVariables', () => {
     let state = secretEnvironmentVariables(undefined, fetchSecretEnvironmentVariables.pending(null, null))
 
     expect(state).toEqual(

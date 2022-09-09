@@ -4,7 +4,7 @@ import { ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router'
 import { getApplicationsState } from '@console/domains/application'
-import { RunningStatus } from '@console/shared/enums'
+import { RunningStatus, getServiceType } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -127,7 +127,11 @@ export function TabsFeature() {
             onClick: (e: ClickEvent) => {
               openModal({
                 content: (
-                  <ImportEnvironmentVariableModalFeature closeModal={closeModal} applicationId={applicationId} />
+                  <ImportEnvironmentVariableModalFeature
+                    closeModal={closeModal}
+                    applicationId={applicationId}
+                    serviceType={getServiceType(application)}
+                  />
                 ),
                 options: {
                   width: 750,
@@ -164,6 +168,7 @@ export function TabsFeature() {
                 applicationId={applicationId}
                 environmentId={environmentId}
                 projectId={projectId}
+                serviceType={getServiceType(application)}
               />
             ),
           })

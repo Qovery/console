@@ -1,3 +1,4 @@
+import { applicationFactoryMock } from '@console/domains/application'
 import { formatData, handleSubmit } from './handle-submit'
 
 describe('handleSubmit()', () => {
@@ -45,7 +46,8 @@ describe('handleSubmit()', () => {
       key2_is_secret: 'true',
     }
     const keys = ['key', 'key2']
-    await handleSubmit(data, applicationId, keys, dispatch, modalClose)
+    const application = applicationFactoryMock(1)[0]
+    await handleSubmit(data, applicationId, keys, dispatch, modalClose, application)
     // called three times: one to dispatch the import and two times to fetch secrets and env variables
     expect(dispatch).toHaveBeenCalledTimes(3)
     expect(modalClose).toHaveBeenCalledWith()

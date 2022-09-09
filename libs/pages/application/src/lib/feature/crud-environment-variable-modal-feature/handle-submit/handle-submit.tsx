@@ -12,6 +12,7 @@ import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
 } from '@console/domains/environment-variable'
+import { ServicesEnum } from '@console/shared/enums'
 import { SecretEnvironmentVariableEntity } from '@console/shared/interfaces'
 import {
   CrudEnvironmentVariableModalFeatureProps,
@@ -25,7 +26,8 @@ export function handleSubmitForEnvSecretCreation(
   setLoading: (b: boolean) => void,
   props: CrudEnvironmentVariableModalFeatureProps,
   dispatch: any,
-  setClosing: (b: boolean) => void
+  setClosing: (b: boolean) => void,
+  serviceType: ServicesEnum
 ): void {
   if (data) {
     let entityId
@@ -60,6 +62,7 @@ export function handleSubmitForEnvSecretCreation(
                 },
                 environmentVariableId: props.variable?.id || '',
                 scope: data.scope as EnvironmentVariableScopeEnum,
+                serviceType: serviceType,
                 toasterCallback,
               })
             )
@@ -80,6 +83,7 @@ export function handleSubmitForEnvSecretCreation(
                 },
                 environmentVariableId: props.variable?.id || '',
                 scope: data.scope as EnvironmentVariableScopeEnum,
+                serviceType: serviceType,
                 toasterCallback,
               })
             )
@@ -101,6 +105,7 @@ export function handleSubmitForEnvSecretCreation(
                   value: data.value,
                 },
                 scope: data.scope as EnvironmentVariableScopeEnum,
+                serviceType: serviceType,
                 toasterCallback,
               })
             )
@@ -122,11 +127,17 @@ export function handleSubmitForEnvSecretCreation(
               value: data.value,
             },
             scope: data.scope as EnvironmentVariableScopeEnum,
+            serviceType: serviceType,
             toasterCallback,
           })
         )
           .then(async () => {
-            await dispatch(fetchEnvironmentVariables(props.applicationId)).unwrap()
+            await dispatch(
+              fetchEnvironmentVariables({
+                applicationId: props.applicationId,
+                serviceType: serviceType,
+              })
+            ).unwrap()
             setClosing(true)
           })
           .finally(() => {
@@ -146,6 +157,7 @@ export function handleSubmitForEnvSecretCreation(
                 },
                 environmentVariableId: props.variable?.id || '',
                 scope: data.scope as EnvironmentVariableScopeEnum,
+                serviceType: serviceType,
                 toasterCallback,
               })
             )
@@ -166,6 +178,7 @@ export function handleSubmitForEnvSecretCreation(
                 },
                 environmentVariableId: props.variable?.id || '',
                 scope: data.scope as EnvironmentVariableScopeEnum,
+                serviceType: serviceType,
                 toasterCallback,
               })
             )
@@ -186,6 +199,7 @@ export function handleSubmitForEnvSecretCreation(
                   value: data.value,
                 },
                 scope: data.scope as EnvironmentVariableScopeEnum,
+                serviceType: serviceType,
                 toasterCallback,
               })
             )
@@ -207,11 +221,17 @@ export function handleSubmitForEnvSecretCreation(
               value: (props.variable as SecretEnvironmentVariableEntity).aliased_secret?.key || data.value || '',
             },
             scope: data.scope as EnvironmentVariableScopeEnum,
+            serviceType: serviceType,
             toasterCallback,
           })
         )
           .then(async () => {
-            await dispatch(fetchSecretEnvironmentVariables(props.applicationId)).unwrap()
+            await dispatch(
+              fetchSecretEnvironmentVariables({
+                applicationId: props.applicationId,
+                serviceType: serviceType,
+              })
+            ).unwrap()
             setClosing(true)
           })
           .finally(() => {
