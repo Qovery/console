@@ -109,11 +109,19 @@ export const createOverrideSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.createApplicationSecretOverride(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
+        if (payload.serviceType === ServicesEnum.CONTAINER) {
+          response = await applicationSecretApi.createContainerSecretOverride(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        } else {
+          response = await applicationSecretApi.createApplicationSecretOverride(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        }
         break
     }
 
@@ -151,11 +159,19 @@ export const createAliasSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.createApplicationSecretAlias(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
+        if (payload.serviceType === ServicesEnum.CONTAINER) {
+          response = await containerSecretApi.createContainerSecretAlias(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        } else {
+          response = await applicationSecretApi.createApplicationSecretAlias(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        }
         break
     }
 
@@ -192,11 +208,19 @@ export const editSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.editApplicationSecret(
-          payload.entityId,
-          payload.environmentVariableId,
-          payload.environmentVariableRequest
-        )
+        if (payload.serviceType === ServicesEnum.CONTAINER) {
+          response = await containerSecretApi.editContainerSecret(
+            payload.entityId,
+            payload.environmentVariableId,
+            payload.environmentVariableRequest
+          )
+        } else {
+          response = await applicationSecretApi.editApplicationSecret(
+            payload.entityId,
+            payload.environmentVariableId,
+            payload.environmentVariableRequest
+          )
+        }
         break
     }
     return response.data
@@ -223,7 +247,11 @@ export const deleteSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.deleteApplicationSecret(payload.entityId, payload.environmentVariableId)
+        if (payload.serviceType === ServicesEnum.CONTAINER) {
+          response = await containerSecretApi.deleteContainerSecret(payload.entityId, payload.environmentVariableId)
+        } else {
+          response = await applicationSecretApi.deleteApplicationSecret(payload.entityId, payload.environmentVariableId)
+        }
         break
     }
     return response.data

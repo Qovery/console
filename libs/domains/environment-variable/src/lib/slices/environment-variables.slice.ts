@@ -89,10 +89,17 @@ export const createEnvironmentVariablePayloadCreator = async (payload: {
       break
     case EnvironmentVariableScopeEnum.APPLICATION:
     default:
-      response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariable(
-        payload.entityId,
-        payload.environmentVariableRequest
-      )
+      if (payload.serviceType === ServicesEnum.CONTAINER) {
+        response = await containerEnvironmentVariableApi.createContainerEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableRequest
+        )
+      } else {
+        response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableRequest
+        )
+      }
       break
   }
   return response.data
@@ -131,11 +138,19 @@ export const createOverrideEnvironmentVariablesPayloadCreator = async (payload: 
       break
     case EnvironmentVariableScopeEnum.APPLICATION:
     default:
-      response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariableOverride(
-        entityId,
-        environmentVariableId,
-        environmentVariableRequest
-      )
+      if (payload.serviceType === ServicesEnum.CONTAINER) {
+        response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableOverride(
+          entityId,
+          environmentVariableId,
+          environmentVariableRequest
+        )
+      } else {
+        response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariableOverride(
+          entityId,
+          environmentVariableId,
+          environmentVariableRequest
+        )
+      }
       break
   }
 
@@ -177,11 +192,19 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariableAlias(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
+        if (payload.serviceType === ServicesEnum.CONTAINER) {
+          response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableAlias(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        } else {
+          response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariableAlias(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        }
         break
     }
 
@@ -218,11 +241,19 @@ export const editEnvironmentVariables = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationEnvironmentVariableApi.editApplicationEnvironmentVariable(
-          payload.entityId,
-          payload.environmentVariableId,
-          payload.environmentVariableRequest
-        )
+        if (payload.serviceType === ServicesEnum.CONTAINER) {
+          response = await containerEnvironmentVariableApi.editContainerEnvironmentVariable(
+            payload.entityId,
+            payload.environmentVariableId,
+            payload.environmentVariableRequest
+          )
+        } else {
+          response = await applicationEnvironmentVariableApi.editApplicationEnvironmentVariable(
+            payload.entityId,
+            payload.environmentVariableId,
+            payload.environmentVariableRequest
+          )
+        }
         break
     }
     return response.data
@@ -235,6 +266,7 @@ export const deleteEnvironmentVariable = createAsyncThunk(
     entityId: string
     environmentVariableId: string
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServicesEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -254,10 +286,17 @@ export const deleteEnvironmentVariable = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationEnvironmentVariableApi.deleteApplicationEnvironmentVariable(
-          payload.entityId,
-          payload.environmentVariableId
-        )
+        if (payload.serviceType === ServicesEnum.CONTAINER) {
+          response = await containerEnvironmentVariableApi.deleteContainerEnvironmentVariable(
+            payload.entityId,
+            payload.environmentVariableId
+          )
+        } else {
+          response = await applicationEnvironmentVariableApi.deleteApplicationEnvironmentVariable(
+            payload.entityId,
+            payload.environmentVariableId
+          )
+        }
         break
     }
     return response.data

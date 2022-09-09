@@ -181,7 +181,12 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
                 if (variable.variable_type === 'public') {
                   dispatch(
-                    deleteEnvironmentVariable({ entityId, environmentVariableId: variable.id, scope: variable.scope })
+                    deleteEnvironmentVariable({
+                      entityId,
+                      environmentVariableId: variable.id,
+                      scope: variable.scope,
+                      serviceType: props.serviceType,
+                    })
                   )
                 } else {
                   dispatch(
