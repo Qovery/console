@@ -197,7 +197,7 @@ export function TableRowServices(props: TableRowServicesProps) {
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
           {type !== ServicesEnum.DATABASE && (
             <Skeleton show={isLoading} width={160} height={16}>
-              <div className="flex gap-2 items-center">
+              <div className="flex gap-2 items-center -mt-[1px]">
                 {type === ServicesEnum.APPLICATION && (
                   <TagCommit commitId={(data as GitApplicationEntity).git_repository?.deployed_commit_id} />
                 )}
@@ -232,7 +232,6 @@ export function TableRowServices(props: TableRowServicesProps) {
             </div>
           </Skeleton>
         </div>
-        <div className="text-text-500">-</div>
       </>
     </TableRow>
   )

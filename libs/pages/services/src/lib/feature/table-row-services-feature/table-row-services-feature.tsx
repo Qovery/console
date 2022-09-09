@@ -102,7 +102,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       dataHead={dataHead}
       link={link}
       buttonActions={actions}
-      columnsWidth="25% 25% 25% 10% 10%"
+      columnsWidth="25% 25% 25% 20%"
       removeService={data.status && isDeleteAvailable(data.status.state) ? removeService : undefined}
     />
   )

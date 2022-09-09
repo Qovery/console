@@ -57,12 +57,9 @@ function PageGeneralMemo(props: PageGeneralProps) {
         },
       ],
     },
-    {
-      title: 'Tags',
-    },
   ]
 
-  const columnWidth = '35% 25% 25% 15%'
+  const columnWidth = '30% 25% 40%'
 
   return (
     <>

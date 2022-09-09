@@ -142,7 +142,6 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
             <TagMode status={data.mode} />
           </Skeleton>
         </div>
-        <div className="text-text-500">-</div>
       </>
     </TableRow>
   )

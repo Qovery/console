@@ -47,9 +47,6 @@ function PageGeneralMemo(props: PageGeneralProps) {
     {
       title: 'Type',
     },
-    {
-      title: 'Tags',
-    },
   ]
 
   return (
@@ -60,7 +57,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
         filterData={data}
         setFilterData={setData}
         className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
-        columnsWidth="30% 20% 25% 10% 15%"
+        columnsWidth="30% 20% 25% 20%"
       >
         <>
           {data.map((currentData) => {
