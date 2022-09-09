@@ -15,6 +15,7 @@ import {
   ApplicationMetricsApi,
   ApplicationsApi,
   Commit,
+  ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainerMetricsApi,
   ContainerResponse,
@@ -50,6 +51,7 @@ const applicationConfigurationApi = new ApplicationConfigurationApi()
 const containersApi = new ContainersApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
 const containerMetricsApi = new ContainerMetricsApi()
+const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
@@ -131,10 +133,15 @@ export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationI
 
 export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],
-  { applicationId: string; silently?: boolean }
+  { applicationId: string; serviceType?: ServicesEnum; silently?: boolean }
 >('application/deployments', async (data) => {
-  const response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
-  return response.data.results as DeploymentHistoryApplication[]
+  let response
+  if (data.serviceType === ServicesEnum.CONTAINER) {
+    response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
+  } else {
+    response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
+  }
+  return response.data.results
 })
 
 export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string; serviceType?: ServicesEnum }>(

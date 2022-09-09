@@ -32,7 +32,13 @@ export const postApplicationActionsRestart = createAsyncThunk<
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
       // refetch deployments after update
       if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
+        await dispatch(
+          fetchApplicationDeployments({
+            applicationId: data.applicationId,
+            serviceType: data.serviceType,
+            silently: true,
+          })
+        )
       // success message
       toast(ToastEnum.SUCCESS, 'Your application is redeploying')
     }
@@ -61,7 +67,13 @@ export const postApplicationActionsDeploy = createAsyncThunk<
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
       // refetch deployments after update
       if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
+        await dispatch(
+          fetchApplicationDeployments({
+            applicationId: data.applicationId,
+            serviceType: data.serviceType,
+            silently: true,
+          })
+        )
       // success message
       toast(ToastEnum.SUCCESS, 'Your application is deploying')
     }
@@ -90,7 +102,13 @@ export const postApplicationActionsStop = createAsyncThunk<
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
       // refetch deployments after update
       if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
+        await dispatch(
+          fetchApplicationDeployments({
+            applicationId: data.applicationId,
+            serviceType: data.serviceType,
+            silently: true,
+          })
+        )
       // success message
       toast(ToastEnum.SUCCESS, 'Your application is stopping')
     }

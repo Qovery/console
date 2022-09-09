@@ -7,6 +7,7 @@ import {
   fetchApplicationDeployments,
   getApplicationsState,
 } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { BaseLink } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -39,11 +40,14 @@ export function PageDeploymentsFeature() {
       application &&
       (!application.deployments?.loadingStatus || application.deployments.loadingStatus === 'not loaded')
     ) {
-      dispatch(fetchApplicationDeployments({ applicationId }))
+      dispatch(fetchApplicationDeployments({ applicationId, serviceType: getServiceType(application) }))
     }
 
     const pullDeployments = setInterval(
-      () => dispatch(fetchApplicationDeployments({ applicationId, silently: true })),
+      () =>
+        dispatch(
+          fetchApplicationDeployments({ applicationId, serviceType: getServiceType(application), silently: true })
+        ),
       2500
     )
 
