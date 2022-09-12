@@ -176,17 +176,10 @@ export function Container(props: ContainerProps) {
     {
       items: [
         {
-          name: 'Create app from Git Repository',
+          name: 'Create application',
           contentLeft: <Icon name={IconAwesomeEnum.LAYER_GROUP} className="text-brand-500 text-sm" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create app from Image Registry',
-          contentLeft: <Icon name={IconAwesomeEnum.LAYER_GROUP} className="text-brand-500 text-sm" />,
-          link: {
-            url: `/`,
           },
         },
         {
