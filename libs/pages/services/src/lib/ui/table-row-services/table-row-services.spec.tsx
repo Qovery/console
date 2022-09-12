@@ -1,7 +1,6 @@
-import { applicationFactoryMock } from '@console/domains/application'
-import { ServicesEnum } from '@console/shared/enums'
 import { render } from '__tests__/utils/setup-jest'
-
+import { applicationFactoryMock } from '@console/domains/application'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import TableRowServices, { TableRowServicesProps } from './table-row-services'
 
 let props: TableRowServicesProps
@@ -9,7 +8,7 @@ let props: TableRowServicesProps
 beforeEach(() => {
   props = {
     data: applicationFactoryMock(1)[0],
-    type: ServicesEnum.APPLICATION,
+    type: ServiceTypeEnum.APPLICATION,
     dataHead: [],
     link: '/',
     buttonActions: [

@@ -25,7 +25,7 @@ import {
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import {
   ApplicationEntity,
   ApplicationsState,
@@ -57,31 +57,34 @@ export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
   { environmentId: string; withoutStatus?: boolean }
 >('applications/fetch', async (data, thunkApi) => {
-  // fetch Git applications
-  const responseApplication = (await applicationsApi.listApplication(data.environmentId)).data
-    .results as GitApplicationEntity[]
-  // fetch Container applications
-  const responseContainer = (await containersApi.listContainer(data.environmentId)).data
-    .results as ContainerApplicationEntity[]
+  const result = await Promise.all([
+    // fetch Git applications
+    applicationsApi.listApplication(data.environmentId),
+    // fetch Container applications
+    containersApi.listContainer(data.environmentId),
+  ])
 
   if (!data.withoutStatus) {
     thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
   }
 
-  return [...responseApplication, ...responseContainer] as ApplicationEntity[]
+  return [
+    ...(result[0].data.results as GitApplicationEntity[]),
+    ...(result[1].data.results as ContainerApplicationEntity[]),
+  ] as ApplicationEntity[]
 })
 
 export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
-    // fetch status Git applications
-    const responseApplication = (await applicationsApi.getEnvironmentApplicationStatus(data.environmentId)).data
-      .results as Status[]
-    // fetch status Container applications
-    const responseContainer = (await containersApi.getEnvironmentContainerStatus(data.environmentId)).data
-      .results as Status[]
+    const result = await Promise.all([
+      // fetch status Git applications
+      applicationsApi.getEnvironmentApplicationStatus(data.environmentId),
+      // fetch status Container applications
+      containersApi.getEnvironmentContainerStatus(data.environmentId),
+    ])
 
-    return [...responseApplication, ...responseContainer] as Status[]
+    return [...(result[0].data.results as Status[]), ...(result[1].data.results as Status[])]
   }
 )
 
@@ -95,12 +98,12 @@ export const editApplication = createAsyncThunk(
   }
 )
 
-export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string; serviceType?: ServicesEnum }>(
+export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string; serviceType?: ServiceTypeEnum }>(
   'application/links',
   async (data) => {
     let response
 
-    if (data.serviceType === ServicesEnum.CONTAINER) {
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
       response = await containerMainCallsApi.listContainerLinks(data.applicationId)
     } else {
       response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
@@ -111,11 +114,11 @@ export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: s
 
 export const fetchApplicationInstances = createAsyncThunk<
   Instance[],
-  { applicationId: string; serviceType?: ServicesEnum }
+  { applicationId: string; serviceType?: ServiceTypeEnum }
 >('application/instances', async (data) => {
   let response
 
-  if (data.serviceType === ServicesEnum.CONTAINER) {
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
     response = await containerMetricsApi.getContainerCurrentInstance(data.applicationId)
   } else {
     response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
@@ -133,10 +136,10 @@ export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationI
 
 export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],
-  { applicationId: string; serviceType?: ServicesEnum; silently?: boolean }
+  { applicationId: string; serviceType?: ServiceTypeEnum; silently?: boolean }
 >('application/deployments', async (data) => {
   let response
-  if (data.serviceType === ServicesEnum.CONTAINER) {
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
     response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
   } else {
     response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
@@ -144,19 +147,19 @@ export const fetchApplicationDeployments = createAsyncThunk<
   return response.data.results
 })
 
-export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string; serviceType?: ServicesEnum }>(
-  'application/status',
-  async (data) => {
-    let response
-    if (data.serviceType === ServicesEnum.CONTAINER) {
-      response = await containerMainCallsApi.getContainerStatus(data.applicationId)
-    } else {
-      response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
-    }
-
-    return response.data as Status
+export const fetchApplicationStatus = createAsyncThunk<
+  Status,
+  { applicationId: string; serviceType?: ServiceTypeEnum }
+>('application/status', async (data) => {
+  let response
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    response = await containerMainCallsApi.getContainerStatus(data.applicationId)
+  } else {
+    response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
   }
-)
+
+  return response.data as Status
+})
 
 export const fetchApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,

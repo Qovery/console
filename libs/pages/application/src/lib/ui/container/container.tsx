@@ -3,7 +3,7 @@ import { createContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@console/domains/application'
-import { IconEnum, ServicesEnum, getServiceType } from '@console/shared/enums'
+import { IconEnum, ServiceTypeEnum, getServiceType } from '@console/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@console/shared/interfaces'
 import {
   Button,
@@ -72,7 +72,7 @@ export function Container(props: ContainerProps) {
       },
     },
     {
-      ...(getServiceType(application) === ServicesEnum.APPLICATION && {
+      ...(getServiceType(application) === ServiceTypeEnum.APPLICATION && {
         iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
         iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
         menusClassName: 'border-r border-r-element-light-lighter-500',
@@ -112,7 +112,7 @@ export function Container(props: ContainerProps) {
         menus: [
           {
             items:
-              getServiceType(application) === ServicesEnum.APPLICATION
+              getServiceType(application) === ServiceTypeEnum.APPLICATION
                 ? [
                     {
                       name: 'Edit code',

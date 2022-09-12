@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import { deleteEnvironmentVariable, deleteSecret } from '@console/domains/environment-variable'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -30,7 +30,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
   dataHead: TableHeadProps[]
   columnsWidth?: string
   isLoading: boolean
-  serviceType: ServicesEnum
+  serviceType: ServiceTypeEnum
 }
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {

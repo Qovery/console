@@ -1,4 +1,4 @@
-import { ServicesEnum, getServiceType } from '@console/shared/enums'
+import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -83,7 +83,7 @@ export function PageGeneral(props: PageGeneralProps) {
           loadingStatus={loadingStatus}
           type={getServiceType(application)}
         />
-        {getServiceType(application) === ServicesEnum.APPLICATION ? (
+        {getServiceType(application) === ServiceTypeEnum.APPLICATION ? (
           <LastCommitFeature />
         ) : (
           <div className="py-6 px-10">

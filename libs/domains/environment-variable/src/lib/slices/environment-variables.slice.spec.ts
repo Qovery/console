@@ -5,7 +5,7 @@ import {
   EnvironmentVariableScopeEnum,
   ProjectEnvironmentVariableApi,
 } from 'qovery-typescript-axios'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import { EnvironmentVariablesState } from '@console/shared/interfaces'
 import { toast } from '@console/shared/toast'
 import { mockEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
@@ -41,7 +41,7 @@ describe('environmentVariables reducer', () => {
 
   it('should handle fetchEnvironmentVariables', () => {
     const applicationId = '123'
-    const serviceType = ServicesEnum.APPLICATION
+    const serviceType = ServiceTypeEnum.APPLICATION
     let state = environmentVariables(undefined, fetchEnvironmentVariables.pending('', { applicationId, serviceType }))
 
     expect(state).toEqual(

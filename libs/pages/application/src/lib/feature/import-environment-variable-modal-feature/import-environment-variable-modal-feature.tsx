@@ -8,7 +8,7 @@ import {
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@console/domains/environment-variable'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -29,7 +29,7 @@ import { triggerToggleAll } from './utils/trigger-toggle-all'
 export interface ImportEnvironmentVariableModalFeatureProps {
   applicationId: string
   closeModal: () => void
-  serviceType: ServicesEnum
+  serviceType: ServiceTypeEnum
 }
 
 export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVariableModalFeatureProps) {

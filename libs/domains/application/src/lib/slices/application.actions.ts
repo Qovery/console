@@ -5,7 +5,7 @@ import {
   ContainerActionsApi,
   ContainerMainCallsApi,
 } from 'qovery-typescript-axios'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import { ToastEnum, toast } from '@console/shared/toast'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 
@@ -17,11 +17,11 @@ const containerMainCallsApi = new ContainerMainCallsApi()
 
 export const postApplicationActionsRestart = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; serviceType?: ServicesEnum; withDeployments?: boolean }
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
 >('applicationActions/restart', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServicesEnum.CONTAINER) {
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
       response = await containerActionApi.restartContainer(data.applicationId)
     } else {
       response = await applicationActionApi.restartApplication(data.applicationId)
@@ -52,11 +52,11 @@ export const postApplicationActionsRestart = createAsyncThunk<
 
 export const postApplicationActionsDeploy = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; serviceType?: ServicesEnum; withDeployments?: boolean }
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
 >('applicationActions/deploy', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServicesEnum.CONTAINER) {
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
       response = await containerActionApi.restartContainer(data.applicationId)
     } else {
       response = await applicationActionApi.restartApplication(data.applicationId)
@@ -87,11 +87,11 @@ export const postApplicationActionsDeploy = createAsyncThunk<
 
 export const postApplicationActionsStop = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; serviceType?: ServicesEnum; withDeployments?: boolean }
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
 >('applicationActions/stop', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServicesEnum.CONTAINER) {
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
       response = await containerActionApi.stopContainer(data.applicationId)
     } else {
       response = await applicationActionApi.stopApplication(data.applicationId)
@@ -122,11 +122,11 @@ export const postApplicationActionsStop = createAsyncThunk<
 
 export const deleteApplicationAction = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; serviceType?: ServicesEnum }
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum }
 >('applicationActions/delete', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServicesEnum.CONTAINER) {
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
       response = await containerMainCallsApi.deleteContainer(data.applicationId)
     } else {
       response = await applicationMainCallsApi.deleteApplication(data.applicationId)

@@ -1,6 +1,6 @@
 export * from './lib/colors.enum'
 export * from './lib/icon.enum'
-export * from './lib/services.enum'
+export * from './lib/service-type.enum'
 export * from './lib/running-status.enum'
 export * from './lib/logs-type.enum'
 export * from './lib/memory-size.enum'

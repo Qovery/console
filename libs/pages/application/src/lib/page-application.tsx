@@ -17,7 +17,7 @@ import {
   selectApplicationById,
 } from '@console/domains/application'
 import { selectEnvironmentById } from '@console/domains/environment'
-import { ServicesEnum, getServiceType } from '@console/shared/enums'
+import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
 import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@console/shared/router'
 import { StatusMenuActions } from '@console/shared/ui'
@@ -50,7 +50,7 @@ export function PageApplication() {
         dispatch(fetchApplicationInstances({ applicationId, serviceType: getServiceType(application) }))
       if (
         (application as GitApplicationEntity)?.commits?.loadingStatus !== 'loaded' &&
-        getServiceType(application) === ServicesEnum.APPLICATION
+        getServiceType(application) === ServiceTypeEnum.APPLICATION
       )
         dispatch(fetchApplicationCommits({ applicationId }))
     }

@@ -12,7 +12,7 @@ import {
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@console/domains/database'
-import { ServicesEnum, getServiceType } from '@console/shared/enums'
+import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
 import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@console/shared/ui'
@@ -36,7 +36,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   const type = getServiceType(data)
 
   const link =
-    type === ServicesEnum.DATABASE
+    type === ServiceTypeEnum.DATABASE
       ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
       : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
 
@@ -75,7 +75,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     },
   ]
 
-  const removeService = (id: string, type: ServicesEnum, name?: string) => {
+  const removeService = (id: string, type: ServiceTypeEnum, name?: string) => {
     const currentType = type.toLocaleLowerCase()
     openModalConfirmation({
       title: `Delete ${currentType}`,
@@ -83,7 +83,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       name: name,
       isDelete: true,
       action: () => {
-        if (type === ServicesEnum.DATABASE) {
+        if (type === ServiceTypeEnum.DATABASE) {
           dispatch(deleteDatabaseAction({ environmentId, databaseId: id }))
         } else {
           dispatch(deleteApplicationAction({ environmentId, applicationId: id, serviceType: getServiceType(data) }))
@@ -92,7 +92,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     })
   }
 
-  const actions = type === ServicesEnum.DATABASE ? databaseActions : applicationActions
+  const actions = type === ServiceTypeEnum.DATABASE ? databaseActions : applicationActions
 
   return (
     <TableRowServices

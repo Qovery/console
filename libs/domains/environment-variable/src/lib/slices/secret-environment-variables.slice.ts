@@ -9,7 +9,7 @@ import {
   Value,
 } from 'qovery-typescript-axios'
 import { Key } from 'qovery-typescript-axios/api'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@console/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@console/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
@@ -26,9 +26,9 @@ const projectSecretApi = new ProjectSecretApi()
 
 export const fetchSecretEnvironmentVariables = createAsyncThunk(
   'secretEnvironmentVariables/list',
-  async (payload: { applicationId: string; serviceType: ServicesEnum }) => {
+  async (payload: { applicationId: string; serviceType: ServiceTypeEnum }) => {
     let response
-    if (payload.serviceType === ServicesEnum.CONTAINER) {
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
       response = await containerSecretApi.listContainerSecrets(payload.applicationId)
     } else {
       response = await applicationSecretApi.listApplicationSecrets(payload.applicationId)
@@ -45,7 +45,7 @@ export const createSecret = createAsyncThunk(
     applicationId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
-    serviceType: ServicesEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -62,7 +62,7 @@ export const createSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServicesEnum.CONTAINER) {
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await applicationSecretApi.createApplicationSecret(
             payload.entityId,
             payload.environmentVariableRequest
@@ -87,7 +87,7 @@ export const createOverrideSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Value
     scope: EnvironmentVariableScopeEnum
-    serviceType: ServicesEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -109,7 +109,7 @@ export const createOverrideSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServicesEnum.CONTAINER) {
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await applicationSecretApi.createContainerSecretOverride(
             entityId,
             environmentVariableId,
@@ -137,7 +137,7 @@ export const createAliasSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Key
     scope: EnvironmentVariableScopeEnum
-    serviceType: ServicesEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -159,7 +159,7 @@ export const createAliasSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServicesEnum.CONTAINER) {
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerSecretApi.createContainerSecretAlias(
             entityId,
             environmentVariableId,
@@ -186,7 +186,7 @@ export const editSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
-    serviceType: ServicesEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -208,7 +208,7 @@ export const editSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServicesEnum.CONTAINER) {
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerSecretApi.editContainerSecret(
             payload.entityId,
             payload.environmentVariableId,
@@ -233,7 +233,7 @@ export const deleteSecret = createAsyncThunk(
     entityId: string
     environmentVariableId: string
     scope: EnvironmentVariableScopeEnum
-    serviceType: ServicesEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -247,7 +247,7 @@ export const deleteSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServicesEnum.CONTAINER) {
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerSecretApi.deleteContainerSecret(payload.entityId, payload.environmentVariableId)
         } else {
           response = await applicationSecretApi.deleteApplicationSecret(payload.entityId, payload.environmentVariableId)

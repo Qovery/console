@@ -12,7 +12,7 @@ import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
 } from '@console/domains/environment-variable'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import { SecretEnvironmentVariableEntity } from '@console/shared/interfaces'
 import {
   CrudEnvironmentVariableModalFeatureProps,
@@ -27,7 +27,7 @@ export function handleSubmitForEnvSecretCreation(
   props: CrudEnvironmentVariableModalFeatureProps,
   dispatch: any,
   setClosing: (b: boolean) => void,
-  serviceType: ServicesEnum
+  serviceType: ServiceTypeEnum
 ): void {
   if (data) {
     let entityId

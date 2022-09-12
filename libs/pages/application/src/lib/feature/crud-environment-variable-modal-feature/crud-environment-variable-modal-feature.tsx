@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { getEnvironmentVariablesState } from '@console/domains/environment-variable'
-import { ServicesEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
@@ -17,7 +17,7 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   applicationId: string
   environmentId: string
   projectId: string
-  serviceType: ServicesEnum
+  serviceType: ServiceTypeEnum
 }
 
 export enum EnvironmentVariableCrudMode {

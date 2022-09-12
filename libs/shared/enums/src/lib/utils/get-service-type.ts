@@ -4,19 +4,19 @@ import {
   DatabaseEntity,
   GitApplicationEntity,
 } from '@console/shared/interfaces'
-import { ServicesEnum } from '../services.enum'
+import { ServiceTypeEnum } from '../service-type.enum'
 
 export const getServiceType = (data?: ApplicationEntity | DatabaseEntity) => {
-  let currentType = ServicesEnum.APPLICATION
+  let currentType = ServiceTypeEnum.APPLICATION
 
   if (!data) return currentType
 
   if ((data as ContainerApplicationEntity).image_name) {
-    currentType = ServicesEnum.CONTAINER
+    currentType = ServiceTypeEnum.CONTAINER
   }
 
   if (!(data as GitApplicationEntity).build_mode && !(data as ContainerApplicationEntity).image_name) {
-    currentType = ServicesEnum.DATABASE
+    currentType = ServiceTypeEnum.DATABASE
   }
 
   return currentType

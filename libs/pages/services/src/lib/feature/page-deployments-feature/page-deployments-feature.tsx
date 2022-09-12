@@ -1,16 +1,16 @@
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router'
 import {
   environmentFactoryMock,
   environmentsLoadingEnvironmentDeployments,
   fetchEnvironmentDeploymentHistory,
   selectEnvironmentById,
 } from '@console/domains/environment'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import { DeploymentService, EnvironmentEntity } from '@console/shared/interfaces'
 import { BaseLink } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
-import { ServicesEnum } from '@console/shared/enums'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
@@ -39,7 +39,7 @@ export function PageDeploymentsFeature() {
         const a: DeploymentService = {
           ...app,
           execution_id: deployment.id,
-          type: ServicesEnum.APPLICATION,
+          type: ServiceTypeEnum.APPLICATION,
         }
         merged.push(a)
       })
@@ -48,7 +48,7 @@ export function PageDeploymentsFeature() {
         const d: DeploymentService = {
           ...db,
           execution_id: deployment.id,
-          type: ServicesEnum.DATABASE,
+          type: ServiceTypeEnum.DATABASE,
         }
         merged.push(d)
       })
