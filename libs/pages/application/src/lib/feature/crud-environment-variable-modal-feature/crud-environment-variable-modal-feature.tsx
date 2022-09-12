@@ -1,12 +1,13 @@
-import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
-import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
 import { getEnvironmentVariablesState } from '@console/domains/environment-variable'
-import { useEffect, useState } from 'react'
-import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'
+import { ServiceTypeEnum } from '@console/shared/enums'
+import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
+import { AppDispatch, RootState } from '@console/store/data'
+import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
+import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'
 
 export interface CrudEnvironmentVariableModalFeatureProps {
   variable?: EnvironmentVariableSecretOrPublic
@@ -16,6 +17,7 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   applicationId: string
   environmentId: string
   projectId: string
+  serviceType: ServiceTypeEnum
 }
 
 export enum EnvironmentVariableCrudMode {
@@ -61,7 +63,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   })
 
   const onSubmit = methods.handleSubmit((data) =>
-    handleSubmitForEnvSecretCreation(data, setLoading, props, dispatch, setClosing)
+    handleSubmitForEnvSecretCreation(data, setLoading, props, dispatch, setClosing, props.serviceType)
   )
 
   const computeTitle = (): string => {

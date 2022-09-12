@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
-import { BaseLink, HelpSection, Table } from '@console/shared/ui'
+import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@console/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
+import { BaseLink, HelpSection, Table } from '@console/shared/ui'
 import TableRowServicesFeature from '../../feature/table-row-services-feature/table-row-services-feature'
 
 export interface PageGeneralProps {
@@ -41,14 +41,11 @@ function PageGeneralMemo(props: PageGeneralProps) {
       },
     },
     {
-      title: 'Commit',
+      title: 'Version',
       className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full',
     },
     {
       title: 'Type',
-    },
-    {
-      title: 'Tags',
     },
   ]
 
@@ -60,11 +57,11 @@ function PageGeneralMemo(props: PageGeneralProps) {
         filterData={data}
         setFilterData={setData}
         className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
-        columnsWidth="30% 20% 25% 10% 15%"
+        columnsWidth="30% 20% 25% 20%"
       >
         <>
           {data.map((currentData) => {
-            const isDatabase = !(currentData as ApplicationEntity).build_mode
+            const isDatabase = !(currentData as GitApplicationEntity).build_mode
             return (
               <TableRowServicesFeature
                 key={currentData.id}

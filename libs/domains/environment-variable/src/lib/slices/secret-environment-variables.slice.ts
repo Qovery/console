@@ -1,30 +1,38 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import {
   ApplicationSecretApi,
+  ContainerSecretApi,
   EnvironmentSecretApi,
   EnvironmentVariableRequest,
   EnvironmentVariableScopeEnum,
   ProjectSecretApi,
   Value,
 } from 'qovery-typescript-axios'
-import { RootState } from '@console/store/data'
-import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
 import { Key } from 'qovery-typescript-axios/api'
-import { toast, ToastEnum, toastError } from '@console/shared/toast'
+import { ServiceTypeEnum } from '@console/shared/enums'
+import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@console/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
+import { RootState } from '@console/store/data'
 
 export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'
 
 export const secretEnvironmentVariablesAdapter = createEntityAdapter<SecretEnvironmentVariableEntity>()
 
 const applicationSecretApi = new ApplicationSecretApi()
+const containerSecretApi = new ContainerSecretApi()
 const environmentSecretApi = new EnvironmentSecretApi()
 const projectSecretApi = new ProjectSecretApi()
 
 export const fetchSecretEnvironmentVariables = createAsyncThunk(
   'secretEnvironmentVariables/list',
-  async (applicationId: string, thunkAPI) => {
-    const response = await applicationSecretApi.listApplicationSecrets(applicationId)
+  async (payload: { applicationId: string; serviceType: ServiceTypeEnum }) => {
+    let response
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await containerSecretApi.listContainerSecrets(payload.applicationId)
+    } else {
+      response = await applicationSecretApi.listApplicationSecrets(payload.applicationId)
+    }
 
     return response.data.results as SecretEnvironmentVariableEntity[]
   }
@@ -37,6 +45,7 @@ export const createSecret = createAsyncThunk(
     applicationId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -53,10 +62,17 @@ export const createSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.createApplicationSecret(
-          payload.entityId,
-          payload.environmentVariableRequest
-        )
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+          response = await applicationSecretApi.createApplicationSecret(
+            payload.entityId,
+            payload.environmentVariableRequest
+          )
+        } else {
+          response = await containerSecretApi.createContainerSecret(
+            payload.entityId,
+            payload.environmentVariableRequest
+          )
+        }
         break
     }
     return response.data
@@ -71,6 +87,7 @@ export const createOverrideSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Value
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -92,11 +109,19 @@ export const createOverrideSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.createApplicationSecretOverride(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+          response = await applicationSecretApi.createContainerSecretOverride(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        } else {
+          response = await applicationSecretApi.createApplicationSecretOverride(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        }
         break
     }
 
@@ -112,6 +137,7 @@ export const createAliasSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: Key
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
@@ -133,11 +159,19 @@ export const createAliasSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.createApplicationSecretAlias(
-          entityId,
-          environmentVariableId,
-          environmentVariableRequest
-        )
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+          response = await containerSecretApi.createContainerSecretAlias(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        } else {
+          response = await applicationSecretApi.createApplicationSecretAlias(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        }
         break
     }
 
@@ -152,6 +186,7 @@ export const editSecret = createAsyncThunk(
     environmentVariableId: string
     environmentVariableRequest: EnvironmentVariableRequest
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -173,11 +208,19 @@ export const editSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.editApplicationSecret(
-          payload.entityId,
-          payload.environmentVariableId,
-          payload.environmentVariableRequest
-        )
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+          response = await containerSecretApi.editContainerSecret(
+            payload.entityId,
+            payload.environmentVariableId,
+            payload.environmentVariableRequest
+          )
+        } else {
+          response = await applicationSecretApi.editApplicationSecret(
+            payload.entityId,
+            payload.environmentVariableId,
+            payload.environmentVariableRequest
+          )
+        }
         break
     }
     return response.data
@@ -190,6 +233,7 @@ export const deleteSecret = createAsyncThunk(
     entityId: string
     environmentVariableId: string
     scope: EnvironmentVariableScopeEnum
+    serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
@@ -203,7 +247,11 @@ export const deleteSecret = createAsyncThunk(
         break
       case EnvironmentVariableScopeEnum.APPLICATION:
       default:
-        response = await applicationSecretApi.deleteApplicationSecret(payload.entityId, payload.environmentVariableId)
+        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+          response = await containerSecretApi.deleteContainerSecret(payload.entityId, payload.environmentVariableId)
+        } else {
+          response = await applicationSecretApi.deleteApplicationSecret(payload.entityId, payload.environmentVariableId)
+        }
         break
     }
     return response.data
@@ -237,9 +285,13 @@ export const secretEnvironmentVariablesSlice = createSlice({
 
         secretEnvironmentVariablesAdapter.setAll(state, extendedEnvs)
         action.payload.forEach((secret) => {
-          state.joinApplicationSecretEnvironmentVariable = addOneToManyRelation(action.meta.arg, secret.id, {
-            ...state.joinApplicationSecretEnvironmentVariable,
-          })
+          state.joinApplicationSecretEnvironmentVariable = addOneToManyRelation(
+            action.meta.arg.applicationId,
+            secret.id,
+            {
+              ...state.joinApplicationSecretEnvironmentVariable,
+            }
+          )
         })
         state.loadingStatus = 'loaded'
       })

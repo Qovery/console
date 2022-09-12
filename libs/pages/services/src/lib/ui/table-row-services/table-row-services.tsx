@@ -1,10 +1,13 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
-import { IconEnum, RunningStatus, ServicesEnum } from '@console/shared/enums'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import { IconEnum, RunningStatus, ServiceTypeEnum } from '@console/shared/enums'
 import {
-  Avatar,
-  AvatarStyle,
+  ApplicationEntity,
+  ContainerApplicationEntity,
+  DatabaseEntity,
+  GitApplicationEntity,
+} from '@console/shared/interfaces'
+import {
   ButtonIconAction,
   Icon,
   Skeleton,
@@ -13,6 +16,7 @@ import {
   StatusMenuActions,
   TableHeadProps,
   TableRow,
+  Tag,
   TagCommit,
   Tooltip,
 } from '@console/shared/ui'
@@ -20,14 +24,13 @@ import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@console/shared/ut
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
-  type: ServicesEnum
+  type: ServiceTypeEnum
   environmentMode: string
   dataHead: TableHeadProps[]
   link: string
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
-  removeApplication?: (applicationId: string, name?: string) => void
-  removeDatabase?: (databaseId: string, name?: string) => void
+  removeService?: (applicationId: string, type: ServiceTypeEnum, name?: string) => void
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -39,8 +42,7 @@ export function TableRowServices(props: TableRowServicesProps) {
     link,
     buttonActions,
     environmentMode,
-    removeApplication,
-    removeDatabase,
+    removeService,
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
@@ -56,7 +58,7 @@ export function TableRowServices(props: TableRowServicesProps) {
       ?.focus()
   }
 
-  const buttonActionsDefaultApp = [
+  const buttonActionsDefault = [
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
@@ -67,29 +69,40 @@ export function TableRowServices(props: TableRowServicesProps) {
       },
     },
     {
-      iconLeft: <Icon name="icon-solid-scroll" />,
-      onClick: () => openLogs(),
+      ...(type === ServiceTypeEnum.APPLICATION && {
+        iconLeft: <Icon name="icon-solid-scroll" />,
+        onClick: () => openLogs(),
+      }),
     },
     {
-      ...(removeApplication && {
+      ...(removeService && {
         iconLeft: <Icon name="icon-solid-ellipsis-v" />,
         menus: [
           {
-            items: [
-              {
-                name: 'Edit code',
-                contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
-                link: {
-                  url: urlCodeEditor((data as ApplicationEntity).git_repository) || '',
-                  external: true,
-                },
-              },
-              {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeApplication(data.id, data.name),
-              },
-            ],
+            items:
+              type === ServiceTypeEnum.APPLICATION
+                ? [
+                    {
+                      name: 'Edit code',
+                      contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
+                      link: {
+                        url: urlCodeEditor((data as GitApplicationEntity).git_repository) || '',
+                        external: true,
+                      },
+                    },
+                    {
+                      name: 'Remove',
+                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                      onClick: () => removeService(data.id, ServiceTypeEnum.APPLICATION, data.name),
+                    },
+                  ]
+                : [
+                    {
+                      name: 'Remove',
+                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
+                      onClick: () => removeService(data.id, ServiceTypeEnum.CONTAINER, data.name),
+                    },
+                  ],
           },
         ],
       }),
@@ -100,14 +113,14 @@ export function TableRowServices(props: TableRowServicesProps) {
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
-      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
+      menusClassName: removeService ? 'border-r border-r-element-light-lighter-500' : '',
       statusActions: {
         status: data.status && data.status.state,
         actions: buttonActions,
       },
     },
     {
-      ...(removeDatabase && {
+      ...(removeService && {
         iconLeft: <Icon name="icon-solid-ellipsis-v" />,
         menus: [
           {
@@ -115,7 +128,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               {
                 name: 'Remove',
                 contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeDatabase(data.id, data.name),
+                onClick: () => removeService(data.id, ServiceTypeEnum.DATABASE, data.name),
               },
             ],
           },
@@ -150,7 +163,7 @@ export function TableRowServices(props: TableRowServicesProps) {
           )}
           <div className="ml-2 mr-2">
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-              <Icon name={type === ServicesEnum.APPLICATION ? IconEnum.APPLICATION : IconEnum.DATABASE} width="20" />
+              <Icon name={type === ServiceTypeEnum.DATABASE ? IconEnum.DATABASE : IconEnum.APPLICATION} width="20" />
             </Skeleton>
           </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
@@ -170,7 +183,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <ButtonIconAction
-                  actions={type === ServicesEnum.APPLICATION ? buttonActionsDefaultApp : buttonActionsDefaultDB}
+                  actions={type === ServiceTypeEnum.DATABASE ? buttonActionsDefaultDB : buttonActionsDefault}
                   statusInformation={{
                     id: data.id,
                     name: data.name,
@@ -182,17 +195,17 @@ export function TableRowServices(props: TableRowServicesProps) {
           </Skeleton>
         </div>
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          {type === ServicesEnum.APPLICATION && (
+          {type !== ServiceTypeEnum.DATABASE && (
             <Skeleton show={isLoading} width={160} height={16}>
-              <div className="flex gap-2 items-center">
-                {(data as ApplicationEntity).git_repository?.owner && (
-                  <Avatar
-                    firstName={(data as ApplicationEntity).git_repository?.owner || ''}
-                    style={AvatarStyle.STROKED}
-                    size={28}
-                  />
+              <div className="flex gap-2 items-center -mt-[1px]">
+                {type === ServiceTypeEnum.APPLICATION && (
+                  <TagCommit commitId={(data as GitApplicationEntity).git_repository?.deployed_commit_id} />
                 )}
-                <TagCommit commitId={(data as ApplicationEntity).git_repository?.deployed_commit_id} />
+                {type === ServiceTypeEnum.CONTAINER && (
+                  <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
+                    {(data as ContainerApplicationEntity).image_name}
+                  </Tag>
+                )}
               </div>
             </Skeleton>
           )}
@@ -200,16 +213,17 @@ export function TableRowServices(props: TableRowServicesProps) {
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
             <div className="flex items-center">
-              {(data as DatabaseEntity).type ? (
+              {type === ServiceTypeEnum.DATABASE && (
                 <Tooltip content={`${upperCaseFirstLetter((data as DatabaseEntity).mode)}`}>
                   <div>
                     <Icon name={(data as DatabaseEntity).type} width="20" height="20" />
                   </div>
                 </Tooltip>
-              ) : (
-                <Icon name={(data as ApplicationEntity).build_mode || ''} width="20" height="20" />
               )}
-
+              {type === ServiceTypeEnum.APPLICATION && (
+                <Icon name={(data as GitApplicationEntity).build_mode || ''} width="20" height="20" />
+              )}
+              {type === ServiceTypeEnum.CONTAINER && <Icon name={IconEnum.CONTAINER} width="20" height="20" />}
               {(data as DatabaseEntity).version && (
                 <span className="block text-xs ml-2 text-text-600 font-medium">
                   v{(data as DatabaseEntity).version}
@@ -218,7 +232,6 @@ export function TableRowServices(props: TableRowServicesProps) {
             </div>
           </Skeleton>
         </div>
-        <div className="text-text-500">-</div>
       </>
     </TableRow>
   )

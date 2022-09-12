@@ -8,6 +8,7 @@ import {
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@console/domains/environment-variable'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -28,6 +29,7 @@ import { triggerToggleAll } from './utils/trigger-toggle-all'
 export interface ImportEnvironmentVariableModalFeatureProps {
   applicationId: string
   closeModal: () => void
+  serviceType: ServiceTypeEnum
 }
 
 export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVariableModalFeatureProps) {
@@ -87,7 +89,15 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         loading={loadingStatus === 'loading'}
         availableScopes={computeAvailableScope(undefined, false)}
         onSubmit={methods.handleSubmit(() =>
-          handleSubmit(methods.getValues(), props.applicationId, keys, dispatch, props.closeModal, overwriteEnabled)
+          handleSubmit(
+            methods.getValues(),
+            props.applicationId,
+            keys,
+            dispatch,
+            props.closeModal,
+            overwriteEnabled,
+            props.serviceType
+          )
         )}
         showDropzone={!fileParsed}
         dropzoneGetInputProps={getInputProps}

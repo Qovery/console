@@ -13,7 +13,7 @@ import {
   selectAllAuthProvider,
   selectAllRepository,
 } from '@console/domains/organization'
-import { ApplicationEntity, LoadingStatus, RepositoryEntity } from '@console/shared/interfaces'
+import { GitApplicationEntity, LoadingStatus, RepositoryEntity } from '@console/shared/interfaces'
 import { Icon } from '@console/shared/ui'
 import { upperCaseFirstLetter } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -31,7 +31,7 @@ export function GitRepositorySettingsFeature() {
   const { organizationId = '', applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
+  const application = useSelector<RootState, GitApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
     (a, b) => JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository)
   )

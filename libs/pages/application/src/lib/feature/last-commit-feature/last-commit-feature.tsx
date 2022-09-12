@@ -2,14 +2,14 @@ import { Commit } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getApplicationsState, getCountNewCommitsToDeploy } from '@console/domains/application'
+import { GitApplicationEntity } from '@console/shared/interfaces'
 import { RootState } from '@console/store/data'
-import { ApplicationEntity } from '@console/shared/interfaces'
 import LastCommit from '../../ui/last-commit/last-commit'
 
 export function LastCommitFeature() {
   const { applicationId = '' } = useParams()
   const commitDeltaCount = useSelector(getCountNewCommitsToDeploy(applicationId))
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
+  const application = useSelector<RootState, GitApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
 

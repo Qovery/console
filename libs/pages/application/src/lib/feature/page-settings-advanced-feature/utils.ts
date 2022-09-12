@@ -1,7 +1,7 @@
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { GitApplicationEntity } from '@console/shared/interfaces'
 
-export function initFormValues(keys: string[], application: ApplicationEntity): { [key: string]: string } {
+export function initFormValues(keys: string[], application: GitApplicationEntity): { [key: string]: string } {
   const values: { [key: string]: string } = {}
   keys.forEach((key) => {
     if (application.advanced_settings?.current_settings) {

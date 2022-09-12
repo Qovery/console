@@ -1,8 +1,4 @@
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
-import { ServicesEnum } from '@console/shared/enums'
-import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@console/shared/ui'
-import TableRowServices from '../../ui/table-row-services/table-row-services'
-import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import {
   deleteApplicationAction,
@@ -10,15 +6,19 @@ import {
   postApplicationActionsRestart,
   postApplicationActionsStop,
 } from '@console/domains/application'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from '@console/store/data'
 import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@console/domains/database'
+import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
+import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
+import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@console/shared/ui'
 import { isDeleteAvailable } from '@console/shared/utils'
+import { AppDispatch } from '@console/store/data'
+import TableRowServices from '../../ui/table-row-services/table-row-services'
 
 export interface TableRowServicesFeatureProps {
   data: ApplicationEntity | DatabaseEntity
@@ -33,26 +33,30 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
 
   const { openModalConfirmation } = useModalConfirmation()
 
-  const isDatabase = !(data as ApplicationEntity).build_mode
-  const type = isDatabase ? ServicesEnum.DATABASE : ServicesEnum.APPLICATION
-  const link = isDatabase
-    ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
-    : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
+  const type = getServiceType(data)
+
+  const link =
+    type === ServiceTypeEnum.DATABASE
+      ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
+      : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
 
   const dispatch = useDispatch<AppDispatch>()
 
   const applicationActions: StatusMenuActions[] = [
     {
       name: 'redeploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsRestart({ environmentId, applicationId })),
+      action: (applicationId: string) =>
+        dispatch(postApplicationActionsRestart({ environmentId, applicationId, serviceType: getServiceType(data) })),
     },
     {
       name: 'deploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsDeploy({ environmentId, applicationId })),
+      action: (applicationId: string) =>
+        dispatch(postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(data) })),
     },
     {
       name: 'stop',
-      action: (applicationId: string) => dispatch(postApplicationActionsStop({ environmentId, applicationId })),
+      action: (applicationId: string) =>
+        dispatch(postApplicationActionsStop({ environmentId, applicationId, serviceType: getServiceType(data) })),
     },
   ]
 
@@ -71,31 +75,24 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     },
   ]
 
-  const removeApplication = (applicationId: string, name?: string) => {
+  const removeService = (id: string, type: ServiceTypeEnum, name?: string) => {
+    const currentType = type.toLocaleLowerCase()
     openModalConfirmation({
-      title: 'Delete application',
-      description: 'To confirm the deletion of your application, please type the name of the application:',
+      title: `Delete ${currentType}`,
+      description: `To confirm the deletion of your ${currentType}, please type the name of the ${currentType}:`,
       name: name,
       isDelete: true,
       action: () => {
-        dispatch(deleteApplicationAction({ environmentId, applicationId }))
+        if (type === ServiceTypeEnum.DATABASE) {
+          dispatch(deleteDatabaseAction({ environmentId, databaseId: id }))
+        } else {
+          dispatch(deleteApplicationAction({ environmentId, applicationId: id, serviceType: getServiceType(data) }))
+        }
       },
     })
   }
 
-  const removeDatabase = (databaseId: string, name?: string) => {
-    openModalConfirmation({
-      title: 'Delete database',
-      description: 'To confirm the deletion of your database, please type the name of the database:',
-      name: name,
-      isDelete: true,
-      action: () => {
-        dispatch(deleteDatabaseAction({ environmentId, databaseId }))
-      },
-    })
-  }
-
-  const actions = isDatabase ? databaseActions : applicationActions
+  const actions = type === ServiceTypeEnum.DATABASE ? databaseActions : applicationActions
 
   return (
     <TableRowServices
@@ -105,11 +102,8 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       dataHead={dataHead}
       link={link}
       buttonActions={actions}
-      columnsWidth="25% 25% 25% 10% 10%"
-      removeApplication={
-        !isDatabase && data.status && isDeleteAvailable(data.status.state) ? removeApplication : undefined
-      }
-      removeDatabase={isDatabase && data.status && isDeleteAvailable(data.status.state) ? removeDatabase : undefined}
+      columnsWidth="25% 25% 25% 20%"
+      removeService={data.status && isDeleteAvailable(data.status.state) ? removeService : undefined}
     />
   )
 }

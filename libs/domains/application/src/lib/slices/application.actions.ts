@@ -1,23 +1,44 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { ApplicationActionsApi, ApplicationMainCallsApi } from 'qovery-typescript-axios'
+import {
+  ApplicationActionsApi,
+  ApplicationMainCallsApi,
+  ContainerActionsApi,
+  ContainerMainCallsApi,
+} from 'qovery-typescript-axios'
+import { ServiceTypeEnum } from '@console/shared/enums'
+import { ToastEnum, toast } from '@console/shared/toast'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
-import { toast, ToastEnum } from '@console/shared/toast'
 
 const applicationActionApi = new ApplicationActionsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 
+const containerActionApi = new ContainerActionsApi()
+const containerMainCallsApi = new ContainerMainCallsApi()
+
 export const postApplicationActionsRestart = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; withDeployments?: boolean }
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
 >('applicationActions/restart', async (data, { dispatch }) => {
   try {
-    const response = await applicationActionApi.restartApplication(data.applicationId)
+    let response
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await containerActionApi.restartContainer(data.applicationId)
+    } else {
+      response = await applicationActionApi.restartApplication(data.applicationId)
+    }
+
     if (response.status === 202) {
       // refetch status after update
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
       // refetch deployments after update
       if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
+        await dispatch(
+          fetchApplicationDeployments({
+            applicationId: data.applicationId,
+            serviceType: data.serviceType,
+            silently: true,
+          })
+        )
       // success message
       toast(ToastEnum.SUCCESS, 'Your application is redeploying')
     }
@@ -31,16 +52,28 @@ export const postApplicationActionsRestart = createAsyncThunk<
 
 export const postApplicationActionsDeploy = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; withDeployments?: boolean }
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
 >('applicationActions/deploy', async (data, { dispatch }) => {
   try {
-    const response = await applicationActionApi.restartApplication(data.applicationId)
+    let response
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await containerActionApi.restartContainer(data.applicationId)
+    } else {
+      response = await applicationActionApi.restartApplication(data.applicationId)
+    }
+
     if (response.status === 202) {
       // refetch status after update
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
       // refetch deployments after update
       if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
+        await dispatch(
+          fetchApplicationDeployments({
+            applicationId: data.applicationId,
+            serviceType: data.serviceType,
+            silently: true,
+          })
+        )
       // success message
       toast(ToastEnum.SUCCESS, 'Your application is deploying')
     }
@@ -54,16 +87,28 @@ export const postApplicationActionsDeploy = createAsyncThunk<
 
 export const postApplicationActionsStop = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; withDeployments?: boolean }
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
 >('applicationActions/stop', async (data, { dispatch }) => {
   try {
-    const response = await applicationActionApi.stopApplication(data.applicationId)
+    let response
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await containerActionApi.stopContainer(data.applicationId)
+    } else {
+      response = await applicationActionApi.stopApplication(data.applicationId)
+    }
+
     if (response.status === 202) {
       // refetch status after update
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
       // refetch deployments after update
       if (data.withDeployments)
-        await dispatch(fetchApplicationDeployments({ applicationId: data.applicationId, silently: true }))
+        await dispatch(
+          fetchApplicationDeployments({
+            applicationId: data.applicationId,
+            serviceType: data.serviceType,
+            silently: true,
+          })
+        )
       // success message
       toast(ToastEnum.SUCCESS, 'Your application is stopping')
     }
@@ -75,22 +120,28 @@ export const postApplicationActionsStop = createAsyncThunk<
   }
 })
 
-export const deleteApplicationAction = createAsyncThunk<any, { environmentId: string; applicationId: string }>(
-  'applicationActions/delete',
-  async (data, { dispatch }) => {
-    try {
-      const response = await applicationMainCallsApi.deleteApplication(data.applicationId)
-      if (response.status === 204) {
-        // refetch status after update
-        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your application is being deleted')
-      }
-
-      return response
-    } catch (err) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Deleting error')
+export const deleteApplicationAction = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum }
+>('applicationActions/delete', async (data, { dispatch }) => {
+  try {
+    let response
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await containerMainCallsApi.deleteContainer(data.applicationId)
+    } else {
+      response = await applicationMainCallsApi.deleteApplication(data.applicationId)
     }
+
+    if (response.status === 204) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your application is being deleted')
+    }
+
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Deleting error')
   }
-)
+})

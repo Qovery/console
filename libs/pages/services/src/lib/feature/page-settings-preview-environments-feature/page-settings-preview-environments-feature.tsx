@@ -15,7 +15,7 @@ import {
   fetchEnvironmentDeploymentRules,
   selectEnvironmentDeploymentRulesByEnvId,
 } from '@console/domains/environment'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { GitApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
@@ -33,7 +33,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const loadingStatusEnvironmentDeploymentRules = useSelector(environmentsLoadingEnvironmentDeploymentRules)
 
-  const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
+  const applications = useSelector<RootState, GitApplicationEntity[] | undefined>(
     (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
     (a, b) =>
       JSON.stringify(a?.map((application) => application.auto_preview)) ===

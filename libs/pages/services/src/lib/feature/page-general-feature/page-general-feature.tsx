@@ -1,17 +1,17 @@
+import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { Environment } from 'qovery-typescript-axios'
 import {
   applicationFactoryMock,
   fetchApplicationsStatus,
   selectApplicationsEntitiesByEnvId,
 } from '@console/domains/application'
-import { AppDispatch, RootState } from '@console/store/data'
-import { BaseLink } from '@console/shared/ui'
-import { selectEnvironmentById } from '@console/domains/environment'
 import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
+import { selectEnvironmentById } from '@console/domains/environment'
 import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
+import { BaseLink } from '@console/shared/ui'
+import { AppDispatch, RootState } from '@console/store/data'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {
@@ -19,14 +19,6 @@ export function PageGeneralFeature() {
 
   const loadingServices = applicationFactoryMock(3)
   const dispatch = useDispatch<AppDispatch>()
-
-  useEffect(() => {
-    const fetchServicesStatusByInterval = setInterval(() => {
-      dispatch(fetchApplicationsStatus({ environmentId }))
-      dispatch(fetchDatabasesStatus({ environmentId }))
-    }, 3000)
-    return () => clearInterval(fetchServicesStatusByInterval)
-  }, [dispatch, environmentId])
 
   const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
@@ -39,6 +31,14 @@ export function PageGeneralFeature() {
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
+
+  useEffect(() => {
+    const fetchServicesStatusByInterval = setInterval(() => {
+      if (applicationsByEnv.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
+      if (databasesByEnv.length > 0) dispatch(fetchDatabasesStatus({ environmentId }))
+    }, 3000)
+    return () => clearInterval(fetchServicesStatusByInterval)
+  }, [dispatch, environmentId, applicationsByEnv.length, databasesByEnv.length])
 
   const listHelpfulLinks: BaseLink[] = [
     {

@@ -1,5 +1,12 @@
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
+import {
+  ApplicationEntity,
+  ContainerApplicationEntity,
+  GitApplicationEntity,
+  LoadingStatus,
+} from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@console/shared/ui'
+import { timeAgo } from '@console/shared/utils'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
@@ -65,17 +72,33 @@ export function PageGeneral(props: PageGeneralProps) {
       </div>
       <div className="w-right-help-sidebar py-10 border-l border-element-light-lighter-400">
         <About
-          description={application?.description || ''}
+          description={(application as GitApplicationEntity)?.description || ''}
           link={{
-            link: application?.git_repository?.url || '',
-            linkLabel: application?.git_repository?.provider,
+            link: (application as GitApplicationEntity)?.git_repository?.url || '',
+            linkLabel: (application as GitApplicationEntity)?.git_repository?.provider,
             external: true,
           }}
-          buildMode={application?.build_mode}
-          gitProvider={application?.git_repository?.provider}
+          buildMode={(application as GitApplicationEntity)?.build_mode}
+          gitProvider={(application as GitApplicationEntity)?.git_repository?.provider}
           loadingStatus={loadingStatus}
+          type={getServiceType(application)}
         />
-        <LastCommitFeature />
+        {getServiceType(application) === ServiceTypeEnum.APPLICATION ? (
+          <LastCommitFeature />
+        ) : (
+          <div className="py-6 px-10">
+            <div className="text-subtitle mb-3 text-text-600">Image information</div>
+            <div className="mb-3">
+              <p className="text-text-500 mb-2">Image name: {(application as ContainerApplicationEntity).image_name}</p>
+              <p className="text-text-500 mb-2">
+                Latest deployed tag: {(application as ContainerApplicationEntity).tag}
+              </p>
+              <p className="text-text-400 text-sm">
+                {timeAgo(new Date((application as ContainerApplicationEntity)?.updated_at || ''))}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

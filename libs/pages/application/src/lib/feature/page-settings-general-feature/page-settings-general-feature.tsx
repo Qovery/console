@@ -4,7 +4,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { GitApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -14,9 +14,10 @@ export const buildGitRepoUrl = (provider: string, branch: string): string => {
   return `https://${authProvider}.com/${branch}.git`
 }
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
-  const cloneApplication = Object.assign({}, application as ApplicationEntity)
+export const handleSubmit = (data: FieldValues, application: GitApplicationEntity) => {
+  const cloneApplication = Object.assign({}, application as GitApplicationEntity)
   cloneApplication.name = data['name']
+
   cloneApplication.build_mode = data['build_mode']
 
   if (data['build_mode'] === BuildModeEnum.DOCKER) {
@@ -41,7 +42,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
 export function PageSettingsGeneralFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
+  const application = useSelector<RootState, GitApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
     (a, b) =>
       a?.name === b?.name &&

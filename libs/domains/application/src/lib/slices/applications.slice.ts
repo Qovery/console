@@ -15,20 +15,27 @@ import {
   ApplicationMetricsApi,
   ApplicationsApi,
   Commit,
+  ContainerDeploymentHistoryApi,
+  ContainerMainCallsApi,
+  ContainerMetricsApi,
+  ContainerResponse,
+  ContainersApi,
   DeploymentHistoryApplication,
   Instance,
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { ApplicationEntity, ApplicationsState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import {
-  addOneToManyRelation,
-  getEntitiesByIds,
-  refactoApplicationPayload,
-  removeOneToManyRelation,
-  shortToLongId,
-} from '@console/shared/utils'
+  ApplicationEntity,
+  ApplicationsState,
+  ContainerApplicationEntity,
+  GitApplicationEntity,
+  LoadingStatus,
+  ServiceRunningStatus,
+} from '@console/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@console/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, refactoApplicationPayload, shortToLongId } from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
@@ -41,32 +48,43 @@ const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const applicationMetricsApi = new ApplicationMetricsApi()
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 
-export const fetchApplications = createAsyncThunk<Application[], { environmentId: string; withoutStatus?: boolean }>(
-  'applications/fetch',
-  async (data, thunkApi) => {
-    const response = await applicationsApi.listApplication(data.environmentId)
+const containersApi = new ContainersApi()
+const containerMainCallsApi = new ContainerMainCallsApi()
+const containerMetricsApi = new ContainerMetricsApi()
+const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 
-    if (!data.withoutStatus) {
-      thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-    }
+export const fetchApplications = createAsyncThunk<
+  Application[] | ContainerResponse[],
+  { environmentId: string; withoutStatus?: boolean }
+>('applications/fetch', async (data, thunkApi) => {
+  const result = await Promise.all([
+    // fetch Git applications
+    applicationsApi.listApplication(data.environmentId),
+    // fetch Container applications
+    containersApi.listContainer(data.environmentId),
+  ])
 
-    return response.data.results as Application[]
+  if (!data.withoutStatus) {
+    thunkApi.dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
   }
-)
+
+  return [
+    ...(result[0].data.results as GitApplicationEntity[]),
+    ...(result[1].data.results as ContainerApplicationEntity[]),
+  ] as ApplicationEntity[]
+})
 
 export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
-    const response = await applicationsApi.getEnvironmentApplicationStatus(data.environmentId)
-    return response.data.results as Status[]
-  }
-)
+    const result = await Promise.all([
+      // fetch status Git applications
+      applicationsApi.getEnvironmentApplicationStatus(data.environmentId),
+      // fetch status Container applications
+      containersApi.getEnvironmentContainerStatus(data.environmentId),
+    ])
 
-export const fetchApplication = createAsyncThunk<Application, { applicationId: string }>(
-  'application/fetch',
-  async (data) => {
-    const response = await applicationMainCallsApi.getApplication(data.applicationId)
-    return response.data as Application
+    return [...(result[0].data.results as Status[]), ...(result[1].data.results as Status[])]
   }
 )
 
@@ -80,29 +98,33 @@ export const editApplication = createAsyncThunk(
   }
 )
 
-export const removeOneApplication = createAsyncThunk<string, { applicationId: string }>(
-  'applications/remove',
-  async (data) => {
-    // const response = await applicationMainCallsApi.getApplication(data.applicationId)
-    return data.applicationId
-  }
-)
-
-export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string }>(
+export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: string; serviceType?: ServiceTypeEnum }>(
   'application/links',
   async (data) => {
-    const response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
+    let response
+
+    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await containerMainCallsApi.listContainerLinks(data.applicationId)
+    } else {
+      response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
+    }
     return response.data.results as Link[]
   }
 )
 
-export const fetchApplicationInstances = createAsyncThunk<Instance[], { applicationId: string }>(
-  'application/instances',
-  async (data) => {
-    const response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
-    return response.data.results as Instance[]
+export const fetchApplicationInstances = createAsyncThunk<
+  Instance[],
+  { applicationId: string; serviceType?: ServiceTypeEnum }
+>('application/instances', async (data) => {
+  let response
+
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    response = await containerMetricsApi.getContainerCurrentInstance(data.applicationId)
+  } else {
+    response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
   }
-)
+  return response.data.results as Instance[]
+})
 
 export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationId: string }>(
   'application/commits',
@@ -114,19 +136,30 @@ export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationI
 
 export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],
-  { applicationId: string; silently?: boolean }
+  { applicationId: string; serviceType?: ServiceTypeEnum; silently?: boolean }
 >('application/deployments', async (data) => {
-  const response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
-  return response.data.results as DeploymentHistoryApplication[]
+  let response
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
+  } else {
+    response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
+  }
+  return response.data.results
 })
 
-export const fetchApplicationStatus = createAsyncThunk<Status, { applicationId: string }>(
-  'application/status',
-  async (data) => {
-    const response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
-    return response.data as Status
+export const fetchApplicationStatus = createAsyncThunk<
+  Status,
+  { applicationId: string; serviceType?: ServiceTypeEnum }
+>('application/status', async (data) => {
+  let response
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    response = await containerMainCallsApi.getContainerStatus(data.applicationId)
+  } else {
+    response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
   }
-)
+
+  return response.data as Status
+})
 
 export const fetchApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,
@@ -225,18 +258,6 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
-      // fetch application
-      .addCase(fetchApplication.pending, (state: ApplicationsState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(fetchApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<Application>) => {
-        applicationsAdapter.upsertOne(state, action.payload)
-        state.loadingStatus = 'loaded'
-      })
-      .addCase(fetchApplication.rejected, (state: ApplicationsState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
-      })
       // edit application
       .addCase(editApplication.pending, (state: ApplicationsState) => {
         state.loadingStatus = 'loading'
@@ -284,10 +305,6 @@ export const applicationsSlice = createSlice({
       .addCase(fetchApplicationsStatus.rejected, (state: ApplicationsState, action) => {
         state.statusLoadingStatus = 'error'
         state.error = action.error.message
-      })
-      // remove application
-      .addCase(removeOneApplication.fulfilled, (state: ApplicationsState, action: PayloadAction<string>) => {
-        state.joinEnvApplication = removeOneToManyRelation(action.payload, state.joinEnvApplication)
       })
       .addCase(fetchApplicationLinks.pending, (state: ApplicationsState, action) => {
         const applicationId = action.meta.arg.applicationId
@@ -401,7 +418,8 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'loading',
-              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
+              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
+                ?.current_settings,
             },
           },
         }
@@ -435,7 +453,8 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'error',
-              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
+              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
+                ?.current_settings,
             },
           },
         }
@@ -451,7 +470,7 @@ export const applicationsSlice = createSlice({
           id: applicationId,
           changes: {
             commits: {
-              ...state.entities[applicationId]?.commits,
+              ...(state.entities[applicationId] as GitApplicationEntity)?.commits,
               loadingStatus: 'loading',
             },
           },
@@ -583,7 +602,7 @@ export const applicationsLoadingStatus = (state: RootState): LoadingStatus => ge
 export const getCountNewCommitsToDeploy = (applicationId: string) =>
   createSelector(
     (state: RootState) => {
-      return selectById(getApplicationsState(state), applicationId)
+      return selectById(getApplicationsState(state), applicationId) as GitApplicationEntity
     },
     (application): number => {
       const deployedCommit = application?.git_repository?.deployed_commit_id

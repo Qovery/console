@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
 import { deleteEnvironmentVariable, deleteSecret } from '@console/domains/environment-variable'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -29,6 +30,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
   dataHead: TableHeadProps[]
   columnsWidth?: string
   isLoading: boolean
+  serviceType: ServiceTypeEnum
 }
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
@@ -53,6 +55,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             projectId={projectId}
             environmentId={environmentId}
             type={type}
+            serviceType={props.serviceType}
           />
         ),
       })
@@ -73,6 +76,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             applicationId={applicationId}
             projectId={projectId}
             environmentId={environmentId}
+            serviceType={props.serviceType}
           />
         ),
       })
@@ -93,6 +97,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             applicationId={applicationId}
             projectId={projectId}
             environmentId={environmentId}
+            serviceType={props.serviceType}
           />
         ),
       })
@@ -176,7 +181,12 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
                 if (variable.variable_type === 'public') {
                   dispatch(
-                    deleteEnvironmentVariable({ entityId, environmentVariableId: variable.id, scope: variable.scope })
+                    deleteEnvironmentVariable({
+                      entityId,
+                      environmentVariableId: variable.id,
+                      scope: variable.scope,
+                      serviceType: props.serviceType,
+                    })
                   )
                 } else {
                   dispatch(
@@ -184,6 +194,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                       entityId,
                       environmentVariableId: variable.id,
                       scope: variable.scope,
+                      serviceType: props.serviceType,
                     })
                   )
                 }

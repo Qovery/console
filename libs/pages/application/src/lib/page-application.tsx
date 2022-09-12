@@ -17,7 +17,8 @@ import {
   selectApplicationById,
 } from '@console/domains/application'
 import { selectEnvironmentById } from '@console/domains/environment'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
+import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@console/shared/router'
 import { StatusMenuActions } from '@console/shared/ui'
 import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
@@ -43,56 +44,44 @@ export function PageApplication() {
 
   useEffect(() => {
     if (applicationId && loadingStatus === 'loaded') {
-      application?.links?.loadingStatus !== 'loaded' && dispatch(fetchApplicationLinks({ applicationId }))
-      application?.instances?.loadingStatus !== 'loaded' && dispatch(fetchApplicationInstances({ applicationId }))
-      application?.commits?.loadingStatus !== 'loaded' && dispatch(fetchApplicationCommits({ applicationId }))
+      if (application?.links?.loadingStatus !== 'loaded')
+        dispatch(fetchApplicationLinks({ applicationId, serviceType: getServiceType(application) }))
+      if (application?.instances?.loadingStatus !== 'loaded')
+        dispatch(fetchApplicationInstances({ applicationId, serviceType: getServiceType(application) }))
+      if (
+        (application as GitApplicationEntity)?.commits?.loadingStatus !== 'loaded' &&
+        getServiceType(application) === ServiceTypeEnum.APPLICATION
+      )
+        dispatch(fetchApplicationCommits({ applicationId }))
     }
     const fetchApplicationStatusByInterval = setInterval(
-      () => dispatch(fetchApplicationStatus({ applicationId })),
+      () => dispatch(fetchApplicationStatus({ applicationId, serviceType: getServiceType(application) })),
       3000
     )
     return () => clearInterval(fetchApplicationStatusByInterval)
   }, [applicationId, loadingStatus, dispatch])
 
+  const payload = (applicationId: string) => ({
+    environmentId,
+    applicationId,
+    serviceType: getServiceType(application),
+    withDeployments:
+      pathname ===
+      APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
+  })
+
   const statusActions: StatusMenuActions[] = [
     {
       name: 'redeploy',
-      action: (applicationId: string) =>
-        dispatch(
-          postApplicationActionsRestart({
-            environmentId,
-            applicationId,
-            withDeployments:
-              pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-          })
-        ),
+      action: (applicationId: string) => dispatch(postApplicationActionsRestart(payload(applicationId))),
     },
     {
       name: 'deploy',
-      action: (applicationId: string) =>
-        dispatch(
-          postApplicationActionsDeploy({
-            environmentId,
-            applicationId,
-            withDeployments:
-              pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-          })
-        ),
+      action: (applicationId: string) => dispatch(postApplicationActionsDeploy(payload(applicationId))),
     },
     {
       name: 'stop',
-      action: (applicationId: string) =>
-        dispatch(
-          postApplicationActionsStop({
-            environmentId,
-            applicationId,
-            withDeployments:
-              pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-          })
-        ),
+      action: (applicationId: string) => dispatch(postApplicationActionsStop(payload(applicationId))),
     },
   ]
 
@@ -101,6 +90,7 @@ export function PageApplication() {
       deleteApplicationAction({
         environmentId,
         applicationId,
+        serviceType: getServiceType(application),
       })
     )
   }
