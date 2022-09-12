@@ -1,7 +1,7 @@
 import {
-  APPLICATION_SETTINGS_GENERAL_URL,
   Route,
   SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_CREATION_GENERAL_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
@@ -11,7 +11,7 @@ import {
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_URL,
 } from '@console/shared/router'
-import PageApplicationCreateFeature from '../feature/page-application-create-feature/page-application-create-feature'
+import { PageApplicationCreateFeature } from '../feature/page-application-create-feature/page-application-create-feature'
 import PageApplicationCreateGeneralFeature from '../feature/page-application-create-feature/page-application-create-general-feature/page-application-create-general-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
@@ -66,7 +66,7 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
 
 export const ROUTER_SERVICE_CREATION: Route[] = [
   {
-    path: APPLICATION_SETTINGS_GENERAL_URL,
+    path: SERVICES_CREATION_GENERAL_URL,
     component: <PageApplicationCreateGeneralFeature />,
   },
 ]

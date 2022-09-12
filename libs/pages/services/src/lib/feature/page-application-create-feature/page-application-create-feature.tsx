@@ -1,7 +1,6 @@
 import { createContext, useContext, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router'
-import { useParams } from 'react-router-dom'
-import { SERVICES_APPLICATION_CREATION_URL, SERVICES_URL, SERVICE_CREATION_GENERAL_URL } from '@console/shared/router'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { FunnelFlow } from '@console/shared/ui'
 import { useDocumentTitle } from '@console/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
@@ -56,7 +55,7 @@ export function PageApplicationCreateFeature() {
           {ROUTER_SERVICE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + SERVICE_CREATION_GENERAL_URL} />} />
+          <Route path="*" element={<Navigate to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
         </Routes>
       </FunnelFlow>
     </ApplicationContainerCreateContext.Provider>

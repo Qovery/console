@@ -4,8 +4,8 @@ import posthog from 'posthog-js'
 import React, { ComponentType, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
-import { ModalProvider } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store/data'
+import { ModalProvider } from '@console/shared/ui'
+import { RootState } from '@console/store/data'
 import { initialRootState, rootReducer } from '../../libs/store/data/src'
 
 type Params = {

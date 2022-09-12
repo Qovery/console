@@ -1,3 +1,5 @@
+import { render } from '__tests__/utils/setup-jest'
+import { Route, Routes } from 'react-router'
 import PageApplicationCreateFeature from './page-application-create-feature'
 
 jest.mock('react-router', () => ({
@@ -7,7 +9,16 @@ jest.mock('react-router', () => ({
 
 describe('PageApplicationCreateFeature', () => {
   it('should render successfully', () => {
-    // const { baseElement } = render(<PageApplicationCreateFeature />)
-    // expect(baseElement).toBeTruthy()
+    const { baseElement, debug } = render(
+      <Routes location={'/organization/1/project/2/environment/3/services/create'}>
+        <Route
+          path={'/organization/1/project/2/environment/3/services/create/*'}
+          element={<PageApplicationCreateFeature />}
+        ></Route>
+      </Routes>
+    )
+    expect(baseElement).toBeTruthy()
+
+    debug()
   })
 })
