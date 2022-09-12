@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import PageApplicationCreateGeneralFeature from './page-application-create-general-feature'
 
 describe('PageApplicationCreateGeneralFeature', () => {

@@ -25,16 +25,21 @@ export function FunnelFlow(props: FunnelFlowProps) {
           </div>
         </div>
         <div className="border-l border-l-element-light-lighter-400 pl-4 h-full flex items-center">
-          <Button style={ButtonStyle.TAB}>Save and exit</Button>
+          <Button onClick={props.onExit} style={ButtonStyle.TAB}>
+            Save and exit
+          </Button>
         </div>
       </header>
-      <div className="h-[6px] bg-element-light-lighter-500 relative shrink-0">
+      <div data-testid="progress-bar-wrapper" className="h-[6px] bg-element-light-lighter-500 relative shrink-0">
         <div
+          data-testid="progress-bar"
           style={{ transform: `scaleX(${(props.currentStep - 1) / props.totalSteps})` }}
           className="h-full absolute origin-left transition-transform duration-700 ease-in-out inset-0 bg-brand-500"
         ></div>
       </div>
-      <div className="flex-grow min-h-0 flex  relative">{props.children}</div>
+      <div data-testid="funnel-content" className="flex-grow min-h-0 flex relative">
+        {props.children}
+      </div>
     </div>
   )
 }
