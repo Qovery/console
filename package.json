@@ -27,7 +27,7 @@
     "@nrwl/web": "14.6.1",
     "@nrwl/workspace": "14.6.1",
     "@radix-ui/react-accordion": "^0.1.6",
-    "@radix-ui/react-dialog": "^0.1.7",
+    "@radix-ui/react-dialog": "^1.0.0",
     "@radix-ui/react-slider": "^1.0.0",
     "@radix-ui/react-tooltip": "^0.1.7",
     "@reduxjs/toolkit": "1.8.5",
