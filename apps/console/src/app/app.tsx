@@ -130,11 +130,15 @@ export function App() {
                 path={route.path}
                 element={
                   !route.protected ? (
-                    <Layout darkMode={route.darkMode}>{route.component}</Layout>
+                    <Layout darkMode={route.darkMode} topBar={route.topBar}>
+                      {route.component}
+                    </Layout>
                   ) : (
                     <ProtectedRoute>
                       <BetaRoute>
-                        <Layout darkMode={route.darkMode}>{route.component}</Layout>
+                        <Layout darkMode={route.darkMode} topBar={route.topBar}>
+                          {route.component}
+                        </Layout>
                       </BetaRoute>
                     </ProtectedRoute>
                   )
