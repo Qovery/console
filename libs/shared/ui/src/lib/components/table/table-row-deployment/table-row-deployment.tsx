@@ -145,7 +145,9 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
                   {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
-              {data?.name && <ButtonIconAction actions={buttonActionsDefault} />}
+              {data?.name && (data as DeploymentService)?.type !== ServiceTypeEnum.CONTAINER && (
+                <ButtonIconAction actions={buttonActionsDefault} />
+              )}
             </>
           </Skeleton>
         </div>
