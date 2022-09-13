@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import {
+  APIVariableScopeEnum,
   ApplicationEnvironmentVariableApi,
   EnvironmentVariableApi,
-  EnvironmentVariableScopeEnum,
   ProjectEnvironmentVariableApi,
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@console/shared/enums'
@@ -193,7 +193,7 @@ describe('create variable at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.ENVIRONMENT,
+      scope: APIVariableScopeEnum.ENVIRONMENT,
     })
 
     expect(createEnvironmentEnvironmentVariableMock).toHaveBeenCalled()
@@ -212,7 +212,7 @@ describe('create variable at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.APPLICATION,
+      scope: APIVariableScopeEnum.APPLICATION,
     })
 
     expect(createApplicationEnvironmentVariableMock).toHaveBeenCalled()
@@ -231,7 +231,7 @@ describe('create variable at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.PROJECT,
+      scope: APIVariableScopeEnum.PROJECT,
     })
 
     expect(createApplicationEnvironmentVariableMock).toHaveBeenCalled()
@@ -252,7 +252,7 @@ describe('create override at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.ENVIRONMENT,
+      scope: APIVariableScopeEnum.ENVIRONMENT,
     })
 
     expect(createEnvironmentEnvironmentVariableMock).toHaveBeenCalled()
@@ -271,7 +271,7 @@ describe('create override at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.APPLICATION,
+      scope: APIVariableScopeEnum.APPLICATION,
     })
 
     expect(createApplicationEnvironmentVariableMock).toHaveBeenCalled()
@@ -290,7 +290,7 @@ describe('create override at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.PROJECT,
+      scope: APIVariableScopeEnum.PROJECT,
     })
 
     expect(createApplicationEnvironmentVariableMock).toHaveBeenCalled()
@@ -324,7 +324,7 @@ describe('create alias at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.ENVIRONMENT,
+      scope: APIVariableScopeEnum.ENVIRONMENT,
     })
 
     expect(createEnvironmentEnvironmentVariableMock).toHaveBeenCalled()
@@ -343,7 +343,7 @@ describe('create alias at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.APPLICATION,
+      scope: APIVariableScopeEnum.APPLICATION,
     })
 
     expect(createApplicationEnvironmentVariableMock).toHaveBeenCalled()
@@ -362,7 +362,7 @@ describe('create alias at any scope', () => {
         key: 'key',
         value: 'value',
       },
-      scope: EnvironmentVariableScopeEnum.PROJECT,
+      scope: APIVariableScopeEnum.PROJECT,
     })
 
     expect(createApplicationEnvironmentVariableMock).toHaveBeenCalled()

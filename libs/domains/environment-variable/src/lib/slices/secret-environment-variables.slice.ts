@@ -1,10 +1,10 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import {
+  APIVariableScopeEnum,
   ApplicationSecretApi,
   ContainerSecretApi,
   EnvironmentSecretApi,
   EnvironmentVariableRequest,
-  EnvironmentVariableScopeEnum,
   ProjectSecretApi,
   Value,
 } from 'qovery-typescript-axios'
@@ -44,23 +44,23 @@ export const createSecret = createAsyncThunk(
     entityId: string
     applicationId: string
     environmentVariableRequest: EnvironmentVariableRequest
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentSecretApi.createEnvironmentSecret(
           payload.entityId,
           payload.environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectSecretApi.createProjectSecret(payload.entityId, payload.environmentVariableRequest)
 
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await applicationSecretApi.createApplicationSecret(
@@ -86,31 +86,31 @@ export const createOverrideSecret = createAsyncThunk(
     applicationId: string
     environmentVariableId: string
     environmentVariableRequest: Value
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentSecretApi.createEnvironmentSecretOverride(
           entityId,
           environmentVariableId,
           environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectSecretApi.createProjectSecretOverride(
           entityId,
           environmentVariableId,
           environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
-          response = await applicationSecretApi.createContainerSecretOverride(
+          response = await containerSecretApi.createContainerSecretOverride(
             entityId,
             environmentVariableId,
             environmentVariableRequest
@@ -136,28 +136,28 @@ export const createAliasSecret = createAsyncThunk(
     applicationId: string
     environmentVariableId: string
     environmentVariableRequest: Key
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentSecretApi.createEnvironmentSecretAlias(
           entityId,
           environmentVariableId,
           environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectSecretApi.createProjectSecretAlias(
           entityId,
           environmentVariableId,
           environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerSecretApi.createContainerSecretAlias(
@@ -185,20 +185,20 @@ export const editSecret = createAsyncThunk(
     entityId: string
     environmentVariableId: string
     environmentVariableRequest: EnvironmentVariableRequest
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentSecretApi.editEnvironmentSecret(
           payload.entityId,
           payload.environmentVariableId,
           payload.environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectSecretApi.editProjectSecret(
           payload.entityId,
           payload.environmentVariableId,
@@ -206,7 +206,7 @@ export const editSecret = createAsyncThunk(
         )
 
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerSecretApi.editContainerSecret(
@@ -232,20 +232,20 @@ export const deleteSecret = createAsyncThunk(
   async (payload: {
     entityId: string
     environmentVariableId: string
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentSecretApi.deleteEnvironmentSecret(payload.entityId, payload.environmentVariableId)
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectSecretApi.deleteProjectSecret(payload.entityId, payload.environmentVariableId)
 
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerSecretApi.deleteContainerSecret(payload.entityId, payload.environmentVariableId)

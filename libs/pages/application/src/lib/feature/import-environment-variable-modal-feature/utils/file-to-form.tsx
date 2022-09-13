@@ -1,4 +1,4 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 
 export function jsonToForm(json: string): { [key: string]: string } {
   const parsed = JSON.parse(json)
@@ -10,7 +10,7 @@ export function parsedToForm(parsed: { [key: string]: string }): { [key: string]
   Object.keys(parsed).forEach((key) => {
     defaultValues[key + '_key'] = key || ''
     defaultValues[key + '_value'] = parsed[key] || ''
-    defaultValues[key + '_scope'] = EnvironmentVariableScopeEnum.PROJECT
+    defaultValues[key + '_scope'] = APIVariableScopeEnum.PROJECT
     defaultValues[key + '_secret'] = ''
   })
 

@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/extend-expect'
 import { act, findAllByTestId, fireEvent, getByTestId, screen, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import React from 'react'
 import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
 import ImportEnvironmentVariableModal, {
@@ -123,10 +123,10 @@ describe('ImportEnvironmentVariableModal', () => {
 
       await act(() => {
         const select = screen.getByTestId('select-scope-for-all')
-        fireEvent.change(select, { target: { value: EnvironmentVariableScopeEnum.ENVIRONMENT } })
+        fireEvent.change(select, { target: { value: APIVariableScopeEnum.ENVIRONMENT } })
       })
 
-      expect(spy).toHaveBeenCalledWith(EnvironmentVariableScopeEnum.ENVIRONMENT)
+      expect(spy).toHaveBeenCalledWith(APIVariableScopeEnum.ENVIRONMENT)
     })
 
     it('should toggle all on click on secret toggle', async () => {

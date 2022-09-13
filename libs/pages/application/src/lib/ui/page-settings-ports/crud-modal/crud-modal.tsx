@@ -1,9 +1,9 @@
-import { ServicePortPorts } from 'qovery-typescript-axios'
+import { ServicePort } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputText, InputToggle, ModalCrud } from '@console/shared/ui'
 
 export interface CrudModalProps {
-  port?: ServicePortPorts
+  port?: ServicePort
   onSubmit: () => void
   onClose: () => void
   loading?: boolean

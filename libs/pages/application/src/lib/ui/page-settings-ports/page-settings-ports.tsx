@@ -1,4 +1,4 @@
-import { ServicePortPorts, ServicePortRequestPorts } from 'qovery-typescript-axios'
+import { ServicePort } from 'qovery-typescript-axios'
 import { LoadingStatus } from '@console/shared/interfaces'
 import {
   BlockContent,
@@ -14,10 +14,10 @@ import {
 } from '@console/shared/ui'
 
 export interface PageSettingsPortsProps {
-  ports?: ServicePortPorts[]
+  ports?: ServicePort[]
   onAddPort: () => void
-  onEdit: (customPort: ServicePortPorts) => void
-  onDelete: (customPort: ServicePortRequestPorts) => void
+  onEdit: (customPort: ServicePort) => void
+  onDelete: (customPort: ServicePort) => void
   loading?: LoadingStatus
 }
 

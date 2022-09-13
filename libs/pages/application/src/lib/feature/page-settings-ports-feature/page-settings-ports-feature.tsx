@@ -1,4 +1,4 @@
-import { ServicePortPorts } from 'qovery-typescript-axios'
+import { ServicePort } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import {
@@ -45,12 +45,12 @@ export function PageSettingsPortsFeature() {
       onAddPort={() => {
         openModal({ content: <CrudModalFeature onClose={closeModal} application={application} /> })
       }}
-      onEdit={(port: ServicePortPorts) => {
+      onEdit={(port: ServicePort) => {
         openModal({
           content: <CrudModalFeature onClose={closeModal} application={application} port={port} />,
         })
       }}
-      onDelete={(port: ServicePortPorts) => {
+      onDelete={(port: ServicePort) => {
         openModalConfirmation({
           title: 'Delete Port',
           isDelete: true,

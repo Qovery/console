@@ -1,4 +1,4 @@
-import { ApplicationStorageStorage } from 'qovery-typescript-axios'
+import { ServiceStorageStorage } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -13,7 +13,7 @@ import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
 
-export const removeStorage = (storage: ApplicationStorageStorage, application: ApplicationEntity) => {
+export const removeStorage = (storage: ServiceStorageStorage, application: ApplicationEntity) => {
   const app = { ...application }
   app.storage = app.storage?.filter((s) => s.id !== storage.id)
   return app
@@ -38,7 +38,7 @@ export function PageSettingsStorageFeature() {
   return (
     <PageSettingsStorage
       storages={application?.storage || []}
-      onRemove={(storage: ApplicationStorageStorage) => {
+      onRemove={(storage: ServiceStorageStorage) => {
         openModalConfirmation({
           title: 'Delete storage',
           description: 'To confirm the deletion of this storage, please type the name of the application',
@@ -55,7 +55,7 @@ export function PageSettingsStorageFeature() {
           },
         })
       }}
-      onEdit={(storage?: ApplicationStorageStorage) => {
+      onEdit={(storage?: ServiceStorageStorage) => {
         openModal({
           content: (
             <StorageModalFeature

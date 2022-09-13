@@ -9,6 +9,7 @@ import {
 import {
   CloneRequest,
   ContainersApi,
+  CreateEnvironmentRequest,
   DeploymentHistoryEnvironment,
   Environment,
   EnvironmentActionsApi,
@@ -17,7 +18,6 @@ import {
   EnvironmentDeploymentRuleApi,
   EnvironmentEditRequest,
   EnvironmentMainCallsApi,
-  EnvironmentRequest,
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
@@ -98,7 +98,7 @@ export const editEnvironmentDeploymentRules = createAsyncThunk(
 
 export const createEnvironment = createAsyncThunk(
   'environment/create',
-  async (payload: { projectId: string; environmentRequest: EnvironmentRequest }) => {
+  async (payload: { projectId: string; environmentRequest: CreateEnvironmentRequest }) => {
     const response = await environmentsApi.createEnvironment(payload.projectId, payload.environmentRequest)
     return response.data
   }

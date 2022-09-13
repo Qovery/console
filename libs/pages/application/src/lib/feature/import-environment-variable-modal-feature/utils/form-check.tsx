@@ -1,11 +1,11 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { getScopeHierarchy } from '../../../utils/compute-available-environment-variable-scope'
 
 export const validateKey = (
   value: string,
   existingVars: EnvironmentVariableSecretOrPublic[],
-  currentScope: EnvironmentVariableScopeEnum
+  currentScope: APIVariableScopeEnum
 ): string | boolean => {
   if (value.toLowerCase().startsWith('qovery')) {
     return 'Variable name cannot begin with "QOVERY"'
@@ -22,7 +22,7 @@ export const validateKey = (
 export const warningMessage = (
   value: string,
   existingVars: EnvironmentVariableSecretOrPublic[],
-  currentScope: EnvironmentVariableScopeEnum,
+  currentScope: APIVariableScopeEnum,
   overwriteEnabled = false
 ): string | undefined => {
   const existingVar = existingVars.find((envVar) => envVar.key === value)

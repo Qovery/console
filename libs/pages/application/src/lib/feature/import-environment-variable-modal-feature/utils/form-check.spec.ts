@@ -1,5 +1,5 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { validateKey, warningMessage } from './form-check'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 
 const mockedExistingEnvVar: any = [
   {
@@ -128,42 +128,42 @@ const mockedExistingEnvVar: any = [
 
 describe('validateKey', () => {
   it('should return a string if value begins with QOVERY', () => {
-    expect(validateKey('QOVERY_variable', [], EnvironmentVariableScopeEnum.ENVIRONMENT)).toEqual(
+    expect(validateKey('QOVERY_variable', [], APIVariableScopeEnum.ENVIRONMENT)).toEqual(
       `Variable name cannot begin with "QOVERY"`
     )
   })
 
   it('should return a string variable key already exists on a lower scope', () => {
-    expect(validateKey('variable_2', mockedExistingEnvVar, EnvironmentVariableScopeEnum.PROJECT)).toEqual(
+    expect(validateKey('variable_2', mockedExistingEnvVar, APIVariableScopeEnum.PROJECT)).toEqual(
       'This variable name already exists on a lower scope'
     )
   })
 
   it('should return true if nothing is wrong', () => {
-    expect(validateKey('variable_4', mockedExistingEnvVar, EnvironmentVariableScopeEnum.ENVIRONMENT)).toEqual(true)
+    expect(validateKey('variable_4', mockedExistingEnvVar, APIVariableScopeEnum.ENVIRONMENT)).toEqual(true)
   })
 })
 
 describe('warningMessage', () => {
   it('should say that an override is gonna be created', () => {
-    expect(warningMessage('variable_2', mockedExistingEnvVar, EnvironmentVariableScopeEnum.APPLICATION)).toEqual(
+    expect(warningMessage('variable_2', mockedExistingEnvVar, APIVariableScopeEnum.APPLICATION)).toEqual(
       'This variable name already exists on a higher scope. An override will be created.'
     )
   })
 
   describe('with overwrite on', () => {
     it('should say that an override is gonna be updated', () => {
-      expect(
-        warningMessage('variable_2', mockedExistingEnvVar, EnvironmentVariableScopeEnum.ENVIRONMENT, true)
-      ).toEqual('This variable name on the same scope already exists and will be updated')
+      expect(warningMessage('variable_2', mockedExistingEnvVar, APIVariableScopeEnum.ENVIRONMENT, true)).toEqual(
+        'This variable name on the same scope already exists and will be updated'
+      )
     })
   })
 
   describe('with overwrite off', () => {
     it('should say that the value already exist on this scope and will not be updated', () => {
-      expect(
-        warningMessage('variable_2', mockedExistingEnvVar, EnvironmentVariableScopeEnum.ENVIRONMENT, false)
-      ).toEqual('This variable already exists and will not be updated')
+      expect(warningMessage('variable_2', mockedExistingEnvVar, APIVariableScopeEnum.ENVIRONMENT, false)).toEqual(
+        'This variable already exists and will not be updated'
+      )
     })
   })
 })

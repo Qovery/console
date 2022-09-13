@@ -1,4 +1,4 @@
-import { ServicePortPorts } from 'qovery-typescript-axios'
+import { ServicePort } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -8,15 +8,15 @@ import { AppDispatch } from '@console/store/data'
 import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
-  port?: ServicePortPorts
+  port?: ServicePort
   application?: ApplicationEntity
   onClose: () => void
 }
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePortPorts) => {
+export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePort) => {
   const cloneApplication = Object.assign({}, application)
 
-  const ports: ServicePortPorts[] | [] = cloneApplication.ports || []
+  const ports: ServicePort[] | [] = cloneApplication.ports || []
 
   const port = {
     internal_port: parseInt(data['internal_port'], 10),
@@ -25,15 +25,15 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity, 
   }
 
   if (currentPort) {
-    cloneApplication.ports = application.ports?.map((p: ServicePortPorts) => {
+    cloneApplication.ports = application.ports?.map((p: ServicePort) => {
       if (p.id === currentPort.id) {
         return port
       } else {
         return p
       }
-    })
+    }) as ServicePort[]
   } else {
-    cloneApplication.ports = [...ports, port]
+    cloneApplication.ports = [...ports, port] as ServicePort[]
   }
 
   return cloneApplication
