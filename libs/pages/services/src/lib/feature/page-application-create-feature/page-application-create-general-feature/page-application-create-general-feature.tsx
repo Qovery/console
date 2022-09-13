@@ -1,5 +1,7 @@
+import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@console/shared/ui'
 import PageApplicationCreateGeneral from '../../../../../../application/src/lib/ui/page-application-create/page-application-create-general/page-application-create-general'
+import { GlobalData } from '../interfaces.interface'
 
 export function PageApplicationCreateGeneralFeature() {
   const funnelCardHelp = (
@@ -12,10 +14,22 @@ export function PageApplicationCreateGeneralFeature() {
       }}
     />
   )
+  const methods = useForm<GlobalData>({
+    defaultValues: {
+      name: '',
+      applicationSource: undefined,
+      registry: '',
+    },
+    mode: 'all',
+  })
+
+  const onSubmit = methods.handleSubmit((data) => {})
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
-      <PageApplicationCreateGeneral />
+      <FormProvider {...methods}>
+        <PageApplicationCreateGeneral onSubmit={onSubmit} />
+      </FormProvider>
     </FunnelFlowBody>
   )
 }
