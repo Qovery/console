@@ -11,6 +11,7 @@ import {
   ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
+  ApplicationEditRequest,
   ApplicationMainCallsApi,
   ApplicationMetricsApi,
   ApplicationsApi,
@@ -18,6 +19,7 @@ import {
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainerMetricsApi,
+  ContainerRequest,
   ContainerResponse,
   ContainersApi,
   DeploymentHistoryApplication,
@@ -35,7 +37,13 @@ import {
   ServiceRunningStatus,
 } from '@console/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds, refactoApplicationPayload, shortToLongId } from '@console/shared/utils'
+import {
+  addOneToManyRelation,
+  getEntitiesByIds,
+  refactoContainerApplicationPayload,
+  refactoGitApplicationPayload,
+  shortToLongId,
+} from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
@@ -90,10 +98,24 @@ export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentI
 
 export const editApplication = createAsyncThunk(
   'application/edit',
-  async (payload: { applicationId: string; data: Partial<ApplicationEntity>; toasterCallback: () => void }) => {
-    const cloneApplication = Object.assign({}, refactoApplicationPayload(payload.data) as any)
+  async (payload: {
+    applicationId: string
+    data: Partial<ApplicationEntity>
+    serviceType: ServiceTypeEnum
+    toasterCallback: () => void
+  }) => {
+    let response
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      const cloneApplication = Object.assign({}, refactoContainerApplicationPayload(payload.data))
+      response = await containerMainCallsApi.editContainer(payload.applicationId, cloneApplication as ContainerRequest)
+    } else {
+      const cloneApplication = Object.assign({}, refactoGitApplicationPayload(payload.data))
+      response = await applicationMainCallsApi.editApplication(
+        payload.applicationId,
+        cloneApplication as ApplicationEditRequest
+      )
+    }
 
-    const response = await applicationMainCallsApi.editApplication(payload.applicationId, cloneApplication)
     return response.data as Application
   }
 )

@@ -7,6 +7,7 @@ import {
   postApplicationActionsRestart,
   selectApplicationById,
 } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -47,7 +48,14 @@ export function PageSettingsStorageFeature() {
           action: async () => {
             if (!application) return
             const app = removeStorage(storage, application)
-            await dispatch(editApplication({ applicationId: app.id, data: app, toasterCallback }))
+            await dispatch(
+              editApplication({
+                applicationId: app.id,
+                data: app,
+                serviceType: getServiceType(application),
+                toasterCallback,
+              })
+            )
 
             if (!error) {
               closeModal()

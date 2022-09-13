@@ -2,6 +2,7 @@ import { ServiceStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
@@ -60,7 +61,7 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
       return
     }
     const app = handleSubmit(data, props.application, props.storage)
-    dispatch(editApplication({ data: app, applicationId: app.id, toasterCallback }))
+    dispatch(editApplication({ data: app, applicationId: app.id, serviceType: getServiceType(app), toasterCallback }))
       .unwrap()
       .then(() => props.onClose())
       .catch((e) => console.error(e))

@@ -1,7 +1,8 @@
-import { DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { Application, DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@console/domains/database'
+import { GitApplicationEntity } from '@console/shared/interfaces'
 import { refactoDatabasePayload } from '@console/shared/utils'
-import { refactoApplicationPayload, refactoPayload } from './refacto-payload'
+import { refactoContainerApplicationPayload, refactoGitApplicationPayload, refactoPayload } from './refacto-payload'
 
 describe('testing payload refactoring', () => {
   it('should remove default values (id, created_at and updated_at)', () => {
@@ -16,10 +17,10 @@ describe('testing payload refactoring', () => {
   })
 
   it('should remove application values', () => {
-    const response = {
+    const response: any = {
       id: '1',
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: '',
+      updated_at: '',
       environment: '',
       status: '',
       storage: [
@@ -31,8 +32,8 @@ describe('testing payload refactoring', () => {
         },
       ],
       running_status: '',
-      maximum_cpu: '',
-      maximum_memory: '',
+      maximum_cpu: 10,
+      maximum_memory: 10,
       git_repository: {
         url: '',
         branch: '',
@@ -45,7 +46,7 @@ describe('testing payload refactoring', () => {
       instances: [],
     }
 
-    expect(refactoApplicationPayload(response)).toEqual({
+    expect(refactoGitApplicationPayload(response)).toEqual({
       storage: [
         {
           id: '1',
@@ -59,6 +60,42 @@ describe('testing payload refactoring', () => {
         branch: '',
         root_path: '',
       },
+      name: 'hello-2',
+    })
+  })
+
+  it('should remove container values', () => {
+    const response: any = {
+      id: '1',
+      created_at: '',
+      updated_at: '',
+      environment: '',
+      status: '',
+      storage: [
+        {
+          id: '1',
+          mount_point: '',
+          size: 4,
+          type: StorageTypeEnum.FAST_SSD,
+        },
+      ],
+      running_status: '',
+      maximum_cpu: 10,
+      maximum_memory: 10,
+      name: 'hello-2',
+      test: 'test',
+      instances: [],
+    }
+
+    expect(refactoContainerApplicationPayload(response)).toEqual({
+      storage: [
+        {
+          id: '1',
+          mount_point: '',
+          size: 4,
+          type: StorageTypeEnum.FAST_SSD,
+        },
+      ],
       name: 'hello-2',
     })
   })

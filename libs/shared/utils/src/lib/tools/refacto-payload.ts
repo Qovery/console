@@ -4,7 +4,7 @@ import {
   DatabaseEditRequest,
   ServiceStorageStorage,
 } from 'qovery-typescript-axios'
-import { DatabaseEntity, GitApplicationEntity } from '@console/shared/interfaces'
+import { ContainerApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@console/shared/interfaces'
 
 export function refactoPayload(response: any) {
   delete response['id']
@@ -14,7 +14,7 @@ export function refactoPayload(response: any) {
   return response
 }
 
-export function refactoApplicationPayload(application: Partial<GitApplicationEntity>) {
+export function refactoGitApplicationPayload(application: Partial<GitApplicationEntity>) {
   // refacto because we can't send all git data
   if (application.git_repository) {
     application.git_repository = {
@@ -55,6 +55,25 @@ export function refactoApplicationPayload(application: Partial<GitApplicationEnt
   }
 
   return applicationRequestPayload
+}
+
+export function refactoContainerApplicationPayload(application: Partial<ContainerApplicationEntity>) {
+  const containerRequestPayload = {
+    name: application.name,
+    storage: application.storage,
+    ports: application.ports,
+    cpu: application.cpu,
+    memory: application.memory,
+    max_running_instances: application.max_running_instances,
+    min_running_instances: application.min_running_instances,
+    registry_id: application.registry?.id,
+    image_name: application.image_name,
+    tag: application.tag,
+    arguments: application.arguments,
+    entrypoint: application.entrypoint,
+  }
+
+  return containerRequestPayload
 }
 
 export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {

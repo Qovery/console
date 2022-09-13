@@ -7,6 +7,7 @@ import {
   postApplicationActionsRestart,
   selectApplicationById,
 } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -62,6 +63,7 @@ export function PageSettingsPortsFeature() {
               editApplication({
                 applicationId: applicationId,
                 data: cloneApplication,
+                serviceType: getServiceType(application),
                 toasterCallback,
               })
             )
