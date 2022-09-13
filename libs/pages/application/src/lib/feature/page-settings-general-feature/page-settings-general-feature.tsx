@@ -4,7 +4,8 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@console/domains/application'
-import { GitApplicationEntity } from '@console/shared/interfaces'
+import { getServiceType } from '@console/shared/enums'
+import { ApplicationEntity, GitApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -14,27 +15,29 @@ export const buildGitRepoUrl = (provider: string, branch: string): string => {
   return `https://${authProvider}.com/${branch}.git`
 }
 
-export const handleSubmit = (data: FieldValues, application: GitApplicationEntity) => {
-  const cloneApplication = Object.assign({}, application as GitApplicationEntity)
+export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
+  const cloneApplication = Object.assign({}, application)
   cloneApplication.name = data['name']
 
-  cloneApplication.build_mode = data['build_mode']
+  if ('build_mode' in cloneApplication) {
+    cloneApplication.build_mode = data['build_mode']
 
-  if (data['build_mode'] === BuildModeEnum.DOCKER) {
-    cloneApplication.dockerfile_path = data['dockerfile_path']
-    cloneApplication.buildpack_language = null
-  } else {
-    cloneApplication.buildpack_language = data['buildpack_language']
-    cloneApplication.dockerfile_path = null
+    if (data['build_mode'] === BuildModeEnum.DOCKER) {
+      cloneApplication.dockerfile_path = data['dockerfile_path']
+      cloneApplication.buildpack_language = null
+    } else {
+      cloneApplication.buildpack_language = data['buildpack_language']
+      cloneApplication.dockerfile_path = null
+    }
+
+    const git_repository = {
+      url: buildGitRepoUrl(data['provider'], data['repository']),
+      branch: data['branch'],
+      root_path: data['root_path'],
+    }
+
+    cloneApplication.git_repository = git_repository
   }
-
-  const git_repository = {
-    url: buildGitRepoUrl(data['provider'], data['repository']),
-    branch: data['branch'],
-    root_path: data['root_path'],
-  }
-
-  cloneApplication.git_repository = git_repository
 
   return cloneApplication
 }
@@ -42,13 +45,13 @@ export const handleSubmit = (data: FieldValues, application: GitApplicationEntit
 export function PageSettingsGeneralFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
-  const application = useSelector<RootState, GitApplicationEntity | undefined>(
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
     (a, b) =>
       a?.name === b?.name &&
-      a?.build_mode === b?.build_mode &&
-      a?.buildpack_language === b?.buildpack_language &&
-      a?.dockerfile_path === b?.dockerfile_path
+      (a as GitApplicationEntity)?.build_mode === (b as GitApplicationEntity)?.build_mode &&
+      (a as GitApplicationEntity)?.buildpack_language === (b as GitApplicationEntity)?.buildpack_language &&
+      (a as GitApplicationEntity)?.dockerfile_path === (b as GitApplicationEntity)?.dockerfile_path
   )
 
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)
@@ -70,6 +73,7 @@ export function PageSettingsGeneralFeature() {
         editApplication({
           applicationId: applicationId,
           data: cloneApplication,
+          serviceType: getServiceType(application),
           toasterCallback,
         })
       )
@@ -86,23 +90,24 @@ export function PageSettingsGeneralFeature() {
 
   useEffect(() => {
     methods.setValue('name', application?.name)
-    methods.setValue('build_mode', application?.build_mode)
-    methods.setValue(
-      'buildpack_language',
-      application?.buildpack_language ? application?.buildpack_language : BuildPackLanguageEnum.PYTHON
-    )
-    methods.setValue('dockerfile_path', application?.dockerfile_path ? application?.dockerfile_path : 'Dockerfile')
-  }, [
-    methods,
-    application?.name,
-    application?.build_mode,
-    application?.buildpack_language,
-    application?.dockerfile_path,
-  ])
+    if (application && 'build_mode' in application) {
+      methods.setValue('build_mode', application?.build_mode)
+      methods.setValue(
+        'buildpack_language',
+        application?.buildpack_language ? application?.buildpack_language : BuildPackLanguageEnum.PYTHON
+      )
+      methods.setValue('dockerfile_path', application?.dockerfile_path ? application?.dockerfile_path : 'Dockerfile')
+    }
+  }, [methods, application])
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} watchBuildMode={watchBuildMode} loading={loadingStatus === 'loading'} />
+      <PageSettingsGeneral
+        onSubmit={onSubmit}
+        watchBuildMode={watchBuildMode}
+        loading={loadingStatus === 'loading'}
+        type={getServiceType(application)}
+      />
     </FormProvider>
   )
 }

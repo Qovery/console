@@ -37,7 +37,7 @@ export function PageApplication() {
     equal
   )
 
-  useDocumentTitle(`${application?.name} - Qovery`)
+  useDocumentTitle(`${application?.name || 'Application'} - Qovery`)
 
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 

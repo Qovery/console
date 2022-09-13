@@ -3,7 +3,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@console/domains/application'
-import { MemorySizeEnum } from '@console/shared/enums'
+import { MemorySizeEnum, getServiceType } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { convertCpuToVCpu } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -85,6 +85,7 @@ export function PageSettingsResourcesFeature() {
       editApplication({
         applicationId: applicationId,
         data: cloneApplication,
+        serviceType: getServiceType(application),
         toasterCallback,
       })
     )

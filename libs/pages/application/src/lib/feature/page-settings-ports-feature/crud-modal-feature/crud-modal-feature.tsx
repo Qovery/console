@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editApplication, postApplicationActionsRestart } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { ApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch } from '@console/store/data'
 import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
@@ -71,6 +72,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
       editApplication({
         applicationId: props.application.id,
         data: cloneApplication,
+        serviceType: getServiceType(props.application),
         toasterCallback,
       })
     )

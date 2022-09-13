@@ -15,6 +15,7 @@ import {
   fetchEnvironmentDeploymentRules,
   selectEnvironmentDeploymentRulesByEnvId,
 } from '@console/domains/environment'
+import { getServiceType } from '@console/shared/enums'
 import { GitApplicationEntity } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
@@ -73,6 +74,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
             editApplication({
               applicationId: application.id,
               data: cloneApplication,
+              serviceType: getServiceType(application),
               toasterCallback,
             })
           )

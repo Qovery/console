@@ -11,13 +11,17 @@ import {
   ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
+  ApplicationEditRequest,
   ApplicationMainCallsApi,
   ApplicationMetricsApi,
   ApplicationsApi,
   Commit,
+  ContainerAdvancedSettings,
+  ContainerConfigurationApi,
   ContainerDeploymentHistoryApi,
   ContainerMainCallsApi,
   ContainerMetricsApi,
+  ContainerRequest,
   ContainerResponse,
   ContainersApi,
   DeploymentHistoryApplication,
@@ -35,7 +39,13 @@ import {
   ServiceRunningStatus,
 } from '@console/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds, refactoApplicationPayload, shortToLongId } from '@console/shared/utils'
+import {
+  addOneToManyRelation,
+  getEntitiesByIds,
+  refactoContainerApplicationPayload,
+  refactoGitApplicationPayload,
+  shortToLongId,
+} from '@console/shared/utils'
 import { RootState } from '@console/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
@@ -52,6 +62,7 @@ const containersApi = new ContainersApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
 const containerMetricsApi = new ContainerMetricsApi()
 const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
+const containerConfigurationApi = new ContainerConfigurationApi()
 
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
@@ -90,10 +101,24 @@ export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentI
 
 export const editApplication = createAsyncThunk(
   'application/edit',
-  async (payload: { applicationId: string; data: Partial<ApplicationEntity>; toasterCallback: () => void }) => {
-    const cloneApplication = Object.assign({}, refactoApplicationPayload(payload.data) as any)
+  async (payload: {
+    applicationId: string
+    data: Partial<ApplicationEntity>
+    serviceType: ServiceTypeEnum
+    toasterCallback: () => void
+  }) => {
+    let response
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      const cloneApplication = Object.assign({}, refactoContainerApplicationPayload(payload.data))
+      response = await containerMainCallsApi.editContainer(payload.applicationId, cloneApplication as ContainerRequest)
+    } else {
+      const cloneApplication = Object.assign({}, refactoGitApplicationPayload(payload.data))
+      response = await applicationMainCallsApi.editApplication(
+        payload.applicationId,
+        cloneApplication as ApplicationEditRequest
+      )
+    }
 
-    const response = await applicationMainCallsApi.editApplication(payload.applicationId, cloneApplication)
     return response.data as Application
   }
 )
@@ -163,17 +188,38 @@ export const fetchApplicationStatus = createAsyncThunk<
 
 export const fetchApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,
-  { applicationId: string }
+  { applicationId: string; serviceType: ServiceTypeEnum }
 >('application/advancedSettings', async (data) => {
-  const response = await applicationConfigurationApi.getAdvancedSettings(data.applicationId)
+  let response
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    response = await containerConfigurationApi.getContainerAdvancedSettings(data.applicationId)
+  } else {
+    response = await applicationConfigurationApi.getAdvancedSettings(data.applicationId)
+  }
   return response.data as ApplicationAdvancedSettings
 })
 
 export const editApplicationAdvancedSettings = createAsyncThunk<
   ApplicationAdvancedSettings,
-  { applicationId: string; settings: ApplicationAdvancedSettings; toasterCallback: () => void }
+  {
+    applicationId: string
+    settings: ApplicationAdvancedSettings | ContainerAdvancedSettings
+    serviceType: ServiceTypeEnum
+    toasterCallback: () => void
+  }
 >('application/advancedSettings/edit', async (data) => {
-  const response = await applicationConfigurationApi.editAdvancedSettings(data.applicationId, data.settings)
+  let response
+  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    response = await containerConfigurationApi.editContainerAdvancedSettings(
+      data.applicationId,
+      data.settings as ContainerAdvancedSettings[]
+    )
+  } else {
+    response = await applicationConfigurationApi.editAdvancedSettings(
+      data.applicationId,
+      data.settings as ApplicationAdvancedSettings
+    )
+  }
   return response.data as ApplicationAdvancedSettings
 })
 
