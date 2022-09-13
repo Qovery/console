@@ -11,6 +11,7 @@ import {
   postApplicationActionsRestart,
   selectApplicationById,
 } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { GitApplicationEntity } from '@console/shared/interfaces'
 import { objectFlattener } from '@console/shared/utils'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -37,12 +38,12 @@ export function PageSettingsAdvancedFeature() {
   // at the init fetch the default settings advanced settings
   useEffect(() => {
     dispatch(fetchDefaultApplicationAdvancedSettings())
-  }, [dispatch])
+  }, [dispatch, application])
 
   // when application is ready, and advanced setting has never been fetched before
   useEffect(() => {
     if (application && !application.advanced_settings?.loadingStatus) {
-      dispatch(fetchApplicationAdvancedSettings({ applicationId }))
+      dispatch(fetchApplicationAdvancedSettings({ applicationId, serviceType: getServiceType(application) }))
     }
   }, [dispatch, application, applicationId])
 
@@ -66,7 +67,7 @@ export function PageSettingsAdvancedFeature() {
   }, [application, keys, methods])
 
   const toasterCallback = () => {
-    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+    dispatch(postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) }))
   }
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -79,7 +80,14 @@ export function PageSettingsAdvancedFeature() {
     })
 
     dataFormatted = objectFlattener(dataFormatted)
-    dispatch(editApplicationAdvancedSettings({ applicationId, settings: dataFormatted, toasterCallback }))
+    dispatch(
+      editApplicationAdvancedSettings({
+        applicationId,
+        settings: dataFormatted,
+        serviceType: getServiceType(application),
+        toasterCallback,
+      })
+    )
   })
 
   return (

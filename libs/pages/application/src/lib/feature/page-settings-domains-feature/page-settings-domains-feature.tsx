@@ -9,6 +9,7 @@ import {
   getCustomDomainsState,
   selectCustomDomainsByApplicationId,
 } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { useModal, useModalConfirmation } from '@console/shared/ui'
 import { AppDispatch, RootState } from '@console/store/data'
@@ -38,7 +39,7 @@ export function PageSettingsDomainsFeature() {
 
   useEffect(() => {
     if (application) {
-      dispatch(fetchCustomDomains({ applicationId }))
+      dispatch(fetchCustomDomains({ applicationId, serviceType: getServiceType(application) }))
     }
   }, [dispatch, applicationId, application])
 
@@ -61,7 +62,7 @@ export function PageSettingsDomainsFeature() {
           description: 'Are you sure you want to delete this custom domain?',
           name: customDomain.domain,
           action: () => {
-            dispatch(deleteCustomDomain({ applicationId, customDomain }))
+            dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
           },
         })
       }}

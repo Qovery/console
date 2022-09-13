@@ -1,5 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { CustomDomain, CustomDomainApi } from 'qovery-typescript-axios'
+import { ContainerCustomDomainApi, CustomDomain, CustomDomainApi } from 'qovery-typescript-axios'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import { CustomDomainsState } from '@console/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@console/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
@@ -9,43 +10,82 @@ export const CUSTOM_DOMAIN_FEATURE_KEY = 'customDomains'
 
 export const customDomainAdapter = createEntityAdapter<CustomDomain>()
 
-const customDomainApi = new CustomDomainApi()
+const customDomainApplicationApi = new CustomDomainApi()
+const customDomainContainerApi = new ContainerCustomDomainApi()
 
 export const fetchCustomDomains = createAsyncThunk(
   'customDomains/fetch',
-  async (payload: { applicationId: string }, thunkAPI) => {
-    const response = await customDomainApi.listApplicationCustomDomain(payload.applicationId)
+  async (payload: { applicationId: string; serviceType: ServiceTypeEnum }) => {
+    let response
+    if (payload.serviceType === ServiceTypeEnum.APPLICATION) {
+      response = await customDomainContainerApi.listContainerCustomDomain(payload.applicationId)
+    } else {
+      response = await customDomainApplicationApi.listApplicationCustomDomain(payload.applicationId)
+    }
+
     return response.data.results as CustomDomain[]
   }
 )
 
 export const createCustomDomain = createAsyncThunk(
   'customDomains/create',
-  async (payload: { applicationId: string; domain: string; toasterCallback: () => void }, thunkAPI) => {
-    const response = await customDomainApi.createApplicationCustomDomain(payload.applicationId, {
-      domain: payload.domain,
-    })
+  async (payload: {
+    applicationId: string
+    domain: string
+    serviceType: ServiceTypeEnum
+    toasterCallback: () => void
+  }) => {
+    let response
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await customDomainContainerApi.createContainerCustomDomain(payload.applicationId, {
+        domain: payload.domain,
+      })
+    } else {
+      response = await customDomainApplicationApi.createApplicationCustomDomain(payload.applicationId, {
+        domain: payload.domain,
+      })
+    }
+
     return response.data as CustomDomain
   }
 )
 
 export const editCustomDomain = createAsyncThunk(
   'customDomains/edit',
-  async (
-    payload: { applicationId: string; domain: string; customDomain: CustomDomain; toasterCallback: () => void },
-    thunkAPI
-  ) => {
-    const response = await customDomainApi.editCustomDomain(payload.applicationId, payload.customDomain.id, {
-      domain: payload.domain,
-    })
+  async (payload: {
+    applicationId: string
+    domain: string
+    customDomain: CustomDomain
+    serviceType: ServiceTypeEnum
+    toasterCallback: () => void
+  }) => {
+    let response
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await customDomainContainerApi.editContainerCustomDomain(
+        payload.applicationId,
+        payload.customDomain.id,
+        {
+          domain: payload.domain,
+        }
+      )
+    } else {
+      response = await customDomainApplicationApi.editCustomDomain(payload.applicationId, payload.customDomain.id, {
+        domain: payload.domain,
+      })
+    }
+
     return response.data as CustomDomain
   }
 )
 
 export const deleteCustomDomain = createAsyncThunk(
   'customDomains/delete',
-  async (payload: { applicationId: string; customDomain: CustomDomain }, thunkAPI) => {
-    return await customDomainApi.deleteCustomDomain(payload.applicationId, payload.customDomain.id)
+  async (payload: { applicationId: string; customDomain: CustomDomain; serviceType: ServiceTypeEnum }) => {
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      return await customDomainContainerApi.deleteContainerCustomDomain(payload.applicationId, payload.customDomain.id)
+    } else {
+      return await customDomainApplicationApi.deleteCustomDomain(payload.applicationId, payload.customDomain.id)
+    }
   }
 )
 

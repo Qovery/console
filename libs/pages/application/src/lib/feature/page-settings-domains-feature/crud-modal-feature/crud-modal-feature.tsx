@@ -7,6 +7,7 @@ import {
   getCustomDomainsState,
   postApplicationActionsRestart,
 } from '@console/domains/application'
+import { getServiceType } from '@console/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
 import { AppDispatch, RootState } from '@console/store/data'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
@@ -43,6 +44,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
           applicationId: props.application.id,
           customDomain: props.customDomain,
           domain: data.domain,
+          serviceType: getServiceType(props.application),
           toasterCallback,
         })
       )
@@ -50,7 +52,14 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         .then(() => props.onClose())
         .catch((e) => console.error(e))
     } else {
-      dispatch(createCustomDomain({ applicationId: props.application.id, domain: data.domain, toasterCallback }))
+      dispatch(
+        createCustomDomain({
+          applicationId: props.application.id,
+          domain: data.domain,
+          serviceType: getServiceType(props.application),
+          toasterCallback,
+        })
+      )
         .unwrap()
         .then(() => props.onClose())
         .catch((e) => console.error(e))
