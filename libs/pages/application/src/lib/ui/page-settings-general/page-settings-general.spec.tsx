@@ -2,12 +2,14 @@ import { getByTestId, screen, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
+import { ServiceTypeEnum } from '@console/shared/enums'
 import PageSettingsGeneral, { PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
   const props: PageSettingsGeneralProps = {
     watchBuildMode: BuildModeEnum.DOCKER,
     onSubmit: jest.fn((e) => e.preventDefault()),
+    type: ServiceTypeEnum.APPLICATION,
   }
 
   const defaultValues = (mode = BuildModeEnum.DOCKER) => ({
