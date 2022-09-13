@@ -51,9 +51,11 @@ export function Container(props: ContainerProps) {
 
   const redeployApplication = () => {
     if (application?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
-      dispatch(postApplicationActionsDeploy({ environmentId, applicationId }))
+      dispatch(postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(application) }))
     } else {
-      dispatch(postApplicationActionsRestart({ environmentId, applicationId }))
+      dispatch(
+        postApplicationActionsRestart({ environmentId, applicationId, serviceType: getServiceType(application) })
+      )
     }
   }
 
