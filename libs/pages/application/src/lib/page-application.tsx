@@ -27,7 +27,6 @@ import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 
 export function PageApplication() {
-  useDocumentTitle('Application - Qovery')
   const { applicationId = '', environmentId = '', organizationId, projectId } = useParams()
   const { pathname } = useLocation()
   const environment = useSelector<RootState, Environment | undefined>((state) =>
@@ -37,6 +36,8 @@ export function PageApplication() {
     (state) => selectApplicationById(state, applicationId),
     equal
   )
+
+  useDocumentTitle(`${application?.name} - Qovery`)
 
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
 

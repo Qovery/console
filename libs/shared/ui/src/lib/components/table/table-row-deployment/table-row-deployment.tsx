@@ -3,18 +3,9 @@ import { useState } from 'react'
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { ServiceTypeEnum } from '@console/shared/enums'
-import { DeploymentService } from '@console/shared/interfaces'
+import { ContainerApplicationEntity, DeploymentService } from '@console/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@console/shared/router'
-import {
-  Avatar,
-  AvatarStyle,
-  ButtonIconAction,
-  Skeleton,
-  StatusChip,
-  TableRow,
-  TagCommit,
-  Tooltip,
-} from '@console/shared/ui'
+import { ButtonIconAction, Skeleton, StatusChip, TableRow, Tag, TagCommit, Tooltip } from '@console/shared/ui'
 import { renameStatus, timeAgo, trimId, upperCaseFirstLetter } from '@console/shared/utils'
 import Icon from '../../icon/icon'
 import { TableHeadProps } from '../table'
@@ -70,6 +61,8 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
       setHoverId(false)
     }, 2000)
   }
+
+  console.log()
 
   return (
     <TableRow
@@ -145,29 +138,21 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
                   {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
-              {data?.name && <ButtonIconAction actions={buttonActionsDefault} />}
+              {data?.name && !(data as ContainerApplicationEntity)?.image_name && (
+                <ButtonIconAction actions={buttonActionsDefault} />
+              )}
             </>
           </Skeleton>
         </div>
         {!noCommit && (
           <div className="flex items-center px-4 gap-2 border-element-light-lighter-400 border-l h-full">
             {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
-              <>
-                <Avatar
-                  firstName={
-                    (data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name.split(' ')[0] || ''
-                  }
-                  lastName={
-                    (data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_name.split(' ')[1] || ''
-                  }
-                  url={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.author_avatar_url}
-                  style={AvatarStyle.STROKED}
-                  size={28}
-                />
-                <TagCommit
-                  commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id}
-                />
-              </>
+              <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
+            )}
+            {(data as ContainerApplicationEntity).image_name && (
+              <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
+                {(data as ContainerApplicationEntity).image_name}
+              </Tag>
             )}
           </div>
         )}

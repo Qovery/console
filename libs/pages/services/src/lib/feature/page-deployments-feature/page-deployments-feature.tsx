@@ -44,6 +44,15 @@ export function PageDeploymentsFeature() {
         merged.push(a)
       })
 
+      deployment.containers?.forEach((container) => {
+        const c: DeploymentService = {
+          ...container,
+          execution_id: deployment.id,
+          type: ServiceTypeEnum.CONTAINER,
+        }
+        merged.push(c)
+      })
+
       deployment.databases?.forEach((db) => {
         const d: DeploymentService = {
           ...db,

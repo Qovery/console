@@ -49,15 +49,8 @@ export function Deployments(props: PageDeploymentsProps) {
       },
     },
     {
-      title: 'Commit',
+      title: 'Version',
       className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full bg-white',
-      filter: [
-        {
-          search: true,
-          title: 'Filter by service',
-          key: 'commit.git_commit_id',
-        },
-      ],
     },
   ]
 

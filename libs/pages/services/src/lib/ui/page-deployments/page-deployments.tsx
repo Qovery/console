@@ -1,6 +1,6 @@
+import { useEffect, useState } from 'react'
 import { DeploymentService } from '@console/shared/interfaces'
 import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
-import { useEffect, useState } from 'react'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentService[]
@@ -66,15 +66,8 @@ export function PageDeployments(props: PageDeploymentsProps) {
       },
     },
     {
-      title: 'Commit',
+      title: 'Version',
       className: 'px-4 py-2 border-b-element-light-lighter-400 border-l h-full bg-white',
-      filter: [
-        {
-          search: true,
-          title: 'Filter by service',
-          key: 'commit.git_commit_id',
-        },
-      ],
     },
   ]
 
