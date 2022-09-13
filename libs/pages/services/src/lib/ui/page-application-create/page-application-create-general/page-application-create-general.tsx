@@ -1,17 +1,34 @@
+import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { GitRepositorySettingsFeature } from '@console/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@console/shared/enums'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText, Link } from '@console/shared/ui'
-import { GlobalData } from '../../../../../../services/src/lib/feature/page-application-create-feature/interfaces.interface'
+import { upperCaseFirstLetter } from '@console/shared/utils'
+import { GlobalData } from '../../../feature/page-application-create-feature/interfaces.interface'
 
 export interface PageApplicationCreateGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
 }
 
 export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneralProps) {
-  const { control, formState, getValues, watch } = useFormContext<GlobalData>()
-  console.log(control, formState, getValues().applicationSource)
+  const { control, getValues, watch } = useFormContext<GlobalData>()
   watch('applicationSource')
+  const watchBuildMode = watch('build_mode')
+
+  const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
+    label: upperCaseFirstLetter(value) || '',
+    value: value,
+  }))
+
+  const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
+    label: upperCaseFirstLetter(value) || '',
+    value: value,
+  }))
+
+  watch((data) => {
+    console.log(data)
+  })
 
   return (
     <div>
@@ -65,8 +82,66 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         />
 
         <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
-        {getValues().applicationSource}
         {getValues().applicationSource === ServiceTypeEnum.APPLICATION && (
+          <>
+            <div className="mb-3">
+              <GitRepositorySettingsFeature inBlock={false} />
+            </div>
+            <Controller
+              name="build_mode"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  dataTestId="input-select-mode"
+                  label="Mode"
+                  className="mb-3"
+                  options={buildModeItems}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+            {watchBuildMode === BuildModeEnum.BUILDPACKS ? (
+              <Controller
+                key="buildpack_language"
+                name="buildpack_language"
+                control={control}
+                rules={{
+                  required: 'Please enter your buildpack language.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    dataTestId="input-select-language"
+                    label="Language framework"
+                    options={languageItems}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                  />
+                )}
+              />
+            ) : (
+              <Controller
+                key="dockerfile_path"
+                name="dockerfile_path"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-text-dockerfile"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Dockerfile path"
+                    error={error?.message}
+                  />
+                )}
+              />
+            )}
+          </>
+        )}
+
+        {getValues().applicationSource === ServiceTypeEnum.CONTAINER && (
           <div>
             <p className="mb-3 text-sm text-text-500">
               For Applications created from a Registry, fill the informations below
@@ -93,8 +168,6 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
             />
           </div>
         )}
-
-        {getValues().applicationSource === ServiceTypeEnum.CONTAINER && <h1>Container</h1>}
 
         <div className="flex justify-between">
           <Button type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>

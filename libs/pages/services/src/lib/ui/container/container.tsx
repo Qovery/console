@@ -171,7 +171,6 @@ export function Container(props: ContainerProps) {
     },
   ]
 
-  console.log(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
   const newServicesMenu: MenuData = [
     {
       items: [

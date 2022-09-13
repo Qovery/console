@@ -1,6 +1,6 @@
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@console/shared/ui'
-import PageApplicationCreateGeneral from '../../../../../../application/src/lib/ui/page-application-create/page-application-create-general/page-application-create-general'
+import PageApplicationCreateGeneral from '../../../ui/page-application-create/page-application-create-general/page-application-create-general'
 import { GlobalData } from '../interfaces.interface'
 
 export function PageApplicationCreateGeneralFeature() {
@@ -19,8 +19,15 @@ export function PageApplicationCreateGeneralFeature() {
       name: '',
       applicationSource: undefined,
       registry: '',
+      branch: '',
+      build_mode: '',
+      buildpack_language: '',
+      dockerfile_path: '',
+      provider: '',
+      repository: '',
+      root_path: '',
     },
-    mode: 'all',
+    mode: 'onChange',
   })
 
   const onSubmit = methods.handleSubmit((data) => {})

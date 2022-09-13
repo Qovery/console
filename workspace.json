@@ -23,6 +23,7 @@
     "pages-services": "libs/pages/services",
     "pages-settings": "libs/pages/settings",
     "shared-auth": "libs/shared/auth",
+    "shared-console-shared": "libs/shared/console-shared",
     "shared-enums": "libs/shared/enums",
     "shared-interfaces": "libs/shared/interfaces",
     "shared-router": "libs/shared/router",

@@ -33,7 +33,7 @@ export function FunnelFlow(props: FunnelFlowProps) {
       <div data-testid="progress-bar-wrapper" className="h-[6px] bg-element-light-lighter-500 relative shrink-0">
         <div
           data-testid="progress-bar"
-          style={{ transform: `scaleX(${(props.currentStep - 1) / props.totalSteps})` }}
+          style={{ transform: `scaleX(${props.currentStep / props.totalSteps})` }}
           className="h-full absolute origin-left transition-transform duration-700 ease-in-out inset-0 bg-brand-500"
         ></div>
       </div>

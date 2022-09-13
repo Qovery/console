@@ -9,7 +9,7 @@ jest.mock('react-router', () => ({
 
 describe('PageApplicationCreateFeature', () => {
   it('should render successfully', () => {
-    const { baseElement, debug } = render(
+    const { baseElement } = render(
       <Routes location={'/organization/1/project/2/environment/3/services/create'}>
         <Route
           path={'/organization/1/project/2/environment/3/services/create/*'}
@@ -18,7 +18,5 @@ describe('PageApplicationCreateFeature', () => {
       </Routes>
     )
     expect(baseElement).toBeTruthy()
-
-    debug()
   })
 })

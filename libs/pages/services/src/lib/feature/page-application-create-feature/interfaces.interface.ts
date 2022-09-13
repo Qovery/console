@@ -3,7 +3,18 @@ import { ServiceTypeEnum } from '@console/shared/enums'
 export interface GlobalData {
   name: string
   applicationSource: ServiceTypeEnum
-  registry: string
+
+  // container
+  registry?: string
+
+  // application
+  build_mode?: string
+  branch?: string
+  repository?: string
+  provider?: string
+  root_path?: string
+  buildpack_language?: string
+  dockerfile_path?: string
 }
 
 export interface ResourcesData {

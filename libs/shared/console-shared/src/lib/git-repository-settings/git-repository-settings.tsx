@@ -23,6 +23,7 @@ export interface GitRepositorySettingsProps {
   loadingStatusRepositories?: LoadingStatus
   loadingStatusBranches?: LoadingStatus
   currentAuthProvider?: string
+  inBlock?: boolean
 }
 
 export function GitRepositorySettings(props: GitRepositorySettingsProps) {
@@ -36,13 +37,14 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     loadingStatusAuthProviders,
     loadingStatusBranches,
     branches = [],
+    inBlock = true,
   } = props
 
   const { control } = useFormContext()
   const { openModal, closeModal } = useModal()
 
-  return (
-    <BlockContent title="Git repository">
+  const children = (
+    <>
       <Controller
         name="provider"
         control={control}
@@ -150,8 +152,10 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           </Button>
         </div>
       )}
-    </BlockContent>
+    </>
   )
+
+  return inBlock ? <BlockContent title="Git repository">{children}</BlockContent> : children
 }
 
 export default GitRepositorySettings
