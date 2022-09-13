@@ -1,5 +1,5 @@
 import { ThunkDispatch } from '@reduxjs/toolkit'
-import { EnvironmentVariableScopeEnum, VariableImportRequestVars } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, VariableImportRequestVars } from 'qovery-typescript-axios'
 import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
@@ -15,7 +15,7 @@ export function formatData(data: { [key: string]: string }, keys: string[]) {
       vars.push({
         name: data[key + '_key'],
         value: data[key + '_value'],
-        scope: data[key + '_scope'] as EnvironmentVariableScopeEnum,
+        scope: data[key + '_scope'] as APIVariableScopeEnum,
         is_secret: data[key + '_is_secret'] === 'true',
       })
     })

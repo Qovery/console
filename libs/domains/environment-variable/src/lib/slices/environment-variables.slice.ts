@@ -1,10 +1,10 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import {
+  APIVariableScopeEnum,
   ApplicationEnvironmentVariableApi,
   ContainerEnvironmentVariableApi,
   EnvironmentVariableApi,
   EnvironmentVariableRequest,
-  EnvironmentVariableScopeEnum,
   ProjectEnvironmentVariableApi,
   Value,
   VariableImport,
@@ -68,26 +68,26 @@ export const createEnvironmentVariablePayloadCreator = async (payload: {
   entityId: string
   applicationId: string
   environmentVariableRequest: EnvironmentVariableRequest
-  scope: EnvironmentVariableScopeEnum
+  scope: APIVariableScopeEnum
   serviceType: ServiceTypeEnum
   toasterCallback?: () => void
 }) => {
   let response
   switch (payload.scope) {
-    case EnvironmentVariableScopeEnum.ENVIRONMENT:
+    case APIVariableScopeEnum.ENVIRONMENT:
       response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariable(
         payload.entityId,
         payload.environmentVariableRequest
       )
       break
-    case EnvironmentVariableScopeEnum.PROJECT:
+    case APIVariableScopeEnum.PROJECT:
       response = await projectEnvironmentVariableApi.createProjectEnvironmentVariable(
         payload.entityId,
         payload.environmentVariableRequest
       )
 
       break
-    case EnvironmentVariableScopeEnum.APPLICATION:
+    case APIVariableScopeEnum.APPLICATION:
     default:
       if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
         response = await containerEnvironmentVariableApi.createContainerEnvironmentVariable(
@@ -115,28 +115,28 @@ export const createOverrideEnvironmentVariablesPayloadCreator = async (payload: 
   applicationId: string
   environmentVariableId: string
   environmentVariableRequest: Value
-  scope: EnvironmentVariableScopeEnum
+  scope: APIVariableScopeEnum
   serviceType: ServiceTypeEnum
   toasterCallback?: () => void
 }) => {
   const { entityId, environmentVariableId, environmentVariableRequest } = payload
   let response
   switch (payload.scope) {
-    case EnvironmentVariableScopeEnum.ENVIRONMENT:
+    case APIVariableScopeEnum.ENVIRONMENT:
       response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariableOverride(
         entityId,
         environmentVariableId,
         environmentVariableRequest
       )
       break
-    case EnvironmentVariableScopeEnum.PROJECT:
+    case APIVariableScopeEnum.PROJECT:
       response = await projectEnvironmentVariableApi.createProjectEnvironmentVariableOverride(
         entityId,
         environmentVariableId,
         environmentVariableRequest
       )
       break
-    case EnvironmentVariableScopeEnum.APPLICATION:
+    case APIVariableScopeEnum.APPLICATION:
     default:
       if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
         response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableOverride(
@@ -169,28 +169,28 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
     applicationId: string
     environmentVariableId: string
     environmentVariableRequest: Key
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     const { entityId, environmentVariableId, environmentVariableRequest } = payload
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentEnvironmentVariableApi.createEnvironmentEnvironmentVariableAlias(
           entityId,
           environmentVariableId,
           environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectEnvironmentVariableApi.createProjectEnvironmentVariableAlias(
           entityId,
           environmentVariableId,
           environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableAlias(
@@ -218,20 +218,20 @@ export const editEnvironmentVariables = createAsyncThunk(
     entityId: string
     environmentVariableId: string
     environmentVariableRequest: EnvironmentVariableRequest
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentEnvironmentVariableApi.editEnvironmentEnvironmentVariable(
           payload.entityId,
           payload.environmentVariableId,
           payload.environmentVariableRequest
         )
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectEnvironmentVariableApi.editProjectEnvironmentVariable(
           payload.entityId,
           payload.environmentVariableId,
@@ -239,7 +239,7 @@ export const editEnvironmentVariables = createAsyncThunk(
         )
 
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerEnvironmentVariableApi.editContainerEnvironmentVariable(
@@ -265,26 +265,26 @@ export const deleteEnvironmentVariable = createAsyncThunk(
   async (payload: {
     entityId: string
     environmentVariableId: string
-    scope: EnvironmentVariableScopeEnum
+    scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
   }) => {
     let response
     switch (payload.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         response = await environmentEnvironmentVariableApi.deleteEnvironmentEnvironmentVariable(
           payload.entityId,
           payload.environmentVariableId
         )
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         response = await projectEnvironmentVariableApi.deleteProjectEnvironmentVariable(
           payload.entityId,
           payload.environmentVariableId
         )
 
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
           response = await containerEnvironmentVariableApi.deleteContainerEnvironmentVariable(

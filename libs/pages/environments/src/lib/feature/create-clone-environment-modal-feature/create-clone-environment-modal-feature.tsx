@@ -1,4 +1,9 @@
-import { CloneRequest, EnvironmentModeEnum, EnvironmentRequest } from 'qovery-typescript-axios'
+import {
+  CloneRequest,
+  CreateEnvironmentModeEnum,
+  CreateEnvironmentRequest,
+  EnvironmentModeEnum,
+} from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -62,9 +67,9 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
           console.error(e)
         })
     } else {
-      const environmentRequest: EnvironmentRequest = {
+      const environmentRequest: CreateEnvironmentRequest = {
         name: dataFormatted.name,
-        mode: dataFormatted.mode as EnvironmentModeEnum,
+        mode: dataFormatted.mode as CreateEnvironmentModeEnum,
         cluster: dataFormatted.cluster,
       }
       dispatch(createEnvironment({ projectId: props.projectId, environmentRequest }))

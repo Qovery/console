@@ -1,4 +1,4 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
@@ -121,7 +121,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       variableType = EnvironmentVariableType.ALIAS
     }
 
-    if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) menu.push(edit(variableType))
+    if (variable.scope !== APIVariableScopeEnum.BUILT_IN) menu.push(edit(variableType))
 
     if (
       !(
@@ -135,7 +135,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
     ) {
       menu.push(createAlias)
 
-      if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) menu.push(createOverride)
+      if (variable.scope !== APIVariableScopeEnum.BUILT_IN) menu.push(createOverride)
     }
 
     return menu
@@ -152,7 +152,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
     },
   ]
 
-  if (variable.scope !== EnvironmentVariableScopeEnum.BUILT_IN) {
+  if (variable.scope !== APIVariableScopeEnum.BUILT_IN) {
     rowActions[0]?.menus?.push({
       items: [
         {
@@ -167,13 +167,13 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
               action: () => {
                 let entityId: string
                 switch (variable.scope) {
-                  case EnvironmentVariableScopeEnum.ENVIRONMENT:
+                  case APIVariableScopeEnum.ENVIRONMENT:
                     entityId = environmentId
                     break
-                  case EnvironmentVariableScopeEnum.PROJECT:
+                  case APIVariableScopeEnum.PROJECT:
                     entityId = projectId
                     break
-                  case EnvironmentVariableScopeEnum.APPLICATION:
+                  case APIVariableScopeEnum.APPLICATION:
                   default:
                     entityId = applicationId
                     break

@@ -1,3 +1,13 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { useParams } from 'react-router'
+import { NavLink } from 'react-router-dom'
+import { IconEnum } from '@console/shared/enums'
+import {
+  EnvironmentVariableEntity,
+  EnvironmentVariableSecretOrPublic,
+  SecretEnvironmentVariableEntity,
+} from '@console/shared/interfaces'
+import { APPLICATION_URL } from '@console/shared/router'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -10,16 +20,6 @@ import {
   Tooltip,
 } from '@console/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@console/shared/utils'
-import {
-  EnvironmentVariableEntity,
-  EnvironmentVariableSecretOrPublic,
-  SecretEnvironmentVariableEntity,
-} from '@console/shared/interfaces'
-import { IconEnum } from '@console/shared/enums'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
-import { NavLink } from 'react-router-dom'
-import { APPLICATION_URL } from '@console/shared/router'
-import { useParams } from 'react-router'
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
@@ -113,7 +113,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
             </Skeleton>
           </div>
           <div className="text-text-600 text-ssm font-medium px-4">
-            {variable.scope === EnvironmentVariableScopeEnum.BUILT_IN && variable.service_type ? (
+            {variable.scope === APIVariableScopeEnum.BUILT_IN && variable.service_type ? (
               <NavLink
                 className="flex gap-2 items-center"
                 to={APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) + '/general'}

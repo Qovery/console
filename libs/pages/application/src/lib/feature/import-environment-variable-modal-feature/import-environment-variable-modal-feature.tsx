@@ -1,4 +1,4 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -83,7 +83,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
       <ImportEnvironmentVariableModal
         toggleAll={false}
         triggerToggleAll={(b) => triggerToggleAll(b, methods.setValue, keys)}
-        changeScopeForAll={(scope) => changeScopeForAll(scope as EnvironmentVariableScopeEnum, methods.setValue, keys)}
+        changeScopeForAll={(scope) => changeScopeForAll(scope as APIVariableScopeEnum, methods.setValue, keys)}
         keys={keys}
         closeModal={props.closeModal}
         loading={loadingStatus === 'loading'}

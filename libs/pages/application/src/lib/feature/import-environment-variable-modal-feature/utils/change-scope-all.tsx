@@ -1,8 +1,8 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { UseFormSetValue } from 'react-hook-form'
 
 export function changeScopeForAll(
-  value: EnvironmentVariableScopeEnum,
+  value: APIVariableScopeEnum,
   setValue: UseFormSetValue<{ [key: string]: string }>,
   keys: (string | boolean)[]
 ): void {

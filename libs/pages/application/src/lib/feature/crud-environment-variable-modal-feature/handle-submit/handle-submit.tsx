@@ -1,4 +1,4 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { postEnvironmentActionsRestart } from '@console/domains/environment'
 import {
   createAliasEnvironmentVariables,
@@ -33,13 +33,13 @@ export function handleSubmitForEnvSecretCreation(
     let entityId
     setLoading(true)
     switch (data.scope) {
-      case EnvironmentVariableScopeEnum.ENVIRONMENT:
+      case APIVariableScopeEnum.ENVIRONMENT:
         entityId = props.environmentId
         break
-      case EnvironmentVariableScopeEnum.PROJECT:
+      case APIVariableScopeEnum.PROJECT:
         entityId = props.projectId
         break
-      case EnvironmentVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.APPLICATION:
       default:
         entityId = props.applicationId
         break
@@ -61,7 +61,7 @@ export function handleSubmitForEnvSecretCreation(
                   value: data.value,
                 },
                 environmentVariableId: props.variable?.id || '',
-                scope: data.scope as EnvironmentVariableScopeEnum,
+                scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,
                 toasterCallback,
               })
@@ -82,7 +82,7 @@ export function handleSubmitForEnvSecretCreation(
                   key: data.key,
                 },
                 environmentVariableId: props.variable?.id || '',
-                scope: data.scope as EnvironmentVariableScopeEnum,
+                scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,
                 toasterCallback,
               })
@@ -104,7 +104,7 @@ export function handleSubmitForEnvSecretCreation(
                   key: data.key,
                   value: data.value,
                 },
-                scope: data.scope as EnvironmentVariableScopeEnum,
+                scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,
                 toasterCallback,
               })
@@ -126,7 +126,7 @@ export function handleSubmitForEnvSecretCreation(
               key: data.key,
               value: data.value,
             },
-            scope: data.scope as EnvironmentVariableScopeEnum,
+            scope: data.scope as APIVariableScopeEnum,
             serviceType: serviceType,
             toasterCallback,
           })
@@ -156,7 +156,7 @@ export function handleSubmitForEnvSecretCreation(
                   value: data.value,
                 },
                 environmentVariableId: props.variable?.id || '',
-                scope: data.scope as EnvironmentVariableScopeEnum,
+                scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,
                 toasterCallback,
               })
@@ -177,7 +177,7 @@ export function handleSubmitForEnvSecretCreation(
                   key: data.key,
                 },
                 environmentVariableId: props.variable?.id || '',
-                scope: data.scope as EnvironmentVariableScopeEnum,
+                scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,
                 toasterCallback,
               })
@@ -198,7 +198,7 @@ export function handleSubmitForEnvSecretCreation(
                   key: data.key,
                   value: data.value,
                 },
-                scope: data.scope as EnvironmentVariableScopeEnum,
+                scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,
                 toasterCallback,
               })
@@ -220,7 +220,7 @@ export function handleSubmitForEnvSecretCreation(
               key: data.key,
               value: (props.variable as SecretEnvironmentVariableEntity).aliased_secret?.key || data.value || '',
             },
-            scope: data.scope as EnvironmentVariableScopeEnum,
+            scope: data.scope as APIVariableScopeEnum,
             serviceType: serviceType,
             toasterCallback,
           })

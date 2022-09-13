@@ -1,4 +1,4 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@console/shared/ui'
 import {
@@ -13,7 +13,7 @@ export interface CrudEnvironmentVariableModalProps {
   description: string
   onSubmit: () => void
   closeModal: () => void
-  availableScopes: EnvironmentVariableScopeEnum[]
+  availableScopes: APIVariableScopeEnum[]
   loading: boolean
 }
 

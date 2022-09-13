@@ -1,4 +1,4 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { DropzoneRootProps } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
@@ -20,12 +20,12 @@ import { computeAvailableScope } from '../../utils/compute-available-environment
 export interface ImportEnvironmentVariableModalProps {
   onSubmit: () => void
   keys?: string[]
-  availableScopes: EnvironmentVariableScopeEnum[]
+  availableScopes: APIVariableScopeEnum[]
   closeModal: () => void
   loading: boolean
   triggerToggleAll: (b: boolean) => void
   toggleAll: boolean
-  changeScopeForAll: (value: EnvironmentVariableScopeEnum | undefined) => void
+  changeScopeForAll: (value: APIVariableScopeEnum | undefined) => void
   showDropzone: boolean
   dropzoneGetRootProps: <T extends DropzoneRootProps>(props?: T) => T
   dropzoneGetInputProps: <T extends DropzoneRootProps>(props?: T) => T
@@ -82,7 +82,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   name="search"
                   items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
                   onChange={(value?: string) => {
-                    props.changeScopeForAll(value as EnvironmentVariableScopeEnum)
+                    props.changeScopeForAll(value as APIVariableScopeEnum)
                     trigger().then()
                   }}
                 />
@@ -113,7 +113,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       message: 'Variable name cannot contain spaces.',
                     },
                     validate: (value) =>
-                      validateKey(value, props.existingVars, getValues(key + '_scope') as EnvironmentVariableScopeEnum),
+                      validateKey(value, props.existingVars, getValues(key + '_scope') as APIVariableScopeEnum),
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputTextSmall
@@ -125,7 +125,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       warning={warningMessage(
                         field.value,
                         props.existingVars,
-                        getValues(key + '_scope') as EnvironmentVariableScopeEnum,
+                        getValues(key + '_scope') as APIVariableScopeEnum,
                         props.overwriteEnabled
                       )}
                       label={key + '_key'}

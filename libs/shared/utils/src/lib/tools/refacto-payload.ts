@@ -1,8 +1,8 @@
 import {
   ApplicationEditRequest,
   ApplicationGitRepositoryRequest,
-  ApplicationStorageStorage,
   DatabaseEditRequest,
+  ServiceStorageStorage,
 } from 'qovery-typescript-axios'
 import { DatabaseEntity, GitApplicationEntity } from '@console/shared/interfaces'
 
@@ -28,7 +28,7 @@ export function refactoApplicationPayload(application: Partial<GitApplicationEnt
   if (application.storage) {
     application.storage =
       application.storage.length > 0
-        ? application.storage.map((storage: ApplicationStorageStorage) => ({
+        ? application.storage.map((storage: ServiceStorageStorage) => ({
             mount_point: storage.mount_point,
             size: storage.size,
             type: storage.type,

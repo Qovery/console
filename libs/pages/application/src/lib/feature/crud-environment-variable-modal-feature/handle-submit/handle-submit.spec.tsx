@@ -1,13 +1,13 @@
+import { waitFor } from '@testing-library/react'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { mockEnvironmentVariable } from '@console/domains/environment-variable'
 import {
   CrudEnvironmentVariableModalFeatureProps,
   DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../crud-environment-variable-modal-feature'
-import { mockEnvironmentVariable } from '@console/domains/environment-variable'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 import { handleSubmitForEnvSecretCreation } from './handle-submit'
-import { waitFor } from '@testing-library/react'
 
 const mockSetOpen = jest.fn()
 
@@ -25,7 +25,7 @@ describe('Handle Submit Environment Variable', () => {
   const data: DataFormEnvironmentVariableInterface = {
     key: 'key',
     value: 'value',
-    scope: EnvironmentVariableScopeEnum.PROJECT,
+    scope: APIVariableScopeEnum.PROJECT,
     isSecret: false,
   }
 
@@ -56,7 +56,7 @@ describe('Handle Submit Environment Variable', () => {
     })
 
     describe('with selected scope equal environment', () => {
-      data.scope = EnvironmentVariableScopeEnum.ENVIRONMENT
+      data.scope = APIVariableScopeEnum.ENVIRONMENT
 
       it('should dispatch set loading and trigger the closing', async () => {
         await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
@@ -79,7 +79,7 @@ describe('Handle Submit Environment Variable', () => {
     })
 
     describe('with selected scope equal project', () => {
-      data.scope = EnvironmentVariableScopeEnum.PROJECT
+      data.scope = APIVariableScopeEnum.PROJECT
 
       it('should dispatch set loading and trigger the closing', async () => {
         await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
@@ -93,7 +93,7 @@ describe('Handle Submit Environment Variable', () => {
     })
 
     describe('with selected scope equal application', () => {
-      data.scope = EnvironmentVariableScopeEnum.APPLICATION
+      data.scope = APIVariableScopeEnum.APPLICATION
 
       it('should dispatch set loading and trigger the closing', async () => {
         await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
@@ -152,7 +152,7 @@ describe('Handle Submit Environment Variable', () => {
     })
 
     describe('with selected scope equal environment', () => {
-      data.scope = EnvironmentVariableScopeEnum.ENVIRONMENT
+      data.scope = APIVariableScopeEnum.ENVIRONMENT
 
       it('should dispatch set loading and trigger the closing', async () => {
         await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
@@ -166,7 +166,7 @@ describe('Handle Submit Environment Variable', () => {
     })
 
     describe('with selected scope equal project', () => {
-      data.scope = EnvironmentVariableScopeEnum.PROJECT
+      data.scope = APIVariableScopeEnum.PROJECT
 
       it('should dispatch set loading and trigger the closing', async () => {
         await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)
@@ -180,7 +180,7 @@ describe('Handle Submit Environment Variable', () => {
     })
 
     describe('with selected scope equal application', () => {
-      data.scope = EnvironmentVariableScopeEnum.APPLICATION
+      data.scope = APIVariableScopeEnum.APPLICATION
 
       it('should dispatch set loading and trigger the closing', async () => {
         await handleSubmitForEnvSecretCreation(data, mockSetLoading, props, mockDispatch, mockSetClosing)

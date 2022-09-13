@@ -1,9 +1,9 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
 } from '@console/shared/interfaces'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
 
 export function sortVariable(
   variables: EnvironmentVariableEntity[],
@@ -22,11 +22,11 @@ export function sortVariable(
     .sort((a, b) => {
       let serviceNameSorting = 0
       let scopeOrdering = 0
-      if (a.scope === EnvironmentVariableScopeEnum.BUILT_IN && b.scope !== EnvironmentVariableScopeEnum.BUILT_IN) {
+      if (a.scope === APIVariableScopeEnum.BUILT_IN && b.scope !== APIVariableScopeEnum.BUILT_IN) {
         scopeOrdering = -1
       }
 
-      if (a.scope !== EnvironmentVariableScopeEnum.BUILT_IN && b.scope === EnvironmentVariableScopeEnum.BUILT_IN) {
+      if (a.scope !== APIVariableScopeEnum.BUILT_IN && b.scope === APIVariableScopeEnum.BUILT_IN) {
         scopeOrdering = 1
       }
 

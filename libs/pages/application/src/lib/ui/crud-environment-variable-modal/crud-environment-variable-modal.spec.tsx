@@ -1,20 +1,20 @@
-import CrudEnvironmentVariableModal, { CrudEnvironmentVariableModalProps } from './crud-environment-variable-modal'
+import '@testing-library/jest-dom/extend-expect'
+import { act, fireEvent, getByRole, queryByText, render, screen, waitFor } from '@testing-library/react'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { FormProvider, useForm } from 'react-hook-form'
 import {
   DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
-import { FormProvider, useForm } from 'react-hook-form'
-import { act, fireEvent, getByRole, queryByText, render, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
+import CrudEnvironmentVariableModal, { CrudEnvironmentVariableModalProps } from './crud-environment-variable-modal'
 
 const props: CrudEnvironmentVariableModalProps = {
   mode: EnvironmentVariableCrudMode.CREATION,
   title: 'Create Environment Variable',
   description: 'Create an environment variable.',
   onSubmit: jest.fn(),
-  availableScopes: [EnvironmentVariableScopeEnum.ENVIRONMENT, EnvironmentVariableScopeEnum.PROJECT],
+  availableScopes: [APIVariableScopeEnum.ENVIRONMENT, APIVariableScopeEnum.PROJECT],
   setOpen: jest.fn(),
   type: EnvironmentVariableType.NORMAL,
 }
@@ -23,7 +23,7 @@ const WrapperForm = ({ children }) => {
   const methods = useForm<DataFormEnvironmentVariableInterface>({
     defaultValues: {
       key: 'asdasd',
-      scope: EnvironmentVariableScopeEnum.PROJECT,
+      scope: APIVariableScopeEnum.PROJECT,
       value: 'asdas',
       isSecret: false,
     },

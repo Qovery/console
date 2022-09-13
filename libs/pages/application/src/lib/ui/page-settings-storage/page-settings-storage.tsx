@@ -1,4 +1,4 @@
-import { ApplicationStorageStorage } from 'qovery-typescript-axios'
+import { ServiceStorageStorage } from 'qovery-typescript-axios'
 import {
   BlockContent,
   Button,
@@ -11,10 +11,10 @@ import {
 } from '@console/shared/ui'
 
 export interface PageSettingsStorageProps {
-  storages: ApplicationStorageStorage[]
+  storages: ServiceStorageStorage[]
   onAddStorage: () => void
-  onRemove: (storage: ApplicationStorageStorage) => void
-  onEdit: (storage: ApplicationStorageStorage) => void
+  onRemove: (storage: ServiceStorageStorage) => void
+  onEdit: (storage: ServiceStorageStorage) => void
 }
 
 export function PageSettingsStorage(props: PageSettingsStorageProps) {

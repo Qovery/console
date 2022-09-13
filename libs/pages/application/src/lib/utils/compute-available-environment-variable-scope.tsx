@@ -1,43 +1,43 @@
-import { EnvironmentVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 
 const environmentScopes: {
-  name: EnvironmentVariableScopeEnum
+  name: APIVariableScopeEnum
   hierarchy: number
 }[] = [
   {
-    name: EnvironmentVariableScopeEnum.BUILT_IN,
+    name: APIVariableScopeEnum.BUILT_IN,
     hierarchy: -1,
   },
   {
-    name: EnvironmentVariableScopeEnum.PROJECT,
+    name: APIVariableScopeEnum.PROJECT,
     hierarchy: 1,
   },
   {
-    name: EnvironmentVariableScopeEnum.ENVIRONMENT,
+    name: APIVariableScopeEnum.ENVIRONMENT,
     hierarchy: 2,
   },
   {
-    name: EnvironmentVariableScopeEnum.APPLICATION,
+    name: APIVariableScopeEnum.APPLICATION,
     hierarchy: 3,
   },
 ]
 
 export const computeAvailableScope = (
-  scope?: EnvironmentVariableScopeEnum,
+  scope?: APIVariableScopeEnum,
   includeBuiltIn?: boolean
-): EnvironmentVariableScopeEnum[] => {
+): APIVariableScopeEnum[] => {
   if (!scope) {
     const scopeToReturn = []
 
     if (includeBuiltIn) {
-      scopeToReturn.push(EnvironmentVariableScopeEnum.BUILT_IN)
+      scopeToReturn.push(APIVariableScopeEnum.BUILT_IN)
     }
 
     return [
       ...scopeToReturn,
-      EnvironmentVariableScopeEnum.PROJECT,
-      EnvironmentVariableScopeEnum.ENVIRONMENT,
-      EnvironmentVariableScopeEnum.APPLICATION,
+      APIVariableScopeEnum.PROJECT,
+      APIVariableScopeEnum.ENVIRONMENT,
+      APIVariableScopeEnum.APPLICATION,
     ]
   }
 
@@ -50,7 +50,7 @@ export const computeAvailableScope = (
     .map((scope) => scope.name)
 }
 
-export function getScopeHierarchy(scope?: EnvironmentVariableScopeEnum): number {
+export function getScopeHierarchy(scope?: APIVariableScopeEnum): number {
   if (!scope) return -1
 
   const hierarchy = environmentScopes.find((s) => s.name === scope)?.hierarchy
