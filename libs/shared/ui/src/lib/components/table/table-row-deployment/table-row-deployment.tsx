@@ -62,8 +62,6 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
     }, 2000)
   }
 
-  console.log()
-
   return (
     <TableRow
       columnsWidth={columnsWidth}
