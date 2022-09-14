@@ -1,25 +1,25 @@
-import React from 'react'
 import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
+import React from 'react'
 import { matchPath, useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { Icon, MenuItemProps, StatusChip } from '@console/shared/ui'
+import { IconEnum } from '@qovery/shared/enums'
+import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
-  SERVICES_GENERAL_URL,
-  SERVICES_URL,
+  APPLICATION_GENERAL_URL,
+  APPLICATION_URL,
+  DATABASE_GENERAL_URL,
+  DATABASE_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
+  INFRA_LOGS_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
-  APPLICATION_URL,
-  APPLICATION_GENERAL_URL,
-  DATABASE_URL,
-  DATABASE_GENERAL_URL,
-  INFRA_LOGS_URL,
-} from '@console/shared/router'
+  SERVICES_GENERAL_URL,
+  SERVICES_URL,
+} from '@qovery/shared/router'
+import { Icon, MenuItemProps, StatusChip } from '@qovery/shared/ui'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
-import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@console/shared/interfaces'
-import { IconEnum } from '@console/shared/enums'
 
 export interface BreadcrumbProps {
   organizations: Organization[]

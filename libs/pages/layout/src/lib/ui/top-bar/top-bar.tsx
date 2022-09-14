@@ -1,5 +1,5 @@
 //import { useNavigate } from 'react-router'
-// import { ButtonIcon, ButtonIconStyle, Menu, MenuAlign, Icon } from '@console/shared/ui'
+// import { ButtonIcon, ButtonIconStyle, Menu, MenuAlign, Icon } from '@qovery/shared/ui'
 import { BreadcrumbFeature } from '../../feature/breadcrumb/breadcrumb'
 
 // const notificationsMenu = [

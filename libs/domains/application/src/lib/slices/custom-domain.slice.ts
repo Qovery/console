@@ -1,10 +1,10 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { ContainerCustomDomainApi, CustomDomain, CustomDomainApi } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { CustomDomainsState } from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { CustomDomainsState } from '@qovery/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 
 export const CUSTOM_DOMAIN_FEATURE_KEY = 'customDomains'
 

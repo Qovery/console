@@ -1,6 +1,6 @@
-import TableRowEnvironmentVariable, { TableRowEnvironmentVariableProps } from './table-row-environment-variable'
 import { render } from '__tests__/utils/setup-jest'
-import { mockEnvironmentVariable } from '@console/domains/environment-variable'
+import { mockEnvironmentVariable } from '@qovery/domains/environment-variable'
+import TableRowEnvironmentVariable, { TableRowEnvironmentVariableProps } from './table-row-environment-variable'
 
 const props: TableRowEnvironmentVariableProps = {
   variable: mockEnvironmentVariable(false, false),

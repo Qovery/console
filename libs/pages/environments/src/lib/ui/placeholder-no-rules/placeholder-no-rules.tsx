@@ -1,4 +1,4 @@
-import { Button } from '@console/shared/ui'
+import { Button } from '@qovery/shared/ui'
 import HelpSidebar from '../help-sidebar/help-sidebar'
 
 export interface PlaceholderNoRulesProps {

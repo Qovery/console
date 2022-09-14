@@ -6,7 +6,7 @@ import {
   StateEnum,
   WeekdayEnum,
 } from 'qovery-typescript-axios'
-import { EnvironmentEntity } from '@console/shared/interfaces'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 

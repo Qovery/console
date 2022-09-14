@@ -1,11 +1,11 @@
 import { useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@console/shared/router'
-import { useAuth } from '@console/shared/auth'
-import { useDocumentTitle } from '@console/shared/utils'
-import { ContextOnboarding } from '../container/container'
+import { useAuth } from '@qovery/shared/auth'
+import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@qovery/shared/router'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { StepProject } from '../../ui/step-project/step-project'
+import { ContextOnboarding } from '../container/container'
 
 export function OnboardingProject() {
   useDocumentTitle('Onboarding Organization - Qovery')

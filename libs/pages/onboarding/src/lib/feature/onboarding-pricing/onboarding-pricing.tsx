@@ -1,21 +1,21 @@
+import { Organization, PlanEnum, Project } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
 import { useIntercom } from 'react-use-intercom'
-import { useDispatch } from 'react-redux'
-import { Organization, PlanEnum, Project } from 'qovery-typescript-axios'
 import {
   OrganizationPlan,
   OrganizationPlanType,
   OrganizationPrice,
   postOrganization,
-} from '@console/domains/organization'
-import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/router'
-import { useAuth } from '@console/shared/auth'
-import { useDocumentTitle } from '@console/shared/utils'
-import { postProject } from '@console/domains/projects'
-import { AppDispatch } from '@console/store/data'
-import { ContextOnboarding } from '../container/container'
+} from '@qovery/domains/organization'
+import { postProject } from '@qovery/domains/projects'
+import { useAuth } from '@qovery/shared/auth'
+import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/router'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch } from '@qovery/store/data'
 import { StepPricing } from '../../ui/step-pricing/step-pricing'
+import { ContextOnboarding } from '../container/container'
 
 function listPrice(base: number, isBusinessPlan?: boolean) {
   const results: OrganizationPrice[] = []

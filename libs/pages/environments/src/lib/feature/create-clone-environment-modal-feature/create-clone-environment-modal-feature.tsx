@@ -7,10 +7,10 @@ import {
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { cloneEnvironment, createEnvironment } from '@console/domains/environment'
-import { selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
-import { ClusterEntity, EnvironmentEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
+import { cloneEnvironment, createEnvironment } from '@qovery/domains/environment'
+import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import CreateCloneEnvironmentModal from '../../ui/create-clone-environment-modal/create-clone-environment-modal'
 
 export interface CreateCloneEnvironmentModalFeatureProps {

@@ -1,5 +1,5 @@
 import { Control, Controller } from 'react-hook-form'
-import { InputText, Button, ButtonSize, ButtonStyle } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
   onSubmit: () => void

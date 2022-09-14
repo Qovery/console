@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { applicationFactoryMock } from '@console/domains/application'
+import { applicationFactoryMock } from '@qovery/domains/application'
 import PageSettingsPortsFeature, { deletePort } from './page-settings-ports-feature'
 
 const application = applicationFactoryMock(1)[0]

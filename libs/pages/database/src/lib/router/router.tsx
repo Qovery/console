@@ -7,7 +7,7 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_VARIABLES_URL,
   Route,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'

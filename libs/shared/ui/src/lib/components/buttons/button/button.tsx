@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
 import LoaderSpinner from '../../loader-spinner/loader-spinner'
 

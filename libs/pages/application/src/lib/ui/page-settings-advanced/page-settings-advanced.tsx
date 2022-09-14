@@ -1,7 +1,7 @@
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { LoadingStatus } from '@console/shared/interfaces'
+import { LoadingStatus } from '@qovery/shared/interfaces'
 import {
   CopyToClipboard,
   HelpSection,
@@ -12,7 +12,7 @@ import {
   TableEdition,
   TableEditionRow,
   Tooltip,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 
 export interface PageSettingsAdvancedProps {
   keys?: string[]

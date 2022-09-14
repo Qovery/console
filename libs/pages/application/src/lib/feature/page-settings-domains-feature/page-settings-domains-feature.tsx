@@ -8,11 +8,11 @@ import {
   getApplicationsState,
   getCustomDomainsState,
   selectCustomDomainsByApplicationId,
-} from '@console/domains/application'
-import { getServiceType } from '@console/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
-import { useModal, useModalConfirmation } from '@console/shared/ui'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 

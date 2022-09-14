@@ -1,19 +1,19 @@
+import { ProjectDeploymentRule } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router'
 import {
   deleteDeploymentRule,
   deploymentRulesLoadingStatus,
   fetchDeploymentRules,
   selectDeploymentRulesEntitiesByProjectId,
   updateDeploymentRuleOrder,
-} from '@console/domains/projects'
-import { AppDispatch, RootState } from '@console/store/data'
-import { BaseLink } from '@console/shared/ui'
-import { ProjectDeploymentRule } from 'qovery-typescript-axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
-import { useEffect } from 'react'
+} from '@qovery/domains/projects'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
+import { BaseLink } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@console/shared/router'
-import { useDocumentTitle } from '@console/shared/utils'
 
 export function PageDeploymentRulesFeature() {
   const { projectId = '', organizationId = '' } = useParams()

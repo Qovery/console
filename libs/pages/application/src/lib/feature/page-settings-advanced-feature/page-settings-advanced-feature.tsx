@@ -10,11 +10,11 @@ import {
   getApplicationsState,
   postApplicationActionsRestart,
   selectApplicationById,
-} from '@console/domains/application'
-import { getServiceType } from '@console/shared/enums'
-import { GitApplicationEntity } from '@console/shared/interfaces'
-import { objectFlattener } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
+import { GitApplicationEntity } from '@qovery/shared/interfaces'
+import { objectFlattener } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './utils'
 

@@ -1,8 +1,8 @@
 import { Cluster } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Value } from '@console/shared/interfaces'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@console/shared/ui'
-import { environmentModeValues } from '@console/shared/utils'
+import { Value } from '@qovery/shared/interfaces'
+import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
+import { environmentModeValues } from '@qovery/shared/utils'
 
 export interface PageSettingsGeneralProps {
   onSubmit: () => void

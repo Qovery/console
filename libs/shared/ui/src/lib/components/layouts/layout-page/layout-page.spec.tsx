@@ -1,12 +1,11 @@
 import { render } from '__tests__/utils/setup-jest'
-
-import LayoutPage, { LayoutPageProps } from './layout-page'
 import React from 'react'
-import { userSignUpFactoryMock } from '@console/domains/user'
-import { organizationFactoryMock } from '@console/domains/organization'
-import { projectsFactoryMock } from '@console/domains/projects'
-import { environmentFactoryMock } from '@console/domains/environment'
-import { applicationFactoryMock } from '@console/domains/application'
+import { applicationFactoryMock } from '@qovery/domains/application'
+import { environmentFactoryMock } from '@qovery/domains/environment'
+import { organizationFactoryMock } from '@qovery/domains/organization'
+import { projectsFactoryMock } from '@qovery/domains/projects'
+import { userSignUpFactoryMock } from '@qovery/domains/user'
+import LayoutPage, { LayoutPageProps } from './layout-page'
 
 describe('LayoutPage', () => {
   let props: LayoutPageProps

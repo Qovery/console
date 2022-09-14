@@ -2,13 +2,13 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
-import { deleteEnvironmentVariable, deleteSecret } from '@console/domains/environment-variable'
-import { ServiceTypeEnum } from '@console/shared/enums'
+import { deleteEnvironmentVariable, deleteSecret } from '@qovery/domains/environment-variable'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
-} from '@console/shared/interfaces'
+} from '@qovery/shared/interfaces'
 import {
   ButtonIconActionElementProps,
   Icon,
@@ -16,8 +16,8 @@ import {
   TableHeadProps,
   useModal,
   useModalConfirmation,
-} from '@console/shared/ui'
-import { AppDispatch } from '@console/store/data'
+} from '@qovery/shared/ui'
+import { AppDispatch } from '@qovery/store/data'
 import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
 import CrudEnvironmentVariableModalFeature, {

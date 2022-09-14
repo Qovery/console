@@ -1,5 +1,5 @@
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
-import { GitApplicationEntity } from '@console/shared/interfaces'
+import { GitApplicationEntity } from '@qovery/shared/interfaces'
 
 export function initFormValues(keys: string[], application: GitApplicationEntity): { [key: string]: string } {
   const values: { [key: string]: string } = {}

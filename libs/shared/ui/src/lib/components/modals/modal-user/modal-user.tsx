@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import { LOGOUT_URL } from '@console/shared/router'
-import { ButtonIcon, ButtonIconStyle, ModalContentProps } from '@console/shared/ui'
+import { LOGOUT_URL } from '@qovery/shared/router'
+import { ButtonIcon, ButtonIconStyle, ModalContentProps } from '@qovery/shared/ui'
 import Avatar from '../../avatar/avatar'
 import { Button, ButtonStyle } from '../../buttons/button/button'
 

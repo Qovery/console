@@ -2,9 +2,9 @@ import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId } from '@te
 import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as storeEnvironment from '@console/domains/environment'
-import { environmentFactoryMock } from '@console/domains/environment'
-import { clusterFactoryMock } from '@console/domains/organization'
+import * as storeEnvironment from '@qovery/domains/environment'
+import { environmentFactoryMock } from '@qovery/domains/environment'
+import { clusterFactoryMock } from '@qovery/domains/organization'
 import CreateCloneEnvironmentModalFeature, {
   CreateCloneEnvironmentModalFeatureProps,
 } from './create-clone-environment-modal-feature'
@@ -12,13 +12,13 @@ import CreateCloneEnvironmentModalFeature, {
 let props: CreateCloneEnvironmentModalFeatureProps
 
 const mockClusters = clusterFactoryMock(3)
-jest.mock('@console/domains/organization', () => ({
-  ...jest.requireActual('@console/domains/organization'),
+jest.mock('@qovery/domains/organization', () => ({
+  ...jest.requireActual('@qovery/domains/organization'),
   selectClustersEntitiesByOrganizationId: () => mockClusters,
 }))
 
-jest.mock('@console/domains/environment', () => ({
-  ...jest.requireActual('@console/domains/environment'),
+jest.mock('@qovery/domains/environment', () => ({
+  ...jest.requireActual('@qovery/domains/environment'),
   cloneEnvironment: jest.fn(),
   createEnvironment: jest.fn().mockImplementation(() => Promise.resolve()),
 }))

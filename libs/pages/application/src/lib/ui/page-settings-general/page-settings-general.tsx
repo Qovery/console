@@ -1,9 +1,9 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@console/shared/ui'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import GitRepositorySettingsFeature from '../../feature/git-repository-settings-feature/git-repository-settings-feature'
 
 export interface PageSettingsGeneralProps {

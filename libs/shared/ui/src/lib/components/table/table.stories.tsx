@@ -1,10 +1,10 @@
 import { Meta, Story } from '@storybook/react'
-import { environmentFactoryMock } from '@console/domains/environment'
+import { useState } from 'react'
+import { environmentFactoryMock } from '@qovery/domains/environment'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import Button from '../buttons/button/button'
 import { Table, TableProps } from './table'
 import { TableRow } from './table-row/table-row'
-import { useState } from 'react'
-import Button from '../buttons/button/button'
-import { EnvironmentEntity } from '@console/shared/interfaces'
 
 export default {
   component: Table,

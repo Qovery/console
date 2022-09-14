@@ -1,8 +1,8 @@
 import { act, render } from '__tests__/utils/setup-jest'
 import { WeekdayEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
-import { environmentFactoryMock } from '@console/domains/environment'
-import { weekdaysValues } from '@console/shared/utils'
+import { environmentFactoryMock } from '@qovery/domains/environment'
+import { weekdaysValues } from '@qovery/shared/utils'
 import PageSettingsDeploymentFeature, { handleSubmit } from './page-settings-deployment-feature'
 
 import SpyInstance = jest.SpyInstance

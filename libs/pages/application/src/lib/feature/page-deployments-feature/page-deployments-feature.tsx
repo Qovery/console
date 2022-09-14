@@ -6,11 +6,11 @@ import {
   applicationsLoadingStatus,
   fetchApplicationDeployments,
   getApplicationsState,
-} from '@console/domains/application'
-import { getServiceType } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { BaseLink } from '@console/shared/ui'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { BaseLink } from '@qovery/shared/ui'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {

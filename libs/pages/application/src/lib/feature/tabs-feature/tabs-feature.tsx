@@ -3,16 +3,16 @@ import { StateEnum } from 'qovery-typescript-axios'
 import { ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router'
-import { getApplicationsState } from '@console/domains/application'
-import { RunningStatus, getServiceType } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { getApplicationsState } from '@qovery/domains/application'
+import { RunningStatus, getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import {
   Button,
   ButtonAction,
@@ -25,8 +25,8 @@ import {
   Tabs,
   TabsItem,
   useModal,
-} from '@console/shared/ui'
-import { RootState } from '@console/store/data'
+} from '@qovery/shared/ui'
+import { RootState } from '@qovery/store/data'
 import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,

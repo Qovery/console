@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '@console/store/data'
-import { useRunningStatusWebsocket } from '@console/shared/utils'
 import { useParams } from 'react-router-dom'
+import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { useRunningStatusWebsocket } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 import { ClusterWebSocket } from '../cluster-web-socket/cluster-web-socket'
-import { selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
 
 export function WebsocketContainer() {
   const { organizationId = '' } = useParams()

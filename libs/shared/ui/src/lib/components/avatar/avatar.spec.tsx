@@ -1,7 +1,6 @@
-import { IconEnum } from '@console/shared/enums'
-import { render } from '__tests__/utils/setup-jest'
 import { screen } from '@testing-library/react'
-
+import { render } from '__tests__/utils/setup-jest'
+import { IconEnum } from '@qovery/shared/enums'
 import { Avatar, AvatarProps } from './avatar'
 
 let props: AvatarProps

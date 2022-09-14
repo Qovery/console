@@ -1,6 +1,6 @@
-import { AuthEnum } from '@console/shared/auth'
-import { IconEnum } from '@console/shared/enums'
-import { Icon } from '@console/shared/ui'
+import { AuthEnum } from '@qovery/shared/auth'
+import { IconEnum } from '@qovery/shared/enums'
+import { Icon } from '@qovery/shared/ui'
 
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void

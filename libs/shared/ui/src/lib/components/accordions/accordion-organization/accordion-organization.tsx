@@ -1,7 +1,7 @@
-//import { useProjects } from '@console/domains/projects'
-import { Accordion, Icon } from '@console/shared/ui'
+//import { useProjects } from '@qovery/domains/projects'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { Accordion, Icon } from '@qovery/shared/ui'
 
 export interface AccordionOrganizationProps {
   open?: boolean

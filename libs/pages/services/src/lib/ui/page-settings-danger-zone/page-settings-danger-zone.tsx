@@ -1,5 +1,5 @@
-import { EnvironmentEntity } from '@console/shared/interfaces'
-import { BlockContentDelete, HelpSection } from '@console/shared/ui'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteEnvironment: () => void

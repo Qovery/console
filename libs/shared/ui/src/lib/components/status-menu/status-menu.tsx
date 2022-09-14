@@ -1,9 +1,9 @@
-import { StatusMenuAction, StatusMenuActions, StatusMenuInformation } from '@console/shared/ui'
-import { isRunning, isStop, isWarning, upperCaseFirstLetter } from '@console/shared/utils'
 import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
+import { RunningStatus } from '@qovery/shared/enums'
+import { StatusMenuAction, StatusMenuActions, StatusMenuInformation } from '@qovery/shared/ui'
+import { isRunning, isStop, isWarning, upperCaseFirstLetter } from '@qovery/shared/utils'
 import Icon from '../icon/icon'
-import { RunningStatus } from '@console/shared/enums'
 
 export enum StatusMenuType {
   AVAILABLE = 'available',

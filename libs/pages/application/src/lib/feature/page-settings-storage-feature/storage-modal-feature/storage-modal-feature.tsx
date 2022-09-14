@@ -1,10 +1,10 @@
 import { ServiceStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@console/domains/application'
-import { getServiceType } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
+import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
 
 export interface StorageModalFeatureProps {

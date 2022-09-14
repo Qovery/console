@@ -1,14 +1,14 @@
+import { ProjectDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import {
-  Draggable,
   DragDropContext,
-  Droppable,
-  DroppableProvided,
+  Draggable,
   DraggableProvided,
   DropResult,
+  Droppable,
+  DroppableProvided,
 } from 'react-beautiful-dnd'
-import { ProjectDeploymentRule } from 'qovery-typescript-axios'
-import { BaseLink, Button, ButtonSize, HelpSection } from '@console/shared/ui'
+import { BaseLink, Button, ButtonSize, HelpSection } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 

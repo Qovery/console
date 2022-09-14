@@ -8,8 +8,8 @@ import {
   InputSelect,
   InputText,
   InputToggle,
-} from '@console/shared/ui'
-import { timezoneValues, weekdaysValues } from '@console/shared/utils'
+} from '@qovery/shared/ui'
+import { timezoneValues, weekdaysValues } from '@qovery/shared/utils'
 
 export interface PageSettingsDeploymentProps {
   onSubmit: () => void

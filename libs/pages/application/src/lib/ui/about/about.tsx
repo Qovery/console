@@ -1,7 +1,7 @@
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { LoadingStatus } from '@console/shared/interfaces'
-import { BaseLink, Button, ButtonStyle, Icon, Skeleton } from '@console/shared/ui'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { LoadingStatus } from '@qovery/shared/interfaces'
+import { BaseLink, Button, ButtonStyle, Icon, Skeleton } from '@qovery/shared/ui'
 
 export interface AboutProps {
   description: string

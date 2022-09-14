@@ -1,14 +1,7 @@
-import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
 import equal from 'fast-deep-equal'
-import {
-  APPLICATION_GENERAL_URL,
-  ENVIRONMENTS_GENERAL_URL,
-  ENVIRONMENTS_URL,
-  SERVICES_DEPLOYMENTS_URL,
-  SERVICES_URL,
-} from '@console/shared/router'
-import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
 import {
   deleteEnvironmentAction,
   fetchEnvironments,
@@ -18,13 +11,20 @@ import {
   postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
   selectEnvironmentById,
-} from '@console/domains/environment'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/environment'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import {
+  APPLICATION_GENERAL_URL,
+  ENVIRONMENTS_GENERAL_URL,
+  ENVIRONMENTS_URL,
+  SERVICES_DEPLOYMENTS_URL,
+  SERVICES_URL,
+} from '@qovery/shared/router'
+import { useModalConfirmation } from '@qovery/shared/ui'
+import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { ROUTER_SERVICES } from './router/router'
-import { useEffect } from 'react'
 import Container from './ui/container/container'
-import { EnvironmentEntity } from '@console/shared/interfaces'
-import { useModalConfirmation } from '@console/shared/ui'
 
 export function PageServices() {
   useDocumentTitle('Services - Qovery')

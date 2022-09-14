@@ -1,8 +1,8 @@
-import { ClusterEntity, ClustersState } from '@console/shared/interfaces'
-import { RootState } from '@console/store/data'
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, Update } from '@reduxjs/toolkit'
-import { Cluster, ClusterLogs, ClustersApi, ClusterStatus } from 'qovery-typescript-axios'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
+import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import { Cluster, ClusterLogs, ClusterStatus, ClustersApi } from 'qovery-typescript-axios'
+import { ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
+import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
 

@@ -1,4 +1,4 @@
-import { RunningStatus } from '@console/shared/enums'
+import { RunningStatus } from '@qovery/shared/enums'
 
 export interface ServiceRunningStatus {
   id: string

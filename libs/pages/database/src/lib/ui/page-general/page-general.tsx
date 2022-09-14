@@ -1,6 +1,6 @@
-import { DatabaseEntity, LoadingStatus } from '@console/shared/interfaces'
-import { BaseLink, HelpSection, Skeleton } from '@console/shared/ui'
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
 

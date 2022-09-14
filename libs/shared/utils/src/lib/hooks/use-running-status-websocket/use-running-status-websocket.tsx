@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { useAuth } from '@console/shared/auth'
+import { useAuth } from '@qovery/shared/auth'
 
 export interface RunningStatusWebsocketProps {
   organizationId: string

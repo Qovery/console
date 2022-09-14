@@ -6,12 +6,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
-import { selectUser } from '@console/domains/user'
-import { Layout } from '@console/pages/layout'
-import { PageLogin, PageLogoutFeature } from '@console/pages/login'
-import { PageOnboarding } from '@console/pages/onboarding'
-import { useAuth } from '@console/shared/auth'
-import { UserInterface } from '@console/shared/interfaces'
+import { selectUser } from '@qovery/domains/user'
+import { Layout } from '@qovery/pages/layout'
+import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
+import { PageOnboarding } from '@qovery/pages/onboarding'
+import { useAuth } from '@qovery/shared/auth'
+import { UserInterface } from '@qovery/shared/interfaces'
 import {
   BetaRoute,
   LOGIN_URL,
@@ -20,9 +20,9 @@ import {
   NoBetaAccess,
   ONBOARDING_URL,
   ProtectedRoute,
-} from '@console/shared/router'
-import { LoadingScreen } from '@console/shared/ui'
-import { useAuthInterceptor, useDocumentTitle } from '@console/shared/utils'
+} from '@qovery/shared/router'
+import { LoadingScreen } from '@qovery/shared/ui'
+import { useAuthInterceptor, useDocumentTitle } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
 import { ROUTER } from './router/main.router'
 

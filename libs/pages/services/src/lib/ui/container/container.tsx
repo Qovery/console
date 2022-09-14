@@ -1,13 +1,13 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router'
-import { IconEnum, RunningStatus } from '@console/shared/enums'
-import { EnvironmentEntity } from '@console/shared/interfaces'
+import { IconEnum, RunningStatus } from '@qovery/shared/enums'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import {
   ButtonAction,
   ButtonIconAction,
@@ -20,8 +20,8 @@ import {
   Tag,
   TagMode,
   TagSize,
-} from '@console/shared/ui'
-import { copyToClipboard } from '@console/shared/utils'
+} from '@qovery/shared/ui'
+import { copyToClipboard } from '@qovery/shared/utils'
 
 export interface ContainerProps {
   statusActions: StatusMenuActions[]

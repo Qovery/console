@@ -1,7 +1,7 @@
-import { ToastEnum } from '@console/shared/toast'
-import { render, screen } from '__tests__/utils/setup-jest'
-import ToastBehavior, { ToastContent, ToastProps } from './toast'
 import { act } from '@testing-library/react'
+import { render, screen } from '__tests__/utils/setup-jest'
+import { ToastEnum } from '@qovery/shared/toast'
+import ToastBehavior, { ToastContent, ToastProps } from './toast'
 
 let props: ToastProps
 props = {

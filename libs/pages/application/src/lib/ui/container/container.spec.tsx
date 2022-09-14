@@ -1,6 +1,5 @@
-import { userSignUpFactoryMock } from '@console/domains/user'
 import { render } from '__tests__/utils/setup-jest'
-
+import { userSignUpFactoryMock } from '@qovery/domains/user'
 import Container, { ContainerProps } from '../container/container'
 
 describe('Container', () => {

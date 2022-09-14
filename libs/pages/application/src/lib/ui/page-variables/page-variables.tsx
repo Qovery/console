@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
-import { HelpSection, Table, TableHeadProps } from '@console/shared/ui'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
+import { HelpSection, Table, TableHeadProps } from '@qovery/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
 
 export interface PageVariablesProps {

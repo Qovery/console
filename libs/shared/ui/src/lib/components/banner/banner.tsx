@@ -1,4 +1,4 @@
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import Button, { ButtonSize, ButtonStyle } from '../buttons/button/button'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 

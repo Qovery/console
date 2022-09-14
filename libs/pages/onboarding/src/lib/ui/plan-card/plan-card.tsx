@@ -1,5 +1,5 @@
-import { OrganizationPlanType, OrganizationPrice } from '@console/domains/organization'
-import { InputRadio } from '@console/shared/ui'
+import { OrganizationPlanType, OrganizationPrice } from '@qovery/domains/organization'
+import { InputRadio } from '@qovery/shared/ui'
 
 export interface PlanCardProps {
   name: string

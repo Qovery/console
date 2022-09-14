@@ -1,5 +1,5 @@
 import { GitProviderEnum } from 'qovery-typescript-axios'
-import { Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum, WarningBox } from '@console/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum, WarningBox } from '@qovery/shared/ui'
 
 export interface ConfirmationGitModalProps {
   currentAuthProvider?: string

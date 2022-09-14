@@ -3,7 +3,7 @@ import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
-} from '@console/shared/interfaces'
+} from '@qovery/shared/interfaces'
 
 export function sortVariable(
   variables: EnvironmentVariableEntity[],

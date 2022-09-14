@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteApplicationAction, selectApplicationById } from '@console/domains/application'
-import { selectEnvironmentById } from '@console/domains/environment'
-import { getServiceType } from '@console/shared/enums'
-import { ApplicationEntity, EnvironmentEntity } from '@console/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
-import { AppDispatch, RootState } from '@console/store/data'
+import { deleteApplicationAction, selectApplicationById } from '@qovery/domains/application'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {

@@ -1,12 +1,12 @@
-import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
+import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
   GitApplicationEntity,
   LoadingStatus,
-} from '@console/shared/interfaces'
-import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@console/shared/ui'
-import { timeAgo } from '@console/shared/utils'
+} from '@qovery/shared/interfaces'
+import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { timeAgo } from '@qovery/shared/utils'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'

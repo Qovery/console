@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useDocumentTitle } from '@console/shared/utils'
-import FormUser from '../form-user/form-user'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import FormCompany from '../form-company/form-company'
+import FormUser from '../form-user/form-user'
 
 export function OnboardingPersonalize() {
   useDocumentTitle('Onboarding Personalize - Qovery')

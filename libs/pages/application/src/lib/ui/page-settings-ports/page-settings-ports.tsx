@@ -1,5 +1,5 @@
 import { ServicePort } from 'qovery-typescript-axios'
-import { LoadingStatus } from '@console/shared/interfaces'
+import { LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -11,7 +11,7 @@ import {
   InputToggle,
   LoaderSpinner,
   PlaceholderSettings,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 
 export interface PageSettingsPortsProps {
   ports?: ServicePort[]

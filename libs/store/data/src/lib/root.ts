@@ -4,15 +4,15 @@ import {
   customDomainReducer,
   initialApplicationsState,
   initialCustomDomainState,
-} from '@console/domains/application'
-import { databases, initialDatabasesState } from '@console/domains/database'
-import { environments, initialEnvironmentsState } from '@console/domains/environment'
+} from '@qovery/domains/application'
+import { databases, initialDatabasesState } from '@qovery/domains/database'
+import { environments, initialEnvironmentsState } from '@qovery/domains/environment'
 import {
   environmentVariables,
   initialEnvironmentVariablesState,
   initialSecretEnvironmentVariablesState,
   secretEnvironmentVariables,
-} from '@console/domains/environment-variable'
+} from '@qovery/domains/environment-variable'
 import {
   authProviderReducer,
   clusterReducer,
@@ -22,14 +22,14 @@ import {
   initialRepositoryState,
   organization,
   repositoryReducer,
-} from '@console/domains/organization'
+} from '@qovery/domains/organization'
 import {
   deploymentRulesReducer,
   initialDeploymentRulesState,
   initialProjectsState,
   projects,
-} from '@console/domains/projects'
-import { initialUserSignUpState, initialUserState, user, userSignUp } from '@console/domains/user'
+} from '@qovery/domains/projects'
+import { initialUserSignUpState, initialUserState, user, userSignUp } from '@qovery/domains/user'
 
 export const uiReducer = combineReducers({
   user: user,

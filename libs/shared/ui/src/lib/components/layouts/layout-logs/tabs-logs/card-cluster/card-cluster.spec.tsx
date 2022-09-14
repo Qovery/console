@@ -1,6 +1,6 @@
+import { render, screen } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
-import { screen, render } from '__tests__/utils/setup-jest'
-import { clusterFactoryMock, organizationFactoryMock } from '@console/domains/organization'
+import { clusterFactoryMock, organizationFactoryMock } from '@qovery/domains/organization'
 import CardCluster, { CardClusterProps, splitId } from './card-cluster'
 
 describe('CardCluster', () => {

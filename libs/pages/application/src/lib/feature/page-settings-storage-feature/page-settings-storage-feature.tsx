@@ -6,11 +6,11 @@ import {
   getApplicationsState,
   postApplicationActionsRestart,
   selectApplicationById,
-} from '@console/domains/application'
-import { getServiceType } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { useModal, useModalConfirmation } from '@console/shared/ui'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
 

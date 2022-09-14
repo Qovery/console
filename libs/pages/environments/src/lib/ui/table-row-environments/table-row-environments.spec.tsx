@@ -1,6 +1,5 @@
-import { environmentFactoryMock } from '@console/domains/environment'
 import { render } from '__tests__/utils/setup-jest'
-
+import { environmentFactoryMock } from '@qovery/domains/environment'
 import TableRowEnvironments, { TableRowEnvironmentsProps } from './table-row-environments'
 
 describe('TableRowEnvironments', () => {

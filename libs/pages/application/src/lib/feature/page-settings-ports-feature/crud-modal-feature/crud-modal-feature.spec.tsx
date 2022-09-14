@@ -1,6 +1,6 @@
 import { act } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { applicationFactoryMock } from '@console/domains/application'
+import { applicationFactoryMock } from '@qovery/domains/application'
 import CrudModalFeature, { CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'
 
 const application = applicationFactoryMock(1)[0]

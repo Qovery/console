@@ -1,7 +1,7 @@
 import { findByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import * as redux from 'react-redux'
-import { applicationFactoryMock } from '@console/domains/application'
+import { applicationFactoryMock } from '@qovery/domains/application'
 import PageSettingsStorageFeature from './page-settings-storage-feature'
 
 const mockDispatch = jest.fn()

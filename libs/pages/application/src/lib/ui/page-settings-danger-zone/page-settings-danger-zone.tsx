@@ -1,6 +1,6 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { BlockContentDelete, HelpSection } from '@console/shared/ui'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteApplication: () => void

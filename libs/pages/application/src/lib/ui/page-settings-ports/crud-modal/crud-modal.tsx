@@ -1,6 +1,6 @@
 import { ServicePort } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputText, InputToggle, ModalCrud } from '@console/shared/ui'
+import { InputText, InputToggle, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   port?: ServicePort

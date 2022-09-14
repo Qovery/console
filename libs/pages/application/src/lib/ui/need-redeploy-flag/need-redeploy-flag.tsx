@@ -1,6 +1,6 @@
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
-import { ApplicationEntity } from '@console/shared/interfaces'
-import { Banner, BannerStyle, IconAwesomeEnum } from '@console/shared/ui'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { Banner, BannerStyle, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface NeedRedeployFlagProps {
   application: ApplicationEntity

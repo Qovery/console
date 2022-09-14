@@ -1,6 +1,6 @@
 import { CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { CopyToClipboard, InputText, ModalCrud } from '@console/shared/ui'
+import { CopyToClipboard, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   customDomain?: CustomDomain

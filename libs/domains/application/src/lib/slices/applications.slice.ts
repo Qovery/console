@@ -29,7 +29,7 @@ import {
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ApplicationsState,
@@ -37,16 +37,16 @@ import {
   GitApplicationEntity,
   LoadingStatus,
   ServiceRunningStatus,
-} from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
+} from '@qovery/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import {
   addOneToManyRelation,
   getEntitiesByIds,
   refactoContainerApplicationPayload,
   refactoGitApplicationPayload,
   shortToLongId,
-} from '@console/shared/utils'
-import { RootState } from '@console/store/data'
+} from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 

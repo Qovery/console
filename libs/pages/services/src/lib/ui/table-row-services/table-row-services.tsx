@@ -1,12 +1,12 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
-import { IconEnum, RunningStatus, ServiceTypeEnum } from '@console/shared/enums'
+import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
   DatabaseEntity,
   GitApplicationEntity,
-} from '@console/shared/interfaces'
+} from '@qovery/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
@@ -19,8 +19,8 @@ import {
   Tag,
   TagCommit,
   Tooltip,
-} from '@console/shared/ui'
-import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@console/shared/utils'
+} from '@qovery/shared/ui'
+import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@qovery/shared/utils'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity

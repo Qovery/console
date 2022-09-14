@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { applicationDeploymentsFactoryMock } from '@console/domains/application'
+import { applicationDeploymentsFactoryMock } from '@qovery/domains/application'
 import TableRowDeployment, { TableRowDeploymentProps } from './table-row-deployment'
 
 let props: TableRowDeploymentProps

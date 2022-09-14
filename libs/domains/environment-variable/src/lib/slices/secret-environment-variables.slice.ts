@@ -9,11 +9,11 @@ import {
   Value,
 } from 'qovery-typescript-axios'
 import { Key } from 'qovery-typescript-axios/api'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@qovery/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 
 export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'
 

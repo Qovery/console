@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FieldError } from 'react-hook-form'
-import { MemorySizeEnum } from '@console/shared/enums'
-import { convertMemory } from '@console/shared/utils'
+import { MemorySizeEnum } from '@qovery/shared/enums'
+import { convertMemory } from '@qovery/shared/utils'
 import InputSelect from '../input-select/input-select'
 import InputText from '../input-text/input-text'
 

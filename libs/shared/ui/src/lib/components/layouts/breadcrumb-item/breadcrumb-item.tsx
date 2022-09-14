@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ButtonIcon, ButtonIconStyle, Menu, MenuAlign } from '@console/shared/ui'
+import { ButtonIcon, ButtonIconStyle, Menu, MenuAlign } from '@qovery/shared/ui'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
 
 export interface BreadcrumbItemProps {

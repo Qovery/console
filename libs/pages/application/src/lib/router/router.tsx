@@ -12,7 +12,7 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_VARIABLES_URL,
   Route,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageMetricsFeature from '../feature/page-metrics-feature/page-metrics-feature'

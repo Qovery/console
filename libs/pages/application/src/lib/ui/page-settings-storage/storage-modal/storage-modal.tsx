@@ -1,7 +1,7 @@
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputSelect, InputText, ModalCrud } from '@console/shared/ui'
+import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface StorageModalProps {
   onClose: () => void

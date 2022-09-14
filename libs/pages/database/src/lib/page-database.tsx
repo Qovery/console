@@ -1,10 +1,8 @@
-import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
-import { Route, Routes, useParams } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
 import { Environment } from 'qovery-typescript-axios'
-import { selectEnvironmentById } from '@console/domains/environment'
-import { DatabaseEntity, LoadingStatus } from '@console/shared/interfaces'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Route, Routes, useParams } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import {
   databasesLoadingStatus,
   deleteDatabaseAction,
@@ -15,13 +13,15 @@ import {
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
   selectDatabaseById,
-} from '@console/domains/database'
-import { useEffect } from 'react'
-import { StatusMenuActions } from '@console/shared/ui'
-import Container from './ui/container/container'
+} from '@qovery/domains/database'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { StatusMenuActions } from '@qovery/shared/ui'
+import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { ROUTER_DATABASE } from './router/router'
-import { useNavigate } from 'react-router-dom'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
+import Container from './ui/container/container'
 
 export function PageDatabase() {
   useDocumentTitle('Database - Qovery')

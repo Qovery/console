@@ -1,7 +1,7 @@
+import { fireEvent, screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { screen, fireEvent } from '@testing-library/react'
+import { environmentFactoryMock } from '@qovery/domains/environment'
 import TableHeadSort, { TableHeadSortProps, sortTable } from './table-head-sort'
-import { environmentFactoryMock } from '@console/domains/environment'
 
 describe('TableHeadSort', () => {
   let props: TableHeadSortProps

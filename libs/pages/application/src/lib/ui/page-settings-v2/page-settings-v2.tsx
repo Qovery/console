@@ -1,5 +1,5 @@
-import { Button } from '@console/shared/ui'
 import { useParams } from 'react-router'
+import { Button } from '@qovery/shared/ui'
 
 export function PageSettingsV2() {
   const { organizationId, projectId, environmentId, applicationId } = useParams()

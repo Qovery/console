@@ -1,13 +1,13 @@
+import { ClusterLogs } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { LayoutLogs } from '@console/shared/ui'
-import { useDocumentTitle } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { fetchClusterInfraLogs, selectClusterById } from '@console/domains/organization'
-import { ClusterLogs } from 'qovery-typescript-axios'
-import Row from './ui/row/row'
+import { fetchClusterInfraLogs, selectClusterById } from '@qovery/domains/organization'
+import { LayoutLogs } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import CardClusterFeature from './feature/card-cluster-feature/card-cluster-feature'
+import Row from './ui/row/row'
 
 export function PageInfraLogs() {
   const { organizationId = '', clusterId = '' } = useParams()

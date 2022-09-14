@@ -1,6 +1,6 @@
-import PageVariables, { PageVariablesProps } from './page-variables'
 import { render } from '__tests__/utils/setup-jest'
-import { secretEnvironmentVariableFactoryMock } from '@console/domains/environment-variable'
+import { secretEnvironmentVariableFactoryMock } from '@qovery/domains/environment-variable'
+import PageVariables, { PageVariablesProps } from './page-variables'
 
 const props: PageVariablesProps = {
   variables: secretEnvironmentVariableFactoryMock(3, false, false),

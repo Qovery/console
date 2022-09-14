@@ -1,11 +1,10 @@
-import { projectsFactoryMock } from '@console/domains/projects'
-import { BreadcrumbProps } from '@console/shared/ui'
-import { applicationFactoryMock } from '@console/domains/application'
-import { environmentFactoryMock } from '@console/domains/environment'
 import { render } from '__tests__/utils/setup-jest'
-
+import { applicationFactoryMock } from '@qovery/domains/application'
+import { environmentFactoryMock } from '@qovery/domains/environment'
+import { organizationFactoryMock } from '@qovery/domains/organization'
+import { projectsFactoryMock } from '@qovery/domains/projects'
+import { BreadcrumbProps } from '@qovery/shared/ui'
 import { BreadcrumbMemo } from './breadcrumb'
-import { organizationFactoryMock } from '@console/domains/organization'
 
 describe('Breadcrumb', () => {
   const props: BreadcrumbProps = {

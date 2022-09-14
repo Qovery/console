@@ -1,5 +1,5 @@
-import { ToastContent } from '@console/shared/ui'
 import { Toast, toast as toastAction } from 'react-hot-toast'
+import { ToastContent } from '@qovery/shared/ui'
 
 export enum ToastEnum {
   SUCCESS = 'SUCCESS',

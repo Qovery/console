@@ -1,12 +1,12 @@
-import { useRedirectIfLogged } from './use-redirect-if-logged'
 import { renderHook } from '@testing-library/react-hooks'
 import { Wrapper } from '__tests__/utils/providers'
+import { OVERVIEW_URL } from '@qovery/shared/router'
+import { useRedirectIfLogged } from './use-redirect-if-logged'
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,
   getRedirectLoginUriFromStorage,
 } from './utils/utils'
-import { OVERVIEW_URL } from '@console/shared/router'
 
 jest.mock('./utils/utils')
 

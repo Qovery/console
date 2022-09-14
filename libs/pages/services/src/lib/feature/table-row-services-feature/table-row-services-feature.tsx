@@ -5,19 +5,19 @@ import {
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
-} from '@console/domains/application'
+} from '@qovery/domains/application'
 import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
-} from '@console/domains/database'
-import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
-import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@console/shared/router'
-import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@console/shared/ui'
-import { isDeleteAvailable } from '@console/shared/utils'
-import { AppDispatch } from '@console/store/data'
+} from '@qovery/domains/database'
+import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/router'
+import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@qovery/shared/ui'
+import { isDeleteAvailable } from '@qovery/shared/utils'
+import { AppDispatch } from '@qovery/store/data'
 import TableRowServices from '../../ui/table-row-services/table-row-services'
 
 export interface TableRowServicesFeatureProps {

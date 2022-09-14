@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { WeekdayEnum } from 'qovery-typescript-axios'
-import { timezoneValues } from '@console/shared/utils'
+import { timezoneValues } from '@qovery/shared/utils'
 import PageSettingsDeployment, { PageSettingsDeploymentProps } from './page-settings-deployment'
 
 describe('PageSettingsDeployment', () => {

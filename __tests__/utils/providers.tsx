@@ -1,12 +1,12 @@
+import { Auth0Provider } from '@auth0/auth0-react'
 import { configureStore } from '@reduxjs/toolkit'
+import posthog from 'posthog-js'
 import React, { ComponentType, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
+import { ModalProvider } from '@qovery/shared/ui'
+import { RootState } from '@qovery/store/data'
 import { initialRootState, rootReducer } from '../../libs/store/data/src'
-import { Auth0Provider } from '@auth0/auth0-react'
-import posthog from 'posthog-js'
-import { RootState } from '@console/store/data'
-import { ModalProvider } from '@console/shared/ui'
 
 type Params = {
   Component?: ComponentType<any>

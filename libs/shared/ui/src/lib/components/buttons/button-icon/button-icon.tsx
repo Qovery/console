@@ -1,5 +1,5 @@
-import { IconEnum } from '@console/shared/enums'
 import { Link } from 'react-router-dom'
+import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
 import { ButtonSize } from '../button/button'
 

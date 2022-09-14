@@ -1,11 +1,11 @@
 import {
-  ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL,
+  ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_SETTINGS_URL,
   Route,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import PageCreateDeploymentRuleFeature from '../feature/page-create-deployment-rule-feature/page-create-deployment-rule-feature'
 import PageDeploymentRulesFeature from '../feature/page-deployment-rules-feature/page-deployment-rules-feature'
 import PageEditDeploymentRuleFeature from '../feature/page-edit-deployment-rule-feature/page-edit-deployment-rule-feature'

@@ -1,9 +1,9 @@
-import { selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
-import { INFRA_LOGS_URL } from '@console/shared/router'
-import { RootState } from '@console/store/data'
 import { Cluster } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
+import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { INFRA_LOGS_URL } from '@qovery/shared/router'
+import { RootState } from '@qovery/store/data'
 
 /* eslint-disable-next-line */
 export interface PageSettingsProps {}

@@ -1,7 +1,7 @@
 import { ApplicationGitRepository, Commit } from 'qovery-typescript-axios'
-import { LoadingStatus } from '@console/shared/interfaces'
-import { Avatar, Skeleton, TagCommit } from '@console/shared/ui'
-import { timeAgo } from '@console/shared/utils'
+import { LoadingStatus } from '@qovery/shared/interfaces'
+import { Avatar, Skeleton, TagCommit } from '@qovery/shared/ui'
+import { timeAgo } from '@qovery/shared/utils'
 
 export interface LastCommitProps {
   commit?: Commit | ApplicationGitRepository

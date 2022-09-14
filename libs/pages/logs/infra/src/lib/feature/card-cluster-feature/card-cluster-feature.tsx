@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { AppDispatch, RootState } from '@console/store/data'
-import { fetchClusterStatus, selectClusterById } from '@console/domains/organization'
-import { CardCluster } from '@console/shared/ui'
+import { fetchClusterStatus, selectClusterById } from '@qovery/domains/organization'
+import { CardCluster } from '@qovery/shared/ui'
+import { AppDispatch, RootState } from '@qovery/store/data'
 
 export function CardClusterFeature() {
   const { organizationId = '', clusterId = '' } = useParams()

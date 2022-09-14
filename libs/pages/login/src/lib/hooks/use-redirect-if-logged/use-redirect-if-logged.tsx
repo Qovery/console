@@ -2,11 +2,11 @@ import { Organization, Project } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router'
-import { fetchOrganization } from '@console/domains/organization'
-import { fetchProjects } from '@console/domains/projects'
-import { useAuth } from '@console/shared/auth'
-import { ONBOARDING_URL, ORGANIZATION_URL, OVERVIEW_URL } from '@console/shared/router'
-import { AppDispatch } from '@console/store/data'
+import { fetchOrganization } from '@qovery/domains/organization'
+import { fetchProjects } from '@qovery/domains/projects'
+import { useAuth } from '@qovery/shared/auth'
+import { ONBOARDING_URL, ORGANIZATION_URL, OVERVIEW_URL } from '@qovery/shared/router'
+import { AppDispatch } from '@qovery/store/data'
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,

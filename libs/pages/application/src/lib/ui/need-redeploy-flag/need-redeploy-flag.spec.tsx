@@ -1,8 +1,8 @@
 import { act, fireEvent, getByRole } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { applicationFactoryMock } from '@qovery/domains/application'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import NeedRedeployFlag from './need-redeploy-flag'
 
 const mockApplication: ApplicationEntity = applicationFactoryMock(1)[0]

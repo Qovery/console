@@ -1,13 +1,13 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router'
 import { NavLink } from 'react-router-dom'
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
-} from '@console/shared/interfaces'
-import { APPLICATION_URL } from '@console/shared/router'
+} from '@qovery/shared/interfaces'
+import { APPLICATION_URL } from '@qovery/shared/router'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -18,8 +18,8 @@ import {
   TableHeadProps,
   TableRow,
   Tooltip,
-} from '@console/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@console/shared/utils'
+} from '@qovery/shared/ui'
+import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic

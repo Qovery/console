@@ -8,7 +8,7 @@ import {
   IconAwesomeEnum,
   InputText,
   PlaceholderSettings,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 
 export interface PageSettingsStorageProps {
   storages: ServiceStorageStorage[]

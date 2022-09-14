@@ -1,4 +1,4 @@
-import { Icon } from '@console/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 
 export function BenefitsCard() {
   const LIST = [

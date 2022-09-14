@@ -1,10 +1,10 @@
-import { useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { DatabaseEntity, EnvironmentEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
-import { selectEnvironmentById } from '@console/domains/environment'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
-import { deleteDatabaseAction, selectDatabaseById } from '@console/domains/database'
+import { useNavigate, useParams } from 'react-router-dom'
+import { deleteDatabaseAction, selectDatabaseById } from '@qovery/domains/database'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {

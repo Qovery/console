@@ -2,9 +2,9 @@ import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
 import React from 'react'
-import * as storeApplication from '@console/domains/application'
-import { applicationFactoryMock } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import * as storeApplication from '@qovery/domains/application'
+import { applicationFactoryMock } from '@qovery/domains/application'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 import * as Utils from './utils'
 
@@ -31,9 +31,9 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }))
 
-jest.mock('@console/domains/application', () => {
+jest.mock('@qovery/domains/application', () => {
   return {
-    ...jest.requireActual('@console/domains/application'),
+    ...jest.requireActual('@qovery/domains/application'),
     editApplicationAdvancedSettings: jest.fn(),
     fetchApplicationAdvancedSettings: jest.fn(),
     fetchDefaultApplicationAdvancedSettings: jest.fn(),

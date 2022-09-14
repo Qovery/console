@@ -7,16 +7,16 @@ import {
   getEnvironmentVariablesState,
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
-} from '@console/domains/environment-variable'
-import { ServiceTypeEnum } from '@console/shared/enums'
+} from '@qovery/domains/environment-variable'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   LoadingStatus,
   SecretEnvironmentVariableEntity,
-} from '@console/shared/interfaces'
-import { parseEnvText } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/shared/interfaces'
+import { parseEnvText } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { changeScopeForAll } from './utils/change-scope-all'

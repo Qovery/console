@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { LoadingStatus } from '@qovery/shared/interfaces'
 import About from './about'
-import { LoadingStatus } from '@console/shared/interfaces'
 
 describe('About', () => {
   const props = {
