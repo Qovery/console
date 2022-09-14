@@ -12,7 +12,7 @@ export interface PageApplicationCreateGeneralProps {
 }
 
 export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneralProps) {
-  const { control, getValues, watch } = useFormContext<GlobalData>()
+  const { control, getValues, watch, formState } = useFormContext<GlobalData>()
   watch('applicationSource')
   const watchBuildMode = watch('build_mode')
 
@@ -47,7 +47,7 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
           name="name"
           control={control}
           rules={{
-            required: 'Please enter a variable key.',
+            required: 'Value required',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -84,60 +84,73 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
         {getValues().applicationSource === ServiceTypeEnum.APPLICATION && (
           <>
-            <div className="mb-3">
+            <div className="mb-6">
               <GitRepositorySettingsFeature inBlock={false} />
             </div>
-            <Controller
-              name="build_mode"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  dataTestId="input-select-mode"
-                  label="Mode"
-                  className="mb-3"
-                  options={buildModeItems}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                />
-              )}
-            />
-            {watchBuildMode === BuildModeEnum.BUILDPACKS ? (
+
+            <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
+
+            <div className="mb-6">
               <Controller
-                key="buildpack_language"
-                name="buildpack_language"
+                name="build_mode"
                 control={control}
                 rules={{
-                  required: 'Please enter your buildpack language.',
+                  required: 'Please select a mode.',
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <InputSelect
-                    dataTestId="input-select-language"
-                    label="Language framework"
-                    options={languageItems}
+                    dataTestId="input-select-mode"
+                    label="Mode"
+                    className="mb-3"
+                    options={buildModeItems}
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}
                   />
                 )}
               />
-            ) : (
-              <Controller
-                key="dockerfile_path"
-                name="dockerfile_path"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    dataTestId="input-text-dockerfile"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    label="Dockerfile path"
-                    error={error?.message}
-                  />
-                )}
-              />
-            )}
+              {watchBuildMode === BuildModeEnum.BUILDPACKS && (
+                <Controller
+                  key="buildpack_language"
+                  name="buildpack_language"
+                  control={control}
+                  rules={{
+                    required: 'Please enter your buildpack language.',
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputSelect
+                      dataTestId="input-select-language"
+                      label="Language framework"
+                      options={languageItems}
+                      onChange={field.onChange}
+                      value={field.value}
+                      error={error?.message}
+                    />
+                  )}
+                />
+              )}
+
+              {watchBuildMode === BuildModeEnum.DOCKER && (
+                <Controller
+                  key="dockerfile_path"
+                  name="dockerfile_path"
+                  control={control}
+                  rules={{
+                    required: 'Value required',
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      dataTestId="input-text-dockerfile"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Dockerfile path"
+                      error={error?.message}
+                    />
+                  )}
+                />
+              )}
+            </div>
           </>
         )}
 
@@ -173,7 +186,7 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
           <Button type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
             Cancel
           </Button>
-          <Button type="submit" size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
+          <Button type="submit" disabled={!formState.isValid} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
             Continue
           </Button>
         </div>

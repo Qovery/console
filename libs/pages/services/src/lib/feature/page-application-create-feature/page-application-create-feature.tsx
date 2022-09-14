@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from 'react'
+import { useNavigate } from 'react-router'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
 import { FunnelFlow } from '@console/shared/ui'
@@ -36,6 +37,7 @@ export function PageApplicationCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [globalData, setGlobalData] = useState<GlobalData | undefined>()
+  const navigate = useNavigate()
 
   useDocumentTitle('Creation - Service')
 
@@ -50,7 +52,14 @@ export function PageApplicationCreateFeature() {
         setGlobalData,
       }}
     >
-      <FunnelFlow totalSteps={4} currentStep={currentStep} currentTitle={steps[currentStep - 1].title}>
+      <FunnelFlow
+        onExit={() => {
+          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+        }}
+        totalSteps={4}
+        currentStep={currentStep}
+        currentTitle={steps[currentStep - 1].title}
+      >
         <Routes>
           {ROUTER_SERVICE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />

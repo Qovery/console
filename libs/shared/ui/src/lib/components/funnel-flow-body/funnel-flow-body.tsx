@@ -7,7 +7,7 @@ export function FunnelFlowBody(props: FunnelFlowBodyProps) {
   return (
     <div className="flex w-full overflow-auto">
       <section className="flex-[7] bg-white pt-14">
-        <div data-testid="funnel-body-content" className="max-w-funnel-flow-body-content mx-auto relative px-4">
+        <div data-testid="funnel-body-content" className="max-w-funnel-flow-body-content mx-auto relative px-4 pb-14">
           {props.children}
         </div>
       </section>
