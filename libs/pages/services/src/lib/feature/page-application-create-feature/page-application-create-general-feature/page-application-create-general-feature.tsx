@@ -1,5 +1,5 @@
 import { FormProvider, useForm } from 'react-hook-form'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@console/shared/ui'
+import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import PageApplicationCreateGeneral from '../../../ui/page-application-create/page-application-create-general/page-application-create-general'
 import { GlobalData } from '../interfaces.interface'
 

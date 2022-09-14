@@ -1,8 +1,8 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { IconEnum } from '@console/shared/enums'
-import { ButtonSize, Icon, StatusMenuAction, StatusMenuActions, StatusMenuInformation } from '@console/shared/ui'
+import { IconEnum } from '@qovery/shared/enums'
+import { ButtonSize, Icon, StatusMenuAction, StatusMenuActions, StatusMenuInformation } from '@qovery/shared/ui'
 import Menu, { MenuAlign } from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
 

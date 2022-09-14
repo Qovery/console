@@ -10,7 +10,7 @@ import {
   SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_URL,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import { PageApplicationCreateFeature } from '../feature/page-application-create-feature/page-application-create-feature'
 import PageApplicationCreateGeneralFeature from '../feature/page-application-create-feature/page-application-create-general-feature/page-application-create-general-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { getApplicationsState } from '@console/domains/application'
+import { getApplicationsState } from '@qovery/domains/application'
 import {
   authProviderLoadingStatus,
   fetchAuthProvider,
@@ -12,12 +12,12 @@ import {
   repositoryLoadingStatus,
   selectAllAuthProvider,
   selectAllRepository,
-} from '@console/domains/organization'
-import { GitRepositorySettings } from '@console/shared/console-shared'
-import { GitApplicationEntity, LoadingStatus, RepositoryEntity } from '@console/shared/interfaces'
-import { Icon } from '@console/shared/ui'
-import { upperCaseFirstLetter } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/organization'
+import { GitRepositorySettings } from '@qovery/shared/console-shared'
+import { GitApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
+import { Icon } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 
 export const authProvidersValues = (authProviders: GitAuthProvider[]) => {
   return authProviders.map((provider: GitAuthProvider) => ({

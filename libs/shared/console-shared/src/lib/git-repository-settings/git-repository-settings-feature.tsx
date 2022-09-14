@@ -12,11 +12,11 @@ import {
   repositoryLoadingStatus,
   selectAllAuthProvider,
   selectAllRepository,
-} from '@console/domains/organization'
-import { LoadingStatus, RepositoryEntity } from '@console/shared/interfaces'
-import { Icon } from '@console/shared/ui'
-import { upperCaseFirstLetter } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/organization'
+import { LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
+import { Icon } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import GitRepositorySettings from './git-repository-settings'
 
 export interface GitRepositorySettingsFeatureProps {

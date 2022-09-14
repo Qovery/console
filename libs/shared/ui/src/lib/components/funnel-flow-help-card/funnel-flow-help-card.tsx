@@ -1,4 +1,4 @@
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import { HelpSection, HelpSectionProps } from '../help-section/help-section'
 import Icon from '../icon/icon'
 

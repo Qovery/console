@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
-import { FunnelFlow } from '@console/shared/ui'
-import { useDocumentTitle } from '@console/shared/utils'
+import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { FunnelFlow } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
 import { GlobalData } from './interfaces.interface'
 

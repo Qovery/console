@@ -1,10 +1,10 @@
 import { useLocation, useParams } from 'react-router'
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import {
   Button,
   ButtonIcon,
@@ -15,7 +15,7 @@ import {
   IconAwesomeEnum,
   Tabs,
   useModal,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface ContainerProps {

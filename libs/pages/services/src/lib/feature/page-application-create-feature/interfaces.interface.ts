@@ -1,4 +1,4 @@
-import { ServiceTypeEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 
 export interface GlobalData {
   name: string
