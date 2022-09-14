@@ -1,9 +1,9 @@
 import { Cluster } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
-import { selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
-import { INFRA_LOGS_URL } from '@console/shared/router'
-import { RootState } from '@console/store/data'
+import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { INFRA_LOGS_URL } from '@qovery/shared/router'
+import { RootState } from '@qovery/store/data'
 
 export function PageOrganizationClusterFeature() {
   const { organizationId = '' } = useParams()
@@ -11,7 +11,7 @@ export function PageOrganizationClusterFeature() {
   const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
 
   return (
-    <ul>
+    <ul className="p-7">
       {clusters.map((cluster: Cluster, index: number) => (
         <li className="mt-4" key={index}>
           -{' '}
