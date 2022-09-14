@@ -1,19 +1,31 @@
-import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { Organization, OrganizationMainCallsApi, OrganizationRequest } from 'qovery-typescript-axios'
+import {
+  PayloadAction,
+  Update,
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit'
+import {
+  ContainerRegistriesApi,
+  ContainerRegistryResponse,
+  OrganizationMainCallsApi,
+  OrganizationRequest,
+} from 'qovery-typescript-axios'
 import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
 import { RootState } from '@qovery/store/data'
 
 export const ORGANIZATION_KEY = 'organizations'
 
 const organizationMainCalls = new OrganizationMainCallsApi()
-//const containerRegistriesApi = new ContainerRegistriesApi()
+const containerRegistriesApi = new ContainerRegistriesApi()
 
 export const organizationAdapter = createEntityAdapter<OrganizationEntity>()
 
 export const fetchOrganization = createAsyncThunk('organization/fetch', async () => {
   const response = await organizationMainCalls.listOrganization()
 
-  return response.data.results as Organization[]
+  return response.data.results as OrganizationEntity[]
 })
 
 export const postOrganization = createAsyncThunk<OrganizationEntity, OrganizationRequest>(
@@ -28,13 +40,13 @@ export const postOrganization = createAsyncThunk<OrganizationEntity, Organizatio
   }
 )
 
-// export const fetchContainerRegistries = createAsyncThunk<ContainerRegistryResponse, {organizationId: string}>(
-//   'organization/containerRegistries/fetch',
-//   async (data) => {
-//     const result = await containerRegistriesApi.listContainerRegistry(data.organizationId)
-//     return result.data
-//   }
-// )
+export const fetchContainerRegistries = createAsyncThunk<ContainerRegistryResponse[], { organizationId: string }>(
+  'organization/containerRegistries/fetch',
+  async (data) => {
+    const result = await containerRegistriesApi.listContainerRegistry(data.organizationId)
+    return result.data.results as ContainerRegistryResponse[]
+  }
+)
 
 export const initialOrganizationState: OrganizationState = organizationAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -72,6 +84,33 @@ export const organizationSlice = createSlice({
       .addCase(postOrganization.rejected, (state: OrganizationState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+      })
+      // fetch registry
+      .addCase(fetchContainerRegistries.pending, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            containerRegistries: {
+              loadingStatus: 'loaded',
+              items: state.entities[action.meta.arg.organizationId]?.containerRegistries?.items || [],
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
+      })
+      .addCase(fetchContainerRegistries.fulfilled, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            containerRegistries: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
       })
   },
 })

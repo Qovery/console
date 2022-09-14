@@ -6,6 +6,10 @@ export interface GlobalData {
 
   // container
   registry?: string
+  image_name?: string
+  image_tag?: string
+  image_entry_point?: string
+  cmd_arguments?: string
 
   // application
   build_mode?: string
@@ -18,9 +22,7 @@ export interface GlobalData {
 }
 
 export interface ResourcesData {
-  vcpu: string
-}
-
-export interface ResourcesData {
-  vcpu: string
+  memory: number
+  cpu: [number]
+  instances: [number, number]
 }

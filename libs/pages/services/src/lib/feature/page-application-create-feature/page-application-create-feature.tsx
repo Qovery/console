@@ -5,13 +5,15 @@ import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVI
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
-import { GlobalData } from './interfaces.interface'
+import { GlobalData, ResourcesData } from './interfaces.interface'
 
 interface ApplicationContainerCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   globalData: GlobalData | undefined
   setGlobalData: (data: GlobalData) => void
+  resourcesData: ResourcesData | undefined
+  setResourcesData: (data: ResourcesData) => void
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
@@ -35,8 +37,16 @@ export const steps: { title: string }[] = [
 
 export function PageApplicationCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+
+  // context
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [globalData, setGlobalData] = useState<GlobalData | undefined>()
+  const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
+    memory: 512,
+    cpu: [0.5],
+    instances: [1, 12],
+  })
+
   const navigate = useNavigate()
 
   useDocumentTitle('Creation - Service')
@@ -50,6 +60,8 @@ export function PageApplicationCreateFeature() {
         setCurrentStep,
         globalData,
         setGlobalData,
+        resourcesData,
+        setResourcesData,
       }}
     >
       <FunnelFlow
