@@ -52,6 +52,9 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
         if (env.applications && env.applications.length) {
           runningApplication = [...runningApplication, ...env.applications]
         }
+        if (env.containers && env.containers.length) {
+          runningApplication = [...runningApplication, ...env.containers]
+        }
       })
 
       dispatch(

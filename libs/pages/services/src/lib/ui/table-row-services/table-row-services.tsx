@@ -143,15 +143,15 @@ export function TableRowServices(props: TableRowServicesProps) {
         <div className="flex items-center px-4 gap-1">
           {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
             <Skeleton show={isLoading} width={16} height={16} rounded={true}>
-              <StatusChip status={data.status && data.status.state} />
+              <StatusChip status={data.status?.state} />
             </Skeleton>
           ) : (
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
               {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
-                <StatusChip status={data.status && data.status.state} />
+                <StatusChip status={data.status?.state} />
               ) : (
                 <StatusChip
-                  status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED}
+                  status={data.running_status?.state || RunningStatus.STOPPED}
                   appendTooltipMessage={
                     data?.running_status?.state === RunningStatus.ERROR
                       ? data.running_status.pods[0]?.state_message
@@ -195,20 +195,21 @@ export function TableRowServices(props: TableRowServicesProps) {
           </Skeleton>
         </div>
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          {type !== ServiceTypeEnum.DATABASE && (
-            <Skeleton show={isLoading} width={160} height={16}>
-              <div className="flex gap-2 items-center -mt-[1px]">
-                {type === ServiceTypeEnum.APPLICATION && (
-                  <TagCommit commitId={(data as GitApplicationEntity).git_repository?.deployed_commit_id} />
-                )}
-                {type === ServiceTypeEnum.CONTAINER && (
-                  <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
-                    {(data as ContainerApplicationEntity).image_name}
-                  </Tag>
-                )}
-              </div>
-            </Skeleton>
-          )}
+          <Skeleton show={isLoading} width={160} height={16}>
+            <div className="flex gap-2 items-center -mt-[1px]">
+              {type === ServiceTypeEnum.APPLICATION && (
+                <TagCommit commitId={(data as GitApplicationEntity).git_repository?.deployed_commit_id} />
+              )}
+              {type === ServiceTypeEnum.CONTAINER && (
+                <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
+                  {(data as ContainerApplicationEntity).image_name}
+                </Tag>
+              )}
+              {type === ServiceTypeEnum.DATABASE && (
+                <span className="block text-xs ml-2 text-text-600 font-medium">{(data as DatabaseEntity).version}</span>
+              )}
+            </div>
+          </Skeleton>
         </div>
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
@@ -224,11 +225,6 @@ export function TableRowServices(props: TableRowServicesProps) {
                 <Icon name={(data as GitApplicationEntity).build_mode || ''} width="20" height="20" />
               )}
               {type === ServiceTypeEnum.CONTAINER && <Icon name={IconEnum.CONTAINER} width="20" height="20" />}
-              {(data as DatabaseEntity).version && (
-                <span className="block text-xs ml-2 text-text-600 font-medium">
-                  v{(data as DatabaseEntity).version}
-                </span>
-              )}
             </div>
           </Skeleton>
         </div>

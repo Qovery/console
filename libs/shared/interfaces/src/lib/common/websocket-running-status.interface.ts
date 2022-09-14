@@ -3,6 +3,7 @@ import { ServiceRunningStatus } from '../domain/service-running-status.interface
 
 export interface WebsocketRunningStatusInterface {
   applications?: ServiceRunningStatus[]
+  containers?: ServiceRunningStatus[]
   databases?: ServiceRunningStatus[]
   id: string
   project_id: string
