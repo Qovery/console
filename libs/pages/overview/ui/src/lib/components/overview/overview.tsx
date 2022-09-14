@@ -1,6 +1,6 @@
 import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { ENVIRONMENTS_URL } from '@console/shared/router'
+import { ENVIRONMENTS_URL } from '@qovery/shared/router'
 
 export function Overview() {
   const { organizationId, projectId } = useParams()

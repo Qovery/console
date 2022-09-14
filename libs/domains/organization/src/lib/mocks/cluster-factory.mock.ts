@@ -1,6 +1,6 @@
-import { ClusterEntity } from '@console/shared/interfaces'
 import { Chance } from 'chance'
 import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
+import { ClusterEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 

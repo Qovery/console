@@ -1,6 +1,6 @@
 import { DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import React, { useEffect, useState } from 'react'
-import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
+import { BaseLink, HelpSection, Table, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   databaseId?: string

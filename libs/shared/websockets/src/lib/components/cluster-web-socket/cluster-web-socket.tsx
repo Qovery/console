@@ -1,15 +1,15 @@
-import useWebSocket from 'react-use-websocket'
 import { useCallback, useEffect } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '@console/store/data'
-import { applicationsActions, applicationsLoadingStatus } from '@console/domains/application'
-import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
+import useWebSocket from 'react-use-websocket'
+import { applicationsActions, applicationsLoadingStatus } from '@qovery/domains/application'
+import { databasesActions, databasesLoadingStatus } from '@qovery/domains/database'
 import {
   environmentsActions,
   environmentsLoadingStatus,
   selectEnvironmentsIdByClusterId,
-} from '@console/domains/environment'
-import { databasesActions, databasesLoadingStatus } from '@console/domains/database'
+} from '@qovery/domains/environment'
+import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
+import { AppDispatch, RootState } from '@qovery/store/data'
 
 export interface ClusterWebSocketProps {
   url: string

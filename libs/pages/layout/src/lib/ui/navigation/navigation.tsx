@@ -1,7 +1,7 @@
 import { matchPath, useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import { IconEnum } from '@console/shared/enums'
-import { INFRA_LOGS_URL, ORGANIZATION_URL } from '@console/shared/router'
+import { IconEnum } from '@qovery/shared/enums'
+import { INFRA_LOGS_URL, ORGANIZATION_URL } from '@qovery/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -14,7 +14,7 @@ import {
   MenuDirection,
   Modal,
   ModalUser,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 
 export interface NavigationProps {
   firstName: string

@@ -1,6 +1,6 @@
-import { Button } from '@console/shared/ui'
 import { render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
+import { Button } from '@qovery/shared/ui'
 import { StatusMenuAction, StatusMenuActionProps } from './status-menu-action'
 
 let props: StatusMenuActionProps

@@ -8,7 +8,7 @@ import Select, {
   SingleValueProps,
   components,
 } from 'react-select'
-import { Value } from '@console/shared/interfaces'
+import { Value } from '@qovery/shared/interfaces'
 import Icon from '../../icon/icon'
 
 export interface InputSelectProps {

@@ -1,5 +1,5 @@
+import { RunningStatus } from '@qovery/shared/enums'
 import { ServiceRunningStatus } from '../domain/service-running-status.interface'
-import { RunningStatus } from '@console/shared/enums'
 
 export interface WebsocketRunningStatusInterface {
   applications?: ServiceRunningStatus[]

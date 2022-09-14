@@ -1,9 +1,9 @@
-import { BaseLink } from '@console/shared/ui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { applicationsLoadingStatus, getApplicationsState } from '@console/domains/application'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
-import { RootState } from '@console/store/data'
+import { applicationsLoadingStatus, getApplicationsState } from '@qovery/domains/application'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { BaseLink } from '@qovery/shared/ui'
+import { RootState } from '@qovery/store/data'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

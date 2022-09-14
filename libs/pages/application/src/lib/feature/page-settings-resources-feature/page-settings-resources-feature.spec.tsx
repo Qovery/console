@@ -1,17 +1,17 @@
 import { ResizeObserver } from '__tests__/utils/resize-observer'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeApplication from '@console/domains/application'
-import { MemorySizeEnum } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import * as storeApplication from '@qovery/domains/application'
+import { MemorySizeEnum } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance
 
 const mockApplication: ApplicationEntity = storeApplication.applicationFactoryMock(1)[0]
 
-jest.mock('@console/domains/application', () => {
+jest.mock('@qovery/domains/application', () => {
   return {
-    ...jest.requireActual('@console/domains/application'),
+    ...jest.requireActual('@qovery/domains/application'),
     editApplication: jest.fn(),
     getApplicationsState: () => ({
       loadingStatus: 'loaded',

@@ -1,14 +1,14 @@
-import { useEffect, useState, createContext } from 'react'
-import { useNavigate, Params } from 'react-router'
+import { createContext, useEffect, useState } from 'react'
+import { Params, useNavigate } from 'react-router'
 import {
   ONBOARDING_PRICING_FREE_URL,
   ONBOARDING_PRICING_URL,
   ONBOARDING_PROJECT_URL,
   ONBOARDING_URL,
   Route,
-} from '@console/shared/router'
-import { LayoutOnboarding } from '../../ui/layout-onboarding/layout-onboarding'
+} from '@qovery/shared/router'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
+import { LayoutOnboarding } from '../../ui/layout-onboarding/layout-onboarding'
 
 interface DefaultContextProps {
   organization_name: string

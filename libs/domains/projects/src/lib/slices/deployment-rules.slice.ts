@@ -1,9 +1,9 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, Update } from '@reduxjs/toolkit'
+import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
-import { DeploymentRuleState, LoadingStatus } from '@console/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
-import { toast, ToastEnum } from '@console/shared/toast'
+import { DeploymentRuleState, LoadingStatus } from '@qovery/shared/interfaces'
+import { ToastEnum, toast } from '@qovery/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 
 export const DEPLOYMENT_RULES_FEATURE_KEY = 'deploymentRules'
 

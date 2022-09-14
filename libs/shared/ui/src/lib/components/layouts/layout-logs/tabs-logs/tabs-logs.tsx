@@ -11,7 +11,7 @@ import {
   Tabs,
   Tooltip,
   Truncate,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 
 export const enum TabsLogsSection {
   INFORMATION = 'INFORMATION',

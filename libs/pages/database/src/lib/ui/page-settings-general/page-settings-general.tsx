@@ -11,8 +11,8 @@ import {
   InputSelect,
   InputText,
   Link,
-} from '@console/shared/ui'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+} from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>

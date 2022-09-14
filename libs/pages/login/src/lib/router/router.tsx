@@ -1,6 +1,6 @@
-import { LOGIN_AUTH_REDIRECT_URL, Route } from '@console/shared/router'
-import PageRedirectLogin from '../feature/page-redirect-login/page-redirect-login'
+import { LOGIN_AUTH_REDIRECT_URL, Route } from '@qovery/shared/router'
 import PageLoginFeature from '../feature/page-login/page-login'
+import PageRedirectLogin from '../feature/page-redirect-login/page-redirect-login'
 
 export const ROUTER_LOGIN: Route[] = [
   {

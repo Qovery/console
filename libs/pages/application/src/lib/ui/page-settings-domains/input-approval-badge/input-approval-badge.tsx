@@ -1,5 +1,5 @@
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
-import { Icon, IconAwesomeEnum, Tooltip } from '@console/shared/ui'
+import { Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
 
 export interface InputApprovalBadgeProps {
   status?: CustomDomainStatusEnum

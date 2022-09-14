@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { EnvironmentEntity } from '@console/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@console/shared/router'
-import { BaseLink, HelpSection, StatusMenuActions, Table } from '@console/shared/ui'
-import { isDeleteAvailable } from '@console/shared/utils'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { BaseLink, HelpSection, StatusMenuActions, Table } from '@qovery/shared/ui'
+import { isDeleteAvailable } from '@qovery/shared/utils'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface PageGeneralProps {

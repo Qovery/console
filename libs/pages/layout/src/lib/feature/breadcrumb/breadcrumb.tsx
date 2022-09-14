@@ -1,12 +1,12 @@
-import { Breadcrumb } from '@console/shared/ui'
 import { useSelector } from 'react-redux'
-import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@console/domains/organization'
-import { RootState } from '@console/store/data'
-import { selectApplicationsEntitiesByEnvId } from '@console/domains/application'
 import { useParams } from 'react-router-dom'
-import { selectDatabasesEntitiesByEnvId } from '@console/domains/database'
-import { selectEnvironmentsEntitiesByProjectId } from '@console/domains/environment'
-import { selectProjectsEntitiesByOrgId } from '@console/domains/projects'
+import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { selectEnvironmentsEntitiesByProjectId } from '@qovery/domains/environment'
+import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
+import { Breadcrumb } from '@qovery/shared/ui'
+import { RootState } from '@qovery/store/data'
 
 export function BreadcrumbFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()

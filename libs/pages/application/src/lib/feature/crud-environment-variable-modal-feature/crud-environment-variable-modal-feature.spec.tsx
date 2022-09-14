@@ -1,10 +1,10 @@
+import { render } from '__tests__/utils/setup-jest'
+import { mockEnvironmentVariable } from '@qovery/domains/environment-variable'
 import CrudEnvironmentVariableModalFeature, {
   CrudEnvironmentVariableModalFeatureProps,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from './crud-environment-variable-modal-feature'
-import { render } from '__tests__/utils/setup-jest'
-import { mockEnvironmentVariable } from '@console/domains/environment-variable'
 
 const props: CrudEnvironmentVariableModalFeatureProps = {
   mode: EnvironmentVariableCrudMode.CREATION,

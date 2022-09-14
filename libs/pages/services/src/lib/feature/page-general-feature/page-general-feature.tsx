@@ -6,12 +6,12 @@ import {
   applicationFactoryMock,
   fetchApplicationsStatus,
   selectApplicationsEntitiesByEnvId,
-} from '@console/domains/application'
-import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@console/domains/database'
-import { selectEnvironmentById } from '@console/domains/environment'
-import { ApplicationEntity, DatabaseEntity } from '@console/shared/interfaces'
-import { BaseLink } from '@console/shared/ui'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { BaseLink } from '@qovery/shared/ui'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

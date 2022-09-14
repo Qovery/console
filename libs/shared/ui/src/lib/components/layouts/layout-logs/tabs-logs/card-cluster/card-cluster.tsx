@@ -1,5 +1,5 @@
-import { ClusterEntity } from '@console/shared/interfaces'
-import { CopyToClipboard, Icon, StatusChip } from '@console/shared/ui'
+import { ClusterEntity } from '@qovery/shared/interfaces'
+import { CopyToClipboard, Icon, StatusChip } from '@qovery/shared/ui'
 
 export interface CardClusterProps {
   cluster?: ClusterEntity

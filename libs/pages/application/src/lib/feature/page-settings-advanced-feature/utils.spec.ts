@@ -1,6 +1,6 @@
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { applicationFactoryMock } from '@qovery/domains/application'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { initFormValues } from './utils'
 
 const mockApplication: ApplicationEntity = applicationFactoryMock(1)[0]

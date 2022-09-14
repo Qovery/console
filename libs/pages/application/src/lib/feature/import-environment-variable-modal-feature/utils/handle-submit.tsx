@@ -4,9 +4,9 @@ import {
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
   importEnvironmentVariables,
-} from '@console/domains/environment-variable'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { RootState } from '@console/store/data'
+} from '@qovery/domains/environment-variable'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { RootState } from '@qovery/store/data'
 
 export function formatData(data: { [key: string]: string }, keys: string[]) {
   const vars: VariableImportRequestVars[] = []

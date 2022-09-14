@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useParams } from 'react-router'
-import { Icon, Menu, MenuData, Skeleton } from '@console/shared/ui'
-import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@console/shared/router'
-import { dateToHours, upperCaseFirstLetter } from '@console/shared/utils'
+import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
+import { Icon, Menu, MenuData, Skeleton } from '@qovery/shared/ui'
+import { dateToHours, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface DeploymentRuleItemProps {
   id: string

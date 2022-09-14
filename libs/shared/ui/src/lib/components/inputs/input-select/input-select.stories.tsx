@@ -1,5 +1,5 @@
 import { Meta, Story } from '@storybook/react'
-import { Value } from '@console/shared/interfaces'
+import { Value } from '@qovery/shared/interfaces'
 import { InputSelect, InputSelectProps } from './input-select'
 
 export default {

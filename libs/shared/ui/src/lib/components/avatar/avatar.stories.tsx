@@ -1,6 +1,6 @@
-import { Avatar, AvatarProps } from './avatar'
 import { Meta, Story } from '@storybook/react'
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
+import { Avatar, AvatarProps } from './avatar'
 
 export default {
   component: Avatar,

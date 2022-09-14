@@ -6,11 +6,11 @@ import {
   editApplication,
   postApplicationActionsRestart,
   selectApplicationById,
-} from '@console/domains/application'
-import { getServiceType } from '@console/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
-import { useModal, useModalConfirmation } from '@console/shared/ui'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 

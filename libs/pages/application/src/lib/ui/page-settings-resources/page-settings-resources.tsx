@@ -1,7 +1,7 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { MemorySizeEnum } from '@console/shared/enums'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { MemorySizeEnum } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -15,8 +15,8 @@ import {
   WarningBox,
   WarningBoxEnum,
   inputSizeUnitRules,
-} from '@console/shared/ui'
-import { convertCpuToVCpu } from '@console/shared/utils'
+} from '@qovery/shared/ui'
+import { convertCpuToVCpu } from '@qovery/shared/utils'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>

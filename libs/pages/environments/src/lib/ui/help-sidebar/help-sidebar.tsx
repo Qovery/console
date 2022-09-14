@@ -1,4 +1,4 @@
-import { Icon, Link } from '@console/shared/ui'
+import { Icon, Link } from '@qovery/shared/ui'
 
 export function HelpSidebar() {
   const LIST = [

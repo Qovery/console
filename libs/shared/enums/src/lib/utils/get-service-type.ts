@@ -3,7 +3,7 @@ import {
   ContainerApplicationEntity,
   DatabaseEntity,
   GitApplicationEntity,
-} from '@console/shared/interfaces'
+} from '@qovery/shared/interfaces'
 import { ServiceTypeEnum } from '../service-type.enum'
 
 export const getServiceType = (data?: ApplicationEntity | DatabaseEntity) => {

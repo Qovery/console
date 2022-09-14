@@ -1,6 +1,6 @@
-import { useAuth } from '@console/shared/auth'
 import { useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
+import { useAuth } from '@qovery/shared/auth'
 import { LOGIN_URL } from '../router'
 
 export interface IProtectedRoute {

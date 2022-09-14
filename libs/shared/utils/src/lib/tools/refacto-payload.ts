@@ -4,7 +4,7 @@ import {
   DatabaseEditRequest,
   ServiceStorageStorage,
 } from 'qovery-typescript-axios'
-import { ContainerApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@console/shared/interfaces'
+import { ContainerApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 
 export function refactoPayload(response: any) {
   delete response['id']

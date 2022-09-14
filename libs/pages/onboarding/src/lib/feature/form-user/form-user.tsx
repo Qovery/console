@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { postUserSignUp, selectUser, selectUserSignUp } from '@console/domains/user'
-import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@console/shared/router'
-import { useAuth } from '@console/shared/auth'
-import { AppDispatch } from '@console/store/data'
+import { useNavigate } from 'react-router'
+import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
+import { useAuth } from '@qovery/shared/auth'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/router'
+import { AppDispatch } from '@qovery/store/data'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 
 const dataTypes = [

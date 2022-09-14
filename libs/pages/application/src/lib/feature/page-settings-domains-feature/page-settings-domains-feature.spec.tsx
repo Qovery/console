@@ -2,8 +2,8 @@ import { act, getAllByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { CustomDomain, CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
-import { applicationFactoryMock } from '@console/domains/application'
-import { ApplicationEntity } from '@console/shared/interfaces'
+import { applicationFactoryMock } from '@qovery/domains/application'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsDomainsFeature from './page-settings-domains-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -15,8 +15,8 @@ jest.mock('react-redux', () => ({
 
 const mockOpenModal = jest.fn()
 const mockOpenConfirmationModal = jest.fn()
-jest.mock('@console/shared/ui', () => ({
-  ...jest.requireActual('@console/shared/ui'),
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
   useModal: () => ({
     openModal: mockOpenModal,
   }),

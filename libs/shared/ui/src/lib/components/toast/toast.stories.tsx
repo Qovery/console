@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react'
-import { toast, ToastEnum } from '@console/shared/toast'
-import { ToastBehavior, ToastProps } from './toast'
+import { ToastEnum, toast } from '@qovery/shared/toast'
 import { Button } from '../buttons/button/button'
+import { ToastBehavior, ToastProps } from './toast'
 
 export default {
   component: ToastBehavior,

@@ -1,5 +1,5 @@
 import { CustomDomain } from 'qovery-typescript-axios'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -10,7 +10,7 @@ import {
   InputText,
   LoaderSpinner,
   PlaceholderSettings,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 
 export interface PageSettingsDomainsProps {
   application?: ApplicationEntity

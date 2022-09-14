@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { ServiceTypeEnum } from '@console/shared/enums'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import About from './about'
 
 describe('About', () => {

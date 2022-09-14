@@ -1,4 +1,4 @@
-import { StatusMenuInformation } from '@console/shared/ui'
+import { StatusMenuInformation } from '@qovery/shared/ui'
 import ButtonIconActionElement, {
   ButtonIconActionElementProps,
 } from './button-icon-action-element/button-icon-action-element'

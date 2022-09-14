@@ -2,11 +2,11 @@ import { Project } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink, useParams } from 'react-router-dom'
-import { fetchOrganization, selectAllOrganization } from '@console/domains/organization'
-import { fetchProjects } from '@console/domains/projects'
-import { ORGANIZATION_URL, OVERVIEW_URL } from '@console/shared/router'
-import { LoadingScreen } from '@console/shared/ui'
-import { AppDispatch } from '@console/store/data'
+import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organization'
+import { fetchProjects } from '@qovery/domains/projects'
+import { ORGANIZATION_URL, OVERVIEW_URL } from '@qovery/shared/router'
+import { LoadingScreen } from '@qovery/shared/ui'
+import { AppDispatch } from '@qovery/store/data'
 
 export function RedirectOverview() {
   const { organizationId = '' } = useParams()

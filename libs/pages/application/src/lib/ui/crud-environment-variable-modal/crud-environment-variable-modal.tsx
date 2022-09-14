@@ -1,6 +1,6 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@console/shared/ui'
+import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 import {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,

@@ -1,9 +1,9 @@
 import { Commit } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { getApplicationsState, getCountNewCommitsToDeploy } from '@console/domains/application'
-import { GitApplicationEntity } from '@console/shared/interfaces'
-import { RootState } from '@console/store/data'
+import { getApplicationsState, getCountNewCommitsToDeploy } from '@qovery/domains/application'
+import { GitApplicationEntity } from '@qovery/shared/interfaces'
+import { RootState } from '@qovery/store/data'
 import LastCommit from '../../ui/last-commit/last-commit'
 
 export function LastCommitFeature() {

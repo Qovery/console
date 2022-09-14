@@ -1,8 +1,8 @@
 import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react'
-import { LoadingStatus } from '@console/shared/interfaces'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon } from '@console/shared/ui'
-import { dateDifferenceMinutes, scrollParentToChild } from '@console/shared/utils'
+import { LoadingStatus } from '@qovery/shared/interfaces'
+import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon } from '@qovery/shared/ui'
+import { dateDifferenceMinutes, scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
 export interface LayoutLogsProps {

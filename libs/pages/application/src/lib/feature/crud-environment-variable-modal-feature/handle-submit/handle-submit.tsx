@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { postEnvironmentActionsRestart } from '@console/domains/environment'
+import { postEnvironmentActionsRestart } from '@qovery/domains/environment'
 import {
   createAliasEnvironmentVariables,
   createAliasSecret,
@@ -11,9 +11,9 @@ import {
   editSecret,
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
-} from '@console/domains/environment-variable'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { SecretEnvironmentVariableEntity } from '@console/shared/interfaces'
+} from '@qovery/domains/environment-variable'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
 import {
   CrudEnvironmentVariableModalFeatureProps,
   DataFormEnvironmentVariableInterface,

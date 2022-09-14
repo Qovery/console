@@ -1,6 +1,6 @@
 import { useParams } from 'react-router'
-import { RunningStatus } from '@console/shared/enums'
-import { EnvironmentEntity } from '@console/shared/interfaces'
+import { RunningStatus } from '@qovery/shared/enums'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   ButtonIconAction,
   Icon,
@@ -14,8 +14,8 @@ import {
   TagMode,
   Tooltip,
   useModal,
-} from '@console/shared/ui'
-import { timeAgo } from '@console/shared/utils'
+} from '@qovery/shared/ui'
+import { timeAgo } from '@qovery/shared/utils'
 import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface TableRowEnvironmentsProps {

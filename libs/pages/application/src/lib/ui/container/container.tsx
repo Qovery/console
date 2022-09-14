@@ -2,9 +2,9 @@ import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axio
 import { createContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router'
-import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@console/domains/application'
-import { IconEnum, ServiceTypeEnum, getServiceType } from '@console/shared/enums'
-import { ApplicationEntity, GitApplicationEntity } from '@console/shared/interfaces'
+import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
+import { IconEnum, ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import {
   Button,
   ButtonIconAction,
@@ -20,9 +20,9 @@ import {
   Tag,
   TagMode,
   TagSize,
-} from '@console/shared/ui'
-import { copyToClipboard, urlCodeEditor } from '@console/shared/utils'
-import { AppDispatch } from '@console/store/data'
+} from '@qovery/shared/ui'
+import { copyToClipboard, urlCodeEditor } from '@qovery/shared/utils'
+import { AppDispatch } from '@qovery/store/data'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 

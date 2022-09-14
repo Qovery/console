@@ -1,4 +1,4 @@
-import { LoadingScreen } from '@console/shared/ui'
+import { LoadingScreen } from '@qovery/shared/ui'
 import useRedirectIfLogged from '../../hooks/use-redirect-if-logged/use-redirect-if-logged'
 
 export function PageRedirectLogin() {

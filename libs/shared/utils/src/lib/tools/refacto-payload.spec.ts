@@ -1,7 +1,7 @@
 import { Application, DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
-import { databaseFactoryMock } from '@console/domains/database'
-import { GitApplicationEntity } from '@console/shared/interfaces'
-import { refactoDatabasePayload } from '@console/shared/utils'
+import { databaseFactoryMock } from '@qovery/domains/database'
+import { GitApplicationEntity } from '@qovery/shared/interfaces'
+import { refactoDatabasePayload } from '@qovery/shared/utils'
 import { refactoContainerApplicationPayload, refactoGitApplicationPayload, refactoPayload } from './refacto-payload'
 
 describe('testing payload refactoring', () => {

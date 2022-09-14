@@ -1,5 +1,5 @@
-import { IconEnum } from '@console/shared/enums'
-import { Skeleton, Truncate } from '@console/shared/ui'
+import { IconEnum } from '@qovery/shared/enums'
+import { Skeleton, Truncate } from '@qovery/shared/ui'
 import Icon from '../icon/icon'
 
 export interface HeaderProps {

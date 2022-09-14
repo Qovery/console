@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { StatusChip } from './status-chip'
 import { StateEnum } from 'qovery-typescript-axios'
-import { RunningStatus } from '@console/shared/enums'
+import { RunningStatus } from '@qovery/shared/enums'
+import { StatusChip } from './status-chip'
 
 const AllStatus = [...Object.values(RunningStatus), ...Object.values(StateEnum)]
 

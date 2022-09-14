@@ -1,13 +1,13 @@
-import { useParams } from 'react-router-dom'
 import { Navigate, Route, Routes } from 'react-router'
+import { useParams } from 'react-router-dom'
 import {
-  DATABASE_SETTINGS_URL,
+  DATABASE_SETTINGS_DANGER_ZONE_URL,
   DATABASE_SETTINGS_GENERAL_URL,
   DATABASE_SETTINGS_RESOURCES_URL,
+  DATABASE_SETTINGS_URL,
   DATABASE_URL,
-  DATABASE_SETTINGS_DANGER_ZONE_URL,
-} from '@console/shared/router'
-import { useDocumentTitle } from '@console/shared/utils'
+} from '@qovery/shared/router'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_DATABASE_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 

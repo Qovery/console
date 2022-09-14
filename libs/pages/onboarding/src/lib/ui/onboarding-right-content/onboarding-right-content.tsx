@@ -4,7 +4,7 @@ import {
   ONBOARDING_PRICING_FREE_URL,
   ONBOARDING_PRICING_PRO_URL,
   ONBOARDING_PROJECT_URL,
-} from '@console/shared/router'
+} from '@qovery/shared/router'
 import BenefitsCard from '../benefits-card/benefits-card'
 import PlanList from '../plan-list/plan-list'
 

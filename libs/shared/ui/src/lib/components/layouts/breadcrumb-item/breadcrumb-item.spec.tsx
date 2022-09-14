@@ -1,7 +1,6 @@
-import { BreadcrumbItemProps } from '@console/shared/ui'
 import { screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-
+import { BreadcrumbItemProps } from '@qovery/shared/ui'
 import BreadcrumbItem from './breadcrumb-item'
 
 describe('BreadcrumbItem', () => {

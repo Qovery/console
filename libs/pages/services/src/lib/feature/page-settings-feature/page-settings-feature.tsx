@@ -1,14 +1,14 @@
-import { useParams } from 'react-router-dom'
 import { Navigate, Route, Routes } from 'react-router'
+import { useParams } from 'react-router-dom'
 import {
+  SERVICES_SETTINGS_DANGER_ZONE_URL,
+  SERVICES_SETTINGS_DEPLOYMENT_URL,
+  SERVICES_SETTINGS_GENERAL_URL,
+  SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
-  SERVICES_SETTINGS_GENERAL_URL,
-  SERVICES_SETTINGS_DEPLOYMENT_URL,
-  SERVICES_SETTINGS_DANGER_ZONE_URL,
-  SERVICES_SETTINGS_PREVIEW_ENV_URL,
-} from '@console/shared/router'
-import { useDocumentTitle } from '@console/shared/utils'
+} from '@qovery/shared/router'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_ENVIRONMENTS_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 

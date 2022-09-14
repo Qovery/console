@@ -1,6 +1,6 @@
 import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import Icon, { IconProps } from './icon'
 import { IconAwesomeEnum } from './icon-awesome.enum'
 

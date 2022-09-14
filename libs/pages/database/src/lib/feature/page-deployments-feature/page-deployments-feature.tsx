@@ -6,11 +6,11 @@ import {
   databasesLoadingStatus,
   fetchDatabaseDeployments,
   getDatabasesState,
-} from '@console/domains/database'
-import { DatabaseEntity } from '@console/shared/interfaces'
-import { BaseLink } from '@console/shared/ui'
-import { useDocumentTitle } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/database'
+import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { BaseLink } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {

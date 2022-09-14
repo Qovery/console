@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { NavigationLeft, NavigationLeftLinkProps } from '@console/shared/ui'
+import { NavigationLeft, NavigationLeftLinkProps } from '@qovery/shared/ui'
 
 export interface PageSettingsProps {
   links: NavigationLeftLinkProps[]

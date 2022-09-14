@@ -1,7 +1,7 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { DropzoneRootProps } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
-import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
+import { EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import {
   Button,
   ButtonIcon,
@@ -13,7 +13,7 @@ import {
   InputSelectSmall,
   InputTextSmall,
   InputToggle,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 import { validateKey, warningMessage } from '../../feature/import-environment-variable-modal-feature/utils/form-check'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 

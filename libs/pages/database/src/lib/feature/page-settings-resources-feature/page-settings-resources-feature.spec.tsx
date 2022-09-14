@@ -1,18 +1,18 @@
 import { ResizeObserver } from '__tests__/utils/resize-observer'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import * as storeDatabase from '@console/domains/database'
-import { databaseFactoryMock } from '@console/domains/database'
-import { MemorySizeEnum } from '@console/shared/enums'
-import { DatabaseEntity } from '@console/shared/interfaces'
+import * as storeDatabase from '@qovery/domains/database'
+import { databaseFactoryMock } from '@qovery/domains/database'
+import { MemorySizeEnum } from '@qovery/shared/enums'
+import { DatabaseEntity } from '@qovery/shared/interfaces'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance
 
 const mockDatabase: DatabaseEntity = databaseFactoryMock(1)[0]
 
-jest.mock('@console/domains/database', () => {
+jest.mock('@qovery/domains/database', () => {
   return {
-    ...jest.requireActual('@console/domains/database'),
+    ...jest.requireActual('@qovery/domains/database'),
     editDatabase: jest.fn(),
     getDatabasesState: () => ({
       loadingStatus: 'loaded',

@@ -7,9 +7,9 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import { GitProviderEnum, GitRepositoryBranch, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
-import { LoadingStatus, RepositoryEntity, RepositoryState } from '@console/shared/interfaces'
-import { toastError } from '@console/shared/toast'
-import { RootState } from '@console/store/data'
+import { LoadingStatus, RepositoryEntity, RepositoryState } from '@qovery/shared/interfaces'
+import { toastError } from '@qovery/shared/toast'
+import { RootState } from '@qovery/store/data'
 
 export const REPOSITORY_FEATURE_KEY = 'repository'
 

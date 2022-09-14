@@ -1,3 +1,10 @@
+import { PageApplication } from '@qovery/pages/application'
+import { PageDatabase } from '@qovery/pages/database'
+import { PageEnvironments } from '@qovery/pages/environments'
+import { PageInfraLogs } from '@qovery/pages/logs/infra'
+import { OverviewPage } from '@qovery/pages/overview/feature'
+import { PageServices } from '@qovery/pages/services'
+import { PageSettings } from '@qovery/pages/settings'
 import {
   APPLICATION_URL,
   DATABASE_URL,
@@ -7,14 +14,7 @@ import {
   OVERVIEW_URL,
   SERVICES_URL,
   SETTINGS_URL,
-} from '@console/shared/router'
-import { OverviewPage } from '@console/pages/overview/feature'
-import { PageSettings } from '@console/pages/settings'
-import { PageEnvironments } from '@console/pages/environments'
-import { PageServices } from '@console/pages/services'
-import { PageApplication } from '@console/pages/application'
-import { PageDatabase } from '@console/pages/database'
-import { PageInfraLogs } from '@console/pages/logs/infra'
+} from '@qovery/shared/router'
 import RedirectOverview from '../components/redirect-overview'
 
 export const ROUTER = [

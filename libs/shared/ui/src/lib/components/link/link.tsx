@@ -1,5 +1,5 @@
+import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
-import { IconEnum } from '@console/shared/enums'
 
 export interface BaseLink {
   link: string

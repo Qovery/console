@@ -10,8 +10,8 @@ import {
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { environmentFactoryMock } from '@console/domains/environment'
-import { clusterFactoryMock } from '@console/domains/organization'
+import { environmentFactoryMock } from '@qovery/domains/environment'
+import { clusterFactoryMock } from '@qovery/domains/organization'
 import CreateCloneEnvironmentModal, { CreateCloneEnvironmentModalProps } from './create-clone-environment-modal'
 
 const mockClusters = clusterFactoryMock(3)

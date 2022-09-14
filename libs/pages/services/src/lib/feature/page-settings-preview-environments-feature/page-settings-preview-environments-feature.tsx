@@ -7,17 +7,17 @@ import {
   editApplication,
   postApplicationActionsRestart,
   selectApplicationsEntitiesByEnvId,
-} from '@console/domains/application'
+} from '@qovery/domains/application'
 import {
   editEnvironmentDeploymentRules,
   environmentsLoadingEnvironmentDeploymentRules,
   environmentsLoadingStatus,
   fetchEnvironmentDeploymentRules,
   selectEnvironmentDeploymentRulesByEnvId,
-} from '@console/domains/environment'
-import { getServiceType } from '@console/shared/enums'
-import { GitApplicationEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/environment'
+import { getServiceType } from '@qovery/shared/enums'
+import { GitApplicationEntity } from '@qovery/shared/interfaces'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function PageSettingsPreviewEnvironmentsFeature() {

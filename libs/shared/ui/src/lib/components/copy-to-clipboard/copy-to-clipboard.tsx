@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { copyToClipboard as copyToClipboardUtil } from '@console/shared/utils'
+import { copyToClipboard as copyToClipboardUtil } from '@qovery/shared/utils'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 

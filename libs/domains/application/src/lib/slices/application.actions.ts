@@ -5,8 +5,8 @@ import {
   ContainerActionsApi,
   ContainerMainCallsApi,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { ToastEnum, toast } from '@console/shared/toast'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ToastEnum, toast } from '@qovery/shared/toast'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 
 const applicationActionApi = new ApplicationActionsApi()

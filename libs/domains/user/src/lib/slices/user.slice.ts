@@ -1,6 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
+import { RootState } from '@qovery/store/data'
 import { UserInterface } from '../interfaces'
-import { RootState } from '@console/store/data'
 
 export const USER_KEY = 'user'
 

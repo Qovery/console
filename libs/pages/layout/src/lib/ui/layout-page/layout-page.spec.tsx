@@ -1,8 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
-
-import LayoutPage, { LayoutPageProps } from './layout-page'
 import React from 'react'
-import { userSignUpFactoryMock } from '@console/domains/user'
+import { userSignUpFactoryMock } from '@qovery/domains/user'
+import LayoutPage, { LayoutPageProps } from './layout-page'
 
 describe('LayoutPage', () => {
   let props: LayoutPageProps

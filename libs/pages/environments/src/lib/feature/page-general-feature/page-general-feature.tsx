@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { useParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router'
 import {
   deleteEnvironmentAction,
   environmentFactoryMock,
@@ -12,12 +12,12 @@ import {
   postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
   selectEnvironmentsEntitiesByProjectId,
-} from '@console/domains/environment'
-import { EnvironmentEntity } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
-import { BaseLink, StatusMenuActions, useModalConfirmation } from '@console/shared/ui'
+} from '@qovery/domains/environment'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { BaseLink, StatusMenuActions, useModalConfirmation } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { PageGeneral } from '../../ui/page-general/page-general'
-import { useDocumentTitle } from '@console/shared/utils'
 
 export function PageGeneralFeature() {
   useDocumentTitle('Environments - Qovery')

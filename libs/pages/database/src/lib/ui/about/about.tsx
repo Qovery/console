@@ -1,9 +1,9 @@
 /* eslint-disable-next-line */
-import { Button, ButtonStyle, Icon, Skeleton, ToastBehavior, Tooltip } from '@console/shared/ui'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
-import { DatabaseCredentials, LoadingStatus } from '@console/shared/interfaces'
-import { toast, ToastEnum } from '@console/shared/toast'
-import { upperCaseFirstLetter } from '@console/shared/utils'
+import { DatabaseCredentials, LoadingStatus } from '@qovery/shared/interfaces'
+import { ToastEnum, toast } from '@qovery/shared/toast'
+import { Button, ButtonStyle, Icon, Skeleton, ToastBehavior, Tooltip } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface AboutProps {
   description?: string

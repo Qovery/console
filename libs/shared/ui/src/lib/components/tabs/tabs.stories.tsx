@@ -1,5 +1,5 @@
-import { Icon, Tabs, TabsProps } from '@console/shared/ui'
 import { Meta, Story } from '@storybook/react'
+import { Icon, Tabs, TabsProps } from '@qovery/shared/ui'
 
 export default {
   component: Tabs,

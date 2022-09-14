@@ -1,6 +1,6 @@
-import { ButtonAction, ButtonActionProps, ButtonSize, ButtonActionStyle, Icon } from '@console/shared/ui'
 import { Meta, Story } from '@storybook/react'
 import { ClickEvent } from '@szhsin/react-menu'
+import { ButtonAction, ButtonActionProps, ButtonActionStyle, ButtonSize, Icon } from '@qovery/shared/ui'
 
 export default {
   component: ButtonAction,

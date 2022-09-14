@@ -6,10 +6,10 @@ import {
   editCustomDomain,
   getCustomDomainsState,
   postApplicationActionsRestart,
-} from '@console/domains/application'
-import { getServiceType } from '@console/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {

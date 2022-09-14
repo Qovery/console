@@ -1,9 +1,8 @@
-import { screen, render } from '__tests__/utils/setup-jest'
-import { clusterLogFactoryMock } from '@console/domains/organization'
-import { LayoutLogsProps } from '@console/shared/ui'
-
-import { LayoutLogsMemo } from './layout-logs'
+import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { clusterLogFactoryMock } from '@qovery/domains/organization'
+import { LayoutLogsProps } from '@qovery/shared/ui'
+import { LayoutLogsMemo } from './layout-logs'
 
 describe('LayoutLogs', () => {
   const props: LayoutLogsProps = {

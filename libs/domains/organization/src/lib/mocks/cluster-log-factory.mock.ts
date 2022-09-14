@@ -1,6 +1,6 @@
-import { LogsType } from '@console/shared/enums'
 import { Chance } from 'chance'
 import { ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { LogsType } from '@qovery/shared/enums'
 
 const chance = new Chance()
 

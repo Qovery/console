@@ -1,8 +1,8 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { Icon, useModalConfirmation } from '@console/shared/ui'
-import { isCancelBuildAvailable, isDeployAvailable, isRestartAvailable, isStopAvailable } from '@console/shared/utils'
+import { Icon, useModalConfirmation } from '@qovery/shared/ui'
+import { isCancelBuildAvailable, isDeployAvailable, isRestartAvailable, isStopAvailable } from '@qovery/shared/utils'
 import Menu, { MenuAlign, MenuDirection } from '../menu/menu'
 
 export interface StatusMenuActionProps {

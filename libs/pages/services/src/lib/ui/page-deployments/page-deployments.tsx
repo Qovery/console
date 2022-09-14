@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { DeploymentService } from '@console/shared/interfaces'
-import { BaseLink, HelpSection, Table, TableRowDeployment } from '@console/shared/ui'
+import { DeploymentService } from '@qovery/shared/interfaces'
+import { BaseLink, HelpSection, Table, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentService[]

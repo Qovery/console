@@ -15,14 +15,14 @@ import {
   postApplicationActionsRestart,
   postApplicationActionsStop,
   selectApplicationById,
-} from '@console/domains/application'
-import { selectEnvironmentById } from '@console/domains/environment'
-import { ServiceTypeEnum, getServiceType } from '@console/shared/enums'
-import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@console/shared/interfaces'
-import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@console/shared/router'
-import { StatusMenuActions } from '@console/shared/ui'
-import { isDeleteAvailable, useDocumentTitle } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/application'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@qovery/shared/router'
+import { StatusMenuActions } from '@qovery/shared/ui'
+import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 

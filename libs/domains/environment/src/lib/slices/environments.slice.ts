@@ -21,10 +21,10 @@ import {
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
-import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
+import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 

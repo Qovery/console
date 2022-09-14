@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { EnvironmentVariableSecretOrPublic } from '@console/shared/interfaces'
+import { EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { getScopeHierarchy } from '../../../utils/compute-available-environment-variable-scope'
 
 export const validateKey = (

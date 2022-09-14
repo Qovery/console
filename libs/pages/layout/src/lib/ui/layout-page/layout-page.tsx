@@ -1,5 +1,5 @@
 import { SignUp } from 'qovery-typescript-axios'
-import { WarningScreenMobile } from '@console/shared/ui'
+import { WarningScreenMobile } from '@qovery/shared/ui'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 

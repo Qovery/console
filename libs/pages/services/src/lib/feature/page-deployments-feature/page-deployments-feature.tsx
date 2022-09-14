@@ -6,11 +6,11 @@ import {
   environmentsLoadingEnvironmentDeployments,
   fetchEnvironmentDeploymentHistory,
   selectEnvironmentById,
-} from '@console/domains/environment'
-import { ServiceTypeEnum } from '@console/shared/enums'
-import { DeploymentService, EnvironmentEntity } from '@console/shared/interfaces'
-import { BaseLink } from '@console/shared/ui'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/environment'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { DeploymentService, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { BaseLink } from '@qovery/shared/ui'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {

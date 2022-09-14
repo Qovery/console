@@ -1,4 +1,4 @@
-import { Tooltip } from '@console/shared/ui'
+import { Tooltip } from '@qovery/shared/ui'
 import Icon from '../icon/icon'
 
 export enum AvatarStyle {

@@ -1,6 +1,5 @@
-import { OrganizationPlanType } from '@console/domains/organization'
 import { render } from '__tests__/utils/setup-jest'
-
+import { OrganizationPlanType } from '@qovery/domains/organization'
 import PlanCard, { PlanCardProps } from './plan-card'
 
 describe('PlanCard', () => {

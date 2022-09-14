@@ -1,4 +1,4 @@
-import { IconEnum } from '@console/shared/enums'
+import { IconEnum } from '@qovery/shared/enums'
 import IconFa from '../icon-fa/icon-fa'
 import { IconAwesomeEnum } from './icon-awesome.enum'
 import BitbucketIcon from './icons-git/bitbucket'

@@ -1,5 +1,5 @@
-import { Icon } from '@console/shared/ui'
-import { screen, render, fireEvent } from '__tests__/utils/setup-jest'
+import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
+import { Icon } from '@qovery/shared/ui'
 import ButtonIconActionElement, { ButtonIconActionElementProps } from './button-icon-action-element'
 
 describe('ButtonIconActionElement', () => {

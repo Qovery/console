@@ -1,5 +1,5 @@
-import { Route } from '@console/shared/router'
-import { Navbar } from '@console/shared/ui'
+import { Route } from '@qovery/shared/router'
+import { Navbar } from '@qovery/shared/ui'
 import OnboardingRightContent from '../onboarding-right-content/onboarding-right-content'
 
 export interface LayoutOnboardingProps {

@@ -1,4 +1,4 @@
-import { applicationFactoryMock } from '@console/domains/application'
+import { applicationFactoryMock } from '@qovery/domains/application'
 import { formatData, handleSubmit } from './handle-submit'
 
 describe('handleSubmit()', () => {

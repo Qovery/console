@@ -1,4 +1,4 @@
-import { IconFa } from '@console/shared/ui'
+import { IconFa } from '@qovery/shared/ui'
 
 export interface PlanListProps {
   title: string

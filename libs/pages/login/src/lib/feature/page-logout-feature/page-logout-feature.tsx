@@ -1,9 +1,9 @@
-import { useAuth } from '@console/shared/auth'
-import { useNavigate } from 'react-router'
-import { LoadingScreen } from '@console/shared/ui'
 import posthog from 'posthog-js'
-import { LOGIN_URL } from '@console/shared/router'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
+import { useAuth } from '@qovery/shared/auth'
+import { LOGIN_URL } from '@qovery/shared/router'
+import { LoadingScreen } from '@qovery/shared/ui'
 
 export function PageLogoutFeature() {
   const { authLogout } = useAuth()

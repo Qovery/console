@@ -1,5 +1,5 @@
-import { Button, ButtonSize, ButtonStyle, Icon } from '@console/shared/ui'
-import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@console/shared/router'
+import { ONBOARDING_MORE_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/router'
+import { Button, ButtonSize, ButtonStyle, Icon } from '@qovery/shared/ui'
 
 interface StepThanksProps {
   firstName: string

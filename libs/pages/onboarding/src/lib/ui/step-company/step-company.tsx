@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 import { Control, Controller } from 'react-hook-form'
-import { Value } from '@console/shared/interfaces'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@console/shared/ui'
+import { Value } from '@qovery/shared/interfaces'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface StepCompanyProps {
   dataSize: Array<Value>

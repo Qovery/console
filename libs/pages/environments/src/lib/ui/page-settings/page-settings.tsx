@@ -1,5 +1,5 @@
-import { Button } from '@console/shared/ui'
 import { useParams } from 'react-router'
+import { Button } from '@qovery/shared/ui'
 
 /* eslint-disable-next-line */
 export interface PageSettingsProps {}

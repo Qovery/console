@@ -1,5 +1,5 @@
-import { applicationFactoryMock } from '@console/domains/application'
 import { render } from '__tests__/utils/setup-jest'
+import { applicationFactoryMock } from '@qovery/domains/application'
 import { PageGeneral, PageGeneralProps } from './page-general'
 
 let props: PageGeneralProps

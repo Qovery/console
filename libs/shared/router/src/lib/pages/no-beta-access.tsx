@@ -1,8 +1,7 @@
-import { useSelector } from 'react-redux'
-import { selectUser } from '@console/domains/user'
-
-import { Link } from '@console/shared/ui'
 import posthog from 'posthog-js'
+import { useSelector } from 'react-redux'
+import { selectUser } from '@qovery/domains/user'
+import { Link } from '@qovery/shared/ui'
 
 export function NoBetaAccess() {
   const user = useSelector(selectUser)

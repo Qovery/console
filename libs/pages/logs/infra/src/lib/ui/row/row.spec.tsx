@@ -1,8 +1,8 @@
-import { screen, render } from '__tests__/utils/setup-jest'
-import { clusterLogFactoryMock } from '@console/domains/organization'
-import Row, { RowProps } from './row'
-import { LogsType } from '@console/shared/enums'
+import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { clusterLogFactoryMock } from '@qovery/domains/organization'
+import { LogsType } from '@qovery/shared/enums'
+import Row, { RowProps } from './row'
 
 describe('Row', () => {
   const props: RowProps = {

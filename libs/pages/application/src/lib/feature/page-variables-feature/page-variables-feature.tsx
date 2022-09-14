@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { selectApplicationById } from '@console/domains/application'
+import { selectApplicationById } from '@qovery/domains/application'
 import {
   environmentVariableFactoryMock,
   fetchEnvironmentVariables,
@@ -10,18 +10,18 @@ import {
   getSecretEnvironmentVariablesState,
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
-} from '@console/domains/environment-variable'
-import { getServiceType } from '@console/shared/enums'
+} from '@qovery/domains/environment-variable'
+import { getServiceType } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
   LoadingStatus,
   SecretEnvironmentVariableEntity,
-} from '@console/shared/interfaces'
-import { TableHeadProps } from '@console/shared/ui'
-import { useDocumentTitle } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/shared/interfaces'
+import { TableHeadProps } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'
 import { sortVariable } from './utils/sort-variable'

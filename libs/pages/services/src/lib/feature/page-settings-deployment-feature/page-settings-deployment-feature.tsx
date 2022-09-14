@@ -8,9 +8,9 @@ import {
   environmentsLoadingStatus,
   fetchEnvironmentDeploymentRules,
   selectEnvironmentDeploymentRulesByEnvId,
-} from '@console/domains/environment'
-import { dateToHours, weekdaysValues } from '@console/shared/utils'
-import { AppDispatch, RootState } from '@console/store/data'
+} from '@qovery/domains/environment'
+import { dateToHours, weekdaysValues } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsDeployment from '../../ui/page-settings-deployment/page-settings-deployment'
 
 export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: EnvironmentDeploymentRule) => {

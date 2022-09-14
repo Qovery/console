@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react'
-import { Icon } from '@console/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 
 export interface TableHeadSortProps {
   title: string

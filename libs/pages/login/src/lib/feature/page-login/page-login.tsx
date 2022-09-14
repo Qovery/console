@@ -1,9 +1,9 @@
-import { useDocumentTitle } from '@console/shared/utils'
-import { AuthEnum, useAuth } from '@console/shared/auth'
+import { useCallback } from 'react'
+import { AuthEnum, useAuth } from '@qovery/shared/auth'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import useRedirectIfLogged from '../../hooks/use-redirect-if-logged/use-redirect-if-logged'
 import LayoutLogin from '../../ui/layout-login/layout-login'
 import Login from '../../ui/login/login'
-import { useCallback } from 'react'
-import useRedirectIfLogged from '../../hooks/use-redirect-if-logged/use-redirect-if-logged'
 
 export function PageLoginFeature() {
   const { authLogin } = useAuth()

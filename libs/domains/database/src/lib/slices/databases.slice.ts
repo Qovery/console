@@ -17,10 +17,10 @@ import {
   DeploymentHistoryDatabase,
   Status,
 } from 'qovery-typescript-axios'
-import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@console/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@console/shared/toast'
-import { addOneToManyRelation, getEntitiesByIds, refactoDatabasePayload, shortToLongId } from '@console/shared/utils'
-import { RootState } from '@console/store/data'
+import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { addOneToManyRelation, getEntitiesByIds, refactoDatabasePayload, shortToLongId } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 

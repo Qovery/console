@@ -1,17 +1,17 @@
-import { useParams } from 'react-router-dom'
 import { Navigate, Route, Routes } from 'react-router'
+import { useParams } from 'react-router-dom'
 import {
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_SETTINGS_GENERAL_URL,
-  APPLICATION_SETTINGS_STORAGE_URL,
-  APPLICATION_SETTINGS_RESOURCES_URL,
-  APPLICATION_URL,
-  APPLICATION_SETTINGS_DANGER_ZONE_URL,
-  APPLICATION_SETTINGS_PORT_URL,
-  APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
-} from '@console/shared/router'
-import { useDocumentTitle } from '@console/shared/utils'
+  APPLICATION_SETTINGS_DANGER_ZONE_URL,
+  APPLICATION_SETTINGS_DOMAIN_URL,
+  APPLICATION_SETTINGS_GENERAL_URL,
+  APPLICATION_SETTINGS_PORT_URL,
+  APPLICATION_SETTINGS_RESOURCES_URL,
+  APPLICATION_SETTINGS_STORAGE_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+} from '@qovery/shared/router'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 

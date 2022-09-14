@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { LoadingStatus, Value } from '@console/shared/interfaces'
+import { LoadingStatus, Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -10,7 +10,7 @@ import {
   InputText,
   LoaderSpinner,
   useModal,
-} from '@console/shared/ui'
+} from '@qovery/shared/ui'
 import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-modal'
 
 export interface GitRepositorySettingsProps {
