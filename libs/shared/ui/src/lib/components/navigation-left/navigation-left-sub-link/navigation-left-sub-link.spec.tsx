@@ -1,5 +1,5 @@
-import { screen, render } from '__tests__/utils/setup-jest'
 import { fireEvent } from '@testing-library/react'
+import { render, screen } from '__tests__/utils/setup-jest'
 import NavigationLeftSubLink, { NavigationLeftSubLinkProps } from './navigation-left-sub-link'
 
 describe('NavigationLeftSubLink', () => {
@@ -46,5 +46,30 @@ describe('NavigationLeftSubLink', () => {
     fireEvent.click(trigger)
 
     expect(trigger.querySelector('.icon-solid-angle-down')?.classList.contains('rotate-180')).toBeTruthy()
+  })
+
+  it('should have a click emitted', () => {
+    const onClick = jest.fn()
+
+    props.link = {
+      title: 'my-title',
+      icon: 'icon-solid-angle-down',
+      url: '/general',
+      subLinks: [
+        {
+          title: 'title',
+          url: '/general-second',
+          onClick: onClick,
+        },
+      ],
+    }
+
+    render(<NavigationLeftSubLink {...props} />)
+
+    const link = screen.getByTestId('sub-link')
+
+    fireEvent.click(link)
+
+    expect(onClick.mock.calls.length).toEqual(1)
   })
 })

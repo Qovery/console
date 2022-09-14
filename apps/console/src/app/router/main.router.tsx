@@ -1,3 +1,4 @@
+import { JSXElementConstructor, ReactElement } from 'react'
 import { PageApplication } from '@qovery/pages/application'
 import { PageDatabase } from '@qovery/pages/database'
 import { PageEnvironments } from '@qovery/pages/environments'
@@ -17,7 +18,16 @@ import {
 } from '@qovery/shared/router'
 import RedirectOverview from '../components/redirect-overview'
 
-export const ROUTER = [
+interface RouterProps {
+  path: string
+  component: ReactElement<any, string | JSXElementConstructor<any>>
+  protected: boolean
+  layout: boolean
+  darkMode?: boolean
+  topBar?: boolean
+}
+
+export const ROUTER: RouterProps[] = [
   {
     path: ORGANIZATION_URL(),
     component: <RedirectOverview />,
@@ -31,10 +41,11 @@ export const ROUTER = [
     layout: true,
   },
   {
-    path: SETTINGS_URL(),
+    path: `${SETTINGS_URL()}/*`,
     component: <PageSettings />,
     protected: true,
     layout: true,
+    topBar: false,
   },
   {
     path: `${ENVIRONMENTS_URL()}/*`,

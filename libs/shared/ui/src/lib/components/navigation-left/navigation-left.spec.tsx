@@ -1,5 +1,5 @@
-import { screen, render } from '__tests__/utils/setup-jest'
 import { fireEvent } from '@testing-library/react'
+import { render, screen } from '__tests__/utils/setup-jest'
 import NavigationLeft, { NavigationLeftProps, linkClassName } from './navigation-left'
 
 describe('NavigationLeft', () => {
