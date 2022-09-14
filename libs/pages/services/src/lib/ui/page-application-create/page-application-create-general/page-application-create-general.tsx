@@ -51,7 +51,7 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              className="mb-6"
+              className="mb-3"
               name={field.name}
               onChange={field.onChange}
               value={field.value}

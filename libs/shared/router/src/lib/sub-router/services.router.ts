@@ -15,3 +15,4 @@ export const SERVICES_APPLICATION_CREATION_URL = '/create'
 
 // subrouter for app/container steps /create/general /create/settings etc...
 export const SERVICES_CREATION_GENERAL_URL = '/general'
+export const SERVICES_CREATION_RESOURCES_URL = '/resources'
