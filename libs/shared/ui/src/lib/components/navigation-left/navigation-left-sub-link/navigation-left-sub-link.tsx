@@ -37,6 +37,7 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
           {link.subLinks.map((subLink, index) =>
             subLink.onClick ? (
               <div
+                data-testid="sub-link"
                 key={index}
                 className={`${linkClassName(pathname, subLink.url)} pl-[37px]`}
                 onClick={() => subLink.onClick && subLink.onClick()}
@@ -45,6 +46,7 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
               </div>
             ) : (
               <Link
+                data-testid="sub-link"
                 key={index}
                 to={subLink.url || ''}
                 className={`flex ${linkClassName(pathname, subLink.url)} pl-[37px]`}
