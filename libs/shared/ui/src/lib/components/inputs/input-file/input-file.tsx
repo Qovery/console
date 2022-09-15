@@ -36,7 +36,7 @@ export function InputFile(props: InputFileProps) {
     <label
       htmlFor="dropzone-file"
       className={`relative flex items-center justify-center w-[72px] h-[72px] rounded bg-element-light-lighter-100 border border-element-light-lighter-600 ease-out duration-150 border-dashed cursor-pointer ${
-        !selectedImage ? 'hover:bg-element-light-lighter-300' : ''
+        !selectedImage ? 'hover:bg-element-light-lighter-300' : 'bg-element-light-lighter-100'
       } ${className}`}
     >
       <input id="dropzone-file" type="file" className="hidden" onChange={imageChange} />
@@ -44,7 +44,7 @@ export function InputFile(props: InputFileProps) {
       {selectedImage ? (
         <>
           <img
-            className="absolute z-10 top-0 left-0 w-full h-full object-contain p-2"
+            className="absolute z-10 top-0 left-0 w-full h-full object-contain p-2 hover:opacity-75 ease-out duration-150"
             src={URL.createObjectURL(selectedImage as Blob | MediaSource)}
             alt="file"
           />
