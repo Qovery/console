@@ -2,6 +2,8 @@ import {
   ApplicationEditRequest,
   ApplicationGitRepositoryRequest,
   DatabaseEditRequest,
+  Organization,
+  OrganizationEditRequest,
   ServiceStorageStorage,
 } from 'qovery-typescript-axios'
 import { ContainerApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
@@ -87,4 +89,17 @@ export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
   }
 
   return databaseRequestPayload
+}
+
+export function refactoOrganizationPayload(organization: Partial<Organization>) {
+  const organizationRequestPayload: OrganizationEditRequest = {
+    name: organization.name || '',
+    description: organization.description,
+    icon_url: organization.icon_url,
+    logo_url: organization.logo_url,
+    website_url: organization.website_url,
+    admin_emails: organization.admin_emails,
+  }
+
+  return organizationRequestPayload
 }

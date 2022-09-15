@@ -12,9 +12,10 @@ export interface InputTextAreaProps {
 }
 
 export function InputTextArea(props: InputTextAreaProps) {
-  const { label, value, name, onChange, className, error } = props
+  const { label, value = '', name, onChange, className, error } = props
 
   const [focused, setFocused] = useState(false)
+
   const inputRef = useRef<HTMLDivElement>(null)
 
   const hasFocus = focused

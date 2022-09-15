@@ -1,8 +1,14 @@
 import { Application, DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/domains/database'
+import { organizationFactoryMock } from '@qovery/domains/organization'
 import { GitApplicationEntity } from '@qovery/shared/interfaces'
 import { refactoDatabasePayload } from '@qovery/shared/utils'
-import { refactoContainerApplicationPayload, refactoGitApplicationPayload, refactoPayload } from './refacto-payload'
+import {
+  refactoContainerApplicationPayload,
+  refactoGitApplicationPayload,
+  refactoOrganizationPayload,
+  refactoPayload,
+} from './refacto-payload'
 
 describe('testing payload refactoring', () => {
   it('should remove default values (id, created_at and updated_at)', () => {
@@ -116,6 +122,29 @@ describe('testing payload refactoring', () => {
       cpu: 1024,
       memory: 1024,
       storage: 1024,
+    })
+  })
+
+  it('should remove organization values', () => {
+    const response: any = {
+      id: '1',
+      created_at: '',
+      updated_at: '',
+      name: 'hello',
+      description: 'hello world',
+      icon_url: 'https://qovery.com',
+      logo_url: 'https://qovery.com',
+      website_url: 'https://qovery.com',
+      admin_emails: ['test@test.com'],
+    }
+
+    expect(refactoOrganizationPayload(response)).toEqual({
+      name: 'hello',
+      description: 'hello world',
+      icon_url: 'https://qovery.com',
+      logo_url: 'https://qovery.com',
+      website_url: 'https://qovery.com',
+      admin_emails: ['test@test.com'],
     })
   })
 })
