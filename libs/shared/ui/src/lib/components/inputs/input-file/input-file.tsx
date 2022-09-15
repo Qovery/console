@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
@@ -6,12 +6,17 @@ export interface InputFileProps {
   value: string
   onChange?: (e: string) => void
   className?: string
+  accept?: string
 }
 
 export function InputFile(props: InputFileProps) {
-  const { value, className = '', onChange } = props
+  const { value, className = '', onChange, accept = 'image/*' } = props
 
   const [selectedImage, setSelectedImage] = useState<string | undefined | Blob | MediaSource>(value)
+
+  useEffect(() => {
+    if (value) setSelectedImage(value)
+  }, [value, setSelectedImage])
 
   const imageChange = (event: { target: HTMLInputElement & EventTarget }) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -32,6 +37,10 @@ export function InputFile(props: InputFileProps) {
     setSelectedImage(undefined)
   }
 
+  const checkIfBase64 = (value: string) => {
+    return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(value)
+  }
+
   return (
     <label
       htmlFor="dropzone-file"
@@ -39,13 +48,15 @@ export function InputFile(props: InputFileProps) {
         !selectedImage ? 'hover:bg-element-light-lighter-300' : 'bg-element-light-lighter-100'
       } ${className}`}
     >
-      <input id="dropzone-file" type="file" className="hidden" onChange={imageChange} />
+      <input id="dropzone-file" type="file" className="hidden" accept={accept} onChange={imageChange} />
 
       {selectedImage ? (
         <>
           <img
             className="absolute z-10 top-0 left-0 w-full h-full object-contain p-2 hover:opacity-75 ease-out duration-150"
-            src={URL.createObjectURL(selectedImage as Blob | MediaSource)}
+            src={
+              checkIfBase64(selectedImage as string) ? URL.createObjectURL(selectedImage as Blob | MediaSource) : value
+            }
             alt="file"
           />
           <span
