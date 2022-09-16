@@ -1,6 +1,7 @@
 export * from './lib/components/funnel-flow-help-card/funnel-flow-help-card'
 export * from './lib/components/funnel-flow-body/funnel-flow-body'
 export * from './lib/components/funnel-flow/funnel-flow'
+export * from './lib/components/inputs/input-tags/input-tags'
 export * from './lib/components/inputs/input-file/input-file'
 export * from './lib/components/inputs/input-size-unit/input-size-unit'
 export * from './lib/components/inputs/input-size-unit/utils'
