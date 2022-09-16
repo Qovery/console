@@ -8,6 +8,7 @@ export interface InputTextAreaProps {
   className?: string
   disabled?: boolean
   error?: string
+  dataTestId?: string
 }
 
 export function InputTextArea(props: InputTextAreaProps) {
@@ -24,7 +25,11 @@ export function InputTextArea(props: InputTextAreaProps) {
   const isDisabled = props.disabled ? 'input--disabled !border-element-light-lighter-500' : ''
 
   return (
-    <div className={className} onClick={() => inputRef.current?.querySelector('textarea')?.focus()}>
+    <div
+      data-testid={`${props.dataTestId || 'input-textarea'}`}
+      className={className}
+      onClick={() => inputRef.current?.querySelector('textarea')?.focus()}
+    >
       <div
         aria-label="textarea-container"
         className={`input pb-0 pr-2 ${inputActions} ${hasError} ${isDisabled} ${hasLabelUp}`}

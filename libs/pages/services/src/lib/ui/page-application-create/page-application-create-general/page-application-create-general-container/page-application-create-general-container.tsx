@@ -36,6 +36,7 @@ export function PageApplicationCreateGeneralContainer(props: PageApplicationCrea
         }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
+            dataTestId="input-select-registry"
             className="mb-3"
             onChange={field.onChange}
             value={field.value}
@@ -53,6 +54,7 @@ export function PageApplicationCreateGeneralContainer(props: PageApplicationCrea
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-text-image-name"
             name="image_name"
             className="mb-3"
             onChange={field.onChange}
@@ -70,6 +72,7 @@ export function PageApplicationCreateGeneralContainer(props: PageApplicationCrea
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-text-image-tag"
             name="image_tag"
             className="mb-3"
             onChange={field.onChange}
@@ -82,11 +85,9 @@ export function PageApplicationCreateGeneralContainer(props: PageApplicationCrea
       <Controller
         name="image_entry_point"
         control={control}
-        rules={{
-          required: 'Please type a value.',
-        }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-text-image-entry-point"
             name="image_entry_point"
             className="mb-3"
             onChange={field.onChange}
@@ -99,11 +100,9 @@ export function PageApplicationCreateGeneralContainer(props: PageApplicationCrea
       <Controller
         name="cmd_arguments"
         control={control}
-        rules={{
-          required: 'Please type a value.',
-        }}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
+            dataTestId="input-textarea-cmd-arguments"
             name="cmd_arguments"
             className="mb-3"
             onChange={field.onChange}

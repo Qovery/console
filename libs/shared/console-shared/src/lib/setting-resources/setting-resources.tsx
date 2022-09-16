@@ -25,8 +25,12 @@ export function SettingResources(props: SettingResourcesProps) {
   const { getMemoryUnit, memorySize, displayWarningCpu, application } = props
   const { control, watch } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
 
-  const maxMemoryBySize =
+  let maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
+
+  if (!application) {
+    maxMemoryBySize = memorySize === MemorySizeEnum.GB ? 8192 / 1024 : 8192
+  }
 
   return (
     <div>
@@ -41,15 +45,7 @@ export function SettingResources(props: SettingResourcesProps) {
         <Controller
           name="cpu"
           control={control}
-          render={({ field }) => (
-            <Slider
-              min={0}
-              max={convertCpuToVCpu(application?.maximum_cpu)}
-              step={0.25}
-              onChange={field.onChange}
-              value={field.value}
-            />
-          )}
+          render={({ field }) => <Slider min={0} max={40} step={0.25} onChange={field.onChange} value={field.value} />}
         />
         <p className="text-text-400 text-xs mt-3">
           Max consumption by node accordingly to your cluster: {convertCpuToVCpu(application?.maximum_cpu)} vCPU
