@@ -15,6 +15,7 @@ export interface InputSizeUnitProps {
   getUnit?: (value: string | MemorySizeEnum) => void
   onChange?: (...event: any[]) => void
   error?: FieldError
+  showConsumption?: boolean
 }
 
 export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number | string) => {
@@ -26,7 +27,7 @@ export const getSizeUnit = (memorySize: MemorySizeEnum | string, value: number |
 }
 
 export function InputSizeUnit(props: InputSizeUnitProps) {
-  const { name, maxSize, currentSize = 0, getUnit, currentUnit, error, value, onChange } = props
+  const { name, maxSize, currentSize = 0, getUnit, currentUnit, error, value, onChange, showConsumption = true } = props
 
   const [memorySize, setMemorySize] = useState<string | MemorySizeEnum>(currentUnit || MemorySizeEnum.MB)
 
@@ -58,10 +59,12 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
               : undefined
           }
         />
-        <p data-testid="current-consumption" className="text-text-400 text-xs mt-1 ml-4">
-          Current consumption:{' '}
-          {currentSize < 1024 ? currentSize + ` ${MemorySizeEnum.MB}` : currentSize / 1024 + ` ${MemorySizeEnum.GB}`}
-        </p>
+        {showConsumption && (
+          <p data-testid="current-consumption" className="text-text-400 text-xs mt-1 ml-4">
+            Current consumption:{' '}
+            {currentSize < 1024 ? currentSize + ` ${MemorySizeEnum.MB}` : currentSize / 1024 + ` ${MemorySizeEnum.GB}`}
+          </p>
+        )}
       </div>
       <InputSelect
         className="w-full h-full"

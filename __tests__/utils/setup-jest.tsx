@@ -19,7 +19,9 @@ afterEach(() => {
   cleanup()
 })
 
-afterAll(() => server.close())
+afterAll(() => {
+  server.close()
+})
 
 type CustomRenderOptions = {
   wrapperProps?: Props

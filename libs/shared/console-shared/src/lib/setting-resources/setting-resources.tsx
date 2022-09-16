@@ -47,9 +47,11 @@ export function SettingResources(props: SettingResourcesProps) {
           control={control}
           render={({ field }) => <Slider min={0} max={40} step={0.25} onChange={field.onChange} value={field.value} />}
         />
-        <p className="text-text-400 text-xs mt-3">
-          Max consumption by node accordingly to your cluster: {convertCpuToVCpu(application?.maximum_cpu)} vCPU
-        </p>
+        {application && (
+          <p className="text-text-400 text-xs mt-3">
+            Max consumption by node accordingly to your cluster: {convertCpuToVCpu(application?.maximum_cpu)} vCPU
+          </p>
+        )}
         {displayWarningCpu && (
           <WarningBox
             dataTestId="warning-box"
@@ -75,6 +77,7 @@ export function SettingResources(props: SettingResourcesProps) {
               currentSize={application?.memory}
               currentUnit={memorySize}
               getUnit={getMemoryUnit}
+              showConsumption={!!application}
             />
           )}
         />

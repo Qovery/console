@@ -73,6 +73,7 @@ export function PageApplicationCreateGeneralGitApplication() {
 
         {watchBuildMode === BuildModeEnum.DOCKER && (
           <Controller
+            data-testid="input-text-dockerfile-path"
             key="dockerfile_path"
             name="dockerfile_path"
             control={control}

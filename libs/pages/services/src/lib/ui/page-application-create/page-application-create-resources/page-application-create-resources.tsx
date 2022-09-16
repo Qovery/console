@@ -37,7 +37,13 @@ export function PageApplicationCreateResources(props: PageApplicationCreateResou
           <Button onClick={props.onBack} type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
             Cancel
           </Button>
-          <Button type="submit" disabled={!formState.isValid} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
+          <Button
+            dataTestId="button-submit"
+            type="submit"
+            disabled={!formState.isValid}
+            size={ButtonSize.XLARGE}
+            style={ButtonStyle.BASIC}
+          >
             Continue
           </Button>
         </div>

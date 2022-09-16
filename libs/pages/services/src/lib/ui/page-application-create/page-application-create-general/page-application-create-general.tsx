@@ -16,10 +16,6 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
   const { control, getValues, watch, formState } = useFormContext<GlobalData>()
   watch('applicationSource')
 
-  watch((data) => {
-    console.log(data)
-  })
-
   return (
     <div>
       <div className="mb-10">
@@ -58,6 +54,7 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
           }}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
+              dataTestId="input-select-source"
               className="mb-6"
               onChange={field.onChange}
               value={field.value}
@@ -84,7 +81,13 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
           <Button type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
             Cancel
           </Button>
-          <Button type="submit" disabled={!formState.isValid} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
+          <Button
+            dataTestId="button-submit"
+            type="submit"
+            disabled={!formState.isValid}
+            size={ButtonSize.XLARGE}
+            style={ButtonStyle.BASIC}
+          >
             Continue
           </Button>
         </div>
