@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { cleanup, render, RenderOptions } from '@testing-library/react'
+import { RenderOptions, cleanup, render } from '@testing-library/react'
 import React from 'react'
 import { server } from '../server'
 import { Props, Wrapper } from './providers'
