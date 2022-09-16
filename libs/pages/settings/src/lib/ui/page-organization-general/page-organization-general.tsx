@@ -1,6 +1,15 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BlockContent, Button, ButtonSize, ButtonStyle, InputFile, InputText, InputTextArea } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  InputFile,
+  InputTags,
+  InputText,
+  InputTextArea,
+} from '@qovery/shared/ui'
 
 export interface PageOrganizationGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -76,6 +85,16 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                   label="Website"
                 />
               )}
+            />
+            <InputTags
+              label="Contact emails"
+              placeholder="Add new email"
+              tags={[
+                {
+                  id: 'remi@qovery.com',
+                  text: 'remi@qovery.com',
+                },
+              ]}
             />
           </BlockContent>
           <div className="flex justify-end">
