@@ -32,7 +32,7 @@ describe('FunnelFlow', () => {
 
   it('should call onExit when clicking on the exit button', () => {
     const { getByText } = render(<FunnelFlow {...props} />)
-    getByText('Save and exit').click()
+    getByText('Exit').click()
     expect(props.onExit).toHaveBeenCalled()
   })
 })

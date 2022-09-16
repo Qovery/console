@@ -26,7 +26,7 @@ export function FunnelFlow(props: FunnelFlowProps) {
         </div>
         <div className="border-l border-l-element-light-lighter-400 pl-4 h-full flex items-center">
           <Button onClick={props.onExit} style={ButtonStyle.TAB}>
-            Save and exit
+            Exit
           </Button>
         </div>
       </header>
