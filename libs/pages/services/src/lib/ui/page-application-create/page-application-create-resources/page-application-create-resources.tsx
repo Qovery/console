@@ -35,7 +35,7 @@ export function PageApplicationCreateResources(props: PageApplicationCreateResou
 
         <div className="flex justify-between">
           <Button onClick={props.onBack} type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
-            Cancel
+            Back
           </Button>
           <Button
             dataTestId="button-submit"

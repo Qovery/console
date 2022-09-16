@@ -1,7 +1,9 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { SERVICES_URL } from '@qovery/shared/router'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText, Link } from '@qovery/shared/ui'
 import { GlobalData } from '../../../feature/page-application-create-feature/interfaces.interface'
 import PageApplicationCreateGeneralContainer from './page-application-create-general-container/page-application-create-general-container'
@@ -14,6 +16,9 @@ export interface PageApplicationCreateGeneralProps {
 
 export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneralProps) {
   const { control, getValues, watch, formState } = useFormContext<GlobalData>()
+  const { organizationId = '', environmentId = '', projectId = '' } = useParams()
+  const navigate = useNavigate()
+
   watch('applicationSource')
 
   return (
@@ -78,7 +83,12 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         )}
 
         <div className="flex justify-between">
-          <Button type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
+          <Button
+            onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
+            type="button"
+            size={ButtonSize.XLARGE}
+            style={ButtonStyle.STROKED}
+          >
             Cancel
           </Button>
           <Button
