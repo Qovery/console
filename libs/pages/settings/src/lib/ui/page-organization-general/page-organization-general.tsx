@@ -86,16 +86,22 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 />
               )}
             />
-            <InputTags
-              label="Contact emails"
-              placeholder="Add new email"
-              tags={[
-                {
-                  id: 'remi@qovery.com',
-                  text: 'remi@qovery.com',
-                },
-              ]}
+            <Controller
+              name="admin_emails"
+              control={control}
+              render={({ field }) => (
+                <InputTags
+                  label="Contact emails"
+                  placeholder="Add new email"
+                  onChange={field.onChange}
+                  tags={field.value}
+                />
+              )}
             />
+            <p className="text-text-400 text-xs ml-4 mt-1">
+              Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
+              downtime...)
+            </p>
           </BlockContent>
           <div className="flex justify-end">
             <Button

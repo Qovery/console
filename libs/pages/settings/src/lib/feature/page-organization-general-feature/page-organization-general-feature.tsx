@@ -10,6 +10,7 @@ import PageOrganizationGeneral from '../../ui/page-organization-general/page-org
 
 export const handleSubmit = (data: FieldValues, organization: Organization) => {
   const cloneOrganization = Object.assign({}, organization)
+
   cloneOrganization.logo_url = data['logo_url']
   cloneOrganization.name = data['name']
   cloneOrganization.description = data['description']
