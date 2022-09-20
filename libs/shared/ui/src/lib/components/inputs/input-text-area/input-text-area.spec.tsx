@@ -1,6 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { fireEvent, screen } from '@testing-library/react'
-
+import { render } from '__tests__/utils/setup-jest'
 import InputTextArea, { InputTextAreaProps } from './input-text-area'
 
 describe('InputTextAreaArea', () => {
@@ -41,6 +40,6 @@ describe('InputTextAreaArea', () => {
 
     fireEvent.change(input, { target: { value: 'some new text value' } })
 
-    expect((input as any).value).toBe('some new text value')
+    expect((input as HTMLInputElement).value).toBe('some new text value')
   })
 })

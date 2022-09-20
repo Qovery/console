@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 
 export interface InputTextAreaProps {
   label: string
   name: string
   value?: string | undefined
-  onChange?: () => void
+  onChange?: (e: FormEvent<HTMLInputElement>) => void
   className?: string
   disabled?: boolean
   error?: string
@@ -13,6 +13,8 @@ export interface InputTextAreaProps {
 
 export function InputTextArea(props: InputTextAreaProps) {
   const { label, value = '', name, onChange, className, error, dataTestId = 'input-textarea' } = props
+
+  const [currentValue, setCurrentValue] = useState(value)
 
   const [focused, setFocused] = useState(false)
 
@@ -43,8 +45,11 @@ export function InputTextArea(props: InputTextAreaProps) {
           name={name}
           id={label}
           className="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-text-700 outline-0"
-          value={value}
-          onChange={onChange}
+          value={currentValue}
+          onChange={(e) => {
+            if (onChange) onChange(e)
+            setCurrentValue(e.currentTarget.value)
+          }}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           disabled={props.disabled}
