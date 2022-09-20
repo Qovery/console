@@ -1,12 +1,6 @@
-import { useEffect, useState } from 'react'
-import { WithContext as Tags } from 'react-tag-input'
+import { FormEvent, KeyboardEvent, useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
-
-export interface TagInterface {
-  id: string
-  text: string
-}
 
 export interface InputTagsProps {
   label: string
@@ -15,29 +9,14 @@ export interface InputTagsProps {
   onChange?: (value: string[]) => void
 }
 
-const removeComponent = (props: any) => {
-  return (
-    <div
-      onClick={props.onRemove}
-      className="flex items-center justify-center w-4 h-4 rounded-full absolute top-[6px] right-1 text-xs cursor-pointer hover:bg-element-light-lighter-400 transition-background ease-out duration-200 "
-    >
-      <Icon name={IconAwesomeEnum.CROSS} />
-    </div>
-  )
-}
-
-const transformValues = (tags: string[]) => {
-  return tags?.length > 0 ? tags.map((tag) => ({ id: tag, text: tag })) : []
-}
-
 export function InputTags(props: InputTagsProps) {
   const { label, tags, placeholder = 'Add new tag', onChange } = props
 
-  const [currentTags, setCurrentTags] = useState(transformValues(tags) || [])
+  const [currentTags, setCurrentTags] = useState(tags || [])
   const [focused, setFocused] = useState(false)
 
   useEffect(() => {
-    if (tags?.length > 0) setCurrentTags(transformValues(tags))
+    if (tags?.length > 0) setCurrentTags(tags)
   }, [tags, setCurrentTags])
 
   const hasFocus = focused
@@ -45,25 +24,34 @@ export function InputTags(props: InputTagsProps) {
 
   const inputActions = hasFocus ? 'input--focused' : ''
 
-  const handleDelete = (i: number) => {
-    const newTags = currentTags.filter((tag: TagInterface, index: number) => index !== i)
-    setCurrentTags(newTags)
-    onChange && onChange(newTags.map((tag) => tag.id))
+  const handleKeyDown = (event: FormEvent<HTMLInputElement>) => {
+    const key = (event as KeyboardEvent<HTMLInputElement>).key
+    const target = event.target as HTMLInputElement
+    const value = target.value
+
+    // remove tag
+    if (key === 'Backspace') {
+      console.log(value)
+      value.length === 0 && currentTags.length > 0 && removeTag(currentTags.length - 1)
+    }
+
+    // add tag
+    if (key === 'Enter') {
+      if (!value.trim()) return
+      if (currentTags.find((v) => value.toLowerCase() === v.toLowerCase())) return
+
+      const newTags = [...currentTags, value]
+      setCurrentTags(newTags)
+
+      target.value = ''
+      onChange && onChange(newTags)
+    }
   }
 
-  const handleAddition = (tag: TagInterface) => {
-    const newTags = [...currentTags, tag]
+  const removeTag = (index: number) => {
+    const newTags = currentTags.filter((el: string, i: number) => i !== index)
     setCurrentTags(newTags)
-    onChange && onChange(newTags.map((tag) => tag.id))
-  }
-
-  const handleDrag = (tag: TagInterface, currPos: number, newPos: number) => {
-    const newTags = currentTags.slice()
-
-    newTags.splice(currPos, 1)
-    newTags.splice(newPos, 0, tag)
-
-    setCurrentTags(newTags)
+    onChange && onChange(newTags)
   }
 
   return (
@@ -73,28 +61,32 @@ export function InputTags(props: InputTagsProps) {
       onBlur={() => setFocused(false)}
     >
       <label className={`${hasFocus ? 'text-xs' : 'text-sm translate-y-2'}`}>{label}</label>
-      <Tags
-        tags={currentTags}
-        classNames={{
-          tags: `${focused || currentTags?.length > 0 ? 'pt-3' : ''}`,
-          tag: 'relative inline-flex items-center rounded-[33px] bg-element-light-lighter-200 border border-element-light-lighter-600 pl-3 pr-7 h-7 mr-1 mt-1 text-sm text-text-600',
-          tagInput: 'inline-flex',
-          selected: 'inline',
-          tagInputField: `${!focused ? 'text-transparent' : ''} ${
+      <div className={`${focused || currentTags?.length > 0 ? 'pt-3' : ''}`}>
+        {currentTags.map((tag, index) => (
+          <div
+            key={index}
+            className="relative select-none inline-flex items-center rounded-[33px] bg-element-light-lighter-200 border border-element-light-lighter-600 pl-3 pr-7 h-7 mr-1 mt-1 text-sm text-text-600"
+          >
+            <span className="text">{tag}</span>
+            <div
+              onClick={() => removeTag(index)}
+              className="flex items-center justify-center w-4 h-4 rounded-full absolute top-[6px] right-1 text-xs cursor-pointer hover:bg-element-light-lighter-400 transition-background ease-out duration-200 "
+            >
+              <Icon name={IconAwesomeEnum.CROSS} />
+            </div>
+          </div>
+        ))}
+        <input
+          onKeyDown={handleKeyDown}
+          type="text"
+          className={`${!focused ? 'text-transparent' : ''} ${
             focused || currentTags?.length > 0
               ? 'inline-flex text-text-600 text-ssm'
               : 'absolute top-0 left-0 w-full h-full bg-transparent'
-          }`,
-        }}
-        handleDelete={handleDelete}
-        handleAddition={handleAddition}
-        handleDrag={handleDrag}
-        removeComponent={removeComponent as any}
-        inputFieldPosition="bottom"
-        placeholder={currentTags?.length > 0 ? placeholder : ''}
-        autocomplete
-        autofocus={focused}
-      />
+          }`}
+          placeholder={currentTags?.length > 0 ? placeholder : ''}
+        />
+      </div>
     </div>
   )
 }
