@@ -9,7 +9,6 @@ import {
 } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { debug } from 'console'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { environmentFactoryMock } from '@qovery/domains/environment'
 import { clusterFactoryMock } from '@qovery/domains/organization'

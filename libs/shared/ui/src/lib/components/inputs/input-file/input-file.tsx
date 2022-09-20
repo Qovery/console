@@ -7,10 +7,11 @@ export interface InputFileProps {
   onChange?: (e: string) => void
   className?: string
   accept?: string
+  dataTestId?: string
 }
 
 export function InputFile(props: InputFileProps) {
-  const { value, className = '', onChange, accept = 'image/*' } = props
+  const { value, className = '', onChange, accept = 'image/*', dataTestId = 'input-file' } = props
 
   const [selectedImage, setSelectedImage] = useState<string | undefined | Blob | MediaSource>(value)
 
@@ -20,7 +21,7 @@ export function InputFile(props: InputFileProps) {
 
   const imageChange = (event: { target: HTMLInputElement & EventTarget }) => {
     if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0] as any
+      const file = event.target.files[0]
 
       setSelectedImage(file)
 
@@ -33,16 +34,13 @@ export function InputFile(props: InputFileProps) {
     }
   }
 
-  const removeSelectedImage = () => {
-    setSelectedImage(undefined)
-  }
-
   const checkIfBase64 = (value: string) => {
     return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(value)
   }
 
   return (
     <label
+      data-testid={dataTestId}
       htmlFor="dropzone-file"
       className={`relative flex items-center justify-center w-[72px] h-[72px] rounded bg-element-light-lighter-100 border border-element-light-lighter-600 ease-out duration-150 border-dashed cursor-pointer ${
         !selectedImage ? 'hover:bg-element-light-lighter-300' : 'bg-element-light-lighter-100'
@@ -62,7 +60,7 @@ export function InputFile(props: InputFileProps) {
           <span
             onClick={(e) => {
               e.preventDefault()
-              removeSelectedImage()
+              setSelectedImage(undefined)
             }}
             className="w-5 h-5 flex justify-center items-center absolute z-30 -top-2 -right-2 bg-brand-50 hover:bg-brand-100 text-text-400 hover:text-brand-500 ease-out duration-150 rounded-full"
           >

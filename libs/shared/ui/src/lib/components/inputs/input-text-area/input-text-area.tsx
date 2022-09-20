@@ -12,7 +12,7 @@ export interface InputTextAreaProps {
 }
 
 export function InputTextArea(props: InputTextAreaProps) {
-  const { label, value = '', name, onChange, className, error } = props
+  const { label, value = '', name, onChange, className, error, dataTestId = 'input-textarea' } = props
 
   const [focused, setFocused] = useState(false)
 
@@ -27,7 +27,7 @@ export function InputTextArea(props: InputTextAreaProps) {
 
   return (
     <div
-      data-testid={`${props.dataTestId || 'input-textarea'}`}
+      data-testid={dataTestId}
       className={className}
       onClick={() => inputRef.current?.querySelector('textarea')?.focus()}
     >
