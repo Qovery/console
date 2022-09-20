@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 
 export interface InputTextAreaProps {
   label: string
@@ -15,6 +15,10 @@ export function InputTextArea(props: InputTextAreaProps) {
   const { label, value = '', name, onChange, className, error, dataTestId = 'input-textarea' } = props
 
   const [currentValue, setCurrentValue] = useState(value)
+
+  useEffect(() => {
+    if (value) setCurrentValue(value)
+  }, [value, setCurrentValue])
 
   const [focused, setFocused] = useState(false)
 

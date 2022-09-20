@@ -1,13 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputFileProps {
-  value: string
-  onChange?: (e: string) => void
+  value: string | undefined
+  onChange?: (e: string | undefined) => void
   className?: string
   accept?: string
   dataTestId?: string
+}
+
+export async function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.addEventListener('load', () => {
+      if (reader.result) {
+        resolve(reader.result as string)
+      }
+    })
+    reader.readAsDataURL(file)
+  })
 }
 
 export function InputFile(props: InputFileProps) {
@@ -19,20 +31,19 @@ export function InputFile(props: InputFileProps) {
     if (value) setSelectedImage(value)
   }, [value, setSelectedImage])
 
-  const imageChange = (event: { target: HTMLInputElement & EventTarget }) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0]
-
-      setSelectedImage(file)
-
-      // convert to base64
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        onChange && onChange(reader.result as string)
+  const handleChange = useCallback(
+    (event: { target: HTMLInputElement & EventTarget }) => {
+      async function doFileRead() {
+        if (event.target.files && event.target.files.length > 0) {
+          const result = await readFileAsDataURL(event.target.files[0])
+          setSelectedImage(result as string)
+          onChange && onChange(result as string)
+        }
       }
-    }
-  }
+      doFileRead()
+    },
+    [onChange]
+  )
 
   const checkIfBase64 = (value: string) => {
     return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(value)
@@ -46,11 +57,19 @@ export function InputFile(props: InputFileProps) {
         !selectedImage ? 'hover:bg-element-light-lighter-300' : 'bg-element-light-lighter-100'
       } ${className}`}
     >
-      <input id="dropzone-file" type="file" className="hidden" accept={accept} onChange={imageChange} />
+      <input
+        data-testid="input-file-field"
+        id="dropzone-file"
+        type="file"
+        className="hidden"
+        accept={accept}
+        onChange={handleChange}
+      />
 
       {selectedImage ? (
         <>
           <img
+            data-testid="input-file-image"
             className="absolute z-10 top-0 left-0 w-full h-full object-contain p-2 hover:opacity-75 ease-out duration-150"
             src={
               checkIfBase64(selectedImage as string) ? URL.createObjectURL(selectedImage as Blob | MediaSource) : value
@@ -61,6 +80,7 @@ export function InputFile(props: InputFileProps) {
             onClick={(e) => {
               e.preventDefault()
               setSelectedImage(undefined)
+              onChange && onChange(undefined)
             }}
             className="w-5 h-5 flex justify-center items-center absolute z-30 -top-2 -right-2 bg-brand-50 hover:bg-brand-100 text-text-400 hover:text-brand-500 ease-out duration-150 rounded-full"
           >
@@ -69,7 +89,7 @@ export function InputFile(props: InputFileProps) {
         </>
       ) : (
         <svg
-          className="group-hover:z-20 relative"
+          className="relative"
           xmlns="http://www.w3.org/2000/svg"
           width="17"
           height="14"
