@@ -9,6 +9,7 @@ import {
 } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { debug } from 'console'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { environmentFactoryMock } from '@qovery/domains/environment'
 import { clusterFactoryMock } from '@qovery/domains/organization'
@@ -48,7 +49,7 @@ describe('CreateCloneEnvironmentModal', () => {
   })
 
   it('should reformat name by replacing special char by hyphens', async () => {
-    const { baseElement } = render(
+    const { baseElement, debug } = render(
       wrapWithReactHookForm(<CreateCloneEnvironmentModal {...props} />, {
         defaultValues,
       })
@@ -56,6 +57,7 @@ describe('CreateCloneEnvironmentModal', () => {
     const input = getByTestId(baseElement, 'input-text')
     await act(() => {
       fireEvent.input(input, { target: { value: 'ben et remi' } })
+      debug()
     })
 
     getByDisplayValue(baseElement, 'ben-et-remi')
