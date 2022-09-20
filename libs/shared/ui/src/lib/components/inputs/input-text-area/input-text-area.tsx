@@ -4,7 +4,7 @@ export interface InputTextAreaProps {
   label: string
   name: string
   value?: string | undefined
-  onChange?: (e: FormEvent<HTMLInputElement>) => void
+  onChange?: (e: FormEvent<HTMLTextAreaElement>) => void
   className?: string
   disabled?: boolean
   error?: string
