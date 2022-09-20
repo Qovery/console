@@ -10,5 +10,5 @@ const Template: Story<InputFileProps> = (args) => <InputFile {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
-  name: 'textArea',
+  value: undefined,
 }

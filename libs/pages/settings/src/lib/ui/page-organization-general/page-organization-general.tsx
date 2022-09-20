@@ -31,7 +31,9 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               <Controller
                 name="logo_url"
                 control={control}
-                render={({ field }) => <InputFile onChange={field.onChange} value={field.value} />}
+                render={({ field }) => (
+                  <InputFile dataTestId="input-file" onChange={field.onChange} value={field.value} />
+                )}
               />
               <div className="ml-3">
                 <p className="text-text-600 font-medium mb-1">{watch('name')}</p>
@@ -60,6 +62,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               control={control}
               render={({ field }) => (
                 <InputTextArea
+                  dataTestId="input-area"
                   className="mb-3"
                   name={field.name}
                   onChange={field.onChange}
@@ -91,6 +94,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               control={control}
               render={({ field }) => (
                 <InputTags
+                  dataTestId="input-emails"
                   label="Contact emails"
                   placeholder="Add new email"
                   onChange={field.onChange}
