@@ -24,6 +24,7 @@ export interface PageApplicationInstallProps {
   gotoGlobalInformation: () => void
   gotoResources: () => void
   gotoPorts: () => void
+  isLoading: boolean
 }
 
 export function PageApplicationInstall(props: PageApplicationInstallProps) {
@@ -100,7 +101,13 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
         <Button onClick={props.onPrevious} type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
           Back
         </Button>
-        <Button dataTestId="button-submit" type="submit" size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
+        <Button
+          dataTestId="button-submit"
+          loading={props.isLoading}
+          onClick={props.onSubmit}
+          size={ButtonSize.XLARGE}
+          style={ButtonStyle.BASIC}
+        >
           Continue
         </Button>
       </div>

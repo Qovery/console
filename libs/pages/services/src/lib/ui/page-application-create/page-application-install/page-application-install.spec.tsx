@@ -1,4 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import PageApplicationInstall, { PageApplicationInstallProps } from './page-application-install'
 
 const props: PageApplicationInstallProps = {
@@ -10,7 +11,7 @@ const props: PageApplicationInstallProps = {
   },
   gotoGlobalInformation: jest.fn(),
   generalData: {
-    applicationSource: 'application',
+    serviceType: ServiceTypeEnum.APPLICATION,
     name: 'test',
   },
   gotoPorts: jest.fn(),
@@ -25,6 +26,7 @@ const props: PageApplicationInstallProps = {
       },
     ],
   },
+  isLoading: false,
 }
 
 describe('PageApplicationInstall', () => {

@@ -6,14 +6,9 @@ import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import { buildGitRepoUrl } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
-
-export const buildGitRepoUrl = (provider: string, branch: string): string => {
-  if (branch.includes('http')) return branch
-  const authProvider = provider.toLowerCase()
-  return `https://${authProvider}.com/${branch}.git`
-}
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
   const cloneApplication = Object.assign({}, application)

@@ -356,9 +356,14 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(createApplication.fulfilled, (state: ApplicationsState, action) => {
-        applicationsAdapter.addOne(state, action.payload)
+        const application = action.payload
+        applicationsAdapter.addOne(state, application)
         state.error = null
         state.loadingStatus = 'loaded'
+
+        state.joinEnvApplication = addOneToManyRelation(application.environment?.id, application.id, {
+          ...state.joinEnvApplication,
+        })
         toast(ToastEnum.SUCCESS, `Application created`)
       })
       .addCase(createApplication.rejected, (state: ApplicationsState, action) => {

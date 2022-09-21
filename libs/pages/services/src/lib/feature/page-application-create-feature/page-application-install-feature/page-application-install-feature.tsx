@@ -5,10 +5,11 @@ import {
   ContainerRequest,
   PortProtocolEnum,
 } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { createApplication } from '@qovery/domains/application'
+import { selectAllRepository } from '@qovery/domains/organization'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -18,6 +19,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody } from '@qovery/shared/ui'
+import { buildGitRepoUrl, convertCpuToVCpu } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store/data'
 import PageApplicationInstall from '../../../ui/page-application-create/page-application-install/page-application-install'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -27,6 +29,10 @@ export function PageApplicationInstallFeature() {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
+  const [loading, setLoading] = useState(false)
+
+  const repositories = useSelector(selectAllRepository)
+  const selectRepository = repositories.find((repository) => repository.name === generalData?.repository)
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
@@ -44,6 +50,14 @@ export function PageApplicationInstallFeature() {
 
   const onSubmit = () => {
     if (generalData && portData && resourcesData) {
+      setLoading(true)
+      console.log('resourceData', resourcesData)
+
+      const currentMemory = Number(resourcesData['memory'])
+      // todo uncomment this, but for this, we need to keep track of the memorySize in the resourceData
+      const memory = currentMemory //memorySize === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
+      const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
+
       if (generalData.serviceType === ServiceTypeEnum.APPLICATION) {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
@@ -52,17 +66,16 @@ export function PageApplicationInstallFeature() {
             external_port: port.external_port || 443,
             publicly_accessible: port.is_public,
             protocol: PortProtocolEnum.HTTP,
-            id: 'lklk',
           })),
-          cpu: resourcesData.cpu[0],
-          memory: resourcesData.memory,
+          cpu: cpu,
+          memory: memory,
           min_running_instances: resourcesData.instances[0],
           max_running_instances: resourcesData.instances[1],
           build_mode: generalData.build_mode as BuildModeEnum,
           dockerfile_path: generalData.dockerfile_path,
           buildpack_language: generalData.buildpack_language as BuildPackLanguageEnum,
           git_repository: {
-            url: generalData.repository || '',
+            url: buildGitRepoUrl(generalData.provider || '', selectRepository?.url || '') || '',
             root_path: generalData.root_path,
             branch: generalData.branch,
           },
@@ -83,6 +96,9 @@ export function PageApplicationInstallFeature() {
           .catch((e) => {
             console.error(e)
           })
+          .finally(() => {
+            setLoading(false)
+          })
       } else {
         const containerRequest: ContainerRequest = {
           name: generalData.name,
@@ -91,7 +107,6 @@ export function PageApplicationInstallFeature() {
             external_port: port.external_port || 443,
             publicly_accessible: port.is_public,
             protocol: PortProtocolEnum.HTTP,
-            id: 'lklk',
           })),
           cpu: resourcesData.cpu[0],
           memory: resourcesData.memory,
@@ -109,7 +124,7 @@ export function PageApplicationInstallFeature() {
           createApplication({
             environmentId: environmentId,
             data: containerRequest,
-            serviceType: ServiceTypeEnum.APPLICATION,
+            serviceType: ServiceTypeEnum.CONTAINER,
           })
         )
           .unwrap()
@@ -118,6 +133,9 @@ export function PageApplicationInstallFeature() {
           })
           .catch((e) => {
             console.error(e)
+          })
+          .finally(() => {
+            setLoading(false)
           })
       }
     }
@@ -131,6 +149,7 @@ export function PageApplicationInstallFeature() {
     <FunnelFlowBody>
       {generalData && portData && resourcesData && (
         <PageApplicationInstall
+          isLoading={loading}
           onSubmit={onSubmit}
           onPrevious={gotoPorts}
           generalData={generalData}
