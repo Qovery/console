@@ -4,6 +4,11 @@
   }
 }
 
+.input--select .input--select__input-container {
+  @apply text-sm text-text-500;
+  margin: 0;
+}
+
 .input--select__control {
   border: none !important;
   background: none !important;

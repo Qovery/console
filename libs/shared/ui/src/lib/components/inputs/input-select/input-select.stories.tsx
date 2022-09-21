@@ -29,6 +29,7 @@ Single.args = {
   label: 'Select',
   options: options,
   value: 'test1',
+  isSearchable: false,
 }
 
 export const Multi = Template.bind({})
@@ -37,4 +38,5 @@ Multi.args = {
   options: options,
   isMulti: true,
   value: ['test1', 'test2'],
+  isSearchable: false,
 }
