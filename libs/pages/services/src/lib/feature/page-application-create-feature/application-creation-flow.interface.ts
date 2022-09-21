@@ -1,8 +1,8 @@
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 
-export interface GlobalData {
+export interface GeneralData {
   name: string
-  applicationSource: ServiceTypeEnum
+  serviceType: ServiceTypeEnum
 
   // container
   registry?: string

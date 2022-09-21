@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'

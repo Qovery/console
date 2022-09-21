@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { GitAuthProvider } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
@@ -11,7 +10,7 @@ import {
   fetchRepository,
   repositoryLoadingStatus,
   selectAllAuthProvider,
-  selectAllRepository,
+  selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
 import { LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
@@ -20,7 +19,7 @@ import { AppDispatch, RootState } from '@qovery/store/data'
 import GitRepositorySettings from './git-repository-settings'
 
 export interface GitRepositorySettingsFeatureProps {
-  inBlock?: boolean
+  withBlockWrapper?: boolean
 }
 
 export const authProvidersValues = (authProviders: GitAuthProvider[]) => {
@@ -35,14 +34,15 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
   const { organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
-  const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
-  const repositories = useSelector<RootState, RepositoryEntity[]>(selectAllRepository)
-  const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
-  const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
-
   const { setValue, watch } = useFormContext()
   const watchAuthProvider = watch('provider')
   const watchRepository = watch('repository')
+
+  const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
+  const repositories = useSelector((state: RootState) => selectRepositoriesByProvider(state, watchAuthProvider))
+  const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
+  const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
+
   const currentRepository = repositories.find((repository) => repository.name === watchRepository)
 
   useEffect(() => {
@@ -55,15 +55,18 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
   useEffect(() => {
     if (watchRepository && loadingStatusRepositories === 'loaded') {
       const currentRepository = repositories?.find((repository) => repository.name === watchRepository)
-      dispatch(
-        fetchBranches({
-          id: currentRepository?.id,
-          organizationId,
-          gitProvider: watchAuthProvider,
-          name: watchRepository,
-        })
-      )
-      setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
+
+      if (!currentRepository?.branches?.items?.length) {
+        dispatch(
+          fetchBranches({
+            id: currentRepository?.id,
+            organizationId,
+            gitProvider: watchAuthProvider,
+            name: watchRepository,
+          })
+        )
+        setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
+      }
     }
   }, [dispatch, organizationId, watchRepository, watchAuthProvider, loadingStatusRepositories, setValue])
 
@@ -73,9 +76,8 @@ export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatur
 
   return (
     <GitRepositorySettings
-      inBlock={props?.inBlock}
+      withBlockWrapper={props?.withBlockWrapper}
       gitDisabled={false}
-      editGitSettings={() => {}}
       loadingStatusAuthProviders={loadingStatusAuthProviders}
       authProviders={authProvidersValues(authProviders)}
       loadingStatusRepositories={loadingStatusRepositories}

@@ -9,7 +9,7 @@ import {
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import PageApplicationCreateResources from '../../../ui/page-application-create/page-application-create-resources/page-application-create-resources'
-import { ResourcesData } from '../interfaces.interface'
+import { ResourcesData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreateResourcesFeature() {

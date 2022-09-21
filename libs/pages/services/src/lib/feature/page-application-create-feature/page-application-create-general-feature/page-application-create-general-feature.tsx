@@ -9,11 +9,11 @@ import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SER
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageApplicationCreateGeneral from '../../../ui/page-application-create/page-application-create-general/page-application-create-general'
-import { GlobalData } from '../interfaces.interface'
+import { GeneralData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreateGeneralFeature() {
-  const { setGlobalData, globalData, setCurrentStep } = useApplicationContainerCreateContext()
+  const { setGeneralData, generalData, setCurrentStep } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
@@ -34,21 +34,21 @@ export function PageApplicationCreateGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const methods = useForm<GlobalData>({
-    defaultValues: globalData,
+  const methods = useForm<GeneralData>({
+    defaultValues: generalData,
     mode: 'onChange',
   })
 
-  const watchApplicationSource = methods.watch('applicationSource')
+  const watchServiceType = methods.watch('serviceType')
 
   useEffect(() => {
-    if (watchApplicationSource === ServiceTypeEnum.CONTAINER) {
+    if (watchServiceType === ServiceTypeEnum.CONTAINER) {
       dispatch(fetchContainerRegistries({ organizationId }))
     }
-  }, [watchApplicationSource, dispatch])
+  }, [watchServiceType, dispatch])
 
   const onSubmit = methods.handleSubmit((data) => {
-    setGlobalData(data)
+    setGeneralData(data)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })

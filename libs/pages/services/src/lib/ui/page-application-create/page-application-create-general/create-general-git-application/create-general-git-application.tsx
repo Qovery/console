@@ -1,13 +1,12 @@
-/* eslint-disable-next-line */
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { GitRepositorySettingsFeature } from '@qovery/shared/console-shared'
 import { InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { GlobalData } from '../../../../feature/page-application-create-feature/interfaces.interface'
+import { GeneralData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
-export function PageApplicationCreateGeneralGitApplication() {
-  const { control, watch } = useFormContext<GlobalData>()
+export function CreateGeneralGitApplication() {
+  const { control, watch } = useFormContext<GeneralData>()
   const watchBuildMode = watch('build_mode')
 
   const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
@@ -26,7 +25,7 @@ export function PageApplicationCreateGeneralGitApplication() {
         For Applications created from a Git Provider, fill the informations below
       </p>
       <div className="mb-6">
-        <GitRepositorySettingsFeature inBlock={false} />
+        <GitRepositorySettingsFeature withBlockWrapper={false} />
       </div>
 
       <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
@@ -97,4 +96,4 @@ export function PageApplicationCreateGeneralGitApplication() {
   )
 }
 
-export default PageApplicationCreateGeneralGitApplication
+export default CreateGeneralGitApplication

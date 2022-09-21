@@ -5,9 +5,9 @@ import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText, Link } from '@qovery/shared/ui'
-import { GlobalData } from '../../../feature/page-application-create-feature/interfaces.interface'
-import PageApplicationCreateGeneralContainer from './page-application-create-general-container/page-application-create-general-container'
-import PageApplicationCreateGeneralGitApplication from './page-application-create-general-git-application/page-application-create-general-git-application'
+import { GeneralData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
+import CreateGeneralContainer from './create-general-container/create-general-container'
+import CreateGeneralGitApplication from './create-general-git-application/create-general-git-application'
 
 export interface PageApplicationCreateGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -15,11 +15,11 @@ export interface PageApplicationCreateGeneralProps {
 }
 
 export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneralProps) {
-  const { control, getValues, watch, formState } = useFormContext<GlobalData>()
+  const { control, getValues, watch, formState } = useFormContext<GeneralData>()
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
 
-  watch('applicationSource')
+  watch('serviceType')
 
   return (
     <div>
@@ -52,7 +52,7 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
           )}
         />
         <Controller
-          name="applicationSource"
+          name="serviceType"
           control={control}
           rules={{
             required: 'Please select a source.',
@@ -74,12 +74,10 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         />
 
         <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
-        {getValues().applicationSource === ServiceTypeEnum.APPLICATION && (
-          <PageApplicationCreateGeneralGitApplication />
-        )}
+        {getValues().serviceType === ServiceTypeEnum.APPLICATION && <CreateGeneralGitApplication />}
 
-        {getValues().applicationSource === ServiceTypeEnum.CONTAINER && (
-          <PageApplicationCreateGeneralContainer organization={props.organization} />
+        {getValues().serviceType === ServiceTypeEnum.CONTAINER && (
+          <CreateGeneralContainer organization={props.organization} />
         )}
 
         <div className="flex justify-between">

@@ -194,16 +194,11 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <Skeleton width={154} height={32} show={!environment?.status}>
+      <Skeleton width={154} height={40} show={!environment?.status}>
         {environment?.status ? (
           <Menu
             trigger={
-              <Button
-                size={ButtonSize.LARGE}
-                iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-                iconLeft={IconAwesomeEnum.ANGLE_DOWN}
-                iconLeftClassName="!text-base"
-              >
+              <Button size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
                 New service
               </Button>
             }

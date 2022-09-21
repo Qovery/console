@@ -10,16 +10,14 @@ export default {
 } as ComponentMeta<typeof FunnelFlow>
 
 const helpCard = (
-  <>
-    <FunnelFlowHelpCard
-      title="What are the benefits"
-      items={[
-        'An environment help you to amet minim mollit non deserunt.',
-        'An environment help you to amet minim mollit non deserunt.',
-        'An environment help you to amet minim mollit non deserunt.',
-      ]}
-    />
-  </>
+  <FunnelFlowHelpCard
+    title="What are the benefits"
+    items={[
+      'An environment help you to amet minim mollit non deserunt.',
+      'An environment help you to amet minim mollit non deserunt.',
+      'An environment help you to amet minim mollit non deserunt.',
+    ]}
+  />
 )
 
 const children = (

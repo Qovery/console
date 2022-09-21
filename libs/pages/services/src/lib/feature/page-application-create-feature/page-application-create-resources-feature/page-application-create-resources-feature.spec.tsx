@@ -12,8 +12,8 @@ describe('PageApplicationCreateResourcesFeature', () => {
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          globalData: { name: 'test', applicationSource: ServiceTypeEnum.APPLICATION },
-          setGlobalData: jest.fn(),
+          generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
+          setGeneralData: jest.fn(),
           resourcesData: {
             memory: 512,
             cpu: [0.5],

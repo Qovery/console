@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { DatabaseCredentials, LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/toast'

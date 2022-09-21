@@ -15,7 +15,7 @@ import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-moda
 
 export interface GitRepositorySettingsProps {
   gitDisabled: boolean
-  editGitSettings: () => void
+  editGitSettings?: () => void
   authProviders?: Value[]
   repositories?: Value[]
   branches?: Value[]
@@ -23,7 +23,7 @@ export interface GitRepositorySettingsProps {
   loadingStatusRepositories?: LoadingStatus
   loadingStatusBranches?: LoadingStatus
   currentAuthProvider?: string
-  inBlock?: boolean
+  withBlockWrapper?: boolean
 }
 
 export function GitRepositorySettings(props: GitRepositorySettingsProps) {
@@ -37,7 +37,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     loadingStatusAuthProviders,
     loadingStatusBranches,
     branches = [],
-    inBlock = true,
+    withBlockWrapper = true,
   } = props
 
   const { control, getValues } = useFormContext<{
@@ -69,7 +69,8 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           />
         )}
       />
-      {getValues().provider && loadingStatusAuthProviders !== 'loading' && loadingStatusRepositories !== 'loading' ? (
+      {getValues().provider &&
+      (repositories.length || (loadingStatusAuthProviders !== 'loading' && loadingStatusRepositories !== 'loading')) ? (
         <>
           <Controller
             name="repository"
@@ -91,7 +92,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
               />
             )}
           />
-          {(loadingStatusBranches === 'loaded' || gitDisabled) && (
+          {(branches.length || loadingStatusBranches === 'loaded' || gitDisabled) && (
             <>
               <Controller
                 name="branch"
@@ -133,7 +134,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
               />
             </>
           )}
-          {getValues().repository && loadingStatusBranches === 'loading' && !gitDisabled && (
+          {getValues().repository && branches.length === 0 && loadingStatusBranches === 'loading' && !gitDisabled && (
             <div data-testid="loader-branch" className="flex justify-center mt-4">
               <LoaderSpinner />
             </div>
@@ -161,7 +162,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                   <ConfirmationGitModal
                     currentAuthProvider={currentAuthProvider}
                     onClose={closeModal}
-                    onSubmit={editGitSettings}
+                    onSubmit={editGitSettings || (() => {})}
                   />
                 ),
               })
@@ -174,7 +175,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     </>
   )
 
-  return inBlock ? <BlockContent title="Git repository">{children}</BlockContent> : children
+  return withBlockWrapper ? <BlockContent title="Git repository">{children}</BlockContent> : children
 }
 
 export default GitRepositorySettings

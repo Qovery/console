@@ -5,13 +5,13 @@ import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVI
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
-import { GlobalData, ResourcesData } from './interfaces.interface'
+import { GeneralData, ResourcesData } from './application-creation-flow.interface'
 
 interface ApplicationContainerCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
-  globalData: GlobalData | undefined
-  setGlobalData: (data: GlobalData) => void
+  generalData: GeneralData | undefined
+  setGeneralData: (data: GeneralData) => void
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
 }
@@ -24,7 +24,7 @@ export const ApplicationContainerCreateContext = createContext<ApplicationContai
 export const useApplicationContainerCreateContext = () => {
   const applicationContainerCreateContext = useContext(ApplicationContainerCreateContext)
   if (!applicationContainerCreateContext)
-    throw new Error('No ApplicationContainerCreateContext.Provider found when calling useGridItemContext.')
+    throw new Error('useApplicationContainerCreateContext must be used within a ApplicationContainerCreateContext')
   return applicationContainerCreateContext
 }
 
@@ -38,9 +38,9 @@ export const steps: { title: string }[] = [
 export function PageApplicationCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
-  // context
+  // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [globalData, setGlobalData] = useState<GlobalData | undefined>()
+  const [generalData, setGeneralData] = useState<GeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
@@ -58,8 +58,8 @@ export function PageApplicationCreateFeature() {
       value={{
         currentStep,
         setCurrentStep,
-        globalData,
-        setGlobalData,
+        generalData,
+        setGeneralData,
         resourcesData,
         setResourcesData,
       }}

@@ -10,8 +10,8 @@ describe('PageApplicationCreateGeneralFeature', () => {
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          globalData: { name: 'test', applicationSource: ServiceTypeEnum.APPLICATION },
-          setGlobalData: jest.fn(),
+          generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
+          setGeneralData: jest.fn(),
           resourcesData: undefined,
           setResourcesData: jest.fn(),
         }}

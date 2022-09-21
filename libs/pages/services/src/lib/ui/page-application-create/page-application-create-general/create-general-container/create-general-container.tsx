@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { OrganizationEntity, Value } from '@qovery/shared/interfaces'
 import { InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
-import { GlobalData } from '../../../../feature/page-application-create-feature/interfaces.interface'
+import { GeneralData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
-export interface PageApplicationCreateGeneralContainerProps {
+export interface CreateGeneralContainerProps {
   organization?: OrganizationEntity
 }
 
-export function PageApplicationCreateGeneralContainer(props: PageApplicationCreateGeneralContainerProps) {
-  const { control } = useFormContext<GlobalData>()
+export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
+  const { control } = useFormContext<GeneralData>()
   const [availableRegistiesOptions, setAvailableRegistiesOptions] = useState<Value[]>([])
 
   useEffect(() => {
@@ -116,4 +116,4 @@ export function PageApplicationCreateGeneralContainer(props: PageApplicationCrea
   )
 }
 
-export default PageApplicationCreateGeneralContainer
+export default CreateGeneralContainer

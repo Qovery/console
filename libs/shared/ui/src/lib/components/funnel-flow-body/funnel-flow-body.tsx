@@ -9,7 +9,7 @@ export function FunnelFlowBody(props: FunnelFlowBodyProps) {
       <div className="absolute h-full bg-white w-full pointer-events-none" style={{ left: '-30%' }}></div>
       <div className="flex w-full overflow-auto">
         <section className="w-[70%] bg-white pt-14">
-          <div data-testid="funnel-body-content" className="max-w-funnel-flow-body-content mx-auto relative px-4 pb-14">
+          <div data-testid="funnel-body-content" className="max-w-[32rem] mx-auto relative px-4 pb-14">
             {props.children}
           </div>
         </section>

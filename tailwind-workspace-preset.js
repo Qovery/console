@@ -8,7 +8,6 @@ module.exports = {
         'page-container': 'calc(100vh - theme(spacing.navbar-height))',
       },
       maxWidth: {
-        'funnel-flow-body-content': '32rem',
         'content-with-navigation-left': '46.5rem',
       },
       minHeight: {

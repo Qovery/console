@@ -23,7 +23,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
-          applicationSource: ServiceTypeEnum.APPLICATION,
+          serviceType: ServiceTypeEnum.APPLICATION,
           build_mode: BuildModeEnum.DOCKER,
           branch: 'main',
           repository: 'qovery/console',
@@ -51,7 +51,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
-          applicationSource: ServiceTypeEnum.APPLICATION,
+          serviceType: ServiceTypeEnum.APPLICATION,
         },
       })
     )
@@ -66,7 +66,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
-          applicationSource: ServiceTypeEnum.CONTAINER,
+          serviceType: ServiceTypeEnum.CONTAINER,
         },
       })
     )
@@ -81,7 +81,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
-          applicationSource: undefined,
+          serviceType: undefined,
         },
       })
     )
