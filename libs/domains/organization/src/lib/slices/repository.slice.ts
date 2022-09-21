@@ -1,11 +1,4 @@
-import {
-  PayloadAction,
-  Update,
-  createAsyncThunk,
-  createEntityAdapter,
-  createSelector,
-  createSlice,
-} from '@reduxjs/toolkit'
+import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { GitProviderEnum, GitRepositoryBranch, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
 import { LoadingStatus, RepositoryEntity, RepositoryState } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
@@ -78,8 +71,12 @@ export const repositorySlice = createSlice({
       .addCase(fetchRepository.pending, (state: RepositoryState) => {
         state.loadingStatus = 'loading'
       })
-      .addCase(fetchRepository.fulfilled, (state: RepositoryState, action: PayloadAction<RepositoryEntity[]>) => {
-        repositoryAdapter.setAll(state, action.payload)
+      .addCase(fetchRepository.fulfilled, (state: RepositoryState, action) => {
+        const extendedRepositories = action.payload.map((repository) => ({
+          ...repository,
+          provider: action.meta.arg.gitProvider,
+        }))
+        repositoryAdapter.upsertMany(state, extendedRepositories)
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchRepository.rejected, (state: RepositoryState, action) => {
@@ -149,6 +146,16 @@ export const getRepositoryState = (rootState: RootState): RepositoryState =>
   rootState.entities.organization[REPOSITORY_FEATURE_KEY]
 
 export const selectAllRepository = createSelector(getRepositoryState, selectAll)
+
+export const selectRepositoriesByProvider = createSelector(
+  [getRepositoryState, (state, gitProvider: GitProviderEnum) => gitProvider],
+  (state, gitProvider) => {
+    const repositories = selectAll(state)
+    return repositories.filter((repo) => {
+      return repo.provider === gitProvider
+    })
+  }
+)
 
 export const repositoryLoadingStatus = (state: RootState): LoadingStatus => getRepositoryState(state).loadingStatus
 

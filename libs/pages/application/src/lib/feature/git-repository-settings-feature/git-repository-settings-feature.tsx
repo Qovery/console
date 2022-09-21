@@ -11,13 +11,13 @@ import {
   fetchRepository,
   repositoryLoadingStatus,
   selectAllAuthProvider,
-  selectAllRepository,
+  selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
+import { GitRepositorySettings } from '@qovery/shared/console-shared'
 import { GitApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
-import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 
 export const authProvidersValues = (authProviders: GitAuthProvider[]) => {
   return authProviders.map((provider: GitAuthProvider) => ({
@@ -36,14 +36,14 @@ export function GitRepositorySettingsFeature() {
     (a, b) => JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository)
   )
 
-  const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
-  const repositories = useSelector<RootState, RepositoryEntity[]>(selectAllRepository)
-  const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
-  const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
-
   const { setValue, watch } = useFormContext()
   const watchAuthProvider = watch('provider')
   const watchRepository = watch('repository')
+
+  const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
+  const repositories = useSelector((state: RootState) => selectRepositoriesByProvider(state, watchAuthProvider))
+  const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
+  const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
 
   const [gitDisabled, setGitDisabled] = useState(true)
 

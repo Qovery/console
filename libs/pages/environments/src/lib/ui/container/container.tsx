@@ -5,7 +5,17 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
 } from '@qovery/shared/router'
-import { ButtonAction, ButtonIcon, ButtonIconStyle, Header, Icon, Tabs, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
+  Header,
+  Icon,
+  IconAwesomeEnum,
+  Tabs,
+  useModal,
+} from '@qovery/shared/ui'
 import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface ContainerProps {
@@ -47,8 +57,9 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <ButtonAction
-        iconRight="icon-solid-plus"
+      <Button
+        size={ButtonSize.LARGE}
+        iconRight={IconAwesomeEnum.CIRCLE_PLUS}
         onClick={() => {
           openModal({
             content: (
@@ -62,7 +73,7 @@ export function Container(props: ContainerProps) {
         }}
       >
         New environment
-      </ButtonAction>
+      </Button>
     </div>
   )
 

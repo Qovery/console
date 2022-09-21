@@ -13,7 +13,7 @@
 }
 
 .btn-action__content {
-  @apply h-full flex justify-center items-center px-4 gap-3 bg-brand-500 hover:bg-brand-600 transition ease-in-out duration-150 text-white font-medium whitespace-nowrap;
+  @apply h-full flex justify-center items-center px-4 gap-2 bg-brand-500 hover:bg-brand-600 transition ease-in-out duration-150 text-white font-medium whitespace-nowrap;
 }
 
 .btn-action__trigger--open {

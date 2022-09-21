@@ -58,19 +58,19 @@ export function ButtonAction(props: ButtonActionProps) {
         {!link && (
           <button className="btn-action__content" onClick={onClick}>
             <span>{children}</span>
-            {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
+            {iconRight && <Icon name={iconRight} className="text-sm" />}
           </button>
         )}
         {link && !external && (
           <Link className="btn-action__content" to={link} onClick={onClick}>
             <span>{children}</span>
-            {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
+            {iconRight && <Icon name={iconRight} className="text-sm" />}
           </Link>
         )}
         {link && external && (
           <a className="btn-action__content" href={link} target="_blank" onClick={onClick}>
             <span>{children}</span>
-            {iconRight && <Icon name={iconRight} className="text-base -mt-0.5" />}
+            {iconRight && <Icon name={iconRight} className="text-sm" />}
           </a>
         )}
       </>

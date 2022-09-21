@@ -1,9 +1,10 @@
-import { act, render, screen } from '__tests__/utils/setup-jest'
+import { act, screen } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum } from 'qovery-typescript-axios'
 import { authProviderFactoryMock } from '@qovery/domains/organization'
-import { authProvidersValues } from '../../feature/git-repository-settings-feature/git-repository-settings-feature'
-import GitRepositorySettings, { GitRepositorySettingsProps } from './git-repository-settings'
+import { GitRepositorySettings, GitRepositorySettingsProps } from '../git-repository-settings/git-repository-settings'
+import { authProvidersValues } from './git-repository-settings-feature'
 
 const mockOpenModal = jest.fn()
 jest.mock('@qovery/shared/ui', () => ({

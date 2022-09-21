@@ -53,6 +53,12 @@ module.exports = {
             letterSpacing: '0.005em',
           },
         ],
+        lg: [
+          '1.25rem',
+          {
+            lineHeight: '1.75rem',
+          },
+        ],
       },
       colors: {
         brand: {

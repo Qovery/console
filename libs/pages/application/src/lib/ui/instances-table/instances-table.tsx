@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { Instance } from 'qovery-typescript-axios'
 
 export interface InstancesTableProps {

@@ -147,6 +147,7 @@ export function InputSelect(props: InputSelectProps) {
           }}
           name={label}
           inputId={label}
+          menuPlacement={'auto'}
           closeMenuOnSelect={!isMulti}
           onChange={handleChange}
           classNamePrefix="input--select"
@@ -161,7 +162,7 @@ export function InputSelect(props: InputSelectProps) {
           styles={{ menuPortal: (base) => ({ ...base, zIndex: 50, pointerEvents: 'auto' }) }}
         />
         <input type="hidden" name={label} value={selectedValue} />
-        <div className="absolute top-1/2 -translate-y-1/2 right-4">
+        <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
           <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
         </div>
       </div>

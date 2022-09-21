@@ -27,6 +27,7 @@ export * from './lib/domain/service-running-status.interface'
 export * from './lib/domain/environment-variable.entity'
 export * from './lib/domain/secret-environment-variable.entity'
 export * from './lib/domain/repository.entity'
+export * from './lib/domain/organization.entity'
 
 export * from './lib/types/loading-status.type'
 export * from './lib/types/deployment-service.type'

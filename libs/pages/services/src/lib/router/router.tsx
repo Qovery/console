@@ -1,5 +1,8 @@
 import {
   Route,
+  SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_CREATION_GENERAL_URL,
+  SERVICES_CREATION_RESOURCES_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
@@ -9,6 +12,9 @@ import {
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_URL,
 } from '@qovery/shared/router'
+import { PageApplicationCreateFeature } from '../feature/page-application-create-feature/page-application-create-feature'
+import PageApplicationCreateGeneralFeature from '../feature/page-application-create-feature/page-application-create-general-feature/page-application-create-general-feature'
+import PageApplicationCreateResourcesFeature from '../feature/page-application-create-feature/page-application-create-resources-feature/page-application-create-resources-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -30,6 +36,10 @@ export const ROUTER_SERVICES: Route[] = [
   {
     path: `${SERVICES_SETTINGS_URL}/*`,
     component: <PageSettingsFeature />,
+  },
+  {
+    path: `${SERVICES_APPLICATION_CREATION_URL}/*`,
+    component: <PageApplicationCreateFeature />,
   },
 ]
 
@@ -53,5 +63,16 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
   {
     path: SERVICES_SETTINGS_DANGER_ZONE_URL,
     component: <PageSettingsDangerZoneFeature />,
+  },
+]
+
+export const ROUTER_SERVICE_CREATION: Route[] = [
+  {
+    path: SERVICES_CREATION_GENERAL_URL,
+    component: <PageApplicationCreateGeneralFeature />,
+  },
+  {
+    path: SERVICES_CREATION_RESOURCES_URL,
+    component: <PageApplicationCreateResourcesFeature />,
   },
 ]

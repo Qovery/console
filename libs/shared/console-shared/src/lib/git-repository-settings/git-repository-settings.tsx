@@ -15,7 +15,7 @@ import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-moda
 
 export interface GitRepositorySettingsProps {
   gitDisabled: boolean
-  editGitSettings: () => void
+  editGitSettings?: () => void
   authProviders?: Value[]
   repositories?: Value[]
   branches?: Value[]
@@ -23,6 +23,7 @@ export interface GitRepositorySettingsProps {
   loadingStatusRepositories?: LoadingStatus
   loadingStatusBranches?: LoadingStatus
   currentAuthProvider?: string
+  withBlockWrapper?: boolean
 }
 
 export function GitRepositorySettings(props: GitRepositorySettingsProps) {
@@ -36,16 +37,25 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     loadingStatusAuthProviders,
     loadingStatusBranches,
     branches = [],
+    withBlockWrapper = true,
   } = props
 
-  const { control } = useFormContext()
+  const { control, getValues } = useFormContext<{
+    provider: string
+    repository: string
+    branch: string
+    root_path: string
+  }>()
   const { openModal, closeModal } = useModal()
 
-  return (
-    <BlockContent title="Git repository">
+  const children = (
+    <>
       <Controller
         name="provider"
         control={control}
+        rules={{
+          required: 'Please select a provider.',
+        }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             dataTestId="input-provider"
@@ -59,11 +69,15 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           />
         )}
       />
-      {loadingStatusAuthProviders !== 'loading' && loadingStatusRepositories !== 'loading' ? (
+      {getValues().provider &&
+      (repositories.length || (loadingStatusAuthProviders !== 'loading' && loadingStatusRepositories !== 'loading')) ? (
         <>
           <Controller
             name="repository"
             control={control}
+            rules={{
+              required: 'Please select a repository.',
+            }}
             render={({ field, fieldState: { error } }) => (
               <InputSelect
                 dataTestId="input-repository"
@@ -78,11 +92,14 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
               />
             )}
           />
-          {(loadingStatusBranches === 'loaded' || gitDisabled) && (
+          {(branches.length || loadingStatusBranches === 'loaded' || gitDisabled) && (
             <>
               <Controller
                 name="branch"
                 control={control}
+                rules={{
+                  required: 'Please select a branch.',
+                }}
                 render={({ field, fieldState: { error } }) => (
                   <InputSelect
                     dataTestId="input-branch"
@@ -100,6 +117,9 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
               <Controller
                 name="root_path"
                 control={control}
+                rules={{
+                  required: 'Value required',
+                }}
                 render={({ field, fieldState: { error } }) => (
                   <InputText
                     dataTestId="input-root-path"
@@ -114,16 +134,18 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
               />
             </>
           )}
-          {loadingStatusBranches === 'loading' && !gitDisabled && (
+          {getValues().repository && branches.length === 0 && loadingStatusBranches === 'loading' && !gitDisabled && (
             <div data-testid="loader-branch" className="flex justify-center mt-4">
               <LoaderSpinner />
             </div>
           )}
         </>
       ) : (
-        <div data-testid="loader-repository" className="flex justify-center mt-4">
-          <LoaderSpinner />
-        </div>
+        getValues().provider && (
+          <div data-testid="loader-repository" className="flex justify-center mt-4">
+            <LoaderSpinner />
+          </div>
+        )
       )}
       {gitDisabled && (
         <div className="flex justify-end mt-3">
@@ -140,7 +162,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                   <ConfirmationGitModal
                     currentAuthProvider={currentAuthProvider}
                     onClose={closeModal}
-                    onSubmit={editGitSettings}
+                    onSubmit={editGitSettings || (() => {})}
                   />
                 ),
               })
@@ -150,8 +172,10 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           </Button>
         </div>
       )}
-    </BlockContent>
+    </>
   )
+
+  return withBlockWrapper ? <BlockContent title="Git repository">{children}</BlockContent> : children
 }
 
 export default GitRepositorySettings

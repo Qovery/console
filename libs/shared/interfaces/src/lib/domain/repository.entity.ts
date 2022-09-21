@@ -1,4 +1,4 @@
-import { GitRepository, GitRepositoryBranch } from 'qovery-typescript-axios'
+import { GitProviderEnum, GitRepository, GitRepositoryBranch } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
 
 export interface RepositoryEntity extends GitRepository {
@@ -6,4 +6,5 @@ export interface RepositoryEntity extends GitRepository {
     loadingStatus: LoadingStatus
     items?: GitRepositoryBranch[]
   }
+  provider: GitProviderEnum
 }

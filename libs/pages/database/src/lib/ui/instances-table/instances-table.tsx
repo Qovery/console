@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 
 export interface InstancesTableProps {
