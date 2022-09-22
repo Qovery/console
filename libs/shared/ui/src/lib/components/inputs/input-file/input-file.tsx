@@ -45,10 +45,6 @@ export function InputFile(props: InputFileProps) {
     [onChange]
   )
 
-  const checkIfBase64 = (value: string) => {
-    return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(value)
-  }
-
   return (
     <label
       data-testid={dataTestId}
@@ -71,9 +67,7 @@ export function InputFile(props: InputFileProps) {
           <img
             data-testid="input-file-image"
             className="absolute z-10 top-0 left-0 w-full h-full object-contain p-2 hover:opacity-75 ease-out duration-150"
-            src={
-              checkIfBase64(selectedImage as string) ? URL.createObjectURL(selectedImage as Blob | MediaSource) : value
-            }
+            src={selectedImage as string}
             alt="file"
           />
           <span
