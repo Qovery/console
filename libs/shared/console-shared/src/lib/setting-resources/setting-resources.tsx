@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
@@ -23,7 +22,7 @@ export interface SettingResourcesProps {
 
 export function SettingResources(props: SettingResourcesProps) {
   const { getMemoryUnit, memorySize, displayWarningCpu, application } = props
-  const { control, watch, trigger } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
+  const { control, watch } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
 
   let maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
@@ -34,11 +33,11 @@ export function SettingResources(props: SettingResourcesProps) {
 
   // fix a bug where the validation of the memory field is done with the old maximum value but display the new one
   // in the message error. Comment the useEffect to see the bug in action.
-  useEffect(() => {
-    setTimeout(() => {
-      trigger('memory').then()
-    })
-  }, [memorySize, trigger])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     trigger('memory').then()
+  //   })
+  // }, [memorySize, trigger])
 
   return (
     <div>
