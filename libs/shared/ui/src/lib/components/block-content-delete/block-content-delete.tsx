@@ -17,6 +17,7 @@ export interface BlockContentDeleteProps {
     icon?: string
   }[]
   ctaLabel?: string
+  ctaLoading?: boolean
   callback?: () => void
   customWidth?: string
 }
@@ -31,6 +32,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
     callback,
     list,
     modalConfirmation,
+    ctaLoading,
   } = props
 
   const { openModalConfirmation } = useModalConfirmation()
@@ -51,6 +53,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
         <div className="flex justify-end">
           <Button
             className="mt-3 ml-auto"
+            loading={ctaLoading}
             onClick={() => {
               openModalConfirmation({
                 mode: modalConfirmation.mode,
