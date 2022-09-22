@@ -16,4 +16,5 @@ export const organizationFactoryMock = (howMany: number): Organization[] =>
     logo_url: chance.url(),
     icon_url: chance.url(),
     owner: chance.name(),
+    admin_emails: ['test@test.com'],
   }))

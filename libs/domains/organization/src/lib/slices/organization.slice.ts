@@ -9,10 +9,13 @@ import {
 import {
   ContainerRegistriesApi,
   ContainerRegistryResponse,
+  OrganizationEditRequest,
   OrganizationMainCallsApi,
   OrganizationRequest,
 } from 'qovery-typescript-axios'
 import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { refactoOrganizationPayload } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store/data'
 
 export const ORGANIZATION_KEY = 'organizations'
@@ -45,6 +48,19 @@ export const fetchContainerRegistries = createAsyncThunk<ContainerRegistryRespon
   async (data) => {
     const result = await containerRegistriesApi.listContainerRegistry(data.organizationId)
     return result.data.results as ContainerRegistryResponse[]
+  }
+)
+
+export const editOrganization = createAsyncThunk(
+  'organization/edit',
+  async (payload: { organizationId: string; data: Partial<OrganizationEntity> }) => {
+    const cloneOrganization = Object.assign({}, refactoOrganizationPayload(payload.data))
+    const response = await organizationMainCalls.editOrganization(
+      payload.organizationId,
+      cloneOrganization as OrganizationEditRequest
+    )
+
+    return response.data as OrganizationEntity
   }
 )
 
@@ -111,6 +127,27 @@ export const organizationSlice = createSlice({
         }
 
         organizationAdapter.updateOne(state, update)
+      })
+      // edit organization
+      .addCase(editOrganization.pending, (state: OrganizationState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(editOrganization.fulfilled, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            ...action.payload,
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Organization updated')
+      })
+      .addCase(editOrganization.rejected, (state: OrganizationState, action) => {
+        state.loadingStatus = 'error'
+        toastError(action.error)
+        state.error = action.error.message
       })
   },
 })
