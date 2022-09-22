@@ -64,7 +64,7 @@ export function PageApplicationInstallFeature() {
           name: generalData.name,
           ports: portData.ports.map((port) => ({
             internal_port: port.application_port || 80,
-            external_port: port.external_port || 443,
+            external_port: port.external_port,
             publicly_accessible: port.is_public,
             protocol: PortProtocolEnum.HTTP,
           })),

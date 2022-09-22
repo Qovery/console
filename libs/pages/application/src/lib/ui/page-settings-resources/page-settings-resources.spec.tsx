@@ -4,6 +4,7 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { applicationFactoryMock } from '@qovery/domains/application'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
+import { ResourcesData } from '../../../../../services/src/lib/feature/page-application-create-feature/application-creation-flow.interface'
 import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
 
 const application = applicationFactoryMock(1)[0]
@@ -29,26 +30,36 @@ jest.mock('react-hook-form', () => ({
 
 describe('PageSettingsResources', () => {
   window.ResizeObserver = ResizeObserver
+  let defaultValues: ResourcesData
+
+  beforeEach(() => {
+    defaultValues = {
+      instances: [1, 18],
+      cpu: [3],
+      memory: 1024,
+      memory_unit: MemorySizeEnum.MB,
+    }
+  })
 
   it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsResources {...props} />))
+    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsResources {...props} />, { defaultValues }))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the form', async () => {
     const { getByDisplayValue } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [0.5], instances: [1, 1], memory: 323 },
+        defaultValues,
       })
     )
 
     const inputs = screen.getAllByRole('slider') as HTMLSpanElement[]
 
     await act(() => {
-      getByDisplayValue(323)
-      expect(inputs[0].getAttribute('aria-valuenow')).toBe('0.5')
+      getByDisplayValue(1024)
+      expect(inputs[0].getAttribute('aria-valuenow')).toBe('3')
       expect(inputs[1].getAttribute('aria-valuenow')).toBe('1')
-      expect(inputs[2].getAttribute('aria-valuenow')).toBe('1')
+      expect(inputs[2].getAttribute('aria-valuenow')).toBe('18')
     })
   })
 
@@ -57,7 +68,7 @@ describe('PageSettingsResources', () => {
 
     const { getByTestId, getAllByRole } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [10], instances: [1, 1], memory: 323 },
+        defaultValues: { cpu: [10], instances: [1, 1], memory: 323, memory_unit: MemorySizeEnum.MB },
       })
     )
 
@@ -74,7 +85,7 @@ describe('PageSettingsResources', () => {
 
     render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [0.25], instances: [1, 1], memory: 512 },
+        defaultValues,
       })
     )
 
