@@ -48,7 +48,7 @@ describe('CreateCloneEnvironmentModal', () => {
   })
 
   it('should reformat name by replacing special char by hyphens', async () => {
-    const { baseElement, debug } = render(
+    const { baseElement } = render(
       wrapWithReactHookForm(<CreateCloneEnvironmentModal {...props} />, {
         defaultValues,
       })
@@ -56,7 +56,6 @@ describe('CreateCloneEnvironmentModal', () => {
     const input = getByTestId(baseElement, 'input-text')
     await act(() => {
       fireEvent.input(input, { target: { value: 'ben et remi' } })
-      debug()
     })
 
     getByDisplayValue(baseElement, 'ben-et-remi')

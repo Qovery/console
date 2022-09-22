@@ -75,16 +75,19 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               name="website_url"
               control={control}
               rules={{
-                required: false,
-                pattern: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+                pattern: {
+                  value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+                  message: 'The url is not valid',
+                },
               }}
-              render={({ field }) => (
+              render={({ field, fieldState: { error } }) => (
                 <InputText
                   className="mb-3"
                   dataTestId="input-website"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value}
+                  error={error?.message}
                   label="Website"
                 />
               )}

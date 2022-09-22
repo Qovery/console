@@ -9,15 +9,14 @@ import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationGeneral from '../../ui/page-organization-general/page-organization-general'
 
 export const handleSubmit = (data: FieldValues, organization: Organization) => {
-  const cloneOrganization = Object.assign({}, organization)
-
-  cloneOrganization.logo_url = data['logo_url']
-  cloneOrganization.name = data['name']
-  cloneOrganization.description = data['description']
-  cloneOrganization.website_url = data['website_url']
-  cloneOrganization.admin_emails = data['admin_emails']
-
-  return cloneOrganization
+  return {
+    ...organization,
+    logo_url: data['logo_url'],
+    name: data['name'],
+    description: data['description'],
+    website_url: data['website_url'],
+    admin_emails: data['admin_emails'],
+  }
 }
 
 export function PageOrganizationGeneralFeature() {
