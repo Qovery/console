@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-import PageSettingsDangerZoneFeature from './page-settings-danger-zone-feature'
+import PageOrganizationDangerZoneFeature from './page-organization-danger-zone-feature'
 
-describe('PageSettingsDangerZoneFeature', () => {
+describe('PageOrganizationDangerZoneFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsDangerZoneFeature />)
+    const { baseElement } = render(<PageOrganizationDangerZoneFeature />)
     expect(baseElement).toBeTruthy()
   })
 })
