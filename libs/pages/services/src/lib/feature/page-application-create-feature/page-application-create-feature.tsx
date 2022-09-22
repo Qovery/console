@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { MemorySizeEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { MemorySizeEnum } from '@qovery/shared/enums'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -43,10 +43,7 @@ export function PageApplicationCreateFeature() {
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [generalData, setGeneralData] = useState<GeneralData | undefined>({
-    name: 'my-application',
-    serviceType: ServiceTypeEnum.APPLICATION,
-  })
+  const [generalData, setGeneralData] = useState<GeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],

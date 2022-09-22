@@ -73,8 +73,6 @@ export function PageApplicationInstallFeature() {
           min_running_instances: resourcesData.instances[0],
           max_running_instances: resourcesData.instances[1],
           build_mode: generalData.build_mode as BuildModeEnum,
-          dockerfile_path: generalData.dockerfile_path,
-          buildpack_language: generalData.buildpack_language as BuildPackLanguageEnum,
           git_repository: {
             url: buildGitRepoUrl(generalData.provider || '', selectRepository?.url || '') || '',
             root_path: generalData.root_path,
@@ -82,7 +80,12 @@ export function PageApplicationInstallFeature() {
           },
         }
 
-        console.log(applicationRequest)
+        if (generalData.build_mode === BuildModeEnum.DOCKER) {
+          applicationRequest.dockerfile_path = generalData.dockerfile_path
+        } else {
+          applicationRequest.buildpack_language = generalData.buildpack_language as BuildPackLanguageEnum
+        }
+
         dispatch(
           createApplication({
             environmentId: environmentId,

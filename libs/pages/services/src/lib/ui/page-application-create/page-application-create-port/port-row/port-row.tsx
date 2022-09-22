@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ButtonIcon, ButtonIconStyle, IconAwesomeEnum, InputText, InputToggle } from '@qovery/shared/ui'
 import { PortData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
@@ -9,7 +10,13 @@ export interface PortRowProps {
 
 export function PortRow(props: PortRowProps) {
   const { index } = props
-  const { control } = useFormContext<PortData>()
+  const { control, watch, setValue, resetField } = useFormContext<PortData>()
+
+  const isPublicWatch = watch(`ports.${index}.is_public`)
+
+  useEffect(() => {
+    setValue(`ports.${index}.external_port`, isPublicWatch ? 443 : undefined)
+  }, [isPublicWatch, index, setValue, resetField])
 
   return (
     <div data-testid={'port-row'} className="flex gap-3 mb-5 w-full items-center">

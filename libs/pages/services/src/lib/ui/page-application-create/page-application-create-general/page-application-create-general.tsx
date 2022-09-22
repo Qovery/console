@@ -20,9 +20,6 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
   const navigate = useNavigate()
 
   watch('serviceType')
-  watch((data) => {
-    console.log(data)
-  })
 
   return (
     <div>

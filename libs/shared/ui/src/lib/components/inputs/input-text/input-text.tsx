@@ -35,7 +35,7 @@ export function InputText(props: InputTextProps) {
   const [currentType, setCurrentType] = useState(type)
 
   useEffect(() => {
-    if (value) setCurrentValue(value)
+    setCurrentValue(value)
   }, [value, setCurrentValue])
 
   const hasFocus = focused
