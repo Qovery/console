@@ -63,12 +63,12 @@ export const createSecret = createAsyncThunk(
       case APIVariableScopeEnum.APPLICATION:
       default:
         if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
-          response = await applicationSecretApi.createApplicationSecret(
+          response = await containerSecretApi.createContainerSecret(
             payload.entityId,
             payload.environmentVariableRequest
           )
         } else {
-          response = await containerSecretApi.createContainerSecret(
+          response = await applicationSecretApi.createApplicationSecret(
             payload.entityId,
             payload.environmentVariableRequest
           )
