@@ -23,11 +23,7 @@ export interface SettingResourcesProps {
 
 export function SettingResources(props: SettingResourcesProps) {
   const { getMemoryUnit, memorySize, displayWarningCpu, application } = props
-  const {
-    control,
-    watch,
-    trigger: triggerDong,
-  } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
+  const { control, watch, trigger } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
 
   let maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
@@ -40,9 +36,9 @@ export function SettingResources(props: SettingResourcesProps) {
   // in the message error. Comment the useEffect to see the bug in action.
   useEffect(() => {
     setTimeout(() => {
-      triggerDong('memory').then()
+      trigger && trigger('memory').then()
     })
-  }, [memorySize, triggerDong])
+  }, [memorySize, trigger])
 
   return (
     <div>
