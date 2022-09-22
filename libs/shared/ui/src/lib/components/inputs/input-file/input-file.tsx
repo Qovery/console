@@ -44,9 +44,6 @@ export function InputFile(props: InputFileProps) {
     },
     [onChange]
   )
-  // const handleChange = () => {
-  //   console.log('hello')
-  // }
 
   const checkIfBase64 = (value: string) => {
     return /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/.test(value)
