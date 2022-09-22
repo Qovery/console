@@ -36,6 +36,7 @@ export function SettingResources(props: SettingResourcesProps) {
   // in the message error. Comment the useEffect to see the bug in action.
   useEffect(() => {
     setTimeout(() => {
+      // trigger && trigger is here to solve testing with the CI that goes in an infinite loop but not in local
       trigger && trigger('memory').then()
     })
   }, [memorySize, trigger])
