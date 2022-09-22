@@ -43,6 +43,13 @@ export const postOrganization = createAsyncThunk<OrganizationEntity, Organizatio
   }
 )
 
+export const deleteOrganization = createAsyncThunk(
+  'organization/delete',
+  async (payload: { organizationId: string }) => {
+    return await organizationMainCalls.deleteOrganization(payload.organizationId)
+  }
+)
+
 export const fetchContainerRegistries = createAsyncThunk<ContainerRegistryResponse[], { organizationId: string }>(
   'organization/containerRegistries/fetch',
   async (data) => {
@@ -89,7 +96,7 @@ export const organizationSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
-      // post action
+      // post organization
       .addCase(postOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'
       })
@@ -101,6 +108,22 @@ export const organizationSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      // delete organization
+      .addCase(deleteOrganization.pending, (state: OrganizationState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(deleteOrganization.fulfilled, (state: OrganizationState, action) => {
+        organizationAdapter.removeOne(state, action.meta.arg.organizationId)
+        state.loadingStatus = 'loaded'
+        state.error = null
+        toast(ToastEnum.SUCCESS, `Your organization has been deleted`)
+      })
+      .addCase(deleteOrganization.rejected, (state: OrganizationState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+        toastError(action.error)
+      })
+
       // fetch registry
       .addCase(fetchContainerRegistries.pending, (state: OrganizationState, action) => {
         const update: Update<OrganizationEntity> = {
