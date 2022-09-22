@@ -17,7 +17,7 @@ export const fetchCustomDomains = createAsyncThunk(
   'customDomains/fetch',
   async (payload: { applicationId: string; serviceType: ServiceTypeEnum }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.APPLICATION) {
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
       response = await customDomainContainerApi.listContainerCustomDomain(payload.applicationId)
     } else {
       response = await customDomainApplicationApi.listApplicationCustomDomain(payload.applicationId)
