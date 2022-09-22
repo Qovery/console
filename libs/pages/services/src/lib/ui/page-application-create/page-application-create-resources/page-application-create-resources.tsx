@@ -11,12 +11,13 @@ export interface PageApplicationCreateResourcesProps {
 }
 
 export function PageApplicationCreateResources(props: PageApplicationCreateResourcesProps) {
-  const { formState } = useFormContext<ResourcesData>()
+  const { formState, setValue, getValues } = useFormContext<ResourcesData>()
 
-  const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
+  const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(getValues().memory_unit || MemorySizeEnum.MB)
 
   const getMemoryUnit = (value: string) => {
     setMemorySize(value)
+    setValue('memory_unit', value)
     return value
   }
 

@@ -1,12 +1,12 @@
 import { createContext, useContext, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { MemorySizeEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
-import { GeneralData, ResourcesData, PortData } from './application-creation-flow.interface'
+import { GeneralData, PortData, ResourcesData } from './application-creation-flow.interface'
 
 interface ApplicationContainerCreateContextInterface {
   currentStep: number
@@ -51,18 +51,14 @@ export function PageApplicationCreateFeature() {
     memory: 512,
     cpu: [0.5],
     instances: [1, 12],
+    memory_unit: MemorySizeEnum.MB,
   })
 
   const [portData, setPortData] = useState<PortData | undefined>({
     ports: [
       {
-        application_port: 80,
-        external_port: 80,
-        is_public: true,
-      },
-      {
-        application_port: 8080,
-        external_port: 8080,
+        application_port: undefined,
+        external_port: undefined,
         is_public: false,
       },
     ],

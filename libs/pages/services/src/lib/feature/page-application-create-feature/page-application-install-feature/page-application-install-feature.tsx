@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { createApplication } from '@qovery/domains/application'
 import { selectAllRepository } from '@qovery/domains/organization'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { MemorySizeEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -54,8 +54,9 @@ export function PageApplicationInstallFeature() {
       console.log('resourceData', resourcesData)
 
       const currentMemory = Number(resourcesData['memory'])
-      // todo uncomment this, but for this, we need to keep track of the memorySize in the resourceData
-      const memory = currentMemory //memorySize === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
+      const memoryUnit = resourcesData.memory_unit
+
+      const memory = memoryUnit === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
       const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
 
       if (generalData.serviceType === ServiceTypeEnum.APPLICATION) {
@@ -104,12 +105,12 @@ export function PageApplicationInstallFeature() {
           name: generalData.name,
           ports: portData.ports.map((port) => ({
             internal_port: port.application_port || 80,
-            external_port: port.external_port || 443,
+            external_port: port.external_port,
             publicly_accessible: port.is_public,
             protocol: PortProtocolEnum.HTTP,
           })),
-          cpu: resourcesData.cpu[0],
-          memory: resourcesData.memory,
+          cpu: cpu,
+          memory: memory,
           min_running_instances: resourcesData.instances[0],
           max_running_instances: resourcesData.instances[1],
           tag: generalData.image_tag || '',

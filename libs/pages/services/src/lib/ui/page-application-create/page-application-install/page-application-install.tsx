@@ -1,3 +1,4 @@
+import { BuildModeEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   Button,
@@ -47,8 +48,35 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
           <div className="mr-auto flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">General informations</div>
             <ul className="text-text-400 text-sm list-none">
-              <li>{props.generalData.name}</li>
-              <li>{props.generalData.serviceType === ServiceTypeEnum.APPLICATION ? 'Application' : 'Container'}</li>
+              <li>
+                name: <strong className="font-medium">{props.generalData.name}</strong>
+              </li>
+              {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
+                <>
+                  <li>
+                    repository: <strong className="font-medium">{props.generalData.repository}</strong>
+                  </li>
+                  <li>
+                    branch: <strong>{props.generalData.branch}</strong>
+                  </li>
+                  <li>
+                    root application path: <strong>{props.generalData.root_path}</strong>
+                  </li>
+                  <li>
+                    build mode: <strong>{props.generalData.build_mode}</strong>
+                  </li>
+                  {props.generalData.build_mode === BuildModeEnum.BUILDPACKS && (
+                    <li>
+                      buildpack language: <strong>{props.generalData.buildpack_language}</strong>
+                    </li>
+                  )}
+                  {props.generalData.build_mode === BuildModeEnum.DOCKER && (
+                    <li>
+                      dockerfile path: <strong>{props.generalData.dockerfile_path}</strong>
+                    </li>
+                  )}
+                </>
+              )}
             </ul>
           </div>
 
@@ -65,10 +93,16 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
           <div className="mr-auto flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
             <ul className="text-text-400 text-sm list-none">
-              <li>Cpu: {props.resourcesData.cpu[0]}</li>
-              <li>Memory: {props.resourcesData.memory}</li>
               <li>
-                Instances: {props.resourcesData.instances[0]} - {props.resourcesData.instances[1]}
+                <strong className="font-medium">CPU:</strong> {props.resourcesData['cpu'][0]}
+              </li>
+              <li>
+                <strong className="font-medium">Memory:</strong> {props.resourcesData.memory}
+                {props.resourcesData.memory_unit}
+              </li>
+              <li>
+                <strong className="font-medium">Instances:</strong> {props.resourcesData.instances[0]} -{' '}
+                {props.resourcesData.instances[1]}
               </li>
             </ul>
           </div>
@@ -85,7 +119,15 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="mr-auto flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
-            <p className="text-text-400 text-sm">Hello</p>
+            <ul className="text-text-400 text-sm">
+              {props.portsData.ports.map((port, index) => (
+                <li key={index}>
+                  <strong className="font-medium">application port:</strong> {port.application_port} –{' '}
+                  <strong className="font-medium">external port:</strong> {port.external_port} –
+                  <strong className="font-medium">public:</strong> {port.is_public ? 'yes' : 'no'}
+                </li>
+              ))}
+            </ul>
           </div>
 
           <ButtonIcon

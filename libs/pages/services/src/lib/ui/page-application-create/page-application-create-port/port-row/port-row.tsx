@@ -43,6 +43,7 @@ export function PortRow(props: PortRowProps) {
             label={`External Port ${index + 1}`}
             error={error?.message}
             type="number"
+            disabled
           />
         )}
       />

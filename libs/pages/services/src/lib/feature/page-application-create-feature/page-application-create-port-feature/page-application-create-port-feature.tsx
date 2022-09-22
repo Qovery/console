@@ -51,7 +51,12 @@ export function PageApplicationCreatePortFeature() {
   const [ports, setPorts] = useState(methods.getValues().ports)
 
   const onAddPort = () => {
-    setPorts([...ports, { application_port: undefined, external_port: undefined, is_public: false }])
+    const newPortRow = { application_port: undefined, external_port: undefined, is_public: false }
+    setPorts([...ports, newPortRow])
+    methods.reset({
+      ...methods.getValues(),
+      ports: [...ports, newPortRow],
+    })
   }
 
   const removePort = (index: number) => {
