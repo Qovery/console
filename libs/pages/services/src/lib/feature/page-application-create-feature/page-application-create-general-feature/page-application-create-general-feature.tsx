@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
-import { fetchContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
+import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/router'
@@ -43,7 +43,7 @@ export function PageApplicationCreateGeneralFeature() {
 
   useEffect(() => {
     if (watchServiceType === ServiceTypeEnum.CONTAINER) {
-      dispatch(fetchContainerRegistries({ organizationId }))
+      dispatch(fetchOrganizationContainerRegistries({ organizationId }))
     }
   }, [watchServiceType, dispatch])
 

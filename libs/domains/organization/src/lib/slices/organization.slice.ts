@@ -50,13 +50,13 @@ export const deleteOrganization = createAsyncThunk(
   }
 )
 
-export const fetchContainerRegistries = createAsyncThunk<ContainerRegistryResponse[], { organizationId: string }>(
-  'organization/containerRegistries/fetch',
-  async (data) => {
-    const result = await containerRegistriesApi.listContainerRegistry(data.organizationId)
-    return result.data.results as ContainerRegistryResponse[]
-  }
-)
+export const fetchOrganizationContainerRegistries = createAsyncThunk<
+  ContainerRegistryResponse[],
+  { organizationId: string }
+>('organization/containerRegistries/fetch', async (data) => {
+  const result = await containerRegistriesApi.listContainerRegistry(data.organizationId)
+  return result.data.results as ContainerRegistryResponse[]
+})
 
 export const editOrganization = createAsyncThunk(
   'organization/edit',
@@ -125,7 +125,7 @@ export const organizationSlice = createSlice({
       })
 
       // fetch registry
-      .addCase(fetchContainerRegistries.pending, (state: OrganizationState, action) => {
+      .addCase(fetchOrganizationContainerRegistries.pending, (state: OrganizationState, action) => {
         const update: Update<OrganizationEntity> = {
           id: action.meta.arg.organizationId,
           changes: {
@@ -138,7 +138,7 @@ export const organizationSlice = createSlice({
 
         organizationAdapter.updateOne(state, update)
       })
-      .addCase(fetchContainerRegistries.fulfilled, (state: OrganizationState, action) => {
+      .addCase(fetchOrganizationContainerRegistries.fulfilled, (state: OrganizationState, action) => {
         const update: Update<OrganizationEntity> = {
           id: action.meta.arg.organizationId,
           changes: {

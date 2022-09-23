@@ -1,12 +1,13 @@
 export interface BlockContentProps {
-  className?: string
   children: React.ReactNode
   title: string
   customWidth?: string
+  className?: string
+  classNameContent?: string
 }
 
 export function BlockContent(props: BlockContentProps) {
-  const { children, className = '', title, customWidth = 'w-full' } = props
+  const { children, className = '', title, customWidth = 'w-full', classNameContent = 'p-5' } = props
 
   return (
     <div
@@ -15,7 +16,7 @@ export function BlockContent(props: BlockContentProps) {
       <div className="flex items-center justify-between h-9 px-4 border-b border-element-light-lighter-500">
         <h2 className="font-medium text-text-600 text-ssm">{title}</h2>
       </div>
-      <div className="p-5">{children}</div>
+      <div className={classNameContent}>{children}</div>
     </div>
   )
 }

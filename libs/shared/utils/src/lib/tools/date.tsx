@@ -30,8 +30,8 @@ export const dateToHours = (date: string) => {
   return `${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`
 }
 
-export function dateYearMonthDayHourMinuteSecond(date: Date) {
-  return `${date.getFullYear()}-${
-    date.getMonth() + 1
-  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${
+    withTime ? `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}` : ''
+  } `
 }

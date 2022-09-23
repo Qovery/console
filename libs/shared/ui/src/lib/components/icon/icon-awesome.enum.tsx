@@ -51,6 +51,7 @@ export enum IconAwesomeEnum {
   CLOUD_ARROW_DOWN = 'icon-solid-cloud-arrow-down',
   ARROW_DOWN_TO_LINE = 'icon-solid-arrow-down-to-line',
   ARROW_UP_TO_LINE = 'icon-solid-arrow-up-to-line',
+  ARROW_UP_RIGHT_FROM_SQUARE = 'icon-solid-arrow-up-right-from-square',
   TRIANGLE_EXCLAMATION = 'icon-solid-triangle-exclamation',
   EYE = 'icon-solid-eye',
   EYE_SLASH = 'icon-solid-eye-slash',
@@ -77,5 +78,7 @@ export enum IconAwesomeEnum {
   USER_GROUP = 'icon-solid-user-group',
   CODE_BRANCH = 'icon-solid-code-branch',
   DATABASE = 'icon-solid-database',
+  BOX = 'icon-solid-box',
+  SOURCETREE = 'icon-brands-SOURCETREE',
   // schema: favicons name
 }

@@ -121,6 +121,14 @@
 
 .btn-icon--stroked {
   @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-text-500;
+
+  &.bg-transparent {
+    background-color: transparent;
+    &:hover {
+      color: theme('colors.text.600');
+      background-color: theme('colors.white');
+    }
+  }
 }
 
 .btn-icon--flat {
