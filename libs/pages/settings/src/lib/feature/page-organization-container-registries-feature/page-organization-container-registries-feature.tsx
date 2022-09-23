@@ -22,8 +22,6 @@ export function PageOrganizationContainerRegistriesFeature() {
       dispatch(fetchOrganizationContainerRegistries({ organizationId }))
   }, [dispatch, organizationId, organization, containerRegistriesLoadingStatus])
 
-  // console.log(organization)
-
   return (
     <PageOrganizationContainerRegistries
       containerRegistries={organization?.containerRegistries?.items}
