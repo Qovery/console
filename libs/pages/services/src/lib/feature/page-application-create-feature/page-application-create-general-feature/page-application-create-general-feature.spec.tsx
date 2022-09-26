@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
-import { ApplicationContainerCreateContext } from 'libs/pages/services/src/lib/feature/page-application-create-feature/page-application-create-feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ApplicationContainerCreateContext } from '../page-application-create-feature'
 import PageApplicationCreateGeneralFeature from './page-application-create-general-feature'
 
 describe('PageApplicationCreateGeneralFeature', () => {

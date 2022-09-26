@@ -22,11 +22,18 @@ export function PageApplicationCreateGeneralFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Step 1 is cool"
-      items={['because it smells good', 'and we do it with love']}
+      title="Application creation flow"
+      items={[
+        'You can deploy an application from a git repository or a container registry',
+        'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',
+        'Container Registry: Qovery will pull the image from container registry and deploy it on your kubernetes cluster',
+      ]}
       helpSectionProps={{
-        description: 'This is a description',
-        links: [{ link: '#', linkLabel: 'link', external: true }],
+        description: 'Need help? You may find these links useful',
+        links: [
+          { link: '#', linkLabel: 'How to configure my application', external: true },
+          { link: '#', linkLabel: 'Still need help? Ask on our Forum', external: true },
+        ],
       }}
     />
   )

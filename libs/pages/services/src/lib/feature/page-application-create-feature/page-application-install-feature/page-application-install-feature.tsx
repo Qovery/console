@@ -46,12 +46,15 @@ export function PageApplicationInstallFeature() {
     navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
   }
 
+  useEffect(() => {
+    !generalData?.name && gotoGlobalInformations()
+  }, [generalData, navigate, environmentId, organizationId, projectId])
+
   const dispatch = useDispatch<AppDispatch>()
 
   const onSubmit = () => {
     if (generalData && portData && resourcesData) {
       setLoading(true)
-      console.log('resourceData', resourcesData)
 
       const currentMemory = Number(resourcesData['memory'])
       const memoryUnit = resourcesData.memory_unit
@@ -62,12 +65,13 @@ export function PageApplicationInstallFeature() {
       if (generalData.serviceType === ServiceTypeEnum.APPLICATION) {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
-          ports: portData.ports.map((port) => ({
-            internal_port: port.application_port || 80,
-            external_port: port.external_port,
-            publicly_accessible: port.is_public,
-            protocol: PortProtocolEnum.HTTP,
-          })),
+          ports:
+            portData.ports?.map((port) => ({
+              internal_port: port.application_port || 80,
+              external_port: port.external_port,
+              publicly_accessible: port.is_public,
+              protocol: PortProtocolEnum.HTTP,
+            })) || [],
           cpu: cpu,
           memory: memory,
           min_running_instances: resourcesData.instances[0],
@@ -106,12 +110,13 @@ export function PageApplicationInstallFeature() {
       } else {
         const containerRequest: ContainerRequest = {
           name: generalData.name,
-          ports: portData.ports.map((port) => ({
-            internal_port: port.application_port || 80,
-            external_port: port.external_port,
-            publicly_accessible: port.is_public,
-            protocol: PortProtocolEnum.HTTP,
-          })),
+          ports:
+            portData.ports?.map((port) => ({
+              internal_port: port.application_port || 80,
+              external_port: port.external_port,
+              publicly_accessible: port.is_public,
+              protocol: PortProtocolEnum.HTTP,
+            })) || [],
           cpu: cpu,
           memory: memory,
           min_running_instances: resourcesData.instances[0],
@@ -123,7 +128,6 @@ export function PageApplicationInstallFeature() {
           registry_id: generalData.registry || '',
         }
 
-        console.log(containerRequest)
         dispatch(
           createApplication({
             environmentId: environmentId,

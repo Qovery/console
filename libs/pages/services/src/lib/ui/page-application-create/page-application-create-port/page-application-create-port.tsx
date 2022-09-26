@@ -34,7 +34,7 @@ export function PageApplicationCreatePort(props: PageApplicationCreatePortProps)
 
       <form onSubmit={props.onSubmit}>
         <div className="mb-10">
-          {props.ports.map((port, index) => (
+          {props.ports?.map((port, index) => (
             <PortRow onDelete={props.onRemovePort} key={index} index={index} />
           ))}
         </div>

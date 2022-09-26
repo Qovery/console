@@ -120,13 +120,17 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
           <div className="mr-auto flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
             <ul className="text-text-400 text-sm">
-              {props.portsData.ports.map((port, index) => (
-                <li key={index}>
-                  <strong className="font-medium">application port:</strong> {port.application_port} –{' '}
-                  <strong className="font-medium">external port:</strong> {port.external_port} –
-                  <strong className="font-medium">public:</strong> {port.is_public ? 'yes' : 'no'}
-                </li>
-              ))}
+              {props.portsData.ports ? (
+                props.portsData.ports?.map((port, index) => (
+                  <li key={index}>
+                    <strong className="font-medium">application port:</strong> {port.application_port} –{' '}
+                    <strong className="font-medium">external port:</strong> {port.external_port} –
+                    <strong className="font-medium">public:</strong> {port.is_public ? 'yes' : 'no'}
+                  </li>
+                ))
+              ) : (
+                <li>no port declared</li>
+              )}
             </ul>
           </div>
 

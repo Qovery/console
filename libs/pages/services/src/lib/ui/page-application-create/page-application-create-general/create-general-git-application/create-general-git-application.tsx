@@ -37,6 +37,7 @@ export function CreateGeneralGitApplication() {
           rules={{
             required: 'Please select a mode.',
           }}
+          defaultValue={'DOCKER'}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               dataTestId="input-select-mode"
@@ -70,7 +71,7 @@ export function CreateGeneralGitApplication() {
           />
         )}
 
-        {watchBuildMode === BuildModeEnum.DOCKER && (
+        {(!watchBuildMode || watchBuildMode === BuildModeEnum.DOCKER) && (
           <Controller
             data-testid="input-text-dockerfile-path"
             key="dockerfile_path"

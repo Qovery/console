@@ -13,14 +13,16 @@ export function FunnelFlowBody(props: FunnelFlowBodyProps) {
             {props.children}
           </div>
         </section>
-        <aside className="w-[30%] sticky top-0 pt-14 pl-10">
-          <div
-            data-testid="funnel-body-help"
-            className="bg-element-light-lighter-100 p-8 border-element-light-lighter-400 border-b border-l max-w-[22.5rem]"
-          >
-            {props.helpSection}
-          </div>
-        </aside>
+        {props.helpSection && (
+          <aside className="w-[30%] sticky top-0 pt-14 pl-10">
+            <div
+              data-testid="funnel-body-help"
+              className="bg-element-light-lighter-100 p-8 border-element-light-lighter-400 border-b border-l max-w-[22.5rem]"
+            >
+              {props.helpSection}
+            </div>
+          </aside>
+        )}
       </div>
     </>
   )

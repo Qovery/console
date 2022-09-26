@@ -3,6 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
 import {
   SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_INSTALLATION_URL,
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_URL,
@@ -13,17 +14,33 @@ import { PortData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreatePortFeature() {
-  const { setCurrentStep, portData, setPortData } = useApplicationContainerCreateContext()
+  const { setCurrentStep, portData, setPortData, generalData } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    !generalData?.name &&
+      navigate(
+        `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}` +
+          SERVICES_CREATION_GENERAL_URL
+      )
+  }, [generalData, navigate, environmentId, organizationId, projectId])
+
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Step 3 is the cherry on the cake"
-      items={['because ports is luxuous', 'and we do it with for free']}
+      title="Configuring the application port"
+      items={[
+        'Declare the ports used internally by your application',
+        'Declared ports are accessible from other applications within the same environment',
+        'You can also expose them on the internet by making them public.',
+        'Declared ports are also used to check the liveness/readiness of your application.',
+      ]}
       helpSectionProps={{
         description: 'This is still a description',
-        links: [{ link: '#', linkLabel: 'link', external: true }],
+        links: [
+          { link: '#', linkLabel: 'How to configure my application', external: true },
+          { link: '#', linkLabel: 'Still need help? Ask on our Forum', external: true },
+        ],
       }}
     />
   )
@@ -51,7 +68,7 @@ export function PageApplicationCreatePortFeature() {
   const [ports, setPorts] = useState(methods.getValues().ports)
 
   const onAddPort = () => {
-    const newPortRow = { application_port: undefined, external_port: undefined, is_public: false }
+    const newPortRow = { application_port: undefined, external_port: 443, is_public: true }
     setPorts([...ports, newPortRow])
     methods.reset({
       ...methods.getValues(),

@@ -15,7 +15,7 @@ export function HelpSection(props: HelpSectionProps) {
       {links &&
         links.map((link, i, row) => (
           <Link
-            key={link.link}
+            key={i}
             className={`font-medium ${i + 1 === row.length ? '' : 'mb-2'}`}
             link={link.link}
             linkLabel={link.linkLabel || link.link}

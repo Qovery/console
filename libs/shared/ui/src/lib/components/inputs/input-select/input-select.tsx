@@ -85,11 +85,12 @@ export function InputSelect(props: InputSelectProps) {
         <span className="input--select__checkbox">
           {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
         </span>
+      ) : props.isSelected ? (
+        <Icon name="icon-solid-check" className="text-success-500" />
+      ) : props.data.icon ? (
+        props.data.icon
       ) : (
-        <Icon
-          name="icon-solid-check"
-          className={`text-success-500 ${props.isSelected ? 'opacity-100' : 'opacity-0'}`}
-        />
+        <Icon name="icon-solid-check" className="opacity-0" />
       )}
 
       <label className="ml-2">{props.label}</label>
@@ -104,7 +105,14 @@ export function InputSelect(props: InputSelectProps) {
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="text-sm text-text-600 mr-1">{props.data.label}</span>
+    <span className="text-sm text-text-600 mr-1">
+      {props.data.icon && !props.isMulti && (
+        <span className="inline-block mr-1 relative top-0.5" data-testid="selected-icon">
+          {props.data.icon}
+        </span>
+      )}{' '}
+      {props.data.label}
+    </span>
   )
 
   const inputActions =

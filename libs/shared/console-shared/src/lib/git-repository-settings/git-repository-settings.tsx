@@ -78,6 +78,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
             rules={{
               required: 'Please select a repository.',
             }}
+            defaultValue=""
             render={({ field, fieldState: { error } }) => (
               <InputSelect
                 dataTestId="input-repository"

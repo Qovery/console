@@ -1,7 +1,7 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
-import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText, Link } from '@qovery/shared/ui'
@@ -64,8 +64,8 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
               onChange={field.onChange}
               value={field.value}
               options={[
-                { value: ServiceTypeEnum.APPLICATION, label: 'Git provider', icon: IconEnum.GITHUB },
-                { value: ServiceTypeEnum.CONTAINER, label: 'Container Registry', icon: IconEnum.GITHUB },
+                { value: ServiceTypeEnum.APPLICATION, label: 'Git provider' },
+                { value: ServiceTypeEnum.CONTAINER, label: 'Container Registry' },
               ]}
               label="Application source"
               error={error?.message}
