@@ -16,6 +16,9 @@ import {
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
 
 export interface PageOrganizationContainerRegistriesProps {
+  onAddRegistry: () => void
+  onEdit: (customPort: ContainerRegistryResponse) => void
+  onDelete: (customPort: ContainerRegistryResponse) => void
   containerRegistries?: ContainerRegistryResponse[]
   loading?: LoadingStatus
 }
@@ -34,7 +37,7 @@ const logoByRegistryKind = (kind?: ContainerRegistryKindEnum) => {
 }
 
 export function PageOrganizationContainerRegistries(props: PageOrganizationContainerRegistriesProps) {
-  const { containerRegistries, loading } = props
+  const { containerRegistries, loading, onAddRegistry, onEdit, onDelete } = props
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -46,7 +49,9 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
               Define and manage the container registry to be used within your organization.
             </p>
           </div>
-          <Button iconRight={IconAwesomeEnum.CIRCLE_PLUS}>Add registry</Button>
+          <Button onClick={() => onAddRegistry()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+            Add registry
+          </Button>
         </div>
         {(loading === 'not loaded' || loading === 'loading') && containerRegistries?.length === 0 ? (
           <div className="flex justify-center">
@@ -88,6 +93,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                     icon={IconAwesomeEnum.WHEEL}
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
+                    onClick={() => onEdit(registry)}
                     className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
                     iconClassName="!text-xs"
                   />
@@ -95,6 +101,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
+                    onClick={() => onDelete(registry)}
                     className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"
                   />
