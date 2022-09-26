@@ -36,8 +36,6 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
 export function CrudModal(props: CrudModalProps) {
   const { control, watch } = useFormContext()
 
-  console.log(watch('kind') === (ContainerRegistryKindEnum.ECR || ContainerRegistryKindEnum.PUBLIC_ECR))
-
   return (
     <ModalCrud
       title={props.isEdit ? 'Edit container registry' : 'Set container registry'}
@@ -124,6 +122,7 @@ export function CrudModal(props: CrudModalProps) {
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
+                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -141,6 +140,7 @@ export function CrudModal(props: CrudModalProps) {
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
+                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -181,6 +181,7 @@ export function CrudModal(props: CrudModalProps) {
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
+                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -198,6 +199,7 @@ export function CrudModal(props: CrudModalProps) {
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
+                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -219,6 +221,7 @@ export function CrudModal(props: CrudModalProps) {
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
+                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -236,6 +239,7 @@ export function CrudModal(props: CrudModalProps) {
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
+                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}

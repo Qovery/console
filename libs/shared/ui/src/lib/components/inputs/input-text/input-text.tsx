@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputTextProps {
   name: string
@@ -31,6 +32,7 @@ export function InputText(props: InputTextProps) {
   const [focused, setFocused] = useState(false)
   const inputRef = useRef<HTMLDivElement>(null)
   const [currentValue, setCurrentValue] = useState(value)
+  const [currentType, setCurrentType] = useState(type)
 
   useEffect(() => {
     if (value) setCurrentValue(value)
@@ -74,7 +76,7 @@ export function InputText(props: InputTextProps) {
               id={label}
               className="input__value"
               value={currentValue}
-              type={type}
+              type={currentType}
               onChange={(e) => {
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)
@@ -85,7 +87,18 @@ export function InputText(props: InputTextProps) {
             />
             {isInputDate && (
               <div className="absolute top-1/2 -translate-y-1/2 right-4">
-                <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+                <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-sm text-text-500" />
+              </div>
+            )}
+            {type === 'password' && (
+              <div
+                className="absolute top-1/2 -translate-y-1/2 right-4"
+                onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
+              >
+                {currentType === 'password' && <Icon name={IconAwesomeEnum.EYE} className="text-sm text-text-500" />}
+                {currentType !== 'password' && (
+                  <Icon name={IconAwesomeEnum.EYE_SLASH} className="text-sm text-text-500" />
+                )}
               </div>
             )}
           </div>
