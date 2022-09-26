@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
-import { createApplication } from '@qovery/domains/application'
+import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { selectAllRepository } from '@qovery/domains/organization'
 import { MemorySizeEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -52,7 +52,7 @@ export function PageApplicationInstallFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const onSubmit = () => {
+  const onSubmit = (withDeploy: boolean) => {
     if (generalData && portData && resourcesData) {
       setLoading(true)
 
@@ -98,7 +98,16 @@ export function PageApplicationInstallFeature() {
           })
         )
           .unwrap()
-          .then(() => {
+          .then((app) => {
+            if (withDeploy) {
+              dispatch(
+                postApplicationActionsDeploy({
+                  environmentId,
+                  applicationId: app.id,
+                  serviceType: ServiceTypeEnum.APPLICATION,
+                })
+              )
+            }
             navigate(SERVICES_URL(organizationId, projectId, environmentId))
           })
           .catch((e) => {
@@ -136,7 +145,16 @@ export function PageApplicationInstallFeature() {
           })
         )
           .unwrap()
-          .then(() => {
+          .then((app) => {
+            if (withDeploy) {
+              dispatch(
+                postApplicationActionsDeploy({
+                  environmentId,
+                  applicationId: app.id,
+                  serviceType: ServiceTypeEnum.CONTAINER,
+                })
+              )
+            }
             navigate(SERVICES_URL(organizationId, projectId, environmentId))
           })
           .catch((e) => {

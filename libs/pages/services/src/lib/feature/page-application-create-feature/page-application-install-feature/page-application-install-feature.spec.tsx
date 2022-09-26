@@ -109,7 +109,7 @@ describe('InstallApplicationFeature', () => {
       </ApplicationContainerCreateContext.Provider>
     )
 
-    const submitButton = getByTestId(baseElement, 'button-submit')
+    const submitButton = getByTestId(baseElement, 'button-create')
 
     await act(() => {
       submitButton.click()
@@ -161,7 +161,7 @@ describe('InstallApplicationFeature', () => {
       </ApplicationContainerCreateContext.Provider>
     )
 
-    const submitButton = getByTestId(baseElement, 'button-submit')
+    const submitButton = getByTestId(baseElement, 'button-create')
 
     await act(() => {
       submitButton.click()

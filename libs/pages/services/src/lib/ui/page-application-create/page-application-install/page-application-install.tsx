@@ -17,7 +17,7 @@ import {
 } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
 
 export interface PageApplicationInstallProps {
-  onSubmit: () => void
+  onSubmit: (withDeploy: boolean) => void
   onPrevious: () => void
   generalData: GeneralData
   resourcesData: ResourcesData
@@ -147,15 +147,26 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
         <Button onClick={props.onPrevious} type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
           Back
         </Button>
-        <Button
-          dataTestId="button-submit"
-          loading={props.isLoading}
-          onClick={props.onSubmit}
-          size={ButtonSize.XLARGE}
-          style={ButtonStyle.BASIC}
-        >
-          Continue
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            dataTestId="button-create"
+            loading={props.isLoading}
+            onClick={() => props.onSubmit(false)}
+            size={ButtonSize.XLARGE}
+            style={ButtonStyle.STROKED}
+          >
+            Just create
+          </Button>
+          <Button
+            dataTestId="button-create-deploy"
+            loading={props.isLoading}
+            onClick={() => props.onSubmit(true)}
+            size={ButtonSize.XLARGE}
+            style={ButtonStyle.BASIC}
+          >
+            Create and Deploy
+          </Button>
+        </div>
       </div>
     </div>
   )
