@@ -17,8 +17,8 @@ import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
 
 export interface PageOrganizationContainerRegistriesProps {
   onAddRegistry: () => void
-  onEdit: (customPort: ContainerRegistryResponse) => void
-  onDelete: (customPort: ContainerRegistryResponse) => void
+  onEdit: (registry: ContainerRegistryResponse) => void
+  onDelete: (registry: ContainerRegistryResponse) => void
   containerRegistries?: ContainerRegistryResponse[]
   loading?: LoadingStatus
 }
@@ -54,13 +54,14 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           </Button>
         </div>
         {(loading === 'not loaded' || loading === 'loading') && containerRegistries?.length === 0 ? (
-          <div className="flex justify-center">
+          <div data-testid="registries-loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
         ) : containerRegistries && containerRegistries.length > 0 ? (
           <BlockContent title="Container registries" classNameContent="">
             {containerRegistries?.map((registry: ContainerRegistryResponse) => (
               <div
+                data-testid={`registries-list-${registry.id}`}
                 key={registry.id}
                 className="flex justify-between items-center px-5 py-4 border-b border-element-light-lighter-500 last:border-0"
               >
@@ -113,6 +114,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           loading === 'loaded' &&
           containerRegistries?.length === 0 && (
             <PlaceholderSettings
+              dataTestId="empty-state"
               title="No container registry"
               description="Define a container registry for your organization"
             />

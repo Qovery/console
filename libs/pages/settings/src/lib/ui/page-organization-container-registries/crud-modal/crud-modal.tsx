@@ -121,6 +121,7 @@ export function CrudModal(props: CrudModalProps) {
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
+                dataTestId="input-username"
                 className="mb-5"
                 type="text"
                 name={field.name}
@@ -139,6 +140,7 @@ export function CrudModal(props: CrudModalProps) {
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
+                dataTestId="input-password"
                 className="mb-5"
                 type="password"
                 name={field.name}

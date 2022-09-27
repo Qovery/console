@@ -1,17 +1,18 @@
 import { act, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import CrudModal, { CrudModalProps } from './crud-modal'
+import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
+import CrudModal, { CrudModalProps, getOptionsContainerRegistry } from './crud-modal'
 
 const props: CrudModalProps = {
   loading: false,
   onSubmit: jest.fn(),
   onClose: jest.fn(),
-  port: {
-    internal_port: 80,
-    external_port: 433,
-    publicly_accessible: false,
-  },
+  availableContainerRegistry: [
+    {
+      kind: ContainerRegistryKindEnum.DOCKER_HUB,
+    },
+  ],
 }
 
 describe('CrudModal', () => {
@@ -20,17 +21,110 @@ describe('CrudModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the form', async () => {
+  it('should render the form with Docker', async () => {
     const { getByDisplayValue } = render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
-        defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },
+        defaultValues: {
+          name: 'hello',
+          description: 'description',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.DOCKER_HUB,
+          config: {
+            username: 'test',
+            password: 'password',
+          },
+        },
       })
     )
     await act(() => {
-      getByDisplayValue(99)
-      getByDisplayValue(420)
-      getByDisplayValue('true')
+      getByDisplayValue('hello')
+      getByDisplayValue('description')
+      getByDisplayValue('https://qovery.com')
+      getByDisplayValue('test')
+      getByDisplayValue('password')
     })
+  })
+
+  it('should render the form with ECR', async () => {
+    const { getByDisplayValue } = render(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.ECR,
+          config: {
+            region: 'region',
+            access_key_id: 'test',
+            secret_access_key: 'key',
+          },
+        },
+      })
+    )
+    await act(() => {
+      getByDisplayValue('hello')
+      getByDisplayValue('https://qovery.com')
+      getByDisplayValue('region')
+      getByDisplayValue('test')
+      getByDisplayValue('key')
+    })
+  })
+
+  it('should render the form with PUBLIC_ECR', async () => {
+    const { getByDisplayValue } = render(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.PUBLIC_ECR,
+          config: {
+            access_key_id: 'test',
+            secret_access_key: 'key',
+          },
+        },
+      })
+    )
+    await act(() => {
+      getByDisplayValue('hello')
+      getByDisplayValue('https://qovery.com')
+      getByDisplayValue('test')
+      getByDisplayValue('key')
+    })
+  })
+
+  it('should render the form with SCALEWAY_CR', async () => {
+    const { getByDisplayValue } = render(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.SCALEWAY_CR,
+          config: {
+            region: 'region',
+            scaleway_access_key: 'test',
+            scaleway_secret_key: 'key',
+          },
+        },
+      })
+    )
+    await act(() => {
+      getByDisplayValue('hello')
+      getByDisplayValue('https://qovery.com')
+      getByDisplayValue('test')
+      getByDisplayValue('key')
+    })
+  })
+
+  it('should have an array of container registry', async () => {
+    const options = getOptionsContainerRegistry([
+      {
+        kind: ContainerRegistryKindEnum.DOCKER_HUB,
+      },
+      {
+        kind: ContainerRegistryKindEnum.ECR,
+      },
+    ])
+
+    expect(options[0].value).toBe(ContainerRegistryKindEnum.DOCKER_HUB)
   })
 
   it('should submit the form', async () => {
@@ -38,7 +132,16 @@ describe('CrudModal', () => {
     props.onSubmit = spy
     const { findByTestId } = render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
-        defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },
+        defaultValues: {
+          name: 'hello',
+          description: 'description',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.DOCKER_HUB,
+          config: {
+            username: 'test',
+            password: 'password',
+          },
+        },
       })
     )
 
