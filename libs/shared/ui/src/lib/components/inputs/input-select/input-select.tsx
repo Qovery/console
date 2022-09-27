@@ -44,7 +44,7 @@ export function InputSelect(props: InputSelectProps) {
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
   const [selectedValue, setSelectedValue] = useState<string | string[]>([])
   const [selectedHasIcon, setSelectedHasIcon] = useState<boolean>(false)
-  const selectedWithIconClassName = 'ml-6'
+  const selectedWithIconClassName = 'ml-7'
 
   const hasFocus = focused
   const hasError = error ? 'input--select--error' : ''
@@ -131,7 +131,7 @@ export function InputSelect(props: InputSelectProps) {
   const SingleValue = (props: SingleValueProps<Value>) => (
     <span className="text-sm text-text-600 mr-1">
       {props.data.icon && !props.isMulti && (
-        <span className="inline-block mr-1 relative -top-1.5" data-testid="selected-icon">
+        <span className="inline-block mr-2 relative -top-1.5" data-testid="selected-icon">
           {props.data.icon}
         </span>
       )}{' '}
