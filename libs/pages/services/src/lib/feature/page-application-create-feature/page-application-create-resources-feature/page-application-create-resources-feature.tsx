@@ -37,8 +37,12 @@ export function PageApplicationCreateResourcesFeature() {
       helpSectionProps={{
         description: 'Need help? You may find these links useful',
         links: [
-          { link: '#', linkLabel: 'How to configure my application', external: true },
-          { link: '#', linkLabel: 'Still need help? Ask on our Forum', external: true },
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#resources',
+            linkLabel: 'How to configure my application',
+            external: true,
+          },
+          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
         ],
       }}
     />

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
-import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText, Link } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { GeneralData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
 import CreateGeneralContainer from './create-general-container/create-general-container'
 import CreateGeneralGitApplication from './create-general-git-application/create-general-git-application'
@@ -24,13 +24,10 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-text-700 text-lg mb-2">Application General Data</h3>
+        <h3 className="text-text-700 text-lg mb-2">General informations</h3>
         <p className="text-text-500 text-sm mb-2">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate dignissimos earum fugiat fugit impedit in
-          ipsa natus, quam sunt voluptate. Amet animi cupiditate, dignissimos eos excepturi maiores praesentium vero
-          voluptates!
+          General settings allow you to set up your application name, git repository or container settings.
         </p>
-        <Link link="#" linkLabel="link" external={true} />
       </div>
 
       <form onSubmit={props.onSubmit}>

@@ -38,8 +38,12 @@ export function PageApplicationCreatePortFeature() {
       helpSectionProps={{
         description: 'This is still a description',
         links: [
-          { link: '#', linkLabel: 'How to configure my application', external: true },
-          { link: '#', linkLabel: 'Still need help? Ask on our Forum', external: true },
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#ports',
+            linkLabel: 'How to configure my application',
+            external: true,
+          },
+          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
         ],
       }}
     />
