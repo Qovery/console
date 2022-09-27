@@ -59,6 +59,7 @@ export function InputText(props: InputTextProps) {
     <div
       className={className}
       onClick={() => (isInputDate ? displayPicker() : inputRef.current?.querySelector('input')?.focus())}
+      data-testid={`${dataTestId || 'input-text'}-wrapper`}
     >
       <div className="relative">
         <div

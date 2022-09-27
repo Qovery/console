@@ -34,7 +34,6 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     currentAuthProvider,
     repositories = [],
     loadingStatusRepositories,
-    // loadingStatusAuthProviders,
     loadingStatusBranches,
     branches = [],
     withBlockWrapper = true,
@@ -47,22 +46,6 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     root_path: string
   }>()
   const { openModal, closeModal } = useModal()
-
-  // useEffect(() => {
-  //   register('repository', { required: true })
-  // }, [])
-
-  // const watchProvider = watch('provider')
-  //
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     trigger().then()
-  //   }, 1000)
-  // }, [watchProvider])
-  //
-  // console.log(formState.isValid)
-  //
-  console.log(getValues())
 
   const children = (
     <>
@@ -95,7 +78,9 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           <InputSelect
             dataTestId="input-repository"
             label="Repository"
-            className={`mb-3 ${getValues().provider && repositories.length ? '' : 'hidden'}`}
+            className={`mb-3 ${
+              (getValues().provider && loadingStatusRepositories === 'loaded') || gitDisabled ? '' : 'hidden'
+            }`}
             options={repositories}
             onChange={field.onChange}
             value={field.value}
@@ -148,7 +133,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
       />
 
       {(loadingStatusRepositories === 'loading' || loadingStatusBranches === 'loading') && !gitDisabled && (
-        <div data-testid="loader-branch" className="flex justify-center mt-4">
+        <div data-testid="loader" className="flex justify-center mt-4">
           <LoaderSpinner />
         </div>
       )}

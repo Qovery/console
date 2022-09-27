@@ -76,7 +76,6 @@ export function GitRepositorySettingsFeature() {
 
   // fetch branches by repository and set default branch
   useEffect(() => {
-    console.log('fetching branches', getValues().repository, loadingStatusRepositories)
     if (!gitDisabled && getValues().repository && loadingStatusRepositories === 'loaded') {
       const currentRepository = repositories?.find((repository) => repository.name === watchRepository)
       dispatch(
