@@ -1,7 +1,9 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { CreateGeneralContainer } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import GitRepositorySettingsFeature from '../../feature/git-repository-settings-feature/git-repository-settings-feature'
@@ -11,6 +13,7 @@ export interface PageSettingsGeneralProps {
   watchBuildMode: BuildModeEnum
   type: ServiceTypeEnum
   loading?: boolean
+  organization?: OrganizationEntity
 }
 
 const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
@@ -49,6 +52,11 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
+          {type === ServiceTypeEnum.CONTAINER && (
+            <BlockContent title="Container settings">
+              <CreateGeneralContainer organization={props.organization} />
+            </BlockContent>
+          )}
           {type === ServiceTypeEnum.APPLICATION && (
             <>
               <GitRepositorySettingsFeature />

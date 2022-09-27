@@ -1,12 +1,12 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
+import { CreateGeneralContainer } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
 import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { GeneralData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
-import CreateGeneralContainer from './create-general-container/create-general-container'
 import CreateGeneralGitApplication from './create-general-git-application/create-general-git-application'
 
 export interface PageApplicationCreateGeneralProps {

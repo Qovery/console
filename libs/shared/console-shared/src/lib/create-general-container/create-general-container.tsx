@@ -2,14 +2,19 @@ import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { OrganizationEntity, Value } from '@qovery/shared/interfaces'
 import { InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
-import { GeneralData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
 export interface CreateGeneralContainerProps {
   organization?: OrganizationEntity
 }
 
 export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
-  const { control } = useFormContext<GeneralData>()
+  const { control } = useFormContext<{
+    registry?: string
+    image_name?: string
+    image_tag?: string
+    image_entry_point?: string
+    cmd_arguments?: string
+  }>()
   const [availableRegistiesOptions, setAvailableRegistiesOptions] = useState<Value[]>([])
 
   useEffect(() => {
@@ -20,6 +25,11 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
           label: registry.name || '',
         }))
       )
+
+      // setInterval(() => {
+      //   trigger().then()
+      //   getValues()
+      // }, 100)
     }
   }, [props.organization])
 
