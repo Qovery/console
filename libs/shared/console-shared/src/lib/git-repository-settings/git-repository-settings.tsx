@@ -34,7 +34,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     currentAuthProvider,
     repositories = [],
     loadingStatusRepositories,
-    loadingStatusAuthProviders,
+    // loadingStatusAuthProviders,
     loadingStatusBranches,
     branches = [],
     withBlockWrapper = true,
@@ -47,6 +47,22 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
     root_path: string
   }>()
   const { openModal, closeModal } = useModal()
+
+  // useEffect(() => {
+  //   register('repository', { required: true })
+  // }, [])
+
+  // const watchProvider = watch('provider')
+  //
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     trigger().then()
+  //   }, 1000)
+  // }, [watchProvider])
+  //
+  // console.log(formState.isValid)
+  //
+  console.log(getValues())
 
   const children = (
     <>
@@ -69,85 +85,72 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           />
         )}
       />
-      {getValues().provider &&
-      (repositories.length || (loadingStatusAuthProviders !== 'loading' && loadingStatusRepositories !== 'loading')) ? (
-        <>
-          <Controller
-            name="repository"
-            control={control}
-            rules={{
-              required: 'Please select a repository.',
-            }}
-            defaultValue=""
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                dataTestId="input-repository"
-                label="Repository"
-                className="mb-3"
-                options={repositories}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-                disabled={gitDisabled}
-                isSearchable
-              />
-            )}
+      <Controller
+        name="repository"
+        control={control}
+        rules={{
+          required: 'Please select a repository.',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            dataTestId="input-repository"
+            label="Repository"
+            className={`mb-3 ${getValues().provider && repositories.length ? '' : 'hidden'}`}
+            options={repositories}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            disabled={gitDisabled}
+            isSearchable
           />
-          {(branches.length || loadingStatusBranches === 'loaded' || gitDisabled) && (
-            <>
-              <Controller
-                name="branch"
-                control={control}
-                rules={{
-                  required: 'Please select a branch.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputSelect
-                    dataTestId="input-branch"
-                    label="Branch"
-                    className="mb-3"
-                    options={branches}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    disabled={gitDisabled}
-                    isSearchable
-                  />
-                )}
-              />
-              <Controller
-                name="root_path"
-                control={control}
-                defaultValue={'/'}
-                rules={{
-                  required: 'Value required',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    dataTestId="input-root-path"
-                    label="Root application path"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    disabled={gitDisabled}
-                  />
-                )}
-              />
-            </>
-          )}
-          {getValues().repository && branches.length === 0 && loadingStatusBranches === 'loading' && !gitDisabled && (
-            <div data-testid="loader-branch" className="flex justify-center mt-4">
-              <LoaderSpinner />
-            </div>
-          )}
-        </>
-      ) : (
-        getValues().provider && (
-          <div data-testid="loader-repository" className="flex justify-center mt-4">
-            <LoaderSpinner />
-          </div>
-        )
+        )}
+      />
+
+      <Controller
+        name="branch"
+        control={control}
+        rules={{
+          required: 'Please select a branch.',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            dataTestId="input-branch"
+            label="Branch"
+            className={`mb-3 ${branches.length || loadingStatusBranches === 'loaded' || gitDisabled ? '' : 'hidden'}`}
+            options={branches}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            disabled={gitDisabled}
+            isSearchable
+          />
+        )}
+      />
+      <Controller
+        name="root_path"
+        control={control}
+        defaultValue={'/'}
+        rules={{
+          required: 'Value required',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            dataTestId="input-root-path"
+            label="Root application path"
+            className={`${branches.length || loadingStatusBranches === 'loaded' || gitDisabled ? '' : 'hidden'}`}
+            name={field.name}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+            disabled={gitDisabled}
+          />
+        )}
+      />
+
+      {(loadingStatusRepositories === 'loading' || loadingStatusBranches === 'loading') && !gitDisabled && (
+        <div data-testid="loader-branch" className="flex justify-center mt-4">
+          <LoaderSpinner />
+        </div>
       )}
       {gitDisabled && (
         <div className="flex justify-end mt-3">

@@ -75,8 +75,8 @@ export function InputSelect(props: InputSelectProps) {
       }
     })
 
-    value && items && setSelectedItems(items)
-    value && setSelectedValue(items.map((item) => item.value))
+    items && setSelectedItems(items)
+    setSelectedValue(items.map((item) => item.value))
   }, [value, isMulti, options])
 
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (

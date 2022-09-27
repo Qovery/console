@@ -1,4 +1,4 @@
-import { GitAuthProvider } from 'qovery-typescript-axios'
+import { GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -36,12 +36,19 @@ export function GitRepositorySettingsFeature() {
     (a, b) => JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository)
   )
 
-  const { setValue, watch } = useFormContext()
+  const { setValue, watch, getValues } = useFormContext<{
+    provider: string
+    repository: string | undefined
+    branch: string | undefined
+    root_path: string | undefined
+  }>()
   const watchAuthProvider = watch('provider')
   const watchRepository = watch('repository')
 
   const authProviders = useSelector<RootState, GitAuthProvider[]>(selectAllAuthProvider)
-  const repositories = useSelector((state: RootState) => selectRepositoriesByProvider(state, watchAuthProvider))
+  const repositories = useSelector((state: RootState) =>
+    selectRepositoriesByProvider(state, watchAuthProvider as GitProviderEnum)
+  )
   const loadingStatusRepositories = useSelector<RootState, LoadingStatus>(repositoryLoadingStatus)
   const loadingStatusAuthProviders = useSelector<RootState, LoadingStatus>(authProviderLoadingStatus)
 
@@ -54,7 +61,7 @@ export function GitRepositorySettingsFeature() {
 
   useEffect(() => {
     if (watchAuthProvider) {
-      dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider }))
+      dispatch(fetchRepository({ organizationId, gitProvider: watchAuthProvider as GitProviderEnum }))
     }
   }, [dispatch, organizationId, watchAuthProvider])
 
@@ -69,14 +76,15 @@ export function GitRepositorySettingsFeature() {
 
   // fetch branches by repository and set default branch
   useEffect(() => {
-    if (!gitDisabled && watchRepository && loadingStatusRepositories === 'loaded') {
+    console.log('fetching branches', getValues().repository, loadingStatusRepositories)
+    if (!gitDisabled && getValues().repository && loadingStatusRepositories === 'loaded') {
       const currentRepository = repositories?.find((repository) => repository.name === watchRepository)
       dispatch(
         fetchBranches({
           id: currentRepository?.id,
           organizationId,
-          gitProvider: watchAuthProvider,
-          name: watchRepository,
+          gitProvider: getValues().provider as GitProviderEnum,
+          name: getValues().repository || '',
         })
       )
       setValue('branch', currentRepository?.default_branch, { shouldValidate: true })
