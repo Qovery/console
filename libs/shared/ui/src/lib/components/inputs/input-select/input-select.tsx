@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Select, {
   GroupBase,
   MultiValue,
@@ -43,6 +43,8 @@ export function InputSelect(props: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
   const [selectedValue, setSelectedValue] = useState<string | string[]>([])
+  const [selectedHasIcon, setSelectedHasIcon] = useState<boolean>(false)
+  const selectedWithIconClassName = 'ml-6'
 
   const hasFocus = focused
   const hasError = error ? 'input--select--error' : ''
@@ -76,8 +78,30 @@ export function InputSelect(props: InputSelectProps) {
     })
 
     items && setSelectedItems(items)
-    setSelectedValue(items.map((item) => item.value))
+    if (isMulti) {
+      setSelectedValue(items.map((item) => item.value))
+    } else {
+      if (items && items.length > 0) {
+        setSelectedValue(items[0]?.value)
+      }
+    }
   }, [value, isMulti, options])
+
+  const selectedValueHasIcon = useCallback((): boolean => {
+    if (!isMulti) {
+      const selectedOption = options.find((option) => selectedValue === option.value)
+      //console.log(selectedOption, selectedValue)
+      if (!selectedOption) return false
+
+      return !!selectedOption.icon
+    }
+
+    return false
+  }, [selectedValue, isMulti, options])
+
+  useEffect(() => {
+    setSelectedHasIcon(selectedValueHasIcon())
+  }, [setSelectedHasIcon, selectedValueHasIcon])
 
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
     <components.Option {...props}>
@@ -107,7 +131,7 @@ export function InputSelect(props: InputSelectProps) {
   const SingleValue = (props: SingleValueProps<Value>) => (
     <span className="text-sm text-text-600 mr-1">
       {props.data.icon && !props.isMulti && (
-        <span className="inline-block mr-1 relative top-0.5" data-testid="selected-icon">
+        <span className="inline-block mr-1 relative -top-1.5" data-testid="selected-icon">
           {props.data.icon}
         </span>
       )}{' '}
@@ -140,7 +164,9 @@ export function InputSelect(props: InputSelectProps) {
       >
         <label
           htmlFor={label}
-          className={`${hasLabelUp ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`}
+          className={`${hasLabelUp ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'} ${
+            selectedHasIcon ? selectedWithIconClassName : ''
+          }`}
         >
           {label}
         </label>

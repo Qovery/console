@@ -18,6 +18,7 @@
 }
 
 .input--select__value-container {
+  overflow: visible !important;
   padding: 0 !important;
   cursor: pointer;
   display: flex !important;
