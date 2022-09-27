@@ -8,6 +8,7 @@ import {
 } from '@reduxjs/toolkit'
 import {
   ContainerRegistriesApi,
+  ContainerRegistryRequest,
   ContainerRegistryResponse,
   OrganizationEditRequest,
   OrganizationMainCallsApi,
@@ -43,6 +44,19 @@ export const postOrganization = createAsyncThunk<OrganizationEntity, Organizatio
   }
 )
 
+export const editOrganization = createAsyncThunk(
+  'organization/edit',
+  async (payload: { organizationId: string; data: Partial<OrganizationEntity> }) => {
+    const cloneOrganization = Object.assign({}, refactoOrganizationPayload(payload.data))
+    const response = await organizationMainCalls.editOrganization(
+      payload.organizationId,
+      cloneOrganization as OrganizationEditRequest
+    )
+
+    return response.data as OrganizationEntity
+  }
+)
+
 export const deleteOrganization = createAsyncThunk(
   'organization/delete',
   async (payload: { organizationId: string }) => {
@@ -58,16 +72,33 @@ export const fetchOrganizationContainerRegistries = createAsyncThunk<
   return result.data.results as ContainerRegistryResponse[]
 })
 
-export const editOrganization = createAsyncThunk(
-  'organization/edit',
-  async (payload: { organizationId: string; data: Partial<OrganizationEntity> }) => {
-    const cloneOrganization = Object.assign({}, refactoOrganizationPayload(payload.data))
-    const response = await organizationMainCalls.editOrganization(
-      payload.organizationId,
-      cloneOrganization as OrganizationEditRequest
-    )
+export const postOrganizationContainerRegistry = createAsyncThunk(
+  'organization/containerRegistries/post',
+  async (payload: { organizationId: string; data: ContainerRegistryRequest }) => {
+    // edit container registry
+    const result = await containerRegistriesApi.createContainerRegistry(payload.organizationId, payload.data)
+    return result.data as ContainerRegistryResponse
+  }
+)
 
-    return response.data as OrganizationEntity
+export const editOrganizationContainerRegistry = createAsyncThunk(
+  'organization/containerRegistries/edit',
+  async (payload: { organizationId: string; containerRegistryId: string; data: ContainerRegistryRequest }) => {
+    // edit container registry
+    const result = await containerRegistriesApi.editContainerRegistry(
+      payload.organizationId,
+      payload.containerRegistryId,
+      payload.data
+    )
+    return result.data as ContainerRegistryResponse
+  }
+)
+
+export const deleteOrganizationContainerRegistry = createAsyncThunk(
+  'organization/containerRegistries/delete',
+  async (payload: { organizationId: string; containerRegistryId: string }) => {
+    // delete container registry
+    await containerRegistriesApi.deleteContainerRegistry(payload.organizationId, payload.containerRegistryId)
   }
 )
 
@@ -123,7 +154,27 @@ export const organizationSlice = createSlice({
         state.error = action.error.message
         toastError(action.error)
       })
-
+      // edit organization
+      .addCase(editOrganization.pending, (state: OrganizationState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(editOrganization.fulfilled, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            ...action.payload,
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Organization updated')
+      })
+      .addCase(editOrganization.rejected, (state: OrganizationState, action) => {
+        state.loadingStatus = 'error'
+        toastError(action.error)
+        state.error = action.error.message
+      })
       // fetch registry
       .addCase(fetchOrganizationContainerRegistries.pending, (state: OrganizationState, action) => {
         const update: Update<OrganizationEntity> = {
@@ -151,26 +202,64 @@ export const organizationSlice = createSlice({
 
         organizationAdapter.updateOne(state, update)
       })
-      // edit organization
-      .addCase(editOrganization.pending, (state: OrganizationState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(editOrganization.fulfilled, (state: OrganizationState, action) => {
+      // post container registry
+      .addCase(postOrganizationContainerRegistry.fulfilled, (state: OrganizationState, action) => {
+        const containerRegistries = state.entities[action.meta.arg.organizationId]?.containerRegistries?.items || []
+
         const update: Update<OrganizationEntity> = {
           id: action.meta.arg.organizationId,
           changes: {
-            ...action.payload,
+            containerRegistries: {
+              loadingStatus: 'loaded',
+              items: [...containerRegistries, action.payload],
+            },
           },
         }
         organizationAdapter.updateOne(state, update)
-        state.error = null
-        state.loadingStatus = 'loaded'
-        toast(ToastEnum.SUCCESS, 'Organization updated')
+        toast(ToastEnum.SUCCESS, `Container registry added`)
       })
-      .addCase(editOrganization.rejected, (state: OrganizationState, action) => {
-        state.loadingStatus = 'error'
+      .addCase(postOrganizationContainerRegistry.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
-        state.error = action.error.message
+      })
+      // edit container registry
+      .addCase(editOrganizationContainerRegistry.fulfilled, (state: OrganizationState, action) => {
+        const containerRegistries = state.entities[action.meta.arg.organizationId]?.containerRegistries?.items || []
+        const index = containerRegistries.findIndex((obj) => obj.id === action.payload.id)
+        containerRegistries[index] = action.payload
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            containerRegistries: {
+              loadingStatus: 'loaded',
+              items: containerRegistries,
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Container registry updated`)
+      })
+      .addCase(editOrganizationContainerRegistry.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
+      })
+      // delete container registry
+      .addCase(deleteOrganizationContainerRegistry.fulfilled, (state: OrganizationState, action) => {
+        const containerRegistries = state.entities[action.meta.arg.organizationId]?.containerRegistries?.items || []
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            containerRegistries: {
+              loadingStatus: 'loaded',
+              items: containerRegistries.filter((registry) => registry.id !== action.meta.arg.containerRegistryId),
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Container registry removed`)
+      })
+      .addCase(deleteOrganizationContainerRegistry.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
       })
   },
 })

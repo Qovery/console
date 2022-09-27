@@ -90,15 +90,13 @@ export function InputText(props: InputTextProps) {
                 <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-sm text-text-500" />
               </div>
             )}
-            {type === 'password' && (
+            {(currentValue as string)?.length > 0 && type === 'password' && (
               <div
-                className="absolute top-1/2 -translate-y-1/2 right-4"
+                className="absolute top-1/2 -translate-y-1/2 right-4 transition-colors text-text-600 hover:text-text-700"
                 onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
               >
-                {currentType === 'password' && <Icon name={IconAwesomeEnum.EYE} className="text-sm text-text-500" />}
-                {currentType !== 'password' && (
-                  <Icon name={IconAwesomeEnum.EYE_SLASH} className="text-sm text-text-500" />
-                )}
+                {currentType === 'password' && <Icon name={IconAwesomeEnum.EYE} className="text-sm" />}
+                {currentType !== 'password' && <Icon name={IconAwesomeEnum.EYE_SLASH} className="text-sm" />}
               </div>
             )}
           </div>

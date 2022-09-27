@@ -122,7 +122,7 @@ export function CrudModal(props: CrudModalProps) {
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
-                type="password"
+                type="text"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}

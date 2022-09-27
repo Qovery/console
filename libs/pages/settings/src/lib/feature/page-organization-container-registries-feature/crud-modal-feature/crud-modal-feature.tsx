@@ -1,36 +1,34 @@
-import { ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { ContainerRegistryRequest, ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import {
+  editOrganizationContainerRegistry,
   fetchAvailableContainerRegistry,
+  postOrganizationContainerRegistry,
   selectAvailableContainerRegistry,
   selectAvailableContainerRegistryLoadingStatus,
 } from '@qovery/domains/organization'
-// import { editApplication, postApplicationActionsRestart } from '@qovery/domains/application'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import CrudModal from '../../../ui/page-organization-container-registries/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
-  registry?: ContainerRegistryResponse
   onClose: () => void
+  organizationId?: string
+  registry?: ContainerRegistryResponse
 }
 
-// export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePort) => {
-//   const cloneApplication = Object.assign({}, application)
-
-//   return cloneApplication
-// }
-
 export function CrudModalFeature(props: CrudModalFeatureProps) {
+  const { organizationId = '', onClose, registry } = props
+
   const [loading, setLoading] = useState(false)
 
   const methods = useForm({
     defaultValues: {
-      name: props.registry ? props.registry.name : undefined,
-      description: props.registry ? props.registry.description : undefined,
-      url: props.registry ? props.registry.url : undefined,
-      kind: props.registry ? props.registry?.kind : undefined,
+      name: registry ? registry.name : undefined,
+      description: registry ? registry.description : undefined,
+      url: registry ? registry.url : undefined,
+      kind: registry ? registry?.kind : undefined,
     },
     mode: 'onChange',
   })
@@ -49,37 +47,51 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const onSubmit = methods.handleSubmit((data) => {
     setLoading(true)
 
-    console.log(data)
-    // const cloneApplication = handleSubmit(data, props.application, props.port)
-
-    // dispatch(
-    //   editApplication({
-    //     applicationId: props.application.id,
-    //     data: cloneApplication,
-    //     serviceType: getServiceType(props.application),
-    //     toasterCallback,
-    //   })
-    // )
-    //   .unwrap()
-    //   .then(() => {
-    //     setLoading(false)
-    //     props.onClose()
-    //   })
-    //   .catch((e) => {
-    //     setLoading(false)
-    //     console.error(e)
-    //   })
+    if (registry) {
+      dispatch(
+        editOrganizationContainerRegistry({
+          organizationId: organizationId,
+          containerRegistryId: registry.id,
+          data: data as ContainerRegistryRequest,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          setLoading(false)
+          onClose()
+        })
+        .catch((e) => {
+          setLoading(false)
+          console.error(e)
+        })
+    } else {
+      dispatch(
+        postOrganizationContainerRegistry({
+          organizationId: organizationId,
+          data: data as ContainerRegistryRequest,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          setLoading(false)
+          onClose()
+        })
+        .catch((e) => {
+          setLoading(false)
+          console.error(e)
+        })
+    }
   })
 
   return (
     <FormProvider {...methods}>
       <CrudModal
-        registry={props.registry}
+        registry={registry}
         availableContainerRegistry={availableContainerRegistry}
         onSubmit={onSubmit}
-        onClose={props.onClose}
+        onClose={onClose}
         loading={loading}
-        isEdit={!!props.registry}
+        isEdit={!!registry}
       />
     </FormProvider>
   )

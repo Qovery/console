@@ -15,12 +15,6 @@ export const fetchAvailableContainerRegistry = createAsyncThunk('availableContai
   return result.data.results as AvailableContainerRegistryResponse[]
 })
 
-export const editAvailableContainerRegistry = createAsyncThunk('availableContainerRegistry/edit', async () => {
-  // fetch container registries
-  // const result = (await containerRegistriesApi.editContainerRegistry)
-  // return result.data.results as AvailableContainerRegistryResponse[]
-})
-
 export const initialAvailableContainerRegistryState: AvailableContainerRegistryState = {
   loadingStatus: 'not loaded',
   error: null,
