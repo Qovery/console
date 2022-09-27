@@ -2,6 +2,9 @@
 module.exports = {
   theme: {
     extend: {
+      transitionProperty: {
+        label: 'transform, font-size',
+      },
       spacing: {
         'right-help-sidebar': '22.5rem',
         'navbar-height': '4rem',
