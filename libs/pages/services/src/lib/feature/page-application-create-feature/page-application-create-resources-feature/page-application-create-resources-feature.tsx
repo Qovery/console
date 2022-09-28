@@ -8,11 +8,13 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import PageApplicationCreateResources from '../../../ui/page-application-create/page-application-create-resources/page-application-create-resources'
 import { ResourcesData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreateResourcesFeature() {
+  useDocumentTitle('Resources - Create Application')
   const { setCurrentStep, resourcesData, setResourcesData, generalData } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()

@@ -1,7 +1,7 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
-import { CreateGeneralContainer } from '@qovery/shared/console-shared'
+import { GeneralContainerSettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
@@ -82,13 +82,14 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         {getValues().serviceType === ServiceTypeEnum.APPLICATION && <CreateGeneralGitApplication />}
 
         {getValues().serviceType === ServiceTypeEnum.CONTAINER && (
-          <CreateGeneralContainer organization={props.organization} />
+          <GeneralContainerSettings organization={props.organization} />
         )}
 
         <div className="flex justify-between">
           <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
+            className="btn--no-min-w"
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
           >

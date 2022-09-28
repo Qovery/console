@@ -40,7 +40,13 @@ export function PageApplicationCreatePort(props: PageApplicationCreatePortProps)
         </div>
 
         <div className="flex justify-between">
-          <Button onClick={props.onBack} type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
+          <Button
+            onClick={props.onBack}
+            className="btn--no-min-w"
+            type="button"
+            size={ButtonSize.XLARGE}
+            style={ButtonStyle.STROKED}
+          >
             Back
           </Button>
           <Button

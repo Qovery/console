@@ -90,7 +90,6 @@ export function InputSelect(props: InputSelectProps) {
   const selectedValueHasIcon = useCallback((): boolean => {
     if (!isMulti) {
       const selectedOption = options.find((option) => selectedValue === option.value)
-      //console.log(selectedOption, selectedValue)
       if (!selectedOption) return false
 
       return !!selectedOption.icon

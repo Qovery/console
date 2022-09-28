@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import PageApplicationInstall, { PageApplicationInstallProps } from './page-application-install'
+import PageApplicationPost, { PageApplicationPostProps } from './page-application-post'
 
-const props: PageApplicationInstallProps = {
+const props: PageApplicationPostProps = {
   gotoResources: jest.fn(),
   resourcesData: {
     cpu: [0.5],
@@ -29,9 +29,9 @@ const props: PageApplicationInstallProps = {
   isLoading: false,
 }
 
-describe('PageApplicationInstall', () => {
+describe('PageApplicationPost', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageApplicationInstall {...props} />)
+    const { baseElement } = render(<PageApplicationPost {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

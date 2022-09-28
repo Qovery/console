@@ -3,11 +3,11 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { OrganizationEntity, Value } from '@qovery/shared/interfaces'
 import { InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
 
-export interface CreateGeneralContainerProps {
+export interface GeneralContainerSettingsProps {
   organization?: OrganizationEntity
 }
 
-export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
+export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
   const { control } = useFormContext<{
     registry?: string
     image_name?: string
@@ -25,11 +25,6 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
           label: registry.name || '',
         }))
       )
-
-      // setInterval(() => {
-      //   trigger().then()
-      //   getValues()
-      // }, 100)
     }
   }, [props.organization])
 
@@ -128,4 +123,4 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
   )
 }
 
-export default CreateGeneralContainer
+export default GeneralContainerSettings

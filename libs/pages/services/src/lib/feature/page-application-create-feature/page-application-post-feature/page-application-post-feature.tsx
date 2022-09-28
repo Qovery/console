@@ -19,17 +19,19 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { buildGitRepoUrl, convertCpuToVCpu } from '@qovery/shared/utils'
+import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store/data'
-import PageApplicationInstall from '../../../ui/page-application-create/page-application-install/page-application-install'
+import PageApplicationPost from '../../../ui/page-application-create/page-application-post/page-application-post'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
-export function PageApplicationInstallFeature() {
+export function PageApplicationPostFeature() {
+  useDocumentTitle('Post - Create Application')
   const { generalData, portData, resourcesData, setCurrentStep } = useApplicationContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
-  const [loading, setLoading] = useState(false)
+  const [loadingCreate, setLoadingCreate] = useState(false)
+  const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
 
   const repositories = useSelector(selectAllRepository)
   const selectRepository = repositories.find((repository) => repository.name === generalData?.repository)
@@ -54,7 +56,8 @@ export function PageApplicationInstallFeature() {
 
   const onSubmit = (withDeploy: boolean) => {
     if (generalData && portData && resourcesData) {
-      setLoading(true)
+      if (withDeploy) setLoadingCreateAndDeploy(true)
+      else setLoadingCreate(true)
 
       const currentMemory = Number(resourcesData['memory'])
       const memoryUnit = resourcesData.memory_unit
@@ -114,7 +117,8 @@ export function PageApplicationInstallFeature() {
             console.error(e)
           })
           .finally(() => {
-            setLoading(false)
+            if (withDeploy) setLoadingCreateAndDeploy(false)
+            else setLoadingCreate(false)
           })
       } else {
         const containerRequest: ContainerRequest = {
@@ -161,7 +165,8 @@ export function PageApplicationInstallFeature() {
             console.error(e)
           })
           .finally(() => {
-            setLoading(false)
+            if (withDeploy) setLoadingCreateAndDeploy(false)
+            else setLoadingCreate(false)
           })
       }
     }
@@ -174,8 +179,9 @@ export function PageApplicationInstallFeature() {
   return (
     <FunnelFlowBody>
       {generalData && portData && resourcesData && (
-        <PageApplicationInstall
-          isLoading={loading}
+        <PageApplicationPost
+          isLoadingCreate={loadingCreate}
+          isLoadingCreateAndDeploy={loadingCreateAndDeploy}
           onSubmit={onSubmit}
           onPrevious={gotoPorts}
           generalData={generalData}
@@ -190,4 +196,4 @@ export function PageApplicationInstallFeature() {
   )
 }
 
-export default PageApplicationInstallFeature
+export default PageApplicationPostFeature

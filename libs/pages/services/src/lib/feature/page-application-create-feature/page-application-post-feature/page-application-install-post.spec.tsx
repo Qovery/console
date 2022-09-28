@@ -8,7 +8,7 @@ import {
   ApplicationContainerCreateContext,
   ApplicationContainerCreateContextInterface,
 } from '../page-application-create-feature'
-import PageApplicationInstallFeature from './page-application-install-feature'
+import PageApplicationPostFeature from './page-application-post-feature'
 
 import SpyInstance = jest.SpyInstance
 
@@ -67,11 +67,11 @@ const mockContext: ApplicationContainerCreateContextInterface = {
   },
 }
 
-describe('InstallApplicationFeature', () => {
+describe('PageApplicationPostFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
       <ApplicationContainerCreateContext.Provider value={mockContext}>
-        <PageApplicationInstallFeature />
+        <PageApplicationPostFeature />
       </ApplicationContainerCreateContext.Provider>
     )
 
@@ -105,7 +105,7 @@ describe('InstallApplicationFeature', () => {
           },
         }}
       >
-        <PageApplicationInstallFeature />
+        <PageApplicationPostFeature />
       </ApplicationContainerCreateContext.Provider>
     )
 
@@ -158,7 +158,7 @@ describe('InstallApplicationFeature', () => {
           },
         }}
       >
-        <PageApplicationInstallFeature />
+        <PageApplicationPostFeature />
       </ApplicationContainerCreateContext.Provider>
     )
 

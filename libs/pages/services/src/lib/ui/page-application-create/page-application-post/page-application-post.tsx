@@ -1,22 +1,13 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import {
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonSize,
-  ButtonStyle,
-  Icon,
-  IconAwesomeEnum,
-  Link,
-} from '@qovery/shared/ui'
+import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import {
   GeneralData,
   PortData,
   ResourcesData,
 } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
 
-export interface PageApplicationInstallProps {
+export interface PageApplicationPostProps {
   onSubmit: (withDeploy: boolean) => void
   onPrevious: () => void
   generalData: GeneralData
@@ -25,10 +16,11 @@ export interface PageApplicationInstallProps {
   gotoGlobalInformation: () => void
   gotoResources: () => void
   gotoPorts: () => void
-  isLoading: boolean
+  isLoadingCreate: boolean
+  isLoadingCreateAndDeploy: boolean
 }
 
-export function PageApplicationInstall(props: PageApplicationInstallProps) {
+export function PageApplicationPost(props: PageApplicationPostProps) {
   return (
     <div>
       <div className="mb-10">
@@ -39,7 +31,6 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
           The basic application setup is done, you can now deploy your application or move forward with some advanced
           setup.
         </p>
-        <Link link="#" linkLabel="link" external={true} />
       </div>
 
       <div className="mb-10">
@@ -163,13 +154,19 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
       </div>
 
       <div className="flex justify-between">
-        <Button onClick={props.onPrevious} type="button" size={ButtonSize.XLARGE} style={ButtonStyle.STROKED}>
+        <Button
+          onClick={props.onPrevious}
+          className="btn--no-min-w"
+          type="button"
+          size={ButtonSize.XLARGE}
+          style={ButtonStyle.STROKED}
+        >
           Back
         </Button>
         <div className="flex gap-2">
           <Button
             dataTestId="button-create"
-            loading={props.isLoading}
+            loading={props.isLoadingCreate}
             onClick={() => props.onSubmit(false)}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
@@ -178,7 +175,7 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
           </Button>
           <Button
             dataTestId="button-create-deploy"
-            loading={props.isLoading}
+            loading={props.isLoadingCreateAndDeploy}
             onClick={() => props.onSubmit(true)}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.BASIC}
@@ -191,4 +188,4 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
   )
 }
 
-export default PageApplicationInstall
+export default PageApplicationPost

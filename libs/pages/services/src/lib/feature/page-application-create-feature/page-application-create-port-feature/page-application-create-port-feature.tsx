@@ -4,19 +4,22 @@ import { useNavigate, useParams } from 'react-router'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
-  SERVICES_CREATION_INSTALLATION_URL,
+  SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import PageApplicationCreatePort from '../../../ui/page-application-create/page-application-create-port/page-application-create-port'
 import { PortData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreatePortFeature() {
+  useDocumentTitle('Ports - Create Application')
   const { setCurrentStep, portData, setPortData, generalData } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
+  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
 
   useEffect(() => {
     !generalData?.name &&
@@ -60,12 +63,10 @@ export function PageApplicationCreatePortFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     setPortData(data)
-    const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
-    navigate(pathCreate + SERVICES_CREATION_INSTALLATION_URL)
+    navigate(pathCreate + SERVICES_CREATION_POST_URL)
   })
 
   const onBack = () => {
-    const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   }
 

@@ -11,7 +11,7 @@ import {
   LoaderSpinner,
   useModal,
 } from '@qovery/shared/ui'
-import ConfirmationGitModal from './confirmation-git-modal/confirmation-git-modal'
+import ConfirmationGitModal from '../confirmation-git-modal/confirmation-git-modal'
 
 export interface GitRepositorySettingsProps {
   gitDisabled: boolean

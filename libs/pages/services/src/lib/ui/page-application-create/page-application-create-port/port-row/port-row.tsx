@@ -26,14 +26,13 @@ export function PortRow(props: PortRowProps) {
         rules={{
           required: 'Please enter a value',
         }}
-        render={({ field, fieldState: { error } }) => (
+        render={({ field }) => (
           <InputText
             className="flex-grow"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
             label={`Application Port ${index + 1}`}
-            error={error?.message}
             type="number"
           />
         )}
@@ -57,9 +56,7 @@ export function PortRow(props: PortRowProps) {
       <Controller
         name={`ports.${index}.is_public`}
         control={control}
-        render={({ field, fieldState: { error } }) => (
-          <InputToggle onChange={field.onChange} value={field.value} title={'Public'} />
-        )}
+        render={({ field }) => <InputToggle onChange={field.onChange} value={field.value} title={'Public'} />}
       />
       <ButtonIcon
         dataTestId="delete-port"

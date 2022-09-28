@@ -6,13 +6,16 @@ import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@q
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/router'
+import { toastError } from '@qovery/shared/toast'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageApplicationCreateGeneral from '../../../ui/page-application-create/page-application-create-general/page-application-create-general'
 import { GeneralData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreateGeneralFeature() {
+  useDocumentTitle('General - Create Application')
   const { setGeneralData, generalData, setCurrentStep } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
@@ -64,13 +67,12 @@ export function PageApplicationCreateGeneralFeature() {
     }
 
     if (data.serviceType === ServiceTypeEnum.CONTAINER && data.cmd_arguments) {
-      cloneData.cmd = eval(data.cmd_arguments)
-      // try {
-      //   cloneData.cmd = eval(data.cmd_arguments)
-      // } catch (e: any) {
-      //   toastError(e, 'Invalid CMD array')
-      //   return
-      // }
+      try {
+        cloneData.cmd = eval(data.cmd_arguments)
+      } catch (e: any) {
+        toastError(e, 'Invalid CMD array')
+        return
+      }
     }
     setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
