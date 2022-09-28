@@ -42,7 +42,7 @@ jest.mock('react-redux', () => ({
 
 jest.mock('react-router', () => ({
   ...(jest.requireActual('react-router') as any),
-  useParams: () => ({ organizationId: '0' }),
+  useParams: () => ({ organizationId: mockOrganization.id }),
 }))
 
 describe('CrudModalFeature', () => {
@@ -91,15 +91,20 @@ describe('CrudModalFeature', () => {
     expect(editOrganizationContainerRegistrySpy.mock.calls[0][0].containerRegistryId).toBe(
       mockContainerRegistriesConfig.id
     )
-    expect(editOrganizationContainerRegistrySpy.mock.calls[0][0].data).toStrictEqual({
-      name: mockContainerRegistriesConfig.name,
-      description: mockContainerRegistriesConfig.description,
-      kind: mockContainerRegistriesConfig.kind,
-      url: mockContainerRegistriesConfig.url,
-      config: {
-        username: 'hello',
-        password: 'password',
+
+    expect(editOrganizationContainerRegistrySpy).toHaveBeenCalledWith({
+      data: {
+        name: mockContainerRegistriesConfig.name,
+        description: mockContainerRegistriesConfig.description,
+        kind: mockContainerRegistriesConfig.kind,
+        url: mockContainerRegistriesConfig.url,
+        config: {
+          username: 'hello',
+          password: 'password',
+        },
       },
+      containerRegistryId: mockContainerRegistriesConfig.id,
+      organizationId: '',
     })
   })
 
@@ -146,15 +151,18 @@ describe('CrudModalFeature', () => {
 
     const mockContainerRegistriesConfig = mockContainerRegistries[0]
 
-    expect(postOrganizationContainerRegistry.mock.calls[0][0].data).toStrictEqual({
-      name: 'my-registry',
-      kind: mockContainerRegistriesConfig.kind,
-      description: undefined,
-      url: 'https://docker.io',
-      config: {
-        username: 'hello',
-        password: 'password',
+    expect(postOrganizationContainerRegistry).toHaveBeenCalledWith({
+      data: {
+        name: 'my-registry',
+        kind: mockContainerRegistriesConfig.kind,
+        description: undefined,
+        url: 'https://docker.io',
+        config: {
+          username: 'hello',
+          password: 'password',
+        },
       },
+      organizationId: '',
     })
   })
 })
