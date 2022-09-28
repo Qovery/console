@@ -88,10 +88,6 @@ describe('CrudModalFeature', () => {
 
     const mockContainerRegistriesConfig = mockContainerRegistries[0]
 
-    expect(editOrganizationContainerRegistrySpy.mock.calls[0][0].containerRegistryId).toBe(
-      mockContainerRegistriesConfig.id
-    )
-
     expect(editOrganizationContainerRegistrySpy).toHaveBeenCalledWith({
       data: {
         name: mockContainerRegistriesConfig.name,
