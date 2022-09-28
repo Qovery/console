@@ -20,7 +20,7 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
     admin_emails: ['test@test.com'],
     containerRegistries: {
       loadingStatus: 'loaded',
-      items: containerRegistriesMock(2),
+      items: containerRegistriesByOrganizationIdMock,
     },
   }))
 
@@ -34,3 +34,5 @@ export const containerRegistriesMock = (howMany: number): ContainerRegistryRespo
     description: chance.word({ length: 10 }),
     url: chance.url(),
   }))
+
+export const containerRegistriesByOrganizationIdMock = containerRegistriesMock(2)

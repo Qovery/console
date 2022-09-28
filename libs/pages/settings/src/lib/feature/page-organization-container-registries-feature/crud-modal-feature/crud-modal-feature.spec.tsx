@@ -1,5 +1,7 @@
 import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
+import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
@@ -7,11 +9,14 @@ import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
 import SpyInstance = jest.SpyInstance
 
 const mockOrganization: OrganizationEntity = storeOrganization.organizationFactoryMock(1)[0]
+const mockContainerRegistries = storeOrganization.containerRegistriesByOrganizationIdMock
 
 jest.mock('@qovery/domains/organization', () => {
   return {
     ...jest.requireActual('@qovery/domains/organization'),
     editOrganizationContainerRegistry: jest.fn(),
+    postOrganizationContainerRegistry: jest.fn(),
+    fetchAvailableContainerRegistry: jest.fn(),
     getOrganizationsState: () => ({
       loadingStatus: 'loaded',
       ids: [mockOrganization.id],
@@ -21,6 +26,11 @@ jest.mock('@qovery/domains/organization', () => {
       error: null,
     }),
     selectOrganizationById: () => mockOrganization,
+    selectAvailableContainerRegistry: () => [
+      {
+        kind: 'DOCKER_HUB',
+      },
+    ],
   }
 })
 
@@ -38,7 +48,7 @@ jest.mock('react-router', () => ({
 describe('CrudModalFeature', () => {
   const props: CrudModalFeatureProps = {
     onClose: jest.fn(),
-    registry: storeOrganization.containerRegistriesMock(1)[0],
+    registry: mockContainerRegistries[0],
   }
 
   it('should render successfully', async () => {
@@ -76,17 +86,75 @@ describe('CrudModalFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    // const cloneApplication = handleSubmit(
-    //   { memory: 9, cpu: [1], instances: [1, 3] },
-    //   mockApplication,
-    //   MemorySizeEnum.MB
-    // )
+    const mockContainerRegistriesConfig = mockContainerRegistries[0]
 
-    // expect(editOrganizationContainerRegistrySpy.mock.calls[0][0].containerRegistryId).toBe(
-    //   mockOrganization.containerRegistries?.items[0].id
-    // )
-    expect(editOrganizationContainerRegistrySpy.mock.calls[0][0].data).toStrictEqual(
-      mockOrganization.containerRegistries?.items[0]
+    expect(editOrganizationContainerRegistrySpy.mock.calls[0][0].containerRegistryId).toBe(
+      mockContainerRegistriesConfig.id
     )
+    expect(editOrganizationContainerRegistrySpy.mock.calls[0][0].data).toStrictEqual({
+      name: mockContainerRegistriesConfig.name,
+      description: mockContainerRegistriesConfig.description,
+      kind: mockContainerRegistriesConfig.kind,
+      url: mockContainerRegistriesConfig.url,
+      config: {
+        username: 'hello',
+        password: 'password',
+      },
+    })
+  })
+
+  it('should dispatch editOrganizationContainerRegistry if form is submitted', async () => {
+    const postOrganizationContainerRegistry: SpyInstance = jest.spyOn(
+      storeOrganization,
+      'postOrganizationContainerRegistry'
+    )
+
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve({
+          data: {},
+        }),
+    }))
+
+    props.registry = undefined
+
+    const { getByTestId, getByLabelText } = render(<CrudModalFeature {...props} />)
+
+    await act(() => {
+      const inputName = getByTestId('input-name')
+      fireEvent.input(inputName, { target: { value: 'my-registry' } })
+
+      const inputUrl = getByTestId('input-url')
+      fireEvent.input(inputUrl, { target: { value: 'https://docker.io' } })
+
+      selectEvent.select(getByLabelText('Type'), ContainerRegistryKindEnum.DOCKER_HUB, { container: document.body })
+    })
+
+    await act(() => {
+      const inputUsername = getByTestId('input-username')
+      fireEvent.input(inputUsername, { target: { value: 'hello' } })
+
+      const inputPassword = getByTestId('input-password')
+      fireEvent.input(inputPassword, { target: { value: 'password' } })
+    })
+
+    expect(getByTestId('submit-button')).not.toBeDisabled()
+
+    await act(() => {
+      getByTestId('submit-button').click()
+    })
+
+    const mockContainerRegistriesConfig = mockContainerRegistries[0]
+
+    expect(postOrganizationContainerRegistry.mock.calls[0][0].data).toStrictEqual({
+      name: 'my-registry',
+      kind: mockContainerRegistriesConfig.kind,
+      description: undefined,
+      url: 'https://docker.io',
+      config: {
+        username: 'hello',
+        password: 'password',
+      },
+    })
   })
 })

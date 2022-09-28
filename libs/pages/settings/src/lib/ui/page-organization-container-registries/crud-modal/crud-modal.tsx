@@ -52,6 +52,7 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-name"
             className="mb-5"
             name={field.name}
             onChange={field.onChange}
@@ -84,6 +85,7 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-url"
             className="mb-5"
             name={field.name}
             onChange={field.onChange}
@@ -102,12 +104,12 @@ export function CrudModal(props: CrudModalProps) {
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             className="mb-5"
-            portal
             onChange={field.onChange}
             value={field.value}
             label="Type"
             error={error?.message}
             options={getOptionsContainerRegistry(props.availableContainerRegistry)}
+            portal
           />
         )}
       />
