@@ -7,6 +7,7 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import {
+  AvailableContainerRegistryResponse,
   ContainerRegistriesApi,
   ContainerRegistryRequest,
   ContainerRegistryResponse,
@@ -102,9 +103,19 @@ export const deleteOrganizationContainerRegistry = createAsyncThunk(
   }
 )
 
+export const fetchAvailableContainerRegistry = createAsyncThunk('availableContainerRegistry/fetch', async () => {
+  // fetch container registries
+  const result = (await containerRegistriesApi.listAvailableContainerRegistry()) as any
+  return result.data.results as AvailableContainerRegistryResponse[]
+})
+
 export const initialOrganizationState: OrganizationState = organizationAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
+  availableContainerRegistries: {
+    loadingStatus: 'not loaded',
+    items: [],
+  },
 })
 
 export const organizationSlice = createSlice({
@@ -261,6 +272,17 @@ export const organizationSlice = createSlice({
       .addCase(deleteOrganizationContainerRegistry.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
       })
+      // fetch container registries
+      .addCase(fetchAvailableContainerRegistry.pending, (state: OrganizationState) => {
+        state.availableContainerRegistries.loadingStatus = 'loading'
+      })
+      .addCase(
+        fetchAvailableContainerRegistry.fulfilled,
+        (state: OrganizationState, action: PayloadAction<AvailableContainerRegistryResponse[]>) => {
+          state.availableContainerRegistries.loadingStatus = 'loaded'
+          state.availableContainerRegistries.items = action.payload
+        }
+      )
   },
 })
 
@@ -279,3 +301,13 @@ export const selectOrganizationById = (state: RootState, organizationId: string)
   getOrganizationState(state).entities[organizationId]
 
 export const selectOrganizationLoadingStatus = createSelector(getOrganizationState, (state) => state.loadingStatus)
+
+export const selectAvailableContainerRegistry = createSelector(
+  getOrganizationState,
+  (state) => state.availableContainerRegistries.items
+)
+
+export const selectAvailableContainerRegistryLoadingStatus = createSelector(
+  getOrganizationState,
+  (state) => state.availableContainerRegistries.loadingStatus
+)

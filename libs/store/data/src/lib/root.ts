@@ -15,10 +15,8 @@ import {
 } from '@qovery/domains/environment-variable'
 import {
   authProviderReducer,
-  availableContainerRegistryReducer,
   clusterReducer,
   initialAuthProviderState,
-  initialAvailableContainerRegistryState,
   initialClusterState,
   initialOrganizationState,
   initialRepositoryState,
@@ -42,7 +40,6 @@ export const organizationReducer = combineReducers({
   organizations: organization,
   authProvider: authProviderReducer,
   repository: repositoryReducer,
-  availableContainerRegistry: availableContainerRegistryReducer,
 })
 
 export const projectReducer = combineReducers({
@@ -97,7 +94,6 @@ export const initialRootState = (): RootState => ({
       organizations: initialOrganizationState,
       authProvider: initialAuthProviderState,
       repository: initialRepositoryState,
-      availableContainerRegistry: initialAvailableContainerRegistryState,
     },
     cluster: initialClusterState,
     project: {

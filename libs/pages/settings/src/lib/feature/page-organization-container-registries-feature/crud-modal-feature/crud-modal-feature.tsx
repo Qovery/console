@@ -87,7 +87,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     <FormProvider {...methods}>
       <CrudModal
         registry={registry}
-        availableContainerRegistry={availableContainerRegistry}
+        availableContainerRegistry={availableContainerRegistry || []}
         onSubmit={onSubmit}
         onClose={onClose}
         loading={loading}

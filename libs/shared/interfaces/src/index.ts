@@ -16,7 +16,6 @@ export * from './lib/states/environment-deployment-rules.interface'
 export * from './lib/states/custom-domains-state.interface'
 export * from './lib/states/auth-provider.interface'
 export * from './lib/states/repository.interface'
-export * from './lib/states/available-container-registry.interface'
 
 export * from './lib/domain/application.entity'
 export * from './lib/domain/container-application.entity'
