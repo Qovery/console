@@ -77,7 +77,7 @@ export function CreateGeneralGitApplication() {
             data-testid="input-text-dockerfile-path"
             key="dockerfile_path"
             name="dockerfile_path"
-            defaultValue={'Dockefile'}
+            defaultValue={'Dockerfile'}
             control={control}
             rules={{
               required: 'Value required',

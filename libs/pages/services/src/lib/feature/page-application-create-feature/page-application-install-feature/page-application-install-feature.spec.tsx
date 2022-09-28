@@ -97,7 +97,7 @@ describe('InstallApplicationFeature', () => {
             serviceType: ServiceTypeEnum.APPLICATION,
             provider: 'GITHUB',
             build_mode: 'BUILDPACKS',
-            dockerfile_path: 'Dockefile',
+            dockerfile_path: 'Dockerfile',
             repository: 'Qovery/test_http_server',
             branch: 'master',
             root_path: '/',
