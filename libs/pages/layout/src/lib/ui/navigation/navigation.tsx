@@ -1,7 +1,7 @@
 import { matchPath, useLocation, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { INFRA_LOGS_URL, ORGANIZATION_URL } from '@qovery/shared/router'
+import { INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -28,7 +28,8 @@ export function Navigation(props: NavigationProps) {
   const { pathname } = useLocation()
 
   const matchLogInfraRoute = matchPath(pathname, INFRA_LOGS_URL(organizationId, clusterId))
-  //const navigate = useNavigate()
+  const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
+  const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
 
   const infosMenu = [
     {
@@ -100,7 +101,7 @@ export function Navigation(props: NavigationProps) {
         <div className="flex flex-col gap-3">
           {matchLogInfraRoute ? (
             <ButtonIcon
-              icon="icon-solid-layer-group"
+              icon={IconAwesomeEnum.LAYER_GROUP}
               style={ButtonIconStyle.ALT}
               size={ButtonSize.XLARGE}
               link={`https://console.qovery.com/platform/organization/${organizationId}/projects`}
@@ -108,7 +109,8 @@ export function Navigation(props: NavigationProps) {
             />
           ) : (
             <ButtonIcon
-              icon="icon-solid-layer-group"
+              className={matchOrganizationRoute ? 'is-active' : ''}
+              icon={IconAwesomeEnum.LAYER_GROUP}
               style={ButtonIconStyle.ALT}
               size={ButtonSize.XLARGE}
               link={ORGANIZATION_URL(organizationId)}
@@ -127,15 +129,15 @@ export function Navigation(props: NavigationProps) {
         <div>
           <div className="flex flex-col gap-3">
             <ButtonIcon
-              icon="icon-solid-wheel"
+              className={matchSettingsRoute ? 'is-active' : ''}
+              icon={IconAwesomeEnum.WHEEL}
               style={ButtonIconStyle.ALT}
               size={ButtonSize.XLARGE}
-              link={`https://console.qovery.com/platform/organization/${organizationId}/settings/general`}
-              external
+              link={SETTINGS_URL(organizationId)}
             />
             <Menu
               trigger={
-                <ButtonIcon icon="icon-solid-circle-info" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
+                <ButtonIcon icon={IconAwesomeEnum.CIRCLE_INFO} style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
               }
               direction={MenuDirection.RIGHT}
               arrowAlign={MenuAlign.END}

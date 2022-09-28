@@ -105,7 +105,7 @@
     }
   }
   &.btn.is-active {
-    @apply border-brand-500 bg-brand-500 text-white hover:text-white hover:bg-brand-600;
+    @apply bg-element-light-lighter-400 text-brand-500;
   }
 
   &.btn-icon--small {
