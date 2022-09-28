@@ -4,6 +4,7 @@ import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import {
   SETTINGS_BILLING_URL,
   SETTINGS_CLUSTER_URL,
+  SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_MEMBERS_URL,
@@ -41,6 +42,11 @@ export function PageSettings() {
       title: 'Biling & plans',
       icon: IconAwesomeEnum.CREDIT_CARD,
       url: pathSettings + SETTINGS_BILLING_URL,
+    },
+    {
+      title: 'Container registries',
+      icon: IconAwesomeEnum.BOX,
+      url: pathSettings + SETTINGS_CONTAINER_REGISTRIES_URL,
     },
     {
       title: 'Cluster',

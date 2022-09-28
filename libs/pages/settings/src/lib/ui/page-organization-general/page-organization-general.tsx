@@ -5,6 +5,7 @@ import {
   Button,
   ButtonSize,
   ButtonStyle,
+  HelpSection,
   InputFile,
   InputTags,
   InputText,
@@ -125,6 +126,16 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
           </div>
         </form>
       </div>
+      <HelpSection
+        description="Need help? You may find these links useful"
+        links={[
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#creating-an-organization',
+            linkLabel: 'How to configure my organization',
+            external: true,
+          },
+        ]}
+      />
     </div>
   )
 }

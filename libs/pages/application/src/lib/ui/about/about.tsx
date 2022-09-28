@@ -1,7 +1,9 @@
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import { BaseLink, Button, ButtonStyle, Icon, Skeleton } from '@qovery/shared/ui'
+import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { BaseLink, Button, ButtonStyle, Icon, IconAwesomeEnum, Skeleton } from '@qovery/shared/ui'
 
 export interface AboutProps {
   description: string
@@ -14,10 +16,24 @@ export interface AboutProps {
 
 export function About(props: AboutProps) {
   const { description, buildMode, link, gitProvider, loadingStatus, type } = props
+  const { organizationId = '' } = useParams()
+  const navigate = useNavigate()
+
   return (
     <div className="pt-2 pb-8 px-8 flex flex-col items-start border-b border-element-light-lighter-400">
       <div className="text-subtitle mb-3 text-text-600">About</div>
       <p className="text-text-500 mb-5">{description ? description : 'No description provided yet'}</p>
+      {type === ServiceTypeEnum.CONTAINER && (
+        <Skeleton height={36} width={70} show={!loadingStatus || loadingStatus === 'loading'}>
+          <Button
+            onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_CONTAINER_REGISTRIES_URL}`)}
+            style={ButtonStyle.STROKED}
+            iconLeft={IconAwesomeEnum.SOURCETREE}
+          >
+            Source registry
+          </Button>
+        </Skeleton>
+      )}
       {type === ServiceTypeEnum.APPLICATION && (
         <>
           <Skeleton height={24} width={70} show={!loadingStatus || loadingStatus === 'loading'} className="mb-5">
@@ -32,7 +48,7 @@ export function About(props: AboutProps) {
               link={link.link}
               style={ButtonStyle.STROKED}
               external={link.external}
-              iconRight="icon-solid-arrow-up-right-from-square"
+              iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
               className="capitalize"
             >
               {gitProvider && gitProvider.toLowerCase()}

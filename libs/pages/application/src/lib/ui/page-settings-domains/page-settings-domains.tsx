@@ -38,7 +38,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
 
         {(props.loading === 'not loaded' || props.loading === 'loading') && props.domains?.length === 0 ? (
           <div className="flex justify-center">
-            <LoaderSpinner className="w-6"></LoaderSpinner>
+            <LoaderSpinner className="w-6" />
           </div>
         ) : props.domains && props.domains.length > 0 ? (
           <BlockContent title="Configured domains">
@@ -59,7 +59,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     disabled
                   />
                   <ButtonIcon
-                    className="text-text-500 hover:text-text-700"
+                    className="text-text-500"
                     style={ButtonIconStyle.FLAT}
                     onClick={() => props.onEdit(customDomain)}
                     dataTestId="edit-button"
