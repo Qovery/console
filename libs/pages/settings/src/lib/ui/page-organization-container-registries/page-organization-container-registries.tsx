@@ -23,7 +23,7 @@ export interface PageOrganizationContainerRegistriesProps {
   loading?: LoadingStatus
 }
 
-const logoByRegistryKind = (kind?: ContainerRegistryKindEnum) => {
+export const logoByRegistryKind = (kind?: ContainerRegistryKindEnum) => {
   switch (kind) {
     case ContainerRegistryKindEnum.DOCR:
       return IconEnum.DO

@@ -79,6 +79,6 @@ export enum IconAwesomeEnum {
   CODE_BRANCH = 'icon-solid-code-branch',
   DATABASE = 'icon-solid-database',
   BOX = 'icon-solid-box',
-  SOURCETREE = 'icon-brands-SOURCETREE',
+  SOURCETREE = 'icon-brands-sourcetree',
   // schema: favicons name
 }

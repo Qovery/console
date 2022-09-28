@@ -5,7 +5,8 @@ import {
 } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
-import { InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { logoByRegistryKind } from '../page-organization-container-registries'
 
 export interface CrudModalProps {
   registry?: ContainerRegistryResponse
@@ -24,6 +25,7 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
           containerRegistry.kind !== ContainerRegistryKindEnum.DOCR && {
             label: containerRegistry.kind || '',
             value: containerRegistry.kind || '',
+            icon: <Icon name={logoByRegistryKind(containerRegistry.kind)} width="16px" height="16px" />,
           }
       )
       .filter(Boolean)

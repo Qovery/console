@@ -25,13 +25,18 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
 
   const methods = useForm({
     defaultValues: {
-      name: registry ? registry.name : undefined,
-      description: registry ? registry.description : undefined,
-      url: registry ? registry.url : undefined,
-      kind: registry ? registry?.kind : undefined,
+      name: registry?.name,
+      description: registry?.description,
+      url: registry?.url,
+      kind: registry?.kind,
+      config: {},
     },
     mode: 'onChange',
   })
+
+  useEffect(() => {
+    setTimeout(() => methods.clearErrors('config'), 0)
+  }, [methods])
 
   const availableContainerRegistry = useSelector((state: RootState) => selectAvailableContainerRegistry(state))
   const availableContainerRegistryLoadingStatus = useSelector((state: RootState) =>
