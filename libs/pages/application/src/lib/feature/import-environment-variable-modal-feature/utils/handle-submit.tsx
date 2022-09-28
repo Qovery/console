@@ -30,8 +30,9 @@ export function handleSubmit(
   dispatch: ThunkDispatch<RootState, any, any>,
   closeModal: () => void,
   overwriteEnabled = false,
-  serviceType: ServiceTypeEnum
+  serviceType?: ServiceTypeEnum
 ): void {
+  if (!serviceType) return
   const vars = formatData(data, keys)
   dispatch(importEnvironmentVariables({ applicationId, vars, overwriteEnabled, serviceType })).then(() => {
     closeModal()

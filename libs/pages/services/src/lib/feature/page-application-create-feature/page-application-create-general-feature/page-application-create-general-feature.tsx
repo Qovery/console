@@ -59,7 +59,20 @@ export function PageApplicationCreateGeneralFeature() {
   }, [watchServiceType, dispatch])
 
   const onSubmit = methods.handleSubmit((data) => {
-    setGeneralData(data)
+    const cloneData = {
+      ...data,
+    }
+
+    if (data.serviceType === ServiceTypeEnum.CONTAINER && data.cmd_arguments) {
+      cloneData.cmd = eval(data.cmd_arguments)
+      // try {
+      //   cloneData.cmd = eval(data.cmd_arguments)
+      // } catch (e: any) {
+      //   toastError(e, 'Invalid CMD array')
+      //   return
+      // }
+    }
+    setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })

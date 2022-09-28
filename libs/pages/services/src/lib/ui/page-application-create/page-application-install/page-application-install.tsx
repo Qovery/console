@@ -77,6 +77,25 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
                   )}
                 </>
               )}
+              {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
+                <>
+                  <li>
+                    registry: <strong className="font-medium">{props.generalData.registry}</strong>
+                  </li>
+                  <li>
+                    image name: <strong>{props.generalData.image_name}</strong>
+                  </li>
+                  <li>
+                    image tag: <strong>{props.generalData.image_tag}</strong>
+                  </li>
+                  <li>
+                    image entry point: <strong>{props.generalData.image_entry_point}</strong>
+                  </li>
+                  <li>
+                    CMD arguments: <strong>{props.generalData.cmd_arguments}</strong>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 

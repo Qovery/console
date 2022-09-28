@@ -10,6 +10,7 @@ export interface GeneralData {
   image_tag?: string
   image_entry_point?: string
   cmd_arguments?: string
+  cmd?: string[]
 
   // application
   build_mode?: string

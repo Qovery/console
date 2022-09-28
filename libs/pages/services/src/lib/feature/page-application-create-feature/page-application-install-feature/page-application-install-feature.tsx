@@ -132,7 +132,7 @@ export function PageApplicationInstallFeature() {
           max_running_instances: resourcesData.instances[1],
           tag: generalData.image_tag || '',
           image_name: generalData.image_name || '',
-          arguments: generalData.cmd_arguments?.split(' ') || [],
+          arguments: generalData.cmd,
           entrypoint: generalData.image_entry_point || '',
           registry_id: generalData.registry || '',
         }

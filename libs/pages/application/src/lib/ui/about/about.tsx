@@ -8,7 +8,7 @@ import { BaseLink, Button, ButtonStyle, Icon, IconAwesomeEnum, Skeleton } from '
 export interface AboutProps {
   description: string
   link: BaseLink
-  type: ServiceTypeEnum
+  type?: ServiceTypeEnum
   buildMode?: BuildModeEnum
   gitProvider?: GitProviderEnum
   loadingStatus?: LoadingStatus

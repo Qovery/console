@@ -6,17 +6,15 @@ import {
 } from '@qovery/shared/interfaces'
 import { ServiceTypeEnum } from '../service-type.enum'
 
-export const getServiceType = (data?: ApplicationEntity | DatabaseEntity) => {
-  let currentType = ServiceTypeEnum.APPLICATION
-
-  if (!data) return currentType
+export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
+  let currentType: ServiceTypeEnum
 
   if ((data as ContainerApplicationEntity).image_name) {
     currentType = ServiceTypeEnum.CONTAINER
-  }
-
-  if (!(data as GitApplicationEntity).build_mode && !(data as ContainerApplicationEntity).image_name) {
+  } else if (!(data as GitApplicationEntity).build_mode && !(data as ContainerApplicationEntity).image_name) {
     currentType = ServiceTypeEnum.DATABASE
+  } else {
+    currentType = ServiceTypeEnum.APPLICATION
   }
 
   return currentType

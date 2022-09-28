@@ -12,6 +12,7 @@ import {
   GitApplicationEntity,
   OrganizationEntity,
 } from '@qovery/shared/interfaces'
+import { toastError } from '@qovery/shared/toast'
 import { buildGitRepoUrl } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
@@ -49,7 +50,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
     name: data['name'],
     tag: data['image_tag'] || '',
     image_name: data['image_name'] || '',
-    arguments: data['cmd_arguments']?.split(' ') || [],
+    arguments: data['cmd_arguments'] && eval(data['cmd_arguments']),
     entrypoint: data['image_entry_point'] || '',
     registry_id: data['registry'] || '',
   }
@@ -87,7 +88,14 @@ export function PageSettingsGeneralFeature() {
       if (getServiceType(application) === ServiceTypeEnum.APPLICATION) {
         cloneApplication = handleSubmit(data, application)
       } else {
-        cloneApplication = handleContainerSubmit(data, application)
+        try {
+          cloneApplication = handleContainerSubmit(data, application)
+        } catch (e: any) {
+          toastError(e, 'Invalid CMD array')
+          return
+        }
+
+        console.log(cloneApplication)
       }
 
       dispatch(
@@ -102,6 +110,8 @@ export function PageSettingsGeneralFeature() {
   })
 
   useEffect(() => {
+    if (!application) return
+
     if (getServiceType(application) === ServiceTypeEnum.APPLICATION) {
       if (watchBuildMode === BuildModeEnum.DOCKER) {
         methods.setValue('dockerfile_path', 'Dockerfile')
@@ -113,26 +123,41 @@ export function PageSettingsGeneralFeature() {
 
   useEffect(() => {
     methods.setValue('name', application?.name)
-    if (application && 'build_mode' in application) {
-      methods.setValue('build_mode', application?.build_mode)
-      methods.setValue(
-        'buildpack_language',
-        application?.buildpack_language ? application?.buildpack_language : BuildPackLanguageEnum.PYTHON
-      )
-      methods.setValue('dockerfile_path', application?.dockerfile_path ? application?.dockerfile_path : 'Dockerfile')
-    }
+    if (application) {
+      if (getServiceType(application) === ServiceTypeEnum.APPLICATION) {
+        methods.setValue('build_mode', (application as GitApplicationEntity).build_mode)
+        methods.setValue(
+          'buildpack_language',
+          (application as GitApplicationEntity).buildpack_language
+            ? (application as GitApplicationEntity).buildpack_language
+            : BuildPackLanguageEnum.PYTHON
+        )
+        methods.setValue(
+          'dockerfile_path',
+          (application as GitApplicationEntity).dockerfile_path
+            ? (application as GitApplicationEntity).dockerfile_path
+            : 'Dockerfile'
+        )
+      }
 
-    if (application && getServiceType(application) === ServiceTypeEnum.CONTAINER) {
-      methods.setValue('registry', (application as ContainerApplicationEntity)?.registry.id)
-      methods.setValue('image_name', (application as ContainerApplicationEntity)?.image_name)
-      methods.setValue('image_tag', (application as ContainerApplicationEntity)?.tag)
-      methods.setValue('image_entry_point', (application as ContainerApplicationEntity)?.entrypoint)
-      methods.setValue('cmd_arguments', (application as ContainerApplicationEntity)?.arguments)
-      methods.unregister('buildpack_language')
-      methods.unregister('dockerfile_path')
-      methods.unregister('build_mode')
+      if (getServiceType(application) === ServiceTypeEnum.CONTAINER) {
+        methods.setValue('registry', (application as ContainerApplicationEntity).registry.id)
+        methods.setValue('image_name', (application as ContainerApplicationEntity).image_name)
+        methods.setValue('image_tag', (application as ContainerApplicationEntity).tag)
+        methods.setValue('image_entry_point', (application as ContainerApplicationEntity).entrypoint)
+        methods.setValue(
+          'cmd_arguments',
+          (application as ContainerApplicationEntity).arguments &&
+            (application as ContainerApplicationEntity).arguments?.length
+            ? JSON.stringify((application as ContainerApplicationEntity).arguments)
+            : ''
+        )
+        methods.unregister('buildpack_language')
+        methods.unregister('dockerfile_path')
+        methods.unregister('build_mode')
 
-      dispatch(fetchContainerRegistries({ organizationId }))
+        dispatch(fetchContainerRegistries({ organizationId }))
+      }
     }
   }, [methods, application, dispatch, organizationId])
 
@@ -142,7 +167,7 @@ export function PageSettingsGeneralFeature() {
         onSubmit={onSubmit}
         watchBuildMode={watchBuildMode}
         loading={loadingStatus === 'loading'}
-        type={getServiceType(application)}
+        type={application && getServiceType(application)}
         organization={organization}
       />
     </FormProvider>

@@ -114,7 +114,6 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
           <InputTextArea
             dataTestId="input-textarea-cmd-arguments"
             name="cmd_arguments"
-            className="mb-3"
             onChange={field.onChange}
             value={field.value}
             label="CMD Arguments"
@@ -122,6 +121,9 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
           />
         )}
       />
+      <p className="text-xs ml-4 mt-1 text-text-400">
+        Expected format: ["rails", "-h", "0.0.0.0", "-p", "8080", "string"]
+      </p>
     </div>
   )
 }

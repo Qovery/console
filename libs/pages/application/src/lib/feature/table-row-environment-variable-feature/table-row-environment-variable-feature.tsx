@@ -30,7 +30,7 @@ export interface TableRowEnvironmentVariableFeatureProps {
   dataHead: TableHeadProps[]
   columnsWidth?: string
   isLoading: boolean
-  serviceType: ServiceTypeEnum
+  serviceType?: ServiceTypeEnum
 }
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
@@ -180,23 +180,27 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                 }
 
                 if (variable.variable_type === 'public') {
-                  dispatch(
-                    deleteEnvironmentVariable({
-                      entityId,
-                      environmentVariableId: variable.id,
-                      scope: variable.scope,
-                      serviceType: props.serviceType,
-                    })
-                  )
+                  if (props.serviceType) {
+                    dispatch(
+                      deleteEnvironmentVariable({
+                        entityId,
+                        environmentVariableId: variable.id,
+                        scope: variable.scope,
+                        serviceType: props.serviceType,
+                      })
+                    )
+                  }
                 } else {
-                  dispatch(
-                    deleteSecret({
-                      entityId,
-                      environmentVariableId: variable.id,
-                      scope: variable.scope,
-                      serviceType: props.serviceType,
-                    })
-                  )
+                  if (props.serviceType) {
+                    dispatch(
+                      deleteSecret({
+                        entityId,
+                        environmentVariableId: variable.id,
+                        scope: variable.scope,
+                        serviceType: props.serviceType,
+                      })
+                    )
+                  }
                 }
               },
             })

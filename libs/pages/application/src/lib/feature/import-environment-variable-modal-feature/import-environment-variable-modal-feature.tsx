@@ -29,7 +29,7 @@ import { triggerToggleAll } from './utils/trigger-toggle-all'
 export interface ImportEnvironmentVariableModalFeatureProps {
   applicationId: string
   closeModal: () => void
-  serviceType: ServiceTypeEnum
+  serviceType?: ServiceTypeEnum
 }
 
 export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVariableModalFeatureProps) {

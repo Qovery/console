@@ -11,7 +11,7 @@ import GitRepositorySettingsFeature from '../../feature/git-repository-settings-
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   watchBuildMode: BuildModeEnum
-  type: ServiceTypeEnum
+  type?: ServiceTypeEnum
   loading?: boolean
   organization?: OrganizationEntity
 }
