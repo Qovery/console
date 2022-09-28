@@ -27,7 +27,8 @@ const props: PageApplicationPostProps = {
       },
     ],
   },
-  isLoading: false,
+  isLoadingCreate: false,
+  isLoadingCreateAndDeploy: false,
 }
 
 describe('PageApplicationPost', () => {
