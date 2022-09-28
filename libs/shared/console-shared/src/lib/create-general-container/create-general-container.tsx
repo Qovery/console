@@ -102,7 +102,7 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
             className="mb-3"
             onChange={field.onChange}
             value={field.value}
-            label="Image Entry Point"
+            label="Image Entrypoint"
             error={error?.message}
           />
         )}

@@ -89,7 +89,7 @@ export function PageApplicationInstall(props: PageApplicationInstallProps) {
                     image tag: <strong>{props.generalData.image_tag}</strong>
                   </li>
                   <li>
-                    image entry point: <strong>{props.generalData.image_entry_point}</strong>
+                    image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
                   </li>
                   <li>
                     CMD arguments: <strong>{props.generalData.cmd_arguments}</strong>
