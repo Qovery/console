@@ -1,6 +1,11 @@
-import { useEffect } from 'react'
+import { KubernetesEnum } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { selectClusterById } from '@qovery/domains/organization'
+import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -9,6 +14,7 @@ import {
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 import PageApplicationCreateResources from '../../../ui/page-application-create/page-application-create-resources/page-application-create-resources'
 import { ResourcesData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -18,6 +24,14 @@ export function PageApplicationCreateResourcesFeature() {
   const { setCurrentStep, resourcesData, setResourcesData, generalData } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
+  const [maxInstances, setMaxInstance] = useState(2)
+
+  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
+    selectEnvironmentById(state, environmentId)
+  )
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) =>
+    selectClusterById(state, environment?.cluster_id || '')
+  )
 
   useEffect(() => {
     !generalData?.name &&
@@ -59,6 +73,13 @@ export function PageApplicationCreateResourcesFeature() {
     mode: 'onChange',
   })
 
+  useEffect(() => {
+    if (cluster?.kubernetes === KubernetesEnum.K3_S) {
+      setMaxInstance(1)
+      methods.setValue('instances', [1, 1])
+    }
+  }, [cluster])
+
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
@@ -73,7 +94,7 @@ export function PageApplicationCreateResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <PageApplicationCreateResources onBack={onBack} onSubmit={onSubmit} />
+        <PageApplicationCreateResources maximumInstances={maxInstances} onBack={onBack} onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )

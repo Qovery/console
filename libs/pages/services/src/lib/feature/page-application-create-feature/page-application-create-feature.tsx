@@ -47,18 +47,12 @@ export function PageApplicationCreateFeature() {
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
-    instances: [1, 12],
+    instances: [1, 2],
     memory_unit: MemorySizeEnum.MB,
   })
 
   const [portData, setPortData] = useState<PortData | undefined>({
-    ports: [
-      {
-        application_port: undefined,
-        external_port: 443,
-        is_public: true,
-      },
-    ],
+    ports: [],
   })
 
   const navigate = useNavigate()

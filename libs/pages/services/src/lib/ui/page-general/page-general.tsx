@@ -51,6 +51,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
   return (
     <>
+      HEY
       <Table
         dataHead={tableHead}
         defaultData={services}

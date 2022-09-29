@@ -19,10 +19,12 @@ export interface SettingResourcesProps {
   memorySize: MemorySizeEnum | string
   displayWarningCpu: boolean
   application?: ApplicationEntity
+  minInstances?: number
+  maxInstances?: number
 }
 
 export function SettingResources(props: SettingResourcesProps) {
-  const { getMemoryUnit, memorySize, displayWarningCpu, application } = props
+  const { getMemoryUnit, memorySize, displayWarningCpu, application, minInstances = 1, maxInstances = 50 } = props
   const { control, watch, trigger } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
 
   let maxMemoryBySize =
@@ -96,7 +98,9 @@ export function SettingResources(props: SettingResourcesProps) {
         <Controller
           name="instances"
           control={control}
-          render={({ field }) => <Slider min={1} max={50} step={1} onChange={field.onChange} value={field.value} />}
+          render={({ field }) => (
+            <Slider min={minInstances} max={maxInstances} step={1} onChange={field.onChange} value={field.value} />
+          )}
         />
         <p className="text-text-400 text-xs mt-3">
           {application?.instances?.items && (

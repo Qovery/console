@@ -78,7 +78,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           <InputSelect
             dataTestId="input-repository"
             label="Repository"
-            className={`mb-3 ${
+            className={`mb-0.5 ${
               (getValues().provider && loadingStatusRepositories === 'loaded') || gitDisabled ? '' : 'hidden'
             }`}
             options={repositories}
@@ -90,6 +90,18 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
           />
         )}
       />
+      <p className="mb-3 text-right">
+        {/*todo: uncomment when github app is ready on v3*/}
+        {/*<Link*/}
+        {/*  className={`font-medium text-ssm ${*/}
+        {/*    (getValues().provider && loadingStatusRepositories === 'loaded') || gitDisabled ? '' : 'hidden'*/}
+        {/*  }`}*/}
+        {/*  link="https://discuss.qovery.com"*/}
+        {/*  linkLabel="Don't see your repository?"*/}
+        {/*  external={true}*/}
+        {/*  iconRight="icon-solid-arrow-up-right-from-square"*/}
+        {/*/>*/}
+      </p>
 
       <Controller
         name="branch"

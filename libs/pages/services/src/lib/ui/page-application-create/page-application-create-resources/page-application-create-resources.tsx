@@ -8,6 +8,7 @@ import { ResourcesData } from '../../../feature/page-application-create-feature/
 export interface PageApplicationCreateResourcesProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
+  maximumInstances?: number
 }
 
 export function PageApplicationCreateResources(props: PageApplicationCreateResourcesProps) {
@@ -28,7 +29,12 @@ export function PageApplicationCreateResources(props: PageApplicationCreateResou
       </div>
 
       <form onSubmit={props.onSubmit}>
-        <SettingResources getMemoryUnit={getMemoryUnit} memorySize={memorySize} displayWarningCpu={false} />
+        <SettingResources
+          maxInstances={props.maximumInstances}
+          getMemoryUnit={getMemoryUnit}
+          memorySize={memorySize}
+          displayWarningCpu={false}
+        />
 
         <div className="flex justify-between">
           <Button

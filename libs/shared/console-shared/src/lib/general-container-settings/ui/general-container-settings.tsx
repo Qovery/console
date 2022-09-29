@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { OrganizationEntity, Value } from '@qovery/shared/interfaces'
-import { InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
+import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { InputSelect, InputText, InputTextArea, Link } from '@qovery/shared/ui'
 
 export interface GeneralContainerSettingsProps {
   organization?: OrganizationEntity
@@ -42,7 +43,7 @@ export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             dataTestId="input-select-registry"
-            className="mb-3"
+            className="mb-0.5"
             onChange={field.onChange}
             value={field.value}
             options={availableRegistiesOptions}
@@ -51,6 +52,14 @@ export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
           />
         )}
       />
+      <p className="mb-3  text-right">
+        <Link
+          className="font-medium text-ssm"
+          link={`${SETTINGS_URL(props.organization?.id)}${SETTINGS_CONTAINER_REGISTRIES_URL}`}
+          linkLabel="Don't see your registry?"
+          iconRight="icon-solid-arrow-up-right-from-square"
+        />
+      </p>
       <Controller
         name="image_name"
         control={control}
