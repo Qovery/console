@@ -4,7 +4,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
-import { fetchContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
+import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
@@ -157,7 +157,7 @@ export function PageSettingsGeneralFeature() {
 
         methods.unregister('build_mode')
 
-        dispatch(fetchContainerRegistries({ organizationId }))
+        dispatch(fetchOrganizationContainerRegistries({ organizationId }))
       }
     }
   }, [methods, application, dispatch, organizationId])
