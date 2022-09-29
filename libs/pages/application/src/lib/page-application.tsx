@@ -61,7 +61,7 @@ export function PageApplication() {
       3000
     )
     return () => clearInterval(fetchApplicationStatusByInterval)
-  }, [application, applicationId, loadingStatus, dispatch])
+  }, [applicationId, loadingStatus, dispatch])
 
   const payload = (applicationId: string) => ({
     environmentId,
