@@ -91,7 +91,7 @@ export function InputSelect(props: InputSelectProps) {
     <components.Option {...props}>
       {isMulti ? (
         <span className="input--select__checkbox">
-          {props.isSelected && <Icon name="icon-solid-check" className="text-xs" />}
+          {props.isSelected && <Icon name="icon-solid-check" className="text-success-500 text-xs" />}
         </span>
       ) : props.isSelected ? (
         <Icon name="icon-solid-check" className="text-success-500" />
