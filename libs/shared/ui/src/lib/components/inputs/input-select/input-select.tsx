@@ -97,7 +97,7 @@ export function InputSelect(props: InputSelectProps) {
       ) : props.isSelected ? (
         <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />
       ) : props.data.icon ? (
-        props.data.icon
+        <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
       ) : (
         <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
       )}

@@ -76,18 +76,13 @@ describe('CrudModal', () => {
           name: 'hello',
           url: 'https://qovery.com',
           kind: ContainerRegistryKindEnum.PUBLIC_ECR,
-          config: {
-            access_key_id: 'test',
-            secret_access_key: 'key',
-          },
+          config: {},
         },
       })
     )
     await act(() => {
       getByDisplayValue('hello')
       getByDisplayValue('https://qovery.com')
-      getByDisplayValue('test')
-      getByDisplayValue('key')
     })
   })
 

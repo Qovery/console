@@ -176,7 +176,7 @@ export function CrudModal(props: CrudModalProps) {
           )}
         />
       )}
-      {(watch('kind') === ContainerRegistryKindEnum.ECR || watch('kind') === ContainerRegistryKindEnum.PUBLIC_ECR) && (
+      {watch('kind') === ContainerRegistryKindEnum.ECR && (
         <>
           <Controller
             name="config.access_key_id"
