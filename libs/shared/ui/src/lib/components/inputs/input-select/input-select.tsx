@@ -10,6 +10,7 @@ import Select, {
 } from 'react-select'
 import { Value } from '@qovery/shared/interfaces'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputSelectProps {
   className?: string
@@ -91,17 +92,19 @@ export function InputSelect(props: InputSelectProps) {
     <components.Option {...props}>
       {isMulti ? (
         <span className="input--select__checkbox">
-          {props.isSelected && <Icon name="icon-solid-check" className="text-success-500 text-xs" />}
+          {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 text-xs" />}
+          {!props.isSelected && !props.data.icon && <Icon name={IconAwesomeEnum.CHECK} className="opacity-0 text-xs" />}
+          {props.data.icon ? props.data.icon : ''}
         </span>
       ) : props.isSelected ? (
-        <Icon name="icon-solid-check" className="text-success-500" />
+        <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 text-xs" />
       ) : props.data.icon ? (
         props.data.icon
       ) : (
-        <Icon name="icon-solid-check" className="opacity-0" />
+        <Icon name={IconAwesomeEnum.CHECK} className="opacity-0 text-xs" />
       )}
 
-      <label className="ml-2">{props.label}</label>
+      <label className={`${props.isSelected ? '' : ''} ml-2`}>{props.label}</label>
     </components.Option>
   )
 
