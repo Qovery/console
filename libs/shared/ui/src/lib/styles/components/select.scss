@@ -1,7 +1,7 @@
 .input-select__control .input-select__input-container {
   @apply text-sm;
   margin: 0;
-  color: theme('colors.text.700') !important;
+  color: theme('colors.text.700');
 }
 
 .input-select__control {
