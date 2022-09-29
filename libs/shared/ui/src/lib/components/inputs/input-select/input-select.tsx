@@ -147,7 +147,12 @@ export function InputSelect(props: InputSelectProps) {
         data-testid={dataTestId || 'select'}
       >
         {hasIcon && (
-          <div className="w-12 h-full absolute left-0 top-0 flex items-center justify-center">{currentIcon.icon}</div>
+          <div
+            data-testid="selected-icon"
+            className="w-12 h-full absolute left-0 top-0 flex items-center justify-center"
+          >
+            {currentIcon.icon}
+          </div>
         )}
         <label
           htmlFor={label}
