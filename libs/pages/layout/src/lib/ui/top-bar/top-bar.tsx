@@ -18,14 +18,16 @@ export function TopBar(props: TopBarProps) {
     >
       <div className="flex px-5 justify-between items-center h-full">
         <BreadcrumbFeature />
-        <Button
-          style={ButtonStyle.STROKED}
-          size={ButtonSize.LARGE}
-          iconRight={IconAwesomeEnum.ARROW_RIGHT_FROM_BRACKET}
-          onClick={() => window.location.replace(`https://console.qovery.com/platform/organization/`)}
-        >
-          Back to the console V2
-        </Button>
+        {!darkMode && (
+          <Button
+            style={ButtonStyle.STROKED}
+            size={ButtonSize.LARGE}
+            iconRight={IconAwesomeEnum.ARROW_RIGHT_FROM_BRACKET}
+            onClick={() => window.location.replace(`https://console.qovery.com/platform/organization/`)}
+          >
+            Back to the console V2
+          </Button>
+        )}
       </div>
     </div>
   )
