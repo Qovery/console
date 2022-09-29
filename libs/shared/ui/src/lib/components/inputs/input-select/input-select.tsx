@@ -91,20 +91,18 @@ export function InputSelect(props: InputSelectProps) {
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
     <components.Option {...props}>
       {isMulti ? (
-        <span className="input--select__checkbox">
-          {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 text-xs" />}
-          {!props.isSelected && !props.data.icon && <Icon name={IconAwesomeEnum.CHECK} className="opacity-0 text-xs" />}
-          {props.data.icon ? props.data.icon : ''}
+        <span className="input-select__checkbox">
+          {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
         </span>
       ) : props.isSelected ? (
-        <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 text-xs" />
+        <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />
       ) : props.data.icon ? (
         props.data.icon
       ) : (
-        <Icon name={IconAwesomeEnum.CHECK} className="opacity-0 text-xs" />
+        <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
       )}
 
-      <label className={`${props.isSelected ? '' : ''} ml-2`}>{props.label}</label>
+      <label className="ml-2">{props.label}</label>
     </components.Option>
   )
 
