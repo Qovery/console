@@ -154,6 +154,7 @@ export function PageSettingsGeneralFeature() {
         )
         methods.unregister('buildpack_language')
         methods.unregister('dockerfile_path')
+
         methods.unregister('build_mode')
 
         dispatch(fetchContainerRegistries({ organizationId }))
