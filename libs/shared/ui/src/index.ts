@@ -1,3 +1,4 @@
+export * from './lib/components/table-empty-state/table-empty-state'
 export * from './lib/components/funnel-flow-help-card/funnel-flow-help-card'
 export * from './lib/components/funnel-flow-body/funnel-flow-body'
 export * from './lib/components/funnel-flow/funnel-flow'

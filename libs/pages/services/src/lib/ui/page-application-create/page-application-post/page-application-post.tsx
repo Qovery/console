@@ -172,7 +172,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
           >
-            Just create
+            Create
           </Button>
           <Button
             dataTestId="button-create-deploy"

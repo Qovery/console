@@ -19,7 +19,7 @@ export function PageApplicationCreatePort(props: PageApplicationCreatePortProps)
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">Set Port</h3>
+          <h3 className="text-text-700 text-lg">Set port</h3>
           <Button size={ButtonSize.TINY} className="btn--no-min-w" onClick={props.onAddPort}>
             Add port
           </Button>

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/router'
-import { BaseLink, HelpSection, Table } from '@qovery/shared/ui'
+import { BaseLink, HelpSection, Table, TableEmptyState } from '@qovery/shared/ui'
 import TableRowServicesFeature from '../../feature/table-row-services-feature/table-row-services-feature'
 
 export interface PageGeneralProps {
+  isLoading?: boolean
   environmentMode: string
   services: (ApplicationEntity | DatabaseEntity)[]
   listHelpfulLinks: BaseLink[]
@@ -51,34 +52,42 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
   return (
     <>
-      HEY
-      <Table
-        dataHead={tableHead}
-        defaultData={services}
-        filterData={data}
-        setFilterData={setData}
-        className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
-        columnsWidth="30% 20% 25% 20%"
-      >
-        <>
-          {data.map((currentData) => {
-            const isDatabase = !(currentData as GitApplicationEntity).build_mode
-            return (
-              <TableRowServicesFeature
-                key={currentData.id}
-                data={currentData}
-                dataHead={tableHead}
-                link={
-                  isDatabase
-                    ? DATABASE_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
-                    : APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
-                }
-                environmentMode={environmentMode}
-              />
-            )
-          })}
-        </>
-      </Table>
+      {!props.isLoading && services.length ? (
+        <Table
+          dataHead={tableHead}
+          defaultData={services}
+          filterData={data}
+          setFilterData={setData}
+          className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
+          columnsWidth="30% 20% 25% 20%"
+        >
+          <>
+            {}
+            {data.map((currentData) => {
+              const isDatabase = !(currentData as GitApplicationEntity).build_mode
+              return (
+                <TableRowServicesFeature
+                  key={currentData.id}
+                  data={currentData}
+                  dataHead={tableHead}
+                  link={
+                    isDatabase
+                      ? DATABASE_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
+                      : APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
+                  }
+                  environmentMode={environmentMode}
+                />
+              )
+            })}
+          </>
+        </Table>
+      ) : (
+        <TableEmptyState
+          title="No service found"
+          description="You can create an application from a git repository, from an image registry or create a database"
+        />
+      )}
+
       <div className="bg-white rounded-b flex flex-col justify-end">
         <HelpSection description="Need help? You may find these links useful" links={listHelpfulLinks} />
       </div>
