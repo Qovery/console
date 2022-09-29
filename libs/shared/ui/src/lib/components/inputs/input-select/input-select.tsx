@@ -3,6 +3,7 @@ import Select, {
   GroupBase,
   MultiValue,
   MultiValueProps,
+  NoticeProps,
   OptionProps,
   SingleValue,
   SingleValueProps,
@@ -121,6 +122,17 @@ export function InputSelect(props: InputSelectProps) {
     </span>
   )
 
+  const NoOptionsMessage = (props: NoticeProps<Value>) => {
+    return (
+      <components.NoOptionsMessage {...props}>
+        <div className="text-center px-3 py-6">
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
+          <p className="text-text-400 font-medium text-xs mt-1">No result for this search</p>
+        </div>{' '}
+      </components.NoOptionsMessage>
+    )
+  }
+
   const inputActions =
     hasFocus && !disabled
       ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
@@ -173,6 +185,7 @@ export function InputSelect(props: InputSelectProps) {
             Option,
             MultiValue,
             SingleValue,
+            NoOptionsMessage,
           }}
           name={label}
           inputId={label}

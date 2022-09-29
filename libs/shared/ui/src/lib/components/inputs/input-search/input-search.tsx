@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
 export interface InputSearchProps {
   placeholder?: string
@@ -59,7 +60,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         {toggleDelete && (
           <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
-            <Icon className="text-text-400 text-sm" name="icon-solid-circle-xmark" />
+            <Icon className="text-text-400 text-sm" name={IconAwesomeEnum.CIRCLE_XMARK} />
           </button>
         )}
       </div>
@@ -69,7 +70,7 @@ export function InputSearch(props: InputSearchProps) {
             emptyContent
           ) : (
             <div className="text-center px-3 py-6">
-              <Icon name="icon-solid-wave-pulse" className="text-text-400" />
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
               <p className="text-text-400 font-medium text-xs mt-1">No result for this search</p>
             </div>
           )}
