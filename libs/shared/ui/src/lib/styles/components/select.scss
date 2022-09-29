@@ -1,15 +1,9 @@
-/* Value selected container */
-.input--select {
-  &:hover {
-  }
-}
-
-.input--select .input--select__input-container {
+.input-select .input-select__input-container {
   @apply text-sm text-text-500;
   margin: 0;
 }
 
-.input--select__control {
+.input-select__control {
   border: none !important;
   background: none !important;
   box-shadow: none !important;
@@ -17,7 +11,7 @@
   height: 34px;
 }
 
-.input--select__value-container {
+.input-select__value-container {
   overflow: visible !important;
   padding: 0 !important;
   cursor: pointer;
@@ -26,7 +20,7 @@
 }
 
 // state
-.input--select--error {
+.input-select--error {
   @apply border-error-500;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   &:hover {
@@ -34,13 +28,13 @@
   }
 }
 
-.input--select--focused {
+.input-select--focused {
   & > label {
     @apply text-xs translate-y-0;
   }
 }
 
-.input--select--disabled {
+.input-select--disabled {
   @apply bg-element-light-lighter-200 border-element-light-lighter-500 pointer-events-none;
 
   & > label {
@@ -49,12 +43,12 @@
 }
 
 // buttons
-.input--select__indicators {
+.input-select__indicators {
   display: none !important;
 }
 
 // menu
-.input--select__menu {
+.input-select__menu {
   width: calc(100% + 2rem) !important;
   left: -1rem;
   margin-top: 1rem !important;
@@ -62,12 +56,12 @@
   @apply p-2;
 }
 
-.input--select__menu-list {
+.input-select__menu-list {
   padding: 0 !important;
 }
 
 // option
-.input--select__option {
+.input-select__option {
   display: flex !important;
   background: #fff !important;
   padding: 8px !important;
@@ -78,7 +72,7 @@
     @apply static translate-y-0 font-medium text-ssm text-text-600;
   }
 
-  .input--select__checkbox {
+  .input-select__checkbox {
     @apply bg-white border-2 border-element-light-lighter-700 rounded-sm w-4 h-4 flex items-center justify-center;
   }
 
@@ -87,24 +81,24 @@
   }
 }
 
-.input--select__option--is-selected {
+.input-select__option--is-selected {
   background: theme('colors.white');
 
   label {
     @apply text-text-600;
   }
 
-  .input--select__checkbox {
+  .input-select__checkbox {
     @apply bg-brand-500 border-0;
   }
 }
 
-.input--select__placeholder {
+.input-select__placeholder {
   display: none;
 }
 
-.input--select__option--is-focused,
-.input--select__option--is-focused.input--select__option--is-selected,
-.input--select__option--is-focused:hover {
+.input-select__option--is-focused,
+.input-select__option--is-focused.input-select__option--is-selected,
+.input-select__option--is-focused:hover {
   background: theme('colors.element.light.lighter.300') !important;
 }
