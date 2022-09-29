@@ -136,7 +136,7 @@ export function InputSelect(props: InputSelectProps) {
   }, [hasFocus, selectedValue, setHasLabelUp])
 
   const currentIcon = options.find((option) => option.value === selectedValue)
-  const hasIcon = !props.isMulti && currentIcon
+  const hasIcon = !props.isMulti && currentIcon?.icon
 
   return (
     <div className={className}>
