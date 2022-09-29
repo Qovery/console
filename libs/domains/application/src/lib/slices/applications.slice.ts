@@ -14,6 +14,7 @@ import {
   ApplicationEditRequest,
   ApplicationMainCallsApi,
   ApplicationMetricsApi,
+  ApplicationRequest,
   ApplicationsApi,
   Commit,
   ContainerAdvancedSettings,
@@ -120,6 +121,24 @@ export const editApplication = createAsyncThunk(
     }
 
     return response.data as Application
+  }
+)
+
+export const createApplication = createAsyncThunk(
+  'application/create',
+  async (payload: {
+    environmentId: string
+    data: ApplicationRequest | ContainerRequest
+    serviceType: ServiceTypeEnum
+  }) => {
+    let response
+    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      response = await containersApi.createContainer(payload.environmentId, payload.data as ContainerRequest)
+    } else {
+      response = await applicationsApi.createApplication(payload.environmentId, payload.data as ApplicationRequest)
+    }
+
+    return response.data as Application | ContainerResponse
   }
 )
 
@@ -328,6 +347,26 @@ export const applicationsSlice = createSlice({
         )
       })
       .addCase(editApplication.rejected, (state: ApplicationsState, action) => {
+        state.loadingStatus = 'error'
+        toastError(action.error)
+        state.error = action.error.message
+      })
+      // create application
+      .addCase(createApplication.pending, (state: ApplicationsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(createApplication.fulfilled, (state: ApplicationsState, action) => {
+        const application = action.payload
+        applicationsAdapter.addOne(state, application)
+        state.error = null
+        state.loadingStatus = 'loaded'
+
+        state.joinEnvApplication = addOneToManyRelation(application.environment?.id, application.id, {
+          ...state.joinEnvApplication,
+        })
+        toast(ToastEnum.SUCCESS, `Application created`)
+      })
+      .addCase(createApplication.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message

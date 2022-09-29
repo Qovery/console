@@ -130,7 +130,7 @@ export function TabsFeature() {
                   <ImportEnvironmentVariableModalFeature
                     closeModal={closeModal}
                     applicationId={applicationId}
-                    serviceType={getServiceType(application)}
+                    serviceType={application && getServiceType(application)}
                   />
                 ),
                 options: {
@@ -168,7 +168,7 @@ export function TabsFeature() {
                 applicationId={applicationId}
                 environmentId={environmentId}
                 projectId={projectId}
-                serviceType={getServiceType(application)}
+                serviceType={application && getServiceType(application)}
               />
             ),
           })

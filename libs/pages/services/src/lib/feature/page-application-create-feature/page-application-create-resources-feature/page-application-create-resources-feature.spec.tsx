@@ -1,7 +1,7 @@
 import ResizeObserver from '__tests__/utils/resize-observer'
 import { render } from '__tests__/utils/setup-jest'
-import { ApplicationContainerCreateContext } from 'libs/pages/services/src/lib/feature/page-application-create-feature/page-application-create-feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ApplicationContainerCreateContext } from '../page-application-create-feature'
 import PageApplicationCreateResourcesFeature from './page-application-create-resources-feature'
 
 describe('PageApplicationCreateResourcesFeature', () => {
@@ -15,11 +15,14 @@ describe('PageApplicationCreateResourcesFeature', () => {
           generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
           setGeneralData: jest.fn(),
           resourcesData: {
+            memory_unit: 'MB',
             memory: 512,
             cpu: [0.5],
             instances: [1, 12],
           },
           setResourcesData: jest.fn(),
+          setPortData: jest.fn(),
+          portData: undefined,
         }}
       >
         <PageApplicationCreateResourcesFeature />

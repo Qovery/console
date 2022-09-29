@@ -1,4 +1,6 @@
 import Button, { ButtonStyle } from '../buttons/button/button'
+import Icon from '../icon/icon'
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 export interface FunnelFlowProps {
   totalSteps: number
@@ -25,8 +27,8 @@ export function FunnelFlow(props: FunnelFlowProps) {
           </div>
         </div>
         <div className="border-l border-l-element-light-lighter-400 pl-4 h-full flex items-center">
-          <Button onClick={props.onExit} style={ButtonStyle.TAB}>
-            Exit
+          <Button onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
+            Close <Icon name={IconAwesomeEnum.CROSS} className="ml-2" />
           </Button>
         </div>
       </header>

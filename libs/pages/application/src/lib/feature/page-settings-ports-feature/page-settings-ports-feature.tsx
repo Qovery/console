@@ -58,15 +58,17 @@ export function PageSettingsPortsFeature() {
           description: 'Are you sure you want to delete this port?',
           name: application?.name,
           action: () => {
-            const cloneApplication = deletePort(application, port.id)
-            dispatch(
-              editApplication({
-                applicationId: applicationId,
-                data: cloneApplication,
-                serviceType: getServiceType(application),
-                toasterCallback,
-              })
-            )
+            if (application) {
+              const cloneApplication = deletePort(application, port.id)
+              dispatch(
+                editApplication({
+                  applicationId: applicationId,
+                  data: cloneApplication,
+                  serviceType: getServiceType(application),
+                  toasterCallback,
+                })
+              )
+            }
           },
         })
       }}

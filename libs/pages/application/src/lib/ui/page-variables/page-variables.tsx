@@ -10,7 +10,7 @@ export interface PageVariablesProps {
   setFilterData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   filterData: EnvironmentVariableSecretOrPublic[]
   isLoading: boolean
-  serviceType: ServiceTypeEnum
+  serviceType?: ServiceTypeEnum
 }
 
 export function PageVariablesMemo(props: PageVariablesProps) {

@@ -44,10 +44,10 @@ export function PageApplication() {
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    if (applicationId && loadingStatus === 'loaded') {
-      if (application?.links?.loadingStatus !== 'loaded')
+    if (application && applicationId && loadingStatus === 'loaded') {
+      if (application.links?.loadingStatus !== 'loaded')
         dispatch(fetchApplicationLinks({ applicationId, serviceType: getServiceType(application) }))
-      if (application?.instances?.loadingStatus !== 'loaded')
+      if (application.instances?.loadingStatus !== 'loaded')
         dispatch(fetchApplicationInstances({ applicationId, serviceType: getServiceType(application) }))
       if (
         (application as GitApplicationEntity)?.commits?.loadingStatus !== 'loaded' &&
@@ -56,16 +56,17 @@ export function PageApplication() {
         dispatch(fetchApplicationCommits({ applicationId }))
     }
     const fetchApplicationStatusByInterval = setInterval(
-      () => dispatch(fetchApplicationStatus({ applicationId, serviceType: getServiceType(application) })),
+      () =>
+        application && dispatch(fetchApplicationStatus({ applicationId, serviceType: getServiceType(application) })),
       3000
     )
     return () => clearInterval(fetchApplicationStatusByInterval)
-  }, [applicationId, loadingStatus, dispatch])
+  }, [application, applicationId, loadingStatus, dispatch])
 
   const payload = (applicationId: string) => ({
     environmentId,
     applicationId,
-    serviceType: getServiceType(application),
+    serviceType: application && getServiceType(application),
     withDeployments:
       pathname ===
       APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
@@ -87,13 +88,15 @@ export function PageApplication() {
   ]
 
   const removeApplication = (applicationId: string) => {
-    dispatch(
-      deleteApplicationAction({
-        environmentId,
-        applicationId,
-        serviceType: getServiceType(application),
-      })
-    )
+    if (application) {
+      dispatch(
+        deleteApplicationAction({
+          environmentId,
+          applicationId,
+          serviceType: getServiceType(application),
+        })
+      )
+    }
   }
 
   return (

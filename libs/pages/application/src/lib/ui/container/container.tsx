@@ -50,12 +50,16 @@ export function Container(props: ContainerProps) {
   const dispatch = useDispatch<AppDispatch>()
 
   const redeployApplication = () => {
-    if (application?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
-      dispatch(postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(application) }))
-    } else {
-      dispatch(
-        postApplicationActionsRestart({ environmentId, applicationId, serviceType: getServiceType(application) })
-      )
+    if (application) {
+      if (application?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+        dispatch(
+          postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(application) })
+        )
+      } else {
+        dispatch(
+          postApplicationActionsRestart({ environmentId, applicationId, serviceType: getServiceType(application) })
+        )
+      }
     }
   }
 
@@ -74,39 +78,40 @@ export function Container(props: ContainerProps) {
       },
     },
     {
-      ...(getServiceType(application) === ServiceTypeEnum.APPLICATION && {
-        iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-        iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-        menusClassName: 'border-r border-r-element-light-lighter-500',
-        menus: [
-          {
-            items: [
-              {
-                name: 'Deployment logs',
-                contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                onClick: () =>
-                  window
-                    .open(
-                      `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-                      '_blank'
-                    )
-                    ?.focus(),
-              },
-              {
-                name: 'Application logs',
-                contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                onClick: () =>
-                  window
-                    .open(
-                      `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
-                      '_blank'
-                    )
-                    ?.focus(),
-              },
-            ],
-          },
-        ],
-      }),
+      ...(application &&
+        getServiceType(application) === ServiceTypeEnum.APPLICATION && {
+          iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+          menusClassName: 'border-r border-r-element-light-lighter-500',
+          menus: [
+            {
+              items: [
+                {
+                  name: 'Deployment logs',
+                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+                  onClick: () =>
+                    window
+                      .open(
+                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
+                        '_blank'
+                      )
+                      ?.focus(),
+                },
+                {
+                  name: 'Application logs',
+                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
+                  onClick: () =>
+                    window
+                      .open(
+                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
+                        '_blank'
+                      )
+                      ?.focus(),
+                },
+              ],
+            },
+          ],
+        }),
     },
     {
       ...(removeApplication && {
@@ -114,7 +119,7 @@ export function Container(props: ContainerProps) {
         menus: [
           {
             items:
-              getServiceType(application) === ServiceTypeEnum.APPLICATION
+              application && getServiceType(application) === ServiceTypeEnum.APPLICATION
                 ? [
                     {
                       name: 'Edit code',
@@ -212,7 +217,7 @@ export function Container(props: ContainerProps) {
       )}
       <Skeleton width={40} height={32} show={!environment?.cloud_provider}>
         <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
-          <Icon name={getServiceType(application)} width="16" height="16" />
+          {application && <Icon name={getServiceType(application)} width="16" height="16" />}
         </div>
       </Skeleton>
       <Skeleton width={100} height={32} show={!environment?.cloud_provider}>
@@ -234,9 +239,11 @@ export function Container(props: ContainerProps) {
     >
       <Header title={application?.name} icon={IconEnum.APPLICATION} buttons={headerButtons} actions={headerActions} />
       <TabsFeature />
-      {application && application.status?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-        <NeedRedeployFlag application={application} onClickCTA={redeployApplication} />
-      )}
+      {application &&
+        application.status &&
+        application.status.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+          <NeedRedeployFlag application={application} onClickCTA={redeployApplication} />
+        )}
       {children}
     </ApplicationContext.Provider>
   )

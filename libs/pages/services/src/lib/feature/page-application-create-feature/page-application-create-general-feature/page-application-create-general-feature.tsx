@@ -6,13 +6,16 @@ import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@q
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/router'
+import { toastError } from '@qovery/shared/toast'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageApplicationCreateGeneral from '../../../ui/page-application-create/page-application-create-general/page-application-create-general'
 import { GeneralData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreateGeneralFeature() {
+  useDocumentTitle('General - Create Application')
   const { setGeneralData, generalData, setCurrentStep } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
@@ -22,11 +25,22 @@ export function PageApplicationCreateGeneralFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Step 1 is cool"
-      items={['because it smells good', 'and we do it with love']}
+      title="Application creation flow"
+      items={[
+        'You can deploy an application from a git repository or a container registry',
+        'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',
+        'Container Registry: Qovery will pull the image from container registry and deploy it on your kubernetes cluster',
+      ]}
       helpSectionProps={{
-        description: 'This is a description',
-        links: [{ link: '#', linkLabel: 'link', external: true }],
+        description: 'Need help? You may find these links useful',
+        links: [
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#general',
+            linkLabel: 'How to configure my application',
+            external: true,
+          },
+          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
+        ],
       }}
     />
   )
@@ -48,7 +62,19 @@ export function PageApplicationCreateGeneralFeature() {
   }, [watchServiceType, dispatch])
 
   const onSubmit = methods.handleSubmit((data) => {
-    setGeneralData(data)
+    const cloneData = {
+      ...data,
+    }
+
+    if (data.serviceType === ServiceTypeEnum.CONTAINER && data.cmd_arguments) {
+      try {
+        cloneData.cmd = eval(data.cmd_arguments)
+      } catch (e: any) {
+        toastError(e, 'Invalid CMD array')
+        return
+      }
+    }
+    setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })

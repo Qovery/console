@@ -23,6 +23,7 @@ describe('SettingResources', () => {
           instances: [1, 18],
           cpu: [3],
           memory: 1024,
+          memory_unit: MemorySizeEnum.MB,
         },
       })
     )

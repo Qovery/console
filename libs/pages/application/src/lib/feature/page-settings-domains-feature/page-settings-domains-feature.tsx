@@ -62,7 +62,9 @@ export function PageSettingsDomainsFeature() {
           description: 'Are you sure you want to delete this custom domain?',
           name: customDomain.domain,
           action: () => {
-            dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
+            if (application) {
+              dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
+            }
           },
         })
       }}

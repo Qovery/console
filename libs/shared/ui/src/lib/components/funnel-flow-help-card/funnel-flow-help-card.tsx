@@ -16,7 +16,9 @@ export function FunnelFlowHelpCard(props: FunnelFlowHelpCardProps) {
       <h5 className="text-lg font-medium text-700 mb-4">{props.title}</h5>
       <ul className={`list-disc pl-4 text-text-500 text-sm ${props.helpSectionProps && 'mb-8'}`}>
         {props.items.map((item, index) => (
-          <li key={index}>{item}</li>
+          <li className="mb-3" key={index}>
+            {item}
+          </li>
         ))}
       </ul>
       {props.helpSectionProps && <HelpSection className="-mx-8 px-8 pb-0" {...props.helpSectionProps} />}

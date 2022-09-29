@@ -10,6 +10,7 @@ export interface GeneralData {
   image_tag?: string
   image_entry_point?: string
   cmd_arguments?: string
+  cmd?: string[]
 
   // application
   build_mode?: string
@@ -25,4 +26,13 @@ export interface ResourcesData {
   memory: number
   cpu: [number]
   instances: [number, number]
+  memory_unit: string
+}
+
+export interface PortData {
+  ports: {
+    application_port: number | undefined
+    external_port: number | undefined
+    is_public: boolean
+  }[]
 }

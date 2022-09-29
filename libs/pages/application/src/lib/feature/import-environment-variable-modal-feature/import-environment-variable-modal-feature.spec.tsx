@@ -1,9 +1,9 @@
+import '@testing-library/jest-dom/extend-expect'
+import { act, findAllByTestId, fireEvent, screen, waitFor } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import ImportEnvironmentVariableModalFeature, {
   ImportEnvironmentVariableModalFeatureProps,
 } from './import-environment-variable-modal-feature'
-import { findAllByTestId, fireEvent, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
-import { render } from '__tests__/utils/setup-jest'
 
 const envText = `
 QOVERY_BUILD_TIME=hello
@@ -33,15 +33,14 @@ describe('ImportEnvironmentVariableModalFeature', () => {
       type: 'application/text',
     })
 
-    fireEvent.change(inputEl, {
-      target: {
-        files: [file],
-      },
+    await act(() => {
+      fireEvent.change(inputEl, {
+        target: {
+          files: [file],
+        },
+      })
     })
-
-    await waitFor(async () => {
-      const formRows = await findAllByTestId(baseElement, 'form-row')
-      expect(formRows).toHaveLength(2)
-    })
+    const formRows = await findAllByTestId(baseElement, 'form-row')
+    expect(formRows).toHaveLength(2)
   })
 })

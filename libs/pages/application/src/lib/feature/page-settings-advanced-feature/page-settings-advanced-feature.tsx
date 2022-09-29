@@ -67,7 +67,11 @@ export function PageSettingsAdvancedFeature() {
   }, [application, keys, methods])
 
   const toasterCallback = () => {
-    dispatch(postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) }))
+    if (application) {
+      dispatch(
+        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+      )
+    }
   }
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -80,14 +84,16 @@ export function PageSettingsAdvancedFeature() {
     })
 
     dataFormatted = objectFlattener(dataFormatted)
-    dispatch(
-      editApplicationAdvancedSettings({
-        applicationId,
-        settings: dataFormatted,
-        serviceType: getServiceType(application),
-        toasterCallback,
-      })
-    )
+    if (application) {
+      dispatch(
+        editApplicationAdvancedSettings({
+          applicationId,
+          settings: dataFormatted,
+          serviceType: getServiceType(application),
+          toasterCallback,
+        })
+      )
+    }
   })
 
   return (

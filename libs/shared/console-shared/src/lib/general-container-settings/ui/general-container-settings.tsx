@@ -2,14 +2,19 @@ import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { OrganizationEntity, Value } from '@qovery/shared/interfaces'
 import { InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
-import { GeneralData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
-export interface CreateGeneralContainerProps {
+export interface GeneralContainerSettingsProps {
   organization?: OrganizationEntity
 }
 
-export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
-  const { control } = useFormContext<GeneralData>()
+export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
+  const { control } = useFormContext<{
+    registry?: string
+    image_name?: string
+    image_tag?: string
+    image_entry_point?: string
+    cmd_arguments?: string
+  }>()
   const [availableRegistiesOptions, setAvailableRegistiesOptions] = useState<Value[]>([])
 
   useEffect(() => {
@@ -92,7 +97,7 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
             className="mb-3"
             onChange={field.onChange}
             value={field.value}
-            label="Image Entry Point"
+            label="Image Entrypoint"
             error={error?.message}
           />
         )}
@@ -104,7 +109,6 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
           <InputTextArea
             dataTestId="input-textarea-cmd-arguments"
             name="cmd_arguments"
-            className="mb-3"
             onChange={field.onChange}
             value={field.value}
             label="CMD Arguments"
@@ -112,8 +116,11 @@ export function CreateGeneralContainer(props: CreateGeneralContainerProps) {
           />
         )}
       />
+      <p className="text-xs ml-4 mt-1 text-text-400">
+        Expected format: ["rails", "-h", "0.0.0.0", "-p", "8080", "string"]
+      </p>
     </div>
   )
 }
 
-export default CreateGeneralContainer
+export default GeneralContainerSettings

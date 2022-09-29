@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
@@ -22,7 +23,7 @@ export interface SettingResourcesProps {
 
 export function SettingResources(props: SettingResourcesProps) {
   const { getMemoryUnit, memorySize, displayWarningCpu, application } = props
-  const { control, watch } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
+  const { control, watch, trigger } = useFormContext<{ memory: number; cpu: [number]; instances: [number, number] }>()
 
   let maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
@@ -30,6 +31,15 @@ export function SettingResources(props: SettingResourcesProps) {
   if (!application) {
     maxMemoryBySize = memorySize === MemorySizeEnum.GB ? 8192 / 1024 : 8192
   }
+
+  // fix a bug where the validation of the memory field is done with the old maximum value but display the new one
+  // in the message error. Comment the useEffect to see the bug in action.
+  useEffect(() => {
+    setTimeout(() => {
+      // trigger && trigger is here to solve testing with the CI that goes in an infinite loop but not in local
+      trigger && trigger('memory').then()
+    })
+  }, [memorySize, trigger])
 
   return (
     <div>
@@ -44,7 +54,7 @@ export function SettingResources(props: SettingResourcesProps) {
         <Controller
           name="cpu"
           control={control}
-          render={({ field }) => <Slider min={0} max={40} step={0.25} onChange={field.onChange} value={field.value} />}
+          render={({ field }) => <Slider min={0} max={20} step={0.25} onChange={field.onChange} value={field.value} />}
         />
         {application && (
           <p className="text-text-400 text-xs mt-3">

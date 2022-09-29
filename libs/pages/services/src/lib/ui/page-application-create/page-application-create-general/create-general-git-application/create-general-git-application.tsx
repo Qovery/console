@@ -1,7 +1,7 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { GitRepositorySettingsFeature } from '@qovery/shared/console-shared'
-import { InputSelect, InputText } from '@qovery/shared/ui'
+import { Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { GeneralData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
@@ -12,6 +12,7 @@ export function CreateGeneralGitApplication() {
   const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
     label: upperCaseFirstLetter(value) || '',
     value: value,
+    icon: <Icon name={value} className="w-4" />,
   }))
 
   const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
@@ -37,6 +38,7 @@ export function CreateGeneralGitApplication() {
           rules={{
             required: 'Please select a mode.',
           }}
+          defaultValue={'DOCKER'}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               dataTestId="input-select-mode"
@@ -70,11 +72,12 @@ export function CreateGeneralGitApplication() {
           />
         )}
 
-        {watchBuildMode === BuildModeEnum.DOCKER && (
+        {(!watchBuildMode || watchBuildMode === BuildModeEnum.DOCKER) && (
           <Controller
             data-testid="input-text-dockerfile-path"
             key="dockerfile_path"
             name="dockerfile_path"
+            defaultValue={'Dockerfile'}
             control={control}
             rules={{
               required: 'Value required',

@@ -1,19 +1,22 @@
 import { createContext, useContext, useState } from 'react'
-import { useNavigate } from 'react-router'
-import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router'
+import { Route, Routes, useParams } from 'react-router-dom'
+import { MemorySizeEnum } from '@qovery/shared/enums'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
-import { GeneralData, ResourcesData } from './application-creation-flow.interface'
+import { GeneralData, PortData, ResourcesData } from './application-creation-flow.interface'
 
-interface ApplicationContainerCreateContextInterface {
+export interface ApplicationContainerCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalData: GeneralData | undefined
   setGeneralData: (data: GeneralData) => void
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
+  portData: PortData | undefined
+  setPortData: (data: PortData) => void
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
@@ -45,6 +48,17 @@ export function PageApplicationCreateFeature() {
     memory: 512,
     cpu: [0.5],
     instances: [1, 12],
+    memory_unit: MemorySizeEnum.MB,
+  })
+
+  const [portData, setPortData] = useState<PortData | undefined>({
+    ports: [
+      {
+        application_port: undefined,
+        external_port: 443,
+        is_public: true,
+      },
+    ],
   })
 
   const navigate = useNavigate()
@@ -62,6 +76,8 @@ export function PageApplicationCreateFeature() {
         setGeneralData,
         resourcesData,
         setResourcesData,
+        portData,
+        setPortData,
       }}
     >
       <FunnelFlow
@@ -76,7 +92,7 @@ export function PageApplicationCreateFeature() {
           {ROUTER_SERVICE_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
+          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
         </Routes>
       </FunnelFlow>
     </ApplicationContainerCreateContext.Provider>

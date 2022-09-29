@@ -11,7 +11,7 @@ import {
   selectEnvironmentVariablesByApplicationId,
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@qovery/domains/environment-variable'
-import { getServiceType } from '@qovery/shared/enums'
+import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   EnvironmentVariableEntity,
@@ -36,7 +36,7 @@ export function PageVariablesFeature() {
     selectApplicationById(state, applicationId)
   )
 
-  const serviceType = getServiceType(application)
+  const serviceType: ServiceTypeEnum | undefined = application && getServiceType(application)
 
   const environmentVariables = useSelector<RootState, EnvironmentVariableEntity[]>(
     (state) => selectEnvironmentVariablesByApplicationId(state, applicationId),
@@ -70,8 +70,11 @@ export function PageVariablesFeature() {
 
   useEffect(() => {
     setShowHideAllEnvironmentVariablesValues(false)
-    dispatch(fetchEnvironmentVariables({ applicationId, serviceType }))
-    dispatch(fetchSecretEnvironmentVariables({ applicationId, serviceType }))
+
+    if (serviceType) {
+      dispatch(fetchEnvironmentVariables({ applicationId, serviceType }))
+      dispatch(fetchSecretEnvironmentVariables({ applicationId, serviceType }))
+    }
   }, [dispatch, applicationId, serviceType])
 
   useEffect(() => {

@@ -35,7 +35,7 @@ export function InputText(props: InputTextProps) {
   const [currentType, setCurrentType] = useState(type)
 
   useEffect(() => {
-    if (value) setCurrentValue(value)
+    setCurrentValue(value)
   }, [value, setCurrentValue])
 
   const hasFocus = focused
@@ -59,6 +59,7 @@ export function InputText(props: InputTextProps) {
     <div
       className={className}
       onClick={() => (isInputDate ? displayPicker() : inputRef.current?.querySelector('input')?.focus())}
+      data-testid={`${dataTestId || 'input-text'}-wrapper`}
     >
       <div className="relative">
         <div

@@ -1,5 +1,7 @@
 import { Meta, Story } from '@storybook/react'
 import { Value } from '@qovery/shared/interfaces'
+import { IconEnum } from '../../../../../../enums/src'
+import Icon from '../../icon/icon'
 import { InputSelect, InputSelectProps } from './input-select'
 
 export default {
@@ -11,10 +13,12 @@ const options: Value[] = [
   {
     label: 'Test 1',
     value: 'test1',
+    icon: <Icon name={IconEnum.GITHUB} className="w-4" />,
   },
   {
     label: 'Test 2',
     value: 'test2',
+    icon: <Icon name={IconEnum.GITLAB} className="w-4" />,
   },
   {
     label: 'Test 3',

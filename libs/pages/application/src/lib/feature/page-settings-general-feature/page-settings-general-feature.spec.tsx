@@ -2,7 +2,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/domains/application'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import PageSettingsGeneralFeature, { buildGitRepoUrl, handleSubmit } from './page-settings-general-feature'
+import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
 
 describe('PageSettingsGeneralFeature', () => {
   let application: ApplicationEntity
@@ -73,10 +73,5 @@ describe('PageSettingsGeneralFeature', () => {
     expect(app.git_repository?.branch).toBe('main')
     expect(app.git_repository?.root_path).toBe('/')
     expect(app.git_repository?.url).toBe('https://github.com/qovery/console.git')
-  })
-
-  it('should have function to build git url', () => {
-    const provider = GitProviderEnum.GITHUB
-    expect(buildGitRepoUrl(provider, 'qovery/console')).toBe('https://github.com/qovery/console.git')
   })
 })

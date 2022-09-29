@@ -3,8 +3,8 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum } from 'qovery-typescript-axios'
 import { authProviderFactoryMock } from '@qovery/domains/organization'
-import { GitRepositorySettings, GitRepositorySettingsProps } from '../git-repository-settings/git-repository-settings'
-import { authProvidersValues } from './git-repository-settings-feature'
+import { authProvidersValues } from '../feature/git-repository-settings-feature'
+import { GitRepositorySettings, GitRepositorySettingsProps } from './git-repository-settings'
 
 const mockOpenModal = jest.fn()
 jest.mock('@qovery/shared/ui', () => ({
@@ -52,13 +52,13 @@ describe('GitRepositorySettings', () => {
     )
 
     const authProvider = screen.getByTestId('input-provider')
-    const loaderRepository = screen.getByTestId('loader-repository')
+    const loaderRepository = screen.getByTestId('loader')
 
     expect(authProvider).toBeVisible()
     expect(loaderRepository).toBeVisible()
-    expect(queryByTestId('input-repository')).not.toBeInTheDocument()
-    expect(queryByTestId('input-branch')).not.toBeInTheDocument()
-    expect(queryByTestId('input-root-path')).not.toBeInTheDocument()
+    expect(queryByTestId('input-repository')?.parentElement).toHaveClass('hidden')
+    expect(queryByTestId('input-branch')?.parentElement).toHaveClass('hidden')
+    expect(queryByTestId('input-root-path-wrapper')).toHaveClass('hidden')
     expect(queryByTestId('button-edit')).not.toBeInTheDocument()
   })
 
@@ -75,13 +75,13 @@ describe('GitRepositorySettings', () => {
 
     const authProvider = screen.getByTestId('input-provider')
     const repository = screen.getByTestId('input-repository')
-    const loaderBranch = screen.getByTestId('loader-branch')
+    const loaderBranch = screen.getByTestId('loader')
 
     expect(authProvider).toBeVisible()
-    expect(repository).toBeVisible()
+    expect(repository?.parentElement).not.toHaveClass('hidden')
     expect(loaderBranch).toBeVisible()
-    expect(queryByTestId('input-branch')).not.toBeInTheDocument()
-    expect(queryByTestId('input-root-path')).not.toBeInTheDocument()
+    expect(queryByTestId('input-branch')?.parentElement).toHaveClass('hidden')
+    expect(queryByTestId('input-root-path-wrapper')).toHaveClass('hidden')
     expect(queryByTestId('button-edit')).not.toBeInTheDocument()
   })
 
@@ -125,13 +125,14 @@ describe('GitRepositorySettings', () => {
 
     expect(authProvider).toBeVisible()
     expect(authProvider.classList.contains('input--disabled'))
-    expect(repository).toBeVisible()
     expect(repository.classList.contains('input--disabled'))
-    expect(branch).toBeVisible()
     expect(branch.classList.contains('input--disabled'))
-    expect(rootPath).toBeVisible()
     expect(rootPath.classList.contains('input--disabled'))
     expect(buttonEdit).toBeVisible()
+
+    expect(repository?.parentElement).not.toHaveClass('hidden')
+    expect(branch?.parentElement).not.toHaveClass('hidden')
+    expect(screen.getByTestId('input-root-path-wrapper')).not.toHaveClass('hidden')
   })
 
   it('should have inputs disabled', async () => {
@@ -147,7 +148,7 @@ describe('GitRepositorySettings', () => {
     )
 
     const authProvider = screen.getByTestId('input-provider')
-    const loaderRepository = screen.getByTestId('loader-repository')
+    const loaderRepository = screen.getByTestId('loader')
 
     expect(authProvider).toBeVisible()
     expect(loaderRepository).toBeVisible()

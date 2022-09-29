@@ -1,12 +1,12 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
+import { GeneralContainerSettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputText, Link } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { GeneralData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
-import CreateGeneralContainer from './create-general-container/create-general-container'
 import CreateGeneralGitApplication from './create-general-git-application/create-general-git-application'
 
 export interface PageApplicationCreateGeneralProps {
@@ -24,13 +24,10 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-text-700 text-lg mb-2">Application General Data</h3>
+        <h3 className="text-text-700 text-lg mb-2">General informations</h3>
         <p className="text-text-500 text-sm mb-2">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cupiditate dignissimos earum fugiat fugit impedit in
-          ipsa natus, quam sunt voluptate. Amet animi cupiditate, dignissimos eos excepturi maiores praesentium vero
-          voluptates!
+          General settings allow you to set up your application name, git repository or container settings.
         </p>
-        <Link link="#" linkLabel="link" external={true} />
       </div>
 
       <form onSubmit={props.onSubmit}>
@@ -64,8 +61,16 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
               onChange={field.onChange}
               value={field.value}
               options={[
-                { value: ServiceTypeEnum.APPLICATION, label: 'Git provider', icon: IconEnum.GITHUB },
-                { value: ServiceTypeEnum.CONTAINER, label: 'Container Registry', icon: IconEnum.GITHUB },
+                {
+                  value: ServiceTypeEnum.APPLICATION,
+                  label: 'Git provider',
+                  icon: <Icon name={IconEnum.GIT} className="w-4" />,
+                },
+                {
+                  value: ServiceTypeEnum.CONTAINER,
+                  label: 'Container Registry',
+                  icon: <Icon name={IconEnum.CONTAINER} className="w-4" />,
+                },
               ]}
               label="Application source"
               error={error?.message}
@@ -77,13 +82,14 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         {getValues().serviceType === ServiceTypeEnum.APPLICATION && <CreateGeneralGitApplication />}
 
         {getValues().serviceType === ServiceTypeEnum.CONTAINER && (
-          <CreateGeneralContainer organization={props.organization} />
+          <GeneralContainerSettings organization={props.organization} />
         )}
 
         <div className="flex justify-between">
           <Button
             onClick={() => navigate(SERVICES_URL(organizationId, projectId, environmentId))}
             type="button"
+            className="btn--no-min-w"
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
           >

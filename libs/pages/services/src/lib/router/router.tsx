@@ -1,7 +1,10 @@
+import PageApplicationCreatePortFeature from 'libs/pages/services/src/lib/feature/page-application-create-feature/page-application-create-port-feature/page-application-create-port-feature'
 import {
   Route,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
+  SERVICES_CREATION_PORTS_URL,
+  SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
@@ -15,6 +18,7 @@ import {
 import { PageApplicationCreateFeature } from '../feature/page-application-create-feature/page-application-create-feature'
 import PageApplicationCreateGeneralFeature from '../feature/page-application-create-feature/page-application-create-general-feature/page-application-create-general-feature'
 import PageApplicationCreateResourcesFeature from '../feature/page-application-create-feature/page-application-create-resources-feature/page-application-create-resources-feature'
+import PageApplicationPostFeature from '../feature/page-application-create-feature/page-application-post-feature/page-application-post-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -74,5 +78,13 @@ export const ROUTER_SERVICE_CREATION: Route[] = [
   {
     path: SERVICES_CREATION_RESOURCES_URL,
     component: <PageApplicationCreateResourcesFeature />,
+  },
+  {
+    path: SERVICES_CREATION_PORTS_URL,
+    component: <PageApplicationCreatePortFeature />,
+  },
+  {
+    path: SERVICES_CREATION_POST_URL,
+    component: <PageApplicationPostFeature />,
   },
 ]

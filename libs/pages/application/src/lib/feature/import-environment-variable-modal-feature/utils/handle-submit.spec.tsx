@@ -1,4 +1,4 @@
-import { applicationFactoryMock } from '@qovery/domains/application'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { formatData, handleSubmit } from './handle-submit'
 
 describe('handleSubmit()', () => {
@@ -46,8 +46,7 @@ describe('handleSubmit()', () => {
       key2_is_secret: 'true',
     }
     const keys = ['key', 'key2']
-    const application = applicationFactoryMock(1)[0]
-    await handleSubmit(data, applicationId, keys, dispatch, modalClose, application)
+    await handleSubmit(data, applicationId, keys, dispatch, modalClose, false, ServiceTypeEnum.APPLICATION)
     // called three times: one to dispatch the import and two times to fetch secrets and env variables
     expect(dispatch).toHaveBeenCalledTimes(3)
     expect(modalClose).toHaveBeenCalledWith()

@@ -26,4 +26,5 @@ export enum IconEnum {
   MYSQL = 'MYSQL',
   CHILDREN_ARROW = 'CHILDREN_ARROW',
   INFORMATION = 'INFORMATION',
+  GIT = 'GIT',
 }

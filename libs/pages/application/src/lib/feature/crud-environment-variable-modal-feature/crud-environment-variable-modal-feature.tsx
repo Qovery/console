@@ -17,7 +17,7 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   applicationId: string
   environmentId: string
   projectId: string
-  serviceType: ServiceTypeEnum
+  serviceType?: ServiceTypeEnum
 }
 
 export enum EnvironmentVariableCrudMode {
@@ -62,8 +62,10 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data) =>
-    handleSubmitForEnvSecretCreation(data, setLoading, props, dispatch, setClosing, props.serviceType)
+  const onSubmit = methods.handleSubmit(
+    (data) =>
+      props.serviceType &&
+      handleSubmitForEnvSecretCreation(data, setLoading, props, dispatch, setClosing, props.serviceType)
   )
 
   const computeTitle = (): string => {

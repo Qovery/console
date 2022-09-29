@@ -20,9 +20,11 @@ export function PageSettingsDangerZoneFeature() {
   )
 
   const deleteApplication = () => {
-    dispatch(deleteApplicationAction({ environmentId, applicationId, serviceType: getServiceType(application) }))
-      .unwrap()
-      .then(() => navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL))
+    if (application) {
+      dispatch(deleteApplicationAction({ environmentId, applicationId, serviceType: getServiceType(application) }))
+        .unwrap()
+        .then(() => navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL))
+    }
   }
 
   return (
