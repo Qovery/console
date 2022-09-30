@@ -13,14 +13,16 @@ export interface PageGeneralProps {
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {
-  const { environmentMode, services, listHelpfulLinks } = props
+  const { environmentMode, services, listHelpfulLinks, isLoading } = props
   const { organizationId, projectId, environmentId } = useParams()
 
   const [data, setData] = useState(services)
+  const [loading, setLoading] = useState(isLoading)
 
   useEffect(() => {
     setData(services)
-  }, [services])
+    setLoading(isLoading)
+  }, [services, isLoading])
 
   const tableHead = [
     {
@@ -52,7 +54,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
   return (
     <>
-      {!props.isLoading && services.length ? (
+      {services.length ? (
         <Table
           dataHead={tableHead}
           defaultData={services}
@@ -62,11 +64,11 @@ function PageGeneralMemo(props: PageGeneralProps) {
           columnsWidth="30% 20% 25% 20%"
         >
           <>
-            {}
             {data.map((currentData) => {
               const isDatabase = !(currentData as GitApplicationEntity).build_mode
               return (
                 <TableRowServicesFeature
+                  isLoading={loading}
                   key={currentData.id}
                   data={currentData}
                   dataHead={tableHead}
@@ -82,12 +84,14 @@ function PageGeneralMemo(props: PageGeneralProps) {
           </>
         </Table>
       ) : (
-        <EmptyState
-          title="No service found"
-          description="You can create an application from a git repository, from an image registry or create a database"
-          className="bg-white rounded-t-sm mt-2 pt-10"
-          imageWidth="w-[160px]"
-        />
+        !loading && (
+          <EmptyState
+            title="No service found"
+            description="You can create an application from a git repository, from an image registry or create a database"
+            className="bg-white rounded-t-sm mt-2 pt-10"
+            imageWidth="w-[160px]"
+          />
+        )
       )}
 
       <div className="bg-white rounded-b flex flex-col justify-end">

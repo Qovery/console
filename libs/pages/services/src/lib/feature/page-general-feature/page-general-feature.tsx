@@ -75,6 +75,7 @@ export function PageGeneralFeature() {
       services={isLoading() ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
+      isLoading={isLoading()}
     />
   )
 }

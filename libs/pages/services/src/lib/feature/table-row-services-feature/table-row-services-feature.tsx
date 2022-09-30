@@ -25,6 +25,7 @@ export interface TableRowServicesFeatureProps {
   environmentMode: string
   dataHead: TableHeadProps[]
   link: string
+  isLoading?: boolean
 }
 
 export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
@@ -104,6 +105,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       buttonActions={actions}
       columnsWidth="25% 25% 25% 20%"
       removeService={data.status && isDeleteAvailable(data.status.state) ? removeService : undefined}
+      isLoading={props.isLoading}
     />
   )
 }

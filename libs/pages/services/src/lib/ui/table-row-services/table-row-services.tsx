@@ -31,6 +31,7 @@ export interface TableRowServicesProps {
   buttonActions: StatusMenuActions[]
   columnsWidth?: string
   removeService?: (applicationId: string, type: ServiceTypeEnum, name?: string) => void
+  isLoading?: boolean
 }
 
 export function TableRowServices(props: TableRowServicesProps) {
@@ -43,11 +44,10 @@ export function TableRowServices(props: TableRowServicesProps) {
     buttonActions,
     environmentMode,
     removeService,
+    isLoading,
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
-
-  const isLoading = !data.status?.id
 
   const openLogs = () => {
     window
