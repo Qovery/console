@@ -2,6 +2,8 @@ import equal from 'fast-deep-equal'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
+import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
   deleteEnvironmentAction,
   fetchEnvironments,
@@ -12,7 +14,7 @@ import {
   postEnvironmentActionsStop,
   selectEnvironmentById,
 } from '@qovery/domains/environment'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_GENERAL_URL,
   ENVIRONMENTS_GENERAL_URL,
@@ -40,6 +42,14 @@ export function PageServices() {
   )
 
   const dispatch = useDispatch<AppDispatch>()
+
+  const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
+    selectApplicationsEntitiesByEnvId(state, environmentId)
+  )
+
+  const databasesByEnv = useSelector<RootState, DatabaseEntity[]>((state: RootState) =>
+    selectDatabasesEntitiesByEnvId(state, environmentId)
+  )
 
   useEffect(() => {
     if (location.pathname === SERVICES_URL(organizationId, projectId, environmentId)) {
@@ -121,6 +131,7 @@ export function PageServices() {
 
   return (
     <Container
+      servicesLength={[...applicationsByEnv, ...databasesByEnv].length}
       environment={environment}
       statusActions={statusActions}
       removeEnvironment={

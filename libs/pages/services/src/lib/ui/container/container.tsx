@@ -34,10 +34,11 @@ export interface ContainerProps {
   environment?: EnvironmentEntity
   children?: React.ReactNode
   removeEnvironment?: () => void
+  servicesLength?: number
 }
 
 export function Container(props: ContainerProps) {
-  const { environment, children, statusActions, removeEnvironment } = props
+  const { environment, children, statusActions, removeEnvironment, servicesLength } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -46,13 +47,16 @@ export function Container(props: ContainerProps) {
 
   const buttonActionsDefault = [
     {
-      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
-      statusActions: {
-        status: environment?.status && environment?.status.state,
-        actions: statusActions,
-      },
+      ...(servicesLength &&
+        servicesLength > 0 && {
+          iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
+          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+          menusClassName: 'border-r border-r-element-light-lighter-500',
+          statusActions: {
+            status: environment?.status && environment?.status.state,
+            actions: statusActions,
+          },
+        }),
     },
     {
       iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
