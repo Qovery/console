@@ -1,22 +1,20 @@
-import { ReactNode } from 'react'
-
-export interface EmptyResultProps {
-  dataTestId?: string
+export interface EmptyStateProps {
   title: string
   description?: string
-  cta?: ReactNode
   className?: string
+  imageWidth?: string
+  dataTestId?: string
 }
 
-export function TableEmptyState(props: EmptyResultProps) {
+export function EmptyState(props: EmptyStateProps) {
   return (
-    <div className={`bg-white flex flex-grow items-center justify-center rounded-t-sm  mt-2  ${props.className || ''}`}>
+    <div className={`flex flex-grow items-center justify-center ${props.className || ''}`}>
       <div
         className="text-center flex flex-col items-center justify-center w-[420px] m-auto mt-10"
         data-testid={props.dataTestId || 'placeholder-settings'}
       >
         <img
-          className="w-[48px] pointer-events-none user-none mb-5"
+          className={`pointer-events-none user-none mb-5 ${props.imageWidth || 'w-[48px]'}`}
           src="/assets/images/event-placeholder-light.svg"
           alt="Event placeholder"
         />
@@ -26,11 +24,9 @@ export function TableEmptyState(props: EmptyResultProps) {
             {props.description}
           </p>
         )}
-
-        {props.cta && <div className="flex justify-center">{props.cta}</div>}
       </div>
     </div>
   )
 }
 
-export default TableEmptyState
+export default EmptyState

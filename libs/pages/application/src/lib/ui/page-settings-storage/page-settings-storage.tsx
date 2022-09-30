@@ -4,10 +4,10 @@ import {
   Button,
   ButtonIcon,
   ButtonIconStyle,
+  EmptyState,
   HelpSection,
   IconAwesomeEnum,
   InputText,
-  PlaceholderSettings,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsStorageProps {
@@ -82,7 +82,7 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
             ))}
           </BlockContent>
         ) : (
-          <PlaceholderSettings
+          <EmptyState
             title="No storage are set"
             description="Qovery applications can use storage to store data that persists across deploys and restarts, making it easy to deploy stateful applications"
           />

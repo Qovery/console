@@ -5,11 +5,11 @@ import {
   Button,
   ButtonIcon,
   ButtonIconStyle,
+  EmptyState,
   HelpSection,
   IconAwesomeEnum,
   InputText,
   LoaderSpinner,
-  PlaceholderSettings,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsDomainsProps {
@@ -76,7 +76,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
               ))}
           </BlockContent>
         ) : (
-          <PlaceholderSettings title="No domains are set" description="Define a custom domain for your application" />
+          <EmptyState title="No domains are set" description="Define a custom domain for your application" />
         )}
       </div>
       <HelpSection

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
-import { BaseLink, HelpSection, StatusMenuActions, Table, TableEmptyState } from '@qovery/shared/ui'
+import { BaseLink, EmptyState, HelpSection, StatusMenuActions, Table } from '@qovery/shared/ui'
 import { isDeleteAvailable } from '@qovery/shared/utils'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
@@ -90,7 +90,14 @@ function PageGeneralMemo(props: PageGeneralProps) {
           </>
         </Table>
       ) : (
-        !props.isLoading && <TableEmptyState title="No environment found" description="Create your first environment" />
+        !props.isLoading && (
+          <EmptyState
+            className="bg-white rounded-t-sm mt-2 pt-10"
+            title="No environment found"
+            description="Please create your first environment"
+            imageWidth="w-[160px]"
+          />
+        )
       )}
 
       <div className="bg-white rounded-b flex flex-col justify-end">

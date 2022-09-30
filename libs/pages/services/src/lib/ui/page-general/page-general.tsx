@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/router'
-import { BaseLink, HelpSection, Table, TableEmptyState } from '@qovery/shared/ui'
+import { BaseLink, EmptyState, HelpSection, Table } from '@qovery/shared/ui'
 import TableRowServicesFeature from '../../feature/table-row-services-feature/table-row-services-feature'
 
 export interface PageGeneralProps {
@@ -82,9 +82,11 @@ function PageGeneralMemo(props: PageGeneralProps) {
           </>
         </Table>
       ) : (
-        <TableEmptyState
+        <EmptyState
           title="No service found"
           description="You can create an application from a git repository, from an image registry or create a database"
+          className="bg-white rounded-t-sm mt-2 pt-10"
+          imageWidth="w-[160px]"
         />
       )}
 
