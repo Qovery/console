@@ -202,7 +202,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               )}
               {type === ServiceTypeEnum.CONTAINER && (
                 <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
-                  {(data as ContainerApplicationEntity).image_name}
+                  {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
                 </Tag>
               )}
               {type === ServiceTypeEnum.DATABASE && (

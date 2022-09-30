@@ -104,15 +104,21 @@ export function CrudModal(props: CrudModalProps) {
           required: 'Please enter a registry type.',
         }}
         render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            className="mb-5"
-            onChange={field.onChange}
-            value={field.value}
-            label="Type"
-            error={error?.message}
-            options={getOptionsContainerRegistry(props.availableContainerRegistry)}
-            portal
-          />
+          <div className="mb-5">
+            <InputSelect
+              onChange={field.onChange}
+              value={field.value}
+              label="Type"
+              error={error?.message}
+              options={getOptionsContainerRegistry(props.availableContainerRegistry)}
+              portal
+            />
+            {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
+              <p className="text-xs text-text-400 my-1">
+                If you don't want to be limited, we recommend that should provide your credentials.
+              </p>
+            )}
+          </div>
         )}
       />
       {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
@@ -120,9 +126,6 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.username"
             control={control}
-            rules={{
-              required: 'Please enter a username.',
-            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-username"
@@ -139,9 +142,6 @@ export function CrudModal(props: CrudModalProps) {
           <Controller
             name="config.password"
             control={control}
-            rules={{
-              required: 'Please enter a password.',
-            }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-password"

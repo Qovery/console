@@ -181,13 +181,15 @@ export function Container(props: ContainerProps) {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
           },
         },
-        // {
-        //   name: 'Create database',
-        //   contentLeft: <Icon name={IconAwesomeEnum.DATABASE} className="text-brand-500 text-sm" />,
-        //   link: {
-        //     url: `/`,
-        //   },
-        // },
+        {
+          name: 'Create database',
+          contentLeft: <Icon name={IconAwesomeEnum.DATABASE} className="text-brand-500 text-sm" />,
+          onClick: () => {
+            window.location.replace(
+              `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications`
+            )
+          },
+        },
       ],
     },
   ]
