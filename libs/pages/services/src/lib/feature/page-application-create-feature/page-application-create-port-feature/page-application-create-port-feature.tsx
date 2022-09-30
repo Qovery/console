@@ -74,10 +74,14 @@ export function PageApplicationCreatePortFeature() {
 
   const onAddPort = () => {
     const newPortRow = { application_port: undefined, external_port: 443, is_public: true }
-    setPorts([...ports, newPortRow])
+    if (ports) {
+      setPorts([...ports, newPortRow])
+    } else {
+      setPorts([newPortRow])
+    }
     methods.reset({
       ...methods.getValues(),
-      ports: [...ports, newPortRow],
+      ports: ports ? [...ports, newPortRow] : [newPortRow],
     })
   }
 

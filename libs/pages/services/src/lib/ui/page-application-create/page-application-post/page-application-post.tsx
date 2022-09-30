@@ -1,6 +1,7 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import {
   GeneralData,
   PortData,
@@ -37,34 +38,34 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
       <div className="mb-10">
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-          <div className="mr-auto flex-grow mr-2">
+          <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">General informations</div>
             <ul className="text-text-400 text-sm list-none">
               <li>
-                name: <strong className="font-medium">{props.generalData.name}</strong>
+                Name: <strong className="font-medium">{props.generalData.name}</strong>
               </li>
               {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
                 <>
                   <li>
-                    repository: <strong className="font-medium">{props.generalData.repository}</strong>
+                    Repository: <strong className="font-medium">{props.generalData.repository}</strong>
                   </li>
                   <li>
-                    branch: <strong>{props.generalData.branch}</strong>
+                    Branch: <strong>{props.generalData.branch}</strong>
                   </li>
                   <li>
-                    root application path: <strong>{props.generalData.root_path}</strong>
+                    Root application path: <strong>{props.generalData.root_path}</strong>
                   </li>
                   <li>
-                    build mode: <strong>{props.generalData.build_mode}</strong>
+                    Build mode: <strong>{upperCaseFirstLetter(props.generalData.build_mode)}</strong>
                   </li>
                   {props.generalData.build_mode === BuildModeEnum.BUILDPACKS && (
                     <li>
-                      buildpack language: <strong>{props.generalData.buildpack_language}</strong>
+                      Buildpack language: <strong>{props.generalData.buildpack_language}</strong>
                     </li>
                   )}
                   {props.generalData.build_mode === BuildModeEnum.DOCKER && (
                     <li>
-                      dockerfile path: <strong>{props.generalData.dockerfile_path}</strong>
+                      Dockerfile path: <strong>{props.generalData.dockerfile_path}</strong>
                     </li>
                   )}
                 </>
@@ -72,16 +73,16 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
               {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
                 <>
                   <li>
-                    registry: <strong className="font-medium">{props.selectedRegistryName}</strong>
+                    Registry: <strong className="font-medium">{props.selectedRegistryName}</strong>
                   </li>
                   <li>
-                    image name: <strong>{props.generalData.image_name}</strong>
+                    Image name: <strong>{props.generalData.image_name}</strong>
                   </li>
                   <li>
-                    image tag: <strong>{props.generalData.image_tag}</strong>
+                    Image tag: <strong>{props.generalData.image_tag}</strong>
                   </li>
                   <li>
-                    image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
+                    Image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
                   </li>
                   <li>
                     CMD arguments: <strong>{props.generalData.cmd_arguments}</strong>
@@ -101,19 +102,23 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-          <div className="mr-auto flex-grow mr-2">
+          <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
             <ul className="text-text-400 text-sm list-none">
               <li>
-                <strong className="font-medium">CPU:</strong> {props.resourcesData['cpu'][0]}
+                CPU: <strong className="font-medium">{props.resourcesData['cpu'][0]}</strong>
               </li>
               <li>
-                <strong className="font-medium">Memory:</strong> {props.resourcesData.memory}
-                {props.resourcesData.memory_unit}
+                Memory:{' '}
+                <strong className="font-medium">
+                  {props.resourcesData.memory} {props.resourcesData.memory_unit}
+                </strong>
               </li>
               <li>
-                <strong className="font-medium">Instances:</strong> {props.resourcesData.instances[0]} -{' '}
-                {props.resourcesData.instances[1]}
+                Instances:{' '}
+                <strong className="font-medium">
+                  {props.resourcesData.instances[0]} - {props.resourcesData.instances[1]}
+                </strong>
               </li>
             </ul>
           </div>
@@ -128,19 +133,19 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-          <div className="mr-auto flex-grow mr-2">
+          <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
             <ul className="text-text-400 text-sm">
-              {props.portsData.ports ? (
+              {props.portsData.ports && props.portsData.ports.length > 0 ? (
                 props.portsData.ports?.map((port, index) => (
                   <li key={index}>
-                    <strong className="font-medium">application port:</strong> {port.application_port} –{' '}
-                    <strong className="font-medium">external port:</strong> {port.external_port} –
-                    <strong className="font-medium">public:</strong> {port.is_public ? 'yes' : 'no'}
+                    Application port: <strong className="font-medium">{port.application_port}</strong> – External port:{' '}
+                    <strong className="font-medium">{port.external_port}</strong> – Public:{' '}
+                    <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
                   </li>
                 ))
               ) : (
-                <li>no port declared</li>
+                <li>No port declared</li>
               )}
             </ul>
           </div>
@@ -171,6 +176,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
             onClick={() => props.onSubmit(false)}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
+            className="btn--no-min-w"
           >
             Create
           </Button>
@@ -181,7 +187,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
             size={ButtonSize.XLARGE}
             style={ButtonStyle.BASIC}
           >
-            Create and Deploy
+            Create and deploy
           </Button>
         </div>
       </div>

@@ -5,7 +5,7 @@ import {
 } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
-import { Icon, InputSelect, InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, InputSelect, InputText, InputTextArea, Link, ModalCrud } from '@qovery/shared/ui'
 import { logoByRegistryKind } from '../page-organization-container-registries'
 
 export interface CrudModalProps {
@@ -115,7 +115,16 @@ export function CrudModal(props: CrudModalProps) {
             />
             {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
               <p className="text-xs text-text-400 my-1">
-                If you don't want to be limited, we recommend that should provide your credentials.
+                We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
+                <Link
+                  className="font-medium text-accent2-500 block ml-1"
+                  size="text-xs"
+                  link="https://www.docker.com/increase-rate-limits"
+                  linkLabel="See here"
+                  iconRightClassName="text-xxs relative top-[1px]"
+                  iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+                  external
+                />
               </p>
             )}
           </div>

@@ -24,7 +24,7 @@ export function PageApplicationCreateResourcesFeature() {
   const { setCurrentStep, resourcesData, setResourcesData, generalData } = useApplicationContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
-  const [maxInstances, setMaxInstance] = useState(2)
+  const [maxInstances, setMaxInstance] = useState(50)
 
   const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
@@ -78,7 +78,7 @@ export function PageApplicationCreateResourcesFeature() {
       setMaxInstance(1)
       methods.setValue('instances', [1, 1])
     }
-  }, [cluster])
+  }, [methods, cluster])
 
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)

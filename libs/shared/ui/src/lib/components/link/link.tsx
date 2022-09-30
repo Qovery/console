@@ -9,22 +9,35 @@ export interface BaseLink {
 
 export interface LinkProps extends BaseLink {
   className?: string
+  size?: string
   iconRight?: IconEnum | string
+  iconRightClassName?: string
   iconLeft?: IconEnum | string
+  iconLeftClassName?: string
 }
 
 export function Link(props: LinkProps) {
-  const { link, linkLabel, external = false, className = '', iconLeft, iconRight } = props
+  const {
+    link,
+    linkLabel,
+    external = false,
+    className = '',
+    size = 'text-sm',
+    iconLeft,
+    iconRight,
+    iconLeftClassName = 'text-xs leading-5',
+    iconRightClassName = 'ml-0.5 text-xs leading-5 ',
+  } = props
   return (
     <a
-      className={`${className} text-accent2-500 text-sm inline-flex flex-center gap-1 hover:underline`}
+      className={`${className} ${size} text-accent2-500 inline-flex flex-center gap-1 hover:underline`}
       href={link}
       target={external ? '_blank' : '_self'}
       rel="noreferrer"
     >
-      {iconLeft && <Icon name={iconLeft} className="text-xs leading-5" />}
+      {iconLeft && <Icon name={iconLeft} className={iconLeftClassName} />}
       {linkLabel}
-      {iconRight && <Icon name={iconRight} className="ml-0.5 text-xs leading-5" />}
+      {iconRight && <Icon name={iconRight} className={iconRightClassName} />}
     </a>
   )
 }
