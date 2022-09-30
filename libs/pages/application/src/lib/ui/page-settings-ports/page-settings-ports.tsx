@@ -5,12 +5,12 @@ import {
   Button,
   ButtonIcon,
   ButtonIconStyle,
+  EmptyState,
   HelpSection,
   IconAwesomeEnum,
   InputText,
   InputToggle,
   LoaderSpinner,
-  PlaceholderSettings,
 } from '@qovery/shared/ui'
 
 export interface PageSettingsPortsProps {
@@ -96,7 +96,7 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
               ))}
           </BlockContent>
         ) : (
-          <PlaceholderSettings title="No port are set" description="Define a custom port for your application" />
+          <EmptyState title="No port are set" description="Define a custom port for your application" />
         )}
       </div>
       <HelpSection

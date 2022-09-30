@@ -85,6 +85,7 @@ export function PageGeneralFeature() {
 
   return (
     <PageGeneral
+      isLoading={loadingStatus === 'loading'}
       environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
       buttonActions={actions}
       listHelpfulLinks={listHelpfulLinks}

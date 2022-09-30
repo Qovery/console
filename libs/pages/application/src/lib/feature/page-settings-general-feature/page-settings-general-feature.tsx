@@ -50,7 +50,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
     name: data['name'],
     tag: data['image_tag'] || '',
     image_name: data['image_name'] || '',
-    arguments: data['cmd_arguments'] && eval(data['cmd_arguments']),
+    arguments: (data['cmd_arguments'] & data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
     entrypoint: data['image_entry_point'] || '',
     registry_id: data['registry'] || '',
   }
@@ -94,8 +94,6 @@ export function PageSettingsGeneralFeature() {
           toastError(e, 'Invalid CMD array')
           return
         }
-
-        console.log(cloneApplication)
       }
 
       dispatch(

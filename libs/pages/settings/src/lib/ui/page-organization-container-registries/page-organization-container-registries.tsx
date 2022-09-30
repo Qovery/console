@@ -7,10 +7,10 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonSize,
+  EmptyState,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
-  PlaceholderSettings,
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
@@ -113,7 +113,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
         ) : (
           loading === 'loaded' &&
           containerRegistries?.length === 0 && (
-            <PlaceholderSettings
+            <EmptyState
               dataTestId="empty-state"
               title="No container registry"
               description="Define a container registry for your organization"

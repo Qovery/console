@@ -18,6 +18,7 @@ export interface PageApplicationPostProps {
   gotoPorts: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
+  selectedRegistryName?: string
 }
 
 export function PageApplicationPost(props: PageApplicationPostProps) {
@@ -71,7 +72,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
               {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
                 <>
                   <li>
-                    registry: <strong className="font-medium">{props.generalData.registry}</strong>
+                    registry: <strong className="font-medium">{props.selectedRegistryName}</strong>
                   </li>
                   <li>
                     image name: <strong>{props.generalData.image_name}</strong>
@@ -171,7 +172,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
           >
-            Just create
+            Create
           </Button>
           <Button
             dataTestId="button-create-deploy"

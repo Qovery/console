@@ -5,11 +5,12 @@ import { useParams } from 'react-router'
 import {
   applicationFactoryMock,
   fetchApplicationsStatus,
+  getApplicationsState,
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
-import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { fetchDatabasesStatus, getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { selectEnvironmentById } from '@qovery/domains/environment'
-import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import { PageGeneral } from '../../ui/page-general/page-general'
@@ -32,6 +33,13 @@ export function PageGeneralFeature() {
     selectEnvironmentById(state, environmentId)
   )
 
+  const applicationsLoadingStatus = useSelector<RootState, LoadingStatus>(
+    (state) => getApplicationsState(state).loadingStatus
+  )
+  const databasesLoadingStatus = useSelector<RootState, LoadingStatus>(
+    (state) => getDatabasesState(state).loadingStatus
+  )
+
   useEffect(() => {
     const fetchServicesStatusByInterval = setInterval(() => {
       if (applicationsByEnv.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
@@ -49,31 +57,17 @@ export function PageGeneralFeature() {
   ]
 
   function isLoading() {
-    let isLoading = true
-
-    if (applicationsByEnv.length > 0 && databasesByEnv.length > 0) {
-      if (
-        applicationsByEnv.filter((application) => application.status?.id).length > 0 &&
-        databasesByEnv.filter((database) => database.status?.id).length > 0
-      ) {
-        isLoading = false
-      }
-      return isLoading
+    // if at least one collection has value to display, we remove the loading state
+    if (applicationsByEnv.length || databasesByEnv.length) {
+      return false
     }
 
-    if (applicationsByEnv.length > 0) {
-      if (applicationsByEnv.filter((application) => application.status?.id).length > 0) {
-        isLoading = false
-      }
+    // if the two collections are loaded, we remove the loading state
+    if (applicationsLoadingStatus === 'loaded' && databasesLoadingStatus === 'loaded') {
+      return false
     }
 
-    if (databasesByEnv.length > 0) {
-      if (databasesByEnv.filter((database) => database.status?.id).length > 0) {
-        isLoading = false
-      }
-    }
-
-    return isLoading
+    return true
   }
 
   return (
@@ -81,6 +75,7 @@ export function PageGeneralFeature() {
       services={isLoading() ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
+      isLoading={isLoading()}
     />
   )
 }

@@ -9,8 +9,9 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
-import { selectAllRepository } from '@qovery/domains/organization'
+import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
 import { MemorySizeEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -20,7 +21,7 @@ import {
 } from '@qovery/shared/router'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageApplicationPost from '../../../ui/page-application-create/page-application-post/page-application-post'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -32,6 +33,9 @@ export function PageApplicationPostFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
+  const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
+    selectOrganizationById(state, organizationId)
+  )
 
   const repositories = useSelector(selectAllRepository)
   const selectRepository = repositories.find((repository) => repository.name === generalData?.repository)
@@ -190,6 +194,9 @@ export function PageApplicationPostFeature() {
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}
           gotoPorts={gotoPorts}
+          selectedRegistryName={
+            organization?.containerRegistries?.items?.find((registry) => registry.id === generalData.registry)?.name
+          }
         />
       )}
     </FunnelFlowBody>
