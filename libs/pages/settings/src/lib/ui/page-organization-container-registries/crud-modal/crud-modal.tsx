@@ -79,25 +79,6 @@ export function CrudModal(props: CrudModalProps) {
         )}
       />
       <Controller
-        name="url"
-        control={control}
-        rules={{
-          value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
-          required: 'Please enter a registry url.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            dataTestId="input-url"
-            className="mb-5"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Registry url"
-            error={error?.message}
-          />
-        )}
-      />
-      <Controller
         name="kind"
         control={control}
         rules={{
@@ -130,6 +111,27 @@ export function CrudModal(props: CrudModalProps) {
           </div>
         )}
       />
+      {watch('kind') && watch('kind') !== ContainerRegistryKindEnum.DOCKER_HUB && (
+        <Controller
+          name="url"
+          control={control}
+          rules={{
+            value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+            required: 'Please enter a registry url.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              dataTestId="input-url"
+              className="mb-5"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Registry url"
+              error={error?.message}
+            />
+          )}
+        />
+      )}
       {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
         <>
           <Controller
@@ -143,7 +145,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Username"
+                label="Username (optional)"
                 error={error?.message}
               />
             )}
@@ -159,7 +161,7 @@ export function CrudModal(props: CrudModalProps) {
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Password"
+                label="Password (optional)"
                 error={error?.message}
               />
             )}

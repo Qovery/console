@@ -27,7 +27,6 @@ describe('CrudModal', () => {
         defaultValues: {
           name: 'hello',
           description: 'description',
-          url: 'https://qovery.com',
           kind: ContainerRegistryKindEnum.DOCKER_HUB,
           config: {
             username: 'test',
@@ -39,7 +38,6 @@ describe('CrudModal', () => {
     await act(() => {
       getByDisplayValue('hello')
       getByDisplayValue('description')
-      getByDisplayValue('https://qovery.com')
       getByDisplayValue('test')
       getByDisplayValue('password')
     })

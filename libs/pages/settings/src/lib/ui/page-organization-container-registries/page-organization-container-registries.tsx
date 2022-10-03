@@ -8,6 +8,7 @@ import {
   ButtonIconStyle,
   ButtonSize,
   EmptyState,
+  HelpSection,
   Icon,
   IconAwesomeEnum,
   LoaderSpinner,
@@ -121,6 +122,16 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           )
         )}
       </div>
+      <HelpSection
+        description="Need help? You may find these links useful"
+        links={[
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#container-registry-management',
+            linkLabel: 'How to configure my container registry',
+            external: true,
+          },
+        ]}
+      />
     </div>
   )
 }
