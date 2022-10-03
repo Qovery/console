@@ -18,7 +18,7 @@ export function LayoutPage(props: LayoutPageProps) {
       <WarningScreenMobile />
       <main className={`${darkMode ? 'bg-element-light-darker-600 h-screen' : 'bg-element-light-lighter-400'}`}>
         <div className="flex">
-          <div className="h-full sticky top-0 z-10">
+          <div className="h-full sticky top-0 z-20">
             <Navigation darkMode={darkMode} firstName={user?.first_name} lastName={user?.last_name} />
           </div>
           <div className="w-full">
