@@ -10,10 +10,10 @@ export function TopBar(props: TopBarProps) {
 
   return (
     <div
-      className={`fixed top-0 left-16 border-l border-b w-[calc(100%-3.5rem)] h-navbar-height ${
+      className={`sticky top-0 left-16 z-20 border-l border-b w-full h-navbar-height ${
         darkMode
           ? 'border-element-light-darker-100 bg-element-light-darker-400 border-b-0'
-          : 'border-element-light-lighter-400 z-10 bg-white'
+          : 'border-element-light-lighter-400 bg-white'
       }`}
     >
       <div className="flex px-5 justify-between items-center h-full">

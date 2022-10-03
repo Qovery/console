@@ -87,7 +87,7 @@ export function Navigation(props: NavigationProps) {
   ]
 
   return (
-    <div className={`w-16 h-full fixed top-0 left-0 z-10 ${darkMode ? 'bg-element-light-darker-400' : 'bg-white'}`}>
+    <div className={`w-16 h-screen ${darkMode ? 'bg-element-light-darker-400' : 'bg-white'}`}>
       <Link
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
         className={`flex w-16 h-16 items-center justify-center border-b z-10 ${
