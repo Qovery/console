@@ -44,9 +44,12 @@ export function PageCreateDeploymentRuleFeature() {
 
       fields.weekdays = data['weekdays']
 
-      dispatch(postDeploymentRule({ projectId, data: fields })).then(() => {
-        navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
-      })
+      dispatch(postDeploymentRule({ projectId, data: fields }))
+        .unwrap()
+        .then(() => {
+          navigate(`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`)
+        })
+        .catch((e) => console.error(e))
     }
   })
 

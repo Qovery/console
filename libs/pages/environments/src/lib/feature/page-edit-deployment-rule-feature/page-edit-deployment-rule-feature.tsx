@@ -1,4 +1,4 @@
-import { Cluster, ProjectDeploymentRule, ProjectDeploymentRuleRequest, Value } from 'qovery-typescript-axios'
+import { Cluster, ProjectDeploymentRule, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { fetchDeploymentRule, selectDeploymentRuleById, updateDeploymentRule } from '@qovery/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
-import { dateToHours, upperCaseFirstLetter, useDocumentTitle } from '@qovery/shared/utils'
+import { dateToHours, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageCreateEditDeploymentRule from '../../ui/page-create-edit-deployment-rule/page-create-edit-deployment-rule'
 
@@ -27,7 +27,6 @@ export function PageEditDeploymentRuleFeature() {
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      data['weekdays'] = (data['weekdays'] as Value[]).map((day) => day?.value)
       data['start_time'] = `1970-01-01T${data['start_time']}:00.000Z`
       data['stop_time'] = `1970-01-01T${data['stop_time']}:00.000Z`
 
@@ -60,13 +59,7 @@ export function PageEditDeploymentRuleFeature() {
     setValue('auto_deploy', deploymentRule?.auto_deploy)
     setValue('auto_delete', deploymentRule?.auto_delete)
     setValue('auto_stop', deploymentRule?.auto_stop)
-    setValue(
-      'weekdays',
-      deploymentRule?.weekdays.map((day: string) => ({
-        value: day,
-        label: upperCaseFirstLetter(day.toLowerCase()),
-      }))
-    )
+    setValue('weekdays', deploymentRule?.weekdays)
     setValue('wildcard', deploymentRule?.wildcard)
     setValue('description', deploymentRule?.description)
     setValue('cluster_id', deploymentRule?.cluster_id)

@@ -9,7 +9,7 @@ import {
   fetchEnvironmentDeploymentRules,
   selectEnvironmentDeploymentRulesByEnvId,
 } from '@qovery/domains/environment'
-import { dateToHours, weekdaysValues } from '@qovery/shared/utils'
+import { dateToHours } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageSettingsDeployment from '../../ui/page-settings-deployment/page-settings-deployment'
 
@@ -58,7 +58,7 @@ export function PageSettingsDeploymentFeature() {
     methods.setValue('timezone', environmentDeploymentRules?.timezone || 'UTC')
     methods.setValue('start_time', startTime)
     methods.setValue('stop_time', stopTime)
-    methods.setValue('weekdays', weekdaysValues)
+    methods.setValue('weekdays', environmentDeploymentRules?.weekdays)
   }, [methods, environmentDeploymentRules])
 
   const onSubmit = methods.handleSubmit(async (data) => {
