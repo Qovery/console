@@ -27,12 +27,15 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => getCustomDomainsState(state).loadingStatus)
 
   const toasterCallback = () => {
-    dispatch(
-      postApplicationActionsRestart({
-        applicationId: props.application?.id || '',
-        environmentId: props.application?.environment?.id || '',
-      })
-    )
+    if (props.application) {
+      dispatch(
+        postApplicationActionsRestart({
+          applicationId: props.application.id,
+          environmentId: props.application.environment?.id || '',
+          serviceType: getServiceType(props.application),
+        })
+      )
+    }
   }
 
   const onSubmit = methods.handleSubmit((data) => {

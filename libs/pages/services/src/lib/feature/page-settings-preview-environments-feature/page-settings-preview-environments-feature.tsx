@@ -3,11 +3,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  editApplication,
-  postApplicationActionsRestart,
-  selectApplicationsEntitiesByEnvId,
-} from '@qovery/domains/application'
+import { editApplication, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import {
   editEnvironmentDeploymentRules,
   environmentsLoadingEnvironmentDeploymentRules,
@@ -16,12 +12,12 @@ import {
   selectEnvironmentDeploymentRulesByEnvId,
 } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
-import { GitApplicationEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function PageSettingsPreviewEnvironmentsFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
 
@@ -47,10 +43,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const watchEnvPreview = methods.watch('auto_preview')
 
-  const toasterCallback = () => {
-    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
-  }
-
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
       setLoading(true)
@@ -66,16 +58,18 @@ export function PageSettingsPreviewEnvironmentsFeature() {
         })
       )
 
-      applications?.forEach(async (application: Application) => {
+      await applications?.forEach(async (application: Application) => {
         if (application.id === Object.keys(data).find((key) => key === application.id)) {
-          const cloneApplication = Object.assign({}, application as Application)
+          const cloneApplication: ApplicationEntity = Object.assign({}, application as Application)
           cloneApplication.auto_preview = data[application.id]
+
           await dispatch(
             editApplication({
               applicationId: application.id,
               data: cloneApplication,
               serviceType: getServiceType(application),
-              toasterCallback,
+              silentToaster: true,
+              toasterCallback: () => {},
             })
           )
         }

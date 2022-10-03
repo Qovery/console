@@ -107,6 +107,7 @@ export const editApplication = createAsyncThunk(
     data: Partial<ApplicationEntity>
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
+    silentToaster?: boolean
   }) => {
     let response
     if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
@@ -337,14 +338,17 @@ export const applicationsSlice = createSlice({
         applicationsAdapter.updateOne(state, update)
         state.error = null
         state.loadingStatus = 'loaded'
-        toast(
-          ToastEnum.SUCCESS,
-          `Application updated`,
-          'You must redeploy to apply the settings update',
-          action.meta.arg.toasterCallback,
-          undefined,
-          'Redeploy'
-        )
+
+        if (!action.meta.arg.silentToaster) {
+          toast(
+            ToastEnum.SUCCESS,
+            `Application updated`,
+            'You must redeploy to apply the settings update',
+            action.meta.arg.toasterCallback,
+            undefined,
+            'Redeploy'
+          )
+        }
       })
       .addCase(editApplication.rejected, (state: ApplicationsState, action) => {
         state.loadingStatus = 'error'

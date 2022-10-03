@@ -79,7 +79,11 @@ export function PageSettingsGeneralFeature() {
   const watchBuildMode = methods.watch('build_mode')
 
   const toasterCallback = () => {
-    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+    if (application) {
+      dispatch(
+        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+      )
+    }
   }
 
   const onSubmit = methods.handleSubmit((data) => {

@@ -60,19 +60,21 @@ export function refactoGitApplicationPayload(application: Partial<GitApplication
 }
 
 export function refactoContainerApplicationPayload(application: Partial<ContainerApplicationEntity>) {
+  // todo type with the ContainerEditRequest interface but for now api doc is not updated, does not take auto_preview into account
   const containerRequestPayload = {
-    name: application.name,
+    name: application.name || '',
     storage: application.storage,
     ports: application.ports,
     cpu: application.cpu,
     memory: application.memory,
     max_running_instances: application.max_running_instances,
     min_running_instances: application.min_running_instances,
-    registry_id: application.registry?.id,
-    image_name: application.image_name,
-    tag: application.tag,
+    registry_id: application.registry?.id || '',
+    image_name: application.image_name || '',
+    tag: application.tag || '',
     arguments: application.arguments,
     entrypoint: application.entrypoint,
+    auto_preview: application.auto_preview,
   }
 
   return containerRequestPayload
