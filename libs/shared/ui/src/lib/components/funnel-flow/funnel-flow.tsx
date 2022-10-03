@@ -17,7 +17,7 @@ export function FunnelFlow(props: FunnelFlowProps) {
       <header className="h-16 px-5 bg-white flex shrink-0 items-center justify-between">
         <div className="flex items-center h-full">
           <div className="pr-4">
-            <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" />
+            <img className="w-[90px] shrink-0" src="assets/logos/logo-black.svg" alt="Qovery logo black" />
           </div>
           <div className="flex h-full items-center gap-4 pl-4 border-l border-l-element-light-lighter-400">
             <div className="h-5 px-1 bg-element-light-lighter-400 font-medium rounded-sm text-text-400 text-xs flex items-center">

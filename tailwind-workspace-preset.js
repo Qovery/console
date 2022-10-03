@@ -8,13 +8,13 @@ module.exports = {
       spacing: {
         'right-help-sidebar': '22.5rem',
         'navbar-height': '4rem',
-        'page-container': 'calc(100vh - theme(spacing.navbar-height))',
       },
       maxWidth: {
         'content-with-navigation-left': '46.5rem',
       },
       minHeight: {
         'height-with-navigation-left': 'calc(100vh - 270px)',
+        'page-container': 'calc(100vh - theme(spacing.navbar-height))',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
