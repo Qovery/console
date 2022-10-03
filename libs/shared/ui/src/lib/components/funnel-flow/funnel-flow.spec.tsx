@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { ReactDOM, render } from '__tests__/utils/setup-jest'
 import FunnelFlow, { FunnelFlowProps } from './funnel-flow'
 
 const props: FunnelFlowProps = {
@@ -7,6 +7,7 @@ const props: FunnelFlowProps = {
   children: <div>Content</div>,
   currentStep: 6,
   currentTitle: 'Title',
+  portal: false,
 }
 
 describe('FunnelFlow', () => {

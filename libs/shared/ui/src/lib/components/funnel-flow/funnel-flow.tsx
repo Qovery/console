@@ -54,7 +54,7 @@ export function FunnelFlow(props: FunnelFlowProps) {
     const target = document.body
     return createPortal(<FunnelFlowContent {...props} />, target)
   } else {
-    return <FunnelFlow {...props} />
+    return <FunnelFlowContent {...props} />
   }
 }
 
