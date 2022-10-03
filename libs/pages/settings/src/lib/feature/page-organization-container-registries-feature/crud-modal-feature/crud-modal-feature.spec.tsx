@@ -104,7 +104,7 @@ describe('CrudModalFeature', () => {
     })
   })
 
-  it('should dispatch editOrganizationContainerRegistry if form is submitted', async () => {
+  it('should dispatch postOrganizationContainerRegistry if form is submitted', async () => {
     const postOrganizationContainerRegistry: SpyInstance = jest.spyOn(
       storeOrganization,
       'postOrganizationContainerRegistry'
@@ -124,9 +124,6 @@ describe('CrudModalFeature', () => {
     await act(() => {
       const inputName = getByTestId('input-name')
       fireEvent.input(inputName, { target: { value: 'my-registry' } })
-
-      const inputUrl = getByTestId('input-url')
-      fireEvent.input(inputUrl, { target: { value: 'https://docker.io' } })
 
       selectEvent.select(getByLabelText('Type'), ContainerRegistryKindEnum.DOCKER_HUB, { container: document.body })
     })
@@ -152,7 +149,7 @@ describe('CrudModalFeature', () => {
         name: 'my-registry',
         kind: mockContainerRegistriesConfig.kind,
         description: undefined,
-        url: 'https://docker.io',
+        url: undefined,
         config: {
           username: 'hello',
           password: 'password',
