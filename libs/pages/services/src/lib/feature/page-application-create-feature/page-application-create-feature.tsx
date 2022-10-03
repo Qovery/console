@@ -81,6 +81,7 @@ export function PageApplicationCreateFeature() {
         totalSteps={4}
         currentStep={currentStep}
         currentTitle={steps[currentStep - 1].title}
+        portal
       >
         <Routes>
           {ROUTER_SERVICE_CREATION.map((route) => (

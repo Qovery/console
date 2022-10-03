@@ -1,3 +1,5 @@
+import React from 'react'
+import { createPortal } from 'react-dom'
 import Button, { ButtonStyle } from '../buttons/button/button'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
@@ -9,11 +11,12 @@ export interface FunnelFlowProps {
   children: React.ReactNode
   exitTo?: string
   onExit?: () => void
+  portal?: boolean
 }
 
-export function FunnelFlow(props: FunnelFlowProps) {
+const FunnelFlowContent = (props: FunnelFlowProps) => {
   return (
-    <div className="fixed inset-0 bg-element-light-lighter-300 scroll-auto flex flex-col min-h-0 z-20">
+    <div className="absolute top-0 left-0 inset-0 bg-element-light-lighter-300 scroll-auto flex flex-col min-h-0 z-20">
       <header className="h-16 px-5 bg-white flex shrink-0 items-center justify-between">
         <div className="flex items-center h-full">
           <div className="pr-4">
@@ -44,6 +47,15 @@ export function FunnelFlow(props: FunnelFlowProps) {
       </div>
     </div>
   )
+}
+
+export function FunnelFlow(props: FunnelFlowProps) {
+  if (props.portal) {
+    const target = document.body
+    return createPortal(<FunnelFlowContent {...props} />, target)
+  } else {
+    return <FunnelFlow {...props} />
+  }
 }
 
 export default FunnelFlow
