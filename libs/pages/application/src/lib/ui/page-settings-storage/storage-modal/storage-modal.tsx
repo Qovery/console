@@ -66,7 +66,7 @@ export function StorageModal(props: StorageModalProps) {
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
-              label="Path"
+              label="Mounting Path"
             />
           )}
         />
