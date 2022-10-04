@@ -1,7 +1,6 @@
-import { Application, DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/domains/database'
-import { organizationFactoryMock } from '@qovery/domains/organization'
-import { GitApplicationEntity } from '@qovery/shared/interfaces'
+import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
 import { refactoDatabasePayload } from '@qovery/shared/utils'
 import {
   refactoContainerApplicationPayload,
@@ -71,12 +70,13 @@ describe('testing payload refactoring', () => {
   })
 
   it('should remove container values', () => {
-    const response: any = {
+    const response: Partial<ContainerApplicationEntity> = {
       id: '1',
       created_at: '',
       updated_at: '',
-      environment: '',
-      status: '',
+      environment: {
+        id: '1',
+      },
       storage: [
         {
           id: '1',
@@ -85,15 +85,26 @@ describe('testing payload refactoring', () => {
           type: StorageTypeEnum.FAST_SSD,
         },
       ],
-      running_status: '',
       maximum_cpu: 10,
       maximum_memory: 10,
       name: 'hello-2',
-      test: 'test',
-      instances: [],
+      entrypoint: '/',
+      cpu: 3000,
+      auto_preview: false,
+      tag: '1',
+      ports: [],
+      arguments: [],
+      memory: 32,
+      max_running_instances: 12,
+      min_running_instances: 1,
+      registry: {
+        id: '1',
+      },
+      image_name: 'image_name',
     }
 
     expect(refactoContainerApplicationPayload(response)).toEqual({
+      name: 'hello-2',
       storage: [
         {
           id: '1',
@@ -102,7 +113,17 @@ describe('testing payload refactoring', () => {
           type: StorageTypeEnum.FAST_SSD,
         },
       ],
-      name: 'hello-2',
+      ports: [],
+      cpu: 3000,
+      memory: 32,
+      max_running_instances: 12,
+      min_running_instances: 1,
+      registry_id: '1',
+      image_name: 'image_name',
+      tag: '1',
+      arguments: [],
+      entrypoint: '/',
+      auto_preview: false,
     })
   })
 

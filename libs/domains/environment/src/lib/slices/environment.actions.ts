@@ -22,9 +22,9 @@ export const postEnvironmentActionsRestart = createAsyncThunk<
       toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
     }
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Redeploying error')
+    return toast(ToastEnum.ERROR, 'Redeploying error', err.message)
   }
 })
 
@@ -44,9 +44,9 @@ export const postEnvironmentActionsDeploy = createAsyncThunk<
       toast(ToastEnum.SUCCESS, 'Your environment is deploying')
     }
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Deploying error')
+    return toast(ToastEnum.ERROR, 'Deploying error', err.message)
   }
 })
 
@@ -66,9 +66,9 @@ export const postEnvironmentActionsStop = createAsyncThunk<
       toast(ToastEnum.SUCCESS, 'Your environment is stopping')
     }
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Stopping error')
+    return toast(ToastEnum.ERROR, 'Stopping error', err.message)
   }
 })
 
@@ -89,9 +89,9 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
     }
 
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Cancelling error')
+    return toast(ToastEnum.ERROR, 'Cancelling error', err.message)
   }
 })
 
@@ -108,9 +108,9 @@ export const deleteEnvironmentAction = createAsyncThunk<any, { projectId: string
       }
 
       return response
-    } catch (err) {
+    } catch (err: any) {
       // error message
-      return toast(ToastEnum.ERROR, 'Deleting error')
+      return toast(ToastEnum.ERROR, 'Deleting error', err.message)
     }
   }
 )

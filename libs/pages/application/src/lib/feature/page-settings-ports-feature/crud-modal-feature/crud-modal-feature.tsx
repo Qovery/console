@@ -54,12 +54,15 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const dispatch = useDispatch<AppDispatch>()
 
   const toasterCallback = () => {
-    dispatch(
-      postApplicationActionsRestart({
-        applicationId: props.application?.id || '',
-        environmentId: props.application?.environment?.id || '',
-      })
-    )
+    if (props.application) {
+      dispatch(
+        postApplicationActionsRestart({
+          applicationId: props.application?.id || '',
+          environmentId: props.application?.environment?.id || '',
+          serviceType: getServiceType(props.application),
+        })
+      )
+    }
   }
 
   const onSubmit = methods.handleSubmit((data) => {

@@ -33,7 +33,11 @@ export function PageSettingsStorageFeature() {
   )
 
   const toasterCallback = () => {
-    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+    if (application) {
+      dispatch(
+        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+      )
+    }
   }
 
   return (

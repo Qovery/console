@@ -72,7 +72,11 @@ export function PageSettingsResourcesFeature() {
   ])
 
   const toasterCallback = () => {
-    dispatch(postApplicationActionsRestart({ applicationId, environmentId }))
+    if (application) {
+      dispatch(
+        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+      )
+    }
   }
 
   const onSubmit = methods.handleSubmit((data) => {

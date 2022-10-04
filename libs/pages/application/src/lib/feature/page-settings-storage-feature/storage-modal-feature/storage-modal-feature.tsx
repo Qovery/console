@@ -45,12 +45,15 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
   })
 
   const toasterCallback = () => {
-    dispatch(
-      postApplicationActionsRestart({
-        applicationId: props.application?.id || '',
-        environmentId: props.application?.environment?.id || '',
-      })
-    )
+    if (props.application) {
+      dispatch(
+        postApplicationActionsRestart({
+          applicationId: props.application.id,
+          environmentId: props.application.environment?.id || '',
+          serviceType: getServiceType(props.application),
+        })
+      )
+    }
   }
 
   const loadingStatus = useSelector((state: RootState) => getApplicationsState(state).loadingStatus)

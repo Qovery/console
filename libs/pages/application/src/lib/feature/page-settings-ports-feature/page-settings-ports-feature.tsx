@@ -36,7 +36,15 @@ export function PageSettingsPortsFeature() {
   const { openModalConfirmation } = useModalConfirmation()
 
   const toasterCallback = () => {
-    dispatch(postApplicationActionsRestart({ applicationId: applicationId, environmentId: environmentId }))
+    if (application) {
+      dispatch(
+        postApplicationActionsRestart({
+          applicationId: applicationId,
+          environmentId: environmentId,
+          serviceType: getServiceType(application),
+        })
+      )
+    }
   }
 
   return (
