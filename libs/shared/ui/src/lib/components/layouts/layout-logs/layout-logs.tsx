@@ -97,7 +97,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
   }
 
   return (
-    <div className="overflow-hidden flex relative h-full">
+    <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
       <div className="absolute z-20 left-0 w-[calc(100%-360px)] flex justify-end items-center h-9 bg-element-light-darker-200 px-5">
         {realErrors && realErrors.length > 0 && (
           <p
