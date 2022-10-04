@@ -8,6 +8,7 @@ import {
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_MEMBERS_URL,
+  SETTINGS_ROLES_URL,
   SETTINGS_URL,
 } from '@qovery/shared/router'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
@@ -35,6 +36,10 @@ export function PageSettings() {
         {
           title: 'Members',
           url: pathSettings + SETTINGS_MEMBERS_URL,
+        },
+        {
+          title: 'Roles & permissions',
+          url: pathSettings + SETTINGS_ROLES_URL,
         },
       ],
     },

@@ -11,6 +11,8 @@ import {
   ContainerRegistriesApi,
   ContainerRegistryRequest,
   ContainerRegistryResponse,
+  OrganizationCustomRole,
+  OrganizationCustomRoleApi,
   OrganizationEditRequest,
   OrganizationMainCallsApi,
   OrganizationRequest,
@@ -24,6 +26,7 @@ export const ORGANIZATION_KEY = 'organizations'
 
 const organizationMainCalls = new OrganizationMainCallsApi()
 const containerRegistriesApi = new ContainerRegistriesApi()
+const customRolesApi = new OrganizationCustomRoleApi()
 
 export const organizationAdapter = createEntityAdapter<OrganizationEntity>()
 
@@ -105,14 +108,24 @@ export const deleteOrganizationContainerRegistry = createAsyncThunk(
 
 export const fetchAvailableContainerRegistry = createAsyncThunk('availableContainerRegistry/fetch', async () => {
   // fetch container registries
-  const result = (await containerRegistriesApi.listAvailableContainerRegistry()) as any
+  const result = await containerRegistriesApi.listAvailableContainerRegistry()
   return result.data.results as AvailableContainerRegistryResponse[]
+})
+
+export const fetchCustomRoles = createAsyncThunk('customRole/fetch', async (payload: { organizationId: string }) => {
+  // fetch custom roles
+  const result = await customRolesApi.listOrganizationCustomRoles(payload.organizationId)
+  return result.data.results as OrganizationCustomRole[]
 })
 
 export const initialOrganizationState: OrganizationState = organizationAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
   availableContainerRegistries: {
+    loadingStatus: 'not loaded',
+    items: [],
+  },
+  customRoles: {
     loadingStatus: 'not loaded',
     items: [],
   },
@@ -283,6 +296,17 @@ export const organizationSlice = createSlice({
           state.availableContainerRegistries.items = action.payload
         }
       )
+      // fetch custom roles
+      .addCase(fetchCustomRoles.pending, (state: OrganizationState) => {
+        state.customRoles.loadingStatus = 'loading'
+      })
+      .addCase(
+        fetchCustomRoles.fulfilled,
+        (state: OrganizationState, action: PayloadAction<OrganizationCustomRole[]>) => {
+          state.customRoles.loadingStatus = 'loaded'
+          state.customRoles.items = action.payload
+        }
+      )
   },
 })
 
@@ -310,4 +334,11 @@ export const selectAvailableContainerRegistry = createSelector(
 export const selectAvailableContainerRegistryLoadingStatus = createSelector(
   getOrganizationState,
   (state) => state.availableContainerRegistries.loadingStatus
+)
+
+export const selectCustomRoles = createSelector(getOrganizationState, (state) => state.customRoles.items)
+
+export const selectCustomRolesLoadingStatus = createSelector(
+  getOrganizationState,
+  (state) => state.customRoles.loadingStatus
 )
