@@ -4,6 +4,7 @@ import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
+  SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_SETTINGS_URL,
@@ -189,9 +190,7 @@ export function Container(props: ContainerProps) {
           name: 'Create database',
           contentLeft: <Icon name={IconAwesomeEnum.DATABASE} className="text-brand-500 text-sm" />,
           onClick: () => {
-            window.location.replace(
-              `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications`
-            )
+            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`)
           },
         },
       ],
