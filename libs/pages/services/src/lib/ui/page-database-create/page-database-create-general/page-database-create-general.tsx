@@ -2,7 +2,7 @@ import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router'
 import { SERVICES_URL } from '@qovery/shared/router'
-import { Button, ButtonSize, ButtonStyle, InputText } from '@qovery/shared/ui'
+import { BlockContent, Button, ButtonSize, ButtonStyle, InputText } from '@qovery/shared/ui'
 import { GeneralData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
 
 export interface PageDatabaseCreateGeneralProps {
@@ -41,6 +41,10 @@ export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps)
             />
           )}
         />
+
+        <BlockContent title="Select the mode for you database">
+          <h2>Hey</h2>
+        </BlockContent>
 
         <div className="flex justify-between">
           <Button

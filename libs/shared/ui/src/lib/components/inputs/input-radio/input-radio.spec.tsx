@@ -1,6 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { fireEvent, screen } from '@testing-library/react'
-
+import { render } from '__tests__/utils/setup-jest'
 import InputRadio, { InputRadioProps } from './input-radio'
 
 describe('InputRadio', () => {
@@ -40,5 +39,11 @@ describe('InputRadio', () => {
     fireEvent.click(input)
 
     expect(getValue).toHaveBeenCalledWith(true, '1')
+  })
+
+  it('should call display a description', async () => {
+    render(<InputRadio {...props} description="qovery is life" />)
+
+    screen.getByText('qovery is life')
   })
 })
