@@ -139,7 +139,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
               {props.portsData.ports && props.portsData.ports.length > 0 ? (
                 props.portsData.ports?.map((port, index) => (
                   <li key={index}>
-                    Application port: <strong className="font-medium">{port.application_port}</strong> – External port:{' '}
+                    Application port: <strong className="font-medium">{port.application_port}</strong> – Public port:{' '}
                     <strong className="font-medium">{port.external_port}</strong> – Public:{' '}
                     <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
                   </li>

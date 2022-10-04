@@ -52,7 +52,7 @@ export function CrudModal(props: CrudModalProps) {
         name="external_port"
         control={control}
         rules={{
-          required: watchPublicly ? 'Please enter an external port.' : undefined,
+          required: watchPublicly ? 'Please enter a public port.' : undefined,
           pattern: pattern,
         }}
         render={({ field, fieldState: { error } }) => (
@@ -62,7 +62,7 @@ export function CrudModal(props: CrudModalProps) {
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="External port"
+            label="Public port"
             error={error?.message}
             disabled={!watchPublicly}
           />

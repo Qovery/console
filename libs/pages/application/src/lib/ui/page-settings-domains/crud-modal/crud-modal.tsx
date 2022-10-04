@@ -15,7 +15,7 @@ export function CrudModal(props: CrudModalProps) {
 
   return (
     <ModalCrud
-      title={props.isEdit ? `Domain: ${props.customDomain?.domain}` : 'Set DNS configuration'}
+      title={props.isEdit ? `Domain: ${props.customDomain?.domain}` : 'Set custom DNS name'}
       description="DNS configuration"
       onSubmit={props.onSubmit}
       onClose={props.onClose}

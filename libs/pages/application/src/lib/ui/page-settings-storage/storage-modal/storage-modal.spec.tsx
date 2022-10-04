@@ -25,7 +25,7 @@ describe('StorageModal', () => {
     )
 
     const sizeInput = await findByLabelText(baseElement, 'Size in GB')
-    const pathInput = await findByLabelText(baseElement, 'Path')
+    const pathInput = await findByLabelText(baseElement, 'Mounting Path')
     findByLabelText(baseElement, 'Type')
 
     expect(sizeInput).toHaveValue(54)
