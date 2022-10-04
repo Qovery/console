@@ -1,24 +1,108 @@
-import { useEffect } from 'react'
+import { DatabaseConfiguration, DatabaseModeEnum } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
+import { fetchDatabaseConfiguration, selectEnvironmentById } from '@qovery/domains/environment'
+import { EnvironmentEntity, Value } from '@qovery/shared/interfaces'
 import {
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store/data'
 import PageDatabaseCreateGeneral from '../../../ui/page-database-create/page-database-create-general/page-database-create-general'
 import { GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
+
+export const generateDatabasesTypesAndVersionOptions = (databaseConfigs: DatabaseConfiguration[]) => {
+  const databaseVersionOptions: { [Key: string]: Value[] } = {}
+
+  const databaseTypeOptions: Value[] = databaseConfigs.map((config) => {
+    const label = (`${config.database_type}` as string) || ''
+
+    let versionsStored: DatabaseModeEnum[] = []
+
+    databaseVersionOptions[label] =
+      config.version?.map((v) => {
+        const versionNumber = v.name
+
+        if (databaseVersionOptions[`${label}-${v.supported_mode}`]) {
+          databaseVersionOptions[`${label}-${v.supported_mode}`] = [
+            {
+              label: versionNumber || '',
+              value: versionNumber || '',
+            },
+            ...databaseVersionOptions[`${label}-${v.supported_mode}`],
+          ]
+        } else {
+          databaseVersionOptions[`${label}-${v.supported_mode}`] = [
+            {
+              label: versionNumber || '',
+              value: versionNumber || '',
+            },
+          ]
+        }
+
+        if (v.supported_mode) versionsStored.push(v.supported_mode)
+
+        return { label: v.supported_mode || '', value: v.supported_mode || '' } as Value
+      }) || []
+
+    versionsStored = [...new Set(versionsStored)]
+    // removing twins
+    databaseVersionOptions[label] = versionsStored.map((v) => {
+      return { value: v, label: v, icon: <Icon name={v} /> }
+    })
+
+    return {
+      label: label,
+      value: label,
+      icon: <Icon name={label} />,
+    }
+  })
+
+  return {
+    databaseTypeOptions,
+    databaseVersionOptions,
+  }
+}
 
 export function PageDatabaseCreateGeneralFeature() {
   useDocumentTitle('General - Create Database')
   const { setGeneralData, generalData, setCurrentStep } = useDatabaseCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
+  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
+    selectEnvironmentById(state, environmentId)
+  )
 
-  // const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>()
+
+  const [databaseTypeOptions, setDatabaseTypeOptions] = useState<Value[]>()
+  const [databaseVersionOptions, setDatabaseVersionOptions] = useState<{ [Key: string]: Value[] }>()
+
+  useEffect(() => {
+    if (!environment?.databaseConfigurations || environment.databaseConfigurations.loadingStatus === 'not loaded') {
+      dispatch(fetchDatabaseConfiguration({ environmentId }))
+    }
+
+    if (
+      environment?.databaseConfigurations?.loadingStatus === 'loaded' &&
+      environment?.databaseConfigurations?.data &&
+      !databaseTypeOptions &&
+      !databaseVersionOptions
+    ) {
+      const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
+        environment.databaseConfigurations.data
+      )
+      setDatabaseTypeOptions(databaseTypeOptions)
+      setDatabaseVersionOptions(databaseVersionOptions)
+    }
+  }, [dispatch, environment, environmentId])
+
   const funnelCardHelp = (
     <FunnelFlowHelpCard
       title="Database creation flow"
@@ -49,6 +133,14 @@ export function PageDatabaseCreateGeneralFeature() {
     mode: 'onChange',
   })
 
+  const watchModeDatabase = methods.watch('mode')
+  const watchTypeDatabase = methods.watch('type')
+
+  useEffect(() => {
+    methods.setValue('version', undefined)
+    if (watchTypeDatabase) methods.trigger('version')
+  }, [watchModeDatabase, methods.setValue])
+
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {
       ...data,
@@ -62,7 +154,11 @@ export function PageDatabaseCreateGeneralFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <PageDatabaseCreateGeneral onSubmit={onSubmit} />
+        <PageDatabaseCreateGeneral
+          onSubmit={onSubmit}
+          databaseTypeOptions={databaseTypeOptions}
+          databaseVersionOptions={databaseVersionOptions}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )

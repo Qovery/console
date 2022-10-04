@@ -10,6 +10,7 @@ import {
   CloneRequest,
   ContainersApi,
   CreateEnvironmentRequest,
+  DatabasesApi,
   DeploymentHistoryEnvironment,
   Environment,
   EnvironmentActionsApi,
@@ -34,6 +35,7 @@ const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const environmentContainersApi = new ContainersApi()
+const databasesApi = new DatabasesApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
@@ -117,6 +119,14 @@ export const fetchEnvironmentContainers = createAsyncThunk(
   async (payload: { environmentId: string }) => {
     const response = await environmentContainersApi.listContainer(payload.environmentId)
     return response.data
+  }
+)
+
+export const fetchDatabaseConfiguration = createAsyncThunk(
+  'environment/database-configuration/fetch',
+  async (payload: { environmentId: string }) => {
+    const response = await databasesApi.listEnvironmentDatabaseConfig(payload.environmentId)
+    return response.data.results
   }
 )
 
@@ -313,6 +323,30 @@ export const environmentsSlice = createSlice({
         state.loadingEnvironmentDeploymentRules = 'error'
         toastError(action.error)
         state.error = action.error.message
+      })
+      // fetch database configurations for this environment
+      .addCase(fetchDatabaseConfiguration.pending, (state: EnvironmentsState, action) => {
+        const update: Update<EnvironmentEntity> = {
+          id: action.meta.arg.environmentId,
+          changes: {
+            databaseConfigurations: {
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        environmentsAdapter.updateOne(state, update)
+      })
+      .addCase(fetchDatabaseConfiguration.fulfilled, (state: EnvironmentsState, action) => {
+        const update: Update<EnvironmentEntity> = {
+          id: action.meta.arg.environmentId,
+          changes: {
+            databaseConfigurations: {
+              loadingStatus: 'loaded',
+              data: action.payload,
+            },
+          },
+        }
+        environmentsAdapter.updateOne(state, update)
       })
   },
 })

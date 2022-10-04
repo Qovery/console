@@ -2,10 +2,10 @@ import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'q
 
 export interface GeneralData {
   name: string
-  mode: DatabaseModeEnum
-  type: DatabaseTypeEnum
-  version: string
-  accessibility: DatabaseAccessibilityEnum
+  mode: DatabaseModeEnum | undefined
+  type: DatabaseTypeEnum | undefined
+  version?: string
+  accessibility?: DatabaseAccessibilityEnum
 }
 
 export interface ResourcesData {
