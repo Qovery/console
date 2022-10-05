@@ -1,4 +1,3 @@
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import { Route, Routes, useParams } from 'react-router-dom'
@@ -31,23 +30,22 @@ export const useDatabaseCreateContext = () => {
   return databaseCreateContext
 }
 
-export const steps: { title: string }[] = [{ title: 'Create new database' }, { title: 'Set resources' }]
+export const steps: { title: string }[] = [
+  { title: 'Create new database' },
+  { title: 'Set resources' },
+  { title: 'Install new database' },
+]
 
 export function PageDatabaseCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [generalData, setGeneralData] = useState<GeneralData | undefined>({
-    mode: DatabaseModeEnum.MANAGED,
-    name: '',
-    type: undefined,
-    accessibility: undefined,
-    version: '',
-  })
+  const [generalData, setGeneralData] = useState<GeneralData>()
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
-    instances: [1, 2],
+    storage_unit: MemorySizeEnum.GB,
+    storage: 10,
     memory_unit: MemorySizeEnum.MB,
   })
 

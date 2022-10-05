@@ -129,7 +129,7 @@ export function PageDatabaseCreateGeneralFeature() {
   }, [setCurrentStep])
 
   const methods = useForm<GeneralData>({
-    defaultValues: generalData,
+    defaultValues: generalData ? generalData : { mode: DatabaseModeEnum.MANAGED },
     mode: 'onChange',
   })
 
@@ -137,7 +137,7 @@ export function PageDatabaseCreateGeneralFeature() {
   const watchTypeDatabase = methods.watch('type')
 
   useEffect(() => {
-    methods.setValue('version', undefined)
+    methods.setValue('version', '')
     if (watchTypeDatabase) methods.trigger('version')
   }, [watchModeDatabase, methods.setValue])
 

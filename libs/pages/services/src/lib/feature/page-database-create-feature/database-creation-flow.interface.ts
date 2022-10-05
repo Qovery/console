@@ -2,15 +2,16 @@ import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'q
 
 export interface GeneralData {
   name: string
-  mode: DatabaseModeEnum | undefined
-  type: DatabaseTypeEnum | undefined
-  version?: string
+  mode: DatabaseModeEnum
+  type: DatabaseTypeEnum
+  version: string
   accessibility?: DatabaseAccessibilityEnum
 }
 
 export interface ResourcesData {
   memory: number
   cpu: [number]
-  instances: [number, number]
   memory_unit: string
+  storage: number
+  storage_unit: string
 }

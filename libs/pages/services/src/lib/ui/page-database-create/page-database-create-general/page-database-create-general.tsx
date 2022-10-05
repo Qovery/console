@@ -64,7 +64,7 @@ export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps)
                     description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
                     onChange={field.onChange}
                     formValue={field.value}
-                    label="Database name"
+                    label="Mode managed"
                   />
                   <InputRadio
                     value={DatabaseModeEnum.CONTAINER}

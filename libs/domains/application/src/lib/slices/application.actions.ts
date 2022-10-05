@@ -44,9 +44,9 @@ export const postApplicationActionsRestart = createAsyncThunk<
     }
 
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Redeploying error')
+    return toast(ToastEnum.ERROR, 'Redeploying error', err.message)
   }
 })
 
@@ -79,9 +79,9 @@ export const postApplicationActionsDeploy = createAsyncThunk<
     }
 
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Deploying error')
+    return toast(ToastEnum.ERROR, 'Deploying error', err.message)
   }
 })
 
@@ -114,9 +114,9 @@ export const postApplicationActionsStop = createAsyncThunk<
     }
 
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Stopping error')
+    return toast(ToastEnum.ERROR, 'Stopping error', err.message)
   }
 })
 
@@ -140,8 +140,8 @@ export const deleteApplicationAction = createAsyncThunk<
     }
 
     return response
-  } catch (err) {
+  } catch (err: any) {
     // error message
-    return toast(ToastEnum.ERROR, 'Deleting error')
+    return toast(ToastEnum.ERROR, 'Deleting error', err.message)
   }
 })

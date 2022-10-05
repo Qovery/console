@@ -4,7 +4,7 @@ export interface SliderProps {
   min: number
   max: number
   step: number
-  value: number[]
+  value?: number[]
   onChange: (value: number[]) => void
   label?: string
   valueLabel?: string
@@ -28,7 +28,7 @@ export function Slider(props: SliderProps) {
               {label}
             </p>
           )}
-          {valueLabel && (
+          {valueLabel && value && (
             <p className="text-brand-500 font-medium">
               {value.map((currentValue, index) => `${currentValue}${index < value.length - 1 ? ', ' : ''}`)}
               {valueLabel}
