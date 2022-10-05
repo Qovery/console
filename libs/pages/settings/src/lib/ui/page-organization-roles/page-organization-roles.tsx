@@ -1,17 +1,21 @@
 import { OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import { Button, IconAwesomeEnum, LoaderSpinner, Tabs } from '@qovery/shared/ui'
+import { Button, ButtonSize, IconAwesomeEnum, LoaderSpinner, Tabs } from '@qovery/shared/ui'
 import TableProject from './table-project/table-project'
 
 export interface PageOrganizationRolesProps {
+  onSubmit: () => void
   customRoles?: OrganizationCustomRole[]
   loading?: LoadingStatus
+  loadingForm?: boolean
 }
 
 export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
-  const { customRoles, loading } = props
+  const { customRoles, loading, loadingForm, onSubmit } = props
 
+  const { formState } = useFormContext()
   const [currentRole, setCurrentRole] = useState<OrganizationCustomRole | undefined>()
 
   useEffect(() => {
@@ -46,7 +50,21 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                   onClick: () => setCurrentRole(customRoles),
                 }))}
               />
-              {currentRole?.project_permissions && <TableProject projects={currentRole.project_permissions} />}
+              <form onSubmit={onSubmit}>
+                {currentRole?.project_permissions && <TableProject projects={currentRole.project_permissions} />}
+                <div className="flex gap-3 justify-end mt-6">
+                  <Button
+                    dataTestId="submit-button"
+                    className="btn--no-min-w"
+                    type="submit"
+                    size={ButtonSize.XLARGE}
+                    disabled={!formState.isValid}
+                    loading={loadingForm}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </form>
             </div>
           )
         )}
