@@ -43,19 +43,19 @@ export function TableProject(props: TableProjectProps) {
               {project.project_name}
             </div>
             <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              {/* <InputCheckbox name="admin" value="ADMIN" /> */}
+              <InputCheckbox name="admin" value="ADMIN" />
             </div>
             <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              {/* <InputCheckbox name="viewer" value={OrganizationCustomRoleProjectPermission.VIEWER} /> */}
+              <InputCheckbox name="viewer" value={OrganizationCustomRoleProjectPermission.VIEWER} />
             </div>
             <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              {/* <InputCheckbox name="deployer" value={OrganizationCustomRoleProjectPermission.DEPLOYER} /> */}
+              <InputCheckbox name="deployer" value={OrganizationCustomRoleProjectPermission.DEPLOYER} />
             </div>
             <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              {/* <InputCheckbox name="viewer" value={OrganizationCustomRoleProjectPermission.VIEWER} /> */}
+              <InputCheckbox name="viewer" value={OrganizationCustomRoleProjectPermission.VIEWER} />
             </div>
             <div className="flex-1 flex items-center justify-center h-full px-4">
-              {/* <InputCheckbox name="no-access" value={OrganizationCustomRoleProjectPermission.NO_ACCESS} /> */}
+              <InputCheckbox name="no-access" value={OrganizationCustomRoleProjectPermission.NO_ACCESS} />
             </div>
           </div>
           <div>
