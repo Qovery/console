@@ -31,7 +31,7 @@ export const logoByRegistryKind = (kind?: ContainerRegistryKindEnum) => {
     case ContainerRegistryKindEnum.DOCKER_HUB:
       return IconEnum.DOCKER
     case ContainerRegistryKindEnum.SCALEWAY_CR:
-      return IconEnum.SCALEWAY
+      return IconEnum.SCW
     default:
       return IconEnum.AWS
   }

@@ -62,9 +62,9 @@ export function Icon(props: IconProps) {
       return <AWSIcon {...formattedProps} />
     case IconEnum.AWS_GRAY:
       return <AWSGrayIcon {...formattedProps} />
-    case IconEnum.SCALEWAY:
+    case IconEnum.SCW:
       return <ScalewayIcon {...formattedProps} />
-    case IconEnum.SCALEWAY_GRAY:
+    case IconEnum.SCW_GRAY:
       return <ScalewayGrayIcon {...formattedProps} />
     case IconEnum.DO:
       return <DOIcon {...formattedProps} />

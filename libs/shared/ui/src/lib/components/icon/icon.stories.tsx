@@ -47,11 +47,11 @@ const Template: Story<IconProps> = () => (
       <button onClick={() => copyName(IconEnum.AWS_GRAY)}>
         <Icon name={IconEnum.AWS_GRAY} />
       </button>
-      <button onClick={() => copyName(IconEnum.SCALEWAY)}>
-        <Icon name={IconEnum.SCALEWAY} />
+      <button onClick={() => copyName(IconEnum.SCW)}>
+        <Icon name={IconEnum.SCW} />
       </button>
-      <button onClick={() => copyName(IconEnum.SCALEWAY_GRAY)}>
-        <Icon name={IconEnum.SCALEWAY_GRAY} />
+      <button onClick={() => copyName(IconEnum.SCW_GRAY)}>
+        <Icon name={IconEnum.SCW_GRAY} />
       </button>
       <button onClick={() => copyName(IconEnum.DO)}>
         <Icon name={IconEnum.DO} />
