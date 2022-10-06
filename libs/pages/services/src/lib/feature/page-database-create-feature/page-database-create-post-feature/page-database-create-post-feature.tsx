@@ -1,11 +1,9 @@
 import { DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { createDatabase, postDatabaseActionsDeploy } from '@qovery/domains/database'
-import { selectOrganizationById } from '@qovery/domains/organization'
 import { MemorySizeEnum } from '@qovery/shared/enums'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
@@ -14,7 +12,7 @@ import {
 } from '@qovery/shared/router'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store/data'
 import PageDatabaseCreatePost from '../../../ui/page-database-create/page-database-create-post/page-database-create-post'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
@@ -26,10 +24,6 @@ export function PageDatabaseCreatePostFeature() {
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
-
-  const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
-    selectOrganizationById(state, organizationId)
-  )
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL)

@@ -23,7 +23,7 @@ import { PageApplicationCreateFeature } from '../feature/page-application-create
 import PageApplicationCreateGeneralFeature from '../feature/page-application-create-feature/page-application-create-general-feature/page-application-create-general-feature'
 import PageApplicationCreateResourcesFeature from '../feature/page-application-create-feature/page-application-create-resources-feature/page-application-create-resources-feature'
 import PageApplicationPostFeature from '../feature/page-application-create-feature/page-application-post-feature/page-application-post-feature'
-import PageDatabaseCreateFeature from '../feature/page-database-create-feature/page-database-create-feature'
+import { PageDatabaseCreateFeature } from '../feature/page-database-create-feature/page-database-create-feature'
 import PageDatabaseCreateGeneralFeature from '../feature/page-database-create-feature/page-database-create-general-feature/page-database-create-general-feature'
 import PageDatabaseCreatePostFeature from '../feature/page-database-create-feature/page-database-create-post-feature/page-database-create-post-feature'
 import PageDatabaseCreateResourcesFeature from '../feature/page-database-create-feature/page-database-create-resources-feature/page-database-create-resources-feature'

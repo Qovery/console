@@ -137,8 +137,10 @@ export function PageDatabaseCreateGeneralFeature() {
   const watchTypeDatabase = methods.watch('type')
 
   useEffect(() => {
-    methods.setValue('version', '')
-    if (watchTypeDatabase) methods.trigger('version')
+    if (methods.formState.isDirty) {
+      methods.setValue('version', '')
+      if (watchTypeDatabase) methods.trigger('version')
+    }
   }, [watchModeDatabase, methods.setValue])
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -148,6 +150,7 @@ export function PageDatabaseCreateGeneralFeature() {
 
     setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
+
     navigate(pathCreate + SERVICES_DATABASE_CREATION_RESOURCES_URL)
   })
 
