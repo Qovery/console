@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
 import { Icon } from '@qovery/shared/ui'
@@ -7,7 +7,7 @@ import { NavigationLeftLinkProps } from '../navigation-left'
 export interface NavigationLeftSubLinkProps {
   linkContent: (link: NavigationLeftLinkProps) => React.ReactNode
   link: NavigationLeftLinkProps
-  linkClassName: (pathname: string, url?: string) => void
+  linkClassName: (pathname: string, url?: string) => string
 }
 
 export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
@@ -15,6 +15,16 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
   const { pathname } = useLocation()
 
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    // default open sub links if is active
+    link.subLinks &&
+      link.subLinks.forEach((currentLink) => {
+        if (linkClassName(pathname, currentLink.url).includes('is-active')) {
+          setOpen(true)
+        }
+      })
+  }, [])
 
   return (
     <>
