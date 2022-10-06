@@ -3,6 +3,8 @@ import {
   ApplicationGitRepositoryRequest,
   DatabaseEditRequest,
   Organization,
+  OrganizationCustomRole,
+  OrganizationCustomRoleUpdateRequest,
   OrganizationEditRequest,
   ServiceStorageStorage,
 } from 'qovery-typescript-axios'
@@ -104,4 +106,24 @@ export function refactoOrganizationPayload(organization: Partial<Organization>) 
   }
 
   return organizationRequestPayload
+}
+
+export function refactoOrganizationCustomRolePayload(customRole: Partial<OrganizationCustomRole>) {
+  const customRoleRequestPayload: OrganizationCustomRoleUpdateRequest = {
+    name: customRole.name || '',
+    description: customRole.description,
+    cluster_permissions:
+      customRole.cluster_permissions?.map((cluster) => ({
+        cluster_id: cluster.cluster_id,
+        permission: cluster.permission,
+      })) || [],
+    project_permissions:
+      customRole.project_permissions?.map((project) => ({
+        project_id: project.project_id,
+        is_admin: project.is_admin,
+        permissions: project.permissions,
+      })) || [],
+  }
+
+  return customRoleRequestPayload
 }

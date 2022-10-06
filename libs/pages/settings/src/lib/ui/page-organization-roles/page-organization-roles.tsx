@@ -5,9 +5,18 @@ import {
   OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import { Button, ButtonSize, IconAwesomeEnum, LoaderSpinner, Tabs } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonSize,
+  IconAwesomeEnum,
+  InputText,
+  InputTextArea,
+  LoaderSpinner,
+  Tabs,
+} from '@qovery/shared/ui'
 import TableProject from './table-project/table-project'
 
 export interface PageOrganizationRolesProps {
@@ -19,20 +28,13 @@ export interface PageOrganizationRolesProps {
   loadingForm?: boolean
 }
 
-export function getValue(
-  cellKey: OrganizationCustomRoleProjectPermission,
-  permission?: OrganizationCustomRoleProjectPermission,
-  isAdmin = false
-) {
+export function getValue(permission = OrganizationCustomRoleProjectPermission.NO_ACCESS, isAdmin = false) {
   let result = OrganizationCustomRoleProjectPermission.NO_ACCESS
 
-  if (isAdmin) result = OrganizationCustomRoleProjectPermission.MANAGER
-
-  if (
-    cellKey === OrganizationCustomRoleProjectPermission[cellKey] &&
-    permission === OrganizationCustomRoleProjectPermission[cellKey]
-  ) {
-    result = OrganizationCustomRoleProjectPermission[cellKey]
+  if (isAdmin) {
+    result = OrganizationCustomRoleProjectPermission.MANAGER
+  } else {
+    result = OrganizationCustomRoleProjectPermission[permission]
   }
 
   return result
@@ -41,10 +43,14 @@ export function getValue(
 export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
   const { currentRole, customRoles, loading, loadingForm, onSubmit, setCurrentRole } = props
 
-  const { formState, reset } = useFormContext()
+  const { control, formState, reset } = useFormContext()
 
   useEffect(() => {
-    const result = {} as any
+    const result = {
+      project_permissions: {},
+      name: currentRole?.name,
+      description: currentRole?.description,
+    } as any
 
     currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
       const permission = {} as any
@@ -52,13 +58,10 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
       project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
         permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
 
-        permission[currentPermission.environment_type || ''] = getValue(
-          OrganizationCustomRoleProjectPermission.MANAGER,
-          currentPermission.permission
-        )
+        permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
       })
 
-      result[project.project_name || ''] = permission
+      result['project_permissions'][project.project_id || ''] = permission
     })
 
     reset(result)
@@ -93,6 +96,39 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                 }))}
               />
               <form onSubmit={onSubmit}>
+                <div className="max-w-content-with-navigation-left">
+                  <BlockContent title="General informations">
+                    <Controller
+                      name="name"
+                      control={control}
+                      rules={{ required: 'Please enter a name.' }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputText
+                          dataTestId="input-name"
+                          className="mb-3"
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value}
+                          label="Name"
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="description"
+                      control={control}
+                      render={({ field }) => (
+                        <InputTextArea
+                          dataTestId="input-description"
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value}
+                          label="Description"
+                        />
+                      )}
+                    />
+                  </BlockContent>
+                </div>
                 {currentRole?.project_permissions && <TableProject projects={currentRole.project_permissions} />}
                 <div className="flex gap-3 justify-end mt-6">
                   <Button

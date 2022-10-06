@@ -20,7 +20,7 @@ import {
 } from 'qovery-typescript-axios'
 import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
-import { refactoOrganizationPayload } from '@qovery/shared/utils'
+import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store/data'
 
 export const ORGANIZATION_KEY = 'organizations'
@@ -119,14 +119,16 @@ export const fetchCustomRoles = createAsyncThunk('customRoles/fetch', async (pay
   return result.data.results as OrganizationCustomRole[]
 })
 
-export const editCustomRoles = createAsyncThunk(
+export const editCustomRole = createAsyncThunk(
   'customRoles/edit',
   async (payload: { organizationId: string; customRoleId: string; data: OrganizationCustomRoleUpdateRequest }) => {
-    // fetch custom roles
+    // edit custom role
+    const cloneCustomRole = Object.assign({}, refactoOrganizationCustomRolePayload(payload.data))
+
     const result = await customRolesApi.editOrganizationCustomRole(
       payload.organizationId,
-      // payload.customRoleId,
-      payload.data
+      payload.customRoleId,
+      cloneCustomRole
     )
     return result.data as OrganizationCustomRole
   }
@@ -334,7 +336,7 @@ export const organizationSlice = createSlice({
         organizationAdapter.updateOne(state, update)
       })
       // edit custom roles
-      .addCase(editCustomRoles.fulfilled, (state: OrganizationState, action) => {
+      .addCase(editCustomRole.fulfilled, (state: OrganizationState, action) => {
         const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
         const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
         customRoles[index] = action.payload
@@ -351,7 +353,7 @@ export const organizationSlice = createSlice({
         organizationAdapter.updateOne(state, update)
         toast(ToastEnum.SUCCESS, `Role updated`)
       })
-      .addCase(editCustomRoles.rejected, (state: OrganizationState, action) => {
+      .addCase(editCustomRole.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
       })
   },

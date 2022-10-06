@@ -14,7 +14,7 @@ export function TableProject(props: TableProjectProps) {
   const { projects } = props
   const { control } = useFormContext()
 
-  console.log(projects[4])
+  // console.log(projects[4])
 
   return (
     <div className="border border-element-light-lighter-400 border-b-0 rounded text-xs text-text-600">
@@ -61,7 +61,7 @@ export function TableProject(props: TableProjectProps) {
           <div>
             {project.permissions?.map((permission: OrganizationCustomRoleUpdateRequestPermissions, index) => (
               <div
-                key={`${project.project_name}-${permission.environment_type}-${index}`}
+                key={`${project.project_id}-${permission.environment_type}-${index}`}
                 className="flex h-10 border-element-light-lighter-500 border-b"
               >
                 <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-element-light-lighter-500 font-medium">
@@ -72,7 +72,7 @@ export function TableProject(props: TableProjectProps) {
                 </div>
                 <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
                   <Controller
-                    name={`${project.project_name}.${permission.environment_type}`}
+                    name={`project_permissions.${project.project_id}.${permission.environment_type}`}
                     control={control}
                     render={({ field }) => (
                       <InputCheckbox
@@ -87,7 +87,7 @@ export function TableProject(props: TableProjectProps) {
                 </div>
                 <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
                   <Controller
-                    name={`${project.project_name}.${permission.environment_type}`}
+                    name={`project_permissions.${project.project_id}.${permission.environment_type}`}
                     control={control}
                     render={({ field }) => (
                       <InputCheckbox
@@ -102,7 +102,7 @@ export function TableProject(props: TableProjectProps) {
                 </div>
                 <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
                   <Controller
-                    name={`${project.project_name}.${permission.environment_type}`}
+                    name={`project_permissions.${project.project_id}.${permission.environment_type}`}
                     control={control}
                     render={({ field }) => (
                       <InputCheckbox
@@ -117,7 +117,7 @@ export function TableProject(props: TableProjectProps) {
                 </div>
                 <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
                   <Controller
-                    name={`${project.project_name}.${permission.environment_type}`}
+                    name={`project_permissions.${project.project_id}.${permission.environment_type}`}
                     control={control}
                     render={({ field }) => (
                       <InputCheckbox
@@ -132,7 +132,7 @@ export function TableProject(props: TableProjectProps) {
                 </div>
                 <div className="flex-1 flex items-center justify-center h-full px-4">
                   <Controller
-                    name={`${project.project_name}.${permission.environment_type}`}
+                    name={`project_permissions.${project.project_id}.${permission.environment_type}`}
                     control={control}
                     render={({ field }) => (
                       <InputCheckbox

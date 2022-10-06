@@ -1,16 +1,41 @@
-import { OrganizationCustomRole } from 'qovery-typescript-axios'
+import {
+  OrganizationCustomRole,
+  OrganizationCustomRoleProjectPermissions,
+  OrganizationCustomRoleUpdateRequest,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { fetchCustomRoles, selectOrganizationById } from '@qovery/domains/organization'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { editCustomRole, fetchCustomRoles, selectOrganizationById } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
 
-export const handleSubmit = (data: any, organization: OrganizationEntity) => {
-  return organization
+export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomRole) => {
+  const cloneCurrentRole = Object.assign({}, currentRole)
+
+  // update project permissions
+  const projectPermissions = currentRole.project_permissions?.map((project) => {
+    const currentProject = data['project_permissions'][project.project_id || '']
+    const permissions = Object.entries(currentProject)
+      .map((permission) => ({
+        environment_type: permission[0],
+        permission: permission[1],
+      }))
+      .filter((c) => c.environment_type !== 'ADMIN')
+
+    return {
+      project_id: project.project_id,
+      project_name: project.project_name,
+      is_admin: false,
+      permissions: permissions,
+    }
+  })
+
+  cloneCurrentRole.project_permissions = projectPermissions as OrganizationCustomRoleProjectPermissions[]
+
+  return cloneCurrentRole
 }
 
 export function PageOrganizationRolesFeature() {
@@ -41,22 +66,21 @@ export function PageOrganizationRolesFeature() {
   }, [customRoles])
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data && organization) {
+    if (data && currentRole) {
       setLoading(false)
 
-      console.log(organization?.customRoles?.items)
-      console.log(data)
-      // const cloneOrganization = handleSubmit(data, organization)
+      const cloneCustomRole = handleSubmit(data, currentRole)
 
-      // dispatch(
-      //   editCustomRoles({
-      //     organizationId,
-      //     data: {} as any,
-      //   })
-      // )
-      //   .unwrap()
-      //   .then(() => setLoading(false))
-      //   .catch(() => setLoading(false))
+      dispatch(
+        editCustomRole({
+          organizationId,
+          customRoleId: currentRole?.id || '',
+          data: cloneCustomRole as OrganizationCustomRoleUpdateRequest,
+        })
+      )
+        .unwrap()
+        .then(() => setLoading(false))
+        .catch(() => setLoading(false))
     }
   })
 
