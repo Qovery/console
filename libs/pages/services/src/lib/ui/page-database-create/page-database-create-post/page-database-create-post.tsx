@@ -63,38 +63,39 @@ export function PageDatabaseCreatePost(props: PageDatabaseCreatePostProps) {
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
-            <ul className="text-text-400 text-sm list-none">
-              <li>
-                CPU: <strong className="font-medium">{props.resourcesData['cpu'][0]}</strong>
-              </li>
-              <li>
-                Memory:{' '}
-                <strong className="font-medium">
-                  {props.resourcesData.memory} {props.resourcesData.memory_unit}
-                </strong>
-              </li>
-              <li>
-                Instances:{' '}
-                <strong className="font-medium">
-                  {props.resourcesData.storage} - {props.resourcesData.storage_unit}
-                </strong>
-              </li>
-            </ul>
+        {props.generalData.mode !== DatabaseModeEnum.MANAGED && (
+          <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10">
+            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <div className="flex-grow mr-2">
+              <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
+              <ul className="text-text-400 text-sm list-none">
+                <li>
+                  CPU: <strong className="font-medium">{props.resourcesData['cpu'][0]}</strong>
+                </li>
+                <li>
+                  Memory:{' '}
+                  <strong className="font-medium">
+                    {props.resourcesData.memory} {props.resourcesData.memory_unit}
+                  </strong>
+                </li>
+                <li>
+                  Instances:{' '}
+                  <strong className="font-medium">
+                    {props.resourcesData.storage} - {props.resourcesData.storage_unit}
+                  </strong>
+                </li>
+              </ul>
+            </div>
+            <ButtonIcon
+              onClick={props.gotoResources}
+              icon={IconAwesomeEnum.WHEEL}
+              style={ButtonIconStyle.FLAT}
+              className="text-text-500 hover:text-text-700"
+            />
           </div>
+        )}
 
-          <ButtonIcon
-            onClick={props.gotoResources}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
-          />
-        </div>
-
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-10">
           <Button
             onClick={props.onPrevious}
             className="btn--no-min-w"

@@ -8,10 +8,20 @@ import PageDatabaseCreateGeneralFeature from './page-database-create-general-fea
 const mockSetGeneralData = jest.fn()
 const mockNavigate = jest.fn()
 
+jest.mock('@qovery/domains/environment', () => ({
+  ...jest.requireActual('@qovery/domains/environment'),
+  fetchDatabaseConfiguration: jest.fn(),
+}))
+
 jest.mock('react-router', () => ({
   ...(jest.requireActual('react-router') as any),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
   useNavigate: () => mockNavigate,
+}))
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => jest.fn(),
 }))
 
 const ContextWrapper = (props: { children: ReactNode }) => {
@@ -25,7 +35,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           accessibility: DatabaseAccessibilityEnum.PRIVATE,
           version: '1',
           type: DatabaseTypeEnum.MYSQL,
-          mode: DatabaseModeEnum.MANAGED,
+          mode: DatabaseModeEnum.CONTAINER,
         },
         setGeneralData: mockSetGeneralData,
         resourcesData: undefined,
@@ -38,12 +48,14 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 }
 
 describe('PageDatabaseCreateGeneralFeature', () => {
-  it('should render successfully', () => {
+  it('should render successfully', async () => {
     const { baseElement } = render(
       <ContextWrapper>
         <PageDatabaseCreateGeneralFeature />
       </ContextWrapper>
     )
+
+    await act(() => {})
     expect(baseElement).toBeTruthy()
   })
 
@@ -68,7 +80,7 @@ describe('PageDatabaseCreateGeneralFeature', () => {
       accessibility: DatabaseAccessibilityEnum.PRIVATE,
       version: '1',
       type: DatabaseTypeEnum.MYSQL,
-      mode: DatabaseModeEnum.MANAGED,
+      mode: DatabaseModeEnum.CONTAINER,
     })
     expect(mockNavigate).toHaveBeenCalledWith(
       '/organization/1/project/2/environment/3/services/create/database/resources'

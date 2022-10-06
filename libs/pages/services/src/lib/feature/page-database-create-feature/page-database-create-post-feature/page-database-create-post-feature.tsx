@@ -1,4 +1,4 @@
-import { DatabaseRequest } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
@@ -33,6 +33,14 @@ export function PageDatabaseCreatePostFeature() {
     navigate(pathCreate + SERVICES_DATABASE_CREATION_RESOURCES_URL)
   }
 
+  const onBack = () => {
+    if (generalData?.mode === DatabaseModeEnum.MANAGED) {
+      gotoGlobalInformations()
+    } else {
+      gotoResources()
+    }
+  }
+
   useEffect(() => {
     !generalData?.name && gotoGlobalInformations()
   }, [generalData, navigate, environmentId, organizationId, projectId, gotoGlobalInformations])
@@ -56,13 +64,16 @@ export function PageDatabaseCreatePostFeature() {
 
       const databaseRequest: DatabaseRequest = {
         name: generalData.name,
-        cpu: cpu,
-        memory: memory,
-        storage: storage,
         type: generalData.type,
         version: generalData.version,
         accessibility: generalData.accessibility,
         mode: generalData.mode,
+      }
+
+      if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
+        databaseRequest.cpu = cpu
+        databaseRequest.memory = memory
+        databaseRequest.storage = storage
       }
 
       dispatch(
@@ -104,7 +115,7 @@ export function PageDatabaseCreatePostFeature() {
           isLoadingCreate={loadingCreate}
           isLoadingCreateAndDeploy={loadingCreateAndDeploy}
           onSubmit={onSubmit}
-          onPrevious={gotoResources}
+          onPrevious={onBack}
           generalData={generalData}
           resourcesData={resourcesData}
           gotoResources={gotoResources}

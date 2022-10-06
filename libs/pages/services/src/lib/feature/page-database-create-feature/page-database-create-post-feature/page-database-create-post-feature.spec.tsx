@@ -33,7 +33,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           accessibility: DatabaseAccessibilityEnum.PRIVATE,
           version: '1',
           type: DatabaseTypeEnum.MYSQL,
-          mode: DatabaseModeEnum.MANAGED,
+          mode: DatabaseModeEnum.CONTAINER,
         },
         setGeneralData: jest.fn(),
         resourcesData: {
@@ -92,7 +92,7 @@ describe('PageDatabaseCreatePostFeature', () => {
         accessibility: DatabaseAccessibilityEnum.PRIVATE,
         cpu: 100000,
         memory: 100,
-        mode: DatabaseModeEnum.MANAGED,
+        mode: DatabaseModeEnum.CONTAINER,
         name: 'test',
         storage: 1024,
         type: DatabaseTypeEnum.MYSQL,

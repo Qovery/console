@@ -1,5 +1,9 @@
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router'
 import { useParams } from 'react-router-dom'
+import { selectDatabaseById } from '@qovery/domains/database'
+import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DATABASE_SETTINGS_DANGER_ZONE_URL,
   DATABASE_SETTINGS_GENERAL_URL,
@@ -8,17 +12,19 @@ import {
   DATABASE_URL,
 } from '@qovery/shared/router'
 import { useDocumentTitle } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store/data'
 import { ROUTER_DATABASE_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 
 export function PageSettingsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
+  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
 
   useDocumentTitle('Application - Settings')
 
   const pathSettings = `${DATABASE_URL(organizationId, projectId, environmentId, databaseId)}${DATABASE_SETTINGS_URL}`
 
-  const links = [
+  let links = [
     {
       title: 'General',
       icon: 'icon-solid-wheel',
@@ -35,6 +41,10 @@ export function PageSettingsFeature() {
       url: pathSettings + DATABASE_SETTINGS_DANGER_ZONE_URL,
     },
   ]
+
+  if (database && database.mode === DatabaseModeEnum.MANAGED) {
+    links = links.filter((link) => link.title !== 'Resources')
+  }
 
   return (
     <PageSettings links={links}>
