@@ -54,13 +54,13 @@ export const generateDatabasesTypesAndVersionOptions = (databaseConfigs: Databas
     versionsStored = [...new Set(versionsStored)]
     // removing twins
     databaseVersionOptions[label] = versionsStored.map((v) => {
-      return { value: v, label: v, icon: <Icon name={v} /> }
+      return { value: v, label: v, icon: <Icon name={v} height="16" width="16" /> }
     })
 
     return {
       label: label,
       value: label,
-      icon: <Icon name={label} />,
+      icon: <Icon name={label} height="16" width="16" />,
     }
   })
 

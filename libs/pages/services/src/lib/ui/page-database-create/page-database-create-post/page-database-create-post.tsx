@@ -59,7 +59,7 @@ export function PageDatabaseCreatePost(props: PageDatabaseCreatePostProps) {
             onClick={props.gotoGlobalInformation}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            iconClassName="text-element-light-lighter-700"
+            className="text-text-500 hover:text-text-700"
           />
         </div>
 
@@ -90,7 +90,7 @@ export function PageDatabaseCreatePost(props: PageDatabaseCreatePostProps) {
             onClick={props.gotoResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            iconClassName="text-element-light-lighter-700"
+            className="text-text-500 hover:text-text-700"
           />
         </div>
 

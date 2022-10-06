@@ -24,6 +24,7 @@ export function InputRadio(props: InputRadioProps) {
     disable = false,
     description,
     formValue,
+    onChange,
   } = props
 
   const [check, setCheck] = useState(isChecked)
@@ -38,7 +39,7 @@ export function InputRadio(props: InputRadioProps) {
 
   const inputChange = (check: boolean, value: string, e: FormEvent<HTMLInputElement>) => {
     if (getValue) getValue(check, value)
-    props.onChange ? props.onChange(e) : setCheck(check)
+    onChange ? onChange(e) : setCheck(check)
   }
 
   return (

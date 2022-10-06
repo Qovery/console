@@ -17,7 +17,7 @@ import PageDatabaseCreatePost from '../../../ui/page-database-create/page-databa
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
 export function PageDatabaseCreatePostFeature() {
-  useDocumentTitle('Post - Create Database')
+  useDocumentTitle('Summary - Create Database')
   const { generalData, resourcesData, setCurrentStep } = useDatabaseCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
