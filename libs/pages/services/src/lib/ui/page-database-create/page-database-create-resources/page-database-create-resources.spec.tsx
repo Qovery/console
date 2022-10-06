@@ -1,9 +1,15 @@
-import { render } from '@testing-library/react'
-import PageDatabaseCreateResources from './page-database-create-resources'
+import { render } from '__tests__/utils/setup-jest'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import PageDatabaseCreateResources, { PageDatabaseCreateResourcesProps } from './page-database-create-resources'
+
+const props: PageDatabaseCreateResourcesProps = {
+  onSubmit: jest.fn(),
+  onBack: jest.fn(),
+}
 
 describe('PageDatabaseCreateResources', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageDatabaseCreateResources />)
+    const { baseElement } = render(wrapWithReactHookForm(<PageDatabaseCreateResources {...props} />))
     expect(baseElement).toBeTruthy()
   })
 })

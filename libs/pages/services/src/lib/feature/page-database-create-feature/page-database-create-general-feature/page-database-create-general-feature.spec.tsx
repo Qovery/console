@@ -70,6 +70,8 @@ describe('PageDatabaseCreateGeneralFeature', () => {
       type: DatabaseTypeEnum.MYSQL,
       mode: DatabaseModeEnum.MANAGED,
     })
-    expect(mockNavigate).toHaveBeenCalled()
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/organization/1/project/2/environment/3/services/create/database/resources'
+    )
   })
 })
