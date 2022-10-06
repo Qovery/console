@@ -1,9 +1,12 @@
+import { ReactNode } from 'react'
+
 export interface EmptyStateProps {
   title: string
   description?: string
   className?: string
   imageWidth?: string
   dataTestId?: string
+  children?: ReactNode
 }
 
 export function EmptyState(props: EmptyStateProps) {
@@ -24,6 +27,7 @@ export function EmptyState(props: EmptyStateProps) {
             {props.description}
           </p>
         )}
+        {props.children}
       </div>
     </div>
   )

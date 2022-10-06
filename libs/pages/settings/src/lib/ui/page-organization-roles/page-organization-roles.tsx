@@ -11,6 +11,7 @@ import {
   BlockContent,
   Button,
   ButtonSize,
+  EmptyState,
   IconAwesomeEnum,
   InputText,
   InputTextArea,
@@ -83,68 +84,71 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
           <div data-testid="custom-roles-loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
+        ) : customRoles && customRoles.length > 0 ? (
+          <div>
+            <Tabs
+              className="mb-5"
+              items={customRoles.map((customRoles: OrganizationCustomRole) => ({
+                name: customRoles.name,
+                active: currentRole?.name === customRoles.name,
+                onClick: () => setCurrentRole(customRoles),
+              }))}
+            />
+            <form onSubmit={onSubmit}>
+              <div className="max-w-content-with-navigation-left">
+                <BlockContent title="General informations">
+                  <Controller
+                    name="name"
+                    control={control}
+                    rules={{ required: 'Please enter a name.' }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-name"
+                        className="mb-3"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Name"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => (
+                      <InputTextArea
+                        dataTestId="input-description"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Description"
+                      />
+                    )}
+                  />
+                </BlockContent>
+              </div>
+              {currentRole?.project_permissions && <TableProject projects={currentRole.project_permissions} />}
+              <div className="flex gap-3 justify-end mt-6">
+                <Button
+                  dataTestId="submit-button"
+                  className="btn--no-min-w"
+                  type="submit"
+                  size={ButtonSize.XLARGE}
+                  disabled={!formState.isValid}
+                  loading={loadingForm}
+                >
+                  Save
+                </Button>
+              </div>
+            </form>
+          </div>
         ) : (
-          customRoles &&
-          customRoles.length > 0 && (
-            <div>
-              <Tabs
-                className="mb-5"
-                items={customRoles.map((customRoles: OrganizationCustomRole) => ({
-                  name: customRoles.name,
-                  active: currentRole?.name === customRoles.name,
-                  onClick: () => setCurrentRole(customRoles),
-                }))}
-              />
-              <form onSubmit={onSubmit}>
-                <div className="max-w-content-with-navigation-left">
-                  <BlockContent title="General informations">
-                    <Controller
-                      name="name"
-                      control={control}
-                      rules={{ required: 'Please enter a name.' }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputText
-                          dataTestId="input-name"
-                          className="mb-3"
-                          name={field.name}
-                          onChange={field.onChange}
-                          value={field.value}
-                          label="Name"
-                          error={error?.message}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="description"
-                      control={control}
-                      render={({ field }) => (
-                        <InputTextArea
-                          dataTestId="input-description"
-                          name={field.name}
-                          onChange={field.onChange}
-                          value={field.value}
-                          label="Description"
-                        />
-                      )}
-                    />
-                  </BlockContent>
-                </div>
-                {currentRole?.project_permissions && <TableProject projects={currentRole.project_permissions} />}
-                <div className="flex gap-3 justify-end mt-6">
-                  <Button
-                    dataTestId="submit-button"
-                    className="btn--no-min-w"
-                    type="submit"
-                    size={ButtonSize.XLARGE}
-                    disabled={!formState.isValid}
-                    loading={loadingForm}
-                  >
-                    Save
-                  </Button>
-                </div>
-              </form>
-            </div>
-          )
+          <EmptyState title="Create your first custom role" imageWidth="w-[160px]">
+            <Button className="mt-5" onClick={() => console.log('hello')}>
+              Create role
+            </Button>
+          </EmptyState>
         )}
       </div>
     </div>
