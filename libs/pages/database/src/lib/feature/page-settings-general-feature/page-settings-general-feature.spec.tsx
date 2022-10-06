@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
 import * as storeDatabase from '@qovery/domains/database'
@@ -69,18 +70,18 @@ describe('PageSettingsGeneralFeature', () => {
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    getByTestId('submit-button').click()
 
-    const cloneApplication = handleSubmit(
-      { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE },
-      mockDatabase
-    )
+    await waitFor(() => {
+      const cloneApplication = handleSubmit(
+        { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE },
+        mockDatabase
+      )
 
-    expect(editDatabaseSpy).toHaveBeenCalledWith({
-      databaseId: mockDatabase.id,
-      data: cloneApplication,
+      expect(editDatabaseSpy).toHaveBeenCalledWith({
+        databaseId: mockDatabase.id,
+        data: cloneApplication,
+      })
     })
   })
 })

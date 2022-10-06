@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act, waitFor } from '@testing-library/react'
 import { getByTestId, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
@@ -71,19 +71,19 @@ describe('PageDatabaseCreateGeneralFeature', () => {
     const button = getByTestId(baseElement, 'button-submit')
     expect(button).not.toBeDisabled()
 
-    await act(() => {
-      button.click()
-    })
+    button.click()
 
-    expect(mockSetGeneralData).toHaveBeenCalledWith({
-      name: 'test',
-      accessibility: DatabaseAccessibilityEnum.PRIVATE,
-      version: '1',
-      type: DatabaseTypeEnum.MYSQL,
-      mode: DatabaseModeEnum.CONTAINER,
+    await waitFor(() => {
+      expect(mockSetGeneralData).toHaveBeenCalledWith({
+        name: 'test',
+        accessibility: DatabaseAccessibilityEnum.PRIVATE,
+        version: '1',
+        type: DatabaseTypeEnum.MYSQL,
+        mode: DatabaseModeEnum.CONTAINER,
+      })
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/organization/1/project/2/environment/3/services/create/database/resources'
+      )
     })
-    expect(mockNavigate).toHaveBeenCalledWith(
-      '/organization/1/project/2/environment/3/services/create/database/resources'
-    )
   })
 })

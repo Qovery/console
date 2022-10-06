@@ -1,4 +1,4 @@
-import { act, getByTestId } from '@testing-library/react'
+import { getByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { GitProviderEnum } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
@@ -111,24 +111,24 @@ describe('PageApplicationPostFeature', () => {
 
     const submitButton = getByTestId(baseElement, 'button-create')
 
-    await act(() => {
-      submitButton.click()
-    })
+    submitButton.click()
 
-    expect(createApplicationSpy).toHaveBeenCalledWith({
-      environmentId: '',
-      data: {
-        name: 'test',
-        ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
-        cpu: 500,
-        memory: 512,
-        min_running_instances: 1,
-        max_running_instances: 12,
-        build_mode: 'BUILDPACKS',
-        git_repository: { url: 'https://github.com/Qovery/test_http_server.git', root_path: '/', branch: 'master' },
-        buildpack_language: 'JAVA',
-      },
-      serviceType: 'APPLICATION',
+    await waitFor(() => {
+      expect(createApplicationSpy).toHaveBeenCalledWith({
+        environmentId: '',
+        data: {
+          name: 'test',
+          ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
+          cpu: 500,
+          memory: 512,
+          min_running_instances: 1,
+          max_running_instances: 12,
+          build_mode: 'BUILDPACKS',
+          git_repository: { url: 'https://github.com/Qovery/test_http_server.git', root_path: '/', branch: 'master' },
+          buildpack_language: 'JAVA',
+        },
+        serviceType: 'APPLICATION',
+      })
     })
   })
 
@@ -163,27 +163,26 @@ describe('PageApplicationPostFeature', () => {
     )
 
     const submitButton = getByTestId(baseElement, 'button-create')
+    submitButton.click()
 
-    await act(() => {
-      submitButton.click()
-    })
-
-    expect(createApplicationSpy).toHaveBeenCalledWith({
-      environmentId: '',
-      data: {
-        name: 'test',
-        ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
-        cpu: 500,
-        memory: 512,
-        min_running_instances: 1,
-        max_running_instances: 12,
-        arguments: ['test'],
-        registry_id: '123',
-        image_name: '456',
-        tag: '789',
-        entrypoint: '/',
-      },
-      serviceType: 'CONTAINER',
+    await waitFor(() => {
+      expect(createApplicationSpy).toHaveBeenCalledWith({
+        environmentId: '',
+        data: {
+          name: 'test',
+          ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
+          cpu: 500,
+          memory: 512,
+          min_running_instances: 1,
+          max_running_instances: 12,
+          arguments: ['test'],
+          registry_id: '123',
+          image_name: '456',
+          tag: '789',
+          entrypoint: '/',
+        },
+        serviceType: 'CONTAINER',
+      })
     })
   })
 })

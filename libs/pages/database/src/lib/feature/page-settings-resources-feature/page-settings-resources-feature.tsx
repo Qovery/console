@@ -59,7 +59,6 @@ export function PageSettingsResourcesFeature() {
 
     setLoading(true)
     const cloneDatabase = handleSubmit(data, database, memorySize, storageSize)
-
     dispatch(
       editDatabase({
         databaseId: databaseId,

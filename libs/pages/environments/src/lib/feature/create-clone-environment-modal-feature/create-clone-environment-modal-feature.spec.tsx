@@ -1,4 +1,4 @@
-import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
@@ -81,17 +81,17 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       })
 
       const submitButton = getByTestId(baseElement, 'submit-button')
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
+      submitButton.click()
 
-      expect(spy).toHaveBeenCalledWith({
-        projectId: '1',
-        environmentRequest: {
-          cluster: mockClusters[2].id,
-          mode: EnvironmentModeEnum.STAGING,
-          name: 'test',
-        },
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith({
+          projectId: '1',
+          environmentRequest: {
+            cluster: mockClusters[2].id,
+            mode: EnvironmentModeEnum.STAGING,
+            name: 'test',
+          },
+        })
       })
     })
   })
@@ -124,17 +124,17 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       })
 
       const submitButton = getByTestId(baseElement, 'submit-button')
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
+      submitButton.click()
 
-      expect(spy).toHaveBeenCalledWith({
-        environmentId: mockEnv.id,
-        cloneRequest: {
-          cluster_id: mockClusters[2].id,
-          mode: EnvironmentModeEnum.STAGING,
-          name: 'test',
-        },
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith({
+          environmentId: mockEnv.id,
+          cloneRequest: {
+            cluster_id: mockClusters[2].id,
+            mode: EnvironmentModeEnum.STAGING,
+            name: 'test',
+          },
+        })
       })
     })
   })

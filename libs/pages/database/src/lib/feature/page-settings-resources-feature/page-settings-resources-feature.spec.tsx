@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react'
 import { ResizeObserver } from '__tests__/utils/resize-observer'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as storeDatabase from '@qovery/domains/database'
@@ -89,20 +90,20 @@ describe('PageSettingsResourcesFeature', () => {
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    getByTestId('submit-button').click()
 
-    expect(editDatabaseSpy).toHaveBeenCalledWith({
-      databaseId: mockDatabase.id,
-      data: {
-        ...mockDatabase,
-        ...{
-          memory: 512,
-          storage: 512,
-          cpu: 1,
+    await waitFor(async () => {
+      expect(editDatabaseSpy).toHaveBeenCalledWith({
+        databaseId: mockDatabase.id,
+        data: {
+          ...mockDatabase,
+          ...{
+            memory: 512,
+            storage: 512,
+            cpu: 1,
+          },
         },
-      },
+      })
     })
   })
 })

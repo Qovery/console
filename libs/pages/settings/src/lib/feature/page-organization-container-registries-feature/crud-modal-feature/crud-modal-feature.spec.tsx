@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
@@ -82,25 +82,25 @@ describe('CrudModalFeature', () => {
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    getByTestId('submit-button').click()
 
-    const mockContainerRegistriesConfig = mockContainerRegistries[0]
+    await waitFor(() => {
+      const mockContainerRegistriesConfig = mockContainerRegistries[0]
 
-    expect(editOrganizationContainerRegistrySpy).toHaveBeenCalledWith({
-      data: {
-        name: mockContainerRegistriesConfig.name,
-        description: mockContainerRegistriesConfig.description,
-        kind: mockContainerRegistriesConfig.kind,
-        url: mockContainerRegistriesConfig.url,
-        config: {
-          username: 'hello',
-          password: 'password',
+      expect(editOrganizationContainerRegistrySpy).toHaveBeenCalledWith({
+        data: {
+          name: mockContainerRegistriesConfig.name,
+          description: mockContainerRegistriesConfig.description,
+          kind: mockContainerRegistriesConfig.kind,
+          url: mockContainerRegistriesConfig.url,
+          config: {
+            username: 'hello',
+            password: 'password',
+          },
         },
-      },
-      containerRegistryId: mockContainerRegistriesConfig.id,
-      organizationId: '',
+        containerRegistryId: mockContainerRegistriesConfig.id,
+        organizationId: '',
+      })
     })
   })
 
@@ -138,24 +138,24 @@ describe('CrudModalFeature', () => {
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    getByTestId('submit-button').click()
 
-    const mockContainerRegistriesConfig = mockContainerRegistries[0]
+    await waitFor(() => {
+      const mockContainerRegistriesConfig = mockContainerRegistries[0]
 
-    expect(postOrganizationContainerRegistry).toHaveBeenCalledWith({
-      data: {
-        name: 'my-registry',
-        kind: mockContainerRegistriesConfig.kind,
-        description: undefined,
-        url: undefined,
-        config: {
-          username: 'hello',
-          password: 'password',
+      expect(postOrganizationContainerRegistry).toHaveBeenCalledWith({
+        data: {
+          name: 'my-registry',
+          kind: mockContainerRegistriesConfig.kind,
+          description: undefined,
+          url: undefined,
+          config: {
+            username: 'hello',
+            password: 'password',
+          },
         },
-      },
-      organizationId: '',
+        organizationId: '',
+      })
     })
   })
 })

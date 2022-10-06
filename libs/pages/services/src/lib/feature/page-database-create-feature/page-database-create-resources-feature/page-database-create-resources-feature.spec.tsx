@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act, waitFor } from '@testing-library/react'
 import ResizeObserver from '__tests__/utils/resize-observer'
 import { getByTestId, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
@@ -81,17 +81,17 @@ describe('PageDatabaseCreateResourcesFeature', () => {
     const button = getByTestId(baseElement, 'button-submit')
     expect(button).not.toBeDisabled()
 
-    await act(() => {
-      button.click()
-    })
+    button.click()
 
-    expect(mockSetResourcesData).toHaveBeenCalledWith({
-      storage: 1,
-      cpu: [100],
-      storage_unit: 'GB',
-      memory: 100,
-      memory_unit: 'MB',
+    await waitFor(() => {
+      expect(mockSetResourcesData).toHaveBeenCalledWith({
+        storage: 1,
+        cpu: [100],
+        storage_unit: 'GB',
+        memory: 100,
+        memory_unit: 'MB',
+      })
+      expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services/create/database/post')
     })
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services/create/database/post')
   })
 })
