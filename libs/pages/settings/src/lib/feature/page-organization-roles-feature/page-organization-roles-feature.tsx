@@ -1,11 +1,17 @@
+import { OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { fetchCustomRoles, selectCustomRoles, selectCustomRolesLoadingStatus } from '@qovery/domains/organization'
+import { fetchCustomRoles, selectOrganizationById } from '@qovery/domains/organization'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
+
+export const handleSubmit = (data: any, organization: OrganizationEntity) => {
+  return organization
+}
 
 export function PageOrganizationRolesFeature() {
   const { organizationId = '' } = useParams()
@@ -13,9 +19,13 @@ export function PageOrganizationRolesFeature() {
   useDocumentTitle('Roles & permissions - Organization settings')
 
   const [loading, setLoading] = useState(false)
-  const customRoles = useSelector((state: RootState) => selectCustomRoles(state))
-  const customRolesLoadingStatus = useSelector((state: RootState) => selectCustomRolesLoadingStatus(state))
+  const [currentRole, setCurrentRole] = useState<OrganizationCustomRole | undefined>()
 
+  const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
+  const customRolesLoadingStatus = useSelector(
+    (state: RootState) => selectOrganizationById(state, organizationId)?.customRoles?.loadingStatus
+  )
+  const customRoles = organization?.customRoles?.items
   const dispatch = useDispatch<AppDispatch>()
 
   const methods = useForm({
@@ -23,21 +33,41 @@ export function PageOrganizationRolesFeature() {
   })
 
   useEffect(() => {
-    if (customRolesLoadingStatus !== 'loaded') dispatch(fetchCustomRoles({ organizationId }))
-  }, [dispatch, customRolesLoadingStatus, organizationId])
+    if (organization && customRolesLoadingStatus !== 'loaded') dispatch(fetchCustomRoles({ organizationId }))
+  }, [organization, customRolesLoadingStatus, dispatch, organizationId])
+
+  useEffect(() => {
+    if (customRoles) setCurrentRole(customRoles[0])
+  }, [customRoles])
 
   const onSubmit = methods.handleSubmit((data) => {
-    console.log(data)
+    if (data && organization) {
+      setLoading(false)
 
-    setLoading(false)
+      console.log(organization?.customRoles?.items)
+      console.log(data)
+      // const cloneOrganization = handleSubmit(data, organization)
+
+      // dispatch(
+      //   editCustomRoles({
+      //     organizationId,
+      //     data: {} as any,
+      //   })
+      // )
+      //   .unwrap()
+      //   .then(() => setLoading(false))
+      //   .catch(() => setLoading(false))
+    }
   })
 
   return (
     <FormProvider {...methods}>
       <PageOrganizationRoles
         customRoles={customRoles}
+        currentRole={currentRole}
+        setCurrentRole={setCurrentRole}
         onSubmit={onSubmit}
-        loading={customRolesLoadingStatus}
+        loading={customRolesLoadingStatus || 'not loaded'}
         loadingForm={loading}
       />
     </FormProvider>

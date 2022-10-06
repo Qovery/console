@@ -1,5 +1,10 @@
-import { OrganizationCustomRole } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import {
+  OrganizationCustomRole,
+  OrganizationCustomRoleProjectPermission,
+  OrganizationCustomRoleProjectPermissions,
+  OrganizationCustomRoleUpdateRequestPermissions,
+} from 'qovery-typescript-axios'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, IconAwesomeEnum, LoaderSpinner, Tabs } from '@qovery/shared/ui'
@@ -7,20 +12,57 @@ import TableProject from './table-project/table-project'
 
 export interface PageOrganizationRolesProps {
   onSubmit: () => void
+  setCurrentRole: Dispatch<SetStateAction<OrganizationCustomRole | undefined>>
   customRoles?: OrganizationCustomRole[]
+  currentRole?: OrganizationCustomRole
   loading?: LoadingStatus
   loadingForm?: boolean
 }
 
-export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
-  const { customRoles, loading, loadingForm, onSubmit } = props
+export function getValue(
+  cellKey: OrganizationCustomRoleProjectPermission,
+  permission?: OrganizationCustomRoleProjectPermission,
+  isAdmin = false
+) {
+  let result = OrganizationCustomRoleProjectPermission.NO_ACCESS
 
-  const { formState } = useFormContext()
-  const [currentRole, setCurrentRole] = useState<OrganizationCustomRole | undefined>()
+  if (isAdmin) result = OrganizationCustomRoleProjectPermission.MANAGER
+
+  if (
+    cellKey === OrganizationCustomRoleProjectPermission[cellKey] &&
+    permission === OrganizationCustomRoleProjectPermission[cellKey]
+  ) {
+    result = OrganizationCustomRoleProjectPermission[cellKey]
+  }
+
+  return result
+}
+
+export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
+  const { currentRole, customRoles, loading, loadingForm, onSubmit, setCurrentRole } = props
+
+  const { formState, reset } = useFormContext()
 
   useEffect(() => {
-    if (customRoles) setCurrentRole(customRoles[0])
-  }, [customRoles])
+    const result = {} as any
+
+    currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
+      const permission = {} as any
+
+      project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
+        permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
+
+        permission[currentPermission.environment_type || ''] = getValue(
+          OrganizationCustomRoleProjectPermission.MANAGER,
+          currentPermission.permission
+        )
+      })
+
+      result[project.project_name || ''] = permission
+    })
+
+    reset(result)
+  }, [currentRole, reset])
 
   return (
     <div className="flex flex-col justify-between w-full">

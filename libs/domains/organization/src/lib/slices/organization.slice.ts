@@ -13,6 +13,7 @@ import {
   ContainerRegistryResponse,
   OrganizationCustomRole,
   OrganizationCustomRoleApi,
+  OrganizationCustomRoleUpdateRequest,
   OrganizationEditRequest,
   OrganizationMainCallsApi,
   OrganizationRequest,
@@ -112,20 +113,29 @@ export const fetchAvailableContainerRegistry = createAsyncThunk('availableContai
   return result.data.results as AvailableContainerRegistryResponse[]
 })
 
-export const fetchCustomRoles = createAsyncThunk('customRole/fetch', async (payload: { organizationId: string }) => {
+export const fetchCustomRoles = createAsyncThunk('customRoles/fetch', async (payload: { organizationId: string }) => {
   // fetch custom roles
   const result = await customRolesApi.listOrganizationCustomRoles(payload.organizationId)
   return result.data.results as OrganizationCustomRole[]
 })
 
+export const editCustomRoles = createAsyncThunk(
+  'customRoles/edit',
+  async (payload: { organizationId: string; customRoleId: string; data: OrganizationCustomRoleUpdateRequest }) => {
+    // fetch custom roles
+    const result = await customRolesApi.editOrganizationCustomRole(
+      payload.organizationId,
+      // payload.customRoleId,
+      payload.data
+    )
+    return result.data as OrganizationCustomRole
+  }
+)
+
 export const initialOrganizationState: OrganizationState = organizationAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
   availableContainerRegistries: {
-    loadingStatus: 'not loaded',
-    items: [],
-  },
-  customRoles: {
     loadingStatus: 'not loaded',
     items: [],
   },
@@ -297,16 +307,53 @@ export const organizationSlice = createSlice({
         }
       )
       // fetch custom roles
-      .addCase(fetchCustomRoles.pending, (state: OrganizationState) => {
-        state.customRoles.loadingStatus = 'loading'
-      })
-      .addCase(
-        fetchCustomRoles.fulfilled,
-        (state: OrganizationState, action: PayloadAction<OrganizationCustomRole[]>) => {
-          state.customRoles.loadingStatus = 'loaded'
-          state.customRoles.items = action.payload
+      .addCase(fetchCustomRoles.pending, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            customRoles: {
+              loadingStatus: 'loaded',
+              items: state.entities[action.meta.arg.organizationId]?.customRoles?.items || [],
+            },
+          },
         }
-      )
+
+        organizationAdapter.updateOne(state, update)
+      })
+      .addCase(fetchCustomRoles.fulfilled, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            customRoles: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
+      })
+      // edit custom roles
+      .addCase(editCustomRoles.fulfilled, (state: OrganizationState, action) => {
+        const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
+        const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
+        customRoles[index] = action.payload
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            customRoles: {
+              loadingStatus: 'loaded',
+              items: customRoles,
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Role updated`)
+      })
+      .addCase(editCustomRoles.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
+      })
   },
 })
 
@@ -334,11 +381,4 @@ export const selectAvailableContainerRegistry = createSelector(
 export const selectAvailableContainerRegistryLoadingStatus = createSelector(
   getOrganizationState,
   (state) => state.availableContainerRegistries.loadingStatus
-)
-
-export const selectCustomRoles = createSelector(getOrganizationState, (state) => state.customRoles.items)
-
-export const selectCustomRolesLoadingStatus = createSelector(
-  getOrganizationState,
-  (state) => state.customRoles.loadingStatus
 )
