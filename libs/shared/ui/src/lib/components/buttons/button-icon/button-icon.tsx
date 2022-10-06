@@ -44,7 +44,7 @@ export function ButtonIcon(props: ButtonIconProps) {
     iconClassName = '',
   } = props
 
-  const defineClass = `btn btn-icon ${size ? `btn--${size}` : ''} ${style ? `btn-icon--${style}` : ''} ${
+  const defineClass = `btn btn-icon group ${size ? `btn--${size}` : ''} ${style ? `btn-icon--${style}` : ''} ${
     disabled || loading ? 'btn--disabled' : ''
   } ${active ? 'btn--active' : ''} ${className}`
 

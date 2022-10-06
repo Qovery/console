@@ -61,6 +61,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
             required: 'Please enter a name.',
             validate: (value) => value === name || 'Please enter the right name.',
           }}
+          defaultValue=""
           render={({ field, fieldState: { error } }) => (
             <InputTextSmall
               className="mb-6"

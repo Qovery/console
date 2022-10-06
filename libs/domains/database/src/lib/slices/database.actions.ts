@@ -11,7 +11,7 @@ export const postDatabaseActionsRestart = createAsyncThunk<any, { environmentId:
   async (data, { dispatch }) => {
     try {
       const response = await databaseActionApi.restartDatabase(data.databaseId)
-      if (response.status === 202) {
+      if (response.status === 202 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message
@@ -31,12 +31,12 @@ export const postDatabaseActionsDeploy = createAsyncThunk<any, { environmentId: 
   async (data, { dispatch }) => {
     try {
       const response = await databaseActionApi.deployDatabase(data.databaseId)
-      if (response.status === 202) {
+      if (response.status === 202 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your database is deploying')
       }
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your database is deploying')
 
       return response
     } catch (err) {
@@ -51,7 +51,7 @@ export const postDatabaseActionsStop = createAsyncThunk<any, { environmentId: st
   async (data, { dispatch }) => {
     try {
       const response = await databaseActionApi.stopDatabase(data.databaseId)
-      if (response.status === 202) {
+      if (response.status === 202 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message
@@ -71,7 +71,7 @@ export const deleteDatabaseAction = createAsyncThunk<any, { environmentId: strin
   async (data, { dispatch }) => {
     try {
       const response = await databaseMainCallsApi.deleteDatabase(data.databaseId)
-      if (response.status === 204) {
+      if (response.status === 204 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message

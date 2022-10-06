@@ -96,7 +96,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
             onClick={props.gotoGlobalInformation}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            iconClassName="text-element-light-lighter-700"
+            className="text-text-500 hover:text-text-700"
           />
         </div>
 
@@ -127,7 +127,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
             onClick={props.gotoResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            iconClassName="text-element-light-lighter-700"
+            className="text-text-500 hover:text-text-700"
           />
         </div>
 
@@ -154,7 +154,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
             onClick={props.gotoPorts}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            iconClassName="text-element-light-lighter-700"
+            className="text-text-500 hover:text-text-700"
           />
         </div>
       </div>

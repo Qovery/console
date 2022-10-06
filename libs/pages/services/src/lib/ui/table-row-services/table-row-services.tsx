@@ -172,11 +172,11 @@ export function TableRowServices(props: TableRowServicesProps) {
         </div>
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
-            <div className="flex items-center">
-              <p className="flex items-center leading-7 text-text-400 text-sm">
-                <StatusLabel status={data.status && data.status.state} />
+            <div className="flex items-center gap-3">
+              <p className="flex items-center gap-3 leading-7 text-text-400 text-sm">
+                {data.status && data.status.state && <StatusLabel status={data.status && data.status.state} />}
                 {data.status?.last_deployment_date && (
-                  <span className="text-xs text-text-300 mx-3 font-medium">
+                  <span className="text-xs text-text-300 font-medium">
                     {timeAgo(new Date(data.status.last_deployment_date))} ago
                   </span>
                 )}

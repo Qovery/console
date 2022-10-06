@@ -13,6 +13,7 @@ import {
   DatabaseDeploymentHistoryApi,
   DatabaseMainCallsApi,
   DatabaseMetricsApi,
+  DatabaseRequest,
   DatabasesApi,
   DeploymentHistoryDatabase,
   Status,
@@ -41,6 +42,15 @@ export const fetchDatabases = createAsyncThunk<Database[], { environmentId: stri
     }
 
     return response.data.results as Database[]
+  }
+)
+
+export const createDatabase = createAsyncThunk<Database, { environmentId: string; databaseRequest: DatabaseRequest }>(
+  'databases/create',
+  async (data) => {
+    const response = await databasesApi.createDatabase(data.environmentId, data.databaseRequest)
+
+    return response.data as DatabaseEntity
   }
 )
 
@@ -179,6 +189,22 @@ export const databasesSlice = createSlice({
       .addCase(fetchDatabase.rejected, (state: DatabasesState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+      })
+      // create
+      .addCase(createDatabase.fulfilled, (state: DatabasesState, action) => {
+        const database = action.payload
+        databasesAdapter.addOne(state, database)
+        state.error = null
+
+        state.joinEnvDatabase = addOneToManyRelation(database.environment?.id, database.id, {
+          ...state.joinEnvDatabase,
+        })
+        toast(ToastEnum.SUCCESS, `Your database ${action.payload.name} has been created`)
+      })
+      .addCase(createDatabase.rejected, (state: DatabasesState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+        toastError(action.error)
       })
       // edit database
       .addCase(editDatabase.pending, (state: DatabasesState) => {

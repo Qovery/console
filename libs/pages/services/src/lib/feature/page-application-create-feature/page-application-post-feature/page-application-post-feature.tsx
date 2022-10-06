@@ -26,7 +26,7 @@ import PageApplicationPost from '../../../ui/page-application-create/page-applic
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationPostFeature() {
-  useDocumentTitle('Post - Create Application')
+  useDocumentTitle('Summary - Create Application')
   const { generalData, portData, resourcesData, setCurrentStep } = useApplicationContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
