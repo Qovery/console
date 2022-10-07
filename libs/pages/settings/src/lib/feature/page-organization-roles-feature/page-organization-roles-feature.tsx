@@ -1,7 +1,10 @@
 import {
+  EnvironmentModeEnum,
   OrganizationCustomRole,
+  OrganizationCustomRoleProjectPermission,
   OrganizationCustomRoleProjectPermissions,
   OrganizationCustomRoleUpdateRequest,
+  OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
@@ -15,6 +18,25 @@ import PageOrganizationRoles from '../../ui/page-organization-roles/page-organiz
 export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomRole) => {
   const cloneCurrentRole = Object.assign({}, currentRole)
 
+  const defaultAdmin: OrganizationCustomRoleUpdateRequestPermissions[] = [
+    {
+      environment_type: EnvironmentModeEnum.DEVELOPMENT,
+      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+    },
+    {
+      environment_type: EnvironmentModeEnum.PREVIEW,
+      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+    },
+    {
+      environment_type: EnvironmentModeEnum.STAGING,
+      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+    },
+    {
+      environment_type: EnvironmentModeEnum.PRODUCTION,
+      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+    },
+  ]
+
   // update project permissions
   const projectPermissions = currentRole.project_permissions?.map((project) => {
     const currentProject = data['project_permissions'][project.project_id || '']
@@ -25,11 +47,13 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
       }))
       .filter((c) => c.environment_type !== 'ADMIN')
 
+    const isAdmin = false
+
     return {
       project_id: project.project_id,
       project_name: project.project_name,
-      is_admin: false,
-      permissions: permissions,
+      is_admin: isAdmin ? true : false,
+      permissions: isAdmin ? defaultAdmin : permissions,
     }
   })
 
