@@ -116,7 +116,7 @@ export function PageDatabaseCreateGeneralFeature() {
         description: 'Need help? You may find these links useful',
         links: [
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#general',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/database/#create-a-database',
             linkLabel: 'How to configure my database',
             external: true,
           },
