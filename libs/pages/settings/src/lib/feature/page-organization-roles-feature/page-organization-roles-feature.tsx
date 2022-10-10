@@ -1,6 +1,7 @@
 import {
   EnvironmentModeEnum,
   OrganizationCustomRole,
+  OrganizationCustomRoleClusterPermissions,
   OrganizationCustomRoleProjectPermission,
   OrganizationCustomRoleProjectPermissions,
   OrganizationCustomRoleUpdateRequest,
@@ -14,7 +15,7 @@ import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
 
-export const defaultPermissionValues = (permission: string) => {
+export const defaultProjectPermission = (permission: string) => {
   return [
     {
       environment_type: EnvironmentModeEnum.DEVELOPMENT,
@@ -54,11 +55,23 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
       project_id: project.project_id,
       project_name: project.project_name,
       is_admin: isAdmin,
-      permissions: isAdmin ? defaultPermissionValues(OrganizationCustomRoleProjectPermission.MANAGER) : permissions,
+      permissions: isAdmin ? defaultProjectPermission(OrganizationCustomRoleProjectPermission.MANAGER) : permissions,
     }
   })
 
   cloneCurrentRole.project_permissions = projectPermissions as OrganizationCustomRoleProjectPermissions[]
+
+  // update cluster permissions
+  const clusterPermissions = currentRole.cluster_permissions?.map((cluster) => {
+    const currentClusterPermission = data['cluster_permissions'][cluster.cluster_id || '']
+
+    return {
+      cluster_id: cluster.cluster_id,
+      permission: currentClusterPermission,
+    }
+  })
+
+  cloneCurrentRole.cluster_permissions = clusterPermissions as OrganizationCustomRoleClusterPermissions[]
 
   return cloneCurrentRole
 }

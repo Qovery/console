@@ -1,5 +1,6 @@
 import {
   OrganizationCustomRole,
+  OrganizationCustomRoleClusterPermissions,
   OrganizationCustomRoleProjectPermission,
   OrganizationCustomRoleProjectPermissions,
   OrganizationCustomRoleUpdateRequestPermissions,
@@ -18,8 +19,11 @@ import {
   LoaderSpinner,
   Tabs,
 } from '@qovery/shared/ui'
-import { defaultPermissionValues } from '../../feature/page-organization-roles-feature/page-organization-roles-feature'
-import TableProject from './table-project/table-project'
+import { defaultProjectPermission } from '../../feature/page-organization-roles-feature/page-organization-roles-feature'
+import RowCluster from './row-cluster/row-cluster'
+import RowProject from './row-project/row-project'
+import TableClusters from './table-clusters/table-clusters'
+import Table from './table/table'
 
 export interface PageOrganizationRolesProps {
   onSubmit: () => void
@@ -49,11 +53,12 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
 
   useEffect(() => {
     // set default values
-    const result: any = {
+    const result = {
       project_permissions: {},
+      cluster_permissions: {},
       name: currentRole?.name,
       description: currentRole?.description,
-    }
+    } as any
 
     currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
       const permission = {} as { [key: string]: string }
@@ -66,7 +71,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
       } else {
         if (project.is_admin) {
           for (let i = 0; i < 4; i++) {
-            const currentPermission = defaultPermissionValues('ADMIN')[i]
+            const currentPermission = defaultProjectPermission('ADMIN')[i]
             permission['ADMIN'] = 'ADMIN'
             permission[currentPermission.environment_type || ''] = 'ADMIN'
           }
@@ -74,6 +79,10 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
       }
 
       result['project_permissions'][project.project_id || ''] = permission
+    })
+
+    currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissions) => {
+      result['cluster_permissions'][cluster.cluster_id || ''] = cluster.permission
     })
 
     reset(result)
@@ -139,7 +148,25 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                   />
                 </BlockContent>
               </div>
-              {currentRole?.project_permissions && <TableProject projects={currentRole.project_permissions} />}
+              {currentRole?.cluster_permissions && (
+                <TableClusters clusters={currentRole?.cluster_permissions}>
+                  <div>
+                    {currentRole.cluster_permissions.map((cluster: OrganizationCustomRoleClusterPermissions) => (
+                      <RowCluster key={cluster.cluster_id} cluster={cluster} />
+                    ))}
+                  </div>
+                </TableClusters>
+              )}
+              {currentRole?.project_permissions && (
+                <Table
+                  title="Project level permissions"
+                  headArray={['Admin', 'Manager', 'Deployer', 'Viewer', 'No Access']}
+                >
+                  {currentRole.project_permissions.map((project: OrganizationCustomRoleProjectPermissions) => (
+                    <RowProject key={project.project_id} project={project} />
+                  ))}
+                </Table>
+              )}
               <div className="flex gap-3 justify-end mt-6">
                 <Button
                   dataTestId="submit-button"

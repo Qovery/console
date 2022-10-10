@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
-import Row from './row'
+import RowProject from './row-project'
 
-describe('Row', () => {
+describe('RowProject', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Row />)
+    const { baseElement } = render(<RowProject />)
     expect(baseElement).toBeTruthy()
   })
 })
