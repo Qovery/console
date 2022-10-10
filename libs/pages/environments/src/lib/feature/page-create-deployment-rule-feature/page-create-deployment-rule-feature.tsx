@@ -1,4 +1,4 @@
-import { Cluster, ProjectDeploymentRuleRequest } from 'qovery-typescript-axios'
+import { Cluster, ProjectDeploymentRuleRequest, Value } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -41,8 +41,7 @@ export function PageCreateDeploymentRuleFeature() {
       const fields = data as ProjectDeploymentRuleRequest
       fields.start_time = `1970-01-01T${fields.start_time}:00.000Z`
       fields.stop_time = `1970-01-01T${fields.stop_time}:00.000Z`
-
-      fields.weekdays = data['weekdays']
+      fields.weekdays = data['weekdays'][0].value ? data['weekdays'].map((day: Value) => day.value) : data['weekdays']
 
       dispatch(postDeploymentRule({ projectId, data: fields }))
         .unwrap()
