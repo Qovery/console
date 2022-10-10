@@ -7,9 +7,6 @@ export interface TableProjectProps {
 
 export function TableProject(props: TableProjectProps) {
   const { projects } = props
-  // const { control } = useFormContext()
-
-  // console.log(projects[4])
 
   return (
     <div className="border border-element-light-lighter-400 border-b-0 rounded text-xs text-text-600">

@@ -4,7 +4,6 @@ import {
   OrganizationCustomRoleProjectPermission,
   OrganizationCustomRoleProjectPermissions,
   OrganizationCustomRoleUpdateRequest,
-  OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
@@ -15,27 +14,29 @@ import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
 
-export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomRole) => {
-  const cloneCurrentRole = Object.assign({}, currentRole)
-
-  const defaultAdmin: OrganizationCustomRoleUpdateRequestPermissions[] = [
+export const defaultPermissionValues = (permission: string) => {
+  return [
     {
       environment_type: EnvironmentModeEnum.DEVELOPMENT,
-      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      permission: permission,
     },
     {
       environment_type: EnvironmentModeEnum.PREVIEW,
-      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      permission: permission,
     },
     {
       environment_type: EnvironmentModeEnum.STAGING,
-      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      permission: permission,
     },
     {
       environment_type: EnvironmentModeEnum.PRODUCTION,
-      permission: OrganizationCustomRoleProjectPermission.MANAGER,
+      permission: permission,
     },
   ]
+}
+
+export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomRole) => {
+  const cloneCurrentRole = Object.assign({}, currentRole)
 
   // update project permissions
   const projectPermissions = currentRole.project_permissions?.map((project) => {
@@ -47,13 +48,13 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
       }))
       .filter((c) => c.environment_type !== 'ADMIN')
 
-    const isAdmin = false
+    const isAdmin = permissions[0].permission === 'ADMIN'
 
     return {
       project_id: project.project_id,
       project_name: project.project_name,
-      is_admin: isAdmin ? true : false,
-      permissions: isAdmin ? defaultAdmin : permissions,
+      is_admin: isAdmin,
+      permissions: isAdmin ? defaultPermissionValues(OrganizationCustomRoleProjectPermission.MANAGER) : permissions,
     }
   })
 

@@ -8,13 +8,14 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputCheckbox } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { defaultPermissionValues } from '../../../../feature/page-organization-roles-feature/page-organization-roles-feature'
 
 export interface RowProps {
   project: OrganizationCustomRoleProjectPermissions
 }
 
 const setGlobalCheckByValue = (
-  values: any,
+  values: { [key: string]: string },
   key: OrganizationCustomRoleProjectPermission,
   setGlobalCheck: (value: string) => void
 ) => {
@@ -46,8 +47,8 @@ const onChangeHeadCheckbox = (
   const newValue = globalCheck !== currentPermission ? currentPermission : nextPermission
   setGlobalCheck(newValue)
   // set value for nextPermission if admin is uncheck
-  project.permissions?.forEach((currentPermission) => {
-    const key = `project_permissions.${project.project_id}.${currentPermission.environment_type}`
+  Object.keys(EnvironmentModeEnum).forEach((currentMode) => {
+    const key = `project_permissions.${project.project_id}.${currentMode}`
     setValue(key, newValue)
   })
 }
@@ -164,121 +165,128 @@ export function Row(props: RowProps) {
         </div>
       </div>
       <div>
-        {project.permissions?.map((permission: OrganizationCustomRoleUpdateRequestPermissions, index) => (
-          <div
-            key={`${project.project_id}-${permission.environment_type}-${index}`}
-            className="flex h-10 border-element-light-lighter-500 border-b"
-          >
-            <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-element-light-lighter-500 font-medium">
-              <svg xmlns="http://www.w3.org/2000/svg" width="7" height="8" fill="none" viewBox="0 0 7 8">
-                <path fill="#C6D3E7" fillRule="evenodd" d="M2 0H.5v8h6V6.5H2V0z" clipRule="evenodd" />
-              </svg>
-              <span className="inline-block ml-3">{upperCaseFirstLetter(permission.environment_type)}</span>
-            </div>
-            <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              <InputCheckbox
-                name={`${project.project_id}.${permission.environment_type}`}
-                disabled
-                type="radio"
-                isChecked={watch(`project_permissions.${project.project_id}.is_admin`)}
-                value={globalCheck}
-                formValue="ADMIN"
-              />
-            </div>
-            <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              <Controller
-                name={`project_permissions.${project.project_id}.${permission.environment_type}`}
-                control={control}
-                render={({ field }) => (
-                  <InputCheckbox
-                    type="radio"
-                    name={field.name}
-                    value={OrganizationCustomRoleProjectPermission.MANAGER}
-                    formValue={field.value}
-                    onChange={(e) => {
-                      field.onChange(e)
+        {(project.is_admin ? defaultPermissionValues('ADMIN') : project.permissions)?.map(
+          (
+            permission:
+              | OrganizationCustomRoleUpdateRequestPermissions
+              | { environment_type: EnvironmentModeEnum; permission: string },
+            index
+          ) => (
+            <div
+              key={`${project.project_id}-${permission.environment_type}-${index}`}
+              className="flex h-10 border-element-light-lighter-500 border-b"
+            >
+              <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-element-light-lighter-500 font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="7" height="8" fill="none" viewBox="0 0 7 8">
+                  <path fill="#C6D3E7" fillRule="evenodd" d="M2 0H.5v8h6V6.5H2V0z" clipRule="evenodd" />
+                </svg>
+                <span className="inline-block ml-3">{upperCaseFirstLetter(permission.environment_type)}</span>
+              </div>
+              <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
+                <InputCheckbox
+                  name={`${project.project_id}.${permission.environment_type}`}
+                  disabled
+                  type="radio"
+                  isChecked={watch(`project_permissions.${project.project_id}.is_admin`)}
+                  value={globalCheck}
+                  formValue="ADMIN"
+                />
+              </div>
+              <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
+                <Controller
+                  name={`project_permissions.${project.project_id}.${permission.environment_type}`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputCheckbox
+                      type="radio"
+                      name={field.name}
+                      value={OrganizationCustomRoleProjectPermission.MANAGER}
+                      formValue={field.value}
+                      onChange={(e) => {
+                        field.onChange(e)
 
-                      setGlobalCheckByValue(
-                        getValues(`project_permissions.${project.project_id}`),
-                        OrganizationCustomRoleProjectPermission.MANAGER,
-                        setGlobalCheck
-                      )
-                    }}
-                  />
-                )}
-              />
-            </div>
-            <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              <Controller
-                name={`project_permissions.${project.project_id}.${permission.environment_type}`}
-                control={control}
-                render={({ field }) => (
-                  <InputCheckbox
-                    type="radio"
-                    name={field.name}
-                    value={OrganizationCustomRoleProjectPermission.DEPLOYER}
-                    formValue={field.value}
-                    onChange={(e) => {
-                      field.onChange(e)
+                        setGlobalCheckByValue(
+                          getValues(`project_permissions.${project.project_id}`),
+                          OrganizationCustomRoleProjectPermission.MANAGER,
+                          setGlobalCheck
+                        )
+                      }}
+                    />
+                  )}
+                />
+              </div>
+              <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
+                <Controller
+                  name={`project_permissions.${project.project_id}.${permission.environment_type}`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputCheckbox
+                      type="radio"
+                      name={field.name}
+                      value={OrganizationCustomRoleProjectPermission.DEPLOYER}
+                      formValue={field.value}
+                      onChange={(e) => {
+                        field.onChange(e)
 
-                      setGlobalCheckByValue(
-                        getValues(`project_permissions.${project.project_id}`),
-                        OrganizationCustomRoleProjectPermission.DEPLOYER,
-                        setGlobalCheck
-                      )
-                    }}
-                  />
-                )}
-              />
-            </div>
-            <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
-              <Controller
-                name={`project_permissions.${project.project_id}.${permission.environment_type}`}
-                control={control}
-                render={({ field }) => (
-                  <InputCheckbox
-                    type="radio"
-                    name={field.name}
-                    value={OrganizationCustomRoleProjectPermission.VIEWER}
-                    formValue={field.value}
-                    onChange={(e) => {
-                      field.onChange(e)
+                        setGlobalCheckByValue(
+                          getValues(`project_permissions.${project.project_id}`),
+                          OrganizationCustomRoleProjectPermission.DEPLOYER,
+                          setGlobalCheck
+                        )
+                      }}
+                    />
+                  )}
+                />
+              </div>
+              <div className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500">
+                <Controller
+                  name={`project_permissions.${project.project_id}.${permission.environment_type}`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputCheckbox
+                      type="radio"
+                      name={field.name}
+                      value={OrganizationCustomRoleProjectPermission.VIEWER}
+                      formValue={field.value}
+                      onChange={(e) => {
+                        field.onChange(e)
 
-                      setGlobalCheckByValue(
-                        getValues(`project_permissions.${project.project_id}`),
-                        OrganizationCustomRoleProjectPermission.VIEWER,
-                        setGlobalCheck
-                      )
-                    }}
-                  />
-                )}
-              />
-            </div>
-            <div className="flex-1 flex items-center justify-center h-full px-4">
-              <Controller
-                name={`project_permissions.${project.project_id}.${permission.environment_type}`}
-                control={control}
-                render={({ field }) => (
-                  <InputCheckbox
-                    type="radio"
-                    name={field.name}
-                    value={OrganizationCustomRoleProjectPermission.NO_ACCESS}
-                    formValue={field.value}
-                    onChange={(e) => {
-                      field.onChange(e)
+                        setGlobalCheckByValue(
+                          getValues(`project_permissions.${project.project_id}`),
+                          OrganizationCustomRoleProjectPermission.VIEWER,
+                          setGlobalCheck
+                        )
+                      }}
+                    />
+                  )}
+                />
+              </div>
+              <div className="flex-1 flex items-center justify-center h-full px-4">
+                <Controller
+                  name={`project_permissions.${project.project_id}.${permission.environment_type}`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputCheckbox
+                      type="radio"
+                      name={field.name}
+                      value={OrganizationCustomRoleProjectPermission.NO_ACCESS}
+                      formValue={field.value}
+                      onChange={(e) => {
+                        field.onChange(e)
 
-                      setGlobalCheckByValue(
-                        getValues(`project_permissions.${project.project_id}`),
-                        OrganizationCustomRoleProjectPermission.NO_ACCESS,
-                        setGlobalCheck
-                      )
-                    }}
-                  />
-                )}
-              />
+                        setGlobalCheckByValue(
+                          getValues(`project_permissions.${project.project_id}`),
+                          OrganizationCustomRoleProjectPermission.NO_ACCESS,
+                          setGlobalCheck
+                        )
+                      }}
+                    />
+                  )}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </div>
     </div>
   )

@@ -18,6 +18,7 @@ import {
   LoaderSpinner,
   Tabs,
 } from '@qovery/shared/ui'
+import { defaultPermissionValues } from '../../feature/page-organization-roles-feature/page-organization-roles-feature'
 import TableProject from './table-project/table-project'
 
 export interface PageOrganizationRolesProps {
@@ -47,26 +48,36 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
   const { control, formState, reset } = useFormContext()
 
   useEffect(() => {
-    const result = {
+    // set default values
+    const result: any = {
       project_permissions: {},
       name: currentRole?.name,
       description: currentRole?.description,
-    } as any
+    }
 
     currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
-      const permission = {} as any
+      const permission = {} as { [key: string]: string }
 
-      project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
-        permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
-
-        permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
-      })
+      if (project.permissions && project.permissions?.length > 0) {
+        project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
+          permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
+          permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
+        })
+      } else {
+        if (project.is_admin) {
+          for (let i = 0; i < 4; i++) {
+            const currentPermission = defaultPermissionValues('ADMIN')[i]
+            permission['ADMIN'] = 'ADMIN'
+            permission[currentPermission.environment_type || ''] = 'ADMIN'
+          }
+        }
+      }
 
       result['project_permissions'][project.project_id || ''] = permission
     })
 
     reset(result)
-  }, [currentRole, reset])
+  }, [currentRole, setCurrentRole, reset])
 
   return (
     <div className="flex flex-col justify-between w-full">
