@@ -6,7 +6,7 @@ import {
   OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, FieldValues, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -14,10 +14,10 @@ import {
   ButtonSize,
   EmptyState,
   IconAwesomeEnum,
+  InputSelect,
   InputText,
   InputTextArea,
   LoaderSpinner,
-  Tabs,
 } from '@qovery/shared/ui'
 import { defaultProjectPermission } from '../../feature/page-organization-roles-feature/page-organization-roles-feature'
 import RowCluster from './row-cluster/row-cluster'
@@ -52,13 +52,13 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
   const { control, formState, reset } = useFormContext()
 
   useEffect(() => {
-    // set default values
-    const result = {
+    // set default values for form
+    const result: FieldValues = {
       project_permissions: {},
       cluster_permissions: {},
       name: currentRole?.name,
       description: currentRole?.description,
-    } as any
+    }
 
     currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
       const permission = {} as { [key: string]: string }
@@ -106,14 +106,21 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
           </div>
         ) : customRoles && customRoles.length > 0 ? (
           <div>
-            <Tabs
-              className="mb-5"
-              items={customRoles.map((customRoles: OrganizationCustomRole) => ({
-                name: customRoles.name,
-                active: currentRole?.name === customRoles.name,
-                onClick: () => setCurrentRole(customRoles),
-              }))}
-            />
+            <div className="max-w-sm">
+              <InputSelect
+                className="mb-5"
+                label="Select a role"
+                value={currentRole?.name}
+                options={customRoles.map((customRole: OrganizationCustomRole) => ({
+                  label: customRole.name || '',
+                  value: customRole.name || '',
+                }))}
+                onChange={(value) => {
+                  const currentCustomRole = customRoles.filter((c) => c.name === value)
+                  setCurrentRole(currentCustomRole[0])
+                }}
+              />
+            </div>
             <form onSubmit={onSubmit}>
               <div className="max-w-content-with-navigation-left">
                 <BlockContent title="General informations">
