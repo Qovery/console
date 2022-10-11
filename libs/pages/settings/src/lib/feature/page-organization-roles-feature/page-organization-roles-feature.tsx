@@ -84,7 +84,7 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
   return cloneCurrentRole
 }
 
-function getValue(permission = OrganizationCustomRoleProjectPermission.NO_ACCESS, isAdmin = false) {
+export function getValue(permission = OrganizationCustomRoleProjectPermission.NO_ACCESS, isAdmin = false) {
   let result = OrganizationCustomRoleProjectPermission.NO_ACCESS
 
   if (isAdmin) {
@@ -92,6 +92,43 @@ function getValue(permission = OrganizationCustomRoleProjectPermission.NO_ACCESS
   } else {
     result = OrganizationCustomRoleProjectPermission[permission]
   }
+
+  return result
+}
+
+export function resetForm(currentRole: OrganizationCustomRole) {
+  // set default values for form
+  const result: FieldValues = {
+    project_permissions: {},
+    cluster_permissions: {},
+    name: currentRole?.name,
+    description: currentRole?.description || ' ',
+  }
+
+  currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
+    const permission = {} as { [key: string]: string }
+
+    if (project.permissions && project.permissions?.length > 0) {
+      project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
+        permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
+        permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
+      })
+    } else {
+      if (project.is_admin) {
+        for (let i = 0; i < 4; i++) {
+          const currentPermission = defaultProjectPermission('ADMIN')[i]
+          permission['ADMIN'] = 'ADMIN'
+          permission[currentPermission.environment_type || ''] = 'ADMIN'
+        }
+      }
+    }
+
+    result['project_permissions'][project.project_id || ''] = permission
+  })
+
+  currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissions) => {
+    result['cluster_permissions'][cluster.cluster_id || ''] = cluster.permission
+  })
 
   return result
 }
@@ -130,40 +167,10 @@ export function PageOrganizationRolesFeature() {
   }, [organization, customRolesLoadingStatus, dispatch, organizationId])
 
   useEffect(() => {
-    // set default values for form
-    const result: FieldValues = {
-      project_permissions: {},
-      cluster_permissions: {},
-      name: currentRole?.name,
-      description: currentRole?.description || ' ',
+    if (currentRole) {
+      const result = resetForm(currentRole)
+      methods.reset(result)
     }
-
-    currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
-      const permission = {} as { [key: string]: string }
-
-      if (project.permissions && project.permissions?.length > 0) {
-        project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
-          permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
-          permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
-        })
-      } else {
-        if (project.is_admin) {
-          for (let i = 0; i < 4; i++) {
-            const currentPermission = defaultProjectPermission('ADMIN')[i]
-            permission['ADMIN'] = 'ADMIN'
-            permission[currentPermission.environment_type || ''] = 'ADMIN'
-          }
-        }
-      }
-
-      result['project_permissions'][project.project_id || ''] = permission
-    })
-
-    currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissions) => {
-      result['cluster_permissions'][cluster.cluster_id || ''] = cluster.permission
-    })
-
-    methods.reset(result)
   }, [currentRole, setCurrentRole, methods])
 
   const onSubmit = methods.handleSubmit((data) => {

@@ -41,6 +41,7 @@ export function CreateModal(props: CreateModalProps) {
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
+            dataTestId="input-description"
             className="mb-5"
             name={field.name}
             onChange={field.onChange}

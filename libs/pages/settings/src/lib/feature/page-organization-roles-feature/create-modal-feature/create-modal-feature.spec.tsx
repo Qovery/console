@@ -1,14 +1,9 @@
 import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
-import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
 import CreateModalFeature, { CreateModalFeatureProps } from './create-modal-feature'
 
 import SpyInstance = jest.SpyInstance
-
-const mockOrganization: OrganizationEntity = storeOrganization.organizationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/organization', () => {
   return {
@@ -23,14 +18,11 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }))
 
-jest.mock('react-router', () => ({
-  ...(jest.requireActual('react-router') as any),
-  useParams: () => ({ organizationId: mockOrganization.id }),
-}))
-
 describe('CreateModalFeature', () => {
   const props: CreateModalFeatureProps = {
     onClose: jest.fn(),
+    setCurrentRole: jest.fn(),
+    organizationId: '1',
   }
 
   it('should render successfully', async () => {
@@ -40,11 +32,8 @@ describe('CreateModalFeature', () => {
     })
   })
 
-  it('should dispatch postOrganizationContainerRegistry if form is submitted', async () => {
-    const postOrganizationContainerRegistry: SpyInstance = jest.spyOn(
-      storeOrganization,
-      'postOrganizationContainerRegistry'
-    )
+  it('should dispatch postCustomRoles if form is submitted', async () => {
+    const postCustomRoles: SpyInstance = jest.spyOn(storeOrganization, 'postCustomRoles')
 
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
@@ -53,23 +42,13 @@ describe('CreateModalFeature', () => {
         }),
     }))
 
-    props.registry = undefined
-
-    const { getByTestId, getByLabelText } = render(<CreateModalFeature {...props} />)
+    const { debug, getByTestId } = render(<CreateModalFeature {...props} />)
 
     await act(() => {
       const inputName = getByTestId('input-name')
-      fireEvent.input(inputName, { target: { value: 'my-registry' } })
+      fireEvent.input(inputName, { target: { value: 'my-role' } })
 
-      selectEvent.select(getByLabelText('Type'), ContainerRegistryKindEnum.DOCKER_HUB, { container: document.body })
-    })
-
-    await act(() => {
-      const inputUsername = getByTestId('input-username')
-      fireEvent.input(inputUsername, { target: { value: 'hello' } })
-
-      const inputPassword = getByTestId('input-password')
-      fireEvent.input(inputPassword, { target: { value: 'password' } })
+      expect(getByTestId('input-description')).toBeInTheDocument()
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
@@ -78,20 +57,13 @@ describe('CreateModalFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    const mockContainerRegistriesConfig = mockContainerRegistries[0]
+    debug()
 
-    expect(postOrganizationContainerRegistry).toHaveBeenCalledWith({
+    expect(postCustomRoles).toHaveBeenCalledWith({
       data: {
-        name: 'my-registry',
-        kind: mockContainerRegistriesConfig.kind,
-        description: undefined,
-        url: undefined,
-        config: {
-          username: 'hello',
-          password: 'password',
-        },
+        name: 'my-role',
       },
-      organizationId: '',
+      organizationId: '1',
     })
   })
 })

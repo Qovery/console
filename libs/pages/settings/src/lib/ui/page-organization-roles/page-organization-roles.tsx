@@ -12,6 +12,7 @@ import {
   ButtonSize,
   ButtonStyle,
   EmptyState,
+  HelpSection,
   IconAwesomeEnum,
   InputSelect,
   InputText,
@@ -162,7 +163,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                   </Button>
                 )}
                 <Button
-                  dataTestId="submit-button"
+                  dataTestId="submit-save-button"
                   className="btn--no-min-w"
                   type="submit"
                   size={ButtonSize.XLARGE}
@@ -177,11 +178,21 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
         ) : (
           <EmptyState title="Create your first custom role" imageWidth="w-[160px]">
             <Button className="mt-5" onClick={onAddRole}>
-              Create role
+              Add new role
             </Button>
           </EmptyState>
         )}
       </div>
+      <HelpSection
+        description="Need help? You may find these links useful"
+        links={[
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#custom-roles',
+            linkLabel: 'How to configure my custom roles',
+            external: true,
+          },
+        ]}
+      />
     </div>
   )
 }
