@@ -11,9 +11,11 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editCustomRole, fetchCustomRoles, selectOrganizationById } from '@qovery/domains/organization'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
+import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
 export const defaultProjectPermission = (permission: string) => {
   return [
@@ -91,6 +93,9 @@ export function PageOrganizationRolesFeature() {
   const customRoles = organization?.customRoles?.items
   const dispatch = useDispatch<AppDispatch>()
 
+  const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
+
   const methods = useForm({
     mode: 'onChange',
   })
@@ -131,6 +136,20 @@ export function PageOrganizationRolesFeature() {
         onSubmit={onSubmit}
         loading={customRolesLoadingStatus || 'not loaded'}
         loadingForm={loading}
+        onAddRole={() => {
+          openModal({ content: <CreateModalFeature organizationId={organizationId} onClose={closeModal} /> })
+        }}
+        onDeleteRole={(customRole: OrganizationCustomRole) => {
+          openModalConfirmation({
+            title: 'Delete custom role',
+            isDelete: true,
+            description: 'Are you sure you want to delete this custom role?',
+            name: customRole?.name,
+            action: () => {
+              console.log('hello')
+            },
+          })
+        }}
       />
     </FormProvider>
   )

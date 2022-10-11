@@ -1,9 +1,13 @@
 import { ReactNode } from 'react'
+import { Icon, Tooltip } from '@qovery/shared/ui'
 
 export interface TableProps {
   title: string
   children: ReactNode
-  headArray: string[]
+  headArray: {
+    label: string
+    tooltip: string
+  }[]
   className?: string
 }
 
@@ -18,10 +22,18 @@ export function Table(props: TableProps) {
         </div>
         {headArray.map((head) => (
           <div
-            key={head}
+            key={head.label}
             className="flex items-center justify-center h-full flex-1 px-4 font-medium border-r border-element-light-lighter-400 last:border-0"
           >
-            {head}
+            {head.label}
+            <Tooltip align="center" content={head.tooltip}>
+              <div className="flex items-center">
+                <Icon
+                  className="cursor-pointer text-xs ml-1 text-element-light-lighter-700"
+                  name="icon-solid-circle-info"
+                />
+              </div>
+            </Tooltip>
           </div>
         ))}
       </div>

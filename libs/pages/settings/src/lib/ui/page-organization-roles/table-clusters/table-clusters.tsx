@@ -19,7 +19,25 @@ export function TableClusters(props: TableClustersProps) {
   const [globalCheck, setGlobalCheck] = useState('')
 
   return (
-    <Table className="mb-5" title="Cluster level permissions" headArray={['Admin', 'Deployer', 'Viewer']}>
+    <Table
+      className="mb-5"
+      title="Cluster level permissions"
+      headArray={[
+        {
+          label: 'Admin',
+          tooltip:
+            'The user can create create environments on this cluster and as well manage its settings (start/stop, change number and type of nodes etc..)',
+        },
+        {
+          label: 'Env Creator',
+          tooltip: 'The user will be able to create environments on this cluster.',
+        },
+        {
+          label: 'Viewer',
+          tooltip: 'The user will just be able to access the cluster information.',
+        },
+      ]}
+    >
       <div className="flex items-center h-10 bg-element-light-lighter-300 border-element-light-lighter-400 border-b">
         <div className="flex-auto flex items-center h-full px-4 w-1/4 border-r border-element-light-lighter-500 font-medium">
           Clusters

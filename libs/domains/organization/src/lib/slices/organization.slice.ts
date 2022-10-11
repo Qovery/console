@@ -13,6 +13,7 @@ import {
   ContainerRegistryResponse,
   OrganizationCustomRole,
   OrganizationCustomRoleApi,
+  OrganizationCustomRoleCreateRequest,
   OrganizationCustomRoleUpdateRequest,
   OrganizationEditRequest,
   OrganizationMainCallsApi,
@@ -118,6 +119,15 @@ export const fetchCustomRoles = createAsyncThunk('customRoles/fetch', async (pay
   const result = await customRolesApi.listOrganizationCustomRoles(payload.organizationId)
   return result.data.results as OrganizationCustomRole[]
 })
+
+export const postCustomRoles = createAsyncThunk(
+  'customRoles/post',
+  async (payload: { organizationId: string; data: OrganizationCustomRoleCreateRequest }) => {
+    // post custom roles
+    const result = await customRolesApi.createOrganizationCustomRole(payload.organizationId, payload.data)
+    return result.data as OrganizationCustomRole
+  }
+)
 
 export const editCustomRole = createAsyncThunk(
   'customRoles/edit',
@@ -354,6 +364,25 @@ export const organizationSlice = createSlice({
         toast(ToastEnum.SUCCESS, `Role updated`)
       })
       .addCase(editCustomRole.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
+      })
+      // post custom role
+      .addCase(postCustomRoles.fulfilled, (state: OrganizationState, action) => {
+        const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            customRoles: {
+              loadingStatus: 'loaded',
+              items: [...customRoles, action.payload],
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Custom role added`)
+      })
+      .addCase(postCustomRoles.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
       })
   },
