@@ -225,8 +225,11 @@ export function PageOrganizationRolesFeature() {
                   for (let index = 0; index < customRoles.length; index++) {
                     const current = customRoles[index]
                     // set new current role
-                    if (current.id !== currentRole?.id) setCurrentRole(current)
-                    return
+                    if (current.id !== currentRole?.id) {
+                      setCurrentRole(current)
+                      window.scrollTo(0, 0)
+                      return
+                    }
                   }
                 })
             },
