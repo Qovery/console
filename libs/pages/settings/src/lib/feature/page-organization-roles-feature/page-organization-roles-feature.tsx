@@ -5,12 +5,18 @@ import {
   OrganizationCustomRoleProjectPermission,
   OrganizationCustomRoleProjectPermissions,
   OrganizationCustomRoleUpdateRequest,
+  OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCustomRole, fetchCustomRoles, selectOrganizationById } from '@qovery/domains/organization'
+import {
+  deleteCustomRole,
+  editCustomRole,
+  fetchCustomRoles,
+  selectOrganizationById,
+} from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
@@ -78,6 +84,18 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
   return cloneCurrentRole
 }
 
+function getValue(permission = OrganizationCustomRoleProjectPermission.NO_ACCESS, isAdmin = false) {
+  let result = OrganizationCustomRoleProjectPermission.NO_ACCESS
+
+  if (isAdmin) {
+    result = OrganizationCustomRoleProjectPermission.MANAGER
+  } else {
+    result = OrganizationCustomRoleProjectPermission[permission]
+  }
+
+  return result
+}
+
 export function PageOrganizationRolesFeature() {
   const { organizationId = '' } = useParams()
 
@@ -101,12 +119,52 @@ export function PageOrganizationRolesFeature() {
   })
 
   useEffect(() => {
-    if (organization && customRolesLoadingStatus !== 'loaded') dispatch(fetchCustomRoles({ organizationId }))
+    if (organization && customRolesLoadingStatus !== 'loaded') {
+      dispatch(fetchCustomRoles({ organizationId }))
+        .unwrap()
+        .then((result: OrganizationCustomRole[]) => {
+          // set default custom role
+          setCurrentRole(result[0])
+        })
+    }
   }, [organization, customRolesLoadingStatus, dispatch, organizationId])
 
   useEffect(() => {
-    if (customRoles) setCurrentRole(customRoles[0])
-  }, [customRoles])
+    // set default values for form
+    const result: FieldValues = {
+      project_permissions: {},
+      cluster_permissions: {},
+      name: currentRole?.name,
+      description: currentRole?.description || ' ',
+    }
+
+    currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
+      const permission = {} as { [key: string]: string }
+
+      if (project.permissions && project.permissions?.length > 0) {
+        project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
+          permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
+          permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
+        })
+      } else {
+        if (project.is_admin) {
+          for (let i = 0; i < 4; i++) {
+            const currentPermission = defaultProjectPermission('ADMIN')[i]
+            permission['ADMIN'] = 'ADMIN'
+            permission[currentPermission.environment_type || ''] = 'ADMIN'
+          }
+        }
+      }
+
+      result['project_permissions'][project.project_id || ''] = permission
+    })
+
+    currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissions) => {
+      result['cluster_permissions'][cluster.cluster_id || ''] = cluster.permission
+    })
+
+    methods.reset(result)
+  }, [currentRole, setCurrentRole, methods])
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && currentRole) {
@@ -137,7 +195,15 @@ export function PageOrganizationRolesFeature() {
         loading={customRolesLoadingStatus || 'not loaded'}
         loadingForm={loading}
         onAddRole={() => {
-          openModal({ content: <CreateModalFeature organizationId={organizationId} onClose={closeModal} /> })
+          openModal({
+            content: (
+              <CreateModalFeature
+                organizationId={organizationId}
+                onClose={closeModal}
+                setCurrentRole={setCurrentRole}
+              />
+            ),
+          })
         }}
         onDeleteRole={(customRole: OrganizationCustomRole) => {
           openModalConfirmation({
@@ -146,7 +212,23 @@ export function PageOrganizationRolesFeature() {
             description: 'Are you sure you want to delete this custom role?',
             name: customRole?.name,
             action: () => {
-              console.log('hello')
+              dispatch(
+                deleteCustomRole({
+                  organizationId: organizationId,
+                  customRoleId: customRole.id || '',
+                })
+              )
+                .unwrap()
+                .then(() => {
+                  if (!customRoles) return
+
+                  for (let index = 0; index < customRoles.length; index++) {
+                    const current = customRoles[index]
+                    // set new current role
+                    if (current.id !== currentRole?.id) setCurrentRole(current)
+                    return
+                  }
+                })
             },
           })
         }}

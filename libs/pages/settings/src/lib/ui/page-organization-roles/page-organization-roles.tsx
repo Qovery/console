@@ -1,12 +1,10 @@
 import {
   OrganizationCustomRole,
   OrganizationCustomRoleClusterPermissions,
-  OrganizationCustomRoleProjectPermission,
   OrganizationCustomRoleProjectPermissions,
-  OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction, useEffect } from 'react'
-import { Controller, FieldValues, useFormContext } from 'react-hook-form'
+import { Dispatch, SetStateAction } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -20,7 +18,6 @@ import {
   InputTextArea,
   LoaderSpinner,
 } from '@qovery/shared/ui'
-import { defaultProjectPermission } from '../../feature/page-organization-roles-feature/page-organization-roles-feature'
 import RowCluster from './row-cluster/row-cluster'
 import RowProject from './row-project/row-project'
 import TableClusters from './table-clusters/table-clusters'
@@ -37,59 +34,10 @@ export interface PageOrganizationRolesProps {
   loadingForm?: boolean
 }
 
-export function getValue(permission = OrganizationCustomRoleProjectPermission.NO_ACCESS, isAdmin = false) {
-  let result = OrganizationCustomRoleProjectPermission.NO_ACCESS
-
-  if (isAdmin) {
-    result = OrganizationCustomRoleProjectPermission.MANAGER
-  } else {
-    result = OrganizationCustomRoleProjectPermission[permission]
-  }
-
-  return result
-}
-
 export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
   const { currentRole, customRoles, loading, loadingForm, onSubmit, setCurrentRole, onAddRole, onDeleteRole } = props
 
-  const { control, formState, reset } = useFormContext()
-
-  useEffect(() => {
-    // set default values for form
-    const result: FieldValues = {
-      project_permissions: {},
-      cluster_permissions: {},
-      name: currentRole?.name,
-      description: currentRole?.description,
-    }
-
-    currentRole?.project_permissions?.forEach((project: OrganizationCustomRoleProjectPermissions) => {
-      const permission = {} as { [key: string]: string }
-
-      if (project.permissions && project.permissions?.length > 0) {
-        project.permissions?.forEach((currentPermission: OrganizationCustomRoleUpdateRequestPermissions) => {
-          permission['ADMIN'] = project.is_admin ? 'ADMIN' : OrganizationCustomRoleProjectPermission.NO_ACCESS
-          permission[currentPermission.environment_type || ''] = getValue(currentPermission.permission)
-        })
-      } else {
-        if (project.is_admin) {
-          for (let i = 0; i < 4; i++) {
-            const currentPermission = defaultProjectPermission('ADMIN')[i]
-            permission['ADMIN'] = 'ADMIN'
-            permission[currentPermission.environment_type || ''] = 'ADMIN'
-          }
-        }
-      }
-
-      result['project_permissions'][project.project_id || ''] = permission
-    })
-
-    currentRole?.cluster_permissions?.forEach((cluster: OrganizationCustomRoleClusterPermissions) => {
-      result['cluster_permissions'][cluster.cluster_id || ''] = cluster.permission
-    })
-
-    reset(result)
-  }, [currentRole, setCurrentRole, reset])
+  const { control, formState } = useFormContext()
 
   return (
     <div className="flex flex-col justify-between w-full">

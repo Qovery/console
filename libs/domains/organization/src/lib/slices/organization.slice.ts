@@ -121,7 +121,7 @@ export const fetchCustomRoles = createAsyncThunk('customRoles/fetch', async (pay
 })
 
 export const postCustomRoles = createAsyncThunk(
-  'customRoles/post',
+  'customRole/post',
   async (payload: { organizationId: string; data: OrganizationCustomRoleCreateRequest }) => {
     // post custom roles
     const result = await customRolesApi.createOrganizationCustomRole(payload.organizationId, payload.data)
@@ -130,7 +130,7 @@ export const postCustomRoles = createAsyncThunk(
 )
 
 export const editCustomRole = createAsyncThunk(
-  'customRoles/edit',
+  'customRole/edit',
   async (payload: { organizationId: string; customRoleId: string; data: OrganizationCustomRoleUpdateRequest }) => {
     // edit custom role
     const cloneCustomRole = Object.assign({}, refactoOrganizationCustomRolePayload(payload.data))
@@ -141,6 +141,14 @@ export const editCustomRole = createAsyncThunk(
       cloneCustomRole
     )
     return result.data as OrganizationCustomRole
+  }
+)
+
+export const deleteCustomRole = createAsyncThunk(
+  'customRole/delete',
+  async (payload: { organizationId: string; customRoleId: string }) => {
+    // delete custom role by id
+    await customRolesApi.deleteOrganizationCustomRole(payload.organizationId, payload.customRoleId)
   }
 )
 
@@ -375,7 +383,7 @@ export const organizationSlice = createSlice({
           changes: {
             customRoles: {
               loadingStatus: 'loaded',
-              items: [...customRoles, action.payload],
+              items: [action.payload, ...customRoles],
             },
           },
         }
@@ -383,6 +391,25 @@ export const organizationSlice = createSlice({
         toast(ToastEnum.SUCCESS, `Custom role added`)
       })
       .addCase(postCustomRoles.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
+      })
+      // delete custom role
+      .addCase(deleteCustomRole.fulfilled, (state: OrganizationState, action) => {
+        const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            customRoles: {
+              loadingStatus: 'loaded',
+              items: customRoles.filter((customRole) => customRole.id !== action.meta.arg.customRoleId),
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Custom role removed`)
+      })
+      .addCase(deleteCustomRole.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
       })
   },

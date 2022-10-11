@@ -1,7 +1,7 @@
 import { act, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import CreateModal, { CreateModalProps } from './crud-modal'
+import CreateModal, { CreateModalProps } from './create-modal'
 
 const props: CreateModalProps = {
   loading: false,

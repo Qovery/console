@@ -31,7 +31,7 @@ export function CreateModal(props: CreateModalProps) {
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="Registry name"
+            label="Name"
             error={error?.message}
           />
         )}

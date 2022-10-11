@@ -1,18 +1,19 @@
-import { OrganizationCustomRoleCreateRequest } from 'qovery-typescript-axios'
+import { OrganizationCustomRole, OrganizationCustomRoleCreateRequest } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { postCustomRoles } from '@qovery/domains/organization'
 import { AppDispatch } from '@qovery/store/data'
-import CreateModal from '../../../ui/page-organization-roles/crud-modal/crud-modal'
+import CreateModal from '../../../ui/page-organization-roles/create-modal/create-modal'
 
 export interface CreateModalFeatureProps {
+  setCurrentRole: (customRole: OrganizationCustomRole) => void
   onClose: () => void
   organizationId?: string
 }
 
 export function CreateModalFeature(props: CreateModalFeatureProps) {
-  const { organizationId = '', onClose } = props
+  const { organizationId = '', onClose, setCurrentRole } = props
 
   const [loading, setLoading] = useState(false)
 
@@ -32,7 +33,8 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
       })
     )
       .unwrap()
-      .then(() => {
+      .then((result: OrganizationCustomRole) => {
+        setCurrentRole(result)
         setLoading(false)
         onClose()
       })
