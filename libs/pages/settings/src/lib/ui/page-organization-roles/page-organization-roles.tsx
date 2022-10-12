@@ -55,7 +55,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
           <div>
             <div className="max-w-sm">
               <InputSelect
-                dataTestId="select-roles"
+                dataTestId="select-custom-roles"
                 className="mb-5"
                 isSearchable
                 label="Select a role"
