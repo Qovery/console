@@ -2,18 +2,18 @@ import {
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleClusterPermissions,
 } from 'qovery-typescript-axios'
-import { ReactElement, cloneElement, useState } from 'react'
+import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { InputCheckbox } from '@qovery/shared/ui'
+import RowCluster from '../row-cluster/row-cluster'
 import Table from '../table/table'
 
 export interface TableClustersProps {
   clusters: OrganizationCustomRoleClusterPermissions[]
-  children: ReactElement
 }
 
 export function TableClusters(props: TableClustersProps) {
-  const { clusters, children } = props
+  const { clusters } = props
 
   const { setValue } = useFormContext()
   const [globalCheck, setGlobalCheck] = useState('')
@@ -50,6 +50,7 @@ export function TableClusters(props: TableClustersProps) {
               className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500 last:border-0"
             >
               <InputCheckbox
+                dataTestId={`checkbox-${permission}`}
                 name="cluster_permissions"
                 value={globalCheck}
                 formValue={permission}
@@ -69,7 +70,11 @@ export function TableClusters(props: TableClustersProps) {
             </div>
           ))}
       </div>
-      {cloneElement(children, { setGlobalCheck: setGlobalCheck })}
+      <div>
+        {clusters.map((cluster: OrganizationCustomRoleClusterPermissions) => (
+          <RowCluster key={cluster.cluster_id} cluster={cluster} setGlobalCheck={setGlobalCheck} />
+        ))}
+      </div>
     </Table>
   )
 }

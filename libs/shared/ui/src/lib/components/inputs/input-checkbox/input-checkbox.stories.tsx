@@ -11,7 +11,5 @@ const Template: Story<InputCheckboxProps> = (args) => <InputCheckbox {...args} /
 export const Primary = Template.bind({})
 Primary.args = {
   name: 'test',
-  isChecked: false,
-  label: 'Choose Qovery',
-  value: 'qovery',
+  isChecked: true,
 }

@@ -56,6 +56,7 @@ export function RowCluster(props: RowClusterProps) {
               control={control}
               render={({ field }) => (
                 <InputCheckbox
+                  dataTestId={`radio-${cluster.permission}`}
                   type="radio"
                   name={field.name}
                   value={permission}

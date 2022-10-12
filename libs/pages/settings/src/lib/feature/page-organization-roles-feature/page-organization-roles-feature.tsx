@@ -50,6 +50,7 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
   // update project permissions
   const projectPermissions = currentRole.project_permissions?.map((project) => {
     const currentProject = data['project_permissions'][project.project_id || '']
+
     const permissions = Object.entries(currentProject)
       .map((permission) => ({
         environment_type: permission[0],
@@ -138,14 +139,15 @@ export function PageOrganizationRolesFeature() {
 
   useDocumentTitle('Roles & permissions - Organization settings')
 
-  const [loading, setLoading] = useState(false)
-  const [currentRole, setCurrentRole] = useState<OrganizationCustomRole | undefined>()
-
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
   const customRolesLoadingStatus = useSelector(
     (state: RootState) => selectOrganizationById(state, organizationId)?.customRoles?.loadingStatus
   )
   const customRoles = organization?.customRoles?.items
+
+  const [currentRole, setCurrentRole] = useState<OrganizationCustomRole | undefined>(customRoles && customRoles[0])
+  const [loading, setLoading] = useState(false)
+
   const dispatch = useDispatch<AppDispatch>()
 
   const { openModal, closeModal } = useModal()
@@ -164,7 +166,7 @@ export function PageOrganizationRolesFeature() {
           setCurrentRole(result[0])
         })
     }
-  }, [organization, customRolesLoadingStatus, dispatch, organizationId])
+  }, [organization, customRolesLoadingStatus, dispatch, organizationId, customRoles])
 
   useEffect(() => {
     if (currentRole) {
@@ -175,7 +177,7 @@ export function PageOrganizationRolesFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && currentRole) {
-      setLoading(false)
+      setLoading(true)
 
       const cloneCustomRole = handleSubmit(data, currentRole)
 

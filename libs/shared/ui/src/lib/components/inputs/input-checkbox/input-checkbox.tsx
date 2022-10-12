@@ -11,7 +11,7 @@ export interface InputCheckboxProps {
   disabled?: boolean
   type?: string
   formValue?: string
-  // getValue?: (check: boolean, value: string) => void
+  dataTestId?: string
 }
 
 export function InputCheckbox(props: InputCheckboxProps) {
@@ -26,7 +26,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
     type = 'checkbox',
     formValue,
     id = name,
-    // getValue,
+    dataTestId = 'input-checkbox',
   } = props
 
   const [check, setCheck] = useState(isChecked)
@@ -47,6 +47,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
   return (
     <div className={`flex gap-2 items-center ${className}`}>
       <input
+        data-testid={dataTestId}
         id={id}
         type={type}
         name={name}
