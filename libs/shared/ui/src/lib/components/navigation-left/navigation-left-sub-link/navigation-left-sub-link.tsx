@@ -18,12 +18,11 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
 
   useEffect(() => {
     // default open sub links if is active
-    link.subLinks &&
-      link.subLinks.forEach((currentLink) => {
-        if (linkClassName(pathname, currentLink.url).includes('is-active')) {
-          setOpen(true)
-        }
-      })
+    link.subLinks?.forEach((currentLink) => {
+      if (linkClassName(pathname, currentLink.url)?.includes('is-active')) {
+        setOpen(true)
+      }
+    })
   }, [])
 
   return (
