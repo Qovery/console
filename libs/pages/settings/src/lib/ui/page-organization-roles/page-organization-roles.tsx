@@ -1,5 +1,5 @@
 import { OrganizationCustomRole, OrganizationCustomRoleProjectPermissions } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, FormEventHandler, SetStateAction } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import {
@@ -20,7 +20,7 @@ import TableClusters from './table-clusters/table-clusters'
 import Table from './table/table'
 
 export interface PageOrganizationRolesProps {
-  onSubmit: () => void
+  onSubmit: FormEventHandler<HTMLFormElement>
   setCurrentRole: Dispatch<SetStateAction<OrganizationCustomRole | undefined>>
   onAddRole: () => void
   onDeleteRole: (customRole: OrganizationCustomRole) => void

@@ -1,4 +1,4 @@
-import { act, render, waitFor } from '__tests__/utils/setup-jest'
+import { render, waitFor } from '__tests__/utils/setup-jest'
 import {
   EnvironmentModeEnum,
   OrganizationCustomRole,

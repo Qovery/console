@@ -40,7 +40,7 @@ const defaultValues = resetForm({
 
 describe('PageOrganizationRoles', () => {
   const props: PageOrganizationRolesProps = {
-    onSubmit: jest.fn(),
+    onSubmit: jest.fn((e) => e.preventDefault()),
     onAddRole: jest.fn(),
     onDeleteRole: jest.fn(),
     setCurrentRole: jest.fn(),
@@ -71,6 +71,8 @@ describe('PageOrganizationRoles', () => {
   })
 
   it('should submit the form', async () => {
+    const spy = jest.fn((e) => e.preventDefault())
+    props.onSubmit = spy
     props.currentRole = customRole
 
     const { getByTestId } = render(
