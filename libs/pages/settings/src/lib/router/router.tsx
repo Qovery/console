@@ -12,6 +12,7 @@ import { PageOrganizationClusterFeature } from '../feature/page-organization-clu
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
 import { PageOrganizationDangerZoneFeature } from '../feature/page-organization-danger-zone-feature/page-organization-danger-zone-feature'
 import { PageOrganizationGeneralFeature } from '../feature/page-organization-general-feature/page-organization-general-feature'
+import { PageOrganizationMembersFeature } from '../feature/page-organization-members-feature/page-organization-members-feature'
 import { PageOrganizationRolesFeature } from '../feature/page-organization-roles-feature/page-organization-roles-feature'
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
@@ -22,7 +23,7 @@ export const ROUTER_SETTINGS: Route[] = [
   },
   {
     path: SETTINGS_MEMBERS_URL,
-    component: <PageSettingsV2 path="members" />,
+    component: <PageOrganizationMembersFeature />,
   },
   {
     path: SETTINGS_ROLES_URL,

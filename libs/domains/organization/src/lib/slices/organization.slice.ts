@@ -11,6 +11,8 @@ import {
   ContainerRegistriesApi,
   ContainerRegistryRequest,
   ContainerRegistryResponse,
+  MemberRoleUpdateRequest,
+  MembersApi,
   OrganizationCustomRole,
   OrganizationCustomRoleApi,
   OrganizationCustomRoleCreateRequest,
@@ -29,6 +31,7 @@ export const ORGANIZATION_KEY = 'organizations'
 const organizationMainCalls = new OrganizationMainCallsApi()
 const containerRegistriesApi = new ContainerRegistriesApi()
 const customRolesApi = new OrganizationCustomRoleApi()
+const membersApi = new MembersApi()
 
 export const organizationAdapter = createEntityAdapter<OrganizationEntity>()
 
@@ -149,6 +152,51 @@ export const deleteCustomRole = createAsyncThunk(
   async (payload: { organizationId: string; customRoleId: string }) => {
     // delete custom role by id
     await customRolesApi.deleteOrganizationCustomRole(payload.organizationId, payload.customRoleId)
+  }
+)
+
+export const fetchMembers = createAsyncThunk('organization/members', async (payload: { organizationId: string }) => {
+  // fetch organization members
+  const result = await membersApi.getOrganizationMembers(payload.organizationId)
+  return result.data.results
+})
+
+export const editMemberRole = createAsyncThunk(
+  'organization/edit-member-role',
+  async (payload: { organizationId: string; data: MemberRoleUpdateRequest }, { dispatch }) => {
+    // edit organization  member role
+    try {
+      const result = await membersApi.editOrganizationMemberRole(payload.organizationId, payload.data)
+      if (result.status === 200) {
+        // refetch member to update members list, we can't update with the edit response
+        await dispatch(fetchMembers({ organizationId: payload.organizationId }))
+
+        toast(ToastEnum.SUCCESS, 'Member role updated')
+      }
+
+      return result
+    } catch (err: any) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Member role error', err.message)
+    }
+  }
+)
+
+export const fetchInviteMembers = createAsyncThunk(
+  'organization/inviteMembers',
+  async (payload: { organizationId: string }) => {
+    // fetch organization invite members
+    const result = await membersApi.getOrganizationInvitedMembers(payload.organizationId)
+    return result.data.results
+  }
+)
+
+export const fetchAvailableRoles = createAsyncThunk(
+  'organization/available-roles',
+  async (payload: { organizationId: string }) => {
+    // fetch available roles
+    const result = await organizationMainCalls.listOrganizationAvailableRoles(payload.organizationId)
+    return result.data.results
   }
 )
 
@@ -411,6 +459,87 @@ export const organizationSlice = createSlice({
       })
       .addCase(deleteCustomRole.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
+      })
+      // fetch organization members
+      .addCase(fetchMembers.pending, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            members: {
+              loadingStatus: 'loaded',
+              items: state.entities[action.meta.arg.organizationId]?.members?.items || [],
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
+      })
+      .addCase(fetchMembers.fulfilled, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            members: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
+      })
+      // fetch organization invite members
+      .addCase(fetchInviteMembers.pending, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            inviteMembers: {
+              loadingStatus: 'loaded',
+              items: state.entities[action.meta.arg.organizationId]?.inviteMembers?.items || [],
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
+      })
+      .addCase(fetchInviteMembers.fulfilled, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            inviteMembers: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
+      })
+      // fetch organization available roles
+      .addCase(fetchAvailableRoles.pending, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            availableRoles: {
+              loadingStatus: 'loaded',
+              items: state.entities[action.meta.arg.organizationId]?.availableRoles?.items || [],
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
+      })
+      .addCase(fetchAvailableRoles.fulfilled, (state: OrganizationState, action) => {
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            availableRoles: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+
+        organizationAdapter.updateOne(state, update)
       })
   },
 })

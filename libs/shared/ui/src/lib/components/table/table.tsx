@@ -6,6 +6,7 @@ export interface TableProps {
   children: React.ReactElement
   dataHead: TableHeadProps[]
   className?: string
+  classNameHead?: string
   columnsWidth?: string
   defaultData?: any[]
   filterData?: any[]
@@ -29,6 +30,7 @@ export function Table(props: TableProps) {
   const {
     dataHead,
     className = 'bg-white rounded-sm',
+    classNameHead = '',
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     children,
     defaultData,
@@ -43,7 +45,7 @@ export function Table(props: TableProps) {
     <div className={className}>
       <div
         data-testid="table-container"
-        className="grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10"
+        className={`grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10 ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(({ title, className = 'px-4 py-2', filter, sort }, index) => (
