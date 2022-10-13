@@ -1,5 +1,13 @@
 import { Chance } from 'chance'
-import { ContainerRegistryKindEnum, ContainerRegistryResponse, PlanEnum } from 'qovery-typescript-axios'
+import {
+  ContainerRegistryKindEnum,
+  ContainerRegistryResponse,
+  EnvironmentModeEnum,
+  OrganizationCustomRole,
+  OrganizationCustomRoleClusterPermission,
+  OrganizationCustomRoleProjectPermission,
+  PlanEnum,
+} from 'qovery-typescript-axios'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
@@ -22,6 +30,10 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
       loadingStatus: 'loaded',
       items: containerRegistriesByOrganizationIdMock,
     },
+    customRoles: {
+      loadingStatus: 'loaded',
+      items: customRolesMock(2),
+    },
   }))
 
 export const containerRegistriesMock = (howMany: number): ContainerRegistryResponse[] =>
@@ -36,3 +48,42 @@ export const containerRegistriesMock = (howMany: number): ContainerRegistryRespo
   }))
 
 export const containerRegistriesByOrganizationIdMock = containerRegistriesMock(2)
+
+export const customRolesMock = (howMany: number): OrganizationCustomRole[] =>
+  Array.from({ length: howMany }).map((_, index) => ({
+    id: `${index}`,
+    name: chance.name(),
+    description: chance.word({ length: 10 }),
+    cluster_permissions: [
+      {
+        cluster_id: '1',
+        cluster_name: 'aws',
+        permission: OrganizationCustomRoleClusterPermission.ADMIN,
+      },
+    ],
+    project_permissions: [
+      {
+        project_id: '1',
+        project_name: 'test',
+        is_admin: false,
+        permissions: [
+          {
+            environment_type: EnvironmentModeEnum.DEVELOPMENT,
+            permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          },
+          {
+            environment_type: EnvironmentModeEnum.PREVIEW,
+            permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          },
+          {
+            environment_type: EnvironmentModeEnum.STAGING,
+            permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          },
+          {
+            environment_type: EnvironmentModeEnum.PRODUCTION,
+            permission: OrganizationCustomRoleProjectPermission.NO_ACCESS,
+          },
+        ],
+      },
+    ],
+  }))

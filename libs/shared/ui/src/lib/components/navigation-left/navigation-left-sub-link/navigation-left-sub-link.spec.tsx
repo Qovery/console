@@ -1,6 +1,12 @@
-import { fireEvent } from '@testing-library/react'
-import { render, screen } from '__tests__/utils/setup-jest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import NavigationLeftSubLink, { NavigationLeftSubLinkProps } from './navigation-left-sub-link'
+
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: '/general-second',
+  }),
+}))
 
 describe('NavigationLeftSubLink', () => {
   const props: NavigationLeftSubLinkProps = {

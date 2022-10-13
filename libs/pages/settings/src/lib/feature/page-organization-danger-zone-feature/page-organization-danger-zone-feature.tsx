@@ -9,7 +9,7 @@ import PageOrganizationDangerZone from '../../ui/page-organization-danger-zone/p
 
 export function PageOrganizationDangerZoneFeature() {
   const { organizationId = '' } = useParams()
-  useDocumentTitle('Organization settings - General')
+  useDocumentTitle('Danger zone - Organization settings')
 
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()

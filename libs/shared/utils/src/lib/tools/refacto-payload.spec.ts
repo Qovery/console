@@ -5,6 +5,7 @@ import { refactoDatabasePayload } from '@qovery/shared/utils'
 import {
   refactoContainerApplicationPayload,
   refactoGitApplicationPayload,
+  refactoOrganizationCustomRolePayload,
   refactoOrganizationPayload,
   refactoPayload,
 } from './refacto-payload'
@@ -21,7 +22,7 @@ describe('testing payload refactoring', () => {
     expect(refactoPayload(response)).toEqual({ name: 'hello' })
   })
 
-  it('should remove application values', () => {
+  it('should remove useless application values', () => {
     const response: any = {
       id: '1',
       created_at: '',
@@ -69,7 +70,7 @@ describe('testing payload refactoring', () => {
     })
   })
 
-  it('should remove container values', () => {
+  it('should remove useless container values', () => {
     const response: Partial<ContainerApplicationEntity> = {
       id: '1',
       created_at: '',
@@ -127,7 +128,7 @@ describe('testing payload refactoring', () => {
     })
   })
 
-  it('should remove database values', () => {
+  it('should remove useless database values', () => {
     let response = databaseFactoryMock(2)[0]
     response.name = 'hello'
     response.version = '12'
@@ -146,7 +147,7 @@ describe('testing payload refactoring', () => {
     })
   })
 
-  it('should remove organization values', () => {
+  it('should remove useless organization values', () => {
     const response: any = {
       id: '1',
       created_at: '',
@@ -166,6 +167,47 @@ describe('testing payload refactoring', () => {
       logo_url: 'https://qovery.com',
       website_url: 'https://qovery.com',
       admin_emails: ['test@test.com'],
+    })
+  })
+
+  it('should remove useless organization custom roles values', () => {
+    const response: any = {
+      id: '1',
+      name: 'hello',
+      description: 'hello world',
+      cluster_permissions: [
+        {
+          cluster_name: 'my cluster',
+          cluster_id: '1',
+          permission: [],
+        },
+      ],
+      project_permissions: [
+        {
+          project_id: '1',
+          project_name: 'my project',
+          is_admin: true,
+          permissions: [],
+        },
+      ],
+    }
+
+    expect(refactoOrganizationCustomRolePayload(response)).toEqual({
+      name: 'hello',
+      description: 'hello world',
+      cluster_permissions: [
+        {
+          cluster_id: '1',
+          permission: [],
+        },
+      ],
+      project_permissions: [
+        {
+          project_id: '1',
+          is_admin: true,
+          permissions: [],
+        },
+      ],
     })
   })
 })

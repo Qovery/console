@@ -21,7 +21,7 @@ export const handleSubmit = (data: FieldValues, organization: Organization) => {
 
 export function PageOrganizationGeneralFeature() {
   const { organizationId = '' } = useParams()
-  useDocumentTitle('Organization settings - General')
+  useDocumentTitle('General - Organization settings')
 
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
 

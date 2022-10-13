@@ -16,7 +16,7 @@ import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 export function PageOrganizationContainerRegistriesFeature() {
   const { organizationId = '' } = useParams()
 
-  useDocumentTitle('Organization settings - Container registries')
+  useDocumentTitle('Container registries - Organization settings')
 
   const dispatch = useDispatch<AppDispatch>()
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))

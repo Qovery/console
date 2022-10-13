@@ -6,11 +6,13 @@ import {
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_MEMBERS_URL,
+  SETTINGS_ROLES_URL,
 } from '@qovery/shared/router'
 import { PageOrganizationClusterFeature } from '../feature/page-organization-cluster-feature/page-organization-cluster-feature'
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
 import { PageOrganizationDangerZoneFeature } from '../feature/page-organization-danger-zone-feature/page-organization-danger-zone-feature'
 import { PageOrganizationGeneralFeature } from '../feature/page-organization-general-feature/page-organization-general-feature'
+import { PageOrganizationRolesFeature } from '../feature/page-organization-roles-feature/page-organization-roles-feature'
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_SETTINGS: Route[] = [
@@ -21,6 +23,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_MEMBERS_URL,
     component: <PageSettingsV2 path="members" />,
+  },
+  {
+    path: SETTINGS_ROLES_URL,
+    component: <PageOrganizationRolesFeature />,
   },
   {
     path: SETTINGS_BILLING_URL,

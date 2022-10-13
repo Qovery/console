@@ -38,7 +38,7 @@ describe('NavigationLeft', () => {
 
     expect(
       linkClassName('/general', props.links[0].url) ===
-        'py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate text-brand-500 bg-brand-50 hover:text-brand-600 hover:bg-brand-100'
+        'py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate is-active text-brand-500 bg-brand-50 hover:text-brand-600 hover:bg-brand-100'
     ).toBe(true)
   })
 
