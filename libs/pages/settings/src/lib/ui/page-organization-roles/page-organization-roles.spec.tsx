@@ -72,6 +72,7 @@ describe('PageOrganizationRoles', () => {
 
   it('should submit the form', async () => {
     const spy = jest.fn((e) => e.preventDefault())
+    props.customRoles = customRoles
     props.onSubmit = spy
     props.currentRole = customRole
 
@@ -81,8 +82,10 @@ describe('PageOrganizationRoles', () => {
       })
     )
 
-    const select = getByTestId('select-custom-roles')
-    selectEvent.select(select, customRole.name || '')
+    await act(() => {
+      const select = getByTestId('select-custom-roles')
+      selectEvent.select(select, customRoles[1].name || '')
+    })
 
     const button = getByTestId('submit-save-button')
     getByTestId('delete-button')
