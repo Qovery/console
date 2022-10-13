@@ -1,4 +1,4 @@
-import { render, waitFor } from '__tests__/utils/setup-jest'
+import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import {
   EnvironmentModeEnum,
   OrganizationCustomRole,
@@ -47,6 +47,7 @@ describe('PageOrganizationRoles', () => {
     cluster_permissions: [
       {
         cluster_id: '1',
+        cluster_name: 'aws',
         permission: OrganizationCustomRoleClusterPermission.ENV_CREATOR,
       },
     ],
@@ -65,6 +66,17 @@ describe('PageOrganizationRoles', () => {
         ],
       },
     ],
+  }
+
+  const formData = {
+    cluster_permissions: { '1': OrganizationCustomRoleClusterPermission.ENV_CREATOR },
+    project_permissions: {
+      '1': {
+        [EnvironmentModeEnum.DEVELOPMENT]: OrganizationCustomRoleProjectPermission.MANAGER,
+      },
+    },
+    name: mockCustomRole[0].name,
+    description: mockCustomRole[0].description,
   }
 
   it('should render successfully', () => {
@@ -94,17 +106,6 @@ describe('PageOrganizationRoles', () => {
   })
 
   it('should have handleSubmit function', () => {
-    const formData = {
-      cluster_permissions: { '1': OrganizationCustomRoleClusterPermission.ENV_CREATOR },
-      project_permissions: {
-        '1': {
-          [EnvironmentModeEnum.DEVELOPMENT]: OrganizationCustomRoleProjectPermission.MANAGER,
-        },
-      },
-      name: mockCustomRole[0].name,
-      description: mockCustomRole[0].description,
-    }
-
     const cloneCustomRole = handleSubmit(formData, mockCustomRole[0])
 
     if (mockCustomRole[0].cluster_permissions && mockCustomRole[0].project_permissions) {
@@ -121,24 +122,28 @@ describe('PageOrganizationRoles', () => {
     )
   })
 
-  // it('should dispatch editCustomRole if form is submitted', async () => {
-  //   const editCustomRoleSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCustomRole')
-  //   mockDispatch.mockImplementation(() => ({
-  //     unwrap: () => Promise.resolve(mockCustomRole),
-  //   }))
+  it('should dispatch editCustomRole if form is submitted', async () => {
+    const editCustomRoleSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCustomRole')
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () => Promise.resolve(mockCustomRole),
+    }))
 
-  //   const { getByTestId } = render(<PageOrganizationRolesFeature />)
+    const { getByTestId } = render(<PageOrganizationRolesFeature />)
 
-  //   await waitFor(() => {
-  //     const button = getByTestId('submit-save-button')
-  //     expect(button).not.toBeDisabled()
-  //     button.click()
-  //   })
+    const button = getByTestId('submit-save-button')
 
-  //   expect(editCustomRoleSpy).toHaveBeenCalledWith({
-  //     data: mockCustomRole[0],
-  //     organizationId: '0',
-  //     customRoleId: mockCustomRole[0].id,
-  //   })
-  // })
+    await waitFor(() => {
+      expect(button).not.toBeDisabled()
+    })
+
+    button.click()
+
+    await waitFor(() => {
+      expect(editCustomRoleSpy).toHaveBeenCalledWith({
+        data: mockCustomRole[0],
+        organizationId: '0',
+        customRoleId: mockCustomRole[0].id,
+      })
+    })
+  })
 })

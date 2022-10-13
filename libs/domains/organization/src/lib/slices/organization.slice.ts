@@ -140,7 +140,7 @@ export const editCustomRole = createAsyncThunk(
       payload.customRoleId,
       cloneCustomRole
     )
-    return result.data as OrganizationCustomRole
+    return result.data
   }
 )
 

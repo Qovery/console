@@ -73,13 +73,11 @@ describe('PageOrganizationRoles', () => {
   it('should submit the form', async () => {
     props.currentRole = customRole
 
-    const { getByTestId, debug } = render(
+    const { getByTestId } = render(
       wrapWithReactHookForm(<PageOrganizationRoles {...props} />, {
         defaultValues: defaultValues,
       })
     )
-
-    debug()
 
     const select = getByTestId('select-custom-roles')
     selectEvent.select(select, customRole.name || '')

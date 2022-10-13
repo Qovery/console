@@ -76,6 +76,7 @@ export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomR
 
     return {
       cluster_id: cluster.cluster_id,
+      cluster_name: cluster.cluster_name,
       permission: currentClusterPermission,
     }
   })

@@ -42,7 +42,7 @@ describe('CreateModalFeature', () => {
         }),
     }))
 
-    const { debug, getByTestId } = render(<CreateModalFeature {...props} />)
+    const { getByTestId } = render(<CreateModalFeature {...props} />)
 
     await act(() => {
       const inputName = getByTestId('input-name')
@@ -56,8 +56,6 @@ describe('CreateModalFeature', () => {
     await act(() => {
       getByTestId('submit-button').click()
     })
-
-    debug()
 
     expect(postCustomRoles).toHaveBeenCalledWith({
       data: {
