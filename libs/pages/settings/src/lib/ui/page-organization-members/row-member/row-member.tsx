@@ -26,7 +26,16 @@ export function RowMember(props: RowMemberProps) {
       items: availableRoles
         ? availableRoles.map((role) => ({
             name: upperCaseFirstLetter(role.name) || '',
-            contentLeft: <Icon name={IconAwesomeEnum.USER} className="text-brand-500" />,
+            contentLeft: (
+              <Icon
+                name={
+                  Object.values(InviteMemberRoleEnum).includes(role.name?.toUpperCase() as InviteMemberRoleEnum)
+                    ? IconAwesomeEnum.USER_CROWN
+                    : IconAwesomeEnum.USER
+                }
+                className="text-brand-500"
+              />
+            ),
             onClick: () => editMemberRole(member.id, role.id || ''),
           }))
         : [],
