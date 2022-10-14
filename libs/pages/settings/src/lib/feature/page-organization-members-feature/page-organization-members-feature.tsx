@@ -6,6 +6,7 @@ import {
   fetchAvailableRoles,
   fetchInviteMembers,
   fetchMembers,
+  membersMock,
   selectOrganizationById,
 } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -62,14 +63,18 @@ export function PageOrganizationMembersFeature() {
 
     dispatch(editMemberRole({ organizationId, data }))
       .unwrap()
-      .catch((e) => {
-        console.error(e)
-      })
+      .catch((e) => console.error(e))
   }
 
   return (
     <PageOrganizationMembers
-      members={organization?.members?.items}
+      members={
+        loadingMembers
+          ? membersMock(5)
+          : organization?.members?.items && organization?.members?.items?.length > 0
+          ? organization?.members?.items
+          : []
+      }
       loadingMembers={loadingMembers}
       inviteMembers={organization?.inviteMembers?.items}
       availableRoles={organization?.availableRoles?.items}

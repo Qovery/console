@@ -30,14 +30,16 @@ export function TableHeadSort(props: TableHeadSortProps) {
     <div
       data-testid="table-head-sort"
       className={`text-xs font-medium select-none cursor-pointer transition-color transition-timing duration-100 hover:text-text-500 ${
-        isSort ? 'text-text-500' : 'text-text-400'
+        isSort ? 'text-text-600' : 'text-text-600'
       }`}
       onClick={() => toggleSort()}
     >
       {title}
       <Icon
         name="icon-solid-arrow-down"
-        className={`ml-1 inline-block transition-transform ease-out duration-100 ${isSort ? 'rotate-180' : ''}`}
+        className={`ml-1 text-xxs inline-block transition-transform ease-out duration-100 ${
+          isSort ? 'rotate-180' : ''
+        }`}
       />
     </div>
   )

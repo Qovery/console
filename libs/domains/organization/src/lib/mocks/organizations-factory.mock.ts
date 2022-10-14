@@ -3,6 +3,8 @@ import {
   ContainerRegistryKindEnum,
   ContainerRegistryResponse,
   EnvironmentModeEnum,
+  InviteMemberRoleEnum,
+  Member,
   OrganizationCustomRole,
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleProjectPermission,
@@ -34,6 +36,25 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
       loadingStatus: 'loaded',
       items: customRolesMock(2),
     },
+    members: {
+      loadingStatus: 'loaded',
+      items: membersMock(2),
+    },
+  }))
+
+export const membersMock = (howMany: number): Member[] =>
+  Array.from({ length: howMany }).map((_, index) => ({
+    id: `${index}`,
+    created_at: new Date().toString(),
+    updated_at: new Date().toString(),
+    name: chance.name(),
+    nickname: chance.name(),
+    email: chance.email(),
+    description: chance.word({ length: 10 }),
+    last_activity_at: new Date().toString(),
+    role: chance.pickone(Object.values(InviteMemberRoleEnum)),
+    role_name: chance.name(),
+    role_id: chance.guid(),
   }))
 
 export const containerRegistriesMock = (howMany: number): ContainerRegistryResponse[] =>

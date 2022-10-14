@@ -1,11 +1,11 @@
 import { InviteMember, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { HelpSection, Table } from '@qovery/shared/ui'
+import { HelpSection, LoaderSpinner, Table } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
   editMemberRole: (userId: string, roleId: string) => void
-  members?: Member[]
+  members: Member[]
   loadingMembers: boolean
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
@@ -30,7 +30,7 @@ const membersHead = [
     title: 'Last activity',
     className: 'px-4',
     sort: {
-      key: 'updated_at',
+      key: 'last_activity_at',
     },
   },
   {
@@ -45,11 +45,13 @@ const membersHead = [
 export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const { members, availableRoles, editMemberRole, loadingMembers } = props
 
-  const [filterMembers, setFilterMembers] = useState<Member[]>([])
+  const [filterMembers, setFilterMembers] = useState<Member[]>(members)
 
   useEffect(() => {
-    members && setFilterMembers(members)
+    setFilterMembers(members)
   }, [members])
+
+  const columnsWidth = '35% 22% 21% 21%'
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -74,9 +76,10 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           setFilterData={setFilterMembers}
           filterData={filterMembers}
           defaultData={members}
+          columnsWidth={columnsWidth}
         >
           <div>
-            {availableRoles &&
+            {filterMembers ? (
               filterMembers.map((member: Member) => (
                 <RowMember
                   key={member.id}
@@ -84,8 +87,12 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
                   member={member}
                   availableRoles={availableRoles}
                   editMemberRole={editMemberRole}
+                  columnsWidth={columnsWidth}
                 />
-              ))}
+              ))
+            ) : (
+              <LoaderSpinner />
+            )}
           </div>
         </Table>
       </div>

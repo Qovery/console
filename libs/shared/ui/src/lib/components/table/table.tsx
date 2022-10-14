@@ -51,7 +51,7 @@ export function Table(props: TableProps) {
         {dataHead.map(({ title, className = 'px-4 py-2', filter, sort }, index) => (
           <div key={index} className={className}>
             {!sort && !filter && (
-              <span data-testid="table-head-title" className="text-text-400 text-xs font-medium">
+              <span data-testid="table-head-title" className="text-text-600 text-xs font-medium">
                 {title}
               </span>
             )}
