@@ -148,8 +148,19 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as ContainerApplicationEntity).image_name && (
-              <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
-                {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
+              <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
+                <span className="block truncate">
+                  <Tooltip
+                    side="left"
+                    content={`${(data as ContainerApplicationEntity).image_name}:${
+                      (data as ContainerApplicationEntity).tag
+                    }`}
+                  >
+                    <span>
+                      {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
+                    </span>
+                  </Tooltip>
+                </span>
               </Tag>
             )}
           </div>

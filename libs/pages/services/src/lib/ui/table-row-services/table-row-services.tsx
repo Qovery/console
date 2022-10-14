@@ -195,14 +195,24 @@ export function TableRowServices(props: TableRowServicesProps) {
           </Skeleton>
         </div>
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
-          <Skeleton show={isLoading} width={160} height={16}>
-            <div className="flex gap-2 items-center -mt-[1px]">
+          <Skeleton className="w-full" show={isLoading} width={160} height={16}>
+            <div className="w-full flex gap-2 items-center -mt-[1px]">
               {type === ServiceTypeEnum.APPLICATION && (
                 <TagCommit commitId={(data as GitApplicationEntity).git_repository?.deployed_commit_id} />
               )}
               {type === ServiceTypeEnum.CONTAINER && (
-                <Tag className="border border-element-light-lighter-500 text-text-400 font-medium h-7 flex items-center justify-center">
-                  {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
+                <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
+                  <span className="block truncate">
+                    <Tooltip
+                      content={`${(data as ContainerApplicationEntity).image_name}:${
+                        (data as ContainerApplicationEntity).tag
+                      }`}
+                    >
+                      <span>
+                        {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
+                      </span>
+                    </Tooltip>
+                  </span>
                 </Tag>
               )}
               {type === ServiceTypeEnum.DATABASE && (
