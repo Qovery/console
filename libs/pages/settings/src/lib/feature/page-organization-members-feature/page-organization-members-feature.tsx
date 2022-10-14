@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -17,6 +17,8 @@ export function PageOrganizationMembersFeature() {
 
   useDocumentTitle('Members - Organization settings')
 
+  const [loadingMembers, setLoadingMembers] = useState(false)
+
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
   const membersLoadingStatus = useSelector(
     (state: RootState) => selectOrganizationById(state, organizationId)?.members?.loadingStatus
@@ -33,7 +35,12 @@ export function PageOrganizationMembersFeature() {
 
   useEffect(() => {
     if (organization && membersLoadingStatus !== 'loaded') {
+      setLoadingMembers(true)
+
       dispatch(fetchMembers({ organizationId }))
+        .unwrap()
+        .then(() => setLoadingMembers(false))
+        .catch((e) => console.error(e))
     }
     if (organization && inviteMembersLoadingStatus !== 'loaded') {
       dispatch(fetchInviteMembers({ organizationId }))
@@ -63,6 +70,7 @@ export function PageOrganizationMembersFeature() {
   return (
     <PageOrganizationMembers
       members={organization?.members?.items}
+      loadingMembers={loadingMembers}
       inviteMembers={organization?.inviteMembers?.items}
       availableRoles={organization?.availableRoles?.items}
       editMemberRole={onClickEditMemberRole}

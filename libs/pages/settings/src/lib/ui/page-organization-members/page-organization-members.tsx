@@ -1,11 +1,12 @@
 import { InviteMember, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { Button, HelpSection, IconAwesomeEnum, Table } from '@qovery/shared/ui'
+import { HelpSection, Table } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
   editMemberRole: (userId: string, roleId: string) => void
   members?: Member[]
+  loadingMembers: boolean
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
 }
@@ -21,7 +22,7 @@ const membersHead = [
       {
         search: true,
         title: 'Filter by role',
-        key: 'role',
+        key: 'role_name',
       },
     ],
   },
@@ -42,7 +43,7 @@ const membersHead = [
 ]
 
 export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
-  const { members, availableRoles, editMemberRole } = props
+  const { members, availableRoles, editMemberRole, loadingMembers } = props
 
   const [filterMembers, setFilterMembers] = useState<Member[]>([])
 
@@ -62,9 +63,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               to your projects and will be able to contribute.
             </p>
           </div>
-          <Button onClick={() => console.log('add')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          {/* <Button onClick={() => console.log('add')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add member
-          </Button>
+          </Button> */}
         </div>
         <Table
           className="border border-element-light-lighter-400 rounded"
@@ -79,6 +80,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               filterMembers.map((member: Member) => (
                 <RowMember
                   key={member.id}
+                  loading={loadingMembers}
                   member={member}
                   availableRoles={availableRoles}
                   editMemberRole={editMemberRole}
