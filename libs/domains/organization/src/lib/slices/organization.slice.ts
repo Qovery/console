@@ -380,8 +380,7 @@ export const organizationSlice = createSlice({
           id: action.meta.arg.organizationId,
           changes: {
             customRoles: {
-              loadingStatus: 'loaded',
-              items: state.entities[action.meta.arg.organizationId]?.customRoles?.items || [],
+              loadingStatus: 'loading',
             },
           },
         }

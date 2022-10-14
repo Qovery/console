@@ -1,7 +1,7 @@
 import { InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
-import { Avatar, Icon, IconAwesomeEnum, Menu, MenuData, Skeleton } from '@qovery/shared/ui'
+import { Avatar, Icon, IconAwesomeEnum, LoaderSpinner, Menu, MenuData, Skeleton } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface RowMemberProps {
@@ -10,10 +10,11 @@ export interface RowMemberProps {
   loading: boolean
   columnsWidth: string
   availableRoles?: OrganizationAvailableRole[]
+  loadingUpdateRole?: boolean
 }
 
 export function RowMember(props: RowMemberProps) {
-  const { member, availableRoles, editMemberRole, loading, columnsWidth } = props
+  const { member, availableRoles, editMemberRole, loading, columnsWidth, loadingUpdateRole } = props
 
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
@@ -42,21 +43,22 @@ export function RowMember(props: RowMemberProps) {
   ]
 
   const input = (role?: InviteMemberRoleEnum | string) => (
-    <Skeleton className="shrink-0" show={loading} width={176} height={38}>
+    <Skeleton className="shrink-0" show={loading} width={176} height={30}>
       <div
         className={`flex relative px-3 py-2 border rounded select-none w-44 ${
-          role === InviteMemberRoleEnum.OWNER.toLocaleLowerCase()
+          role === upperCaseFirstLetter(InviteMemberRoleEnum.OWNER)
             ? 'bg-element-light-lighter-200 border-element-light-ligther-500 text-text-400'
             : 'border-element-light-ligther-600 text-text-600 cursor-pointer'
         }`}
       >
         <span className="text-sm">{upperCaseFirstLetter(role)}</span>
-        {role !== InviteMemberRoleEnum.OWNER.toLocaleLowerCase() && (
+        {!loadingUpdateRole && role !== upperCaseFirstLetter(InviteMemberRoleEnum.OWNER) && (
           <Icon
             name={IconAwesomeEnum.ANGLE_DOWN}
             className="absolute top-2.5 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
           />
         )}
+        {loadingUpdateRole && <LoaderSpinner className="w-4 h-4 absolute top-2.5 right-4" />}
       </div>
     </Skeleton>
   )
@@ -73,18 +75,18 @@ export function RowMember(props: RowMemberProps) {
               <Avatar firstName={name[0]} lastName={name[1]} url={member.profile_picture_url} />
             </Skeleton>
           )}
-          <div className="ml-3 text-xs">
-            <Skeleton className="shrink-0 mb-1" show={loading} width={120} height={16}>
-              <p className="text-text-600 font-medium">{member.name}</p>
+          <div className="ml-3 text-xs truncate">
+            <Skeleton className="mb-1" show={loading} width={120} height={16}>
+              <p className="text-text-600 font-medium truncate">{member.name}</p>
             </Skeleton>
-            <Skeleton className="shrink-0" show={loading} width={100} height={16}>
-              <span className="text-text-500">{member.email}</span>
+            <Skeleton show={loading} width={100} height={16}>
+              <span className="text-text-500 truncate">{member.email}</span>
             </Skeleton>
           </div>
         </div>
       </div>
-      <div className="flex items-center px-4">
-        {member.role_name !== InviteMemberRoleEnum.OWNER.toLocaleLowerCase() ? (
+      <div className="flex items-center px-4 w-[500px]">
+        {member.role_name !== upperCaseFirstLetter(InviteMemberRoleEnum.OWNER) ? (
           <Menu menus={menus} trigger={input(member.role_name)} />
         ) : (
           input(member.role_name)

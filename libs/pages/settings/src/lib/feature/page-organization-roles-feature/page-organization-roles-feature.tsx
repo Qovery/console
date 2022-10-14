@@ -159,7 +159,7 @@ export function PageOrganizationRolesFeature() {
   })
 
   useEffect(() => {
-    if (organization && customRolesLoadingStatus !== 'loaded') {
+    if (organization && (!customRolesLoadingStatus || customRolesLoadingStatus === 'not loaded')) {
       dispatch(fetchCustomRoles({ organizationId }))
         .unwrap()
         .then((result: OrganizationCustomRole[]) => {

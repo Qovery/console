@@ -1,3 +1,4 @@
+import { Member } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -19,11 +20,13 @@ export function PageOrganizationMembersFeature() {
   useDocumentTitle('Members - Organization settings')
 
   const [loadingMembers, setLoadingMembers] = useState(false)
+  const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
 
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
   const membersLoadingStatus = useSelector(
     (state: RootState) => selectOrganizationById(state, organizationId)?.members?.loadingStatus
   )
+
   const inviteMembersLoadingStatus = useSelector(
     (state: RootState) => selectOrganizationById(state, organizationId)?.inviteMembers?.loadingStatus
   )
@@ -34,18 +37,25 @@ export function PageOrganizationMembersFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  useEffect(() => {
-    if (organization && membersLoadingStatus !== 'loaded') {
-      setLoadingMembers(true)
+  const [filterMembers, setFilterMembers] = useState<Member[]>(organization?.members?.items || membersMock(5))
 
+  useEffect(() => {
+    if (membersLoadingStatus !== 'loaded') setLoadingMembers(true)
+
+    if (organization && membersLoadingStatus !== 'loaded') {
       dispatch(fetchMembers({ organizationId }))
         .unwrap()
-        .then(() => setLoadingMembers(false))
+        .then((result?: Member[]) => {
+          result && setFilterMembers(result)
+          setLoadingMembers(false)
+        })
         .catch((e) => console.error(e))
     }
+
     if (organization && inviteMembersLoadingStatus !== 'loaded') {
       dispatch(fetchInviteMembers({ organizationId }))
     }
+
     if (organization && availableRolesLoadingStatus !== 'loaded') {
       dispatch(fetchAvailableRoles({ organizationId }))
     }
@@ -60,24 +70,23 @@ export function PageOrganizationMembersFeature() {
 
   const onClickEditMemberRole = (userId: string, roleId: string) => {
     const data = { user_id: userId, role_id: roleId }
+    setLoadingUpdateRole({ userId, loading: true })
 
     dispatch(editMemberRole({ organizationId, data }))
       .unwrap()
+      .then(() => setLoadingUpdateRole({ userId, loading: false }))
       .catch((e) => console.error(e))
   }
 
   return (
     <PageOrganizationMembers
-      members={
-        loadingMembers
-          ? membersMock(5)
-          : organization?.members?.items && organization?.members?.items?.length > 0
-          ? organization?.members?.items
-          : []
-      }
+      members={!loadingMembers ? organization?.members?.items : membersMock(5)}
+      filterMembers={filterMembers}
+      setFilterMembers={setFilterMembers}
       loadingMembers={loadingMembers}
       inviteMembers={organization?.inviteMembers?.items}
       availableRoles={organization?.availableRoles?.items}
+      loadingUpdateRole={loadingUpdateRole}
       editMemberRole={onClickEditMemberRole}
     />
   )

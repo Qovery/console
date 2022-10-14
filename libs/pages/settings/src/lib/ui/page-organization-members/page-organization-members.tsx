@@ -1,14 +1,17 @@
 import { InviteMember, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
-import { HelpSection, LoaderSpinner, Table } from '@qovery/shared/ui'
+import { Dispatch, SetStateAction, useEffect } from 'react'
+import { HelpSection, Table } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
-  editMemberRole: (userId: string, roleId: string) => void
-  members: Member[]
+  editMemberRole: (userId: string, memberId: string) => void
+  members?: Member[]
+  setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
+  filterMembers?: Member[]
   loadingMembers: boolean
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
+  loadingUpdateRole: { userId: string; loading: boolean }
 }
 
 const membersHead = [
@@ -43,15 +46,21 @@ const membersHead = [
 ]
 
 export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
-  const { members, availableRoles, editMemberRole, loadingMembers } = props
+  const {
+    members,
+    filterMembers,
+    setFilterMembers,
+    availableRoles,
+    editMemberRole,
+    loadingMembers,
+    loadingUpdateRole,
+  } = props
 
-  const [filterMembers, setFilterMembers] = useState<Member[]>(members)
+  const columnsWidth = '35% 22% 21% 21%'
 
   useEffect(() => {
     setFilterMembers(members)
-  }, [members])
-
-  const columnsWidth = '35% 22% 21% 21%'
+  }, [members, setFilterMembers])
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -79,20 +88,17 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           columnsWidth={columnsWidth}
         >
           <div>
-            {filterMembers ? (
-              filterMembers.map((member: Member) => (
-                <RowMember
-                  key={member.id}
-                  loading={loadingMembers}
-                  member={member}
-                  availableRoles={availableRoles}
-                  editMemberRole={editMemberRole}
-                  columnsWidth={columnsWidth}
-                />
-              ))
-            ) : (
-              <LoaderSpinner />
-            )}
+            {filterMembers?.map((member: Member) => (
+              <RowMember
+                key={member.id}
+                loading={loadingMembers}
+                member={member}
+                availableRoles={availableRoles}
+                editMemberRole={editMemberRole}
+                columnsWidth={columnsWidth}
+                loadingUpdateRole={loadingUpdateRole.userId === member.id && loadingUpdateRole.loading}
+              />
+            ))}
           </div>
         </Table>
       </div>
