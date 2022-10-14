@@ -59,7 +59,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
           disabled
             ? 'before:border-element-light-lighter-500'
             : 'before:border-element-light-lighter-700 cursor-pointer'
-        } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] checked:before:content-['\\f00c'] checked:before:bg-brand-500 checked:before:border-brand-500 before:transition-all`}
+        } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] checked:before:content-["\\f00c"] checked:before:bg-brand-500 checked:before:border-brand-500 before:transition-all`}
       />
       {label && (
         <label htmlFor={id} className="cursor-pointer leading-5 h-5 text-text-700 text-sm">
