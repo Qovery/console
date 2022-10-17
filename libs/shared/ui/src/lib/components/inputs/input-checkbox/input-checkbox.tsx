@@ -55,11 +55,11 @@ export function InputCheckbox(props: InputCheckboxProps) {
         checked={check}
         disabled={disabled}
         onChange={(e) => inputChange(e.currentTarget.checked, e)}
-        className={`relative font-icons w-0 h-0 mr-5 appearance-none before:absolute before:flex before:justify-center before:items-center before:text-white before:w-4 before:h-4 before:top-0 before:left-0 before:-translate-y-1/2 before:rounded-sm before:bg-white ${
+        className={`input-checkbox relative font-icons w-0 h-0 mr-5 appearance-none before:absolute before:flex before:justify-center before:items-center before:text-white before:w-4 before:h-4 before:top-0 before:left-0 before:-translate-y-1/2 before:rounded-sm before:bg-white ${
           disabled
             ? 'before:border-element-light-lighter-500'
             : 'before:border-element-light-lighter-700 cursor-pointer'
-        } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] checked:before:content-["\\f00c"] checked:before:bg-brand-500 checked:before:border-brand-500 before:transition-all`}
+        } before:border-2 before:font-black before:text-xs before:leading-none before:content-[''] before:transition-all`}
       />
       {label && (
         <label htmlFor={id} className="cursor-pointer leading-5 h-5 text-text-700 text-sm">
