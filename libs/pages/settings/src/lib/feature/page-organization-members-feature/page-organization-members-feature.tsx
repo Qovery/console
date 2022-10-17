@@ -14,6 +14,8 @@ import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 
+const membersDataMock = membersMock(5)
+
 export function PageOrganizationMembersFeature() {
   const { organizationId = '' } = useParams()
 
@@ -80,7 +82,7 @@ export function PageOrganizationMembersFeature() {
 
   return (
     <PageOrganizationMembers
-      members={!loadingMembers ? organization?.members?.items : membersMock(5)}
+      members={!loadingMembers ? organization?.members?.items : membersDataMock}
       filterMembers={filterMembers}
       setFilterMembers={setFilterMembers}
       loadingMembers={loadingMembers}

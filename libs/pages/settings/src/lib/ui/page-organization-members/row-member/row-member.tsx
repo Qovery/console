@@ -54,6 +54,7 @@ export function RowMember(props: RowMemberProps) {
   const input = (role?: InviteMemberRoleEnum | string) => (
     <Skeleton className="shrink-0" show={loading} width={176} height={30}>
       <div
+        data-testid="input"
         className={`flex relative px-3 py-2 border rounded select-none w-44 ${
           role === upperCaseFirstLetter(InviteMemberRoleEnum.OWNER)
             ? 'bg-element-light-lighter-200 border-element-light-ligther-500 text-text-400'
@@ -103,12 +104,14 @@ export function RowMember(props: RowMemberProps) {
       </div>
       <div className="flex items-center px-4 text-text-500 text-xs font-medium">
         <Skeleton className="shrink-0" show={loading} width={64} height={16}>
-          <span>{timeAgo(new Date(member.last_activity_at || ''))} ago</span>
+          <span data-testid="last-activity">{timeAgo(new Date(member.last_activity_at || ''))} ago</span>
         </Skeleton>
       </div>
       <div className="flex items-center px-4 text-text-500 text-xs font-medium">
         <Skeleton className="shrink-0" show={loading} width={64} height={16}>
-          <span>{dateYearMonthDayHourMinuteSecond(new Date(member.created_at || ''), false)}</span>
+          <span data-testid="created-at">
+            {dateYearMonthDayHourMinuteSecond(new Date(member.created_at || ''), false)}
+          </span>
         </Skeleton>
       </div>
     </div>

@@ -171,7 +171,11 @@ export const editMemberRole = createAsyncThunk(
         // refetch member to update members list, we can't update with the edit response
         await dispatch(fetchMembers({ organizationId: payload.organizationId }))
 
-        toast(ToastEnum.SUCCESS, 'Member role updated')
+        toast(
+          ToastEnum.SUCCESS,
+          'Member role updated',
+          'Target user needs to relog or wait a few minutes to make it work.'
+        )
       }
 
       return result
