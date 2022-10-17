@@ -72,8 +72,8 @@ describe('RowMember', () => {
   })
 
   it('should have menu with edit member role action', async () => {
-    const editMemberRole = jest.fn()
-    props.editMemberRole = editMemberRole
+    const spy = jest.fn()
+    props.editMemberRole = spy
     props.member = membersMock(1)[0]
 
     const { getAllByTestId } = render(<RowMember {...props} />)
@@ -84,6 +84,6 @@ describe('RowMember', () => {
       items[0].click()
     })
 
-    expect(editMemberRole).toBeCalled()
+    expect(spy).toBeCalled()
   })
 })

@@ -95,7 +95,7 @@ export function RowMember(props: RowMemberProps) {
           </div>
         </div>
       </div>
-      <div className="flex items-center px-4 w-[500px]">
+      <div data-testid="row-member-menu" className="flex items-center px-4 w-[500px]">
         {member.role_name !== upperCaseFirstLetter(InviteMemberRoleEnum.OWNER) ? (
           <Menu menus={menus} trigger={input(member.role_name)} />
         ) : (

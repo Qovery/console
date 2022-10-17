@@ -40,6 +40,19 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
       loadingStatus: 'loaded',
       items: membersMock(2),
     },
+    availableRoles: {
+      loadingStatus: 'loaded',
+      items: [
+        {
+          id: '0',
+          name: 'Admin',
+        },
+        {
+          id: '1',
+          name: 'Owner',
+        },
+      ],
+    },
   }))
 
 export const membersMock = (howMany: number): Member[] =>
@@ -53,7 +66,7 @@ export const membersMock = (howMany: number): Member[] =>
     description: chance.word({ length: 10 }),
     last_activity_at: new Date().toString(),
     role: chance.pickone(Object.values(InviteMemberRoleEnum)),
-    role_name: chance.name(),
+    role_name: 'Admin',
     role_id: chance.guid(),
   }))
 

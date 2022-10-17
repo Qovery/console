@@ -39,7 +39,7 @@ export function PageOrganizationMembersFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const [filterMembers, setFilterMembers] = useState<Member[]>(organization?.members?.items || membersMock(5))
+  const [filterMembers, setFilterMembers] = useState<Member[]>(organization?.members?.items || membersDataMock)
 
   useEffect(() => {
     if (membersLoadingStatus !== 'loaded') setLoadingMembers(true)
@@ -49,9 +49,9 @@ export function PageOrganizationMembersFeature() {
         .unwrap()
         .then((result?: Member[]) => {
           result && setFilterMembers(result)
-          setLoadingMembers(false)
         })
         .catch((e) => console.error(e))
+        .finally(() => setLoadingMembers(false))
     }
 
     if (organization && inviteMembersLoadingStatus !== 'loaded') {
@@ -76,8 +76,8 @@ export function PageOrganizationMembersFeature() {
 
     dispatch(editMemberRole({ organizationId, data }))
       .unwrap()
-      .then(() => setLoadingUpdateRole({ userId, loading: false }))
       .catch((e) => console.error(e))
+      .finally(() => setLoadingUpdateRole({ userId, loading: false }))
   }
 
   return (

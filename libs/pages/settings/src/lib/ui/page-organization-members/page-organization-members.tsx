@@ -5,8 +5,8 @@ import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
   editMemberRole: (userId: string, memberId: string) => void
-  members?: Member[]
   setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
+  members?: Member[]
   filterMembers?: Member[]
   loadingMembers: boolean
   inviteMembers?: InviteMember[]
@@ -103,6 +103,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
         </Table>
       </div>
       <HelpSection
+        data-testid="help-section"
         description="Need help? You may find these links useful"
         links={[
           {
