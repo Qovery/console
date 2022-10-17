@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
 import { ControlledMenu, MenuCloseEvent } from '@szhsin/react-menu'
+import React, { useEffect, useRef, useState } from 'react'
 import MenuGroup from './menu-group/menu-group'
 import { MenuItemProps } from './menu-item/menu-item'
 

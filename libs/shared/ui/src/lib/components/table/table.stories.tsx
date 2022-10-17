@@ -32,7 +32,7 @@ const Template: Story<TableProps> = (args) => {
       >
         Add Row
       </Button>
-      <Table {...args} defaultData={data} setFilterData={setData}>
+      <Table {...args} defaultData={environmentData} filterData={data} setFilterData={setData}>
         <>
           {data.map((currentData, index) => (
             <TableRow key={index} columnsWidth={args.columnsWidth} link="/">

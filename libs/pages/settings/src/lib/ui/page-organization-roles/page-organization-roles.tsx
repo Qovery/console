@@ -47,7 +47,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
             Add new role
           </Button>
         </div>
-        {(loading === 'not loaded' || loading === 'loading') && customRoles?.length === 0 ? (
+        {loading === 'not loaded' || loading === 'loading' ? (
           <div data-testid="custom-roles-loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
@@ -70,109 +70,107 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                 }}
               />
             </div>
-            {currentRole && (
-              <form onSubmit={onSubmit}>
-                <div className="max-w-content-with-navigation-left">
-                  <BlockContent title="General informations">
-                    <Controller
-                      name="name"
-                      control={control}
-                      rules={{ required: 'Please enter a name.' }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputText
-                          dataTestId="input-name"
-                          className="mb-3"
-                          name={field.name}
-                          onChange={field.onChange}
-                          value={field.value}
-                          label="Name"
-                          error={error?.message}
-                        />
-                      )}
-                    />
-                    <Controller
-                      name="description"
-                      control={control}
-                      render={({ field }) => (
-                        <InputTextArea
-                          dataTestId="input-description"
-                          name={field.name}
-                          onChange={field.onChange}
-                          value={field.value}
-                          label="Description"
-                        />
-                      )}
-                    />
-                  </BlockContent>
-                </div>
-                {currentRole?.cluster_permissions && <TableClusters clusters={currentRole?.cluster_permissions} />}
-                {currentRole?.project_permissions && (
-                  <Table
-                    title="Project level permissions"
-                    headArray={[
-                      {
-                        label: 'Admin',
-                        tooltip:
-                          'The user is admin of the project and can do everything he wants on it (no matter the environment type)',
-                      },
-                      {
-                        label: 'Manager',
-                        tooltip:
-                          'Manage the deployments and the settings of this environment type (including adding or removing services)',
-                      },
-                      {
-                        label: 'Deployer',
-                        tooltip:
-                          'Manage the deployments of this environment type, access the logs, connect via SSH to the application and manage its environment variables.',
-                      },
-                      {
-                        label: 'Viewer',
-                        tooltip: 'Access in read-only this environment type.',
-                      },
-                      {
-                        label: 'No Access',
-                        tooltip: 'The user has no access to this environment type.',
-                      },
-                    ]}
-                  >
-                    {currentRole.project_permissions.map((project: OrganizationCustomRoleProjectPermissions) => (
-                      <RowProject key={project.project_id} project={project} />
-                    ))}
-                  </Table>
-                )}
-                <div className="flex gap-3 justify-between mt-6">
-                  {currentRole && (
-                    <Button
-                      dataTestId="delete-button"
-                      className="btn--no-min-w"
-                      style={ButtonStyle.ERROR}
-                      size={ButtonSize.XLARGE}
-                      onClick={() => onDeleteRole(currentRole)}
-                    >
-                      Delete role
-                    </Button>
-                  )}
+            <form onSubmit={onSubmit}>
+              <div className="max-w-content-with-navigation-left">
+                <BlockContent title="General informations">
+                  <Controller
+                    name="name"
+                    control={control}
+                    rules={{ required: 'Please enter a name.' }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-name"
+                        className="mb-3"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Name"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => (
+                      <InputTextArea
+                        dataTestId="input-description"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Description"
+                      />
+                    )}
+                  />
+                </BlockContent>
+              </div>
+              {currentRole?.cluster_permissions && <TableClusters clusters={currentRole?.cluster_permissions} />}
+              {currentRole?.project_permissions && (
+                <Table
+                  title="Project level permissions"
+                  headArray={[
+                    {
+                      label: 'Admin',
+                      tooltip:
+                        'The user is admin of the project and can do everything he wants on it (no matter the environment type)',
+                    },
+                    {
+                      label: 'Manager',
+                      tooltip:
+                        'Manage the deployments and the settings of this environment type (including adding or removing services)',
+                    },
+                    {
+                      label: 'Deployer',
+                      tooltip:
+                        'Manage the deployments of this environment type, access the logs, connect via SSH to the application and manage its environment variables.',
+                    },
+                    {
+                      label: 'Viewer',
+                      tooltip: 'Access in read-only this environment type.',
+                    },
+                    {
+                      label: 'No Access',
+                      tooltip: 'The user has no access to this environment type.',
+                    },
+                  ]}
+                >
+                  {currentRole.project_permissions.map((project: OrganizationCustomRoleProjectPermissions) => (
+                    <RowProject key={project.project_id} project={project} />
+                  ))}
+                </Table>
+              )}
+              <div className="flex gap-3 justify-between mt-6">
+                {currentRole && (
                   <Button
-                    dataTestId="submit-save-button"
+                    dataTestId="delete-button"
                     className="btn--no-min-w"
-                    type="submit"
+                    style={ButtonStyle.ERROR}
                     size={ButtonSize.XLARGE}
-                    disabled={!formState.isValid}
-                    loading={loadingForm}
+                    onClick={() => onDeleteRole(currentRole)}
                   >
-                    Save
+                    Delete role
                   </Button>
-                </div>
-              </form>
-            )}
+                )}
+                <Button
+                  dataTestId="submit-save-button"
+                  className="btn--no-min-w"
+                  type="submit"
+                  size={ButtonSize.XLARGE}
+                  disabled={!formState.isValid}
+                  loading={loadingForm}
+                >
+                  Save
+                </Button>
+              </div>
+            </form>
           </div>
-        ) : (
+        ) : loading === 'loaded' && customRoles?.length === 0 ? (
           <EmptyState dataTestId="empty-state" title="Create your first custom role" imageWidth="w-[160px]">
             <Button className="mt-5" onClick={onAddRole}>
               Add new role
             </Button>
           </EmptyState>
-        )}
+        ) : null}
       </div>
       <HelpSection
         description="Need help? You may find these links useful"

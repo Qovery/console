@@ -19,7 +19,7 @@ jest.mock('@qovery/domains/organization', () => {
     editCustomRole: jest.fn(),
     selectOrganizationById: () => {
       const currentMockOrganization = mockOrganization
-      if (currentMockOrganization.customRoles) currentMockOrganization.customRoles.loadingStatus = 'not loaded'
+      if (currentMockOrganization.customRoles) currentMockOrganization.customRoles.loadingStatus = 'loaded'
       return currentMockOrganization
     },
     fetchCustomRoles: () => {

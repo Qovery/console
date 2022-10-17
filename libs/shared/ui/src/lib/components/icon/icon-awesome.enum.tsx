@@ -80,5 +80,7 @@ export enum IconAwesomeEnum {
   DATABASE = 'icon-solid-database',
   BOX = 'icon-solid-box',
   SOURCETREE = 'icon-brands-sourcetree',
+  USER = 'icon-solid-user',
+  USER_CROWN = 'icon-solid-user-crown',
   // schema: favicons name
 }
