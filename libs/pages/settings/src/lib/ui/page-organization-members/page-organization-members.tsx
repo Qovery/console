@@ -8,12 +8,12 @@ export interface PageOrganizationMembersProps {
   deleteMember: (userId: string) => void
   transferOwnership: (userId: string) => void
   setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
+  loadingUpdateRole: { userId: string; loading: boolean }
   members?: Member[]
   filterMembers?: Member[]
   loadingMembers: boolean
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
-  loadingUpdateRole: { userId: string; loading: boolean }
   userId?: string
 }
 

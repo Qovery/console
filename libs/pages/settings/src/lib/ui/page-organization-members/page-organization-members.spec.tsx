@@ -5,8 +5,11 @@ import PageOrganizationMembers, { PageOrganizationMembersProps } from './page-or
 describe('PageOrganizationMembers', () => {
   const props: PageOrganizationMembersProps = {
     editMemberRole: jest.fn(),
+    deleteMember: jest.fn(),
+    transferOwnership: jest.fn(),
     members: membersMock(4),
     setFilterMembers: jest.fn(),
+    loadingUpdateRole: { userId: '0', loading: false },
   }
 
   it('should render successfully', async () => {

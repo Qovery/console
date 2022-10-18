@@ -92,6 +92,7 @@ describe('RowMember', () => {
   it('should have menu with transfer member role action', async () => {
     const spy = jest.fn()
     props.transferOwnership = spy
+    props.userIsOwner = true
     props.member = membersMock(1)[0]
 
     const { getAllByTestId } = render(<RowMember {...props} />)
