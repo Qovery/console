@@ -55,8 +55,8 @@ describe('PageOrganizationMembersFeature', () => {
     const items = getAllByTestId('menuItem')
 
     await act(() => {
-      // 4 is menu for row members
-      items[4].click()
+      // 5 is menu for row members
+      items[5].click()
     })
 
     expect(editMemberRoleSpy).toBeCalled()

@@ -69,7 +69,6 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   }, [members, setFilterMembers])
 
   const userIsOwner = filterMembers?.find((member) => member.id === userId)
-  console.log(userIsOwner)
 
   return (
     <div className="flex flex-col justify-between w-full">
