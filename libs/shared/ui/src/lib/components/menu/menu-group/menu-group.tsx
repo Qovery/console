@@ -83,24 +83,11 @@ export function MenuGroup(props: MenuGroupProps) {
       {currentItems.length > 0 && (
         <div style={paddingStyle} className="overflow-y-auto max-h-80">
           {currentItems.map((item, index) => (
-            <MenuItem
-              key={index}
-              name={item.name}
-              link={item.link}
-              contentLeft={item?.contentLeft}
-              contentRight={item?.contentRight}
-              onClick={item.onClick}
-              copy={item.copy}
-              copyTooltip={item.copyTooltip}
-              className={item.className}
-              textClassName={item.textClassName}
-              isActive={item.isActive}
-              truncateLimit={item?.truncateLimit}
-            />
+            <MenuItem key={index} {...item} />
           ))}
         </div>
       )}
-      {!isFilter && !isLast && <MenuDivider className="bg-element-light-lighter-400 m-0" />}
+      {!isFilter && !isLast && currentItems.length > 0 && <MenuDivider className="bg-element-light-lighter-400 m-0" />}
     </div>
   )
 }

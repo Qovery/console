@@ -1,25 +1,51 @@
 import { InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
-import { Avatar, Icon, IconAwesomeEnum, LoaderSpinner, Menu, MenuData, Skeleton } from '@qovery/shared/ui'
+import {
+  Avatar,
+  ButtonIconAction,
+  Icon,
+  IconAwesomeEnum,
+  LoaderSpinner,
+  Menu,
+  MenuData,
+  Skeleton,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface RowMemberProps {
   member: Member
   editMemberRole: (userId: string, roleId: string) => void
+  transferOwnership: (userId: string) => void
+  deleteMember: (userId: string) => void
   loading: boolean
   columnsWidth: string
   availableRoles?: OrganizationAvailableRole[]
   loadingUpdateRole?: boolean
+  userIsOwner?: boolean
 }
 
 export function RowMember(props: RowMemberProps) {
-  const { member, availableRoles, editMemberRole, loading, columnsWidth, loadingUpdateRole } = props
+  const {
+    member,
+    availableRoles,
+    editMemberRole,
+    loading,
+    columnsWidth,
+    loadingUpdateRole,
+    deleteMember,
+    transferOwnership,
+    userIsOwner,
+  } = props
 
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const name = member.name?.split(' ')
+
+  const isOwner = member.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER
 
   const menus: MenuData = [
     {
@@ -51,18 +77,55 @@ export function RowMember(props: RowMemberProps) {
     },
   ]
 
+  const buttonAction = [
+    {
+      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+      menus: [
+        {
+          items: userIsOwner
+            ? [
+                {
+                  name: 'Transfer ownership',
+                  onClick: () => transferOwnership(member.id),
+                  contentLeft: <Icon name={IconAwesomeEnum.RIGHT_LEFT} className="text-sm text-brand-500" />,
+                },
+              ]
+            : [],
+        },
+        {
+          items: [
+            {
+              name: 'Delete member',
+              onClick: () => {
+                openModalConfirmation({
+                  title: 'Confirm to remove this member',
+                  isDelete: true,
+                  description: 'Are you sure you want to delete this member?',
+                  name: member.name,
+                  action: () => deleteMember(member.id),
+                })
+              },
+              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-error-600" />,
+              containerClassName: 'text-error-600',
+            },
+          ],
+        },
+      ],
+    },
+  ]
+
   const input = (role?: InviteMemberRoleEnum | string) => (
     <Skeleton className="shrink-0" show={loading} width={176} height={30}>
       <div
         data-testid="input"
         className={`flex relative px-3 py-2 border rounded select-none w-44 ${
-          role === upperCaseFirstLetter(InviteMemberRoleEnum.OWNER)
+          role?.toUpperCase() === InviteMemberRoleEnum.OWNER
             ? 'bg-element-light-lighter-200 border-element-light-ligther-500 text-text-400'
             : 'border-element-light-ligther-600 text-text-600 cursor-pointer'
         }`}
       >
         <span className="text-sm">{upperCaseFirstLetter(role)}</span>
-        {!loadingUpdateRole && role !== upperCaseFirstLetter(InviteMemberRoleEnum.OWNER) && (
+        {!loadingUpdateRole && role?.toUpperCase() !== InviteMemberRoleEnum.OWNER && (
           <Icon
             name={IconAwesomeEnum.ANGLE_DOWN}
             className="absolute top-2.5 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
@@ -78,7 +141,7 @@ export function RowMember(props: RowMemberProps) {
       className="grid grid-cols-4 border-b border-element-light-lighter-400 last:border-0"
       style={{ gridTemplateColumns: columnsWidth }}
     >
-      <div className="border-r border-element-light-lighter-400 h-full">
+      <div className="flex items-center justify-between pr-4 border-r border-element-light-lighter-400 h-full">
         <div className="flex items-center px-4 py-3">
           {name && (
             <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>
@@ -94,13 +157,14 @@ export function RowMember(props: RowMemberProps) {
             </Skeleton>
           </div>
         </div>
+        {!isOwner && (
+          <Skeleton className="shrink-0" show={loading} width={28} height={26}>
+            <ButtonIconAction actions={buttonAction} />
+          </Skeleton>
+        )}
       </div>
       <div data-testid="row-member-menu" className="flex items-center px-4 w-[500px]">
-        {member.role_name !== upperCaseFirstLetter(InviteMemberRoleEnum.OWNER) ? (
-          <Menu menus={menus} trigger={input(member.role_name)} />
-        ) : (
-          input(member.role_name)
-        )}
+        {!isOwner ? <Menu menus={menus} trigger={input(member.role_name)} /> : input(member.role_name)}
       </div>
       <div className="flex items-center px-4 text-text-500 text-xs font-medium">
         <Skeleton className="shrink-0" show={loading} width={64} height={16}>

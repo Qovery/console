@@ -52,4 +52,25 @@ describe('PageOrganizationMembersFeature', () => {
 
     expect(editMemberRoleSpy).toBeCalled()
   })
+
+  it('should have dispatch to transfer ownership', async () => {
+    const transferOwnershipSpy: SpyInstance = jest.spyOn(storeOrganization, 'transferOwnershipMemberRole')
+    const fetchMembersSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchMembers')
+
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () => Promise.resolve(mockOrganization.members?.items),
+    }))
+
+    const { getAllByTestId } = render(<PageOrganizationMembersFeature />)
+
+    const items = getAllByTestId('menuItem')
+
+    await act(() => {
+      // 7 is menu for row members
+      items[7].click()
+    })
+
+    expect(transferOwnershipSpy).toBeCalled()
+    expect(fetchMembersSpy).toBeCalled()
+  })
 })

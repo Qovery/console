@@ -1,10 +1,12 @@
-import { InviteMember, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
+import { InviteMember, InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { HelpSection, Table } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
-  editMemberRole: (userId: string, memberId: string) => void
+  editMemberRole: (userId: string, roleId: string) => void
+  deleteMember: (userId: string) => void
+  transferOwnership: (userId: string) => void
   setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
   members?: Member[]
   filterMembers?: Member[]
@@ -12,6 +14,7 @@ export interface PageOrganizationMembersProps {
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
   loadingUpdateRole: { userId: string; loading: boolean }
+  userId?: string
 }
 
 const membersHead = [
@@ -54,6 +57,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     editMemberRole,
     loadingMembers,
     loadingUpdateRole,
+    deleteMember,
+    transferOwnership,
+    userId,
   } = props
 
   const columnsWidth = '35% 22% 21% 21%'
@@ -61,6 +67,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   useEffect(() => {
     setFilterMembers(members)
   }, [members, setFilterMembers])
+
+  const userIsOwner = filterMembers?.find((member) => member.id === userId)
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -91,10 +99,13 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             {filterMembers?.map((member: Member) => (
               <RowMember
                 key={member.id}
+                userIsOwner={userIsOwner?.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER}
                 loading={loadingMembers}
                 member={member}
                 availableRoles={availableRoles}
                 editMemberRole={editMemberRole}
+                transferOwnership={transferOwnership}
+                deleteMember={deleteMember}
                 columnsWidth={columnsWidth}
                 loadingUpdateRole={loadingUpdateRole.userId === member.id && loadingUpdateRole.loading}
               />

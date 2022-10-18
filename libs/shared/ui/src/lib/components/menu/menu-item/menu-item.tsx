@@ -12,6 +12,7 @@ export interface MenuItemProps {
   onClick?: (e: ClickEvent) => void
   copy?: string
   copyTooltip?: string
+  containerClassName?: string
   className?: string
   textClassName?: string
   isActive?: boolean
@@ -30,6 +31,7 @@ export function MenuItem(props: MenuItemProps) {
     isActive = false,
     textClassName = 'text-text-500',
     className = '',
+    containerClassName = '',
     truncateLimit = 34,
   } = props
   const navigate = useNavigate()
@@ -59,7 +61,7 @@ export function MenuItem(props: MenuItemProps) {
   if (link?.external) {
     return (
       <Item
-        className={`menu-item ${isActive ? 'menu-item--hover' : ''}`}
+        className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}
         href={link.url}
         data-testid="menuItem"
         target="_blank"
@@ -75,7 +77,7 @@ export function MenuItem(props: MenuItemProps) {
   } else {
     return (
       <Item
-        className={`menu-item ${isActive ? 'menu-item--hover' : ''}`}
+        className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}
         data-testid="menuItem"
         defaultValue="prod"
         onClick={(e: ClickEvent) => {

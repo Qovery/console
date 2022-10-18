@@ -10,11 +10,11 @@ describe('StepPricing', () => {
 
   beforeEach(() => {
     props = {
-      selectPlan: PlanEnum.BUSINESS,
+      selectPlan: PlanEnum.ENTERPRISE,
       setSelectPlan: jest.fn(),
       plans: [
         {
-          name: PlanEnum.BUSINESS,
+          name: PlanEnum.ENTERPRISE,
           title: 'some-title',
           text: 'bla bla',
           price: 49,
@@ -22,7 +22,7 @@ describe('StepPricing', () => {
         },
       ],
       chooseDeploy: jest.fn(),
-      currentValue: { [PlanEnum.BUSINESS]: { disable: false, number: '1' } },
+      currentValue: { [PlanEnum.ENTERPRISE]: { disable: false, number: '1' } },
       currentDeploy: 100,
       onSubmit: jest.fn(),
       loading: false,
