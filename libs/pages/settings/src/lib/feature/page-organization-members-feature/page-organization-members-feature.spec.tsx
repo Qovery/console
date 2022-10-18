@@ -14,6 +14,15 @@ jest.mock('@qovery/domains/organization', () => {
   }
 })
 
+jest.mock('@qovery/domains/user', () => {
+  return {
+    ...jest.requireActual('@qovery/domains/user'),
+    selectUser: () => ({
+      sub: '0',
+    }),
+  }
+})
+
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -51,5 +60,26 @@ describe('PageOrganizationMembersFeature', () => {
     })
 
     expect(editMemberRoleSpy).toBeCalled()
+  })
+
+  it('should have dispatch to transfer ownership', async () => {
+    const transferOwnershipSpy: SpyInstance = jest.spyOn(storeOrganization, 'transferOwnershipMemberRole')
+    const fetchMembersSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchMembers')
+
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () => Promise.resolve(mockOrganization.members?.items),
+    }))
+
+    const { getAllByTestId } = render(<PageOrganizationMembersFeature />)
+
+    const items = getAllByTestId('menuItem')
+
+    await act(() => {
+      // 3 is menu for row members
+      items[3].click()
+    })
+
+    expect(transferOwnershipSpy).toBeCalled()
+    expect(fetchMembersSpy).toBeCalled()
   })
 })

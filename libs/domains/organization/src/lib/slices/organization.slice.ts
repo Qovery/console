@@ -204,6 +204,31 @@ export const fetchAvailableRoles = createAsyncThunk(
   }
 )
 
+export const deleteMember = createAsyncThunk(
+  'organization/member-delete',
+  async (payload: { organizationId: string; userId: string }) => {
+    // delete member by user id
+    await membersApi.deleteMember(payload.organizationId, { user_id: payload.userId })
+  }
+)
+
+export const transferOwnershipMemberRole = createAsyncThunk(
+  'organization/transfer-ownership-member',
+  async (payload: { organizationId: string; userId: string }) => {
+    // transfer ownership for member
+    try {
+      const result = await membersApi.postOrganizationTransferOwnership(payload.organizationId, {
+        user_id: payload.userId,
+      })
+      if (result.status === 200) toast(ToastEnum.SUCCESS, 'Ownership transferred successfully')
+      return result
+    } catch (err: any) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Ownership transfer error', err.message)
+    }
+  }
+)
+
 export const initialOrganizationState: OrganizationState = organizationAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -543,6 +568,25 @@ export const organizationSlice = createSlice({
         }
 
         organizationAdapter.updateOne(state, update)
+      })
+      // delete member
+      .addCase(deleteMember.fulfilled, (state: OrganizationState, action) => {
+        const members = state.entities[action.meta.arg.organizationId]?.members?.items || []
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            members: {
+              loadingStatus: 'loaded',
+              items: members.filter((member) => member.id !== action.meta.arg.userId),
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Member removed`)
+      })
+      .addCase(deleteMember.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
       })
   },
 })

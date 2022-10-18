@@ -33,7 +33,7 @@ export function StepPricing(props: StepPricingProps) {
     const currentPlans = plans.find((plan) => plan.name === selectPlan)
 
     if (currentPlans && currentPlans.price > 0) {
-      const nbDeploy = selectPlan === PlanEnum.BUSINESS ? 1000 : 300
+      const nbDeploy = selectPlan === PlanEnum.TEAM ? 1000 : 300
       let deploymentPrice = 0
 
       if (currentDeploy > nbDeploy) {
@@ -92,7 +92,7 @@ export function StepPricing(props: StepPricingProps) {
             listPrice={plan.listPrice}
             currentValue={currentValue}
             onClick={() => setSelectPlan(plan.name)}
-            disable={currentValue[plan.name].disable}
+            disable={currentValue[plan.name] && currentValue[plan.name].disable}
           />
         ))}
         {priceParagraph()}

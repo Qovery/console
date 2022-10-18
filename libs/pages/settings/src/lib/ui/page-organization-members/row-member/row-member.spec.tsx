@@ -7,6 +7,8 @@ describe('RowMember', () => {
   const props: RowMemberProps = {
     member: membersMock(1)[0],
     editMemberRole: jest.fn(),
+    deleteMember: jest.fn(),
+    transferOwnership: jest.fn(),
     loading: false,
     columnsWidth: '',
     availableRoles: [
@@ -74,6 +76,23 @@ describe('RowMember', () => {
   it('should have menu with edit member role action', async () => {
     const spy = jest.fn()
     props.editMemberRole = spy
+    props.member = membersMock(1)[0]
+
+    const { getAllByTestId } = render(<RowMember {...props} />)
+
+    const items = getAllByTestId('menuItem')
+
+    await act(() => {
+      items[2].click()
+    })
+
+    expect(spy).toBeCalled()
+  })
+
+  it('should have menu with transfer member role action', async () => {
+    const spy = jest.fn()
+    props.transferOwnership = spy
+    props.userIsOwner = true
     props.member = membersMock(1)[0]
 
     const { getAllByTestId } = render(<RowMember {...props} />)

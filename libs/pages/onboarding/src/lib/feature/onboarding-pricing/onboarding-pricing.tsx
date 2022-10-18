@@ -43,14 +43,14 @@ const PLANS: OrganizationPlan[] = [
     listPrice: [],
   },
   {
-    name: PlanEnum.PROFESSIONAL,
+    name: PlanEnum.TEAM,
     title: 'Professional',
     text: 'For 5-20 members',
     price: 49,
     listPrice: listPrice(49, false),
   },
   {
-    name: PlanEnum.BUSINESS,
+    name: PlanEnum.ENTERPRISE,
     title: 'Business',
     text: 'For medium company',
     price: 599,
@@ -71,11 +71,11 @@ const DEPLOY_DEFAULT = 100
 const DEFAULT_PRICE = {
   [OrganizationPlanType.FREE]: { disable: false },
   [OrganizationPlanType.PROFESSIONAL]: {
-    number: PLANS.find((p) => p.name === PlanEnum.PROFESSIONAL)?.listPrice[0].number,
+    number: PLANS.find((p) => p.name === PlanEnum.TEAM)?.listPrice[0].number,
     disable: false,
   },
   [OrganizationPlanType.BUSINESS]: {
-    number: PLANS.find((p) => p.name === PlanEnum.BUSINESS)?.listPrice[0].number,
+    number: PLANS.find((p) => p.name === PlanEnum.ENTERPRISE)?.listPrice[0].number,
     disable: false,
   },
   [OrganizationPlanType.ENTERPRISE]: { disable: false },
@@ -107,7 +107,7 @@ export function OnboardingPricing() {
       setCurrentDeploy(value)
 
       if (value > 100) {
-        if (selectPlan === PlanEnum.FREE) setSelectPlan(PlanEnum.PROFESSIONAL)
+        if (selectPlan === PlanEnum.FREE) setSelectPlan(PlanEnum.TEAM)
 
         setCurrentValue({
           [OrganizationPlanType.FREE]: { disable: true },

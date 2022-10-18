@@ -38,7 +38,7 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
     },
     members: {
       loadingStatus: 'loaded',
-      items: membersMock(2),
+      items: [...membersMock(2, 'Owner', '0'), ...membersMock(1, 'Admin', '1')],
     },
     availableRoles: {
       loadingStatus: 'loaded',
@@ -55,9 +55,9 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
     },
   }))
 
-export const membersMock = (howMany: number): Member[] =>
+export const membersMock = (howMany: number, roleName = 'Admin', customIndex?: string): Member[] =>
   Array.from({ length: howMany }).map((_, index) => ({
-    id: `${index}`,
+    id: `${customIndex ? customIndex : index}`,
     created_at: new Date().toString(),
     updated_at: new Date().toString(),
     name: chance.name(),
@@ -66,7 +66,7 @@ export const membersMock = (howMany: number): Member[] =>
     description: chance.word({ length: 10 }),
     last_activity_at: new Date().toString(),
     role: chance.pickone(Object.values(InviteMemberRoleEnum)),
-    role_name: 'Admin',
+    role_name: roleName,
     role_id: chance.guid(),
   }))
 
