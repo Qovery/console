@@ -92,7 +92,7 @@ export function StepPricing(props: StepPricingProps) {
             listPrice={plan.listPrice}
             currentValue={currentValue}
             onClick={() => setSelectPlan(plan.name)}
-            disable={currentValue[plan.name].disable}
+            disable={currentValue[plan.name] && currentValue[plan.name].disable}
           />
         ))}
         {priceParagraph()}
