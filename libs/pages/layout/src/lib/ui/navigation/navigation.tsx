@@ -60,14 +60,6 @@ export function Navigation(props: NavigationProps) {
           contentLeft: <Icon name={IconAwesomeEnum.ROAD} className="text-sm text-brand-400" />,
         },
         {
-          name: 'Join Discord',
-          link: {
-            url: 'https://discord.com/invite/Bed5FRa',
-            external: true,
-          },
-          contentLeft: <Icon name="icon-brands-discord" className="text-sm text-brand-400" />,
-        },
-        {
           name: 'Contact us',
           link: {
             url: 'https://discord.qovery.com/',
