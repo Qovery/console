@@ -40,7 +40,7 @@ export function PageOrganizationMembersFeature() {
     (state: RootState) => selectOrganizationById(state, organizationId)?.availableRoles?.loadingStatus
   )
 
-  const user = useSelector(selectUser)
+  const userSub = useSelector((state: RootState) => selectUser(state)?.sub)
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -103,7 +103,7 @@ export function PageOrganizationMembersFeature() {
 
   return (
     <PageOrganizationMembers
-      userId={user.sub}
+      userId={userSub}
       members={!loadingMembers ? organization?.members?.items : membersDataMock}
       filterMembers={filterMembers}
       setFilterMembers={setFilterMembers}

@@ -14,6 +14,15 @@ jest.mock('@qovery/domains/organization', () => {
   }
 })
 
+jest.mock('@qovery/domains/user', () => {
+  return {
+    ...jest.requireActual('@qovery/domains/user'),
+    selectUser: () => ({
+      sub: '0',
+    }),
+  }
+})
+
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -46,8 +55,8 @@ describe('PageOrganizationMembersFeature', () => {
     const items = getAllByTestId('menuItem')
 
     await act(() => {
-      // 5 is menu for row members
-      items[5].click()
+      // 4 is menu for row members
+      items[4].click()
     })
 
     expect(editMemberRoleSpy).toBeCalled()
@@ -66,8 +75,8 @@ describe('PageOrganizationMembersFeature', () => {
     const items = getAllByTestId('menuItem')
 
     await act(() => {
-      // 7 is menu for row members
-      items[7].click()
+      // 3 is menu for row members
+      items[3].click()
     })
 
     expect(transferOwnershipSpy).toBeCalled()

@@ -66,7 +66,7 @@ export const membersMock = (howMany: number): Member[] =>
     description: chance.word({ length: 10 }),
     last_activity_at: new Date().toString(),
     role: chance.pickone(Object.values(InviteMemberRoleEnum)),
-    role_name: 'Admin',
+    role_name: chance.pickone(['Admin', 'Owner']),
     role_id: chance.guid(),
   }))
 
