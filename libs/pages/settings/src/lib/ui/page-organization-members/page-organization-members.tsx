@@ -1,6 +1,6 @@
 import { InviteMember, InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { HelpSection, Table } from '@qovery/shared/ui'
+import { Button, HelpSection, IconAwesomeEnum, Table } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
@@ -8,9 +8,12 @@ export interface PageOrganizationMembersProps {
   deleteMember: (userId: string) => void
   transferOwnership: (userId: string) => void
   setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
+  setFilterInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
+  loadingInviteMembers: boolean
   loadingUpdateRole: { userId: string; loading: boolean }
-  members?: Member[]
+  filterInviteMembers?: InviteMember[]
   filterMembers?: Member[]
+  members?: Member[]
   loadingMembers: boolean
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
@@ -48,11 +51,35 @@ const membersHead = [
   },
 ]
 
+const inviteMembersHead = [
+  {
+    title: 'Pending members',
+    className: 'px-4 py-2 border-r border-element-light-lighter-400 h-full',
+  },
+  {
+    title: 'Roles',
+  },
+  {
+    title: 'Status',
+    className: 'px-4',
+  },
+  {
+    title: 'Sent since',
+    className: 'px-4',
+    sort: {
+      key: 'created_at',
+    },
+  },
+]
+
 export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const {
     members,
     filterMembers,
     setFilterMembers,
+    filterInviteMembers,
+    setFilterInviteMembers,
+    loadingInviteMembers,
     availableRoles,
     editMemberRole,
     loadingMembers,
@@ -82,9 +109,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               to your projects and will be able to contribute.
             </p>
           </div>
-          {/* <Button onClick={() => console.log('add')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button onClick={() => console.log('add')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add member
-          </Button> */}
+          </Button>
         </div>
         <Table
           className="border border-element-light-lighter-400 rounded"
@@ -112,6 +139,32 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             ))}
           </div>
         </Table>
+        {filterInviteMembers && filterInviteMembers?.length > 0 && (
+          <Table
+            className="border border-element-light-lighter-400 rounded mt-5"
+            classNameHead="rounded-t"
+            dataHead={inviteMembersHead}
+            setFilterData={setFilterInviteMembers}
+            filterData={filterInviteMembers}
+            defaultData={members}
+            columnsWidth={columnsWidth}
+          >
+            <div>
+              {filterInviteMembers?.map((member: InviteMember) => (
+                <RowMember
+                  key={member.id}
+                  loading={loadingInviteMembers}
+                  member={member}
+                  availableRoles={availableRoles}
+                  editMemberRole={editMemberRole}
+                  transferOwnership={transferOwnership}
+                  deleteMember={deleteMember}
+                  columnsWidth={columnsWidth}
+                />
+              ))}
+            </div>
+          </Table>
+        )}
       </div>
       <HelpSection
         data-testid="help-section"

@@ -1,4 +1,4 @@
-import { InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
+import { InviteMember, InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
@@ -16,7 +16,7 @@ import {
 import { dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface RowMemberProps {
-  member: Member
+  member: Member | InviteMember
   editMemberRole: (userId: string, roleId: string) => void
   transferOwnership: (userId: string) => void
   deleteMember: (userId: string) => void
@@ -59,7 +59,7 @@ export function RowMember(props: RowMemberProps) {
   const navigate = useNavigate()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const name = member.name?.split(' ')
+  const name = (member as Member).name?.split(' ') || (member as InviteMember).inviter.split(' ')
 
   const isOwner = member.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER
 
@@ -134,7 +134,7 @@ export function RowMember(props: RowMemberProps) {
                   title: 'Confirm to remove this member',
                   isDelete: true,
                   description: 'Are you sure you want to delete this member?',
-                  name: member.name,
+                  name: (member as Member).name,
                   action: () => deleteMember(member.id),
                 })
               },
@@ -169,6 +169,8 @@ export function RowMember(props: RowMemberProps) {
     </Skeleton>
   )
 
+  console.log(member)
+
   return (
     <div
       className="grid grid-cols-4 border-b border-element-light-lighter-400 last:border-0"
@@ -178,12 +180,12 @@ export function RowMember(props: RowMemberProps) {
         <div className="flex items-center px-4 py-3">
           {name && (
             <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>
-              <Avatar firstName={name[0]} lastName={name[1]} url={member.profile_picture_url} />
+              <Avatar firstName={name[0]} lastName={name[1]} url={(member as Member).profile_picture_url} />
             </Skeleton>
           )}
           <div className="ml-3 text-xs truncate">
             <Skeleton className="mb-1" show={loading} width={120} height={16}>
-              <p className="text-text-600 font-medium truncate">{member.name}</p>
+              <p className="text-text-600 font-medium truncate">{(member as Member).name}</p>
             </Skeleton>
             <Skeleton show={loading} width={100} height={16}>
               <span className="text-text-500 truncate">{member.email}</span>
@@ -201,7 +203,11 @@ export function RowMember(props: RowMemberProps) {
       </div>
       <div className="flex items-center px-4 text-text-500 text-xs font-medium">
         <Skeleton className="shrink-0" show={loading} width={64} height={16}>
-          <span data-testid="last-activity">{timeAgo(new Date(member.last_activity_at || ''))} ago</span>
+          {(member as Member).last_activity_at ? (
+            <span data-testid="last-activity">{timeAgo(new Date((member as Member).last_activity_at || ''))} ago</span>
+          ) : (
+            <span>{upperCaseFirstLetter((member as InviteMember).invitation_status)}</span>
+          )}
         </Skeleton>
       </div>
       <div className="flex items-center px-4 text-text-500 text-xs font-medium">

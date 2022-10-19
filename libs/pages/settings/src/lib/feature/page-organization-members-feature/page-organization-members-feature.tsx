@@ -1,4 +1,4 @@
-import { Member } from 'qovery-typescript-axios'
+import { InviteMember, Member } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -24,9 +24,6 @@ export function PageOrganizationMembersFeature() {
 
   useDocumentTitle('Members - Organization settings')
 
-  const [loadingMembers, setLoadingMembers] = useState(false)
-  const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
-
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId))
   const membersLoadingStatus = useSelector(
     (state: RootState) => selectOrganizationById(state, organizationId)?.members?.loadingStatus
@@ -44,7 +41,14 @@ export function PageOrganizationMembersFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const [loadingMembers, setLoadingMembers] = useState(false)
+  const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
+  const [loadingInviteMembers, setLoadingInviteMembers] = useState(false)
+
   const [filterMembers, setFilterMembers] = useState<Member[]>(organization?.members?.items || membersDataMock)
+  const [filterInviteMembers, setFilterInviteMembers] = useState<InviteMember[]>(
+    organization?.inviteMembers?.items || []
+  )
 
   const fetchMembersDispatch = useCallback((): void => {
     dispatch(fetchMembers({ organizationId }))
@@ -65,6 +69,12 @@ export function PageOrganizationMembersFeature() {
 
     if (organization && inviteMembersLoadingStatus !== 'loaded') {
       dispatch(fetchInviteMembers({ organizationId }))
+        .unwrap()
+        .then((result?: InviteMember[]) => {
+          result && setFilterInviteMembers(result)
+        })
+        .catch((e) => console.error(e))
+        .finally(() => setLoadingInviteMembers(false))
     }
 
     if (organization && availableRolesLoadingStatus !== 'loaded') {
@@ -108,6 +118,9 @@ export function PageOrganizationMembersFeature() {
       filterMembers={filterMembers}
       setFilterMembers={setFilterMembers}
       loadingMembers={loadingMembers}
+      filterInviteMembers={filterInviteMembers}
+      setFilterInviteMembers={setFilterInviteMembers}
+      loadingInviteMembers={loadingInviteMembers}
       inviteMembers={organization?.inviteMembers?.items}
       availableRoles={organization?.availableRoles?.items}
       loadingUpdateRole={loadingUpdateRole}
