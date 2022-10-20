@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
+  deleteInviteMember,
   deleteMember,
   editMemberRole,
   fetchAvailableRoles,
@@ -13,9 +14,11 @@ import {
   transferOwnershipMemberRole,
 } from '@qovery/domains/organization'
 import { selectUser } from '@qovery/domains/user'
+import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
+import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
 const membersDataMock = membersMock(5)
 
@@ -41,6 +44,7 @@ export function PageOrganizationMembersFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const { openModal, closeModal } = useModal()
   const [loadingMembers, setLoadingMembers] = useState(false)
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
   const [loadingInviteMembers, setLoadingInviteMembers] = useState(false)
@@ -105,6 +109,12 @@ export function PageOrganizationMembersFeature() {
       .catch((e) => console.error(e))
   }
 
+  const onClickRevokeMemberInvite = (inviteId: string) => {
+    dispatch(deleteInviteMember({ organizationId, inviteId }))
+      .unwrap()
+      .catch((e) => console.error(e))
+  }
+
   const onClickTransferOwnership = (userId: string) => {
     dispatch(transferOwnershipMemberRole({ organizationId, userId }))
       .unwrap()
@@ -127,6 +137,18 @@ export function PageOrganizationMembersFeature() {
       editMemberRole={onClickEditMemberRole}
       transferOwnership={onClickTransferOwnership}
       deleteMember={onClickDeleteMember}
+      deleteInviteMember={onClickRevokeMemberInvite}
+      onAddMember={() => {
+        openModal({
+          content: (
+            <CreateModalFeature
+              organizationId={organizationId}
+              onClose={closeModal}
+              availableRoles={organization?.availableRoles?.items || []}
+            />
+          ),
+        })
+      }}
     />
   )
 }

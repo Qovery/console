@@ -1,6 +1,7 @@
 import { InviteMember, InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { ToastEnum, toast } from '@qovery/shared/toast'
 import {
   Avatar,
   ButtonIconAction,
@@ -13,15 +14,16 @@ import {
   Skeleton,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { copyToClipboard, dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface RowMemberProps {
   member: Member | InviteMember
-  editMemberRole: (userId: string, roleId: string) => void
-  transferOwnership: (userId: string) => void
-  deleteMember: (userId: string) => void
   loading: boolean
   columnsWidth: string
+  transferOwnership?: (userId: string) => void
+  editMemberRole?: (userId: string, roleId: string) => void
+  deleteMember?: (userId: string) => void
+  deleteInviteMember?: (inviteId: string) => void
   availableRoles?: OrganizationAvailableRole[]
   loadingUpdateRole?: boolean
   userIsOwner?: boolean
@@ -51,6 +53,7 @@ export function RowMember(props: RowMemberProps) {
     columnsWidth,
     loadingUpdateRole,
     deleteMember,
+    deleteInviteMember,
     transferOwnership,
     userIsOwner,
   } = props
@@ -71,7 +74,7 @@ export function RowMember(props: RowMemberProps) {
         className="text-brand-500"
       />
     ),
-    onClick: () => editMemberRole(member.id, role.id || ''),
+    onClick: () => editMemberRole && editMemberRole(member.id, role.id || ''),
   })
 
   const itemsBasicRoles = availableRoles
@@ -119,7 +122,7 @@ export function RowMember(props: RowMemberProps) {
             ? [
                 {
                   name: 'Transfer ownership',
-                  onClick: () => transferOwnership(member.id),
+                  onClick: () => transferOwnership && transferOwnership(member.id),
                   contentLeft: <Icon name={IconAwesomeEnum.RIGHT_LEFT} className="text-sm text-brand-500" />,
                 },
               ]
@@ -135,7 +138,7 @@ export function RowMember(props: RowMemberProps) {
                   isDelete: true,
                   description: 'Are you sure you want to delete this member?',
                   name: (member as Member).name,
-                  action: () => deleteMember(member.id),
+                  action: () => deleteMember && deleteMember(member.id),
                 })
               },
               contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-error-600" />,
@@ -152,7 +155,20 @@ export function RowMember(props: RowMemberProps) {
       iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
       menus: [
         {
-          items: [],
+          items: [
+            {
+              name: 'Resend invite',
+              contentLeft: <Icon name={IconAwesomeEnum.PAPER_PLANE} className="text-sm text-brand-500" />,
+            },
+            {
+              name: 'Copy invitation link',
+              contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-500" />,
+              onClick: () => {
+                copyToClipboard((member as InviteMember).invitation_link)
+                toast(ToastEnum.SUCCESS, 'Copied to your clipboard!')
+              },
+            },
+          ],
         },
         {
           items: [
@@ -164,7 +180,7 @@ export function RowMember(props: RowMemberProps) {
                   isDelete: true,
                   description: 'Are you sure you want to delete this member?',
                   name: (member as InviteMember).email,
-                  action: () => deleteMember(member.id),
+                  action: () => deleteInviteMember && deleteInviteMember(member.id),
                 })
               },
               contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-error-600" />,

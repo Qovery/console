@@ -6,6 +6,7 @@ import RowMember from './row-member/row-member'
 export interface PageOrganizationMembersProps {
   editMemberRole: (userId: string, roleId: string) => void
   deleteMember: (userId: string) => void
+  deleteInviteMember: (inviteId: string) => void
   transferOwnership: (userId: string) => void
   setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
   setFilterInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
@@ -18,6 +19,7 @@ export interface PageOrganizationMembersProps {
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
   userId?: string
+  onAddMember?: () => void
 }
 
 const membersHead = [
@@ -75,9 +77,11 @@ const inviteMembersHead = [
 export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const {
     members,
+    inviteMembers,
     filterMembers,
     setFilterMembers,
     filterInviteMembers,
+    deleteInviteMember,
     setFilterInviteMembers,
     loadingInviteMembers,
     availableRoles,
@@ -87,6 +91,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     deleteMember,
     transferOwnership,
     userId,
+    onAddMember,
   } = props
 
   const columnsWidth = '35% 22% 21% 21%'
@@ -94,6 +99,10 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   useEffect(() => {
     setFilterMembers(members)
   }, [members, setFilterMembers])
+
+  useEffect(() => {
+    setFilterInviteMembers(inviteMembers)
+  }, [inviteMembers, setFilterInviteMembers])
 
   const userIsOwner = filterMembers?.find((member) => member.id === userId)
 
@@ -109,7 +118,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               to your projects and will be able to contribute.
             </p>
           </div>
-          <Button onClick={() => console.log('add')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button onClick={() => onAddMember && onAddMember()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add member
           </Button>
         </div>
@@ -156,9 +165,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
                   loading={loadingInviteMembers}
                   member={member}
                   availableRoles={availableRoles}
-                  editMemberRole={editMemberRole}
                   transferOwnership={transferOwnership}
-                  deleteMember={deleteMember}
+                  deleteInviteMember={deleteInviteMember}
                   columnsWidth={columnsWidth}
                 />
               ))}

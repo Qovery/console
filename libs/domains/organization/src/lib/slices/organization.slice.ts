@@ -11,7 +11,8 @@ import {
   ContainerRegistriesApi,
   ContainerRegistryRequest,
   ContainerRegistryResponse,
-  MemberRoleUpdateRequest,
+  InviteMember,
+  InviteMemberRequest,
   MembersApi,
   OrganizationCustomRole,
   OrganizationCustomRoleApi,
@@ -161,37 +162,20 @@ export const fetchMembers = createAsyncThunk('organization/members', async (payl
   return result.data.results
 })
 
-export const editMemberRole = createAsyncThunk(
-  'organization/edit-member-role',
-  async (payload: { organizationId: string; data: MemberRoleUpdateRequest }, { dispatch }) => {
-    // edit organization  member role
-    try {
-      const result = await membersApi.editOrganizationMemberRole(payload.organizationId, payload.data)
-      if (result.status === 200) {
-        // refetch member to update members list, we can't update with the edit response
-        await dispatch(fetchMembers({ organizationId: payload.organizationId }))
-
-        toast(
-          ToastEnum.SUCCESS,
-          'Member role updated',
-          'Target user needs to relog or wait a few minutes to make it work.'
-        )
-      }
-
-      return result
-    } catch (err: any) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Member role error', err.message)
-    }
-  }
-)
-
 export const fetchInviteMembers = createAsyncThunk(
   'organization/inviteMembers',
   async (payload: { organizationId: string }) => {
     // fetch organization invite members
     const result = await membersApi.getOrganizationInvitedMembers(payload.organizationId)
     return result.data.results
+  }
+)
+
+export const deleteInviteMember = createAsyncThunk(
+  'organization/delete-invite-member',
+  async (payload: { organizationId: string; inviteId: string }) => {
+    // delete invite member by user id
+    await membersApi.deleteInviteMember(payload.organizationId, payload.inviteId)
   }
 )
 
@@ -212,20 +196,12 @@ export const deleteMember = createAsyncThunk(
   }
 )
 
-export const transferOwnershipMemberRole = createAsyncThunk(
-  'organization/transfer-ownership-member',
-  async (payload: { organizationId: string; userId: string }) => {
-    // transfer ownership for member
-    try {
-      const result = await membersApi.postOrganizationTransferOwnership(payload.organizationId, {
-        user_id: payload.userId,
-      })
-      if (result.status === 200) toast(ToastEnum.SUCCESS, 'Ownership transferred successfully')
-      return result
-    } catch (err: any) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Ownership transfer error', err.message)
-    }
+export const postInviteMember = createAsyncThunk(
+  'organization/invite-member',
+  async (payload: { organizationId: string; data: InviteMemberRequest }) => {
+    // post invite member
+    const result = await membersApi.postInviteMember(payload.organizationId, payload.data)
+    return result.data as InviteMember
   }
 )
 
@@ -586,6 +562,44 @@ export const organizationSlice = createSlice({
         toast(ToastEnum.SUCCESS, `Member removed`)
       })
       .addCase(deleteMember.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
+      })
+      // delete invite member
+      .addCase(deleteInviteMember.fulfilled, (state: OrganizationState, action) => {
+        const inviteMembers = state.entities[action.meta.arg.organizationId]?.inviteMembers?.items || []
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            inviteMembers: {
+              loadingStatus: 'loaded',
+              items: inviteMembers.filter((member) => member.id !== action.meta.arg.inviteId),
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Invite member removed`)
+      })
+      .addCase(deleteInviteMember.rejected, (state: OrganizationState, action) => {
+        toastError(action.error)
+      })
+      // post invite member
+      .addCase(postInviteMember.fulfilled, (state: OrganizationState, action) => {
+        const inviteMembers = state.entities[action.meta.arg.organizationId]?.inviteMembers?.items || []
+
+        const update: Update<OrganizationEntity> = {
+          id: action.meta.arg.organizationId,
+          changes: {
+            inviteMembers: {
+              loadingStatus: 'loaded',
+              items: [action.payload, ...inviteMembers],
+            },
+          },
+        }
+        organizationAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, `Invite member added`)
+      })
+      .addCase(postInviteMember.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
       })
   },
