@@ -59,7 +59,7 @@ export function RowMember(props: RowMemberProps) {
   const navigate = useNavigate()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const name = (member as Member).name?.split(' ') || (member as InviteMember).inviter.split(' ')
+  const name = (member as Member).name?.split(' ') || (member as InviteMember).email.split(' ')
 
   const isOwner = member.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER
 
@@ -110,9 +110,9 @@ export function RowMember(props: RowMemberProps) {
     },
   ]
 
-  const buttonAction = [
+  const buttonActionMember = [
     {
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
       menus: [
         {
           items: userIsOwner
@@ -147,29 +147,58 @@ export function RowMember(props: RowMemberProps) {
     },
   ]
 
+  const buttonActionInviteMember = [
+    {
+      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
+      menus: [
+        {
+          items: [],
+        },
+        {
+          items: [
+            {
+              name: 'Revoke invite',
+              onClick: () => {
+                openModalConfirmation({
+                  title: 'Confirm to remove this invite',
+                  isDelete: true,
+                  description: 'Are you sure you want to delete this member?',
+                  name: (member as InviteMember).email,
+                  action: () => deleteMember(member.id),
+                })
+              },
+              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-error-600" />,
+              containerClassName: 'text-error-600',
+            },
+          ],
+        },
+      ],
+    },
+  ]
+
   const input = (role?: InviteMemberRoleEnum | string) => (
     <Skeleton className="shrink-0" show={loading} width={176} height={30}>
       <div
         data-testid="input"
         className={`flex relative px-3 py-2 border rounded select-none w-44 ${
-          role?.toUpperCase() === InviteMemberRoleEnum.OWNER
+          role?.toUpperCase() === InviteMemberRoleEnum.OWNER || !(member as Member).last_activity_at
             ? 'bg-element-light-lighter-200 border-element-light-ligther-500 text-text-400'
             : 'border-element-light-ligther-600 text-text-600 cursor-pointer'
         }`}
       >
         <span className="text-sm">{upperCaseFirstLetter(role)}</span>
-        {!loadingUpdateRole && role?.toUpperCase() !== InviteMemberRoleEnum.OWNER && (
-          <Icon
-            name={IconAwesomeEnum.ANGLE_DOWN}
-            className="absolute top-2.5 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
-          />
-        )}
+        {!loadingUpdateRole &&
+          role?.toUpperCase() !== InviteMemberRoleEnum.OWNER &&
+          (member as Member).last_activity_at && (
+            <Icon
+              name={IconAwesomeEnum.ANGLE_DOWN}
+              className="absolute top-2.5 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
+            />
+          )}
         {loadingUpdateRole && <LoaderSpinner className="w-4 h-4 absolute top-2.5 right-4" />}
       </div>
     </Skeleton>
   )
-
-  console.log(member)
 
   return (
     <div
@@ -194,12 +223,20 @@ export function RowMember(props: RowMemberProps) {
         </div>
         {!isOwner && (
           <Skeleton className="shrink-0" show={loading} width={28} height={26}>
-            <ButtonIconAction actions={buttonAction} />
+            {(member as Member).last_activity_at ? (
+              <ButtonIconAction actions={buttonActionMember} />
+            ) : (
+              <ButtonIconAction actions={buttonActionInviteMember} />
+            )}
           </Skeleton>
         )}
       </div>
       <div data-testid="row-member-menu" className="flex items-center px-4 w-[500px]">
-        {!isOwner ? <Menu menus={menus} trigger={input(member.role_name)} /> : input(member.role_name)}
+        {!isOwner && (member as Member).last_activity_at ? (
+          <Menu menus={menus} trigger={input(member.role_name)} />
+        ) : (
+          input(member.role_name)
+        )}
       </div>
       <div className="flex items-center px-4 text-text-500 text-xs font-medium">
         <Skeleton className="shrink-0" show={loading} width={64} height={16}>
