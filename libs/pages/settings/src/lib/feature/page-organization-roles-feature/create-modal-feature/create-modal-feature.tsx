@@ -2,7 +2,7 @@ import { OrganizationCustomRole, OrganizationCustomRoleCreateRequest } from 'qov
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { postCustomRoles } from '@qovery/domains/organization'
+import { fetchAvailableRoles, postCustomRoles } from '@qovery/domains/organization'
 import { AppDispatch } from '@qovery/store/data'
 import CreateModal from '../../../ui/page-organization-roles/create-modal/create-modal'
 
@@ -34,6 +34,9 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
     )
       .unwrap()
       .then((result: OrganizationCustomRole) => {
+        // fetch the list of available roles after add new role
+        dispatch(fetchAvailableRoles({ organizationId }))
+
         setCurrentRole(result)
         setLoading(false)
         onClose()

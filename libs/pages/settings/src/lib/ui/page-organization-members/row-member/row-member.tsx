@@ -9,6 +9,7 @@ import {
   LoaderSpinner,
   Menu,
   MenuData,
+  MenuItemProps,
   Skeleton,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -25,6 +26,14 @@ export interface RowMemberProps {
   loadingUpdateRole?: boolean
   userIsOwner?: boolean
 }
+
+enum InviteMemberRoleExtendEnum {
+  DEVOPS = 'DEVOPS',
+  BILLING = 'BILLING',
+}
+
+type MemberRoleEnum = InviteMemberRoleEnum | InviteMemberRoleExtendEnum
+const MemberRoleEnum = { ...InviteMemberRoleEnum, ...InviteMemberRoleExtendEnum }
 
 export function RowMember(props: RowMemberProps) {
   const {
@@ -47,24 +56,38 @@ export function RowMember(props: RowMemberProps) {
 
   const isOwner = member.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER
 
+  const menuItem = (role: OrganizationAvailableRole, customRole: boolean) => ({
+    name: upperCaseFirstLetter(role.name) || '',
+    contentLeft: (
+      <Icon name={customRole ? IconAwesomeEnum.USER : IconAwesomeEnum.USER_CROWN} className="text-brand-500" />
+    ),
+    onClick: () => editMemberRole(member.id, role.id || ''),
+  })
+
+  const itemsBasicRoles = availableRoles
+    ? (availableRoles
+        .map(
+          (role) =>
+            Object.values(MemberRoleEnum).includes(role.name?.toUpperCase() as MemberRoleEnum) && menuItem(role, false)
+        )
+        .filter(Boolean) as MenuItemProps[])
+    : []
+
+  const itemsCustomRoles = availableRoles
+    ? (availableRoles
+        .map(
+          (role) =>
+            !Object.values(MemberRoleEnum).includes(role.name?.toUpperCase() as MemberRoleEnum) && menuItem(role, true)
+        )
+        .filter(Boolean) as MenuItemProps[])
+    : []
+
   const menus: MenuData = [
     {
-      items: availableRoles
-        ? availableRoles.map((role) => ({
-            name: upperCaseFirstLetter(role.name) || '',
-            contentLeft: (
-              <Icon
-                name={
-                  Object.values(InviteMemberRoleEnum).includes(role.name?.toUpperCase() as InviteMemberRoleEnum)
-                    ? IconAwesomeEnum.USER_CROWN
-                    : IconAwesomeEnum.USER
-                }
-                className="text-brand-500"
-              />
-            ),
-            onClick: () => editMemberRole(member.id, role.id || ''),
-          }))
-        : [],
+      items: itemsBasicRoles,
+    },
+    {
+      items: itemsCustomRoles,
     },
     {
       items: [
