@@ -84,5 +84,6 @@ export enum IconAwesomeEnum {
   USER_CROWN = 'icon-solid-user-crown',
   BAN = 'icon-solid-ban',
   RIGHT_LEFT = 'icon-solid-right-left',
+  WALLET = 'icon-solid-wallet',
   // schema: favicons name
 }

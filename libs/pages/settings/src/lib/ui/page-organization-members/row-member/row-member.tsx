@@ -32,6 +32,13 @@ enum InviteMemberRoleExtendEnum {
   BILLING = 'BILLING',
 }
 
+const RolesIcons: { [key: string]: string } = {
+  ADMIN: IconAwesomeEnum.USER_CROWN,
+  BILLING: IconAwesomeEnum.WALLET,
+  DEVOPS: IconAwesomeEnum.WHEEL,
+  VIEWER: IconAwesomeEnum.EYE,
+}
+
 type MemberRoleEnum = InviteMemberRoleEnum | InviteMemberRoleExtendEnum
 const MemberRoleEnum = { ...InviteMemberRoleEnum, ...InviteMemberRoleExtendEnum }
 
@@ -59,7 +66,10 @@ export function RowMember(props: RowMemberProps) {
   const menuItem = (role: OrganizationAvailableRole, customRole: boolean) => ({
     name: upperCaseFirstLetter(role.name) || '',
     contentLeft: (
-      <Icon name={customRole ? IconAwesomeEnum.USER : IconAwesomeEnum.USER_CROWN} className="text-brand-500" />
+      <Icon
+        name={customRole ? IconAwesomeEnum.USER : RolesIcons[role.name?.toUpperCase() || '']}
+        className="text-brand-500"
+      />
     ),
     onClick: () => editMemberRole(member.id, role.id || ''),
   })
