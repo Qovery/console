@@ -82,4 +82,28 @@ describe('PageOrganizationMembersFeature', () => {
     expect(transferOwnershipSpy).toBeCalled()
     expect(fetchMembersSpy).toBeCalled()
   })
+
+  it('should have dispatch resend invite', async () => {
+    const resendInviteSpy: SpyInstance = jest.spyOn(storeOrganization, 'deleteInviteMember')
+    const postInviteMemberSpy: SpyInstance = jest.spyOn(storeOrganization, 'postInviteMember')
+
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve({
+          data: {},
+        }),
+    }))
+
+    const { getAllByTestId } = render(<PageOrganizationMembersFeature />)
+
+    const items = getAllByTestId('menuItem')
+
+    await act(() => {
+      // 8 is menu for resend invite
+      items[8].click()
+    })
+
+    expect(resendInviteSpy).toBeCalled()
+    expect(postInviteMemberSpy).toBeCalled()
+  })
 })

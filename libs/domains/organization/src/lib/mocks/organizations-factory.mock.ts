@@ -3,7 +3,9 @@ import {
   ContainerRegistryKindEnum,
   ContainerRegistryResponse,
   EnvironmentModeEnum,
+  InviteMember,
   InviteMemberRoleEnum,
+  InviteStatusEnum,
   Member,
   OrganizationCustomRole,
   OrganizationCustomRoleClusterPermission,
@@ -38,7 +40,11 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
     },
     members: {
       loadingStatus: 'loaded',
-      items: [...membersMock(2, 'Owner', '0'), ...membersMock(1, 'Admin', '1')],
+      items: [...membersMock(1, 'Owner', '0'), ...membersMock(1, 'Admin', '1')],
+    },
+    inviteMembers: {
+      loadingStatus: 'loaded',
+      items: inviteMembersMock(1),
     },
     availableRoles: {
       loadingStatus: 'loaded',
@@ -67,6 +73,20 @@ export const membersMock = (howMany: number, roleName = 'Admin', customIndex?: s
     last_activity_at: new Date().toString(),
     role: chance.pickone(Object.values(InviteMemberRoleEnum)),
     role_name: roleName,
+    role_id: chance.guid(),
+  }))
+
+export const inviteMembersMock = (howMany: number): InviteMember[] =>
+  Array.from({ length: howMany }).map((_, index) => ({
+    id: chance.guid(),
+    created_at: new Date().toString(),
+    updated_at: new Date().toString(),
+    invitation_link: 'https://qovery.com',
+    invitation_status: InviteStatusEnum.PENDING,
+    inviter: chance.name(),
+    email: chance.email(),
+    role: chance.pickone(Object.values(InviteMemberRoleEnum)),
+    role_name: 'Admin',
     role_id: chance.guid(),
   }))
 

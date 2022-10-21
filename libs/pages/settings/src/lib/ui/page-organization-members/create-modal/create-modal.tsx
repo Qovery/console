@@ -35,7 +35,7 @@ export function CreateModal(props: CreateModalProps) {
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              dataTestId="input-name"
+              dataTestId="input-email"
               className="w-full"
               name={field.name}
               onChange={field.onChange}

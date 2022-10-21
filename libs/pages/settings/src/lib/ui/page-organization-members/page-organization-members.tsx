@@ -19,10 +19,10 @@ export interface PageOrganizationMembersProps {
   setFilterInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
   loadingInviteMembers: boolean
   loadingUpdateRole: { userId: string; loading: boolean }
+  loadingMembers: boolean
   filterInviteMembers?: InviteMember[]
   filterMembers?: Member[]
   members?: Member[]
-  loadingMembers: boolean
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
   userId?: string

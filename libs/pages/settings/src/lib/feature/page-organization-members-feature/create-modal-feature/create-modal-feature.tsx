@@ -1,4 +1,4 @@
-import { InviteMember, InviteMemberRequest, OrganizationAvailableRole } from 'qovery-typescript-axios'
+import { InviteMemberRequest, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -19,6 +19,10 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
 
   const methods = useForm({
     mode: 'onChange',
+    defaultValues: {
+      // default value with admin id
+      role_id: availableRoles[0].id,
+    },
   })
 
   const dispatch = useDispatch<AppDispatch>()
@@ -33,8 +37,7 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
       })
     )
       .unwrap()
-      .then((result: InviteMember) => {
-        console.log(result)
+      .then(() => {
         setLoading(false)
         onClose()
       })
@@ -46,7 +49,7 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
 
   return (
     <FormProvider {...methods}>
-      <CreateModal onSubmit={onSubmit} availableRoles={availableRoles} onClose={onClose} loading={loading} />
+      <CreateModal onSubmit={onSubmit} availableRoles={availableRoles || []} onClose={onClose} loading={loading} />
     </FormProvider>
   )
 }

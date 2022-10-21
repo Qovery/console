@@ -1,5 +1,5 @@
-import { act, fireEvent } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render } from '@testing-library/react'
+import { InviteMemberRoleEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import CreateModalFeature, { CreateModalFeatureProps } from './create-modal-feature'
 
@@ -8,7 +8,7 @@ import SpyInstance = jest.SpyInstance
 jest.mock('@qovery/domains/organization', () => {
   return {
     ...jest.requireActual('@qovery/domains/organization'),
-    postCustomRoles: jest.fn(),
+    postInviteMember: jest.fn(),
   }
 })
 
@@ -21,7 +21,16 @@ jest.mock('react-redux', () => ({
 describe('CreateModalFeature', () => {
   const props: CreateModalFeatureProps = {
     onClose: jest.fn(),
-    setCurrentRole: jest.fn(),
+    availableRoles: [
+      {
+        id: '1111-1111-1111-1111',
+        name: InviteMemberRoleEnum.ADMIN,
+      },
+      {
+        id: '2222-2222-2222-2222',
+        name: InviteMemberRoleEnum.VIEWER,
+      },
+    ],
     organizationId: '1',
   }
 
@@ -32,8 +41,8 @@ describe('CreateModalFeature', () => {
     })
   })
 
-  it('should dispatch postCustomRoles if form is submitted', async () => {
-    const postCustomRoles: SpyInstance = jest.spyOn(storeOrganization, 'postCustomRoles')
+  it('should dispatch postInviteMember if form is submitted', async () => {
+    const postInviteMember: SpyInstance = jest.spyOn(storeOrganization, 'postInviteMember')
 
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
@@ -45,21 +54,18 @@ describe('CreateModalFeature', () => {
     const { getByTestId } = render(<CreateModalFeature {...props} />)
 
     await act(() => {
-      const inputName = getByTestId('input-name')
-      fireEvent.input(inputName, { target: { value: 'my-role' } })
-
-      expect(getByTestId('input-description')).toBeInTheDocument()
+      const inputEmail = getByTestId('input-email')
+      fireEvent.input(inputEmail, { target: { value: 'test@qovery.com' } })
     })
-
-    expect(getByTestId('submit-button')).not.toBeDisabled()
 
     await act(() => {
       getByTestId('submit-button').click()
     })
 
-    expect(postCustomRoles).toHaveBeenCalledWith({
+    expect(postInviteMember).toHaveBeenCalledWith({
       data: {
-        name: 'my-role',
+        email: 'test@qovery.com',
+        role_id: '1111-1111-1111-1111',
       },
       organizationId: '1',
     })
