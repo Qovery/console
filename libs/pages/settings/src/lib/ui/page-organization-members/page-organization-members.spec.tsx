@@ -6,10 +6,15 @@ describe('PageOrganizationMembers', () => {
   const props: PageOrganizationMembersProps = {
     editMemberRole: jest.fn(),
     deleteMember: jest.fn(),
+    deleteInviteMember: jest.fn(),
     transferOwnership: jest.fn(),
+    resendInvite: jest.fn(),
     members: membersMock(4),
     setFilterMembers: jest.fn(),
+    setFilterInviteMembers: jest.fn(),
     loadingUpdateRole: { userId: '0', loading: false },
+    loadingMembers: false,
+    loadingInviteMembers: false,
   }
 
   it('should render successfully', async () => {

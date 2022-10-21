@@ -1,20 +1,32 @@
-import { InviteMember, InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
+import {
+  InviteMember,
+  InviteMemberRequest,
+  InviteMemberRoleEnum,
+  Member,
+  OrganizationAvailableRole,
+} from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect } from 'react'
-import { HelpSection, Table } from '@qovery/shared/ui'
+import { Button, HelpSection, IconAwesomeEnum, Table } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
   editMemberRole: (userId: string, roleId: string) => void
   deleteMember: (userId: string) => void
+  deleteInviteMember: (inviteId: string) => void
+  resendInvite: (inviteId: string, data: InviteMemberRequest) => void
   transferOwnership: (userId: string) => void
   setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
+  setFilterInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
+  loadingInviteMembers: boolean
   loadingUpdateRole: { userId: string; loading: boolean }
-  members?: Member[]
-  filterMembers?: Member[]
   loadingMembers: boolean
+  filterInviteMembers?: InviteMember[]
+  filterMembers?: Member[]
+  members?: Member[]
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
   userId?: string
+  onAddMember?: () => void
 }
 
 const membersHead = [
@@ -48,11 +60,37 @@ const membersHead = [
   },
 ]
 
+const inviteMembersHead = [
+  {
+    title: 'Pending members',
+    className: 'px-4 py-2 border-r border-element-light-lighter-400 h-full',
+  },
+  {
+    title: 'Roles',
+  },
+  {
+    title: 'Status',
+    className: 'px-4',
+  },
+  {
+    title: 'Sent since',
+    className: 'px-4',
+    sort: {
+      key: 'created_at',
+    },
+  },
+]
+
 export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const {
     members,
+    inviteMembers,
     filterMembers,
     setFilterMembers,
+    filterInviteMembers,
+    deleteInviteMember,
+    setFilterInviteMembers,
+    loadingInviteMembers,
     availableRoles,
     editMemberRole,
     loadingMembers,
@@ -60,6 +98,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     deleteMember,
     transferOwnership,
     userId,
+    onAddMember,
+    resendInvite,
   } = props
 
   const columnsWidth = '35% 22% 21% 21%'
@@ -67,6 +107,10 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   useEffect(() => {
     setFilterMembers(members)
   }, [members, setFilterMembers])
+
+  useEffect(() => {
+    setFilterInviteMembers(inviteMembers)
+  }, [inviteMembers, setFilterInviteMembers])
 
   const userIsOwner = filterMembers?.find((member) => member.id === userId)
 
@@ -82,9 +126,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               to your projects and will be able to contribute.
             </p>
           </div>
-          {/* <Button onClick={() => console.log('add')} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button onClick={() => onAddMember && onAddMember()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add member
-          </Button> */}
+          </Button>
         </div>
         <Table
           className="border border-element-light-lighter-400 rounded"
@@ -112,6 +156,32 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             ))}
           </div>
         </Table>
+        {!loadingMembers && filterInviteMembers && filterInviteMembers?.length > 0 && (
+          <Table
+            className="border border-element-light-lighter-400 rounded mt-5"
+            classNameHead="rounded-t"
+            dataHead={inviteMembersHead}
+            setFilterData={setFilterInviteMembers}
+            filterData={filterInviteMembers}
+            defaultData={members}
+            columnsWidth={columnsWidth}
+          >
+            <div>
+              {filterInviteMembers?.map((member: InviteMember) => (
+                <RowMember
+                  key={member.id}
+                  loading={loadingInviteMembers}
+                  member={member}
+                  availableRoles={availableRoles}
+                  transferOwnership={transferOwnership}
+                  deleteInviteMember={deleteInviteMember}
+                  resendInvite={resendInvite}
+                  columnsWidth={columnsWidth}
+                />
+              ))}
+            </div>
+          </Table>
+        )}
       </div>
       <HelpSection
         data-testid="help-section"
