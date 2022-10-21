@@ -19,9 +19,6 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
 
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: {
-      role_id: 'ADMIN',
-    },
   })
 
   const dispatch = useDispatch<AppDispatch>()

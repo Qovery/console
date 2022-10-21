@@ -1,4 +1,10 @@
-import { InviteMember, InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
+import {
+  InviteMember,
+  InviteMemberRequest,
+  InviteMemberRoleEnum,
+  Member,
+  OrganizationAvailableRole,
+} from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
 import { ToastEnum, toast } from '@qovery/shared/toast'
@@ -24,6 +30,7 @@ export interface RowMemberProps {
   editMemberRole?: (userId: string, roleId: string) => void
   deleteMember?: (userId: string) => void
   deleteInviteMember?: (inviteId: string) => void
+  resendInvite?: (inviteId: string, data: InviteMemberRequest) => void
   availableRoles?: OrganizationAvailableRole[]
   loadingUpdateRole?: boolean
   userIsOwner?: boolean
@@ -55,6 +62,7 @@ export function RowMember(props: RowMemberProps) {
     deleteMember,
     deleteInviteMember,
     transferOwnership,
+    resendInvite,
     userIsOwner,
   } = props
 
@@ -159,6 +167,9 @@ export function RowMember(props: RowMemberProps) {
             {
               name: 'Resend invite',
               contentLeft: <Icon name={IconAwesomeEnum.PAPER_PLANE} className="text-sm text-brand-500" />,
+              onClick: () => {
+                resendInvite && resendInvite(member.id, { email: member.email, role_id: member.role_id })
+              },
             },
             {
               name: 'Copy invitation link',

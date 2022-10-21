@@ -1,4 +1,4 @@
-import { InviteMember, Member } from 'qovery-typescript-axios'
+import { InviteMember, InviteMemberRequest, Member } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -10,10 +10,12 @@ import {
   fetchInviteMembers,
   fetchMembers,
   membersMock,
+  postInviteMember,
   selectOrganizationById,
   transferOwnershipMemberRole,
 } from '@qovery/domains/organization'
 import { selectUser } from '@qovery/domains/user'
+import { ToastEnum, toast } from '@qovery/shared/toast'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
@@ -121,6 +123,23 @@ export function PageOrganizationMembersFeature() {
       .then(() => fetchMembersDispatch())
   }
 
+  const onClickResendInvite = (inviteId: string, data: InviteMemberRequest) => {
+    dispatch(deleteInviteMember({ organizationId, inviteId, silentToaster: true }))
+      .unwrap()
+      .then(() => {
+        dispatch(
+          postInviteMember({
+            organizationId: organizationId,
+            data: data,
+            silentToaster: true,
+          })
+        )
+          .unwrap()
+          .then(() => toast(ToastEnum.SUCCESS, 'Invitation sent'))
+      })
+      .catch((e) => console.error(e))
+  }
+
   return (
     <PageOrganizationMembers
       userId={userSub}
@@ -138,6 +157,7 @@ export function PageOrganizationMembersFeature() {
       transferOwnership={onClickTransferOwnership}
       deleteMember={onClickDeleteMember}
       deleteInviteMember={onClickRevokeMemberInvite}
+      resendInvite={onClickResendInvite}
       onAddMember={() => {
         openModal({
           content: (

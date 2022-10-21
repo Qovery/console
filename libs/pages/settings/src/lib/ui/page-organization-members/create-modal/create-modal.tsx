@@ -28,6 +28,10 @@ export function CreateModal(props: CreateModalProps) {
           control={control}
           rules={{
             required: 'Please enter a email.',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'Please enter a valid email.',
+            },
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText

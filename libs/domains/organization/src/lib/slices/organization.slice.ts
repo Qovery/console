@@ -173,7 +173,7 @@ export const fetchInviteMembers = createAsyncThunk(
 
 export const deleteInviteMember = createAsyncThunk(
   'organization/delete-invite-member',
-  async (payload: { organizationId: string; inviteId: string }) => {
+  async (payload: { organizationId: string; inviteId: string; silentToaster?: boolean }) => {
     // delete invite member by user id
     await membersApi.deleteInviteMember(payload.organizationId, payload.inviteId)
   }
@@ -198,7 +198,7 @@ export const deleteMember = createAsyncThunk(
 
 export const postInviteMember = createAsyncThunk(
   'organization/invite-member',
-  async (payload: { organizationId: string; data: InviteMemberRequest }) => {
+  async (payload: { organizationId: string; data: InviteMemberRequest; silentToaster?: boolean }) => {
     // post invite member
     const result = await membersApi.postInviteMember(payload.organizationId, payload.data)
     return result.data as InviteMember
@@ -578,7 +578,7 @@ export const organizationSlice = createSlice({
           },
         }
         organizationAdapter.updateOne(state, update)
-        toast(ToastEnum.SUCCESS, `Invite member removed`)
+        if (!action.meta.arg.silentToaster) toast(ToastEnum.SUCCESS, 'Invite member removed')
       })
       .addCase(deleteInviteMember.rejected, (state: OrganizationState, action) => {
         toastError(action.error)
@@ -597,7 +597,7 @@ export const organizationSlice = createSlice({
           },
         }
         organizationAdapter.updateOne(state, update)
-        toast(ToastEnum.SUCCESS, `Invite member added`)
+        if (!action.meta.arg.silentToaster) toast(ToastEnum.SUCCESS, 'Invite member added')
       })
       .addCase(postInviteMember.rejected, (state: OrganizationState, action) => {
         toastError(action.error)

@@ -1,4 +1,10 @@
-import { InviteMember, InviteMemberRoleEnum, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
+import {
+  InviteMember,
+  InviteMemberRequest,
+  InviteMemberRoleEnum,
+  Member,
+  OrganizationAvailableRole,
+} from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { Button, HelpSection, IconAwesomeEnum, Table } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
@@ -7,6 +13,7 @@ export interface PageOrganizationMembersProps {
   editMemberRole: (userId: string, roleId: string) => void
   deleteMember: (userId: string) => void
   deleteInviteMember: (inviteId: string) => void
+  resendInvite: (inviteId: string, data: InviteMemberRequest) => void
   transferOwnership: (userId: string) => void
   setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
   setFilterInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
@@ -92,6 +99,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     transferOwnership,
     userId,
     onAddMember,
+    resendInvite,
   } = props
 
   const columnsWidth = '35% 22% 21% 21%'
@@ -167,6 +175,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
                   availableRoles={availableRoles}
                   transferOwnership={transferOwnership}
                   deleteInviteMember={deleteInviteMember}
+                  resendInvite={resendInvite}
                   columnsWidth={columnsWidth}
                 />
               ))}
