@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react'
+import { act, render, waitFor } from '@testing-library/react'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {
   EnvironmentModeEnum,
@@ -8,7 +8,7 @@ import {
 import selectEvent from 'react-select-event'
 import { customRolesMock } from '@qovery/domains/organization'
 import { resetForm } from '../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
-import PageOrganizationRolesEdit, { PageOrganizationRolesEditProps } from './page-organization-roles'
+import PageOrganizationRolesEdit, { PageOrganizationRolesEditProps } from './page-organization-roles-edit'
 
 const customRoles = customRolesMock(3)
 const customRole = customRoles[0]
@@ -40,8 +40,10 @@ const defaultValues = resetForm({
 
 describe('PageOrganizationRolesEdit', () => {
   const props: PageOrganizationRolesEditProps = {
+    onSubmit: jest.fn((e) => e.preventDefault()),
     onAddRole: jest.fn(),
     onDeleteRole: jest.fn(),
+    setCurrentRole: jest.fn(),
     loading: 'loaded',
     loadingForm: false,
     customRoles: customRoles,

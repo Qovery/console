@@ -21,7 +21,6 @@ jest.mock('react-redux', () => ({
 describe('CreateModalFeature', () => {
   const props: CreateModalFeatureProps = {
     onClose: jest.fn(),
-    setCurrentRole: jest.fn(),
     organizationId: '1',
   }
 

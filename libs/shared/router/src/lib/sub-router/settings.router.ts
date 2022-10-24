@@ -5,5 +5,6 @@ export const SETTINGS_CLUSTER_URL = '/cluster'
 export const SETTINGS_CONTAINER_REGISTRIES_URL = '/container-registries'
 export const SETTINGS_MEMBERS_URL = '/members'
 export const SETTINGS_ROLES_URL = '/roles'
+export const SETTINGS_ROLES_EDIT_URL = (roleId = ':roleId') => `/roles/edit/${roleId}`
 export const SETTINGS_BILLING_URL = '/billing'
 export const SETTINGS_DANGER_ZONE_URL = '/danger-zone'

@@ -124,6 +124,15 @@ export const fetchCustomRoles = createAsyncThunk('customRoles/fetch', async (pay
   return result.data.results as OrganizationCustomRole[]
 })
 
+export const fetchCustomRole = createAsyncThunk(
+  'customRole/fetch',
+  async (payload: { organizationId: string; customRoleId: string }) => {
+    // fetch custom role
+    const result = await customRolesApi.getOrganizationCustomRole(payload.organizationId, payload.customRoleId)
+    return result.data as OrganizationCustomRole
+  }
+)
+
 export const postCustomRoles = createAsyncThunk(
   'customRole/post',
   async (payload: { organizationId: string; data: OrganizationCustomRoleCreateRequest }) => {
