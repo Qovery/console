@@ -56,7 +56,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
                   value={field.value}
                   onChange={field.onChange}
                   title="Auto-delete"
-                  description="This environment will be automatically when a branch from a related application is merged or deleted."
+                  description="This environment will be automatically deleted when a branch from a related application is merged or deleted."
                   forceAlignTop
                   small
                 />
