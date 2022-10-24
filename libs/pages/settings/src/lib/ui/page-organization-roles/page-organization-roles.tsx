@@ -27,8 +27,6 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
-  console.log(customRoles)
-
   return (
     <div className="flex flex-col justify-between w-full max-w-content-with-navigation-left">
       <div className="p-8">
