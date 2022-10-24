@@ -45,7 +45,6 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
       statusActions: {
         status: data.status && data.status.state,
         actions: buttonActions,
@@ -54,6 +53,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     {
       ...(removeEnvironment && {
         iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
+        menusClassName: 'border-l border-l-element-light-lighter-500',
         menus: [
           {
             items: [

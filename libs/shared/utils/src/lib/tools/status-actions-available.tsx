@@ -18,7 +18,8 @@ export const isRestartAvailable = (status: StateEnum): boolean => {
     status === StateEnum.DELETING ||
     status === StateEnum.DELETE_ERROR ||
     status === StateEnum.RUNNING ||
-    status === StateEnum.DEPLOYMENT_QUEUED
+    status === StateEnum.DEPLOYMENT_QUEUED ||
+    status === StateEnum.CANCELED
   )
 }
 
@@ -33,7 +34,8 @@ export const isStopAvailable = (status: StateEnum): boolean => {
     status === StateEnum.DELETING ||
     status === StateEnum.RUNNING ||
     status === StateEnum.DEPLOYMENT_ERROR ||
-    status === StateEnum.DEPLOYMENT_QUEUED
+    status === StateEnum.DEPLOYMENT_QUEUED ||
+    status === StateEnum.CANCELED
   )
 }
 
@@ -56,7 +58,8 @@ export const isDeleteAvailable = (status: StateEnum): boolean => {
     status === StateEnum.STOP_ERROR ||
     status === StateEnum.STOPPED ||
     status === StateEnum.DELETE_ERROR ||
-    status === StateEnum.RUNNING
+    status === StateEnum.RUNNING ||
+    status === StateEnum.CANCELED
   )
 }
 

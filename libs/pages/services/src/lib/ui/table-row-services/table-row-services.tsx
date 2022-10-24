@@ -62,7 +62,10 @@ export function TableRowServices(props: TableRowServicesProps) {
     {
       iconLeft: <Icon name="icon-solid-play" />,
       iconRight: <Icon name="icon-solid-angle-down" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
+      menusClassName:
+        (type && type === ServiceTypeEnum.APPLICATION) || removeService
+          ? `border-r border-r-element-light-lighter-500`
+          : '',
       statusActions: {
         status: data.status && data.status.state,
         actions: buttonActions,
