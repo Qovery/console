@@ -1,108 +1,66 @@
-import { render, waitFor } from '@testing-library/react'
-import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import {
-  EnvironmentModeEnum,
-  OrganizationCustomRoleClusterPermission,
-  OrganizationCustomRoleProjectPermission,
-} from 'qovery-typescript-axios'
-import selectEvent from 'react-select-event'
-import { customRolesMock } from '@qovery/domains/organization'
-import { resetForm } from '../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
-import PageOrganizationRolesEdit, { PageOrganizationRolesEditProps } from './page-organization-roles'
+import { render } from '@testing-library/react'
+import { availableRolesMock, customRolesMock } from '@qovery/domains/organization'
+import PageOrganizationRoles, { PageOrganizationRolesProps, isDefaultRole, rolesSort } from './page-organization-roles'
+
+const mockedUsedNavigate = jest.fn()
+jest.mock('react-router', () => ({
+  ...(jest.requireActual('react-router') as any),
+  useNavigate: () => mockedUsedNavigate,
+}))
 
 const customRoles = customRolesMock(3)
-const customRole = customRoles[0]
 
-const defaultValues = resetForm({
-  id: customRoles[0].id,
-  name: customRoles[0].name,
-  description: customRoles[0].description,
-  cluster_permissions: [
-    {
-      cluster_id: '1',
-      permission: OrganizationCustomRoleClusterPermission.ENV_CREATOR,
-    },
-  ],
-  project_permissions: [
-    {
-      project_id: '1',
-      project_name: customRoles[0].project_permissions ? customRoles[0].project_permissions[0].project_name : '',
-      is_admin: false,
-      permissions: [
-        {
-          environment_type: EnvironmentModeEnum.DEVELOPMENT,
-          permission: OrganizationCustomRoleProjectPermission.MANAGER,
-        },
-      ],
-    },
-  ],
-})
-
-describe('PageOrganizationRolesEdit', () => {
-  const props: PageOrganizationRolesEditProps = {
+describe('PageOrganizationRoles', () => {
+  const props: PageOrganizationRolesProps = {
     onAddRole: jest.fn(),
     onDeleteRole: jest.fn(),
-    loading: 'loaded',
-    loadingForm: false,
-    customRoles: customRoles,
+    loading: false,
+    roles: customRoles,
   }
   it('should render successfully', () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
-        defaultValues: defaultValues,
-      })
-    )
+    const { baseElement } = render(<PageOrganizationRoles {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should have loading screen', () => {
-    props.customRoles = []
-    props.loading = 'not loaded'
+    props.roles = []
+    props.loading = true
 
-    const { getByTestId } = render(
-      wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
-        defaultValues: defaultValues,
-      })
-    )
+    const { getByTestId } = render(<PageOrganizationRoles {...props} />)
 
-    expect(getByTestId('custom-roles-loader'))
+    expect(getByTestId('roles-loader'))
   })
 
-  it('should submit the form', async () => {
-    const spy = jest.fn((e) => e.preventDefault())
-    props.customRoles = customRoles
-    props.onSubmit = spy
-    props.currentRole = customRole
-    props.loading = 'loaded'
+  it('should have list of roles', () => {
+    props.roles = [customRoles[0]]
+    props.loading = false
 
-    const { getByTestId } = render(
-      wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
-        defaultValues: defaultValues,
-      })
-    )
+    const { getByTestId } = render(<PageOrganizationRoles {...props} />)
 
-    const select = getByTestId('select-custom-roles')
-    selectEvent.select(select, customRoles[1].name || '')
-
-    const button = getByTestId('submit-save-button')
-    getByTestId('delete-button')
-
-    await waitFor(() => {
-      button.click()
-      expect(props.onSubmit).toHaveBeenCalled()
-    })
+    expect(getByTestId(`role-${customRoles[0].id}`))
+    expect(getByTestId(`role-${customRoles[0].id}`).textContent).toBe(`${customRoles[0].name}Custom Role`)
+    expect(getByTestId(`role-actions-${customRoles[0].id}`))
   })
 
-  it('should submit the form', async () => {
-    props.customRoles = []
-    props.loading = 'loaded'
+  it('should have list of custom roles', () => {
+    props.roles = [availableRolesMock[0]]
+    props.loading = false
 
-    const { getByTestId } = render(
-      wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
-        defaultValues: defaultValues,
-      })
-    )
+    const { getByTestId } = render(<PageOrganizationRoles {...props} />)
 
-    getByTestId('empty-state')
+    expect(getByTestId(`role-${availableRolesMock[0].id}`))
+    expect(getByTestId(`role-${availableRolesMock[0].id}`).textContent).toBe(`${availableRolesMock[0].name}Basic Role`)
+  })
+
+  it('should have function to detect if is default role', () => {
+    expect(isDefaultRole(availableRolesMock[0].name)).toBe(true)
+    expect(isDefaultRole(customRoles[0].name)).toBe(false)
+  })
+
+  it('should have function to sort default roles and custom roles', () => {
+    expect(rolesSort([customRoles[0], availableRolesMock[0]]).map((role) => role.name)).toStrictEqual([
+      availableRolesMock[0].name,
+      customRoles[0].name,
+    ])
   })
 })

@@ -157,24 +157,30 @@ export function PageOrganizationRolesEditFeature() {
   )
 
   useEffect(() => {
-    setLoading(true)
+    if (
+      organization &&
+      (organization?.customRoles?.loadingStatus !== 'loaded' ||
+        (organization?.customRoles?.items && organization?.customRoles?.items?.length > 0))
+    ) {
+      setLoading(true)
 
-    if (organization?.customRoles?.items) {
       const role = organization?.customRoles?.items?.find((currentRole) => currentRole.id === roleId)
-      setCurrentRole(role)
-      setLoading(false)
-    } else {
-      dispatch(fetchCustomRole({ organizationId, customRoleId: roleId }))
-        .unwrap()
-        .then((result: OrganizationCustomRole) => {
-          // set default custom role
-          setCurrentRole(result)
-          setLoading(false)
-        })
-        .catch(() => {
-          redirectPageRoles()
-          setLoading(false)
-        })
+      if (role) {
+        setCurrentRole(role)
+        setLoading(false)
+      } else {
+        dispatch(fetchCustomRole({ organizationId, customRoleId: roleId }))
+          .unwrap()
+          .then((result: OrganizationCustomRole) => {
+            // set default custom role
+            setCurrentRole(result)
+            setLoading(false)
+          })
+          .catch(() => {
+            redirectPageRoles()
+            setLoading(false)
+          })
+      }
     }
   }, [organization, navigate, dispatch, organizationId, roleId, redirectPageRoles])
 

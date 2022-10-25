@@ -1,8 +1,8 @@
 import { OrganizationCustomRole } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { deleteCustomRole, fetchCustomRoles, selectOrganizationById } from '@qovery/domains/organization'
+import { deleteCustomRole, fetchAvailableRoles, selectOrganizationById } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store/data'
@@ -18,23 +18,32 @@ export function PageOrganizationRolesFeature() {
   const customRolesLoadingStatus = useSelector(
     (state: RootState) => selectOrganizationById(state, organizationId)?.customRoles?.loadingStatus
   )
-  const customRoles = organization?.customRoles?.items
+
+  const availableRolesLoadingStatus = useSelector(
+    (state: RootState) => selectOrganizationById(state, organizationId)?.availableRoles?.loadingStatus
+  )
+  const availableRoles = organization?.availableRoles?.items || []
 
   const dispatch = useDispatch<AppDispatch>()
+  const [loading, setLoading] = useState(false)
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
   useEffect(() => {
-    if (organization && (!customRolesLoadingStatus || customRolesLoadingStatus === 'not loaded')) {
-      dispatch(fetchCustomRoles({ organizationId }))
+    if (organization && (!availableRolesLoadingStatus || availableRolesLoadingStatus === 'not loaded')) {
+      setLoading(true)
+
+      dispatch(fetchAvailableRoles({ organizationId }))
+        .unwrap()
+        .finally(() => setLoading(false))
     }
-  }, [organization, customRolesLoadingStatus, dispatch, organizationId, customRoles])
+  }, [organization, customRolesLoadingStatus, dispatch, organizationId, availableRolesLoadingStatus])
 
   return (
     <PageOrganizationRoles
-      customRoles={customRoles}
-      loading={customRolesLoadingStatus || 'not loaded'}
+      roles={availableRoles}
+      loading={loading}
       onAddRole={() => {
         openModal({
           content: <CreateModalFeature organizationId={organizationId} onClose={closeModal} />,

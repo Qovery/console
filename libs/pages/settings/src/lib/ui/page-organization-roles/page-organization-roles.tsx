@@ -1,6 +1,5 @@
-import { OrganizationCustomRole } from 'qovery-typescript-axios'
+import { OrganizationAvailableRole, OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { LoadingStatus } from '@qovery/shared/interfaces'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
   BlockContent,
@@ -8,21 +7,41 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonSize,
-  EmptyState,
   HelpSection,
+  Icon,
   IconAwesomeEnum,
   LoaderSpinner,
 } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { MemberRoleEnum, RolesIcons } from '../page-organization-members/row-member/row-member'
 
-export interface PageOrganizationRolesEditProps {
+export interface PageOrganizationRolesProps {
   onAddRole: () => void
   onDeleteRole: (customRole: OrganizationCustomRole) => void
-  customRoles?: OrganizationCustomRole[]
-  loading?: LoadingStatus
+  loading: boolean
+  roles?: OrganizationAvailableRole[]
 }
 
-export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps) {
-  const { customRoles, loading, onAddRole, onDeleteRole } = props
+export const isDefaultRole = (role?: string) => role && role.toUpperCase() in MemberRoleEnum
+
+export const rolesSort = (roles: OrganizationAvailableRole[]) => {
+  const currentRoles: OrganizationAvailableRole[] = []
+  const currentCustomRoles: OrganizationAvailableRole[] = []
+
+  for (let i = 0; i < roles.length; i++) {
+    const role = roles[i]
+    if (isDefaultRole(role.name)) {
+      currentRoles.push(role)
+    } else {
+      currentCustomRoles.push(role)
+    }
+  }
+
+  return [...currentRoles, ...currentCustomRoles]
+}
+
+export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
+  const { roles, onAddRole, onDeleteRole, loading } = props
 
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
@@ -32,57 +51,71 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
       <div className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Manage your custom roles</h1>
-            <p className="text-text-500 text-xs">Set cluster and project permissions for each of your custom roles.</p>
+            <h1 className="h5 text-text-700 mb-2">Manage your roles</h1>
+            <p className="text-text-500 text-xs">Manage the existing custom roles or create a new one.</p>
           </div>
           <Button onClick={onAddRole} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add new role
           </Button>
         </div>
-        {loading === 'not loaded' || loading === 'loading' ? (
-          <div data-testid="custom-roles-loader" className="flex justify-center">
+        {(!roles || roles.length === 0) && loading ? (
+          <div data-testid="roles-loader" className="flex justify-center mt-5">
             <LoaderSpinner className="w-6" />
           </div>
-        ) : customRoles && customRoles.length > 0 ? (
-          <BlockContent title="Custom roles" classNameContent="">
-            {customRoles?.map((role: OrganizationCustomRole) => (
-              <div
-                data-testid={`registries-list-${role.id}`}
-                key={role.id}
-                className="flex justify-between items-center px-5 py-4 border-b border-element-light-lighter-500 last:border-0"
-              >
-                <div>
-                  <h2 className="flex text-xs text-text-600 font-medium">{role.name}</h2>
-                  {role.description && <p className="text-xs text-text-400 mt-1">{role.description}</p>}
-                </div>
-                <div>
-                  <ButtonIcon
-                    icon={IconAwesomeEnum.WHEEL}
-                    style={ButtonIconStyle.STROKED}
-                    size={ButtonSize.TINY}
-                    onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`)}
-                    className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
-                    iconClassName="!text-xs"
-                  />
-                  <ButtonIcon
-                    icon={IconAwesomeEnum.TRASH}
-                    style={ButtonIconStyle.STROKED}
-                    size={ButtonSize.TINY}
-                    onClick={() => onDeleteRole(role)}
-                    className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
-                    iconClassName="!text-xs"
-                  />
-                </div>
-              </div>
-            ))}
-          </BlockContent>
-        ) : loading === 'loaded' && customRoles?.length === 0 ? (
-          <EmptyState dataTestId="empty-state" title="Create your first custom role" imageWidth="w-[160px]">
-            <Button className="mt-5" onClick={onAddRole}>
-              Add new role
-            </Button>
-          </EmptyState>
-        ) : null}
+        ) : (
+          roles &&
+          roles?.length > 0 && (
+            <BlockContent title="Roles" classNameContent="">
+              {roles &&
+                rolesSort(roles)?.map((role: OrganizationAvailableRole) => (
+                  <div
+                    data-testid={`role-${role.id}`}
+                    key={role.id}
+                    className={`flex justify-between items-center px-5 py-4 border-b border-element-light-lighter-500 last:border-0 ${
+                      isDefaultRole(role.name) ? 'bg-element-light-lighter-300' : ''
+                    }`}
+                  >
+                    <div className="flex">
+                      <Icon
+                        name={
+                          !isDefaultRole(role.name) ? IconAwesomeEnum.USER : RolesIcons[role.name?.toUpperCase() || '']
+                        }
+                        className="text-brand-500"
+                      />
+                      <div className="ml-4">
+                        <h2 className="flex text-xs text-text-600 font-medium">
+                          {isDefaultRole(role.name) ? upperCaseFirstLetter(role.name) : role.name}
+                        </h2>
+                        <p className="text-xs text-text-400 mt-1">
+                          {isDefaultRole(role.name) ? 'Basic Role' : 'Custom Role'}
+                        </p>
+                      </div>
+                    </div>
+                    {!isDefaultRole(role.name) && (
+                      <div data-testid={`role-actions-${role.id}`}>
+                        <ButtonIcon
+                          icon={IconAwesomeEnum.WHEEL}
+                          style={ButtonIconStyle.STROKED}
+                          size={ButtonSize.TINY}
+                          onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`)}
+                          className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                          iconClassName="!text-xs"
+                        />
+                        <ButtonIcon
+                          icon={IconAwesomeEnum.TRASH}
+                          style={ButtonIconStyle.STROKED}
+                          size={ButtonSize.TINY}
+                          onClick={() => onDeleteRole(role)}
+                          className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                          iconClassName="!text-xs"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </BlockContent>
+          )
+        )}
       </div>
       <HelpSection
         description="Need help? You may find these links useful"
@@ -98,4 +131,4 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
   )
 }
 
-export default PageOrganizationRolesEdit
+export default PageOrganizationRoles

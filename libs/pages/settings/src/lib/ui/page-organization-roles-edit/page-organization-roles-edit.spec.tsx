@@ -1,22 +1,26 @@
-import { act, render, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {
   EnvironmentModeEnum,
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleProjectPermission,
 } from 'qovery-typescript-axios'
-import selectEvent from 'react-select-event'
 import { customRolesMock } from '@qovery/domains/organization'
 import { resetForm } from '../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import PageOrganizationRolesEdit, { PageOrganizationRolesEditProps } from './page-organization-roles-edit'
 
-const customRoles = customRolesMock(3)
-const customRole = customRoles[0]
+const mockedUsedNavigate = jest.fn()
+jest.mock('react-router', () => ({
+  ...(jest.requireActual('react-router') as any),
+  useNavigate: () => mockedUsedNavigate,
+}))
+
+const customRole = customRolesMock(1)[0]
 
 const defaultValues = resetForm({
-  id: customRoles[0].id,
-  name: customRoles[0].name,
-  description: customRoles[0].description,
+  id: customRole.id,
+  name: customRole.name,
+  description: customRole.description,
   cluster_permissions: [
     {
       cluster_id: '1',
@@ -26,7 +30,7 @@ const defaultValues = resetForm({
   project_permissions: [
     {
       project_id: '1',
-      project_name: customRoles[0].project_permissions ? customRoles[0].project_permissions[0].project_name : '',
+      project_name: customRole.project_permissions ? customRole.project_permissions[0].project_name : '',
       is_admin: false,
       permissions: [
         {
@@ -41,12 +45,9 @@ const defaultValues = resetForm({
 describe('PageOrganizationRolesEdit', () => {
   const props: PageOrganizationRolesEditProps = {
     onSubmit: jest.fn((e) => e.preventDefault()),
-    onAddRole: jest.fn(),
     onDeleteRole: jest.fn(),
-    setCurrentRole: jest.fn(),
-    loading: 'loaded',
+    loading: false,
     loadingForm: false,
-    customRoles: customRoles,
   }
   it('should render successfully', () => {
     const { baseElement } = render(
@@ -58,8 +59,8 @@ describe('PageOrganizationRolesEdit', () => {
   })
 
   it('should have loading screen', () => {
-    props.customRoles = []
-    props.loading = 'not loaded'
+    props.currentRole = undefined
+    props.loading = true
 
     const { getByTestId } = render(
       wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
@@ -72,19 +73,15 @@ describe('PageOrganizationRolesEdit', () => {
 
   it('should submit the form', async () => {
     const spy = jest.fn((e) => e.preventDefault())
-    props.customRoles = customRoles
-    props.onSubmit = spy
     props.currentRole = customRole
-    props.loading = 'loaded'
+    props.onSubmit = spy
+    props.loading = false
 
     const { getByTestId } = render(
       wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
         defaultValues: defaultValues,
       })
     )
-
-    const select = getByTestId('select-custom-roles')
-    selectEvent.select(select, customRoles[1].name || '')
 
     const button = getByTestId('submit-save-button')
     getByTestId('delete-button')
@@ -93,18 +90,5 @@ describe('PageOrganizationRolesEdit', () => {
       button.click()
       expect(props.onSubmit).toHaveBeenCalled()
     })
-  })
-
-  it('should submit the form', async () => {
-    props.customRoles = []
-    props.loading = 'loaded'
-
-    const { getByTestId } = render(
-      wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
-        defaultValues: defaultValues,
-      })
-    )
-
-    getByTestId('empty-state')
   })
 })
