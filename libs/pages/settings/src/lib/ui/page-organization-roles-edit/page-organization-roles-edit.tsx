@@ -102,22 +102,22 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     title="Project level permissions"
                     headArray={[
                       {
-                        label: 'Admin',
+                        label: 'Full-Access',
                         tooltip:
                           'The user is admin of the project and can do everything he wants on it (no matter the environment type)',
                       },
                       {
-                        label: 'Manager',
+                        label: 'Manage',
                         tooltip:
                           'Manage the deployments and the settings of this environment type (including adding or removing services)',
                       },
                       {
-                        label: 'Deployer',
+                        label: 'Deploy',
                         tooltip:
                           'Manage the deployments of this environment type, access the logs, connect via SSH to the application and manage its environment variables.',
                       },
                       {
-                        label: 'Viewer',
+                        label: 'Read-Only',
                         tooltip: 'Access in read-only this environment type.',
                       },
                       {
