@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'store-data',
+  displayName: 'store',
   preset: '../../../jest.preset.js',
   transform: {
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
