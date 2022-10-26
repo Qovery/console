@@ -42,8 +42,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
             <LoaderSpinner className="w-6" />
           </div>
         ) : (
-          currentRole &&
-          !loading && (
+          currentRole && (
             <>
               <div className="flex justify-between mb-8">
                 <div>
@@ -132,17 +131,15 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                   </Table>
                 )}
                 <div className="flex gap-3 justify-between mt-6">
-                  {currentRole && (
-                    <Button
-                      dataTestId="delete-button"
-                      className="btn--no-min-w"
-                      style={ButtonStyle.ERROR}
-                      size={ButtonSize.XLARGE}
-                      onClick={() => onDeleteRole(currentRole)}
-                    >
-                      Delete role
-                    </Button>
-                  )}
+                  <Button
+                    dataTestId="delete-button"
+                    className="btn--no-min-w"
+                    style={ButtonStyle.ERROR}
+                    size={ButtonSize.XLARGE}
+                    onClick={() => onDeleteRole(currentRole)}
+                  >
+                    Delete role
+                  </Button>
                   <Button
                     dataTestId="submit-save-button"
                     className="btn--no-min-w"

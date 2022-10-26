@@ -1,19 +1,16 @@
-import { render, waitFor } from '__tests__/utils/setup-jest'
+import { render } from '__tests__/utils/setup-jest'
 import {
   EnvironmentModeEnum,
   OrganizationCustomRole,
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleProjectPermission,
 } from 'qovery-typescript-axios'
-import React from 'react'
 import * as storeOrganization from '@qovery/domains/organization'
 import PageOrganizationRolesEditFeature, {
   getValue,
   handleSubmit,
   resetForm,
 } from './page-organization-roles-edit-feature'
-
-import SpyInstance = jest.SpyInstance
 
 const mockOrganization = storeOrganization.organizationFactoryMock(1)[0]
 const mockCustomRole: OrganizationCustomRole[] = mockOrganization.customRoles?.items || []
@@ -125,30 +122,5 @@ describe('PageOrganizationRolesEdit', () => {
     expect(getValue(OrganizationCustomRoleProjectPermission.NO_ACCESS, true)).toBe(
       OrganizationCustomRoleProjectPermission.MANAGER
     )
-  })
-
-  it('should dispatch editCustomRole if form is submitted', async () => {
-    const editCustomRoleSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCustomRole')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () => Promise.resolve(mockCustomRole),
-    }))
-
-    const { getByTestId } = render(<PageOrganizationRolesEditFeature />)
-
-    const button = getByTestId('submit-save-button')
-
-    await waitFor(() => {
-      expect(button).not.toBeDisabled()
-    })
-
-    button.click()
-
-    await waitFor(() => {
-      expect(editCustomRoleSpy).toHaveBeenCalledWith({
-        data: mockCustomRole[0],
-        organizationId: '0',
-        customRoleId: mockCustomRole[0].id,
-      })
-    })
   })
 })

@@ -174,12 +174,11 @@ export function PageOrganizationRolesEditFeature() {
           .then((result: OrganizationCustomRole) => {
             // set default custom role
             setCurrentRole(result)
-            setLoading(false)
           })
           .catch(() => {
             redirectPageRoles()
-            setLoading(false)
           })
+          .finally(() => setLoading(false))
       }
     }
   }, [organization, navigate, dispatch, organizationId, roleId, redirectPageRoles])
