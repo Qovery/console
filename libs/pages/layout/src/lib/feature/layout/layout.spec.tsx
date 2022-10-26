@@ -1,5 +1,5 @@
-import React from 'react'
 import { render } from '__tests__/utils/setup-jest'
+import React from 'react'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 import Layout, { LayoutProps } from './layout'
 

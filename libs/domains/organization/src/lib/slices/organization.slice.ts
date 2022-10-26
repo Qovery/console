@@ -42,6 +42,15 @@ export const fetchOrganization = createAsyncThunk('organization/fetch', async ()
   return response.data.results as OrganizationEntity[]
 })
 
+export const fetchOrganizationById = createAsyncThunk(
+  'organization/fetch-by-id',
+  async (payload: { organizationId: string }) => {
+    const response = await organizationMainCalls.getOrganization(payload.organizationId)
+
+    return response.data as OrganizationEntity
+  }
+)
+
 export const postOrganization = createAsyncThunk<OrganizationEntity, OrganizationRequest>(
   'organization/post',
   async (data: OrganizationRequest, { rejectWithValue }) => {
@@ -237,6 +246,14 @@ export const organizationSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
       })
+      // fetch organization by id
+      .addCase(
+        fetchOrganizationById.fulfilled,
+        (state: OrganizationState, action: PayloadAction<OrganizationEntity>) => {
+          organizationAdapter.addOne(state, action.payload)
+          state.loadingStatus = 'loaded'
+        }
+      )
       // post organization
       .addCase(postOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'

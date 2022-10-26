@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { fetchEnvironments } from '@qovery/domains/environment'
-import { fetchClusters, fetchOrganization } from '@qovery/domains/organization'
+import { fetchClusters, fetchOrganization, fetchOrganizationById } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
 import { fetchUserSignUp, selectUserSignUp } from '@qovery/domains/user'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { ORGANIZATION_URL } from '@qovery/shared/router'
 import { WebsocketContainer } from '@qovery/shared/websockets'
 import { AppDispatch } from '@qovery/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
@@ -24,11 +26,28 @@ export function Layout(props: LayoutProps) {
   const userSignUp = useSelector(selectUserSignUp)
 
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
 
   useEffect(() => {
     dispatch(fetchOrganization())
+      .unwrap()
+      .then((result: OrganizationEntity[]) => {
+        const organizationIds: string[] = []
+
+        for (let i = 0; i < result.length; i++) {
+          const organization = result[i]
+          organizationIds.push(organization.id)
+        }
+
+        // fetch organization by id neccessary for debug by Qovery team
+        if (result.length > 0 && !organizationIds.includes(organizationId)) {
+          dispatch(fetchOrganizationById({ organizationId }))
+            .unwrap()
+            .catch(() => navigate(ORGANIZATION_URL(result[0].id)))
+        }
+      })
     dispatch(fetchUserSignUp())
-  }, [dispatch])
+  }, [dispatch, organizationId, navigate])
 
   useEffect(() => {
     if (environmentId) {
@@ -46,7 +65,7 @@ export function Layout(props: LayoutProps) {
       dispatch(fetchProjects({ organizationId }))
       dispatch(fetchClusters({ organizationId }))
     }
-  }, [dispatch, organizationId])
+  }, [dispatch, organizationId, navigate])
 
   useEffect(() => {
     setCurrentOrganizationIdOnStorage(organizationId)
