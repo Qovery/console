@@ -41,7 +41,7 @@ enum InviteMemberRoleExtendEnum {
   BILLING = 'BILLING',
 }
 
-const RolesIcons: { [key: string]: string } = {
+export const RolesIcons: { [key: string]: string } = {
   ADMIN: IconAwesomeEnum.USER_CROWN,
   BILLING: IconAwesomeEnum.WALLET,
   DEVOPS: IconAwesomeEnum.WHEEL,
@@ -49,7 +49,7 @@ const RolesIcons: { [key: string]: string } = {
 }
 
 type MemberRoleEnum = InviteMemberRoleEnum | InviteMemberRoleExtendEnum
-const MemberRoleEnum = { ...InviteMemberRoleEnum, ...InviteMemberRoleExtendEnum }
+export const MemberRoleEnum = { ...InviteMemberRoleEnum, ...InviteMemberRoleExtendEnum }
 
 export function RowMember(props: RowMemberProps) {
   const {

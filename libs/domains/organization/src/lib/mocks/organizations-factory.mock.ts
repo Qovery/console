@@ -48,18 +48,20 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
     },
     availableRoles: {
       loadingStatus: 'loaded',
-      items: [
-        {
-          id: '0',
-          name: 'Admin',
-        },
-        {
-          id: '1',
-          name: 'Owner',
-        },
-      ],
+      items: availableRolesMock,
     },
   }))
+
+export const availableRolesMock = [
+  {
+    id: '0',
+    name: 'Admin',
+  },
+  {
+    id: '1',
+    name: 'Owner',
+  },
+]
 
 export const membersMock = (howMany: number, roleName = 'Admin', customIndex?: string): Member[] =>
   Array.from({ length: howMany }).map((_, index) => ({

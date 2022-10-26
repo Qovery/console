@@ -118,11 +118,14 @@ export const fetchAvailableContainerRegistry = createAsyncThunk('availableContai
   return result.data.results as AvailableContainerRegistryResponse[]
 })
 
-export const fetchCustomRoles = createAsyncThunk('customRoles/fetch', async (payload: { organizationId: string }) => {
-  // fetch custom roles
-  const result = await customRolesApi.listOrganizationCustomRoles(payload.organizationId)
-  return result.data.results as OrganizationCustomRole[]
-})
+export const fetchCustomRole = createAsyncThunk(
+  'customRole/fetch',
+  async (payload: { organizationId: string; customRoleId: string }) => {
+    // fetch custom role
+    const result = await customRolesApi.getOrganizationCustomRole(payload.organizationId, payload.customRoleId)
+    return result.data as OrganizationCustomRole
+  }
+)
 
 export const postCustomRoles = createAsyncThunk(
   'customRole/post',
@@ -379,26 +382,24 @@ export const organizationSlice = createSlice({
           state.availableContainerRegistries.items = action.payload
         }
       )
-      // fetch custom roles
-      .addCase(fetchCustomRoles.pending, (state: OrganizationState, action) => {
-        const update: Update<OrganizationEntity> = {
-          id: action.meta.arg.organizationId,
-          changes: {
-            customRoles: {
-              loadingStatus: 'loading',
-            },
-          },
+      // fetch custom role
+      .addCase(fetchCustomRole.fulfilled, (state: OrganizationState, action) => {
+        const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
+        console.log(state.entities[action.meta.arg.organizationId]?.customRoles?.items)
+
+        const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
+        if (index === -1) {
+          customRoles.push(action.payload)
+        } else {
+          customRoles[index] = action.payload
         }
 
-        organizationAdapter.updateOne(state, update)
-      })
-      .addCase(fetchCustomRoles.fulfilled, (state: OrganizationState, action) => {
         const update: Update<OrganizationEntity> = {
           id: action.meta.arg.organizationId,
           changes: {
             customRoles: {
               loadingStatus: 'loaded',
-              items: action.payload,
+              items: customRoles,
             },
           },
         }
@@ -410,6 +411,8 @@ export const organizationSlice = createSlice({
         const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
         const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
         customRoles[index] = action.payload
+
+        console.log(customRoles)
 
         const update: Update<OrganizationEntity> = {
           id: action.meta.arg.organizationId,

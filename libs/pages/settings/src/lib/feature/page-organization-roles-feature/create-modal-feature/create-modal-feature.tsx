@@ -1,20 +1,22 @@
-import { OrganizationCustomRole, OrganizationCustomRoleCreateRequest } from 'qovery-typescript-axios'
+import { OrganizationCustomRoleCreateRequest } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { fetchAvailableRoles, postCustomRoles } from '@qovery/domains/organization'
+import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/router'
 import { AppDispatch } from '@qovery/store/data'
 import CreateModal from '../../../ui/page-organization-roles/create-modal/create-modal'
 
 export interface CreateModalFeatureProps {
-  setCurrentRole: (customRole: OrganizationCustomRole) => void
   onClose: () => void
   organizationId?: string
 }
 
 export function CreateModalFeature(props: CreateModalFeatureProps) {
-  const { organizationId = '', onClose, setCurrentRole } = props
+  const { organizationId = '', onClose } = props
 
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
   const methods = useForm({
@@ -33,13 +35,14 @@ export function CreateModalFeature(props: CreateModalFeatureProps) {
       })
     )
       .unwrap()
-      .then((result: OrganizationCustomRole) => {
+      .then((result) => {
         // fetch the list of available roles after add new role
         dispatch(fetchAvailableRoles({ organizationId }))
 
-        setCurrentRole(result)
         setLoading(false)
         onClose()
+        // redirect to edit page
+        navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(result.id)}`)
       })
       .catch((e) => {
         setLoading(false)
