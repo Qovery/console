@@ -1,5 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 import { UserInterface } from '../interfaces'
 
 export const USER_KEY = 'user'
@@ -27,6 +27,6 @@ export const user = userSlice.reducer
 
 export const userActions = userSlice.actions
 
-export const getUserState = (rootState: RootState): UserInterface => rootState.ui[USER_KEY]
+export const getUserState = (rootState: RootState): UserInterface => rootState[USER_KEY]
 
 export const selectUser = createSelector(getUserState, (state) => state)

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { editApplication, postApplicationActionsRestart } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {

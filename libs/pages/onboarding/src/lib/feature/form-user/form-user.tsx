@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router'
 import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/router'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 
 const dataTypes = [

@@ -13,7 +13,7 @@ import { postProject } from '@qovery/domains/projects'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/router'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import { StepPricing } from '../../ui/step-pricing/step-pricing'
 import { ContextOnboarding } from '../container/container'
 

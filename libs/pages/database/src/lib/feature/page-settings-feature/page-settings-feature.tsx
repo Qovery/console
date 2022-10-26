@@ -12,7 +12,7 @@ import {
   DATABASE_URL,
 } from '@qovery/shared/router'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 import { ROUTER_DATABASE_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 

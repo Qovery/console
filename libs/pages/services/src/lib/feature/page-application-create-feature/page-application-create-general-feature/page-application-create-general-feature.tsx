@@ -9,7 +9,7 @@ import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SER
 import { toastError } from '@qovery/shared/toast'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageApplicationCreateGeneral from '../../../ui/page-application-create/page-application-create-general/page-application-create-general'
 import { GeneralData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'

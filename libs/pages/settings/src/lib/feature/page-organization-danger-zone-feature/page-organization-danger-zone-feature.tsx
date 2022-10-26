@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteOrganization, selectOrganizationById } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationDangerZone from '../../ui/page-organization-danger-zone/page-organization-danger-zone'
 
 export function PageOrganizationDangerZoneFeature() {

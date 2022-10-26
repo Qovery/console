@@ -7,7 +7,7 @@ import { useParams } from 'react-router'
 import { selectEnvironmentById, updateEnvironment } from '@qovery/domains/environment'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export function PageSettingsGeneralFeature() {

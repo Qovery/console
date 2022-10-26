@@ -22,7 +22,7 @@ import {
   TagSize,
 } from '@qovery/shared/ui'
 import { copyToClipboard, urlCodeEditor } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 

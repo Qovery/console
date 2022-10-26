@@ -21,7 +21,7 @@ import {
 import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, refactoDatabasePayload, shortToLongId } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 
@@ -364,7 +364,7 @@ export const databasesActions = databasesSlice.actions
 
 const { selectAll } = databasesAdapter.getSelectors()
 
-export const getDatabasesState = (rootState: RootState): DatabasesState => rootState['entities'][DATABASES_FEATURE_KEY]
+export const getDatabasesState = (rootState: RootState): DatabasesState => rootState[DATABASES_FEATURE_KEY]
 
 export const selectAllDatabases = createSelector(getDatabasesState, selectAll)
 

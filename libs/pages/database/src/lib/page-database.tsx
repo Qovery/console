@@ -19,7 +19,7 @@ import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { StatusMenuActions } from '@qovery/shared/ui'
 import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 

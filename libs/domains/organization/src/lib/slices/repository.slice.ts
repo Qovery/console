@@ -2,7 +2,7 @@ import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSl
 import { GitProviderEnum, GitRepositoryBranch, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
 import { LoadingStatus, RepositoryEntity, RepositoryState } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const REPOSITORY_FEATURE_KEY = 'repository'
 
@@ -143,7 +143,7 @@ export const repositoryActions = repositorySlice.actions
 const { selectAll, selectEntities } = repositoryAdapter.getSelectors()
 
 export const getRepositoryState = (rootState: RootState): RepositoryState =>
-  rootState.entities.organization[REPOSITORY_FEATURE_KEY]
+  rootState.organization[REPOSITORY_FEATURE_KEY]
 
 export const selectAllRepository = createSelector(getRepositoryState, selectAll)
 

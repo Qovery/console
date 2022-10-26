@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
 
 export interface StorageModalFeatureProps {

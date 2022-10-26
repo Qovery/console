@@ -9,7 +9,7 @@ import {
   selectEnvironmentsIdByClusterId,
 } from '@qovery/domains/environment'
 import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 
 export interface ClusterWebSocketProps {
   url: string

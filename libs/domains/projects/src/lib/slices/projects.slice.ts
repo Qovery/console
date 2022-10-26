@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, c
 import { Project, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 import { ProjectsState } from '@qovery/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 
@@ -81,8 +81,7 @@ export const projectsActions = projectsSlice.actions
 
 const { selectAll, selectEntities } = projectsAdapter.getSelectors()
 
-export const getProjectsState = (rootState: RootState): ProjectsState =>
-  rootState.entities.project[PROJECTS_FEATURE_KEY]
+export const getProjectsState = (rootState: RootState): ProjectsState => rootState.project[PROJECTS_FEATURE_KEY]
 
 export const selectAllProjects = createSelector(getProjectsState, selectAll)
 

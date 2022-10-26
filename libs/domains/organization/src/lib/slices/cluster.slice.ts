@@ -2,7 +2,7 @@ import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSl
 import { Cluster, ClusterLogs, ClusterStatus, ClustersApi } from 'qovery-typescript-axios'
 import { ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
 
@@ -145,7 +145,7 @@ export const clusterActions = clusterSlice.actions
 
 const { selectAll, selectEntities } = clusterAdapter.getSelectors()
 
-export const getClusterState = (rootState: RootState): ClustersState => rootState.entities[CLUSTER_FEATURE_KEY]
+export const getClusterState = (rootState: RootState): ClustersState => rootState[CLUSTER_FEATURE_KEY]
 
 export const selectAllCluster = createSelector(getClusterState, selectAll)
 

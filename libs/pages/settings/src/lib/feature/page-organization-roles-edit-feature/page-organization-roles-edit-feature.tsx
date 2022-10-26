@@ -15,7 +15,7 @@ import { deleteCustomRole, editCustomRole, fetchCustomRole, selectOrganizationBy
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
 import { useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationRolesEdit from '../../ui/page-organization-roles-edit/page-organization-roles-edit'
 
 export const defaultProjectPermission = (permission: string) => {

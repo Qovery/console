@@ -12,7 +12,7 @@ import {
   SETTINGS_URL,
 } from '@qovery/shared/router'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 import { ROUTER_SETTINGS } from './router/router'
 import { Container } from './ui/container/container'
 

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editOrganization, selectOrganizationById } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationGeneral from '../../ui/page-organization-general/page-organization-general'
 
 export const handleSubmit = (data: FieldValues, organization: Organization) => {

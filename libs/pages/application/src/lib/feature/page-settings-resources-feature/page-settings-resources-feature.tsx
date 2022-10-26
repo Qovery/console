@@ -6,7 +6,7 @@ import { editApplication, postApplicationActionsRestart, selectApplicationById }
 import { MemorySizeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
 export const handleSubmit = (

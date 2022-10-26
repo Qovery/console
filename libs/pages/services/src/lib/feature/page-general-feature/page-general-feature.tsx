@@ -12,7 +12,7 @@ import { fetchDatabasesStatus, getDatabasesState, selectDatabasesEntitiesByEnvId
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

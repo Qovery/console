@@ -5,7 +5,7 @@ import { useParams } from 'react-router'
 import { fetchClusterInfraLogs, selectClusterById } from '@qovery/domains/organization'
 import { LayoutLogs } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import CardClusterFeature from './feature/card-cluster-feature/card-cluster-feature'
 import Row from './ui/row/row'
 

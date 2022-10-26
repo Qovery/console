@@ -13,7 +13,7 @@ import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'
 
@@ -411,7 +411,7 @@ export const secretEnvironmentVariablesActions = secretEnvironmentVariablesSlice
 const { selectAll, selectEntities } = secretEnvironmentVariablesAdapter.getSelectors()
 
 export const getSecretEnvironmentVariablesState = (rootState: RootState): SecretEnvironmentVariablesState =>
-  rootState['entities']['environmentVariable'][SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY]
+  rootState['environmentVariable'][SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY]
 
 export const selectAllSecretEnvironmentVariables = createSelector(getSecretEnvironmentVariablesState, selectAll)
 

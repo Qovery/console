@@ -10,7 +10,7 @@ import {
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {

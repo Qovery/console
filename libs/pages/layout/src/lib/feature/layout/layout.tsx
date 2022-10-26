@@ -8,7 +8,7 @@ import { fetchClusters, fetchOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
 import { fetchUserSignUp, selectUserSignUp } from '@qovery/domains/user'
 import { WebsocketContainer } from '@qovery/shared/websockets'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 

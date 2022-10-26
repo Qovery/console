@@ -6,7 +6,7 @@ import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organi
 import { fetchProjects } from '@qovery/domains/projects'
 import { ORGANIZATION_URL, OVERVIEW_URL } from '@qovery/shared/router'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 
 export function RedirectOverview() {
   const { organizationId = '' } = useParams()

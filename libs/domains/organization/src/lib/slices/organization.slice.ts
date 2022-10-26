@@ -25,7 +25,7 @@ import {
 import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const ORGANIZATION_KEY = 'organizations'
 
@@ -612,7 +612,7 @@ export const { addOrganization, removeOrganization } = organizationSlice.actions
 const { selectAll } = organizationAdapter.getSelectors()
 
 export const getOrganizationState = (rootState: RootState): OrganizationState =>
-  rootState.entities.organization[ORGANIZATION_KEY]
+  rootState.organization[ORGANIZATION_KEY]
 
 export const selectAllOrganization = createSelector(getOrganizationState, selectAll)
 

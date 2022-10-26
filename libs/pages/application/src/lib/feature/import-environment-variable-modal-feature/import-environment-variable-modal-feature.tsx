@@ -16,7 +16,7 @@ import {
   SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
 import { parseEnvText } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { changeScopeForAll } from './utils/change-scope-all'

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { deleteEnvironmentAction, selectEnvironmentById } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {

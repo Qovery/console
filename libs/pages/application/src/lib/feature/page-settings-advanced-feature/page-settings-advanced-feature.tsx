@@ -14,7 +14,7 @@ import {
 import { getServiceType } from '@qovery/shared/enums'
 import { GitApplicationEntity } from '@qovery/shared/interfaces'
 import { objectFlattener } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './utils'
 
