@@ -92,9 +92,8 @@ jobs:
         with:
           node-version: 16
       - name: Nx Affected
-        run: yarn nx affected --target=${{ matrix.target }} --parallel --configuration=${{ inputs.configuration }} --coverage --coverageReporters=lcov
+        run: yarn nx affected --target=${{ matrix.target }} --parallel --configuration=${{ inputs.configuration }} --coverage --coverageReporters=lcov && yarn test --coverage && node ./__tests__/ci/coverageMerger.js
       - name: Upload coverage to Codecov
-      - run: yarn test --coverage && node ./__tests__/ci/coverageMerger.js
         uses: codecov/codecov-action@v3
   deploy:
     name: Deploy to Qovery
