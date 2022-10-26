@@ -6,7 +6,7 @@ import { fetchOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_URL, ORGANIZATION_URL, OVERVIEW_URL } from '@qovery/shared/router'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,

@@ -12,7 +12,7 @@ import {
 } from '@qovery/shared/router'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import PageDatabaseCreatePost from '../../../ui/page-database-create/page-database-create-post/page-database-create-post'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 

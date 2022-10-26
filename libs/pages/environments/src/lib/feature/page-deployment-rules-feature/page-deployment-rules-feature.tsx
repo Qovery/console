@@ -12,7 +12,7 @@ import {
 import { ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
 import { BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-rules'
 
 export function PageDeploymentRulesFeature() {

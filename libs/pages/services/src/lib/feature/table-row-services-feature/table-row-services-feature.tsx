@@ -17,7 +17,7 @@ import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/router'
 import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@qovery/shared/ui'
 import { isDeleteAvailable } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import TableRowServices from '../../ui/table-row-services/table-row-services'
 
 export interface TableRowServicesFeatureProps {

@@ -4,7 +4,7 @@ import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { CustomDomainsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const CUSTOM_DOMAIN_FEATURE_KEY = 'customDomains'
 
@@ -195,7 +195,7 @@ export const customDomainActions = customDomainSlice.actions
 const { selectAll, selectEntities } = customDomainAdapter.getSelectors()
 
 export const getCustomDomainsState = (rootState: RootState): CustomDomainsState =>
-  rootState.entities.application[CUSTOM_DOMAIN_FEATURE_KEY]
+  rootState.application[CUSTOM_DOMAIN_FEATURE_KEY]
 
 export const selectAllCustomDomain = createSelector(getCustomDomainsState, selectAll)
 

@@ -6,7 +6,7 @@ import { editDatabase, selectDatabaseById } from '@qovery/domains/database'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
 export const handleSubmit = (

@@ -3,7 +3,7 @@ import { useParams } from 'react-router'
 import { databasesLoadingStatus, getDatabasesState } from '@qovery/domains/database'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

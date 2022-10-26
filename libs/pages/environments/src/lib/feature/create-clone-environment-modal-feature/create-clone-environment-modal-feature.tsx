@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { cloneEnvironment, createEnvironment } from '@qovery/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import CreateCloneEnvironmentModal from '../../ui/create-clone-environment-modal/create-clone-environment-modal'
 
 export interface CreateCloneEnvironmentModalFeatureProps {

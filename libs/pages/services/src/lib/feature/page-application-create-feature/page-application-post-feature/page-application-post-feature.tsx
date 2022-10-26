@@ -21,7 +21,7 @@ import {
 } from '@qovery/shared/router'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageApplicationPost from '../../../ui/page-application-create/page-application-post/page-application-post'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 

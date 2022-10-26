@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, c
 import { GitAuthProvider, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
 import { AuthProviderState, LoadingStatus } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
 
@@ -51,7 +51,7 @@ export const authProviderActions = authProviderSlice.actions
 const { selectAll, selectEntities } = authProviderAdapter.getSelectors()
 
 export const getAuthProviderState = (rootState: RootState): AuthProviderState =>
-  rootState.entities.organization[AUTH_PROVIDER_FEATURE_KEY]
+  rootState.organization[AUTH_PROVIDER_FEATURE_KEY]
 
 export const selectAllAuthProvider = createSelector(getAuthProviderState, selectAll)
 

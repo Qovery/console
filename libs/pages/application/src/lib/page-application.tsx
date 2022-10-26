@@ -22,7 +22,7 @@ import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@qovery/
 import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@qovery/shared/router'
 import { StatusMenuActions } from '@qovery/shared/ui'
 import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 

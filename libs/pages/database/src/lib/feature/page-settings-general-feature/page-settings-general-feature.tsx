@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editDatabase, selectDatabaseById } from '@qovery/domains/database'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {

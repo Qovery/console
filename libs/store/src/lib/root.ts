@@ -31,11 +31,6 @@ import {
 } from '@qovery/domains/projects'
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@qovery/domains/user'
 
-export const uiReducer = combineReducers({
-  user: user,
-  userSignUp: userSignUp,
-})
-
 export const organizationReducer = combineReducers({
   organizations: organization,
   authProvider: authProviderReducer,
@@ -61,7 +56,7 @@ export const applicationReducer = combineReducers({
   customDomains: customDomainReducer,
 })
 
-export const entitiesReducer = combineReducers({
+export const rootReducer = combineReducers({
   organization: organizationReducer,
   cluster: clusterReducer,
   project: projectReducer,
@@ -69,9 +64,10 @@ export const entitiesReducer = combineReducers({
   databases: databases,
   environmentVariable,
   application: applicationReducer,
+  user: user,
+  userSignUp: userSignUp,
 })
 
-export const rootReducer = { ui: uiReducer, entities: entitiesReducer }
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
@@ -85,32 +81,28 @@ export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
 export const initialRootState = (): RootState => ({
-  ui: {
-    user: initialUserState,
-    userSignUp: initialUserSignUpState,
+  organization: {
+    organizations: initialOrganizationState,
+    authProvider: initialAuthProviderState,
+    repository: initialRepositoryState,
   },
-  entities: {
-    organization: {
-      organizations: initialOrganizationState,
-      authProvider: initialAuthProviderState,
-      repository: initialRepositoryState,
-    },
-    cluster: initialClusterState,
-    project: {
-      projects: initialProjectsState,
-      deploymentRules: initialDeploymentRulesState,
-    },
-    environment: {
-      environments: initialEnvironmentsState,
-    },
-    environmentVariable: {
-      public: initialEnvironmentVariablesState,
-      secret: initialSecretEnvironmentVariablesState,
-    },
-    databases: initialDatabasesState,
-    application: {
-      applications: initialApplicationsState,
-      customDomains: initialCustomDomainState,
-    },
+  cluster: initialClusterState,
+  project: {
+    projects: initialProjectsState,
+    deploymentRules: initialDeploymentRulesState,
   },
+  environment: {
+    environments: initialEnvironmentsState,
+  },
+  environmentVariable: {
+    public: initialEnvironmentVariablesState,
+    secret: initialSecretEnvironmentVariablesState,
+  },
+  databases: initialDatabasesState,
+  application: {
+    applications: initialApplicationsState,
+    customDomains: initialCustomDomainState,
+  },
+  user: initialUserState,
+  userSignUp: initialUserSignUpState,
 })

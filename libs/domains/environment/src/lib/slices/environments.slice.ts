@@ -25,7 +25,7 @@ import {
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
@@ -358,7 +358,7 @@ export const environmentsActions = environmentsSlice.actions
 const { selectAll, selectEntities } = environmentsAdapter.getSelectors()
 
 export const getEnvironmentsState = (rootState: RootState): EnvironmentsState =>
-  rootState.entities.environment[ENVIRONMENTS_FEATURE_KEY]
+  rootState.environment[ENVIRONMENTS_FEATURE_KEY]
 
 export const selectAllEnvironments = createSelector(getEnvironmentsState, selectAll)
 

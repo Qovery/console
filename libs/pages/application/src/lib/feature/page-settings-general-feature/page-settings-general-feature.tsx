@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
 import { buildGitRepoUrl } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {

@@ -7,7 +7,7 @@ import { fetchUserSignUp, postUserSignUp, selectUserSignUp } from '@qovery/domai
 import { Value } from '@qovery/shared/interfaces'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_THANKS_URL, ONBOARDING_URL } from '@qovery/shared/router'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import { StepMore } from '../../ui/step-more/step-more'
 
 const dataQuestions: Value[] = [

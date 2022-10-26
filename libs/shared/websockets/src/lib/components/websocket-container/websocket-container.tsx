@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { useRunningStatusWebsocket } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 import { ClusterWebSocket } from '../cluster-web-socket/cluster-web-socket'
 
 export function WebsocketContainer() {

@@ -6,7 +6,7 @@ import { selectEnvironmentsEntitiesByProjectId } from '@qovery/domains/environme
 import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { Breadcrumb } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export function BreadcrumbFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()

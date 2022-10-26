@@ -3,7 +3,7 @@ import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleR
 import { DeploymentRuleState, LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const DEPLOYMENT_RULES_FEATURE_KEY = 'deploymentRules'
 
@@ -200,7 +200,7 @@ export const { addDeploymentRule, removeDeploymentRule } = deploymentRulesSlice.
 const { selectAll, selectEntities } = deploymentRulesAdapter.getSelectors()
 
 export const getDeploymentRulesState = (rootState: RootState): DeploymentRuleState =>
-  rootState.entities.project[DEPLOYMENT_RULES_FEATURE_KEY]
+  rootState.project[DEPLOYMENT_RULES_FEATURE_KEY]
 
 export const deploymentRulesLoadingStatus = (state: RootState): LoadingStatus =>
   getDeploymentRulesState(state).loadingStatus

@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/router'
 import { ModalProvider, ToastBehavior } from '@qovery/shared/ui'
-import { store } from '@qovery/store/data'
+import { store } from '@qovery/store'
 import App from './app/app'
 import { environment } from './environments/environment'
 

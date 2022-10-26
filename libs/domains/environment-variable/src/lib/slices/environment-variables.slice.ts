@@ -15,7 +15,7 @@ import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const ENVIRONMENT_VARIABLES_FEATURE_KEY = 'public'
 export const environmentVariablesAdapter = createEntityAdapter<EnvironmentVariableEntity>()
@@ -473,7 +473,7 @@ export const environmentVariablesActions = environmentVariablesSlice.actions
 const { selectAll, selectEntities } = environmentVariablesAdapter.getSelectors()
 
 export const getEnvironmentVariablesState = (rootState: RootState): EnvironmentVariablesState =>
-  rootState['entities']['environmentVariable'][ENVIRONMENT_VARIABLES_FEATURE_KEY]
+  rootState['environmentVariable'][ENVIRONMENT_VARIABLES_FEATURE_KEY]
 
 export const selectAllEnvironmentVariables = createSelector(getEnvironmentVariablesState, selectAll)
 

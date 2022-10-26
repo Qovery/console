@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getApplicationsState, getCountNewCommitsToDeploy } from '@qovery/domains/application'
 import { GitApplicationEntity } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 import LastCommit from '../../ui/last-commit/last-commit'
 
 export function LastCommitFeature() {

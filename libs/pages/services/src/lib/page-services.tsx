@@ -24,7 +24,7 @@ import {
 } from '@qovery/shared/router'
 import { useModalConfirmation } from '@qovery/shared/ui'
 import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_SERVICES } from './router/router'
 import Container from './ui/container/container'
 

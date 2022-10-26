@@ -13,7 +13,7 @@ import {
 } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function PageSettingsPreviewEnvironmentsFeature() {

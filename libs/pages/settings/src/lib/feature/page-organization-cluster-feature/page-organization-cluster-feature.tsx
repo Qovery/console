@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { INFRA_LOGS_URL } from '@qovery/shared/router'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export function PageOrganizationClusterFeature() {
   const { organizationId = '' } = useParams()

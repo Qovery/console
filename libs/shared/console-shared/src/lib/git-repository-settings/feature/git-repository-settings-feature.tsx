@@ -15,7 +15,7 @@ import {
 import { LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import GitRepositorySettings from '../ui/git-repository-settings'
 
 export interface GitRepositorySettingsFeatureProps {

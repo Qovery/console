@@ -26,7 +26,7 @@ import {
   TabsItem,
   useModal,
 } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,

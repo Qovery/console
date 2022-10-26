@@ -17,7 +17,7 @@ import { GitRepositorySettings } from '@qovery/shared/console-shared'
 import { GitApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 
 export const authProvidersValues = (authProviders: GitAuthProvider[]) => {
   return authProviders.map((provider: GitAuthProvider) => ({

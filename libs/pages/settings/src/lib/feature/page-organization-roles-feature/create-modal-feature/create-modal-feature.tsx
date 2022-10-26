@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchAvailableRoles, postCustomRoles } from '@qovery/domains/organization'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/router'
-import { AppDispatch } from '@qovery/store/data'
+import { AppDispatch } from '@qovery/store'
 import CreateModal from '../../../ui/page-organization-roles/create-modal/create-modal'
 
 export interface CreateModalFeatureProps {

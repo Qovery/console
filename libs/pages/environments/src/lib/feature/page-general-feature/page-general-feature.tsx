@@ -16,7 +16,7 @@ import {
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { BaseLink, StatusMenuActions, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store/data'
+import { AppDispatch, RootState } from '@qovery/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

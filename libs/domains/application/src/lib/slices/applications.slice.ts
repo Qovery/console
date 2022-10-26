@@ -47,7 +47,7 @@ import {
   refactoGitApplicationPayload,
   shortToLongId,
 } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store/data'
+import { RootState } from '@qovery/store'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
@@ -672,7 +672,7 @@ export const applicationsActions = applicationsSlice.actions
 const { selectAll, selectEntities, selectById } = applicationsAdapter.getSelectors()
 
 export const getApplicationsState = (rootState: RootState): ApplicationsState =>
-  rootState.entities.application[APPLICATIONS_FEATURE_KEY]
+  rootState.application[APPLICATIONS_FEATURE_KEY]
 
 export const selectAllApplications = createSelector(getApplicationsState, selectAll)
 
