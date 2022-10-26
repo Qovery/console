@@ -1,6 +1,6 @@
-import App from './app'
 import { render } from '__tests__/utils/setup-jest'
 import { IntercomProvider } from 'react-use-intercom'
+import App from './app'
 
 describe('App', () => {
   it('should render successfully', () => {
