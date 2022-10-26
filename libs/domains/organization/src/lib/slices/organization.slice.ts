@@ -385,7 +385,6 @@ export const organizationSlice = createSlice({
       // fetch custom role
       .addCase(fetchCustomRole.fulfilled, (state: OrganizationState, action) => {
         const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
-        console.log(state.entities[action.meta.arg.organizationId]?.customRoles?.items)
 
         const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
         if (index === -1) {
@@ -411,8 +410,6 @@ export const organizationSlice = createSlice({
         const customRoles = state.entities[action.meta.arg.organizationId]?.customRoles?.items || []
         const index = customRoles.findIndex((obj) => obj.name === action.payload.name)
         customRoles[index] = action.payload
-
-        console.log(customRoles)
 
         const update: Update<OrganizationEntity> = {
           id: action.meta.arg.organizationId,

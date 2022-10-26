@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import {
   EnvironmentModeEnum,
   OrganizationCustomRole,
@@ -11,6 +11,8 @@ import PageOrganizationRolesEditFeature, {
   handleSubmit,
   resetForm,
 } from './page-organization-roles-edit-feature'
+
+import SpyInstance = jest.SpyInstance
 
 const mockOrganization = storeOrganization.organizationFactoryMock(1)[0]
 const mockCustomRole: OrganizationCustomRole[] = mockOrganization.customRoles?.items || []
@@ -122,5 +124,29 @@ describe('PageOrganizationRolesEdit', () => {
     expect(getValue(OrganizationCustomRoleProjectPermission.NO_ACCESS, true)).toBe(
       OrganizationCustomRoleProjectPermission.MANAGER
     )
+  })
+
+  it('should dispatch editCustomRole if form is submitted', async () => {
+    const editCustomRoleSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCustomRole')
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () => Promise.resolve(mockCustomRole[0]),
+      then: () => Promise.resolve(mockCustomRole[0]),
+    }))
+
+    const { getByTestId } = render(<PageOrganizationRolesEditFeature />)
+
+    await waitFor(() => {
+      const button = getByTestId('submit-save-button')
+      expect(button).not.toBeDisabled()
+      button.click()
+    })
+
+    await waitFor(() => {
+      expect(editCustomRoleSpy).toHaveBeenCalledWith({
+        data: mockCustomRole[0],
+        organizationId: '0',
+        customRoleId: mockCustomRole[0].id,
+      })
+    })
   })
 })
