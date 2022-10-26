@@ -9,7 +9,7 @@
     "build-storybook": "nx run shared-ui:build-storybook",
     "build": "npx nx build",
     "test": "nx test",
-    "test:ci": "nx run-many --target=test --all --parallel --coverage --coverageReporters=lcov && node ./__tests__/ci/coverageMerger.js",
+    "test:ci": "nx affected --target=test --parallel --coverage --coverageReporters=lcov && node ./__tests__/ci/coverageMerger.js",
     "prepare": "husky install"
   },
   "private": true,

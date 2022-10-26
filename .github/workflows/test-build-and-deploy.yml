@@ -92,7 +92,7 @@ jobs:
         with:
           node-version: 16
       - name: Nx Affected
-        run: yarn nx affected --target=${{ matrix.target }} --parallel --max-parallel=3 --configuration=${{ inputs.configuration }} --coverage --coverageReporters=lcov
+        run: yarn nx affected --target=test --parallel --configuration=${{ inputs.configuration }} --coverage --coverageReporters=lcov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
   deploy:
