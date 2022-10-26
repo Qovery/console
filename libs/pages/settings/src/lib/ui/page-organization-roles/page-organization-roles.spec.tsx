@@ -50,6 +50,7 @@ describe('PageOrganizationRoles', () => {
 
     expect(getByTestId(`role-${availableRolesMock[0].id}`))
     expect(getByTestId(`role-${availableRolesMock[0].id}`).textContent).toBe(`${availableRolesMock[0].name}Basic Role`)
+    expect(getByTestId(`role-doc-${customRoles[0].id}`))
   })
 
   it('should have function to detect if is default role', () => {

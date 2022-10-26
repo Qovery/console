@@ -91,7 +91,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         </p>
                       </div>
                     </div>
-                    {!isDefaultRole(role.name) && (
+                    {!isDefaultRole(role.name) ? (
                       <div data-testid={`role-actions-${role.id}`}>
                         <ButtonIcon
                           icon={IconAwesomeEnum.WHEEL}
@@ -108,6 +108,18 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           onClick={() => onDeleteRole(role)}
                           className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
+                        />
+                      </div>
+                    ) : (
+                      <div data-testid={`role-doc-${role.id}`}>
+                        <ButtonIcon
+                          icon={IconAwesomeEnum.BOOK}
+                          style={ButtonIconStyle.STROKED}
+                          size={ButtonSize.TINY}
+                          className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                          iconClassName="!text-xs"
+                          link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
+                          external
                         />
                       </div>
                     )}
