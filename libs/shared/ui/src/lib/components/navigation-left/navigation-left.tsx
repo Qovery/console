@@ -20,7 +20,7 @@ export interface NavigationLeftLinkProps {
   }[]
 }
 
-export const linkClassName = (pathname: string, url?: string) =>
+const linkClassName = (pathname: string, url?: string) =>
   `py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
     url === pathname
       ? 'is-active text-brand-500 bg-brand-50 hover:text-brand-600 hover:bg-brand-100'
@@ -44,20 +44,20 @@ export function NavigationLeft(props: NavigationLeftProps) {
       {title && <span className="text-text-400 uppercase text-xxs font-bold mb-4 pl-3">{title}</span>}
       {links.map((link, index) =>
         !link.onClick && !link.subLinks && link.url ? (
-          <span data-testid="link" key={index} className={linkClassName(link.url, pathname)}>
+          <Link data-testid="link" key={index} to={link.url} className={linkClassName(link.url, pathname)}>
             {linkContent(link)}
-          </span>
+          </Link>
         ) : !link.onClick && link.subLinks ? (
           <NavigationLeftSubLink key={index} link={link} linkClassName={linkClassName} linkContent={linkContent} />
         ) : (
-          <Link
+          <span
             data-testid="link"
             key={index}
             onClick={link.onClick}
             className={linkClassName(link.url || '', pathname)}
           >
             {linkContent(link)}
-          </Link>
+          </span>
         )
       )}
     </div>
