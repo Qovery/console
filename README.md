@@ -14,6 +14,9 @@
 <p align="center">
 <a href="https://opensource.org/licenses"><img alt="GPLv3 License" src="https://img.shields.io/badge/License-GPL%20v3-yellow.svg"></a>
 <a href="https://discord.qovery.com"><img alt="Discord" src="https://img.shields.io/discord/688766934917185556?label=discord&style=flat-circle"></a>
+<a href="https://codecov.io/github/Qovery/console" >
+<img src="https://codecov.io/github/Qovery/console/branch/feat/ci-codecov/graph/badge.svg?token=O8SMO6PEQV"/>
+</a>
 </p>
 
 <p align="center">

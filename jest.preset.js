@@ -2,7 +2,8 @@ const nxPreset = require('@nrwl/jest/preset').default
 
 module.exports = {
   setupFilesAfterEnv: ['./__tests__/mocks.ts'],
-  collectCoverageFrom: ['libs/**/*.{js,jsx,ts,tsx}', '!libs/**/*.d.ts'],
+  // collectCoverageFrom: ['libs/**/*.{js,jsx,ts,tsx}', '!libs/**/*.d.ts'],
+  collectCoverageFrom: ['<rootDir>/src/**/*.{js,jsx,ts,tsx}'],
   testMatch: ['./libs/**/__tests__/**/*.{js,jsx,ts,tsx}', './libs/**/*.{spec,test}.{js,jsx,ts,tsx}'],
   testPathIgnorePatterns: ['./node_modules/', './.next/', './__tests__/utils/setup-jest.tsx'],
   testEnvironment: 'jsdom',
