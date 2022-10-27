@@ -17,46 +17,46 @@ describe('Table', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  // it('should have a custom grid template columns', () => {
-  //   props.columnsWidth = '33% 33% 33%'
+  it('should have a custom grid template columns', () => {
+    props.columnsWidth = '33% 33% 33%'
 
-  //   render(<Table {...props} />)
+    render(<Table {...props} />)
 
-  //   const tableContainer = screen.queryByTestId('table-container')
+    const tableContainer = screen.queryByTestId('table-container')
 
-  //   expect(tableContainer).toHaveStyle('grid-template-columns: 33% 33% 33%')
-  // })
+    expect(tableContainer).toHaveStyle('grid-template-columns: 33% 33% 33%')
+  })
 
-  // it('should have a head title', () => {
-  //   props.dataHead = [
-  //     {
-  //       title: 'Title',
-  //     },
-  //   ]
+  it('should have a head title', () => {
+    props.dataHead = [
+      {
+        title: 'Title',
+      },
+    ]
 
-  //   render(<Table {...props} />)
+    render(<Table {...props} />)
 
-  //   const tableHeadTitle = screen.queryByTestId('table-head-title')
+    const tableHeadTitle = screen.queryByTestId('table-head-title')
 
-  //   expect(tableHeadTitle?.textContent).toBe('Title')
-  // })
+    expect(tableHeadTitle?.textContent).toBe('Title')
+  })
 
-  // it('should have a head filter', () => {
-  //   props.dataHead = [
-  //     {
-  //       title: 'Title',
-  //       filter: [
-  //         {
-  //           key: 'mode',
-  //         },
-  //       ],
-  //     },
-  //   ]
+  it('should have a head filter', () => {
+    props.dataHead = [
+      {
+        title: 'Title',
+        filter: [
+          {
+            key: 'mode',
+          },
+        ],
+      },
+    ]
 
-  //   render(<Table {...props} />)
+    render(<Table {...props} />)
 
-  //   const tableHeadTitle = screen.queryByTestId('table-head-title')
+    const tableHeadTitle = screen.queryByTestId('table-head-title')
 
-  //   expect(tableHeadTitle).toBeNull()
-  // })
+    expect(tableHeadTitle).toBeNull()
+  })
 })
