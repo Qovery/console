@@ -6,19 +6,12 @@
   "cli": {
     "defaultCollection": "@nrwl/react"
   },
-  "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
-    ".eslintrc.json": "*"
-  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/nx-cloud",
       "options": {
         "cacheableOperations": ["build", "lint", "test", "e2e"],
-        "accessToken": "ZDhiYzMyN2QtNTg2ZS00ZWU0LWJhMjQtYWY4Y2I4Y2QwMTE5fHJlYWQtd3JpdGU=",
+        "accessToken": "NzQ2OTBmMDMtMTJjMC00ZWM2LWFjZWItN2E0ZjU5YmZiODFjfHJlYWQtd3JpdGU=",
         "runtimeCacheInputs": [
           "echo $NODE_ENV",
           "echo $NX_GTM",
@@ -59,5 +52,35 @@
       }
     }
   },
-  "defaultProject": "console"
+  "defaultProject": "console",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": ["{workspaceRoot}/babel.config.json"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "inputs": ["production", "^production"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    },
+    "test": {
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "lint": {
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+    },
+    "build-storybook": {
+      "inputs": ["default", "^production", "{workspaceRoot}/.storybook/**/*"]
+    }
+  }
 }

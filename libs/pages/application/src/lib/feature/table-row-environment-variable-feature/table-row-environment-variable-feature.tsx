@@ -1,7 +1,7 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { deleteEnvironmentVariable, deleteSecret } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import {

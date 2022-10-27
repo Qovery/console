@@ -12,7 +12,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/enums"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/enums"],
       "options": {
         "jestConfig": "libs/shared/enums/jest.config.ts",
         "passWithNoTests": true

@@ -12,7 +12,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/toast"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/toast"],
       "options": {
         "jestConfig": "libs/shared/toast/jest.config.ts",
         "passWithNoTests": true

@@ -7,7 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
 import { MemorySizeEnum, ServiceTypeEnum } from '@qovery/shared/enums'

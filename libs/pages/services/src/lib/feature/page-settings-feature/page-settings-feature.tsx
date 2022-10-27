@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import {
   SERVICES_SETTINGS_DANGER_ZONE_URL,

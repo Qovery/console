@@ -1,5 +1,4 @@
-import { matchPath, useLocation, useParams } from 'react-router'
-import { Link } from 'react-router-dom'
+import { Link, matchPath, useLocation, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {

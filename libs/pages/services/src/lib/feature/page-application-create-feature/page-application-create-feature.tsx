@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router'
-import { Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlow } from '@qovery/shared/ui'

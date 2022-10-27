@@ -1,6 +1,6 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { GeneralContainerSettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'

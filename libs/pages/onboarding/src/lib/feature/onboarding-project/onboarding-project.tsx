@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@qovery/shared/router'
 import { useDocumentTitle } from '@qovery/shared/utils'

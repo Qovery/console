@@ -1,4 +1,4 @@
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { Button } from '@qovery/shared/ui'
 
 export function PageSettingsV2({ path }: { path: string }) {

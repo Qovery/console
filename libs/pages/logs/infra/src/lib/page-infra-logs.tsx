@@ -1,7 +1,7 @@
 import { ClusterLogs } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { fetchClusterInfraLogs, selectClusterById } from '@qovery/domains/organization'
 import { LayoutLogs } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'

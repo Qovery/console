@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Icon } from '../icon/icon'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'
 

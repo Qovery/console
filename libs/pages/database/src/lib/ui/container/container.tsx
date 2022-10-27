@@ -1,5 +1,5 @@
 import { Environment } from 'qovery-typescript-axios'
-import { useLocation, useParams } from 'react-router'
+import { useLocation, useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {

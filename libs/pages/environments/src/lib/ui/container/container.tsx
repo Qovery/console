@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router'
+import { useLocation, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,

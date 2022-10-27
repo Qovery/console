@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { fetchEnvironments } from '@qovery/domains/environment'
@@ -46,6 +46,8 @@ export function Layout(props: LayoutProps) {
             .catch(() => navigate(ORGANIZATION_URL(result[0].id)))
         }
       })
+      .catch((error) => console.log(error))
+
     dispatch(fetchUserSignUp())
   }, [dispatch, organizationId, navigate])
 

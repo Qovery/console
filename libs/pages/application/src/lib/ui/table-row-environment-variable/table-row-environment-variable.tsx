@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import {

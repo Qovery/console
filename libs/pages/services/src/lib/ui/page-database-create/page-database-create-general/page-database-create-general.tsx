@@ -1,7 +1,7 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Value } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
 import { BlockContent, Button, ButtonSize, ButtonStyle, InputRadio, InputSelect, InputText } from '@qovery/shared/ui'
