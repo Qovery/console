@@ -2,8 +2,7 @@ import equal from 'fast-deep-equal'
 import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes, useParams } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation, useParams } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   deleteApplicationAction,

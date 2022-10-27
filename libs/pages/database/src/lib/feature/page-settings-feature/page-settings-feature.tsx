@@ -1,7 +1,6 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectDatabaseById } from '@qovery/domains/database'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {

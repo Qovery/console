@@ -49,7 +49,12 @@ export function Layout(props: LayoutProps) {
       .catch((error) => console.log(error))
 
     dispatch(fetchUserSignUp())
-  }, [dispatch, organizationId, navigate])
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(fetchOrganization())
+    dispatch(fetchUserSignUp())
+  }, [dispatch])
 
   useEffect(() => {
     if (environmentId) {
@@ -67,7 +72,7 @@ export function Layout(props: LayoutProps) {
       dispatch(fetchProjects({ organizationId }))
       dispatch(fetchClusters({ organizationId }))
     }
-  }, [dispatch, organizationId, navigate])
+  }, [dispatch, organizationId])
 
   useEffect(() => {
     setCurrentOrganizationIdOnStorage(organizationId)
