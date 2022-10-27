@@ -112,7 +112,6 @@
     "eslint-plugin-react": "7.31.8",
     "eslint-plugin-react-hooks": "4.5.0",
     "faker": "^6.6.6",
-    "glob": "^8.0.3",
     "history": "^5.2.0",
     "husky": "^7.0.0",
     "identity-obj-proxy": "^3.0.0",
