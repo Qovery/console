@@ -2,7 +2,7 @@ import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import {
   editApplicationAdvancedSettings,
   fetchApplicationAdvancedSettings,

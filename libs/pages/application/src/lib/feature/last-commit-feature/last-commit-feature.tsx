@@ -1,6 +1,6 @@
 import { Commit } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { getApplicationsState, getCountNewCommitsToDeploy } from '@qovery/domains/application'
 import { GitApplicationEntity } from '@qovery/shared/interfaces'
 import { RootState } from '@qovery/store'

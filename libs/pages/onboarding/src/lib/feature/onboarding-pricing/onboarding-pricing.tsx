@@ -1,7 +1,7 @@
 import { Organization, PlanEnum, Project } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import {
   OrganizationPlan,

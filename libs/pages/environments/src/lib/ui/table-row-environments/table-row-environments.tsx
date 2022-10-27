@@ -1,4 +1,4 @@
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { RunningStatus } from '@qovery/shared/enums'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {

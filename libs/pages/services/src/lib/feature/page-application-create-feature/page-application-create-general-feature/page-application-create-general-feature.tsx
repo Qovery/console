@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'

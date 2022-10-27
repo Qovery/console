@@ -28,7 +28,7 @@ describe('CreateModal', () => {
   })
 
   it('should render the form', async () => {
-    const { getByDisplayValue, getAllByDisplayValue, debug } = render(
+    const { getByDisplayValue, getAllByDisplayValue } = render(
       wrapWithReactHookForm(<CreateModal {...props} />, {
         defaultValues: {
           email: 'test@qovery.com',
@@ -36,8 +36,6 @@ describe('CreateModal', () => {
         },
       })
     )
-
-    debug()
 
     await act(() => {
       getByDisplayValue('test@qovery.com')

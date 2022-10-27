@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,

@@ -1,6 +1,6 @@
 import posthog from 'posthog-js'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@qovery/shared/auth'
 import { LOGIN_URL } from '@qovery/shared/router'
 import { LoadingScreen } from '@qovery/shared/ui'

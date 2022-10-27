@@ -1,7 +1,7 @@
 import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { createContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
 import { IconEnum, ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'

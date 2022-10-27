@@ -1,4 +1,4 @@
-import { Navigate, useParams } from 'react-router'
+import { Navigate, useParams } from 'react-router-dom'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
 
 export function OverviewPage() {

@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react'
-import { Params, useNavigate } from 'react-router'
+import { Params, useNavigate } from 'react-router-dom'
 import {
   ONBOARDING_PRICING_FREE_URL,
   ONBOARDING_PRICING_URL,

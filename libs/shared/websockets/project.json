@@ -12,7 +12,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/websockets"],
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/websockets"],
       "options": {
         "jestConfig": "libs/shared/websockets/jest.config.ts",
         "passWithNoTests": true

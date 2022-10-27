@@ -1,7 +1,7 @@
 import { SignUp } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { Route, Routes, useNavigate, useParams } from 'react-router'
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { fetchUserSignUp } from '@qovery/domains/user'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/router'
 import { LoadingScreen } from '@qovery/shared/ui'

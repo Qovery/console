@@ -1,6 +1,6 @@
 import { ServicePort } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   editApplication,

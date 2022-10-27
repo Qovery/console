@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_POST_URL,

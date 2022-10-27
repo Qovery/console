@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { BaseLink, EmptyState, HelpSection, StatusMenuActions, Table } from '@qovery/shared/ui'

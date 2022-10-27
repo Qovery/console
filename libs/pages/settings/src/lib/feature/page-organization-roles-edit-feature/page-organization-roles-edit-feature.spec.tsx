@@ -38,8 +38,8 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }))
 
-jest.mock('react-router', () => ({
-  ...(jest.requireActual('react-router') as any),
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
   useParams: () => ({ organizationId: '0' }),
 }))
 

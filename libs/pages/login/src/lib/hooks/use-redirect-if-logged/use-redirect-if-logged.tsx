@@ -1,7 +1,7 @@
 import { Organization, Project } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
 import { useAuth } from '@qovery/shared/auth'

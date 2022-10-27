@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router'
+import { Route, Routes } from 'react-router-dom'
 import { ROUTER_ENVIRONMENTS } from './router/router'
 import Container from './ui/container/container'
 

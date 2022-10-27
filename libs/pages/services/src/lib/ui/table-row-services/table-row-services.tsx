@@ -1,5 +1,5 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,

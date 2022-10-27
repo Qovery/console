@@ -2,7 +2,7 @@ import { Cluster, ProjectDeploymentRuleRequest, Value } from 'qovery-typescript-
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { postDeploymentRule } from '@qovery/domains/projects'
 import { ENVIRONMENTS_DEPLOYMENT_RULES_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'

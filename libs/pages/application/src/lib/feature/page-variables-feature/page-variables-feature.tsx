@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
 import {
   environmentVariableFactoryMock,

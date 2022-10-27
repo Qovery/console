@@ -1,7 +1,7 @@
 import { DatabaseModeEnum, DatabaseRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { createDatabase, postDatabaseActionsDeploy } from '@qovery/domains/database'
 import { MemorySizeEnum } from '@qovery/shared/enums'
 import {

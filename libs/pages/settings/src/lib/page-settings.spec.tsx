@@ -1,9 +1,10 @@
 import { render } from '__tests__/utils/setup-jest'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import PagesSettings from './page-settings'
 
-jest.mock('react-router', () => ({
-  ...(jest.requireActual('react-router') as any),
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router'),
+  Link: 'Link',
   useParams: () => ({ organizationId: '1' }),
 }))
 

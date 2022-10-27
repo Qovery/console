@@ -2,7 +2,7 @@ import { DatabaseConfiguration, DatabaseModeEnum } from 'qovery-typescript-axios
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchDatabaseConfiguration, selectEnvironmentById } from '@qovery/domains/environment'
 import { EnvironmentEntity, Value } from '@qovery/shared/interfaces'
 import {

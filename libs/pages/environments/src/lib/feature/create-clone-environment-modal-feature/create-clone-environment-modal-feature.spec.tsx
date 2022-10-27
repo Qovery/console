@@ -23,8 +23,8 @@ jest.mock('@qovery/domains/environment', () => ({
   createEnvironment: jest.fn().mockImplementation(() => Promise.resolve()),
 }))
 
-jest.mock('react-router', () => ({
-  ...(jest.requireActual('react-router') as any),
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
   useParams: () => ({ projectId: '1', organizationId: '0' }),
 }))
 

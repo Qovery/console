@@ -1,5 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { useLocation, useNavigate, useParams } from 'react-router'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {

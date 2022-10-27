@@ -13,8 +13,8 @@ jest.mock('react-redux', () => ({
 }))
 
 const mockNavigate = jest.fn()
-jest.mock('react-router', () => ({
-  ...(jest.requireActual('react-router') as any),
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
   useNavigate: () => mockNavigate,
 }))

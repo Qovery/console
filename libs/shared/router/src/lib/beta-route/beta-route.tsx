@@ -1,7 +1,7 @@
 import posthog from 'posthog-js'
-import { matchPath, useLocation, useParams } from 'react-router'
-import { INFRA_LOGS_URL } from '../router'
+import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { NoBetaAccess } from '../pages/no-beta-access'
+import { INFRA_LOGS_URL } from '../router'
 
 export interface IBetaRoute {
   children: React.ReactElement

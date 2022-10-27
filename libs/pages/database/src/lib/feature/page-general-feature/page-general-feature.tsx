@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useParams } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { databasesLoadingStatus, getDatabasesState } from '@qovery/domains/database'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'

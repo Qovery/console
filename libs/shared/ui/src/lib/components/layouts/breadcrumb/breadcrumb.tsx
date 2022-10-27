@@ -1,7 +1,7 @@
 import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React from 'react'
-import { matchPath, useLocation, useParams } from 'react-router'
+import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'

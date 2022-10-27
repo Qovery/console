@@ -1,7 +1,7 @@
 import equal from 'fast-deep-equal'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router'
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
