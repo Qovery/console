@@ -50,6 +50,12 @@ jobs:
         npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --code-coverage --coverageReporters=lcov
         npx nx affected --target=build --parallel=3 --configuration=${{ inputs.configuration }}
 
+    agents:
+      name: Nx Cloud - Agents
+      uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.8
+      with:
+        number-of-agents: 3
+
   deploy:
     name: Deploy to Qovery
     runs-on: ubuntu-latest
@@ -68,9 +74,3 @@ jobs:
           qovery-application-names: ${{ inputs.application-names }}
           qovery-application-commit-id: ${{ inputs.application-commit-id }}
           qovery-api-token: ${{ secrets.api-token }}
-
-  agents:
-    name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.8
-    with:
-      number-of-agents: 3

@@ -1,3 +1,7 @@
+# this script as been copied from https://github.com/nrwl/ci/blob/main/.github/workflows/nx-cloud-main.yml
+# we could not use directly the workflow because we need to add a step to change the timezone and the call to code coverage
+# action. They say that if we need to add any step to the workflow, we should copy it and customize it ourselves.
+
 name: Nx Cloud Main
 
 on:
@@ -74,6 +78,10 @@ jobs:
         # Specify shell to help normalize across different operating systems
         shell: bash
     steps:
+      - uses: szenius/set-timezone@v1.0
+        name: Change timezone
+        with:
+          timezoneLinux: 'Europe/Paris'
       - uses: actions/checkout@v3
         name: Checkout [Pull Request]
         if: ${{ github.event_name == 'pull_request' }}
