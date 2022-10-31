@@ -43,24 +43,12 @@ env:
 jobs:
   nx-main:
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.8
+    uses: ./.github/workflows/nx-cloud-main.yml@v0.8
     with:
       number-of-agents: 3
       parallel-commands-on-agents: |
         npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --code-coverage --coverageReporters=lcov
         npx nx affected --target=build --parallel=3 --configuration=${{ inputs.configuration }}
-      final-commands: |
-        echo 'call final commands ideally to trigger codecov workflow'
-
-  codecov:
-    name: Codecov
-    runs-on: ubuntu-latest
-    needs: [nx-main]
-    steps:
-      - name: list directories
-        run: ls -la
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
 
   deploy:
     name: Deploy to Qovery
