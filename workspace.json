@@ -16,6 +16,7 @@
     "pages-environments": "libs/pages/environments",
     "pages-layout": "libs/pages/layout",
     "pages-login": "libs/pages/login",
+    "pages-logs-application": "libs/pages/logs/application",
     "pages-logs-infra": "libs/pages/logs/infra",
     "pages-onboarding": "libs/pages/onboarding",
     "pages-overview-feature": "libs/pages/overview/feature",

@@ -87,23 +87,13 @@ export function Navigation(props: NavigationProps) {
 
       <div className="flex flex-col justify-between h-[calc(100%-8rem)] px-2.5 py-5">
         <div className="flex flex-col gap-3">
-          {matchLogInfraRoute ? (
-            <ButtonIcon
-              icon={IconAwesomeEnum.LAYER_GROUP}
-              style={ButtonIconStyle.ALT}
-              size={ButtonSize.XLARGE}
-              link={`https://console.qovery.com/platform/organization/${organizationId}/projects`}
-              external
-            />
-          ) : (
-            <ButtonIcon
-              className={matchOrganizationRoute ? 'is-active' : ''}
-              icon={IconAwesomeEnum.LAYER_GROUP}
-              style={ButtonIconStyle.ALT}
-              size={ButtonSize.XLARGE}
-              link={ORGANIZATION_URL(organizationId)}
-            />
-          )}
+          <ButtonIcon
+            className={matchOrganizationRoute ? 'is-active' : ''}
+            icon={IconAwesomeEnum.LAYER_GROUP}
+            style={ButtonIconStyle.ALT}
+            size={ButtonSize.XLARGE}
+            link={ORGANIZATION_URL(organizationId)}
+          />
           {/*
           <ButtonIcon
             icon="icon-solid-gauge-high"
