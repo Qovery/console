@@ -44,7 +44,6 @@ jobs:
   nx-main:
     name: Nx Cloud - Main Job
     uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.8
-    needs: [nx-setup]
     with:
       number-of-agents: 3
       parallel-commands-on-agents: |
