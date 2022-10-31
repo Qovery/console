@@ -78,10 +78,6 @@ jobs:
         # Specify shell to help normalize across different operating systems
         shell: bash
     steps:
-      - uses: szenius/set-timezone@v1.0
-        name: Change timezone
-        with:
-          timezoneLinux: 'Europe/Paris'
       - uses: actions/checkout@v3
         name: Checkout [Pull Request]
         if: ${{ github.event_name == 'pull_request' }}
@@ -97,7 +93,10 @@ jobs:
         with:
           # We need to fetch all branches and commits so that Nx affected has a base to compare against.
           fetch-depth: 0
-
+      - uses: szenius/set-timezone@v1.0
+        name: Change timezone
+        with:
+          timezoneLinux: 'Europe/Paris'
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v3
         with:
