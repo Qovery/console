@@ -134,7 +134,7 @@ jobs:
   agents:
     runs-on: ubuntu-latest
     needs: [install-deps]
-    name: Agent 1
+    name: Agents
     timeout-minutes: 60
     strategy:
       matrix:
