@@ -43,7 +43,7 @@ env:
 jobs:
   nx-main:
     name: Nx Cloud - Main Job
-    uses: ./.github/workflows/nx-cloud-main.yml@v0.8
+    uses: ./.github/workflows/nx-cloud-main.yml
     with:
       number-of-agents: 3
       parallel-commands-on-agents: |
