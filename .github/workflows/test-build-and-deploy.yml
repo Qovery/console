@@ -49,6 +49,8 @@ jobs:
       parallel-commands-on-agents: |
         npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --code-coverage --coverageReporters=lcov
         npx nx affected --target=build --parallel=3 --configuration=${{ inputs.configuration }}
+      final-commands: |
+        echo 'call final commands ideally to trigger codecov workflow'
 
   codecov:
     name: Codecov
