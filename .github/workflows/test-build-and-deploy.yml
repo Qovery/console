@@ -30,7 +30,7 @@ on:
       api-token:
         required: true
 
-# Define a concurrency group at the branch level for the current workflows.
+# Define a concurrency group at the branch level for the current workflows..
 # Trigerred workflow will be queued and cancel the previous ones.
 concurrency:
   group: pr-${{ github.ref }}
