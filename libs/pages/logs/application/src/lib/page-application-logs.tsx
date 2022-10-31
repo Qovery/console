@@ -1,6 +1,29 @@
+import { Environment } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { useAuth } from '@qovery/shared/auth'
 import { LayoutLogs } from '@qovery/shared/ui'
+import { RootState } from '@qovery/store'
+
+const useSocket = async (url: string) => {
+  const [messageHistory, setMessageHistory] = useState([])
+  const { getAccessTokenSilently } = useAuth()
+  const token = await getAccessTokenSilently()
+
+  const { lastMessage } = useWebSocket(url + `&bearer_token=${token}`, {
+    shouldReconnect: () => false,
+    share: true,
+  })
+
+  useEffect(() => {
+    lastMessage && setMessageHistory((prev) => prev.concat(lastMessage.data))
+  }, [lastMessage])
+
+  return { messageHistory }
+}
 
 export function PageApplicationLogs() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -8,17 +31,14 @@ export function PageApplicationLogs() {
 
   // useDocumentTitle(`Cluster ${cluster ? `- ${cluster?.name} (${cluster?.region}) ` : '- Loading...'}`)
 
-  console.group(organizationId, projectId, environmentId, applicationId)
+  const environment = useSelector<RootState, Environment | undefined>((state) =>
+    selectEnvironmentById(state, environmentId)
+  )
 
-  const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=be9e22b0-d05a-4330-b5b5-547667d380fd&project=${projectId}&environment=${environmentId}&service=${applicationId}`
+  const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}`
 
-  const { lastMessage } = useWebSocket(url, {
-    //Will attempt to reconnect on all close events, such as server shutting down
-    shouldReconnect: () => false,
-    share: true,
-  })
-
-  console.log(lastMessage)
+  const messageHistory = useSocket(url)
+  console.log(messageHistory)
 
   return (
     <LayoutLogs
