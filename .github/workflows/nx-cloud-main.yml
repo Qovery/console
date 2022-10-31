@@ -1,4 +1,4 @@
-# this script as been copied from https://github.com/nrwl/ci/blob/main/.github/workflows/nx-cloud-main.yml
+# this script has been copied from https://github.com/nrwl/ci/blob/main/.github/workflows/nx-cloud-main.yml
 # we could not use directly the workflow because we need to add a step to change the timezone and the call to code coverage
 # action. They say that if we need to add any step to the workflow, we should copy it and customize it ourselves.
 
