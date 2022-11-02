@@ -2,7 +2,6 @@ import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React from 'react'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
-import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
@@ -18,7 +17,9 @@ import {
   SERVICES_GENERAL_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
-import { Icon, MenuItemProps, StatusChip } from '@qovery/shared/ui'
+import Icon from '../../icon/icon'
+import { MenuItemProps } from '../../menu/menu-item/menu-item'
+import StatusChip from '../../status-chip/status-chip'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
@@ -175,29 +176,35 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   if (organizations?.length === 0) return <div />
 
   return (
-    <div className="flex h-full items-center cursor-pointer">
-      {currentOrganization?.logo_url ? (
-        <img
-          src={currentOrganization?.logo_url}
-          className="w-4 h-auto mt-0.5 mr-0.5"
-          alt={`${currentOrganization?.name} organization`}
-        />
-      ) : (
-        squareContent(currentOrganization?.name.charAt(0), 'mt-0.5')
-      )}
+    <div className="flex h-full items-center">
       {organizationId && (
         <BreadcrumbItem
-          data={projects}
+          isLast={!projectId}
+          label="Organization"
+          data={organizations}
           menuItems={matchLogInfraRoute ? [] : organizationsMenu}
           paramId={organizationId}
           link={ORGANIZATION_URL(organizationId)}
+          logo={
+            currentOrganization?.logo_url ? (
+              <img
+                src={currentOrganization?.logo_url}
+                className="h-4"
+                alt={`${currentOrganization?.name} organization`}
+              />
+            ) : (
+              squareContent(currentOrganization?.name.charAt(0), '')
+            )
+          }
         />
       )}
       {clusterId && (
         <>
-          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
+          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
           <BreadcrumbItem
             isDark
+            isLast={!projectId}
+            label="Cluster"
             data={clusters}
             menuItems={[]}
             paramId={clusterId}
@@ -207,8 +214,10 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       )}
       {projectId && (
         <>
-          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
+          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
           <BreadcrumbItem
+            isLast={!environmentId}
+            label="Project"
             data={projects}
             menuItems={projectMenu}
             paramId={projectId}
@@ -217,41 +226,42 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
           />
         </>
       )}
-      {(environmentId || projectId || applicationId) && pathname !== OVERVIEW_URL(organizationId, projectId) && (
+      {environmentId && (
         <>
-          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
+          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
           <div className="flex items-center">
-            <Link to={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}>
-              {squareContent('E')}
-            </Link>
-            {!environmentId ? (
-              <span className="text-sm text-text-500 font-medium">Environments</span>
-            ) : (
-              <BreadcrumbItem
-                data={environments}
-                menuItems={environmentMenu}
-                paramId={environmentId}
-                link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
-              />
+            {environmentId && (
+              <>
+                <BreadcrumbItem
+                  isLast={!(applicationId || databaseId)}
+                  label="Environment"
+                  data={environments}
+                  menuItems={environmentMenu}
+                  paramId={environmentId}
+                  link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
+                />
+                {(applicationId || databaseId) && (
+                  <>
+                    <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
+                    <div className="flex items-center">
+                      <BreadcrumbItem
+                        isLast={true}
+                        label="Service"
+                        data={mergedServices}
+                        menuItems={applicationMenu}
+                        paramId={applicationId || databaseId || ''}
+                        link={
+                          applicationId
+                            ? APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+                              APPLICATION_GENERAL_URL
+                            : DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL
+                        }
+                      />
+                    </div>
+                  </>
+                )}
+              </>
             )}
-          </div>
-        </>
-      )}
-      {(applicationId || databaseId) && (
-        <>
-          <div className="w-4 h-auto text-text-200 text-center ml-2 mr-3">/</div>
-          <div className="flex items-center">
-            {squareContent('S')}
-            <BreadcrumbItem
-              data={mergedServices}
-              menuItems={applicationMenu}
-              paramId={applicationId || databaseId || ''}
-              link={
-                applicationId
-                  ? APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL
-                  : DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL
-              }
-            />
           </div>
         </>
       )}
