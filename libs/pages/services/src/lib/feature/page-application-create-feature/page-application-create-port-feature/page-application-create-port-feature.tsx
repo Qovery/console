@@ -74,22 +74,20 @@ export function PageApplicationCreatePortFeature() {
 
   const onAddPort = () => {
     const newPortRow = { application_port: undefined, external_port: 443, is_public: true }
-    if (ports) {
+    if (ports.length) {
       setPorts([...ports, newPortRow])
+      methods.setValue(`ports.${ports.length}`, newPortRow)
     } else {
       setPorts([newPortRow])
+      methods.setValue(`ports.0`, newPortRow)
     }
-    methods.reset({
-      ...methods.getValues(),
-      ports: ports ? [...ports, newPortRow] : [newPortRow],
-    })
   }
 
   const removePort = (index: number) => {
-    const newPorts = [...ports]
+    const newPorts = methods.getValues().ports
     newPorts.splice(index, 1)
     setPorts(newPorts)
-    methods.unregister(`ports.${index}`)
+    methods.reset({ ports: newPorts })
   }
 
   return (
