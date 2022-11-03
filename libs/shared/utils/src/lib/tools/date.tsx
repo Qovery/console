@@ -25,13 +25,23 @@ export function dateDifference(firstDate: Date, secondDate: Date) {
   return `${addZero(hoursDifference)}:${addZero(minutesDifference)}:${addZero(secondsDifference)}`
 }
 
+// 10:10
 export const dateToHours = (date: string) => {
   const d = new Date(date)
   return `${addZero(d.getUTCHours())}:${addZero(d.getUTCMinutes())}`
 }
 
+// 2022-09-10 10:10:20
 export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${
     withTime ? `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}` : ''
   } `
+}
+
+// 15 Sep, 10:23:20
+export const dateFullFormat = (date: string) => {
+  const currentDate = new Date(parseInt(date, 10) * 1000)
+  return `${addZero(currentDate.getDay() + 1)} ${currentDate.toLocaleString('en-US', {
+    month: 'short',
+  })}, ${addZero(currentDate.getHours())}:${addZero(currentDate.getMinutes())}:${addZero(currentDate.getSeconds())}`
 }

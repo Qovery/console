@@ -2,15 +2,18 @@ import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-types
 import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon } from '@qovery/shared/ui'
-import { dateDifferenceMinutes, scrollParentToChild } from '@qovery/shared/utils'
+import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
+
+interface ClusterDataProps {
+  loadingStatus: LoadingStatus
+  items?: ClusterLogs[]
+}
 
 export interface LayoutLogsProps {
   children: ReactNode
-  data?: {
-    loadingStatus: LoadingStatus
-    items?: ClusterLogs[]
-  }
+  data?: ClusterDataProps | any[]
+  errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
 }
 
@@ -22,7 +25,7 @@ export interface ErrorLogsProps {
 }
 
 export function LayoutLogsMemo(props: LayoutLogsProps) {
-  const { data, tabInformation, children } = props
+  const { data, tabInformation, children, errors } = props
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -42,7 +45,11 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
     forcedScroll && forcedScroll(true)
   }, [data])
 
-  if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded')
+  if (
+    !data ||
+    (data as ClusterDataProps).items?.length === 0 ||
+    (data as ClusterDataProps)?.loadingStatus === 'not loaded'
+  )
     return (
       <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
         <img
@@ -51,35 +58,10 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
           alt="Event placeholder"
         />
         <p className="mt-5 text-text-100 font-medium">
-          {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
+          {(data as ClusterDataProps)?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
         </p>
       </div>
     )
-
-  const errors =
-    data.items &&
-    (data.items
-      .map(
-        (currentData: ClusterLogs, index: number) =>
-          currentData.error && {
-            index: index + 1,
-            timeAgo:
-              data.items &&
-              data.items[0].timestamp &&
-              currentData.timestamp &&
-              dateDifferenceMinutes(new Date(currentData.timestamp), new Date(data.items[0].timestamp)),
-            step: currentData.step,
-            error: currentData.error,
-          }
-      )
-      .filter((error) => error) as ErrorLogsProps[])
-
-  const realErrors = errors?.filter(
-    (error: ErrorLogsProps) =>
-      error.step === ClusterLogsStepEnum.DELETE_ERROR ||
-      error.step === ClusterLogsStepEnum.PAUSE_ERROR ||
-      error.step === ClusterLogsStepEnum.CREATE_ERROR
-  )
 
   const downloadJSON = (event: MouseEvent) => {
     const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
@@ -98,15 +80,19 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
 
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
-      <div className="absolute z-20 left-0 w-[calc(100%-360px)] flex justify-end items-center h-9 bg-element-light-darker-200 px-5">
-        {realErrors && realErrors.length > 0 && (
+      <div
+        className={`absolute z-20 left-0 flex justify-end items-center h-9 bg-element-light-darker-200 px-5 ${
+          tabInformation ? 'w-[calc(100%-360px)]' : 'w-full'
+        }`}
+      >
+        {errors && errors.length > 0 && (
           <p
             data-testid="error-layout-line"
             onClick={() => scrollToError()}
             className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-text-200 hover:text-text-300 cursor-pointer"
           >
             <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
-            An error occured line {realErrors[realErrors.length - 1]?.index}
+            An error occured line {errors[errors.length - 1]?.index}
             <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
           </p>
         )}
@@ -136,13 +122,19 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       >
         <div className="relative z-10">{children}</div>
       </div>
-      <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={realErrors} />
+      {tabInformation && <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />}
     </div>
   )
 }
 
 export const LayoutLogs = React.memo(LayoutLogsMemo, (prevProps: LayoutLogsProps, nextProps: LayoutLogsProps) => {
   // stringify is necessary to avoid Redux selector behavior
-  const isEqual = JSON.stringify(prevProps.data?.items) === JSON.stringify(nextProps.data?.items)
-  return isEqual
+  if ((prevProps.data as ClusterDataProps).items) {
+    console.log('here')
+    const isEqual =
+      JSON.stringify((prevProps.data as ClusterDataProps)?.items) ===
+      JSON.stringify((nextProps.data as ClusterDataProps)?.items)
+    return isEqual
+  }
+  return false
 })
