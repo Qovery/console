@@ -1,3 +1,4 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -55,7 +56,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const methods = useForm<DataFormEnvironmentVariableInterface>({
     defaultValues: {
       key: variable?.key,
-      scope: variable?.scope,
+      scope: variable?.scope === APIVariableScopeEnum.BUILT_IN ? undefined : variable?.scope,
       value: (variable as EnvironmentVariableEntity)?.value,
       isSecret: variable?.variable_type === 'secret',
     },
