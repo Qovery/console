@@ -1,6 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { fireEvent, screen } from '@testing-library/react'
-
+import { render } from '__tests__/utils/setup-jest'
 import InputTextSmall, { InputTextSmallProps } from './input-text-small'
 
 describe('InputTextSmall', () => {
@@ -92,5 +91,17 @@ describe('InputTextSmall', () => {
     fireEvent.change(input, { target: { value: 'some new text value' } })
 
     expect((input as HTMLInputElement).value).toBe('some new text value')
+  })
+
+  it('should have a show hide button and button should toggle input type', async () => {
+    render(<InputTextSmall {...props} hasShowPasswordButton={true} />)
+    const button = screen.getByTestId('show-password-button')
+    const icon = button.querySelector('.icon-solid-eye-slash')
+    expect(icon).toBeTruthy()
+
+    const input = screen.getByRole('textbox')
+
+    fireEvent.click(button)
+    expect(input).toHaveAttribute('type', 'password')
   })
 })

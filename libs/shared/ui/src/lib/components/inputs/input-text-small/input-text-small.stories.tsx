@@ -20,4 +20,6 @@ Primary.args = {
   placeholder: 'Adding an environment name',
   errorMessagePosition: 'bottom',
   error: 'This is an error',
+  type: 'password',
+  hasShowPasswordButton: false,
 }

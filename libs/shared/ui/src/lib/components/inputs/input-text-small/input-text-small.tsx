@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Tooltip from '../../tooltip/tooltip'
@@ -14,6 +14,7 @@ export interface InputTextSmallProps {
   className?: string
   label?: string
   errorMessagePosition?: 'left' | 'bottom'
+  hasShowPasswordButton?: boolean
 }
 
 export function InputTextSmall(props: InputTextSmallProps) {
@@ -27,14 +28,20 @@ export function InputTextSmall(props: InputTextSmallProps) {
     type = 'text',
     className = '',
     errorMessagePosition = 'bottom',
+    hasShowPasswordButton = false,
   } = props
 
   const [focused, setFocused] = useState(false)
+  const [_type, setType] = useState(type)
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const hasFocus = focused ? 'input--focused' : ''
 
   const classNameError = errorMessagePosition === 'left' ? 'flex gap-3 items-center' : ''
+
+  useEffect(() => {
+    setType(type)
+  }, [type])
 
   return (
     <div data-testid="input-small-wrapper" className={`${className} ${classNameError}`}>
@@ -52,7 +59,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
         <input
           className="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-2"
           name={name}
-          type={type}
+          type={_type}
           placeholder={placeholder}
           value={value}
           onInput={onChange}
@@ -60,6 +67,15 @@ export function InputTextSmall(props: InputTextSmallProps) {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
+        {hasShowPasswordButton && (
+          <div
+            data-testid="show-password-button"
+            onClick={() => setType(_type === 'password' ? 'text' : 'password')}
+            className="text-sm text-text-500 absolute right-2 transform -translate-y-0.5"
+          >
+            <Icon name={_type === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
+          </div>
+        )}
       </div>
       {error && errorMessagePosition === 'bottom' && (
         <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>

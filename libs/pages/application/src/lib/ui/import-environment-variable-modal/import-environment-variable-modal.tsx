@@ -149,6 +149,8 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                       value={field.value}
                       error={error?.message}
                       errorMessagePosition="left"
+                      type="password"
+                      hasShowPasswordButton={true}
                     />
                   )}
                 />
