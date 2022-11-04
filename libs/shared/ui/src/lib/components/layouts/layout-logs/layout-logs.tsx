@@ -1,7 +1,8 @@
 import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, Log } from 'qovery-typescript-axios'
 import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react'
-import { LoadingStatus } from '@qovery/shared/interfaces'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon } from '@qovery/shared/ui'
+import { IconEnum, RunningStatus } from '@qovery/shared/enums'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, StatusChip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
@@ -15,6 +16,8 @@ export interface LayoutLogsProps {
   data?: LayoutLogsDataProps
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
+  withNav?: boolean
+  application?: ApplicationEntity
 }
 
 export interface ErrorLogsProps {
@@ -25,7 +28,7 @@ export interface ErrorLogsProps {
 }
 
 export function LayoutLogsMemo(props: LayoutLogsProps) {
-  const { data, tabInformation, children, errors } = props
+  const { data, application, tabInformation, children, errors, withNav } = props
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -77,10 +80,29 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
 
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
+      {withNav && (
+        <div className="absolute z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
+          {application && (
+            <div className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium">
+              <StatusChip
+                status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+                appendTooltipMessage={
+                  application?.running_status?.state === RunningStatus.ERROR
+                    ? application.running_status.pods[0]?.state_message
+                    : ''
+                }
+                className="mr-2"
+              />{' '}
+              {application.name}
+              <Icon name={IconEnum.APPLICATION} width="14" className="ml-2" />
+            </div>
+          )}
+        </div>
+      )}
       <div
         className={`absolute z-20 left-0 flex justify-end items-center h-9 bg-element-light-darker-200 px-5 ${
           tabInformation ? 'w-[calc(100%-360px)]' : 'w-full'
-        }`}
+        } ${withNav ? 'top-10' : ''}`}
       >
         {errors && errors.length > 0 && (
           <p
@@ -115,7 +137,9 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       </div>
       <div
         ref={refScrollSection}
-        className="overflow-y-auto w-full h-full min-h-[calc(100vh-100px] mt-9 pb-16 before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full"
+        className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full ${
+          withNav ? 'mt-[72px]' : ''
+        }`}
       >
         <div className="relative z-10">{children}</div>
       </div>
@@ -126,10 +150,8 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
 
 export const LayoutLogs = React.memo(LayoutLogsMemo, (prevProps: LayoutLogsProps, nextProps: LayoutLogsProps) => {
   // stringify is necessary to avoid Redux selector behavior
-  if ((prevProps.data as LayoutLogsDataProps).items) {
-    const isEqual =
-      JSON.stringify((prevProps.data as LayoutLogsDataProps)?.items) ===
-      JSON.stringify((nextProps.data as LayoutLogsDataProps)?.items)
+  if (prevProps.data?.items) {
+    const isEqual = JSON.stringify(prevProps.data?.items) === JSON.stringify(nextProps.data?.items)
     return isEqual
   }
   return false

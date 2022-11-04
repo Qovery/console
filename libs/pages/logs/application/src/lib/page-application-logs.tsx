@@ -79,7 +79,7 @@ export function PageApplicationLogs() {
   ]
 
   return (
-    <LayoutLogs data={logs}>
+    <LayoutLogs data={logs} application={application} withNav>
       <Table
         className="bg-transparent"
         classNameHead="!flex bg-element-light-darker-300 !border-transparent"
