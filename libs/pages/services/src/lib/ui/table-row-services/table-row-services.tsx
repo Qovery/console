@@ -1,5 +1,5 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
@@ -7,6 +7,7 @@ import {
   DatabaseEntity,
   GitApplicationEntity,
 } from '@qovery/shared/interfaces'
+import { APPLICATION_LOGS_URL } from '@qovery/shared/router'
 import {
   ButtonIconAction,
   Icon,
@@ -48,15 +49,7 @@ export function TableRowServices(props: TableRowServicesProps) {
   } = props
 
   const { organizationId, projectId, environmentId } = useParams()
-
-  const openLogs = () => {
-    window
-      .open(
-        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${data.id}/summary?fullscreenLogs=true`,
-        '_blank'
-      )
-      ?.focus()
-  }
+  const navigate = useNavigate()
 
   const buttonActionsDefault = [
     {
@@ -72,9 +65,9 @@ export function TableRowServices(props: TableRowServicesProps) {
       },
     },
     {
-      ...(type === ServiceTypeEnum.APPLICATION && {
+      ...((type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER) && {
         iconLeft: <Icon name="icon-solid-scroll" />,
-        onClick: () => openLogs(),
+        onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, data.id)),
       }),
     },
     {

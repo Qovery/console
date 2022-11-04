@@ -7,7 +7,7 @@ import { selectApplicationById } from '@qovery/domains/application'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { LayoutLogs, Table } from '@qovery/shared/ui'
+import { LayoutLogs, LayoutLogsDataProps, Table } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import Row from './ui/row/row'
@@ -26,11 +26,13 @@ export function PageApplicationLogs() {
 
   useDocumentTitle(`Application logs ${application ? `- ${application?.name}` : '- Loading...'}`)
 
-  const [logs, setLogs] = useState([])
+  const [logs, setLogs] = useState({
+    items: [],
+    loadingStatus: 'not loaded',
+  } as LayoutLogsDataProps)
 
   const { getAccessTokenSilently } = useAuth()
 
-  // In functional React component
   const logsUrl: any = useCallback(async () => {
     const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}`
     const token = await getAccessTokenSilently()
@@ -43,26 +45,25 @@ export function PageApplicationLogs() {
   const { lastMessage } = useWebSocket(logsUrl)
 
   useEffect(() => {
-    if (lastMessage !== null) {
-      setLogs((prev) =>
-        prev.length <= 100
-          ? prev.concat(JSON.parse(lastMessage.data))
-          : prev.concat(JSON.parse(lastMessage.data)).slice(-100)
-      )
-    }
-  }, [lastMessage, setLogs])
-
-  const columnsWidth = '10% 10% 10% 55% 15%'
+    const interval = setInterval(() => {
+      lastMessage &&
+        setLogs((prev) => ({
+          items: (prev.items as Log[]).concat(JSON.parse(lastMessage?.data)),
+          loadingStatus: 'loaded',
+        }))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [lastMessage])
 
   const tableHead = [
     {
       title: 'Pod name',
-      className: 'px-4 py-2 h-full ml-7 text-text-300',
+      className: 'py-2 pl-10 h-full text-text-300 w-[224px]',
       classNameTitle: 'text-text-300',
     },
     {
       title: 'Time',
-      className: 'px-4',
+      className: 'px-4 w-[164px]',
       classNameTitle: 'text-text-300',
     },
     {
@@ -72,7 +73,7 @@ export function PageApplicationLogs() {
     },
     {
       title: 'Version',
-      className: 'pl-4 pr-5 text-right',
+      className: 'pl-4 pr-5 text-right ml-auto',
       classNameTitle: 'text-text-300',
     },
   ]
@@ -81,14 +82,13 @@ export function PageApplicationLogs() {
     <LayoutLogs data={logs}>
       <Table
         className="bg-transparent"
-        classNameHead="bg-element-light-darker-300 !border-transparent"
+        classNameHead="!flex bg-element-light-darker-300 !border-transparent"
         dataHead={tableHead}
-        defaultData={logs}
-        columnsWidth={columnsWidth}
+        defaultData={logs.items}
       >
         <div>
-          {logs?.map((log: Log, index: number) => (
-            <Row key={`${log.created_at}-${index}`} index={index} data={log} />
+          {(logs.items as Log[])?.map((log: Log, index: number) => (
+            <Row key={log.id} index={index} data={log} />
           ))}
         </div>
       </Table>

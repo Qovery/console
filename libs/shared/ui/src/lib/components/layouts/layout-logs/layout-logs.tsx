@@ -1,18 +1,18 @@
-import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, Log } from 'qovery-typescript-axios'
 import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
-interface ClusterDataProps {
+export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
-  items?: ClusterLogs[]
+  items?: ClusterLogs[] | Log[]
 }
 
 export interface LayoutLogsProps {
   children: ReactNode
-  data?: ClusterDataProps | any[]
+  data?: LayoutLogsDataProps
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
 }
@@ -45,11 +45,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
     forcedScroll && forcedScroll(true)
   }, [data])
 
-  if (
-    !data ||
-    (data as ClusterDataProps).items?.length === 0 ||
-    (data as ClusterDataProps)?.loadingStatus === 'not loaded'
-  )
+  if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded') {
     return (
       <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
         <img
@@ -58,10 +54,11 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
           alt="Event placeholder"
         />
         <p className="mt-5 text-text-100 font-medium">
-          {(data as ClusterDataProps)?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
+          {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
         </p>
       </div>
     )
+  }
 
   const downloadJSON = (event: MouseEvent) => {
     const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
@@ -129,11 +126,10 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
 
 export const LayoutLogs = React.memo(LayoutLogsMemo, (prevProps: LayoutLogsProps, nextProps: LayoutLogsProps) => {
   // stringify is necessary to avoid Redux selector behavior
-  if ((prevProps.data as ClusterDataProps).items) {
-    console.log('here')
+  if ((prevProps.data as LayoutLogsDataProps).items) {
     const isEqual =
-      JSON.stringify((prevProps.data as ClusterDataProps)?.items) ===
-      JSON.stringify((nextProps.data as ClusterDataProps)?.items)
+      JSON.stringify((prevProps.data as LayoutLogsDataProps)?.items) ===
+      JSON.stringify((nextProps.data as LayoutLogsDataProps)?.items)
     return isEqual
   }
   return false

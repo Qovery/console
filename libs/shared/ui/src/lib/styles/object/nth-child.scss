@@ -1,0 +1,7 @@
+.application-log {
+  background: theme('colors.element.light.darker.500');
+
+  &:nth-child(2n) {
+    background: theme('colors.element.light.darker.600');
+  }
+}
