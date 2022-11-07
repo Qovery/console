@@ -7,11 +7,11 @@ describe('handleSubmit()', () => {
       key_key: 'key',
       key_value: 'value',
       key_scope: 'application',
-      key_is_secret: 'false',
+      key_secret: 'false',
       key2_key: 'key',
       key2_value: 'value',
       key2_scope: 'built_in',
-      key2_is_secret: 'true',
+      key2_secret: 'true',
     }
     const keys = ['key', 'key2']
     const result = formatData(data, keys)
