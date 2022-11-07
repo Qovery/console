@@ -21,6 +21,7 @@ export function BreadcrumbItemValue(props: BreadcrumbItemValueProps) {
 
   return (
     <div
+      data-testid="breadcrumb-item-value"
       className={`${className} flex items-center  text-sm font-medium gap-2 px-2 h-6 rounded-full ${notActiveClass}`}
     >
       {logo}
