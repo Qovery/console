@@ -59,7 +59,7 @@ export function Row(props: RowProps) {
           <span className="whitespace-pre-wrap break-all">{data.message}</span>
         </div>
       </div>
-      <div className="flex whitespace-nowrap py-2 px-4 text-text-100 pr-5">
+      <div data-testid="cell-version" className="flex whitespace-nowrap py-2 px-4 text-text-100 pr-5">
         <CopyToClipboard className="opacity-0 group-hover:opacity-100 mr-4 text-white" content={data.message} />
         {data.version && (
           <span>

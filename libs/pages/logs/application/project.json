@@ -1,5 +1,4 @@
 {
-  "name": "pages-logs-application",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/pages/logs/application/src",
   "projectType": "library",
@@ -14,7 +13,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{workspaceRoot}/coverage/libs/pages/logs/application"],
       "options": {
         "jestConfig": "libs/pages/logs/application/jest.config.ts",
         "passWithNoTests": true

@@ -1,7 +1,8 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
-import { LogsType } from '@qovery/shared/enums'
+import { dateFullFormat } from '@qovery/shared/utils'
 import Row, { RowProps, getColorByPod } from './row'
+
+jest.mock('date-fns', () => ({ format: jest.fn(() => '20 Sept, 19:44:44') }))
 
 describe('Row', () => {
   const props: RowProps = {
@@ -14,9 +15,15 @@ describe('Row', () => {
     },
   }
 
+  const date = dateFullFormat(props.data.created_at)
+
   it('should render successfully', () => {
     const { baseElement } = render(<Row {...props} />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should have function to render colors', () => {
+    expect(getColorByPod(props.data.pod_name)).toBe('#9980FA')
   })
 
   it('should have cell with the pod name', () => {
@@ -24,111 +31,29 @@ describe('Row', () => {
 
     const podName = screen.getByTestId('cell-pod-name')
 
-    expect(podName).toHaveStyle(getColorByPod(props.data.pod_name))
-    expect(podName.textContent).toBe('app-z9d11e...7b6-k9sl7')
+    expect(podName).toHaveStyle({
+      color: getColorByPod(props.data.pod_name),
+    })
+
+    expect(podName.textContent).toBe('app-z9d11e...77b6-k9sl7')
   })
 
-  it('should have error index color', () => {
-    props.data = {
-      type: LogsType.ERROR,
-    }
-
+  it('should have cell render an created pod', () => {
     render(<Row {...props} />)
-
-    const index = screen.getByTestId('index')
-
-    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
-  })
-
-  it('should have real error index color', () => {
-    props.data = {
-      type: LogsType.ERROR,
-      step: ClusterLogsStepEnum.DELETE_ERROR,
-    }
-
-    render(<Row {...props} />)
-
-    const index = screen.getByTestId('index')
-
-    expect(index).toHaveClass('bg-error-500 text-text-800 group-hover:bg-error-600')
-  })
-
-  it('should have success index color', () => {
-    props.data = {
-      step: ClusterLogsStepEnum.CREATED,
-    }
-
-    render(<Row {...props} />)
-
-    const index = screen.getByTestId('index')
-
-    expect(index).toHaveClass('bg-success-500 text-text-800 group-hover:bg-success-600')
-  })
-
-  it('should have warning cell date color', () => {
-    props.data = {
-      type: LogsType.WARNING,
-    }
-
-    render(<Row {...props} />)
-
-    const cellDate = screen.getByTestId('cell-date')
-
-    expect(cellDate).toHaveClass('py-1 px-2 text-warning-500')
-  })
-
-  it('should have error cell date color', () => {
-    props.data = {
-      type: LogsType.ERROR,
-    }
-
-    render(<Row {...props} />)
-
-    const cellDate = screen.getByTestId('cell-date')
-
-    expect(cellDate).toHaveClass('py-1 px-2 text-error-500')
-  })
-
-  it('should have success cell date color', () => {
-    props.data = {
-      step: ClusterLogsStepEnum.CREATED,
-    }
-
-    render(<Row {...props} />)
-
-    const cellDate = screen.getByTestId('cell-date')
-
-    expect(cellDate).toHaveClass('py-1 px-2 text-success-500')
+    expect(date).toBe('20 Sept, 19:44:44')
   })
 
   it('should have cell message', () => {
-    props.data = {
-      step: ClusterLogsStepEnum.CREATED,
-      message: {
-        safe_message: 'hello world',
-      },
-    }
-
     render(<Row {...props} />)
 
     const cellMsg = screen.getByTestId('cell-msg')
-
-    expect(cellMsg?.textContent).toBe(`${ClusterLogsStepEnum.CREATED} - hello world`)
+    expect(cellMsg?.textContent).toBe(props.data.message)
   })
 
-  it('should have cell error message', () => {
-    props.data = {
-      type: LogsType.ERROR,
-      step: ClusterLogsStepEnum.DELETE_ERROR,
-      error: {
-        user_log_message: 'error message',
-      },
-    }
-
+  it('should have cell version', () => {
     render(<Row {...props} />)
 
-    const cellMsg = screen.getByTestId('cell-msg')
-
-    expect(cellMsg?.textContent).toBe(`${ClusterLogsStepEnum.DELETE_ERROR} - error message`)
+    const cellVersion = screen.getByTestId('cell-version')
+    expect(cellVersion?.textContent).toBe('53deb1')
   })
 })
