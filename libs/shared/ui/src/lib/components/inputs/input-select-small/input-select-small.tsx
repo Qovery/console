@@ -36,7 +36,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
 
   return (
     <div className={`${className} relative flex gap-4 items-center`}>
-      {label && <label className="text-sm shrink-0 text-sm">{label}</label>}
+      {label && <label className="text-sm shrink-0">{label}</label>}
       <select
         data-testid={dataTestId || 'input-select-small'}
         name={name}
