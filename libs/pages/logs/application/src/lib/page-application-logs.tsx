@@ -62,12 +62,12 @@ export function PageApplicationLogs() {
   const tableHead = [
     {
       title: 'Pod name',
-      className: 'py-2 pl-10 h-full text-text-300 w-[224px]',
+      className: 'px-4 py-2 h-full text-text-300 w-[195px]',
       classNameTitle: 'text-text-300',
     },
     {
       title: 'Time',
-      className: 'px-4 w-[164px]',
+      className: 'px-4 w-[150px]',
       classNameTitle: 'text-text-300',
     },
     {
@@ -89,6 +89,7 @@ export function PageApplicationLogs() {
       pauseLogs={pauseLogs}
       setPauseLogs={setPauseLogs}
       withLogsNavigation
+      lineNumbers={false}
     >
       <Table
         className="bg-transparent"
@@ -98,7 +99,7 @@ export function PageApplicationLogs() {
       >
         <div className="pb-10">
           {(logs.items as Log[])?.map((log: Log, index: number) => (
-            <Row key={index} index={index} data={log} />
+            <Row key={index} data={log} />
           ))}
         </div>
       </Table>

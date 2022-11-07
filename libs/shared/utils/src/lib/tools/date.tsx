@@ -1,4 +1,4 @@
-import { differenceInMinutes, formatDistanceToNowStrict } from 'date-fns'
+import { differenceInMinutes, format, formatDistanceToNowStrict } from 'date-fns'
 
 export const timeAgo = (date: Date) => formatDistanceToNowStrict(date)
 
@@ -40,8 +40,5 @@ export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
 
 // 15 Sep, 10:23:20
 export const dateFullFormat = (date: string) => {
-  const currentDate = new Date(date)
-  return `${addZero(currentDate.getDay() - 1)} ${currentDate.toLocaleString('en-GB', {
-    month: 'short',
-  })}, ${addZero(currentDate.getHours())}:${addZero(currentDate.getMinutes())}:${addZero(currentDate.getSeconds())}`
+  return format(new Date(date), 'dd MMM, hh:mm:ss')
 }

@@ -20,6 +20,7 @@ export interface LayoutLogsProps {
   application?: ApplicationEntity
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
+  lineNumbers?: boolean
 }
 
 export interface ErrorLogsProps {
@@ -30,7 +31,17 @@ export interface ErrorLogsProps {
 }
 
 export function LayoutLogs(props: LayoutLogsProps) {
-  const { data, application, tabInformation, children, errors, withLogsNavigation, pauseLogs, setPauseLogs } = props
+  const {
+    data,
+    application,
+    tabInformation,
+    children,
+    errors,
+    withLogsNavigation,
+    pauseLogs,
+    setPauseLogs,
+    lineNumbers,
+  } = props
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -148,9 +159,11 @@ export function LayoutLogs(props: LayoutLogsProps) {
       </div>
       <div
         ref={refScrollSection}
-        className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full ${
-          withLogsNavigation ? 'mt-[72px]' : 'mt-10'
-        }`}
+        className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 ${
+          lineNumbers
+            ? 'before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full'
+            : ''
+        } ${withLogsNavigation ? 'mt-[72px]' : 'mt-10'}`}
       >
         <div className="relative z-10">{children}</div>
       </div>

@@ -37,21 +37,14 @@ const getColorByPod = (pod?: string) => {
 
 export interface RowProps {
   data: Log
-  index: number
 }
 
 export function Row(props: RowProps) {
-  const { index, data } = props
+  const { data } = props
 
   return (
     <div className="application-log group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 w-full overflow-y-auto">
       <div className="flex">
-        <div
-          data-testid="index"
-          className="bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200"
-        >
-          <div className="text-left w-10 min-w-[40px] h-6 p-2">{index + 1}</div>
-        </div>
         <div
           data-testid="cell-pod-name"
           className="py-2 px-4 text-element-light-lighter-800 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-2 after:bg-element-light-darker-100 after:w-[1px] after:h-5"
