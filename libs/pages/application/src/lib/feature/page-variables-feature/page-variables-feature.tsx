@@ -141,6 +141,7 @@ export function PageVariablesFeature() {
 
   return (
     <PageVariables
+      key={sortVariableMemo.length}
       tableHead={tableHead}
       variables={!isLoading ? sortVariableMemo : placeholder}
       setFilterData={setData}

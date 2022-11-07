@@ -21,7 +21,7 @@ export function Tooltip(props: TooltipProps) {
     onOpenChange,
     side = 'top',
     align = 'center',
-    delayDuration = 0,
+    delayDuration = 200,
   } = props
 
   return (

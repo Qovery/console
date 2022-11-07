@@ -16,7 +16,7 @@ export interface BreadcrumbItemProps {
 }
 
 export function BreadcrumbItem(props: BreadcrumbItemProps) {
-  const { data, paramId, menuItems, link, isDark, label, logo, isLast = false } = props
+  const { data, paramId, menuItems, link, label, logo, isLast = false } = props
   const { pathname } = useLocation()
 
   const currentName: string = data && data.find((currentData) => paramId === currentData.id)?.name
@@ -28,7 +28,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
-        {label && <span className="text-xs text-text-500 font-medium ml-2">{label}</span>}
+        {label && <span className="text-xs text-text-400 font-medium ml-2">{label}</span>}
         <div className="flex gap-1 items-center">
           <BreadcrumbItemValue link={link} active={isLast} name={currentName} logo={logo} />
           {menuItems.length > 0 && (
@@ -37,7 +37,12 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
               open={false}
               arrowAlign={MenuAlign.START}
               trigger={
-                <ButtonIcon className="btn-icon--circle" icon="icon-solid-angle-down" style={ButtonIconStyle.FLAT} />
+                <ButtonIcon
+                  className="btn-icon--circle"
+                  iconClassName="text-element-light-lighter-700"
+                  icon="icon-solid-angle-down"
+                  style={ButtonIconStyle.FLAT}
+                />
               }
             />
           )}
