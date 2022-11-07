@@ -32,7 +32,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
   } = props
 
   const [focused, setFocused] = useState(false)
-  const [_type, setType] = useState(type)
+  const [currentType, setCurrentType] = useState(type)
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const hasFocus = focused ? 'input--focused' : ''
@@ -40,7 +40,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
   const classNameError = errorMessagePosition === 'left' ? 'flex gap-3 items-center' : ''
 
   useEffect(() => {
-    setType(type)
+    setCurrentType(type)
   }, [type])
 
   return (
@@ -59,7 +59,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
         <input
           className="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-2"
           name={name}
-          type={_type}
+          type={currentType}
           placeholder={placeholder}
           value={value}
           onInput={onChange}
@@ -70,10 +70,10 @@ export function InputTextSmall(props: InputTextSmallProps) {
         {hasShowPasswordButton && (
           <div
             data-testid="show-password-button"
-            onClick={() => setType(_type === 'password' ? 'text' : 'password')}
+            onClick={() => setCurrentType(currentType === 'password' ? 'text' : 'password')}
             className="text-sm text-text-500 absolute right-2 transform -translate-y-0.5"
           >
-            <Icon name={_type === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
+            <Icon name={currentType === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
           </div>
         )}
       </div>
