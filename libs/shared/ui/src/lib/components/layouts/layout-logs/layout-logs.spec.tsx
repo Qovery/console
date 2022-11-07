@@ -51,6 +51,14 @@ describe('LayoutLogs', () => {
   })
 
   it('should have text with error line', () => {
+    props.data = {
+      loadingStatus: 'loaded',
+      items: [
+        {
+          step: ClusterLogsStepEnum.UNKNOWN,
+        },
+      ],
+    }
     props.errors = [
       {
         index: 2,
@@ -70,6 +78,15 @@ describe('LayoutLogs', () => {
   })
 
   it('should render an tabs logs', () => {
+    props.data = {
+      loadingStatus: 'loaded',
+      items: [
+        {
+          step: ClusterLogsStepEnum.UNKNOWN,
+        },
+      ],
+    }
+
     render(<LayoutLogs {...props} />)
 
     const tabsLogs = screen.getByTestId('tabs-logs')
