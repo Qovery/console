@@ -1,8 +1,8 @@
 import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, Log } from 'qovery-typescript-axios'
-import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react'
+import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, StatusChip } from '@qovery/shared/ui'
+import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
@@ -16,8 +16,10 @@ export interface LayoutLogsProps {
   data?: LayoutLogsDataProps
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
-  withNav?: boolean
+  withLogsNavigation?: boolean
   application?: ApplicationEntity
+  pauseLogs?: boolean
+  setPauseLogs?: (pause: boolean) => void
 }
 
 export interface ErrorLogsProps {
@@ -27,8 +29,8 @@ export interface ErrorLogsProps {
   error: ClusterLogsError
 }
 
-export function LayoutLogsMemo(props: LayoutLogsProps) {
-  const { data, application, tabInformation, children, errors, withNav } = props
+export function LayoutLogs(props: LayoutLogsProps) {
+  const { data, application, tabInformation, children, errors, withLogsNavigation, pauseLogs, setPauseLogs } = props
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -80,7 +82,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
 
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
-      {withNav && (
+      {withLogsNavigation && (
         <div className="absolute z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
           {application && (
             <div className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium">
@@ -102,7 +104,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       <div
         className={`absolute z-20 left-0 flex justify-end items-center h-9 bg-element-light-darker-200 px-5 ${
           tabInformation ? 'w-[calc(100%-360px)]' : 'w-full'
-        } ${withNav ? 'top-10' : ''}`}
+        } ${withLogsNavigation ? 'top-10' : ''}`}
       >
         {errors && errors.length > 0 && (
           <p
@@ -116,15 +118,24 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
           </p>
         )}
         <div className="flex">
+          {setPauseLogs && (
+            <ButtonIcon
+              className="mr-2"
+              icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
+              size={ButtonSize.TINY}
+              style={ButtonIconStyle.DARK}
+              onClick={() => setPauseLogs(!pauseLogs)}
+            />
+          )}
           <ButtonIcon
-            icon="icon-solid-arrow-up-to-line"
+            icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
             className="mr-px !rounded-tr-none !rounded-br-none"
             size={ButtonSize.TINY}
             style={ButtonIconStyle.DARK}
             onClick={() => forcedScroll()}
           />
           <ButtonIcon
-            icon="icon-solid-arrow-down-to-line"
+            icon={IconAwesomeEnum.ARROW_DOWN_TO_LINE}
             className="mr-2 !rounded-tl-none !rounded-bl-none"
             size={ButtonSize.TINY}
             style={ButtonIconStyle.DARK}
@@ -138,7 +149,7 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       <div
         ref={refScrollSection}
         className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full ${
-          withNav ? 'mt-[72px]' : ''
+          withLogsNavigation ? 'mt-[72px]' : 'mt-10'
         }`}
       >
         <div className="relative z-10">{children}</div>
@@ -148,11 +159,4 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
   )
 }
 
-export const LayoutLogs = React.memo(LayoutLogsMemo, (prevProps: LayoutLogsProps, nextProps: LayoutLogsProps) => {
-  // stringify is necessary to avoid Redux selector behavior
-  if (prevProps.data?.items) {
-    const isEqual = JSON.stringify(prevProps.data?.items) === JSON.stringify(nextProps.data?.items)
-    return isEqual
-  }
-  return false
-})
+export default LayoutLogs

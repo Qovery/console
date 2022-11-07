@@ -31,6 +31,8 @@ export function PageApplicationLogs() {
     loadingStatus: 'not loaded',
   } as LayoutLogsDataProps)
 
+  const [pauseLogs, setPauseLogs] = useState(false)
+
   const { getAccessTokenSilently } = useAuth()
 
   const logsUrl: any = useCallback(async () => {
@@ -47,13 +49,15 @@ export function PageApplicationLogs() {
   useEffect(() => {
     const interval = setInterval(() => {
       lastMessage &&
+        !pauseLogs &&
         setLogs((prev) => ({
           items: (prev.items as Log[]).concat(JSON.parse(lastMessage?.data)),
           loadingStatus: 'loaded',
         }))
     }, 1000)
+
     return () => clearInterval(interval)
-  }, [lastMessage])
+  }, [lastMessage, pauseLogs])
 
   const tableHead = [
     {
@@ -79,16 +83,22 @@ export function PageApplicationLogs() {
   ]
 
   return (
-    <LayoutLogs data={logs} application={application} withNav>
+    <LayoutLogs
+      data={logs}
+      application={application}
+      pauseLogs={pauseLogs}
+      setPauseLogs={setPauseLogs}
+      withLogsNavigation
+    >
       <Table
         className="bg-transparent"
         classNameHead="!flex bg-element-light-darker-300 !border-transparent"
         dataHead={tableHead}
         defaultData={logs.items}
       >
-        <div>
+        <div className="pb-10">
           {(logs.items as Log[])?.map((log: Log, index: number) => (
-            <Row key={log.id} index={index} data={log} />
+            <Row key={index} index={index} data={log} />
           ))}
         </div>
       </Table>

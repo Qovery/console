@@ -21,7 +21,10 @@ export function PageInfraLogs() {
     return () => clearInterval(fetchLogsAndClusterStatusByInterval)
   }, [dispatch, organizationId, clusterId])
 
-  const cluster = useSelector((state: RootState) => selectClusterById(state, clusterId))
+  const cluster = useSelector(
+    (state: RootState) => selectClusterById(state, clusterId),
+    (prevProps, nextProps) => prevProps?.logs?.items?.length === nextProps?.logs?.items?.length
+  )
 
   useDocumentTitle(`Cluster ${cluster ? `- ${cluster?.name} (${cluster?.region}) ` : '- Loading...'}`)
 
