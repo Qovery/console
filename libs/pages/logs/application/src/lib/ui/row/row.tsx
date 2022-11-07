@@ -2,7 +2,7 @@ import { Log } from 'qovery-typescript-axios'
 import { CopyToClipboard, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
-const getColorByPod = (pod?: string) => {
+export const getColorByPod = (pod?: string) => {
   const COLORS = [
     '#FFF',
     '#FFC312',

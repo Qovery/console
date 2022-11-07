@@ -1,14 +1,17 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
-import { clusterLogFactoryMock } from '@qovery/domains/organization'
 import { LogsType } from '@qovery/shared/enums'
-import Row, { RowProps } from './row'
+import Row, { RowProps, getColorByPod } from './row'
 
 describe('Row', () => {
   const props: RowProps = {
-    data: clusterLogFactoryMock(1, true)[0],
-    index: 1,
-    firstDate: new Date(),
+    data: {
+      id: '1',
+      created_at: '1667834316521',
+      message: 'message',
+      pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
+      version: '53deb16f853aef759b8be84fbeec96e9727',
+    },
   }
 
   it('should render successfully', () => {
@@ -16,16 +19,13 @@ describe('Row', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have warning index color', () => {
-    props.data = {
-      type: LogsType.WARNING,
-    }
-
+  it('should have cell with the pod name', () => {
     render(<Row {...props} />)
 
-    const index = screen.getByTestId('index')
+    const podName = screen.getByTestId('cell-pod-name')
 
-    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
+    expect(podName).toHaveStyle(getColorByPod(props.data.pod_name))
+    expect(podName.textContent).toBe('app-z9d11e...7b6-k9sl7')
   })
 
   it('should have error index color', () => {
