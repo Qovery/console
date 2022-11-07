@@ -202,7 +202,6 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
         <>
           <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
           <BreadcrumbItem
-            isDark
             isLast={!projectId}
             label="Cluster"
             data={clusters}

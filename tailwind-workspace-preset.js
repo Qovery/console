@@ -1,5 +1,6 @@
 // tailwind-workspace-preset.js
 module.exports = {
+  darkMode: 'class',
   theme: {
     extend: {
       transitionProperty: {

@@ -10,7 +10,6 @@ export interface BreadcrumbItemProps {
   paramId: string
   menuItems: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
   link: string
-  isDark?: boolean
   logo?: React.ReactElement
   isLast?: boolean
 }
@@ -28,7 +27,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
-        {label && <span className="text-xs text-text-400 font-medium ml-2">{label}</span>}
+        {label && <span className="text-xs text-text-400 dark:text-text-300 font-medium ml-2">{label}</span>}
         <div className="flex gap-1 items-center">
           <BreadcrumbItemValue link={link} active={isLast} name={currentName} logo={logo} />
           {menuItems.length > 0 && (

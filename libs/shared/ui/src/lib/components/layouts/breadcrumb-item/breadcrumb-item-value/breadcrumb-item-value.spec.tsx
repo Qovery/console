@@ -24,13 +24,13 @@ describe('BreadcrumbItemValue', () => {
   it('should render the item with active classes', () => {
     const { baseElement } = render(<BreadcrumbItemValue {...props} active />)
     const item = getByTestId(baseElement, 'breadcrumb-item-value')
-    expect(item).toHaveClass('text-text-800')
+    expect(item).toHaveClass('text-text-700')
   })
 
   it('should render the item with not active classes', () => {
     const { baseElement } = render(<BreadcrumbItemValue {...props} active={false} />)
     const item = getByTestId(baseElement, 'breadcrumb-item-value')
-    expect(item).toHaveClass('text-text-600 hover:bg-element-light-lighter-400 active:bg-element-light-lighter-500')
+    expect(item).toHaveClass('text-text-500 hover:bg-element-light-lighter-300 active:bg-element-light-lighter-400')
   })
 
   it('should render the display text', () => {
