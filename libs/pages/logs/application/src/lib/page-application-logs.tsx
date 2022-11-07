@@ -14,7 +14,6 @@ import Row from './ui/row/row'
 
 export function PageApplicationLogs() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
-  // const dispatch = useDispatch<AppDispatch>()
 
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
@@ -35,16 +34,16 @@ export function PageApplicationLogs() {
 
   const { getAccessTokenSilently } = useAuth()
 
-  const logsUrl: any = useCallback(async () => {
+  const applicationLogsUrl: () => Promise<string> = useCallback(async () => {
     const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}`
     const token = await getAccessTokenSilently()
 
     return new Promise((resolve) => {
-      resolve(url + `&bearer_token=${token}`)
+      environment?.cluster_id && resolve(url + `&bearer_token=${token}`)
     })
   }, [organizationId, environment?.cluster_id, projectId, environmentId, applicationId, getAccessTokenSilently])
 
-  const { lastMessage } = useWebSocket(logsUrl)
+  const { lastMessage } = useWebSocket(applicationLogsUrl)
 
   useEffect(() => {
     const interval = setInterval(() => {

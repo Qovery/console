@@ -96,7 +96,10 @@ export function LayoutLogs(props: LayoutLogsProps) {
       {withLogsNavigation && (
         <div className="absolute z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
           {application && (
-            <div className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium">
+            <div
+              data-testid="nav-application"
+              className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium"
+            >
               <StatusChip
                 status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
                 appendTooltipMessage={
@@ -105,7 +108,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
                     : ''
                 }
                 className="mr-2"
-              />{' '}
+              />
               {application.name}
               <Icon name={IconEnum.APPLICATION} width="14" className="ml-2" />
             </div>
