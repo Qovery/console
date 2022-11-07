@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router-dom'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Menu, { MenuAlign } from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
@@ -16,13 +15,10 @@ export interface BreadcrumbItemProps {
 
 export function BreadcrumbItem(props: BreadcrumbItemProps) {
   const { data, paramId, menuItems, link, label, logo, isLast = false } = props
-  const { pathname } = useLocation()
 
   const currentName: string = data && data.find((currentData) => paramId === currentData.id)?.name
 
   if (!data) return null
-
-  const isActive = pathname === link
 
   return (
     <div className="flex items-center justify-center">

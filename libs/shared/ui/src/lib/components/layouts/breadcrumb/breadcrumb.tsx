@@ -1,7 +1,7 @@
 import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React from 'react'
-import { matchPath, useLocation, useParams } from 'react-router-dom'
+import { matchPath, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
@@ -34,7 +34,6 @@ export interface BreadcrumbProps {
 export function BreadcrumbMemo(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, applications, databases } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
-  const { pathname } = useLocation()
 
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
   const matchLogInfraRoute = matchPath(location.pathname || '', INFRA_LOGS_URL(organizationId, clusterId))
