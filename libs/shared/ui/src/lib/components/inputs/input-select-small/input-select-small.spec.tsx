@@ -13,6 +13,6 @@ describe('InputSelectSmall', () => {
   })
   it('should render successfully', () => {
     const { baseElement } = render(<InputSelectSmall {...props} />)
-    expect(baseElement).not.toBeTruthy()
+    expect(baseElement).toBeTruthy()
   })
 })
