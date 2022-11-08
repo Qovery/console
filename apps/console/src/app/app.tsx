@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { selectUser } from '@qovery/domains/user'
-import { Layout } from '@qovery/pages/layout'
+import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { PageOnboarding } from '@qovery/pages/onboarding'
 import { useAuth } from '@qovery/shared/auth'
@@ -130,15 +130,15 @@ export function App() {
                 path={route.path}
                 element={
                   !route.protected ? (
-                    <Layout darkMode={route.darkMode} topBar={route.topBar}>
-                      {route.component}
-                    </Layout>
+                    <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
+                      <Layout topBar={route.topBar}>{route.component}</Layout>
+                    </DarkModeEnabler>
                   ) : (
                     <ProtectedRoute>
                       <BetaRoute>
-                        <Layout darkMode={route.darkMode} topBar={route.topBar}>
-                          {route.component}
-                        </Layout>
+                        <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
+                          <Layout topBar={route.topBar}>{route.component}</Layout>
+                        </DarkModeEnabler>
                       </BetaRoute>
                     </ProtectedRoute>
                   )

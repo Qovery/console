@@ -1,3 +1,4 @@
+export * from './lib/feature/dark-mode-enabler/dark-mode-enabler'
 export * from './lib/feature/layout/layout'
 export * from './lib/feature/breadcrumb/breadcrumb'
 

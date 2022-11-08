@@ -9,13 +9,28 @@ export interface TooltipProps {
   onOpenChange?: (open: boolean) => void
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'center' | 'start' | 'end'
+  delayDuration?: number
 }
 
 export function Tooltip(props: TooltipProps) {
-  const { children, content, open, defaultOpen, onOpenChange, side = 'top', align = 'center' } = props
+  const {
+    children,
+    content,
+    open,
+    defaultOpen,
+    onOpenChange,
+    side = 'top',
+    align = 'center',
+    delayDuration = 200,
+  } = props
 
   return (
-    <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={0}>
+    <TooltipPrimitive.Root
+      open={open}
+      defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+      delayDuration={delayDuration}
+    >
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
       <TooltipPrimitive.Content
         className="bg-element-dark-400 text-text-100 rounded-sm px-2 py-1 text-xs font-medium"

@@ -1,7 +1,10 @@
 import { Dispatch, MouseEvent, SetStateAction, useState } from 'react'
-import { Button, ButtonSize, ButtonStyle, Icon, Menu, TableHeadProps } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
+import Icon from '../../icon/icon'
+import Menu from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
+import { TableHeadProps } from '../table'
 
 export interface TableHeadFilterProps {
   title: string

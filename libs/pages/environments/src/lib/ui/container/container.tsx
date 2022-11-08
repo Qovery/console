@@ -1,4 +1,7 @@
+import { Project } from 'qovery-typescript-axios'
+import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
+import { getProjectsState } from '@qovery/domains/projects'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
@@ -16,6 +19,7 @@ import {
   Tabs,
   useModal,
 } from '@qovery/shared/ui'
+import { RootState } from '@qovery/store'
 import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface ContainerProps {
@@ -24,9 +28,10 @@ export interface ContainerProps {
 
 export function Container(props: ContainerProps) {
   const { children } = props
-  const { organizationId, projectId } = useParams()
+  const { organizationId = '', projectId = '' } = useParams()
   const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
+  const project = useSelector<RootState, Project | undefined>((state) => getProjectsState(state).entities[projectId])
 
   const headerButtons = (
     <div className="hidden">
@@ -79,7 +84,7 @@ export function Container(props: ContainerProps) {
 
   return (
     <>
-      <Header title="Environments" icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
+      <Header title={project?.name} icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
       <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
       <div className="flex-grow flex-col flex">{children}</div>
     </>

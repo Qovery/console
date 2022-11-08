@@ -4,16 +4,20 @@ export interface TruncateProps {
   truncateLimit: number
   text: string
   defaultTooltipLimit?: number
+  delayDuration?: number
 }
 
 export const truncateText = (text: string, truncateLimit: number) => text.slice(0, truncateLimit)
 
 export function Truncate(props: TruncateProps) {
-  const { truncateLimit, text, defaultTooltipLimit = 200 } = props
+  const { truncateLimit, text, defaultTooltipLimit = 200, delayDuration = 150 } = props
 
   if (text.length >= truncateLimit) {
     return (
-      <Tooltip content={text.length >= defaultTooltipLimit ? `${truncateText(text, defaultTooltipLimit)}...` : text}>
+      <Tooltip
+        delayDuration={delayDuration}
+        content={text.length >= defaultTooltipLimit ? `${truncateText(text, defaultTooltipLimit)}...` : text}
+      >
         <span data-testid="truncate-text">{truncateText(text, truncateLimit)}...</span>
       </Tooltip>
     )
