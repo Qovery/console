@@ -45,6 +45,8 @@ export function PageApplicationLogs() {
 
   const { lastMessage } = useWebSocket(applicationLogsUrl)
 
+  console.log(lastMessage?.data)
+
   useEffect(() => {
     const interval = setInterval(() => {
       lastMessage &&

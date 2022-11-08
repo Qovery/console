@@ -47,19 +47,19 @@ export function Row(props: RowProps) {
       <div className="flex">
         <div
           data-testid="cell-pod-name"
-          className="py-2 px-4 text-element-light-lighter-800 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-2 after:bg-element-light-darker-100 after:w-[1px] after:h-5"
+          className="py-1 px-4 text-element-light-lighter-800 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-2 after:bg-element-light-darker-100 after:w-[1px] after:h-4"
           style={{ color: getColorByPod(data.pod_name) }}
         >
           {data.pod_name?.substring(0, 10)}...{data.pod_name?.slice(-10)}
         </div>
-        <div data-testid="cell-date" className="py-2 px-4 text-element-light-lighter-700 whitespace-nowrap">
+        <div data-testid="cell-date" className="py-1 px-4 text-element-light-lighter-700 whitespace-nowrap">
           {dateFullFormat(data.created_at)}
         </div>
-        <div data-testid="cell-msg" className="py-2 px-4 text-text-100">
+        <div data-testid="cell-msg" className="py-1 px-4 text-text-100">
           <span className="whitespace-pre-wrap break-all">{data.message}</span>
         </div>
       </div>
-      <div data-testid="cell-version" className="flex whitespace-nowrap py-2 px-4 text-text-100 pr-5">
+      <div data-testid="cell-version" className="flex whitespace-nowrap py-1 px-4 text-text-100 pr-5">
         <CopyToClipboard className="opacity-0 group-hover:opacity-100 mr-4 text-white" content={data.message} />
         {data.version && (
           <span>
