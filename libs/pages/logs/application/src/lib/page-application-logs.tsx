@@ -1,18 +1,16 @@
 import { Environment, Log } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { LayoutLogs, LayoutLogsDataProps, Table } from '@qovery/shared/ui'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { LayoutLogs, Table } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import Row from './ui/row/row'
-
-let groupLogs: Log[] = []
 
 export function PageApplicationLogs() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -27,10 +25,8 @@ export function PageApplicationLogs() {
 
   useDocumentTitle(`Application logs ${application ? `- ${application?.name}` : '- Loading...'}`)
 
-  const [logs, setLogs] = useState({
-    items: [],
-    loadingStatus: 'not loaded',
-  } as LayoutLogsDataProps)
+  const [logs, setLogs] = useState<Log[]>([])
+  const [loading, setLoading] = useState<LoadingStatus>('not loaded')
 
   const [pauseLogs, setPauseLogs] = useState(false)
 
@@ -45,21 +41,10 @@ export function PageApplicationLogs() {
     })
   }, [organizationId, environment?.cluster_id, projectId, environmentId, applicationId, getAccessTokenSilently])
 
-  const { lastMessage } = useWebSocket(applicationLogsUrl)
-
-  useEffect(() => {
-    if (groupLogs?.length >= 20) {
-      !pauseLogs &&
-        setLogs((prev) => ({
-          items: [...(prev.items as Log[]), ...groupLogs],
-          loadingStatus: 'loaded',
-        }))
-
-      groupLogs = []
-    } else {
-      lastMessage?.data && groupLogs.push(JSON.parse(lastMessage?.data))
-    }
-  }, [lastMessage, pauseLogs])
+  useWebSocket(applicationLogsUrl, {
+    onOpen: () => setLoading('loaded'),
+    onMessage: (message) => !pauseLogs && setLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)]),
+  })
 
   const tableHead = [
     {
@@ -84,9 +69,14 @@ export function PageApplicationLogs() {
     },
   ]
 
+  const memoRow = useMemo(() => logs?.map((log: Log, index: number) => <Row key={index} data={log} />), [logs])
+
   return (
     <LayoutLogs
-      data={logs}
+      data={{
+        items: logs,
+        loadingStatus: loading,
+      }}
       application={application}
       pauseLogs={pauseLogs}
       setPauseLogs={setPauseLogs}
@@ -97,13 +87,9 @@ export function PageApplicationLogs() {
         className="bg-transparent"
         classNameHead="!flex bg-element-light-darker-300 !border-transparent"
         dataHead={tableHead}
-        defaultData={logs.items}
+        defaultData={logs}
       >
-        <div className="pb-10">
-          {(logs.items as Log[])?.map((log: Log, index: number) => (
-            <Row key={index} data={log} />
-          ))}
-        </div>
+        <div className="pb-10">{memoRow}</div>
       </Table>
     </LayoutLogs>
   )

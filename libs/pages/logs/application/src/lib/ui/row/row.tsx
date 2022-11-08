@@ -2,21 +2,21 @@ import { Log } from 'qovery-typescript-axios'
 import { CopyToClipboard, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
-export const getColorByPod = (pod?: string) => {
-  const COLORS = [
-    '#FFF',
-    '#FFC312',
-    '#0652DD',
-    '#17C0EB',
-    '#12CBC4',
-    '#D980FA',
-    '#FDA7DF',
-    '#B53471',
-    '#9980FA',
-    '#C4E538',
-    '#FFB8B8',
-  ]
+const COLORS = [
+  '#FFF',
+  '#FFC312',
+  '#0652DD',
+  '#17C0EB',
+  '#12CBC4',
+  '#D980FA',
+  '#FDA7DF',
+  '#B53471',
+  '#9980FA',
+  '#C4E538',
+  '#FFB8B8',
+]
 
+export const getColorByPod = (pod?: string) => {
   if (!pod) return COLORS[0]
 
   const hashString = (string: string) => {

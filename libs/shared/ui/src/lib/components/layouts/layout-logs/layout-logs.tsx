@@ -58,7 +58,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
 
   useEffect(() => {
     // auto scroll when we add data
-    forcedScroll && forcedScroll(true)
+    !pauseLogs && forcedScroll && forcedScroll(true)
   }, [data])
 
   if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded') {
@@ -162,6 +162,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
       </div>
       <div
         ref={refScrollSection}
+        onWheel={(event) => !pauseLogs && setPauseLogs && event.deltaY < 0 && setPauseLogs(true)}
         className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 ${
           lineNumbers
             ? 'before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full'
