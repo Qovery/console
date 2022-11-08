@@ -167,7 +167,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
           lineNumbers
             ? 'before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full'
             : ''
-        } ${withLogsNavigation ? 'mt-[72px]' : 'mt-10'}`}
+        } ${withLogsNavigation ? 'mt-[72px]' : 'mt-[36px]'}`}
       >
         <div className="relative z-10">{children}</div>
       </div>
