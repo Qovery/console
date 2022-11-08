@@ -15,12 +15,11 @@ export interface TabsProps {
   contentRight?: React.ReactNode
   className?: string
   classNameBtn?: string
-  isDark?: boolean
   fullWidth?: boolean
 }
 
 export function Tabs(props: TabsProps) {
-  const { items = [], contentRight, className = 'bg-white pl-4', classNameBtn = '', isDark, fullWidth } = props
+  const { items = [], contentRight, className = 'bg-white pl-4', classNameBtn = '', fullWidth } = props
 
   function content(item: TabsItem) {
     return typeof item.name === 'string' ? (
@@ -33,15 +32,13 @@ export function Tabs(props: TabsProps) {
     )
   }
 
-  const btnClassName = `h-14 border-b-2 px-4 flex gap-3 items-center group transition ease-in-out duration-200 ${classNameBtn} ${
-    isDark ? 'hover:border-text-100 hover:text-text-100' : 'hover:border-brand-500 hover:text-brand-500'
-  }`
+  const btnClassName = `h-14 border-b-2 px-4 flex gap-3 items-center group transition ease-in-out duration-200 ${classNameBtn} dark:hover:border-text-100 dark:hover:text-text-100 hover:border-brand-500 hover:text-brand-500`
 
   const btnClassNameActive = (item: TabsItem) =>
     `${
       item?.active
-        ? `${isDark ? 'text-brand-50 border-brand-50' : 'text-brand-500 border-brand-500'}`
-        : `${isDark ? 'text-text-500 border-text-500' : 'text-text-400 border-element-light-lighter-500'}`
+        ? `dark:text-brand-50 dark:border-brand-50 text-brand-500 border-brand-500`
+        : `dark:text-text-500 dark:border-text-500 text-text-400 border-element-light-lighter-500`
     }`
 
   const contentTab = (item: TabsItem, index: number) => {

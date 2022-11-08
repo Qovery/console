@@ -18,11 +18,10 @@ import {
 export interface NavigationProps {
   firstName: string
   lastName: string
-  darkMode?: boolean
 }
 
 export function Navigation(props: NavigationProps) {
-  const { firstName, lastName, darkMode } = props
+  const { firstName, lastName } = props
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
@@ -78,12 +77,10 @@ export function Navigation(props: NavigationProps) {
   ]
 
   return (
-    <div className={`w-16 h-screen ${darkMode ? 'bg-element-light-darker-400' : 'bg-white'}`}>
+    <div className="w-16 h-screen dark:bg-element-light-darker-400 bg-white">
       <Link
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
-        className={`flex w-16 h-16 items-center justify-center border-b z-10 ${
-          darkMode ? 'border-element-light-darker-100' : 'border-element-light-lighter-400'
-        }`}
+        className="flex w-16 h-16 items-center justify-center border-b z-10 dark:border-element-light-darker-100 border-element-light-lighter-400"
       >
         <img className="w-[28px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
       </Link>
@@ -138,11 +135,7 @@ export function Navigation(props: NavigationProps) {
         </div>
       </div>
 
-      <div
-        className={`flex w-16 h-16 mb-2 items-center justify-center border-t ${
-          darkMode ? 'border-element-light-darker-100' : 'border-element-light-lighter-400'
-        }`}
-      >
+      <div className="flex w-16 h-16 mb-2 items-center justify-center border-t dark:border-element-light-darker-100 border-element-light-lighter-400">
         <Modal
           buttonClose={false}
           trigger={

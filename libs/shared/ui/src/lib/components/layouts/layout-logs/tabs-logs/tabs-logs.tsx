@@ -61,7 +61,7 @@ export function TabsLogs(props: TabsLogsProps) {
   return (
     <div className="w-[360px] h-[100vh-64px] shrink-0 border-l border-t border-element-light-darker-100 bg-element-light-darker-400">
       <div className="py-2 px-5">
-        <Tabs className="bg-transparent" classNameBtn="grow justify-center" items={items} isDark fullWidth />
+        <Tabs className="bg-transparent" classNameBtn="grow justify-center" items={items} fullWidth />
         <div data-testid="sections" className="mt-6">
           {section === TabsLogsSection.INFORMATION && tabInformation}
           {section === TabsLogsSection.ERROR && (

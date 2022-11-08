@@ -16,12 +16,11 @@ import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from 
 
 export interface LayoutProps {
   children: React.ReactElement
-  darkMode?: boolean
   topBar?: boolean
 }
 
 export function Layout(props: LayoutProps) {
-  const { children, darkMode, topBar } = props
+  const { children, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const userSignUp = useSelector(selectUserSignUp)
 
@@ -80,7 +79,7 @@ export function Layout(props: LayoutProps) {
   }, [organizationId, projectId])
 
   return (
-    <LayoutPage user={userSignUp} darkMode={darkMode} topBar={topBar}>
+    <LayoutPage user={userSignUp} topBar={topBar}>
       <>
         <WebsocketContainer />
         {children}
