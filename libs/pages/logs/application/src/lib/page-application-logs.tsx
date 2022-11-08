@@ -53,6 +53,11 @@ export function PageApplicationLogs() {
       classNameTitle: 'text-text-300',
     },
     {
+      title: 'Version',
+      className: 'pl-4 pr-5 text-right',
+      classNameTitle: 'text-text-300',
+    },
+    {
       title: 'Time',
       className: 'px-4 w-[150px]',
       classNameTitle: 'text-text-300',
@@ -60,11 +65,6 @@ export function PageApplicationLogs() {
     {
       title: 'Message',
       className: 'px-4',
-      classNameTitle: 'text-text-300',
-    },
-    {
-      title: 'Version',
-      className: 'pl-4 pr-5 text-right ml-auto',
       classNameTitle: 'text-text-300',
     },
   ]

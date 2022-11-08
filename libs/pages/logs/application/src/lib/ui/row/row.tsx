@@ -5,7 +5,7 @@ import { dateFullFormat } from '@qovery/shared/utils'
 const COLORS = [
   '#FFF',
   '#FFC312',
-  '#0652DD',
+  '#06ADF6',
   '#17C0EB',
   '#12CBC4',
   '#D980FA',
@@ -52,21 +52,24 @@ export function Row(props: RowProps) {
         >
           {data.pod_name?.substring(0, 10)}...{data.pod_name?.slice(-10)}
         </div>
+        <div data-testid="cell-version" className="flex whitespace-nowrap py-1 pl-4 text-text-100">
+          {data.version && (
+            <span>
+              <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
+              {data.version?.substring(0, 6)}
+            </span>
+          )}
+        </div>
         <div data-testid="cell-date" className="py-1 px-4 text-element-light-lighter-700 whitespace-nowrap">
           {dateFullFormat(data.created_at)}
         </div>
-        <div data-testid="cell-msg" className="py-1 pr-4 text-text-100">
+        <div data-testid="cell-msg" className="py-1 pr-6 text-text-100 relative w-full">
           <span className="whitespace-pre-wrap break-all">{data.message}</span>
+          <CopyToClipboard
+            className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
+            content={data.message}
+          />
         </div>
-      </div>
-      <div data-testid="cell-version" className="flex whitespace-nowrap py-1 px-4 text-text-100 pr-5">
-        <CopyToClipboard className="opacity-0 group-hover:opacity-100 mr-4 text-white" content={data.message} />
-        {data.version && (
-          <span>
-            <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
-            {data.version?.substring(0, 6)}
-          </span>
-        )}
       </div>
     </div>
   )
