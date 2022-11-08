@@ -47,7 +47,7 @@ export function Row(props: RowProps) {
       <div className="flex">
         <div
           data-testid="cell-pod-name"
-          className="py-1 px-4 text-element-light-lighter-800 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-2 after:bg-element-light-darker-100 after:w-[1px] after:h-4"
+          className="py-1 px-4 text-element-light-lighter-800 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-2 after:bg-element-light-darker-100 after:w-[1px] after:h-3"
           style={{ color: getColorByPod(data.pod_name) }}
         >
           {data.pod_name?.substring(0, 10)}...{data.pod_name?.slice(-10)}
