@@ -12,6 +12,8 @@ import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import Row from './ui/row/row'
 
+let groupLogs: Log[] = []
+
 export function PageApplicationLogs() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
@@ -46,16 +48,17 @@ export function PageApplicationLogs() {
   const { lastMessage } = useWebSocket(applicationLogsUrl)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      lastMessage &&
-        !pauseLogs &&
+    if (groupLogs?.length >= 20) {
+      !pauseLogs &&
         setLogs((prev) => ({
-          items: (prev.items as Log[]).concat(JSON.parse(lastMessage?.data)),
+          items: [...(prev.items as Log[]), ...groupLogs],
           loadingStatus: 'loaded',
         }))
-    }, 1000)
 
-    return () => clearInterval(interval)
+      groupLogs = []
+    } else {
+      lastMessage?.data && groupLogs.push(JSON.parse(lastMessage?.data))
+    }
   }, [lastMessage, pauseLogs])
 
   const tableHead = [
