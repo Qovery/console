@@ -30,7 +30,7 @@ export function Container(props: ContainerProps) {
   const { children } = props
   const { organizationId = '', projectId = '' } = useParams()
   const { pathname } = useLocation()
-  const { openModal, closeModal } = useModal()
+  const { openModal, closeModal, setMustConfirmClickOutside } = useModal()
   const project = useSelector<RootState, Project | undefined>((state) => getProjectsState(state).entities[projectId])
 
   const headerButtons = (
@@ -75,6 +75,7 @@ export function Container(props: ContainerProps) {
               />
             ),
           })
+          setMustConfirmClickOutside(true)
         }}
       >
         New environment
