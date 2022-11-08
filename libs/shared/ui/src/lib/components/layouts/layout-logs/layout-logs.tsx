@@ -77,7 +77,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
   }
 
   const downloadJSON = (event: MouseEvent) => {
-    const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
+    const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data.items))
     const target = event.currentTarget
     target.setAttribute('href', 'data:' + file)
     target.setAttribute('download', `data-${Date.now()}.json`)
