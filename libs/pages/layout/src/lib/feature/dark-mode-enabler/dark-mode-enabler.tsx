@@ -14,7 +14,7 @@ export function DarkModeEnabler(props: DarkModeEnablerProps) {
     return () => {
       if (isDarkMode) document.documentElement.classList.remove('dark')
     }
-  }, [])
+  }, [isDarkMode])
 
   return children
 }

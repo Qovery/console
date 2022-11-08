@@ -178,7 +178,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     <div className="flex h-full items-center">
       {organizationId && (
         <BreadcrumbItem
-          isLast={!projectId}
+          isLast
           label="Organization"
           data={organizations}
           menuItems={matchLogInfraRoute ? [] : organizationsMenu}

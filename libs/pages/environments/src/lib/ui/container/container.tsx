@@ -28,7 +28,7 @@ export interface ContainerProps {
 
 export function Container(props: ContainerProps) {
   const { children } = props
-  const { organizationId, projectId = '' } = useParams()
+  const { organizationId = '', projectId = '' } = useParams()
   const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
   const project = useSelector<RootState, Project | undefined>((state) => getProjectsState(state).entities[projectId])
