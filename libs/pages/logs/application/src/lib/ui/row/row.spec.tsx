@@ -2,7 +2,10 @@ import { render, screen } from '__tests__/utils/setup-jest'
 import { dateFullFormat } from '@qovery/shared/utils'
 import Row, { RowProps, getColorByPod } from './row'
 
-jest.mock('date-fns', () => ({ format: jest.fn(() => '20 Sept, 19:44:44') }))
+jest.mock('date-fns-tz', () => ({
+  format: jest.fn(() => '20 Sept, 19:44:44:44'),
+  utcToZonedTime: jest.fn(),
+}))
 
 describe('Row', () => {
   const props: RowProps = {
@@ -40,7 +43,7 @@ describe('Row', () => {
 
   it('should have cell render an created pod', () => {
     render(<Row {...props} />)
-    expect(date).toBe('20 Sept, 19:44:44')
+    expect(date).toBe('20 Sept, 19:44:44:44')
   })
 
   it('should have cell message', () => {

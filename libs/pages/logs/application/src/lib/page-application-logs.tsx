@@ -26,9 +26,10 @@ export function PageApplicationLogs() {
   useDocumentTitle(`Application logs ${application ? `- ${application?.name}` : '- Loading...'}`)
 
   const [logs, setLogs] = useState<Log[]>([])
-  const [loading, setLoading] = useState<LoadingStatus>('not loaded')
+  const [pauseLogs, setPauseLogs] = useState<Log[]>([])
+  const [pauseStatusLogs, setPauseStatusLogs] = useState(false)
 
-  const [pauseLogs, setPauseLogs] = useState(false)
+  const [loading, setLoading] = useState<LoadingStatus>('not loaded')
 
   const { getAccessTokenSilently } = useAuth()
 
@@ -42,14 +43,22 @@ export function PageApplicationLogs() {
   }, [organizationId, environment?.cluster_id, projectId, environmentId, applicationId, getAccessTokenSilently])
 
   useWebSocket(applicationLogsUrl, {
-    onOpen: () => setLoading('loaded'),
-    onMessage: (message) => !pauseLogs && setLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)]),
+    onMessage: (message) => {
+      setLoading('loaded')
+
+      if (pauseStatusLogs) {
+        setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
+      } else {
+        setLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
+        setPauseLogs([])
+      }
+    },
   })
 
   const tableHead = [
     {
       title: 'Pod name',
-      className: 'px-4 py-2 h-full text-text-300 w-[195px]',
+      className: 'px-4 py-2 h-full text-text-300 w-[198px]',
       classNameTitle: 'text-text-300',
     },
     {
@@ -59,7 +68,7 @@ export function PageApplicationLogs() {
     },
     {
       title: 'Time',
-      className: 'px-4 w-[150px]',
+      className: 'px-4 w-[156px]',
       classNameTitle: 'text-text-300',
     },
     {
@@ -78,8 +87,8 @@ export function PageApplicationLogs() {
         loadingStatus: loading,
       }}
       application={application}
-      pauseLogs={pauseLogs}
-      setPauseLogs={setPauseLogs}
+      pauseLogs={pauseStatusLogs}
+      setPauseLogs={setPauseStatusLogs}
       withLogsNavigation
       lineNumbers={false}
     >

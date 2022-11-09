@@ -1,4 +1,5 @@
-import { differenceInMinutes, format, formatDistanceToNowStrict } from 'date-fns'
+import { differenceInMinutes, formatDistanceToNowStrict } from 'date-fns'
+import { format, utcToZonedTime } from 'date-fns-tz'
 
 export const timeAgo = (date: Date) => formatDistanceToNowStrict(date)
 
@@ -25,6 +26,9 @@ export function dateDifference(firstDate: Date, secondDate: Date) {
   return `${addZero(hoursDifference)}:${addZero(minutesDifference)}:${addZero(secondsDifference)}`
 }
 
+const formatInTimeZone = (date: Date, fmt: string, tz: string) =>
+  format(utcToZonedTime(date, tz), fmt, { timeZone: tz })
+
 // 10:10
 export const dateToHours = (date: string) => {
   const d = new Date(date)
@@ -40,5 +44,5 @@ export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
 
 // 15 Sep, 10:23:20
 export const dateFullFormat = (date: string) => {
-  return format(new Date(date), 'dd MMM, hh:mm:ss')
+  return formatInTimeZone(new Date(date), 'dd MMM, hh:mm:ss:SS', 'UTC')
 }

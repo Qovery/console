@@ -5,7 +5,6 @@ import {
   DeploymentHistoryApplication,
   Instance,
   Link,
-  Log,
   Status,
 } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
@@ -37,9 +36,5 @@ export interface GitApplicationEntity extends Application {
   default_advanced_settings?: {
     loadingStatus: LoadingStatus
     default_settings?: ApplicationAdvancedSettings
-  }
-  logs?: {
-    LoadingStatus: LoadingStatus
-    items?: Log[]
   }
 }
