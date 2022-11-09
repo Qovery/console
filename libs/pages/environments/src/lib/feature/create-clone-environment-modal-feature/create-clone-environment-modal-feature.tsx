@@ -40,7 +40,6 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
   })
 
   methods.watch((data) => {
-    console.log(data)
     setMustConfirmClickOutside(methods.formState.isDirty)
   })
 

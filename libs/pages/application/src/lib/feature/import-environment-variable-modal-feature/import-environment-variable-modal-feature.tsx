@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,6 +15,7 @@ import {
   LoadingStatus,
   SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
+import { ModalContext } from '@qovery/shared/ui'
 import { parseEnvText } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
@@ -37,6 +38,8 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   const [fileParsed, setFileParsed] = useState<{ [key: string]: string } | undefined>(undefined)
   const [keys, setKeys] = useState<string[]>([])
   const [overwriteEnabled, setOverwriteEnabled] = useState<boolean>(false)
+
+  const { setMustConfirmClickOutside } = useContext(ModalContext)
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -73,6 +76,10 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   useEffect(() => {
     methods.trigger()
   }, [fileParsed, methods])
+
+  useEffect(() => {
+    if (fileParsed) setMustConfirmClickOutside(true)
+  }, [fileParsed, setMustConfirmClickOutside])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, handleData),

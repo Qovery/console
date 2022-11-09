@@ -38,11 +38,17 @@ export const Modal = (props: ModalProps) => {
     useContext(ModalContext)
 
   useEffect(() => {
+    if (!open)
+      // when the modal just open nothing should be dirty in the modal
+      setMustConfirmClickOutside && setMustConfirmClickOutside(false)
+  }, [open, setMustConfirmClickOutside])
+
+  useEffect(() => {
     if (alertModalChoice) {
       setOpen(false)
       setAlertModalChoice && setAlertModalChoice(undefined)
     }
-  }, [alertModalChoice])
+  }, [alertModalChoice, setOpen, setAlertModalChoice])
 
   useEffect(() => {
     if (mustConfirmClickOutside && setAlertModalChoice && alertModalChoice) {
@@ -51,7 +57,14 @@ export const Modal = (props: ModalProps) => {
       setAlertModalChoice(undefined)
       setMustConfirmClickOutside && setMustConfirmClickOutside(false)
     }
-  }, [setModalAlertOpen, setExternalOpen, alertModalChoice, mustConfirmClickOutside, setAlertModalChoice])
+  }, [
+    setModalAlertOpen,
+    setMustConfirmClickOutside,
+    setExternalOpen,
+    alertModalChoice,
+    mustConfirmClickOutside,
+    setAlertModalChoice,
+  ])
 
   return (
     <Dialog.Root

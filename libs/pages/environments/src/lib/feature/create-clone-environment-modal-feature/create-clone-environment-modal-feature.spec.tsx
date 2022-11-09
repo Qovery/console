@@ -77,6 +77,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
           container: document.body,
         })
+      })
+
+      await act(() => {
         selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
       })
 
@@ -120,6 +123,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
           container: document.body,
         })
+      })
+
+      await act(() => {
         selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
       })
 

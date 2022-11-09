@@ -1,10 +1,11 @@
 import { ServicePort } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editApplication, postApplicationActionsRestart } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { ModalContext } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
 
@@ -42,6 +43,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity, 
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
   const [loading, setLoading] = useState(false)
+  const { setMustConfirmClickOutside } = useContext(ModalContext)
 
   const methods = useForm({
     defaultValues: {
@@ -89,6 +91,10 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         console.error(e)
       })
   })
+
+  useEffect(() => {
+    setMustConfirmClickOutside(methods.formState.isDirty)
+  }, [methods.formState, setMustConfirmClickOutside])
 
   return (
     <FormProvider {...methods}>

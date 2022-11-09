@@ -81,5 +81,4 @@ it('should run action with delete props (display modal)', () => {
 
   expect(mockSetOpenModal).toHaveBeenCalled()
   expect(mockSetContentModal).toHaveBeenCalled()
-  expect(mockSetOptionsModal).toHaveBeenCalled()
 })
