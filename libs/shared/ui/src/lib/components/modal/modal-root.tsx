@@ -76,7 +76,9 @@ export const ModalProvider = (props: ModalProviderProps) => {
         mustConfirmClickOutside={mustConfirmClickOutside}
         setExternalOpen={setOpenModal}
         setAlertModalChoice={setAlertModalChoice}
+        alertModalChoice={alertModalChoice}
         width={optionsModal.width}
+        setMustConfirmClickOutside={setMustConfirmClickOutside}
       >
         {contentModal}
       </Modal>

@@ -7,7 +7,7 @@ export interface ModalAlertProps {
 }
 
 export function ModalAlert(props: ModalAlertProps) {
-  const { setModalAlertOpen } = useContext(ModalContext)
+  const { setModalAlertOpen, setAlertModalChoice } = useContext(ModalContext)
   return (
     <Dialog.Root open={props.isOpen} onOpenChange={() => setModalAlertOpen(!props.isOpen)}>
       <Dialog.Portal>
@@ -18,6 +18,23 @@ export function ModalAlert(props: ModalAlertProps) {
         >
           <div className="max-h-[80vh] overflow-auto">
             <h1>Are you sure you want to delete bro?</h1>
+
+            <button
+              onClick={() => {
+                setAlertModalChoice(true)
+                setModalAlertOpen(!props.isOpen)
+              }}
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => {
+                setAlertModalChoice(false)
+                setModalAlertOpen(!props.isOpen)
+              }}
+            >
+              No
+            </button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

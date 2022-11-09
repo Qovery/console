@@ -14,7 +14,8 @@ export interface ModalProps {
   setExternalOpen?: (e: boolean) => void
   mustConfirmClickOutside?: boolean
   alertModalChoice?: boolean | undefined
-  setAlertModalChoice: (e: boolean | undefined) => void
+  setAlertModalChoice?: (e: boolean | undefined) => void
+  setMustConfirmClickOutside?: (e: boolean) => void
 }
 
 export interface ModalContentProps {
@@ -34,18 +35,28 @@ export const Modal = (props: ModalProps) => {
     mustConfirmClickOutside = false,
     alertModalChoice = undefined,
     setAlertModalChoice,
+    setMustConfirmClickOutside,
   } = props
 
   const [open, setOpen] = useState(defaultOpen)
   const { setModalAlertOpen } = useModalAlert()
 
   useEffect(() => {
-    if (mustConfirmClickOutside && alertModalChoice) {
+    console.log(alertModalChoice)
+    if (alertModalChoice) {
+      setOpen(false)
+      setAlertModalChoice && setAlertModalChoice(undefined)
+    }
+  }, [alertModalChoice])
+
+  useEffect(() => {
+    if (mustConfirmClickOutside && setAlertModalChoice && alertModalChoice) {
       setExternalOpen ? setExternalOpen(false) : setOpen(false)
       setModalAlertOpen(false)
       setAlertModalChoice(undefined)
+      setMustConfirmClickOutside && setMustConfirmClickOutside(false)
     }
-  }, [alertModalChoice, mustConfirmClickOutside, setAlertModalChoice])
+  }, [setModalAlertOpen, setExternalOpen, alertModalChoice, mustConfirmClickOutside, setAlertModalChoice])
 
   return (
     <Dialog.Root
