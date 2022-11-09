@@ -1,7 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { ReactElement, ReactNode, cloneElement, useEffect, useState } from 'react'
+import { ReactElement, ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
 import { Icon } from '../icon/icon'
 import useModalAlert from '../modal-alert/use-modal-alert/use-modal-alert'
+import { ModalContext } from './modal-root'
 
 export interface ModalProps {
   children: ReactElement
@@ -12,10 +13,6 @@ export interface ModalProps {
   className?: string
   externalOpen?: boolean
   setExternalOpen?: (e: boolean) => void
-  mustConfirmClickOutside?: boolean
-  alertModalChoice?: boolean | undefined
-  setAlertModalChoice?: (e: boolean | undefined) => void
-  setMustConfirmClickOutside?: (e: boolean) => void
 }
 
 export interface ModalContentProps {
@@ -32,17 +29,15 @@ export const Modal = (props: ModalProps) => {
     buttonClose = true,
     externalOpen = false,
     setExternalOpen,
-    mustConfirmClickOutside = false,
-    alertModalChoice = undefined,
-    setAlertModalChoice,
-    setMustConfirmClickOutside,
   } = props
 
   const [open, setOpen] = useState(defaultOpen)
   const { setModalAlertOpen } = useModalAlert()
 
+  const { setAlertModalChoice, setMustConfirmClickOutside, mustConfirmClickOutside, alertModalChoice } =
+    useContext(ModalContext)
+
   useEffect(() => {
-    console.log(alertModalChoice)
     if (alertModalChoice) {
       setOpen(false)
       setAlertModalChoice && setAlertModalChoice(undefined)
@@ -65,18 +60,21 @@ export const Modal = (props: ModalProps) => {
     >
       {trigger && <div onClick={() => setOpen(!open)}>{trigger}</div>}
       <Dialog.Portal>
-        <Dialog.Overlay className="modal__overlay flex fixed top-0 left-0 bg-element-light-darker-500/20 w-full h-screen z-30" />
-        <Dialog.Content
-          onPointerDownOutside={(event) => {
+        <Dialog.Overlay
+          data-testid={'overlay'}
+          onClick={(event) => {
             if (mustConfirmClickOutside) {
               event.preventDefault()
-              console.log('open alert modal')
-              // todo open alertModal
               setModalAlertOpen(true)
+            } else {
+              setExternalOpen ? setExternalOpen(false) : setOpen(false)
             }
-
-            //setExternalOpen ? setExternalOpen(false) : setOpen(false)
-            console.log('ta clique dehors')
+          }}
+          className="modal__overlay flex fixed top-0 left-0 bg-element-light-darker-500/20 w-full h-screen z-30"
+        />
+        <Dialog.Content
+          onPointerDownOutside={(event) => {
+            event.preventDefault()
           }}
           style={{ width: `${width}px` }}
           className={`modal__content fixed top-[84px] left-1/2 bg-white rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] z-40 ${className}`}
