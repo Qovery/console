@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DeploymentService } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Table, TableRowDeployment } from '@qovery/shared/ui'
 
@@ -8,7 +8,7 @@ export interface PageDeploymentsProps {
   isLoading?: boolean
 }
 
-export function PageDeployments(props: PageDeploymentsProps) {
+export function PageDeploymentsMemo(props: PageDeploymentsProps) {
   const { deployments = [], listHelpfulLinks, isLoading } = props
 
   const [data, setData] = useState<DeploymentService[]>([])
@@ -99,5 +99,21 @@ export function PageDeployments(props: PageDeploymentsProps) {
     </>
   )
 }
+
+export const PageDeployments = React.memo(PageDeploymentsMemo, (prevProps, nextProps) => {
+  // Stringify is necessary to avoid Redux selector behavior
+  return (
+    JSON.stringify(
+      prevProps.deployments?.map((service) => ({
+        id: service.id,
+      }))
+    ) ===
+    JSON.stringify(
+      nextProps.deployments?.map((service) => ({
+        id: service.id,
+      }))
+    )
+  )
+})
 
 export default PageDeployments
