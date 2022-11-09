@@ -1,11 +1,12 @@
 import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React from 'react'
-import { matchPath, useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_GENERAL_URL,
+  APPLICATION_LOGS_URL,
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
@@ -35,8 +36,11 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, applications, databases } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
+  const location = useLocation()
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
-  const matchLogInfraRoute = matchPath(location.pathname || '', INFRA_LOGS_URL(organizationId, clusterId))
+  const matchLogsRoute =
+    location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
+    location.pathname.includes(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId))
 
   const organizationsMenu = [
     {
@@ -65,30 +69,6 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
         : [],
     },
   ]
-
-  // const clustersMenu = [
-  //   {
-  //     title: 'Clusters',
-  //     search: true,
-  //     items: clusters
-  //       ? clusters?.map((cluster: ClusterEntity) => ({
-  //           name: cluster.name,
-  //           link: {
-  //             url: INFRA_LOGS_URL(cluster.id),
-  //           },
-  //           contentLeft: (
-  //             <Icon
-  //               name="icon-solid-check"
-  //               className={`text-sm ${clusterId === cluster.id ? 'text-success-400' : 'text-transparent'}`}
-  //             />
-  //           ),
-  //           contentRight: (
-  //             <>{cluster.cloud_provider && <Icon data-testid="icon" name={`${cluster.cloud_provider}_GRAY`} />}</>
-  //           ),
-  //         }))
-  //       : [],
-  //   },
-  // ]
 
   const projectMenu = [
     {
@@ -181,7 +161,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
           isLast={!organizationId}
           label="Organization"
           data={organizations}
-          menuItems={matchLogInfraRoute ? [] : organizationsMenu}
+          menuItems={organizationsMenu}
           paramId={organizationId}
           link={ORGANIZATION_URL(organizationId)}
           logo={
@@ -199,7 +179,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       )}
       {clusterId && (
         <>
-          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
+          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
           <BreadcrumbItem
             isLast={!projectId}
             label="Cluster"
@@ -212,7 +192,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       )}
       {projectId && (
         <>
-          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
+          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
           <BreadcrumbItem
             isLast={!environmentId}
             label="Project"
@@ -220,13 +200,12 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             menuItems={projectMenu}
             paramId={projectId}
             link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}
-            // link={OVERVIEW_URL(organizationId, projectId)}
           />
         </>
       )}
       {environmentId && (
         <>
-          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
+          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
           <div className="flex items-center">
             {environmentId && (
               <>
@@ -240,7 +219,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
                 />
                 {(applicationId || databaseId) && (
                   <>
-                    <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3">/</div>
+                    <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
                     <div className="flex items-center">
                       <BreadcrumbItem
                         isLast={true}
@@ -262,6 +241,14 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             )}
           </div>
         </>
+      )}
+      {matchLogsRoute && (
+        <div className="flex">
+          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+          <div className="flex items-center text-accent1-300 bg-accent1-800 font-medium text-xs px-2.5 py-1 rounded-[35px] mt-2">
+            LOGS
+          </div>
+        </div>
       )}
     </div>
   )

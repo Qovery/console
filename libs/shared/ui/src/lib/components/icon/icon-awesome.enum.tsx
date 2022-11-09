@@ -86,5 +86,8 @@ export enum IconAwesomeEnum {
   RIGHT_LEFT = 'icon-solid-right-left',
   WALLET = 'icon-solid-wallet',
   PAPER_PLANE = 'icon-solid-paper-plane',
+  SQUARE_PLUS = 'icon-solid-square-plus',
+  SQUARE_MINUS = 'icon-solid-square-minus',
+  PAUSE = 'icon-solid-pause',
   // schema: favicons name
 }

@@ -1,17 +1,26 @@
-import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum } from 'qovery-typescript-axios'
-import React, { MouseEvent, ReactNode, useEffect, useRef } from 'react'
-import { LoadingStatus } from '@qovery/shared/interfaces'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon } from '@qovery/shared/ui'
-import { dateDifferenceMinutes, scrollParentToChild } from '@qovery/shared/utils'
+import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, Log } from 'qovery-typescript-axios'
+import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
+import { IconEnum, RunningStatus } from '@qovery/shared/enums'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
+import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
+
+export interface LayoutLogsDataProps {
+  loadingStatus: LoadingStatus
+  items?: ClusterLogs[] | Log[]
+}
 
 export interface LayoutLogsProps {
   children: ReactNode
-  data?: {
-    loadingStatus: LoadingStatus
-    items?: ClusterLogs[]
-  }
+  data?: LayoutLogsDataProps
+  errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
+  withLogsNavigation?: boolean
+  application?: ApplicationEntity
+  pauseLogs?: boolean
+  setPauseLogs?: (pause: boolean) => void
+  lineNumbers?: boolean
 }
 
 export interface ErrorLogsProps {
@@ -21,8 +30,18 @@ export interface ErrorLogsProps {
   error: ClusterLogsError
 }
 
-export function LayoutLogsMemo(props: LayoutLogsProps) {
-  const { data, tabInformation, children } = props
+export function LayoutLogs(props: LayoutLogsProps) {
+  const {
+    data,
+    application,
+    tabInformation,
+    children,
+    errors,
+    withLogsNavigation,
+    pauseLogs,
+    setPauseLogs,
+    lineNumbers,
+  } = props
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -39,10 +58,10 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
 
   useEffect(() => {
     // auto scroll when we add data
-    forcedScroll && forcedScroll(true)
+    !pauseLogs && forcedScroll && forcedScroll(true)
   }, [data])
 
-  if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded')
+  if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded') {
     return (
       <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
         <img
@@ -55,34 +74,10 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
         </p>
       </div>
     )
-
-  const errors =
-    data.items &&
-    (data.items
-      .map(
-        (currentData: ClusterLogs, index: number) =>
-          currentData.error && {
-            index: index + 1,
-            timeAgo:
-              data.items &&
-              data.items[0].timestamp &&
-              currentData.timestamp &&
-              dateDifferenceMinutes(new Date(currentData.timestamp), new Date(data.items[0].timestamp)),
-            step: currentData.step,
-            error: currentData.error,
-          }
-      )
-      .filter((error) => error) as ErrorLogsProps[])
-
-  const realErrors = errors?.filter(
-    (error: ErrorLogsProps) =>
-      error.step === ClusterLogsStepEnum.DELETE_ERROR ||
-      error.step === ClusterLogsStepEnum.PAUSE_ERROR ||
-      error.step === ClusterLogsStepEnum.CREATE_ERROR
-  )
+  }
 
   const downloadJSON = (event: MouseEvent) => {
-    const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data))
+    const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data.items))
     const target = event.currentTarget
     target.setAttribute('href', 'data:' + file)
     target.setAttribute('download', `data-${Date.now()}.json`)
@@ -98,28 +93,63 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
 
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
-      <div className="absolute z-20 left-0 w-[calc(100%-360px)] flex justify-end items-center h-9 bg-element-light-darker-200 px-5">
-        {realErrors && realErrors.length > 0 && (
+      {withLogsNavigation && (
+        <div className="absolute z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
+          {application && (
+            <div
+              data-testid="nav-application"
+              className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium"
+            >
+              <StatusChip
+                status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+                appendTooltipMessage={
+                  application?.running_status?.state === RunningStatus.ERROR
+                    ? application.running_status.pods[0]?.state_message
+                    : ''
+                }
+                className="mr-2"
+              />
+              {application.name}
+              <Icon name={IconEnum.APPLICATION} width="14" className="ml-2" />
+            </div>
+          )}
+        </div>
+      )}
+      <div
+        className={`absolute z-20 left-0 flex justify-end items-center h-9 bg-element-light-darker-200 px-5 ${
+          tabInformation ? 'w-[calc(100%-360px)]' : 'w-full'
+        } ${withLogsNavigation ? 'top-10' : ''}`}
+      >
+        {errors && errors.length > 0 && (
           <p
             data-testid="error-layout-line"
             onClick={() => scrollToError()}
             className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-text-200 hover:text-text-300 cursor-pointer"
           >
             <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
-            An error occured line {realErrors[realErrors.length - 1]?.index}
+            An error occured line {errors[errors.length - 1]?.index}
             <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
           </p>
         )}
         <div className="flex">
+          {setPauseLogs && (
+            <ButtonIcon
+              className="mr-2"
+              icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
+              size={ButtonSize.TINY}
+              style={ButtonIconStyle.DARK}
+              onClick={() => setPauseLogs(!pauseLogs)}
+            />
+          )}
           <ButtonIcon
-            icon="icon-solid-arrow-up-to-line"
+            icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
             className="mr-px !rounded-tr-none !rounded-br-none"
             size={ButtonSize.TINY}
             style={ButtonIconStyle.DARK}
             onClick={() => forcedScroll()}
           />
           <ButtonIcon
-            icon="icon-solid-arrow-down-to-line"
+            icon={IconAwesomeEnum.ARROW_DOWN_TO_LINE}
             className="mr-2 !rounded-tl-none !rounded-bl-none"
             size={ButtonSize.TINY}
             style={ButtonIconStyle.DARK}
@@ -132,17 +162,18 @@ export function LayoutLogsMemo(props: LayoutLogsProps) {
       </div>
       <div
         ref={refScrollSection}
-        className="overflow-y-auto w-full h-full min-h-[calc(100vh-100px] mt-9 pb-16 before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full"
+        onWheel={(event) => !pauseLogs && setPauseLogs && event.deltaY < 0 && setPauseLogs(true)}
+        className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 ${
+          lineNumbers
+            ? 'before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full'
+            : ''
+        } ${withLogsNavigation ? 'mt-[72px]' : 'mt-[36px]'}`}
       >
         <div className="relative z-10">{children}</div>
       </div>
-      <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={realErrors} />
+      {tabInformation && <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />}
     </div>
   )
 }
 
-export const LayoutLogs = React.memo(LayoutLogsMemo, (prevProps: LayoutLogsProps, nextProps: LayoutLogsProps) => {
-  // stringify is necessary to avoid Redux selector behavior
-  const isEqual = JSON.stringify(prevProps.data?.items) === JSON.stringify(nextProps.data?.items)
-  return isEqual
-})
+export default LayoutLogs

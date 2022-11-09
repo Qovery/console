@@ -16,6 +16,7 @@ export interface TableProps {
 export interface TableHeadProps {
   title: string
   className?: string
+  classNameTitle?: string
   filter?: {
     key: string
     search?: boolean
@@ -48,10 +49,10 @@ export function Table(props: TableProps) {
         className={`grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10 ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
-        {dataHead.map(({ title, className = 'px-4 py-2', filter, sort }, index) => (
+        {dataHead.map(({ title, className = 'px-4 py-2', classNameTitle = 'text-text-600 ', filter, sort }, index) => (
           <div key={index} className={className}>
             {!sort && !filter && (
-              <span data-testid="table-head-title" className="text-text-600 text-xs font-medium">
+              <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>
                 {title}
               </span>
             )}

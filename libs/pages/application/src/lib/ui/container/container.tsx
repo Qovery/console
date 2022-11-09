@@ -1,10 +1,11 @@
 import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { createContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
 import { IconEnum, ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import { APPLICATION_LOGS_URL } from '@qovery/shared/router'
 import {
   Button,
   ButtonIconAction,
@@ -48,6 +49,7 @@ export function Container(props: ContainerProps) {
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
 
   const redeployApplication = () => {
     if (application) {
@@ -79,7 +81,8 @@ export function Container(props: ContainerProps) {
     },
     {
       ...(application &&
-        getServiceType(application) === ServiceTypeEnum.APPLICATION && {
+        (getServiceType(application) === ServiceTypeEnum.APPLICATION ||
+          getServiceType(application) === ServiceTypeEnum.CONTAINER) && {
           iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
           iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
           menusClassName: 'border-r border-r-element-light-lighter-500',
@@ -101,12 +104,7 @@ export function Container(props: ContainerProps) {
                   name: 'Application logs',
                   contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
                   onClick: () =>
-                    window
-                      .open(
-                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${applicationId}/summary?fullscreenLogs=true`,
-                        '_blank'
-                      )
-                      ?.focus(),
+                    navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)),
                 },
               ],
             },
