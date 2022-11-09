@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { ReactElement, ReactNode, cloneElement, useState } from 'react'
+import { ReactElement, ReactNode, cloneElement, useEffect, useState } from 'react'
 import { Icon } from '../icon/icon'
 import useModalAlert from '../modal-alert/use-modal-alert/use-modal-alert'
 
@@ -13,6 +13,8 @@ export interface ModalProps {
   externalOpen?: boolean
   setExternalOpen?: (e: boolean) => void
   mustConfirmClickOutside?: boolean
+  alertModalChoice?: boolean | undefined
+  setAlertModalChoice: (e: boolean | undefined) => void
 }
 
 export interface ModalContentProps {
@@ -30,10 +32,20 @@ export const Modal = (props: ModalProps) => {
     externalOpen = false,
     setExternalOpen,
     mustConfirmClickOutside = false,
+    alertModalChoice = undefined,
+    setAlertModalChoice,
   } = props
 
   const [open, setOpen] = useState(defaultOpen)
   const { setModalAlertOpen } = useModalAlert()
+
+  useEffect(() => {
+    if (mustConfirmClickOutside && alertModalChoice) {
+      setExternalOpen ? setExternalOpen(false) : setOpen(false)
+      setModalAlertOpen(false)
+      setAlertModalChoice(undefined)
+    }
+  }, [alertModalChoice, mustConfirmClickOutside, setAlertModalChoice])
 
   return (
     <Dialog.Root
