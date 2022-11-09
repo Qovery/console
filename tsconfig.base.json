@@ -30,6 +30,7 @@
       "@qovery/pages/layout": ["libs/pages/layout/src/index.ts"],
       "@qovery/pages/login": ["libs/pages/login/src/index.ts"],
       "@qovery/pages/logs/application": ["libs/pages/logs/application/src/index.ts"],
+      "@qovery/pages/logs/deployment": ["libs/pages/logs/deployment/src/index.ts"],
       "@qovery/pages/logs/infra": ["libs/pages/logs/infra/src/index.ts"],
       "@qovery/pages/onboarding": ["libs/pages/onboarding/src/index.ts"],
       "@qovery/pages/overview/feature": ["libs/pages/overview/feature/src/index.ts"],

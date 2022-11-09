@@ -1,14 +1,14 @@
-import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, Log } from 'qovery-typescript-axios'
+import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, EnvironmentLog, Log } from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
 export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
-  items?: ClusterLogs[] | Log[]
+  items?: ClusterLogs[] | Log[] | EnvironmentLog[]
 }
 
 export interface LayoutLogsProps {
@@ -18,6 +18,7 @@ export interface LayoutLogsProps {
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
   application?: ApplicationEntity
+  environment?: EnvironmentEntity
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
@@ -34,6 +35,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
   const {
     data,
     application,
+    environment,
     tabInformation,
     children,
     errors,
@@ -111,6 +113,18 @@ export function LayoutLogs(props: LayoutLogsProps) {
               />
               {application.name}
               <Icon name={IconEnum.APPLICATION} width="14" className="ml-2" />
+            </div>
+          )}
+          {environment && (
+            <div
+              data-testid="nav-environment"
+              className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium"
+            >
+              <StatusChip
+                status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
+                className="mr-2"
+              />
+              Deployment logs
             </div>
           )}
         </div>

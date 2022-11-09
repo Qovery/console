@@ -10,6 +10,7 @@ import {
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
+  DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
@@ -40,7 +41,8 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
   const matchLogsRoute =
     location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
-    location.pathname.includes(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId))
+    location.pathname.includes(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)) ||
+    location.pathname.includes(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId))
 
   const organizationsMenu = [
     {
