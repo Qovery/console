@@ -20,6 +20,7 @@ import {
   Tag,
   TagCommit,
   Tooltip,
+  useModal,
 } from '@qovery/shared/ui'
 import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@qovery/shared/utils'
 
@@ -50,6 +51,7 @@ export function TableRowServices(props: TableRowServicesProps) {
 
   const { organizationId, projectId, environmentId } = useParams()
   const navigate = useNavigate()
+  const { openModal } = useModal()
 
   const buttonActionsDefault = [
     {
@@ -84,6 +86,12 @@ export function TableRowServices(props: TableRowServicesProps) {
                       link: {
                         url: urlCodeEditor((data as GitApplicationEntity).git_repository) || '',
                         external: true,
+                      },
+                    },
+                    {
+                      name: 'Deploy other version ',
+                      onClick: () => {
+                        openModal({ content: <p>{data.id}</p> })
                       },
                     },
                     {
