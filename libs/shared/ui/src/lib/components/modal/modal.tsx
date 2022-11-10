@@ -34,14 +34,13 @@ export const Modal = (props: ModalProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const { setModalAlertOpen } = useModalAlert()
 
-  const { setAlertModalChoice, setMustConfirmClickOutside, mustConfirmClickOutside, alertModalChoice } =
-    useContext(ModalContext)
+  const { setAlertModalChoice, enableAlertClickOutside, alertClickOutside, alertModalChoice } = useContext(ModalContext)
 
   useEffect(() => {
     if (!open)
       // when the modal just open nothing should be dirty in the modal
-      setMustConfirmClickOutside && setMustConfirmClickOutside(false)
-  }, [open, setMustConfirmClickOutside])
+      enableAlertClickOutside && enableAlertClickOutside(false)
+  }, [open, enableAlertClickOutside])
 
   useEffect(() => {
     if (alertModalChoice) {
@@ -51,18 +50,18 @@ export const Modal = (props: ModalProps) => {
   }, [alertModalChoice, setOpen, setAlertModalChoice])
 
   useEffect(() => {
-    if (mustConfirmClickOutside && setAlertModalChoice && alertModalChoice) {
+    if (alertClickOutside && setAlertModalChoice && alertModalChoice) {
       setExternalOpen ? setExternalOpen(false) : setOpen(false)
       setModalAlertOpen(false)
       setAlertModalChoice(undefined)
-      setMustConfirmClickOutside && setMustConfirmClickOutside(false)
+      enableAlertClickOutside && enableAlertClickOutside(false)
     }
   }, [
     setModalAlertOpen,
-    setMustConfirmClickOutside,
+    enableAlertClickOutside,
     setExternalOpen,
     alertModalChoice,
-    mustConfirmClickOutside,
+    alertClickOutside,
     setAlertModalChoice,
   ])
 
@@ -76,7 +75,7 @@ export const Modal = (props: ModalProps) => {
         <Dialog.Overlay
           data-testid={'overlay'}
           onClick={(event) => {
-            if (mustConfirmClickOutside) {
+            if (alertClickOutside) {
               event.preventDefault()
               setModalAlertOpen(true)
             } else {

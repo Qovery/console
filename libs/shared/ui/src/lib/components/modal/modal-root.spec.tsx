@@ -15,12 +15,11 @@ import ModalRoot, { ModalContext } from './modal-root'
 import useModal from './use-modal/use-modal'
 
 function Content(props: { shouldConfirm?: boolean }) {
-  const { openModal } = useModal()
-  const { setMustConfirmClickOutside } = useContext(ModalContext)
+  const { openModal, enableAlertClickOutside } = useModal()
 
   useEffect(() => {
-    setMustConfirmClickOutside(props.shouldConfirm || false)
-  }, [setMustConfirmClickOutside])
+    enableAlertClickOutside(props.shouldConfirm || false)
+  }, [enableAlertClickOutside])
 
   return (
     <div>

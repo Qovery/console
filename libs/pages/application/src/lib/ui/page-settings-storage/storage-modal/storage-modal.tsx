@@ -12,11 +12,11 @@ export interface StorageModalProps {
 
 export function StorageModal(props: StorageModalProps) {
   const { control, formState } = useFormContext()
-  const { setMustConfirmClickOutside } = useModal()
+  const { enableAlertClickOutside } = useModal()
 
   useEffect(() => {
-    setMustConfirmClickOutside(formState.isDirty)
-  }, [setMustConfirmClickOutside, formState])
+    enableAlertClickOutside(formState.isDirty)
+  }, [enableAlertClickOutside, formState])
 
   return (
     <ModalCrud

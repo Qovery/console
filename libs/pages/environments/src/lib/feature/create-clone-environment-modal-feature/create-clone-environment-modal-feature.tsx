@@ -24,7 +24,7 @@ export interface CreateCloneEnvironmentModalFeatureProps {
 export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironmentModalFeatureProps) {
   const [loading, setLoading] = useState(false)
 
-  const { setMustConfirmClickOutside } = useModal()
+  const { enableAlertClickOutside } = useModal()
 
   const clusters = useSelector<RootState, ClusterEntity[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, props.organizationId)
@@ -40,7 +40,7 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
   })
 
   methods.watch((data) => {
-    setMustConfirmClickOutside(methods.formState.isDirty)
+    enableAlertClickOutside(methods.formState.isDirty)
   })
 
   const dispatch = useDispatch<AppDispatch>()

@@ -12,8 +12,8 @@ interface DefaultContextProps {
   setContentModal: any
   setOptionsModal: (optionsModal: ModalOptions) => void
   optionsModal: ModalOptions
-  mustConfirmClickOutside: boolean
-  setMustConfirmClickOutside: (mustConfirm: boolean) => void
+  alertClickOutside: boolean
+  enableAlertClickOutside: (mustConfirm: boolean) => void
 
   modalAlertOpen: boolean
   setModalAlertOpen: (alertModalOpen: boolean) => void
@@ -30,8 +30,8 @@ const defaultContext = {
   optionsModal: {
     width: 488,
   },
-  mustConfirmClickOutside: false,
-  setMustConfirmClickOutside: () => {},
+  alertClickOutside: false,
+  enableAlertClickOutside: () => {},
   modalAlertOpen: false,
   setModalAlertOpen: () => {},
 
@@ -51,7 +51,7 @@ export const ModalProvider = (props: ModalProviderProps) => {
   const [optionsModal, setOptionsModal] = useState({
     width: 488,
   })
-  const [mustConfirmClickOutside, setMustConfirmClickOutside] = useState(false)
+  const [alertClickOutside, enableAlertClickOutside] = useState(false)
   const [modalAlertOpen, setModalAlertOpen] = useState(false)
   const [alertModalChoice, setAlertModalChoice] = useState<boolean | undefined>(undefined)
 
@@ -63,8 +63,8 @@ export const ModalProvider = (props: ModalProviderProps) => {
         setContentModal,
         setOptionsModal,
         optionsModal,
-        mustConfirmClickOutside,
-        setMustConfirmClickOutside,
+        alertClickOutside,
+        enableAlertClickOutside,
         setModalAlertOpen,
         modalAlertOpen,
         alertModalChoice,

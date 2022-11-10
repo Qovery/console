@@ -1,11 +1,11 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { getEnvironmentVariablesState } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
-import { ModalContext } from '@qovery/shared/ui'
+import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
@@ -48,7 +48,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   )
   const [closing, setClosing] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { setMustConfirmClickOutside } = useContext(ModalContext)
+  const { enableAlertClickOutside } = useModal()
 
   useEffect(() => {
     if (closing && !errorEnvironmentVariable) props.closeModal()
@@ -72,8 +72,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   )
 
   useEffect(() => {
-    setMustConfirmClickOutside(methods.formState.isDirty)
-  }, [methods.formState, setMustConfirmClickOutside])
+    enableAlertClickOutside(methods.formState.isDirty)
+  }, [methods.formState, enableAlertClickOutside])
 
   const computeTitle = (): string => {
     if (mode === EnvironmentVariableCrudMode.CREATION && type === EnvironmentVariableType.NORMAL) {

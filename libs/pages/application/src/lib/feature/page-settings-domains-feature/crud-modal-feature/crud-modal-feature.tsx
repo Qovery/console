@@ -1,5 +1,5 @@
 import { CustomDomain } from 'qovery-typescript-axios'
-import { useContext, useEffect } from 'react'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -10,7 +10,7 @@ import {
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { ModalContext } from '@qovery/shared/ui'
+import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
@@ -27,7 +27,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   })
   const dispatch = useDispatch<AppDispatch>()
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => getCustomDomainsState(state).loadingStatus)
-  const { setMustConfirmClickOutside } = useContext(ModalContext)
+  const { enableAlertClickOutside } = useModal()
 
   const toasterCallback = () => {
     if (props.application) {
@@ -42,8 +42,8 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   }
 
   useEffect(() => {
-    setMustConfirmClickOutside(methods.formState.isDirty)
-  }, [methods.formState, setMustConfirmClickOutside])
+    enableAlertClickOutside(methods.formState.isDirty)
+  }, [methods.formState, enableAlertClickOutside])
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!props.application) return

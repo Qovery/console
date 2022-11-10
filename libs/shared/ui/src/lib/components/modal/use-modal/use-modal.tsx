@@ -10,7 +10,7 @@ export interface UseModalProps {
 
 export function useModal() {
   const [modal, openModal] = useState<UseModalProps>()
-  const { setOpenModal, setContentModal, setOptionsModal, setMustConfirmClickOutside } = useContext(ModalContext)
+  const { setOpenModal, setContentModal, setOptionsModal, enableAlertClickOutside } = useContext(ModalContext)
 
   useEffect(() => {
     if (modal) {
@@ -20,7 +20,7 @@ export function useModal() {
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 
-  return { openModal, closeModal: () => setOpenModal(false), setMustConfirmClickOutside }
+  return { openModal, closeModal: () => setOpenModal(false), enableAlertClickOutside }
 }
 
 export default useModal
