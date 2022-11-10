@@ -95,12 +95,7 @@ export function TableRowServices(props: TableRowServicesProps) {
                       contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
                       onClick: () => {
                         openModal({
-                          content: (
-                            <DeployOtherCommitModalFeature
-                              applicationId={data.id}
-                              environmentId={environmentId || ''}
-                            />
-                          ),
+                          content: <DeployOtherCommitModalFeature applicationId={data.id} />,
                           options: { width: 596 },
                         })
                       },
