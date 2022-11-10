@@ -185,6 +185,7 @@ export function TableRowServices(props: TableRowServicesProps) {
                     name: data.name,
                     mode: environmentMode,
                   }}
+                  isService
                 />
               )}
             </div>

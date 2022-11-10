@@ -20,6 +20,7 @@ export interface ButtonIconActionElementProps {
   }
   statusInformation?: StatusMenuInformation
   triggerClassName?: string
+  isService?: boolean
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
@@ -33,6 +34,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
     statusActions,
     statusInformation,
     menuAlign = MenuAlign.START,
+    isService = false,
   } = props
 
   const [open, setOpen] = useState(false)
@@ -75,6 +77,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
             {iconRight}
           </div>
         }
+        isService={isService}
       />
     )
   } else {

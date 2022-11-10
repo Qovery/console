@@ -19,6 +19,7 @@ export interface StatusMenuActionProps {
   paddingMenuY?: number
   paddingMenuX?: number
   setOpen?: (isOpen: boolean) => void
+  isService?: boolean
 }
 
 export type StatusMenuActionItem = {
@@ -49,6 +50,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
     direction = MenuDirection.BOTTOM,
     arrowAlign = MenuAlign.START,
     setOpen,
+    isService,
   } = props
   const [topMenu, setTopMenu] = useState<StatusMenuActionItem[]>([])
   const [bottomMenu, setBottomMenu] = useState<StatusMenuActionItem[]>([])
@@ -124,7 +126,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
       if (isStopAvailable(statusActions.status)) {
         setTopMenu((topMenu) => [...topMenu, stopButton])
       }
-      if (isCancelBuildAvailable(statusActions.status)) {
+      if (!isService && isCancelBuildAvailable(statusActions.status)) {
         setBottomMenu((bottomMenu) => [...bottomMenu, cancelBuildButton])
       }
     }
