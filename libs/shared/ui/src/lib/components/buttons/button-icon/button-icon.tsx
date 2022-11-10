@@ -56,7 +56,7 @@ export function ButtonIcon(props: ButtonIconProps) {
             {notification && (
               <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
             )}
-            <Icon name={icon} className={iconClassName}></Icon>
+            <Icon name={icon} className={iconClassName} />
           </button>
         )}
 
@@ -65,7 +65,7 @@ export function ButtonIcon(props: ButtonIconProps) {
             {notification && (
               <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
             )}
-            <Icon name={icon} className={iconClassName}></Icon>
+            <Icon name={icon} className={iconClassName} />
           </Link>
         )}
 
@@ -81,7 +81,7 @@ export function ButtonIcon(props: ButtonIconProps) {
             {notification && (
               <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
             )}
-            <Icon name={icon} className={iconClassName}></Icon>
+            <Icon name={icon} className={iconClassName} />
           </a>
         )}
       </>

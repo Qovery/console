@@ -1,5 +1,5 @@
 import { Log } from 'qovery-typescript-axios'
-import { CopyToClipboard, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { CopyToClipboard, Icon, IconAwesomeEnum, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 const COLORS = [
@@ -49,7 +49,11 @@ export function Row(props: RowProps) {
         className="py-1 px-4 text-element-light-lighter-800 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-1.5 after:bg-element-light-darker-100 after:w-[1px] after:h-3"
         style={{ color: getColorByPod(data.pod_name) }}
       >
-        {data.pod_name?.substring(0, 10)}...{data.pod_name?.slice(-10)}
+        <Tooltip content={data.pod_name || ''}>
+          <span>
+            {data.pod_name?.substring(0, 10)}...{data.pod_name?.slice(-10)}
+          </span>
+        </Tooltip>
       </div>
       <div data-testid="cell-version" className="flex whitespace-nowrap py-1 pl-4 text-text-100 min-w-[78px]">
         {data.version && (

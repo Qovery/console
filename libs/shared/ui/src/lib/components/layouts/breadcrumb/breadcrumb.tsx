@@ -19,7 +19,10 @@ import {
   SERVICES_GENERAL_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
+import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
+import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
 import StatusChip from '../../status-chip/status-chip'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
@@ -39,10 +42,18 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
 
   const location = useLocation()
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
+
+  const locationIsApplicationLogs = location.pathname.includes(
+    APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)
+  )
+  const locationIsDeploymentLogs = location.pathname.includes(
+    DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)
+  )
+
   const matchLogsRoute =
     location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
-    location.pathname.includes(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)) ||
-    location.pathname.includes(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId))
+    locationIsApplicationLogs ||
+    locationIsDeploymentLogs
 
   const organizationsMenu = [
     {
@@ -157,99 +168,121 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   if (organizations?.length === 0) return <div />
 
   return (
-    <div className="flex h-full items-center">
-      {organizationId && (
-        <BreadcrumbItem
-          isLast={!organizationId}
-          label="Organization"
-          data={organizations}
-          menuItems={organizationsMenu}
-          paramId={organizationId}
-          link={ORGANIZATION_URL(organizationId)}
-          logo={
-            currentOrganization?.logo_url ? (
-              <img
-                src={currentOrganization?.logo_url}
-                className="h-4"
-                alt={`${currentOrganization?.name} organization`}
-              />
-            ) : (
-              squareContent(currentOrganization?.name.charAt(0), '')
-            )
-          }
-        />
-      )}
-      {clusterId && (
-        <>
-          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+    <div className="flex justify-between w-full">
+      <div className="flex h-full items-center">
+        {organizationId && (
           <BreadcrumbItem
-            isLast={!projectId}
-            label="Cluster"
-            data={clusters}
-            menuItems={[]}
-            paramId={clusterId}
-            link={INFRA_LOGS_URL(organizationId, clusterId)}
-          />
-        </>
-      )}
-      {projectId && (
-        <>
-          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
-          <BreadcrumbItem
-            isLast={!environmentId}
-            label="Project"
-            data={projects}
-            menuItems={projectMenu}
-            paramId={projectId}
-            link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}
-          />
-        </>
-      )}
-      {environmentId && (
-        <>
-          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
-          <div className="flex items-center">
-            {environmentId && (
-              <>
-                <BreadcrumbItem
-                  isLast={!(applicationId || databaseId)}
-                  label="Environment"
-                  data={environments}
-                  menuItems={environmentMenu}
-                  paramId={environmentId}
-                  link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
+            isLast={!organizationId}
+            label="Organization"
+            data={organizations}
+            menuItems={organizationsMenu}
+            paramId={organizationId}
+            link={ORGANIZATION_URL(organizationId)}
+            logo={
+              currentOrganization?.logo_url ? (
+                <img
+                  src={currentOrganization?.logo_url}
+                  className="h-4"
+                  alt={`${currentOrganization?.name} organization`}
                 />
-                {(applicationId || databaseId) && (
-                  <>
-                    <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
-                    <div className="flex items-center">
-                      <BreadcrumbItem
-                        isLast={true}
-                        label="Service"
-                        data={mergedServices}
-                        menuItems={applicationMenu}
-                        paramId={applicationId || databaseId || ''}
-                        link={
-                          applicationId
-                            ? APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
-                              APPLICATION_GENERAL_URL
-                            : DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL
-                        }
-                      />
-                    </div>
-                  </>
-                )}
-              </>
-            )}
+              ) : (
+                squareContent(currentOrganization?.name.charAt(0), '')
+              )
+            }
+          />
+        )}
+        {clusterId && (
+          <>
+            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+            <BreadcrumbItem
+              isLast={!projectId}
+              label="Cluster"
+              data={clusters}
+              menuItems={[]}
+              paramId={clusterId}
+              link={INFRA_LOGS_URL(organizationId, clusterId)}
+            />
+          </>
+        )}
+        {projectId && (
+          <>
+            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+            <BreadcrumbItem
+              isLast={!environmentId}
+              label="Project"
+              data={projects}
+              menuItems={projectMenu}
+              paramId={projectId}
+              link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}
+            />
+          </>
+        )}
+        {environmentId && (
+          <>
+            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+            <div className="flex items-center">
+              {environmentId && (
+                <>
+                  <BreadcrumbItem
+                    isLast={!(applicationId || databaseId)}
+                    label="Environment"
+                    data={environments}
+                    menuItems={environmentMenu}
+                    paramId={environmentId}
+                    link={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL}
+                  />
+                  {(applicationId || databaseId) && (
+                    <>
+                      <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+                      <div className="flex items-center">
+                        <BreadcrumbItem
+                          isLast={true}
+                          label="Service"
+                          data={mergedServices}
+                          menuItems={applicationMenu}
+                          paramId={applicationId || databaseId || ''}
+                          link={
+                            applicationId
+                              ? APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+                                APPLICATION_GENERAL_URL
+                              : DATABASE_URL(organizationId, projectId, environmentId, databaseId) +
+                                DATABASE_GENERAL_URL
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </>
+        )}
+        {matchLogsRoute && (
+          <div className="flex">
+            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
+            <div className="flex items-center text-accent1-300 bg-accent1-800 font-medium text-xs px-2.5 py-1 rounded-[35px] mt-2">
+              LOGS
+            </div>
           </div>
-        </>
-      )}
-      {matchLogsRoute && (
-        <div className="flex">
-          <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
-          <div className="flex items-center text-accent1-300 bg-accent1-800 font-medium text-xs px-2.5 py-1 rounded-[35px] mt-2">
-            LOGS
-          </div>
+        )}
+      </div>
+      {(locationIsApplicationLogs || locationIsDeploymentLogs) && (
+        <div className="ml-auto">
+          <ButtonIcon
+            icon={IconAwesomeEnum.CROSS}
+            style={ButtonIconStyle.STROKED}
+            size={ButtonSize.LARGE}
+            link={
+              locationIsApplicationLogs
+                ? `${APPLICATION_URL(
+                    organizationId,
+                    projectId,
+                    environmentId,
+                    applicationId
+                  )}${APPLICATION_GENERAL_URL}`
+                : SERVICES_URL(organizationId, projectId, environmentId)
+            }
+          />
         </div>
       )}
     </div>
