@@ -1,7 +1,10 @@
 import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, EnvironmentLog, Log } from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
 import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
@@ -46,6 +49,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
   } = props
 
   const refScrollSection = useRef<HTMLDivElement>(null)
+
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
   const forcedScroll = (down?: boolean) => {
     const section = refScrollSection.current
@@ -116,16 +121,21 @@ export function LayoutLogs(props: LayoutLogsProps) {
             </div>
           )}
           {environment && (
-            <div
+            <Link
               data-testid="nav-environment"
-              className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium"
+              className={`flex items-center h-full px-4 text-sm font-medium text-text-100 transition-colors transition-timing duration-250 hover:bg-element-light-darker-400 ${
+                application
+                  ? 'bg-element-light-darker-500 border-r border-element-light-darker-400'
+                  : 'bg-element-light-darker-200'
+              }`}
+              to={DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)}
             >
               <StatusChip
                 status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
                 className="mr-2"
               />
               Deployment logs
-            </div>
+            </Link>
           )}
         </div>
       )}

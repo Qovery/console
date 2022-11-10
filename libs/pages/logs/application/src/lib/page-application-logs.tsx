@@ -87,6 +87,7 @@ export function PageApplicationLogs() {
         loadingStatus: loading,
       }}
       application={application}
+      environment={environment}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
       withLogsNavigation

@@ -104,8 +104,9 @@
       @apply text-base;
     }
   }
-  &.btn.is-active {
-    @apply bg-element-light-lighter-400 text-brand-500;
+  &.btn.is-active,
+  &:hover {
+    @apply bg-element-light-lighter-400 text-brand-500 dark:bg-element-light-darker-200;
   }
 
   &.btn-icon--small {

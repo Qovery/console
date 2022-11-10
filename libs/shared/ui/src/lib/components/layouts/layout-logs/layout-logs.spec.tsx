@@ -137,7 +137,6 @@ describe('LayoutLogs', () => {
     render(<LayoutLogs {...props} />)
 
     const navEnvironment = screen.getByTestId('nav-environment')
-
-    expect(navEnvironment.textContent).toBe(props.environment.name)
+    expect(navEnvironment)
   })
 })
