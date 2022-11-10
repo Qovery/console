@@ -1,7 +1,7 @@
 import { StorageTypeEnum } from 'qovery-typescript-axios'
-import { FormEventHandler } from 'react'
+import { FormEventHandler, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 
 export interface StorageModalProps {
   onClose: () => void
@@ -11,7 +11,12 @@ export interface StorageModalProps {
 }
 
 export function StorageModal(props: StorageModalProps) {
-  const { control } = useFormContext()
+  const { control, formState } = useFormContext()
+  const { enableAlertClickOutside } = useModal()
+
+  useEffect(() => {
+    enableAlertClickOutside(formState.isDirty)
+  }, [enableAlertClickOutside, formState])
 
   return (
     <ModalCrud

@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { cloneEnvironment, createEnvironment } from '@qovery/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import CreateCloneEnvironmentModal from '../../ui/create-clone-environment-modal/create-clone-environment-modal'
 
@@ -23,6 +24,8 @@ export interface CreateCloneEnvironmentModalFeatureProps {
 export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironmentModalFeatureProps) {
   const [loading, setLoading] = useState(false)
 
+  const { enableAlertClickOutside } = useModal()
+
   const clusters = useSelector<RootState, ClusterEntity[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, props.organizationId)
   )
@@ -34,6 +37,10 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
       cluster: 'automatic',
       mode: 'automatic',
     },
+  })
+
+  methods.watch((data) => {
+    enableAlertClickOutside(methods.formState.isDirty)
   })
 
   const dispatch = useDispatch<AppDispatch>()

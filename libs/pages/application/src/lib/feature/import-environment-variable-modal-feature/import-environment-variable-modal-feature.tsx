@@ -15,6 +15,7 @@ import {
   LoadingStatus,
   SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
+import { useModal } from '@qovery/shared/ui'
 import { parseEnvText } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
@@ -37,6 +38,8 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   const [fileParsed, setFileParsed] = useState<{ [key: string]: string } | undefined>(undefined)
   const [keys, setKeys] = useState<string[]>([])
   const [overwriteEnabled, setOverwriteEnabled] = useState<boolean>(false)
+
+  const { enableAlertClickOutside } = useModal()
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -73,6 +76,10 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   useEffect(() => {
     methods.trigger()
   }, [fileParsed, methods])
+
+  useEffect(() => {
+    if (fileParsed) enableAlertClickOutside(true)
+  }, [fileParsed, enableAlertClickOutside])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => onDrop(acceptedFiles, handleData),

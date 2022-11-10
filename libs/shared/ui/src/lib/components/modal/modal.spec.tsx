@@ -1,7 +1,7 @@
+import { fireEvent, getByTestId, screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { screen, fireEvent } from '@testing-library/react'
-import Modal, { ModalProps } from './modal'
 import Button from '../buttons/button/button'
+import Modal, { ModalProps } from './modal'
 
 describe('Modal', () => {
   let props: ModalProps
@@ -24,7 +24,6 @@ describe('Modal', () => {
     fireEvent.click(trigger)
 
     const modal = screen.getByRole('dialog')
-
     expect(modal).toBeTruthy()
   })
 

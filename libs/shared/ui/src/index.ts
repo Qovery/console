@@ -1,3 +1,5 @@
+export * from './lib/components/modal-alert/use-modal-alert/use-modal-alert'
+export * from './lib/components/modal-alert/modal-alert'
 export * from './lib/components/layouts/breadcrumb-item/breadcrumb-item-value/breadcrumb-item-value'
 export * from './lib/components/inputs/input-checkbox/input-checkbox'
 export * from './lib/components/funnel-flow-help-card/funnel-flow-help-card'
