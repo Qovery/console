@@ -11,6 +11,7 @@ import { APPLICATION_LOGS_URL } from '@qovery/shared/router'
 import {
   ButtonIconAction,
   Icon,
+  IconAwesomeEnum,
   Skeleton,
   StatusChip,
   StatusLabel,
@@ -23,6 +24,7 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@qovery/shared/utils'
+import DeployOtherCommitModalFeature from '../../../../../../shared/console-shared/src/lib/deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
@@ -90,8 +92,12 @@ export function TableRowServices(props: TableRowServicesProps) {
                     },
                     {
                       name: 'Deploy other version ',
+                      contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
                       onClick: () => {
-                        openModal({ content: <p>{data.id}</p> })
+                        openModal({
+                          content: <DeployOtherCommitModalFeature applicationId={data.id} />,
+                          options: { width: 596 },
+                        })
                       },
                     },
                     {

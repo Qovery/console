@@ -707,3 +707,26 @@ export const getCountNewCommitsToDeploy = (applicationId: string) =>
       return delta
     }
   )
+
+export const getCommitsGroupedByDate = createSelector(
+  [getApplicationsState, (state, applicationId: string) => applicationId],
+  (state, applicationId) => {
+    const application = state.entities[applicationId] as GitApplicationEntity
+
+    if (!application || !application.commits) return {}
+
+    const commits: Commit[] | undefined = application.commits.items
+    if (!commits) return {}
+
+    const commitsByDate = commits.reduce((acc: Record<string, Commit[]>, obj) => {
+      const key = new Date(obj['created_at']).toDateString()
+      if (!acc[key]) {
+        acc[key] = []
+      }
+      acc[key].push(obj)
+      return acc
+    }, {})
+
+    return commitsByDate
+  }
+)
