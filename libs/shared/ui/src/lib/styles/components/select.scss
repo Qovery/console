@@ -13,10 +13,12 @@
 }
 
 .input-select__value-container {
-  overflow: visible !important;
+  overflow: scroll !important;
   padding: 0 !important;
   cursor: pointer;
   display: flex !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap;
   @apply mt-2 top-1;
 }
 
@@ -74,7 +76,7 @@
   }
 
   .input-select__checkbox {
-    @apply bg-white border-2 border-element-light-lighter-700 rounded-sm w-4 h-4 flex items-center justify-center;
+    @apply bg-white border-2 border-element-light-lighter-700 rounded-sm w-4 h-4 flex items-center justify-center shrink-0;
   }
 
   &:hover {

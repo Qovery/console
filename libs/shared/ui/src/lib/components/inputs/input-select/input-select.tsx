@@ -12,6 +12,7 @@ import Select, {
 import { Value } from '@qovery/shared/interfaces'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import Tooltip from '../../tooltip/tooltip'
 
 export interface InputSelectProps {
   className?: string
@@ -102,8 +103,9 @@ export function InputSelect(props: InputSelectProps) {
       ) : (
         <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
       )}
-
-      <label className="ml-2">{props.label}</label>
+      <Tooltip content={props.label}>
+        <label className="ml-2 truncate">{props.label}</label>
+      </Tooltip>
     </components.Option>
   )
 
