@@ -59,7 +59,7 @@ export function Row(props: RowProps) {
         {step}
       </div>
       <div data-testid="cell-msg" className={`py-1 pr-6 w-full font-code relative ${colorsCellClassName(true)}`}>
-        <span className="whitespace-pre-wrap break-all">
+        <span className="whitespace-pre-wrap">
           {type === LogsType.ERROR ? data.error?.user_log_message : data.message?.safe_message}
         </span>
         <CopyToClipboard
