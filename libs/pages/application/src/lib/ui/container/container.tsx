@@ -13,6 +13,7 @@ import {
   ButtonStyle,
   Header,
   Icon,
+  IconAwesomeEnum,
   Menu,
   MenuData,
   MenuItemProps,
@@ -21,9 +22,11 @@ import {
   Tag,
   TagMode,
   TagSize,
+  useModal,
 } from '@qovery/shared/ui'
 import { copyToClipboard, urlCodeEditor } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
+import DeployOtherCommitModalFeature from '../../../../../../shared/console-shared/src/lib/deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
@@ -50,6 +53,8 @@ export function Container(props: ContainerProps) {
 
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
+
+  const { openModal } = useModal()
 
   const redeployApplication = () => {
     if (application) {
@@ -131,6 +136,21 @@ export function Container(props: ContainerProps) {
                       name: 'Copy identifiers',
                       contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
                       onClick: () => copyToClipboard(copyContent),
+                    },
+                    {
+                      name: 'Deploy other version',
+                      contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+                      onClick: () => {
+                        openModal({
+                          content: (
+                            <DeployOtherCommitModalFeature
+                              applicationId={application.id}
+                              environmentId={environmentId || ''}
+                            />
+                          ),
+                          options: { width: 596 },
+                        })
+                      },
                     },
                     {
                       name: 'Remove',
