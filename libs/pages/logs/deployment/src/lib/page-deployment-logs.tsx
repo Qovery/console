@@ -1,4 +1,4 @@
-import { Environment, EnvironmentLog } from 'qovery-typescript-axios'
+import { Environment, EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -20,8 +20,8 @@ export function PageDeploymentLogs() {
 
   useDocumentTitle(`Deployment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
-  const [logs, setLogs] = useState<EnvironmentLog[]>([])
-  const [pauseLogs, setPauseLogs] = useState<EnvironmentLog[]>([])
+  const [logs, setLogs] = useState<EnvironmentLogs[]>([])
+  const [pauseLogs, setPauseLogs] = useState<EnvironmentLogs[]>([])
   const [pauseStatusLogs, setPauseStatusLogs] = useState(false)
 
   const [loading, setLoading] = useState<LoadingStatus>('not loaded')
@@ -42,9 +42,9 @@ export function PageDeploymentLogs() {
       setLoading('loaded')
 
       if (pauseStatusLogs) {
-        setPauseLogs((prev: EnvironmentLog[]) => [...prev, ...JSON.parse(message?.data)])
+        setPauseLogs((prev: EnvironmentLogs[]) => [...prev, ...JSON.parse(message?.data)])
       } else {
-        setLogs((prev: EnvironmentLog[]) => [...prev, ...pauseLogs, ...JSON.parse(message?.data)])
+        setLogs((prev: EnvironmentLogs[]) => [...prev, ...pauseLogs, ...JSON.parse(message?.data)])
         setPauseLogs([])
       }
     },
@@ -52,29 +52,37 @@ export function PageDeploymentLogs() {
 
   const tableHead = [
     {
+      title: '',
+    },
+    {
       title: 'Time',
-      className: 'pl-12 pr-4 w-[185px]',
+      className: 'pl-2 pr-4',
       classNameTitle: 'text-text-300',
     },
     {
       title: 'Scope',
-      className: 'px-4 py-2 h-full text-text-300 w-[160px]',
+      className: 'px-2 py-2 h-full text-text-300',
       classNameTitle: 'text-text-300',
     },
     {
       title: 'Status',
-      className: 'px-4 w-[190px]',
+      className: 'px-2',
       classNameTitle: 'text-text-300',
     },
     {
       title: 'Message',
-      className: 'px-4',
+      className: 'pr-2',
       classNameTitle: 'text-text-300',
     },
   ]
 
+  const columnsWidth = '40px 154px 10% 10% 65%'
+
   const memoRow = useMemo(
-    () => logs?.map((log: EnvironmentLog, index: number) => <Row key={index} index={index} data={log} />),
+    () =>
+      logs?.map((log: EnvironmentLogs, index: number) => (
+        <Row key={index} index={index} data={log} columnsWidth={columnsWidth} />
+      )),
     [logs]
   )
 
@@ -88,10 +96,12 @@ export function PageDeploymentLogs() {
       setPauseLogs={setPauseStatusLogs}
       environment={environment}
       withLogsNavigation
+      lineNumbers
     >
       <Table
-        className="bg-transparent"
-        classNameHead="!flex bg-element-light-darker-300 !border-transparent"
+        className="bg-transparent pb-10"
+        classNameHead="bg-element-light-darker-300 !border-transparent"
+        columnsWidth={columnsWidth}
         dataHead={tableHead}
         defaultData={logs}
       >

@@ -1,4 +1,4 @@
-import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, EnvironmentLog, Log } from 'qovery-typescript-axios'
+import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, EnvironmentLogs, Log } from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
@@ -11,7 +11,7 @@ import TabsLogs from './tabs-logs/tabs-logs'
 
 export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
-  items?: ClusterLogs[] | Log[] | EnvironmentLog[]
+  items?: ClusterLogs[] | Log[] | EnvironmentLogs[]
 }
 
 export interface LayoutLogsProps {
