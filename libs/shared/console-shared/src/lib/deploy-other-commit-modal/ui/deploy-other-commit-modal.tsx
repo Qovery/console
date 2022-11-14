@@ -1,6 +1,6 @@
 /* eslint-disable-next-line */
 import { Commit } from 'qovery-typescript-axios'
-import { Button, ButtonSize, ButtonStyle, LoaderSpinner, TagCommit, useModal } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, LoaderSpinner, TagCommit, Truncate, useModal } from '@qovery/shared/ui'
 import { dateToFormat, timeAgo } from '@qovery/shared/utils'
 
 export interface DeployOtherCommitModalProps {
@@ -9,10 +9,21 @@ export interface DeployOtherCommitModalProps {
   setSelectedCommitId: (commitId: string) => void
   selectedCommitId: string | null
   currentCommitId?: string
+  buttonDisabled?: boolean
+  handleDeploy: () => void
+  deployLoading: boolean
 }
 
 export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
-  const { commitsByDay = {}, setSelectedCommitId, selectedCommitId, currentCommitId } = props
+  const {
+    commitsByDay = {},
+    setSelectedCommitId,
+    selectedCommitId,
+    currentCommitId,
+    buttonDisabled = false,
+    handleDeploy,
+    deployLoading,
+  } = props
   const { closeModal } = useModal()
 
   return (
@@ -27,12 +38,15 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
       )}
       {Object.keys(commitsByDay).map((date) => (
         <div key={date} className="pl-1">
-          <h3 className="text-ssm pl-4 text-text-400 font-medium">Commits on {dateToFormat(date, 'MMM dd, yyyy')}</h3>
+          <h3 data-testid="commit-date" className="text-sm pl-4 text-text-400 font-medium">
+            Commits on {dateToFormat(date, 'MMM dd, yyyy')}
+          </h3>
           <div className="border-l border-element-light-lighter-600 pt-2">
             <div className="pl-5 pb-4">
               <div className="flex flex-col rounded-md border border-element-light-lighter-500">
                 {commitsByDay[date].map((commit, index) => (
                   <div
+                    data-testid="commit-box"
                     key={commit.git_commit_id}
                     onClick={() => setSelectedCommitId(commit.git_commit_id)}
                     className={`h-[5.5rem] flex items-center transition-all justify-between cursor-pointer px-5 border-element-light-lighter-500 ${
@@ -48,7 +62,11 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                   >
                     <div className="w-full">
                       <div className="flex justify-between w-full">
-                        <p className="text-text-500 font-medium mb-1.5">{commit.message}</p>
+                        <p className="text-text-500 font-medium mb-1.5">
+                          <a href={commit.commit_page_url} target="_blank" className="hover:text-brand-500">
+                            <Truncate truncateLimit={45} text={commit.message} />
+                          </a>
+                        </p>
                         <TagCommit commitId={commit.git_commit_id} />
                       </div>
 
@@ -56,10 +74,10 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                         <p className="text-text-400">committed {timeAgo(new Date(commit.created_at))} ago</p>
                         <p>
                           {currentCommitId !== commit.git_commit_id && selectedCommitId === commit.git_commit_id && (
-                            <span className="text-brand-500 font-medium">Selected version</span>
+                            <span className="text-brand-500 text-ssm font-medium">Selected version</span>
                           )}
                           {currentCommitId === commit.git_commit_id && (
-                            <span className="text-green-500 font-medium">Selected version</span>
+                            <span className="text-green-500 text-ssm font-medium">Current version</span>
                           )}
                         </p>
                       </div>
@@ -72,7 +90,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
         </div>
       ))}
 
-      <div className="flex gap-3 justify-end mt-6">
+      <div className="flex gap-3 justify-end mt-6 -mb-6 py-6 bg-white sticky bottom-0">
         <Button
           dataTestId="cancel-button"
           className="btn--no-min-w"
@@ -82,7 +100,15 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
         >
           Cancel
         </Button>
-        <Button dataTestId="submit-button" className="btn--no-min-w" type="submit" size={ButtonSize.XLARGE}>
+        <Button
+          dataTestId="submit-button"
+          disabled={buttonDisabled}
+          className="btn--no-min-w"
+          type="submit"
+          size={ButtonSize.XLARGE}
+          onClick={handleDeploy}
+          loading={deployLoading}
+        >
           Deploy
         </Button>
       </div>
