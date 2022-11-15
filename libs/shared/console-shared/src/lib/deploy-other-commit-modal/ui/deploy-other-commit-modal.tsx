@@ -3,6 +3,7 @@ import {
   Button,
   ButtonSize,
   ButtonStyle,
+  Icon,
   IconAwesomeEnum,
   InputSearch,
   LoaderSpinner,
@@ -12,7 +13,6 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { dateToFormat, timeAgo } from '@qovery/shared/utils'
-import Icon from '../../../../../ui/src/lib/components/icon/icon'
 
 export interface DeployOtherCommitModalProps {
   commitsByDay: Record<string, Commit[]>
