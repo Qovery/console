@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
+import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
 import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
@@ -20,7 +20,7 @@ export interface LayoutLogsProps {
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
-  application?: ApplicationEntity
+  applications?: ApplicationEntity[]
   environment?: EnvironmentEntity
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
@@ -37,7 +37,7 @@ export interface ErrorLogsProps {
 export function LayoutLogs(props: LayoutLogsProps) {
   const {
     data,
-    application,
+    applications,
     environment,
     tabInformation,
     children,
@@ -50,7 +50,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const forcedScroll = (down?: boolean) => {
     const section = refScrollSection.current
@@ -101,11 +101,15 @@ export function LayoutLogs(props: LayoutLogsProps) {
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
       {withLogsNavigation && (
-        <div className="absolute z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
-          {application && (
-            <div
+        <div className="absolute overflow-y-auto z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
+          {applications?.map((application: ApplicationEntity) => (
+            <Link
+              key={application.id}
+              to={APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)}
               data-testid="nav-application"
-              className="flex items-center h-full px-4 bg-element-light-darker-200 text-text-100 text-sm font-medium"
+              className={`flex items-center h-full px-4 text-text-100 text-sm font-medium transition-colors transition-timing duration-250 hover:bg-element-light-darker-300 ${
+                applicationId === application.id ? 'bg-element-light-darker-200' : 'bg-element-light-darker-500'
+              }`}
             >
               <StatusChip
                 status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
@@ -116,17 +120,15 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 }
                 className="mr-2"
               />
-              {application.name}
+              <span className="truncate">{application.name}</span>
               <Icon name={IconEnum.APPLICATION} width="14" className="ml-2" />
-            </div>
-          )}
+            </Link>
+          ))}
           {environment && (
             <Link
               data-testid="nav-environment"
-              className={`flex items-center h-full px-4 text-sm font-medium text-text-100 transition-colors transition-timing duration-250 hover:bg-element-light-darker-400 ${
-                application
-                  ? 'bg-element-light-darker-500 border-r border-element-light-darker-400'
-                  : 'bg-element-light-darker-200'
+              className={`flex items-center h-full px-4 text-sm font-medium text-text-100 transition-colors transition-timing duration-250 hover:bg-element-light-darker-300 ${
+                applicationId ? 'bg-element-light-darker-500 ' : 'bg-element-light-darker-200'
               }`}
               to={DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)}
             >
@@ -134,7 +136,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
                 className="mr-2"
               />
-              Deployment logs
+              <span className="truncate">Deployment logs</span>
             </Link>
           )}
         </div>

@@ -3,9 +3,10 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
+import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { LayoutLogs, Table } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
@@ -16,6 +17,10 @@ export function PageDeploymentLogs() {
 
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
+  )
+
+  const applications = useSelector<RootState, ApplicationEntity[] | undefined>((state) =>
+    selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
   useDocumentTitle(`Deployment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
@@ -92,6 +97,7 @@ export function PageDeploymentLogs() {
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
       environment={environment}
+      applications={applications}
       withLogsNavigation
       lineNumbers
     >

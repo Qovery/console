@@ -1,9 +1,9 @@
 import { Environment, Log } from 'qovery-typescript-axios'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
-import { selectApplicationById } from '@qovery/domains/application'
+import { selectApplicationById, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
@@ -17,6 +17,10 @@ export function PageApplicationLogs() {
 
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
+  )
+
+  const applications = useSelector<RootState, ApplicationEntity[] | undefined>((state) =>
+    selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
@@ -55,6 +59,16 @@ export function PageApplicationLogs() {
     },
   })
 
+  useEffect(() => {
+    // reset state when the applicationId change
+    if (applicationId) {
+      setLoading('not loaded')
+      setLogs([])
+      setPauseLogs([])
+      setPauseStatusLogs(false)
+    }
+  }, [applicationId])
+
   const tableHead = [
     {
       title: 'Pod name',
@@ -82,11 +96,12 @@ export function PageApplicationLogs() {
 
   return (
     <LayoutLogs
+      key={applicationId}
       data={{
         items: logs,
         loadingStatus: loading,
       }}
-      application={application}
+      applications={applications}
       environment={environment}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
