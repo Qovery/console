@@ -10,7 +10,7 @@ import {
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
-import { dateToFormat, timeAgo } from '@qovery/shared/utils'
+import { dateToFormat, timeAgo, useScrollWithShadow } from '@qovery/shared/utils'
 
 export interface DeployOtherCommitModalProps {
   commitsByDay: Record<string, Commit[]>
@@ -36,6 +36,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
     onSearch,
   } = props
   const { closeModal } = useModal()
+  const { onScrollHandler, boxShadow } = useScrollWithShadow()
 
   return (
     <div className="p-6">
@@ -53,7 +54,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
       )}
 
       {!props.isLoading && Object.keys(commitsByDay).length > 0 && (
-        <div className="h-[440px] overflow-auto">
+        <div className="h-[440px] overflow-auto" onScroll={onScrollHandler} style={{ boxShadow }}>
           {Object.keys(commitsByDay).map((date) => (
             <div key={date} className="pl-1">
               <h3 data-testid="commit-date" className="text-sm pl-4 text-text-400 font-medium">
