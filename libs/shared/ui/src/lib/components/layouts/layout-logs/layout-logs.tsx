@@ -1,4 +1,11 @@
-import { ClusterLogs, ClusterLogsError, ClusterLogsStepEnum, EnvironmentLogs, Log } from 'qovery-typescript-axios'
+import {
+  ClusterLogs,
+  ClusterLogsError,
+  ClusterLogsStepEnum,
+  EnvironmentLogs,
+  EnvironmentLogsError,
+  Log,
+} from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
@@ -29,9 +36,9 @@ export interface LayoutLogsProps {
 
 export interface ErrorLogsProps {
   index: number
-  timeAgo: string
-  step: ClusterLogsStepEnum
-  error: ClusterLogsError
+  error?: ClusterLogsError | EnvironmentLogsError
+  timeAgo?: string
+  step?: ClusterLogsStepEnum
 }
 
 export function LayoutLogs(props: LayoutLogsProps) {

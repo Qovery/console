@@ -88,6 +88,13 @@ export function PageDeploymentLogs() {
     [logs]
   )
 
+  const errors = logs
+    .map((log: EnvironmentLogs, index: number) => ({
+      index: index,
+      errors: log.error,
+    }))
+    .filter((log) => log.errors)
+
   return (
     <LayoutLogs
       data={{
@@ -100,6 +107,7 @@ export function PageDeploymentLogs() {
       applications={applications}
       withLogsNavigation
       lineNumbers
+      errors={errors}
     >
       <Table
         // overflow-hidden

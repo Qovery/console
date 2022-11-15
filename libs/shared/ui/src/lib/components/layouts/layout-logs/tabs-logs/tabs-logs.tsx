@@ -1,3 +1,4 @@
+import { ClusterLogsError } from 'qovery-typescript-axios'
 import { ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
@@ -83,7 +84,7 @@ export function TabsLogs(props: TabsLogsProps) {
                       </Tooltip>
                       <span data-testid="error-line" className="text-text-400 text-xs">
                         Line {errors[errors.length - 1].index} - After {errors[errors.length - 1].timeAgo} minute
-                        {parseInt(errors[errors.length - 1].timeAgo, 10) > 1 ? 's' : ''}
+                        {parseInt(errors[errors.length - 1].timeAgo || '', 10) > 1 ? 's' : ''}
                       </span>
                     </div>
                   </div>
@@ -94,7 +95,7 @@ export function TabsLogs(props: TabsLogsProps) {
                         : ''
                     }`}
                     onClick={() =>
-                      (errors[0].error.underlying_error?.message || '')?.length > 240 &&
+                      (errors[0].error?.underlying_error?.message || '')?.length > 240 &&
                       setDisplayFullError(!displayFullError)
                     }
                   >
@@ -110,12 +111,15 @@ export function TabsLogs(props: TabsLogsProps) {
                         </p>
                         <CopyToClipboard
                           className="text-text-300 hover:text-text-100"
-                          content={`Transmitter: ${errors[0].error.event_details?.transmitter?.name} - ${errors[0].error.underlying_error?.message}`}
+                          content={`Transmitter: ${
+                            (errors[0].error as ClusterLogsError).event_details?.transmitter?.name
+                          } - ${errors[0].error?.underlying_error?.message}`}
                         />
                       </div>
                     </div>
                     <p data-testid="error-msg" className="relative text-text-200 text-xs">
-                      Transmitter: {currentError.event_details?.transmitter?.name} - {truncateErrorMessage}
+                      Transmitter: {(currentError as ClusterLogsError).event_details?.transmitter?.name} -{' '}
+                      {truncateErrorMessage}
                       {!displayFullError && (currentError.underlying_error?.message || '').length > 240 && (
                         <>
                           ...
