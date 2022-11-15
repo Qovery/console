@@ -55,34 +55,31 @@ export function PageDeploymentLogs() {
       title: '',
     },
     {
+      title: 'Status',
+      className: 'pl-2.5 pr-2 w-[154px]',
+      classNameTitle: 'text-text-300',
+    },
+    {
       title: 'Time',
       className: 'pl-2 pr-4',
-      classNameTitle: 'text-text-300',
+      classNameTitle: 'text-text-300 w-[154px]',
     },
     {
       title: 'Scope',
-      className: 'px-2 py-2 h-full text-text-300',
-      classNameTitle: 'text-text-300',
-    },
-    {
-      title: 'Status',
-      className: 'px-2',
+      className: 'px-2 py-2 h-full text-text-300 w-[154px]',
       classNameTitle: 'text-text-300',
     },
     {
       title: 'Message',
-      className: 'pr-2',
+      className: 'px-4',
       classNameTitle: 'text-text-300',
     },
   ]
 
-  const columnsWidth = '40px 154px 10% 10% 65%'
+  const columnsWidth = '40px 154px 154px 154px 10%'
 
   const memoRow = useMemo(
-    () =>
-      logs?.map((log: EnvironmentLogs, index: number) => (
-        <Row key={index} index={index} data={log} columnsWidth={columnsWidth} />
-      )),
+    () => logs?.map((log: EnvironmentLogs, index: number) => <Row key={index} index={index} data={log} />),
     [logs]
   )
 
@@ -99,7 +96,8 @@ export function PageDeploymentLogs() {
       lineNumbers
     >
       <Table
-        className="bg-transparent pb-10 overflow-hidden"
+        // overflow-hidden
+        className="bg-transparent pb-10"
         classNameHead="bg-element-light-darker-300 !border-transparent"
         columnsWidth={columnsWidth}
         dataHead={tableHead}
