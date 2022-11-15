@@ -1,16 +1,18 @@
-/* eslint-disable-next-line */
 import { Commit } from 'qovery-typescript-axios'
 import {
   Button,
   ButtonSize,
   ButtonStyle,
+  IconAwesomeEnum,
   InputSearch,
   LoaderSpinner,
+  ScrollShadowWrapper,
   TagCommit,
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
-import { dateToFormat, timeAgo, useScrollWithShadow } from '@qovery/shared/utils'
+import { dateToFormat, timeAgo } from '@qovery/shared/utils'
+import Icon from '../../../../../ui/src/lib/components/icon/icon'
 
 export interface DeployOtherCommitModalProps {
   commitsByDay: Record<string, Commit[]>
@@ -34,9 +36,9 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
     handleDeploy,
     deployLoading,
     onSearch,
+    isLoading = false,
   } = props
   const { closeModal } = useModal()
-  const { onScrollHandler, boxShadow } = useScrollWithShadow()
 
   return (
     <div className="p-6">
@@ -47,14 +49,14 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
         <InputSearch placeholder="Search by commit message or commit id" onChange={onSearch} />
       </div>
 
-      {props.isLoading && (
+      {isLoading && (
         <div className="flex justify-center">
           <LoaderSpinner />
         </div>
       )}
 
-      {!props.isLoading && Object.keys(commitsByDay).length > 0 && (
-        <div className="h-[440px] overflow-auto" onScroll={onScrollHandler} style={{ boxShadow }}>
+      {!isLoading && Object.keys(commitsByDay).length > 0 && (
+        <ScrollShadowWrapper className="max-h-[440px]">
           {Object.keys(commitsByDay).map((date) => (
             <div key={date} className="pl-1">
               <h3 data-testid="commit-date" className="text-sm pl-4 text-text-400 font-medium">
@@ -109,16 +111,17 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
               </div>
             </div>
           ))}
+        </ScrollShadowWrapper>
+      )}
+
+      {!isLoading && Object.keys(commitsByDay).length === 0 && (
+        <div className="text-center px-3 py-6">
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
+          <p className="text-text-400 font-medium text-xs mt-1">No result for this search</p>
         </div>
       )}
 
-      {!props.isLoading && Object.keys(commitsByDay).length === 0 && (
-        <div className="flex justify-center">
-          <p className="text-text-400 text-sm">No commits found</p>
-        </div>
-      )}
-
-      <div className="flex gap-3 justify-end  -mb-6 py-6 bg-white sticky bottom-0">
+      <div className="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0">
         <Button
           dataTestId="cancel-button"
           className="btn--no-min-w"

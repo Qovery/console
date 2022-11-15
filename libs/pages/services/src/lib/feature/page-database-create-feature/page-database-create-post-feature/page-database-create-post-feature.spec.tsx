@@ -1,8 +1,8 @@
 import { act } from '@testing-library/react'
+import { getByTestId, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
 import * as storeDatabase from '@qovery/domains/database'
-import { getByTestId, render } from '../../../../../../../../__tests__/utils/setup-jest'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import PageDatabaseCreatePostFeature from './page-database-create-post-feature'
 
