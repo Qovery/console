@@ -49,6 +49,7 @@ export function InputSearch(props: InputSearchProps) {
           className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-text-400 leading-none"
         />
         <input
+          data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
           className={`w-full rounded border border-element-light-lighter-500 bg-element-light-lighter-300 text-text-600 placeholder:text-text-400 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}

@@ -1,4 +1,12 @@
-import { getAllByTestId, getByTestId, waitFor } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  getAllByTestId,
+  getByTestId,
+  getByText,
+  queryAllByTestId,
+  waitFor,
+} from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import DeployOtherCommitModalFeature, { DeployOtherCommitModalFeatureProps } from './deploy-other-commit-modal-feature'
@@ -49,7 +57,7 @@ jest.mock('@qovery/domains/application', () => ({
     ],
     '2021-09-02': [
       {
-        message: 'blabla',
+        message: 'blabla pouic pouic search',
         commit_page_url: '#',
         tag: 'v1',
         git_commit_id: '3',
@@ -78,6 +86,7 @@ describe('DeployOtherCommitModalFeature', () => {
     }))
 
     const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
+    await waitFor(() => {})
     const commitBoxes = getAllByTestId(baseElement, 'commit-box')
 
     commitBoxes[1].click()
@@ -92,5 +101,30 @@ describe('DeployOtherCommitModalFeature', () => {
       git_commit_id: '2',
       environmentId: 'environmentId',
     })
+  })
+
+  it('should filter by search', async () => {
+    const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
+    const searchInput = getByTestId(baseElement, 'input-search')
+
+    await act(() => {
+      fireEvent.change(searchInput, { target: { value: 'pouic' } })
+    })
+
+    const commitBoxes = getAllByTestId(baseElement, 'commit-box')
+    expect(commitBoxes.length).toEqual(1)
+  })
+
+  it('should filter by search and display no result', async () => {
+    const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
+    const searchInput = getByTestId(baseElement, 'input-search')
+
+    await act(() => {
+      fireEvent.change(searchInput, { target: { value: 'asdfasdf asdf asd ' } })
+    })
+
+    const commitBoxes = queryAllByTestId(baseElement, 'commit-box')
+    expect(commitBoxes.length).toEqual(0)
+    getByText(baseElement, 'No commits found')
   })
 })

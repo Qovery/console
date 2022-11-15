@@ -24,10 +24,13 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
 
   const [selectedCommitId, setSelectedCommitId] = useState<string | null>(null)
   const [deployLoading, setDeployLoading] = useState(false)
+  const [search, setSearch] = useState('')
 
   const commitsByDay = useSelector<RootState, Record<string, Commit[]>>((state) =>
     getCommitsGroupedByDate(state, applicationId)
   )
+
+  const [commitsByDayFiltered, setCommitsByDayFiltered] = useState<Record<string, Commit[]>>({})
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
@@ -65,9 +68,31 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
     }
   }
 
+  const onSearch = (search: string) => {
+    setSearch(search)
+    setCommitsByDayFiltered(filterCommits(search))
+  }
+
+  const filterCommits = (search: string): Record<string, Commit[]> => {
+    // for all commits in commitsByDay if commit message or commit id contains search string then add to filtered commits by day
+    const filteredCommitsByDay: Record<string, Commit[]> = {}
+    Object.keys(commitsByDay).forEach((date) => {
+      const filteredCommits = commitsByDay[date].filter((commit) => {
+        return (
+          commit.message.toLowerCase().includes(search.toLowerCase()) ||
+          commit.git_commit_id.toLowerCase().includes(search.toLowerCase())
+        )
+      })
+      if (filteredCommits.length > 0) {
+        filteredCommitsByDay[date] = filteredCommits
+      }
+    })
+    return filteredCommitsByDay
+  }
+
   return (
     <DeployOtherCommitModal
-      commitsByDay={commitsByDay}
+      commitsByDay={search.length ? commitsByDayFiltered : commitsByDay}
       isLoading={isLoading === 'loading'}
       selectedCommitId={selectedCommitId}
       setSelectedCommitId={setSelectedCommitId}
@@ -75,6 +100,7 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
       buttonDisabled={buttonDisabled()}
       handleDeploy={handleDeploy}
       deployLoading={deployLoading}
+      onSearch={onSearch}
     />
   )
 }
