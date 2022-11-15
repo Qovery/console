@@ -34,7 +34,7 @@ export function Row(props: RowProps) {
         ? 'text-warning-500'
         : success
         ? 'text-success-500'
-        : `${white ? 'text-text-200' : 'text-element-light-lighter-800'}`
+        : `${white ? 'text-text-200' : 'text-element-light-lighter-700'}`
     }`
 
   return (

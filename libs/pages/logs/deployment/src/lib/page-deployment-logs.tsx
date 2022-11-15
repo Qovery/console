@@ -99,7 +99,7 @@ export function PageDeploymentLogs() {
       lineNumbers
     >
       <Table
-        className="bg-transparent pb-10"
+        className="bg-transparent pb-10 overflow-hidden"
         classNameHead="bg-element-light-darker-300 !border-transparent"
         columnsWidth={columnsWidth}
         dataHead={tableHead}

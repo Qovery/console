@@ -46,7 +46,7 @@ export function Row(props: RowProps) {
     <div className="application-log group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 w-full overflow-y-auto">
       <div
         data-testid="cell-pod-name"
-        className="py-1 px-4 text-element-light-lighter-800 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-1 after:bg-element-light-darker-100 after:w-[1px] after:h-4"
+        className="py-1 px-4 text-element-light-lighter-700 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-1 after:bg-element-light-darker-100 after:w-[1px] after:h-4"
         style={{ color: getColorByPod(data.pod_name) }}
       >
         <Tooltip content={data.pod_name || ''}>
