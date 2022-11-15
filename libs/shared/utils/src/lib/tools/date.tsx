@@ -46,3 +46,7 @@ export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
 export const dateFullFormat = (date: string) => {
   return formatInTimeZone(new Date(date), 'dd MMM, hh:mm:ss:SS', 'UTC')
 }
+
+export const dateToFormat = (date: string, format: string) => {
+  return formatInTimeZone(new Date(date), format, 'UTC')
+}

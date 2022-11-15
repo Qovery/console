@@ -85,6 +85,28 @@ export const postApplicationActionsDeploy = createAsyncThunk<
   }
 })
 
+export const postApplicationActionsDeployByCommitId = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; git_commit_id: string }
+>('applicationActions/deploy', async (data, { dispatch }) => {
+  try {
+    const response = await applicationActionApi.deployApplication(data.applicationId, {
+      git_commit_id: data.git_commit_id,
+    })
+
+    if (response.status === 202) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      toast(ToastEnum.SUCCESS, 'Your application is deploying')
+    }
+
+    return response
+  } catch (err: any) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Deploying error', err.message)
+  }
+})
+
 export const postApplicationActionsStop = createAsyncThunk<
   any,
   { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }

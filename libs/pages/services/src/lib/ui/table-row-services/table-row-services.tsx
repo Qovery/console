@@ -11,6 +11,7 @@ import { APPLICATION_LOGS_URL } from '@qovery/shared/router'
 import {
   ButtonIconAction,
   Icon,
+  IconAwesomeEnum,
   Skeleton,
   StatusChip,
   StatusLabel,
@@ -20,8 +21,10 @@ import {
   Tag,
   TagCommit,
   Tooltip,
+  useModal,
 } from '@qovery/shared/ui'
 import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@qovery/shared/utils'
+import DeployOtherCommitModalFeature from '../../../../../../shared/console-shared/src/lib/deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
@@ -50,6 +53,7 @@ export function TableRowServices(props: TableRowServicesProps) {
 
   const { organizationId, projectId, environmentId } = useParams()
   const navigate = useNavigate()
+  const { openModal } = useModal()
 
   const buttonActionsDefault = [
     {
@@ -84,6 +88,21 @@ export function TableRowServices(props: TableRowServicesProps) {
                       link: {
                         url: urlCodeEditor((data as GitApplicationEntity).git_repository) || '',
                         external: true,
+                      },
+                    },
+                    {
+                      name: 'Deploy other version ',
+                      contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+                      onClick: () => {
+                        openModal({
+                          content: (
+                            <DeployOtherCommitModalFeature
+                              applicationId={data.id}
+                              environmentId={environmentId || ''}
+                            />
+                          ),
+                          options: { width: 596 },
+                        })
                       },
                     },
                     {
