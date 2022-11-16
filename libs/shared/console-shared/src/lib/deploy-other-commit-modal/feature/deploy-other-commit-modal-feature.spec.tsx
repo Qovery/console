@@ -125,6 +125,6 @@ describe('DeployOtherCommitModalFeature', () => {
 
     const commitBoxes = queryAllByTestId(baseElement, 'commit-box')
     expect(commitBoxes.length).toEqual(0)
-    getByText(baseElement, 'No commits found')
+    getByText(baseElement, 'No result for this search')
   })
 })

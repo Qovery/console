@@ -19,7 +19,7 @@ export function InputSearch(props: InputSearchProps) {
     onChange,
     isEmpty = false,
     emptyContent,
-    customSize = 'h-8 text-xs',
+    customSize = 'h-9 text-xs',
     autofocus = false,
   } = props
 

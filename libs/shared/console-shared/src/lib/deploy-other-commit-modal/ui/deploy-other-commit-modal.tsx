@@ -1,11 +1,13 @@
-/* eslint-disable-next-line */
 import { Commit } from 'qovery-typescript-axios'
 import {
   Button,
   ButtonSize,
   ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
   InputSearch,
   LoaderSpinner,
+  ScrollShadowWrapper,
   TagCommit,
   Truncate,
   useModal,
@@ -34,6 +36,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
     handleDeploy,
     deployLoading,
     onSearch,
+    isLoading = false,
   } = props
   const { closeModal } = useModal()
 
@@ -46,18 +49,18 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
         <InputSearch placeholder="Search by commit message or commit id" onChange={onSearch} />
       </div>
 
-      {props.isLoading && (
+      {isLoading && (
         <div className="flex justify-center">
           <LoaderSpinner />
         </div>
       )}
 
-      {!props.isLoading && Object.keys(commitsByDay).length > 0 && (
-        <div className="h-[440px] overflow-auto">
+      {!isLoading && Object.keys(commitsByDay).length > 0 && (
+        <ScrollShadowWrapper className="max-h-[440px]">
           {Object.keys(commitsByDay).map((date) => (
             <div key={date} className="pl-1">
               <h3 data-testid="commit-date" className="text-sm pl-4 text-text-400 font-medium">
-                Commits on {dateToFormat(date, 'MMM dd, yyyy')}
+                Commit{commitsByDay[date].length > 1 ? 's' : ''} on {dateToFormat(date, 'MMM dd, yyyy')}
               </h3>
               <div className="border-l border-element-light-lighter-600 pt-2">
                 <div className="pl-5 pb-4">
@@ -108,16 +111,17 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
               </div>
             </div>
           ))}
+        </ScrollShadowWrapper>
+      )}
+
+      {!isLoading && Object.keys(commitsByDay).length === 0 && (
+        <div className="text-center px-3 py-6">
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
+          <p className="text-text-400 font-medium text-xs mt-1">No result for this search</p>
         </div>
       )}
 
-      {!props.isLoading && Object.keys(commitsByDay).length === 0 && (
-        <div className="flex justify-center">
-          <p className="text-text-400 text-sm">No commits found</p>
-        </div>
-      )}
-
-      <div className="flex gap-3 justify-end  -mb-6 py-6 bg-white sticky bottom-0">
+      <div className="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0">
         <Button
           dataTestId="cancel-button"
           className="btn--no-min-w"

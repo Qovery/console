@@ -1,3 +1,4 @@
+export * from './lib/components/scroll-shadow-wrapper/scroll-shadow-wrapper'
 export * from './lib/components/modal-alert/use-modal-alert/use-modal-alert'
 export * from './lib/components/modal-alert/modal-alert'
 export * from './lib/components/layouts/breadcrumb-item/breadcrumb-item-value/breadcrumb-item-value'
