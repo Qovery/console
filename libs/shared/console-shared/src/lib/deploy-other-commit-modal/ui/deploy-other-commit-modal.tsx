@@ -60,7 +60,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
           {Object.keys(commitsByDay).map((date) => (
             <div key={date} className="pl-1">
               <h3 data-testid="commit-date" className="text-sm pl-4 text-text-400 font-medium">
-                Commits on {dateToFormat(date, 'MMM dd, yyyy')}
+                Commit{commitsByDay[date].length > 1 ? 's' : ''} on {dateToFormat(date, 'MMM dd, yyyy')}
               </h3>
               <div className="border-l border-element-light-lighter-600 pt-2">
                 <div className="pl-5 pb-4">

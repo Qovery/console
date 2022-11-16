@@ -3,10 +3,11 @@ import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 export interface ScrollShadowWrapperProps {
   children: ReactNode
   className?: string
+  style?: React.CSSProperties
 }
 
 export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
-  const { children, className = '' } = props
+  const { children, className = '', style = {} } = props
 
   const [scrollTop, setScrollTop] = useState(0)
   const [scrollHeight, setScrollHeight] = useState(0)
@@ -18,19 +19,19 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
     setClientHeight(event.currentTarget.clientHeight)
   }
 
-  const resetRefSizes = (ref: RefObject<HTMLDivElement>) => {
-    if (!ref.current) return
-
-    setScrollTop(ref.current.scrollTop)
-    setScrollHeight(ref.current.scrollHeight)
-    setClientHeight(ref.current.clientHeight)
-  }
-
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const resetRefSizes = (ref: RefObject<HTMLDivElement>) => {
+      if (!ref.current) return
+
+      setScrollTop(ref.current.scrollTop)
+      setScrollHeight(ref.current.scrollHeight)
+      setClientHeight(ref.current.clientHeight)
+    }
+
     resetRefSizes(wrapperRef)
-  }, [wrapperRef?.current?.clientHeight, resetRefSizes])
+  }, [wrapperRef?.current?.clientHeight])
 
   const getVisibleSides = (): { top: boolean; bottom: boolean } => {
     const isBottom = clientHeight === scrollHeight - scrollTop
@@ -47,6 +48,7 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
     <div
       data-testid="scroll-shadow-wrapper"
       ref={wrapperRef}
+      style={style}
       className={`relative overflow-auto ${className}`}
       onScroll={onScrollHandler}
     >
