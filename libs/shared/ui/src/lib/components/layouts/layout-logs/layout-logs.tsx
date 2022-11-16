@@ -112,8 +112,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
           {applications?.map((application: ApplicationEntity) => (
             <Link
               key={application.id}
-              to={APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)}
               data-testid="nav-application"
+              to={APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)}
               className={`flex items-center h-full px-4 text-text-100 text-sm font-medium transition-colors transition-timing duration-250 hover:bg-element-light-darker-300 ${
                 applicationId === application.id ? 'bg-element-light-darker-200' : 'bg-element-light-darker-500'
               }`}

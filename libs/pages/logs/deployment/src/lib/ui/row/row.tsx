@@ -29,8 +29,6 @@ export function Row(props: RowProps) {
     `${
       error
         ? 'text-error-500'
-        : type === LogsType.WARNING
-        ? 'text-warning-500'
         : success
         ? 'text-success-500'
         : `${white ? 'text-text-200' : 'text-element-light-lighter-700'}`
@@ -92,17 +90,12 @@ export function Row(props: RowProps) {
         <span
           className="whitespace-pre-wrap truncate break-all"
           dangerouslySetInnerHTML={{
-            __html:
-              type === LogsType.ERROR
-                ? buildLinkHtml(data.error?.user_log_message)
-                : buildLinkHtml(data.message?.safe_message),
+            __html: error ? buildLinkHtml(data.error?.user_log_message) : buildLinkHtml(data.message?.safe_message),
           }}
         />
         <CopyToClipboard
           className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
-          content={
-            type === LogsType.ERROR ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)
-          }
+          content={error ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)}
         />
       </div>
     </div>

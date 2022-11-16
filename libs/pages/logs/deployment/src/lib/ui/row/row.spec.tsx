@@ -1,6 +1,7 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import { dateFullFormat } from '@qovery/shared/utils'
-import Row, { RowProps, getColorByPod } from './row'
+import { deploymentLogFactoryMock } from '@qovery/domains/environment'
+import { LogsType } from '@qovery/shared/enums'
+import Row, { RowProps } from './row'
 
 jest.mock('date-fns-tz', () => ({
   format: jest.fn(() => '20 Sept, 19:44:44:44'),
@@ -9,54 +10,214 @@ jest.mock('date-fns-tz', () => ({
 
 describe('Row', () => {
   const props: RowProps = {
-    data: {
-      id: '1',
-      created_at: '1667834316521',
-      message: 'message',
-      pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
-      version: '53deb16f853aef759b8be84fbeec96e9727',
-    },
+    data: deploymentLogFactoryMock(1)[0],
+    index: 1,
   }
-
-  const date = dateFullFormat(props.data.created_at)
 
   it('should render successfully', () => {
     const { baseElement } = render(<Row {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have function to render colors', () => {
-    expect(getColorByPod(props.data.pod_name)).toBe('#9980FA')
-  })
+  it('should have success index color', () => {
+    props.data = {
+      type: 'info',
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'Deployed',
+        },
+      },
+    }
 
-  it('should have cell with the pod name', () => {
     render(<Row {...props} />)
 
-    const podName = screen.getByTestId('cell-pod-name')
+    const index = screen.getByTestId('index')
 
-    expect(podName).toHaveStyle({
-      color: getColorByPod(props.data.pod_name),
-    })
-
-    expect(podName.textContent).toBe('app-z9d11e...77b6-k9sl7')
+    expect(index).toHaveClass('bg-success-500 text-text-800 group-hover:bg-success-600')
   })
 
-  it('should have cell render an created pod', () => {
+  it('should have error index color', () => {
+    props.data = {
+      type: LogsType.ERROR,
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'DeployedError',
+        },
+      },
+    }
+
     render(<Row {...props} />)
-    expect(date).toBe('20 Sept, 19:44:44:44')
+
+    const index = screen.getByTestId('index')
+
+    expect(index).toHaveClass('bg-error-500 text-text-800 group-hover:bg-error-600')
   })
 
-  it('should have cell message', () => {
+  it('should have cell status format text', () => {
+    props.data = {
+      type: 'info',
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'DeploymentInProgress',
+        },
+      },
+    }
+
+    render(<Row {...props} />)
+
+    const cellDate = screen.getByTestId('cell-status')
+
+    expect(cellDate.textContent).toBe('Deployment_In_Progress')
+    expect(cellDate).toHaveClass(
+      'py-1 pl-2.5 pr-2 text-xxs font-bold shrink-0 truncate uppercase w-[154px] text-accent2-400'
+    )
+  })
+
+  it('should have error cell status color', () => {
+    props.data = {
+      type: LogsType.ERROR,
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'DeployedError',
+        },
+      },
+    }
+
+    render(<Row {...props} />)
+
+    const cellDate = screen.getByTestId('cell-status')
+
+    expect(cellDate).toHaveClass(
+      'py-1 pl-2.5 pr-2 text-xxs font-bold shrink-0 truncate uppercase w-[154px] text-error-500'
+    )
+  })
+
+  it('should have success cell status color', () => {
+    props.data = {
+      type: 'info',
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'Deployed',
+        },
+      },
+    }
+
+    render(<Row {...props} />)
+
+    const cellDate = screen.getByTestId('cell-status')
+
+    expect(cellDate).toHaveClass(
+      'py-1 pl-2.5 pr-2 text-xxs font-bold shrink-0 truncate uppercase w-[154px] text-success-400'
+    )
+  })
+
+  it('should have error cell date color', () => {
+    props.data = {
+      type: LogsType.ERROR,
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'DeployedError',
+        },
+      },
+    }
+
+    render(<Row {...props} />)
+
+    const cellDate = screen.getByTestId('cell-date')
+
+    expect(cellDate).toHaveClass('py-1 px-2 font-code shrink-0 w-[154px] text-error-500')
+  })
+
+  it('should have success cell date color', () => {
+    props.data = {
+      type: 'info',
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'Deployed',
+        },
+      },
+    }
+
+    render(<Row {...props} />)
+
+    const cellDate = screen.getByTestId('cell-date')
+
+    expect(cellDate).toHaveClass('py-1 px-2 font-code shrink-0 w-[154px] text-success-500')
+  })
+
+  it('should have cell with scope name', () => {
+    props.data = {
+      type: 'info',
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'Deployed',
+        },
+        transmitter: {
+          name: 'message',
+        },
+      },
+    }
+
+    render(<Row {...props} />)
+
+    const cellScope = screen.getByTestId('cell-scope')
+    expect(cellScope.textContent).toBe(props.data.details.transmitter?.name)
+  })
+
+  it('should have cell success message', () => {
+    props.data = {
+      type: 'info',
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'Deployed',
+        },
+        transmitter: {
+          name: 'message',
+        },
+      },
+      message: {
+        safe_message: 'message',
+      },
+    }
+
     render(<Row {...props} />)
 
     const cellMsg = screen.getByTestId('cell-msg')
-    expect(cellMsg?.textContent).toBe(props.data.message)
+
+    expect(cellMsg).toHaveClass(
+      'py-1 pl-4 pr-6 font-code relative w-[calc(100%-502px)] overflow-hidden text-success-500'
+    )
+    expect(cellMsg?.textContent).toBe(props.data.message?.safe_message)
   })
 
-  it('should have cell version', () => {
+  it('should have cell error message', () => {
+    props.data = {
+      type: LogsType.ERROR,
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'DeployedError',
+        },
+      },
+      error: {
+        user_log_message: 'error message',
+      },
+    }
+
     render(<Row {...props} />)
 
-    const cellVersion = screen.getByTestId('cell-version')
-    expect(cellVersion?.textContent).toBe('53deb1')
+    const cellMsg = screen.getByTestId('cell-msg')
+
+    expect(cellMsg).toHaveClass('py-1 pl-4 pr-6 font-code relative w-[calc(100%-502px)] overflow-hidden text-error-500')
+    expect(cellMsg?.textContent).toBe(props.data.error?.user_log_message)
   })
 })

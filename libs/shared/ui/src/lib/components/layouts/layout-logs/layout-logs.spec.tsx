@@ -14,6 +14,8 @@ describe('LayoutLogs', () => {
       items: clusterLogFactoryMock(2, true),
     },
     tabInformation: <div>information</div>,
+    applications: applicationFactoryMock(2),
+    environment: environmentFactoryMock(1)[0],
   }
 
   beforeEach(() => {
@@ -109,13 +111,14 @@ describe('LayoutLogs', () => {
       ],
     }
     props.withLogsNavigation = true
-    props.application = applicationFactoryMock(1)[0]
+    props.applications = applicationFactoryMock(2)
 
     render(<LayoutLogs {...props} />)
 
-    const navApplication = screen.getByTestId('nav-application')
+    const navApplication = screen.getAllByTestId('nav-application')
 
-    expect(navApplication.textContent).toBe(props.application.name)
+    expect(navApplication[0].textContent).toBe(props.applications[0].name)
+    expect(navApplication[1].textContent).toBe(props.applications[1].name)
   })
 
   it('should have navigation with environment', () => {

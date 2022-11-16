@@ -81,7 +81,7 @@ export function PageDeploymentLogs() {
     },
   ]
 
-  const columnsWidth = '40px 154px 154px 154px 10%'
+  const columnsWidth = '40px 154px 154px 154px auto'
 
   const memoRow = useMemo(
     () => logs?.map((log: EnvironmentLogs, index: number) => <Row key={index} index={index} data={log} />),
@@ -110,7 +110,6 @@ export function PageDeploymentLogs() {
       errors={errors}
     >
       <Table
-        // overflow-hidden
         className="bg-transparent pb-10"
         classNameHead="bg-element-light-darker-300 !border-transparent"
         columnsWidth={columnsWidth}
