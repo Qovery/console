@@ -2,24 +2,9 @@ name: Create new release
 on: [workflow_dispatch]
 
 jobs:
-  bump-version:
+  rebase-staging-into-main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Cache node modules
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: cache-node-${{ hashFiles('yarn.lock') }}
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          node-version: 16
-      - name: yarn install
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn
       - name: Launch Semantic release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
