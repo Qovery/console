@@ -270,7 +270,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
         <div className="ml-auto">
           <ButtonIcon
             icon={IconAwesomeEnum.CROSS}
-            style={ButtonIconStyle.STROKED}
+            style={ButtonIconStyle.DARK}
             size={ButtonSize.LARGE}
             link={
               locationIsApplicationLogs
