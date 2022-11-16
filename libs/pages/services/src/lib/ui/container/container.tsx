@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
+  DEPLOYMENT_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
@@ -61,11 +62,7 @@ export function Container(props: ContainerProps) {
     },
     {
       iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-      onClick: () =>
-        window.open(
-          `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-          '_blank'
-        ),
+      onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)),
     },
     {
       ...(removeEnvironment && {

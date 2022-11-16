@@ -7,7 +7,7 @@ export function TopBar() {
       <div className="flex px-5 justify-between items-center h-full">
         <BreadcrumbFeature />
         <Button
-          className="dark:hidden"
+          className="dark:hidden w-[245px]"
           style={ButtonStyle.STROKED}
           size={ButtonSize.LARGE}
           iconRight={IconAwesomeEnum.ARROW_RIGHT_FROM_BRACKET}

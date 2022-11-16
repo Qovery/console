@@ -1,6 +1,7 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/domains/application'
+import { environmentFactoryMock } from '@qovery/domains/environment'
 import { clusterLogFactoryMock } from '@qovery/domains/organization'
 import { LayoutLogsProps } from '@qovery/shared/ui'
 import { LayoutLogs } from './layout-logs'
@@ -13,6 +14,8 @@ describe('LayoutLogs', () => {
       items: clusterLogFactoryMock(2, true),
     },
     tabInformation: <div>information</div>,
+    applications: applicationFactoryMock(2),
+    environment: environmentFactoryMock(1)[0],
   }
 
   beforeEach(() => {
@@ -108,12 +111,35 @@ describe('LayoutLogs', () => {
       ],
     }
     props.withLogsNavigation = true
-    props.application = applicationFactoryMock(1)[0]
+    props.applications = applicationFactoryMock(2)
 
     render(<LayoutLogs {...props} />)
 
-    const navApplication = screen.getByTestId('nav-application')
+    const navApplication = screen.getAllByTestId('nav-application')
 
-    expect(navApplication.textContent).toBe(props.application.name)
+    expect(navApplication[0].textContent).toBe(props.applications[0].name)
+    expect(navApplication[1].textContent).toBe(props.applications[1].name)
+  })
+
+  it('should have navigation with environment', () => {
+    props.data = {
+      loadingStatus: 'loaded',
+      items: [
+        {
+          id: '1',
+          created_at: '1667834316521',
+          message: 'message',
+          pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
+          version: '53deb16f853aef759b8be84fbeec96e9727',
+        },
+      ],
+    }
+    props.withLogsNavigation = true
+    props.environment = environmentFactoryMock(1)[0]
+
+    render(<LayoutLogs {...props} />)
+
+    const navEnvironment = screen.getByTestId('nav-environment')
+    expect(navEnvironment)
   })
 })

@@ -6,7 +6,7 @@ import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qo
 import { DeployOtherCommitModalFeature } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
-import { APPLICATION_LOGS_URL } from '@qovery/shared/router'
+import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
 import {
   Button,
   ButtonIconAction,
@@ -97,13 +97,7 @@ export function Container(props: ContainerProps) {
                 {
                   name: 'Deployment logs',
                   contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                  onClick: () =>
-                    window
-                      .open(
-                        `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`,
-                        '_blank'
-                      )
-                      ?.focus(),
+                  onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)),
                 },
                 {
                   name: 'Application logs',

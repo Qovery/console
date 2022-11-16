@@ -3,6 +3,7 @@ import { PageApplication } from '@qovery/pages/application'
 import { PageDatabase } from '@qovery/pages/database'
 import { PageEnvironments } from '@qovery/pages/environments'
 import { PageApplicationLogs } from '@qovery/pages/logs/application'
+import { PageDeploymentLogs } from '@qovery/pages/logs/deployment'
 import { PageInfraLogs } from '@qovery/pages/logs/infra'
 import { OverviewPage } from '@qovery/pages/overview/feature'
 import { PageServices } from '@qovery/pages/services'
@@ -11,6 +12,7 @@ import {
   APPLICATION_LOGS_URL,
   APPLICATION_URL,
   DATABASE_URL,
+  DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
   ORGANIZATION_URL,
@@ -83,6 +85,13 @@ export const ROUTER: RouterProps[] = [
   {
     path: `${APPLICATION_LOGS_URL()}`,
     component: <PageApplicationLogs />,
+    protected: true,
+    layout: true,
+    darkMode: true,
+  },
+  {
+    path: `${DEPLOYMENT_LOGS_URL()}`,
+    component: <PageDeploymentLogs />,
     protected: true,
     layout: true,
     darkMode: true,
