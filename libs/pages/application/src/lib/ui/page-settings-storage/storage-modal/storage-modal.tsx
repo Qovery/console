@@ -61,7 +61,7 @@ export function StorageModal(props: StorageModalProps) {
             required: 'Please enter a value.',
             pattern: {
               message: 'The mount point must start with a slash',
-              value: /^\/\w+(\/\w+)*$/,
+              value: /^\/.?\w+.*/,
             },
           }}
           render={({ field, fieldState: { error } }) => (
