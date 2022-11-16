@@ -1,6 +1,6 @@
 import { EnvironmentLogs } from 'qovery-typescript-axios'
-import { IconEnum, LogsType } from '@qovery/shared/enums'
-import { CopyToClipboard, Icon, Tooltip } from '@qovery/shared/ui'
+import { LogsType } from '@qovery/shared/enums'
+import { CopyToClipboard, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 export interface RowProps {
@@ -73,12 +73,9 @@ export function Row(props: RowProps) {
         className="py-1 px-2 flex text-accent2-400 font-medium shrink-0 w-[154px] relative after:absolute after:-right-[1px] after:top-1 after:bg-element-light-darker-100 after:w-[1px] after:h-4"
       >
         {data.details?.transmitter?.name && (
-          <>
-            <Icon name={IconEnum.APPLICATION} width="14" height="17" className="mr-1" />
-            <Tooltip content={data.details?.transmitter?.name || ''}>
-              <span className="truncate">{data.details?.transmitter?.name}</span>
-            </Tooltip>
-          </>
+          <Tooltip content={data.details?.transmitter?.name || ''}>
+            <span className="truncate">{data.details?.transmitter?.name}</span>
+          </Tooltip>
         )}
       </div>
       <div

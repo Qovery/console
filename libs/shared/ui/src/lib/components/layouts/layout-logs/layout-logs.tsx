@@ -75,23 +75,23 @@ export function LayoutLogs(props: LayoutLogsProps) {
     !pauseLogs && forcedScroll && forcedScroll(true)
   }, [data])
 
-  if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded') {
-    return (
-      <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
-        <img
-          className="w-40 pointer-events-none user-none"
-          src="/assets/images/event-placeholder-dark.svg"
-          alt="Event placeholder"
-        />
-        <p className="mt-5 text-text-100 font-medium">
-          {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
-        </p>
-      </div>
-    )
-  }
+  // if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded') {
+  //   return (
+  // <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
+  //   <img
+  //     className="w-40 pointer-events-none user-none"
+  //     src="/assets/images/event-placeholder-dark.svg"
+  //     alt="Event placeholder"
+  //   />
+  //   <p className="mt-5 text-text-100 font-medium">
+  //     {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
+  //   </p>
+  // </div>
+  //   )
+  // }
 
   const downloadJSON = (event: MouseEvent) => {
-    const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data.items))
+    const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data?.items))
     const target = event.currentTarget
     target.setAttribute('href', 'data:' + file)
     target.setAttribute('download', `data-${Date.now()}.json`)
@@ -148,63 +148,80 @@ export function LayoutLogs(props: LayoutLogsProps) {
           )}
         </div>
       )}
-      <div
-        className={`absolute z-20 left-0 flex justify-end items-center h-9 bg-element-light-darker-200 px-5 ${
-          tabInformation ? 'w-[calc(100%-360px)]' : 'w-full'
-        } ${withLogsNavigation ? 'top-10' : ''}`}
-      >
-        {errors && errors.length > 0 && (
-          <p
-            data-testid="error-layout-line"
-            onClick={() => scrollToError()}
-            className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-text-200 hover:text-text-300 cursor-pointer"
-          >
-            <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
-            An error occured line {errors[errors.length - 1]?.index}
-            <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
-          </p>
-        )}
-        <div className="flex">
-          {setPauseLogs && (
-            <ButtonIcon
-              className="mr-2"
-              icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
-              size={ButtonSize.TINY}
-              style={ButtonIconStyle.DARK}
-              onClick={() => setPauseLogs(!pauseLogs)}
+      {!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded' ? (
+        <div data-testid="loading-screen" className="mt-[200px] w-full flex justify-center text-center">
+          <div>
+            <img
+              className="w-40 pointer-events-none user-none"
+              src="/assets/images/event-placeholder-dark.svg"
+              alt="Event placeholder"
             />
-          )}
-          <ButtonIcon
-            icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
-            className="mr-px !rounded-tr-none !rounded-br-none"
-            size={ButtonSize.TINY}
-            style={ButtonIconStyle.DARK}
-            onClick={() => forcedScroll()}
-          />
-          <ButtonIcon
-            icon={IconAwesomeEnum.ARROW_DOWN_TO_LINE}
-            className="mr-2 !rounded-tl-none !rounded-bl-none"
-            size={ButtonSize.TINY}
-            style={ButtonIconStyle.DARK}
-            onClick={() => forcedScroll(true)}
-          />
-          <a className="btn btn-icon btn-icon--small btn-icon--dark" onClick={(event) => downloadJSON(event)}>
-            <Icon name="icon-solid-cloud-arrow-down" />
-          </a>
+            <p className="mt-5 text-text-100 font-medium">
+              {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
+            </p>
+          </div>
         </div>
-      </div>
-      <div
-        ref={refScrollSection}
-        onWheel={(event) => !pauseLogs && setPauseLogs && event.deltaY < 0 && setPauseLogs(true)}
-        className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 ${
-          lineNumbers
-            ? 'before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full'
-            : ''
-        } ${withLogsNavigation ? 'mt-[72px]' : 'mt-[36px]'}`}
-      >
-        <div className="relative z-10">{children}</div>
-      </div>
-      {tabInformation && <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />}
+      ) : (
+        <>
+          <div
+            className={`absolute z-20 left-0 flex justify-end items-center h-9 bg-element-light-darker-200 px-5 ${
+              tabInformation ? 'w-[calc(100%-360px)]' : 'w-full'
+            } ${withLogsNavigation ? 'top-10' : ''}`}
+          >
+            {errors && errors.length > 0 && (
+              <p
+                data-testid="error-layout-line"
+                onClick={() => scrollToError()}
+                className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-text-200 hover:text-text-300 cursor-pointer"
+              >
+                <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
+                An error occured line {errors[errors.length - 1]?.index}
+                <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
+              </p>
+            )}
+            <div className="flex">
+              {setPauseLogs && (
+                <ButtonIcon
+                  className="mr-2"
+                  icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
+                  size={ButtonSize.TINY}
+                  style={ButtonIconStyle.DARK}
+                  onClick={() => setPauseLogs(!pauseLogs)}
+                />
+              )}
+              <ButtonIcon
+                icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
+                className="mr-px !rounded-tr-none !rounded-br-none"
+                size={ButtonSize.TINY}
+                style={ButtonIconStyle.DARK}
+                onClick={() => forcedScroll()}
+              />
+              <ButtonIcon
+                icon={IconAwesomeEnum.ARROW_DOWN_TO_LINE}
+                className="mr-2 !rounded-tl-none !rounded-bl-none"
+                size={ButtonSize.TINY}
+                style={ButtonIconStyle.DARK}
+                onClick={() => forcedScroll(true)}
+              />
+              <a className="btn btn-icon btn-icon--small btn-icon--dark" onClick={(event) => downloadJSON(event)}>
+                <Icon name="icon-solid-cloud-arrow-down" />
+              </a>
+            </div>
+          </div>
+          <div
+            ref={refScrollSection}
+            onWheel={(event) => !pauseLogs && setPauseLogs && event.deltaY < 0 && setPauseLogs(true)}
+            className={`overflow-y-auto w-full h-full min-h-[calc(100vh-100px] pb-16 ${
+              lineNumbers
+                ? 'before:bg-element-light-darker-300 before:absolute before:left-0 before:top-9 before:w-10 before:h-full'
+                : ''
+            } ${withLogsNavigation ? 'mt-[72px]' : 'mt-[36px]'}`}
+          >
+            <div className="relative z-10">{children}</div>
+          </div>
+          {tabInformation && <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />}
+        </>
+      )}
     </div>
   )
 }

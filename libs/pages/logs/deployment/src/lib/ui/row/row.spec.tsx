@@ -21,7 +21,7 @@ describe('Row', () => {
 
   it('should have success index color', () => {
     props.data = {
-      type: 'info',
+      type: LogsType.INFO,
       timestamp: new Date().toString(),
       details: {
         stage: {
@@ -57,7 +57,7 @@ describe('Row', () => {
 
   it('should have cell status format text', () => {
     props.data = {
-      type: 'info',
+      type: LogsType.INFO,
       timestamp: new Date().toString(),
       details: {
         stage: {
@@ -98,7 +98,7 @@ describe('Row', () => {
 
   it('should have success cell status color', () => {
     props.data = {
-      type: 'info',
+      type: LogsType.INFO,
       timestamp: new Date().toString(),
       details: {
         stage: {
@@ -136,7 +136,7 @@ describe('Row', () => {
 
   it('should have success cell date color', () => {
     props.data = {
-      type: 'info',
+      type: LogsType.INFO,
       timestamp: new Date().toString(),
       details: {
         stage: {
@@ -154,7 +154,7 @@ describe('Row', () => {
 
   it('should have cell with scope name', () => {
     props.data = {
-      type: 'info',
+      type: LogsType.INFO,
       timestamp: new Date().toString(),
       details: {
         stage: {
@@ -174,7 +174,7 @@ describe('Row', () => {
 
   it('should have cell success message', () => {
     props.data = {
-      type: 'info',
+      type: LogsType.INFO,
       timestamp: new Date().toString(),
       details: {
         stage: {
