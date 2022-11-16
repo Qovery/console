@@ -12,8 +12,7 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
   const [scrollHeight, setScrollHeight] = useState(0)
   const [clientHeight, setClientHeight] = useState(0)
 
-  // todo remove any here and fix types
-  const onScrollHandler = (event: any) => {
+  const onScrollHandler = (event: React.WheelEvent<HTMLDivElement>) => {
     setScrollTop(event.currentTarget.scrollTop)
     setScrollHeight(event.currentTarget.scrollHeight)
     setClientHeight(event.currentTarget.clientHeight)
@@ -33,19 +32,6 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
     resetRefSizes(wrapperRef)
   }, [wrapperRef?.current?.clientHeight, resetRefSizes])
 
-  useEffect(() => {
-    const current = wrapperRef.current
-    if (current) {
-      current.addEventListener('wheel', onScrollHandler)
-    }
-
-    return () => {
-      if (current) {
-        current.removeEventListener('wheel', onScrollHandler)
-      }
-    }
-  }, [wrapperRef])
-
   const getVisibleSides = (): { top: boolean; bottom: boolean } => {
     const isBottom = clientHeight === scrollHeight - scrollTop
     const isTop = scrollTop === 0
@@ -58,14 +44,21 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
   }
 
   return (
-    <div ref={wrapperRef} className={`relative overflow-auto ${className}`} onScroll={onScrollHandler}>
+    <div
+      data-testid="scroll-shadow-wrapper"
+      ref={wrapperRef}
+      className={`relative overflow-auto ${className}`}
+      onScroll={onScrollHandler}
+    >
       <div
+        data-testid="scroll-shadow-top"
         className={`sticky top-0 bg-scroll-shadow-up w-full h-4 -mb-4 transition-opacity duration-300 ${
           getVisibleSides().top ? 'opacity-100' : 'opacity-0'
         }`}
       />
       {children}
       <div
+        data-testid="scroll-shadow-bottom"
         className={`sticky bottom-0 bg-scroll-shadow-bottom w-full h-4 -mt-4 rotate-180 transition-opacity duration-300 ${
           getVisibleSides().bottom ? 'opacity-100' : 'opacity-0'
         }`}
