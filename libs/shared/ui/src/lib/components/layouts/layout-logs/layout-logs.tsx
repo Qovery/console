@@ -75,21 +75,6 @@ export function LayoutLogs(props: LayoutLogsProps) {
     !pauseLogs && forcedScroll && forcedScroll(true)
   }, [data])
 
-  // if (!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded') {
-  //   return (
-  // <div data-testid="loading-screen" className="mt-20 flex flex-col justify-center items-center text-center">
-  //   <img
-  //     className="w-40 pointer-events-none user-none"
-  //     src="/assets/images/event-placeholder-dark.svg"
-  //     alt="Event placeholder"
-  //   />
-  //   <p className="mt-5 text-text-100 font-medium">
-  //     {data?.loadingStatus === 'not loaded' || !data ? 'Loading...' : 'Logs not available'}
-  //   </p>
-  // </div>
-  //   )
-  // }
-
   const downloadJSON = (event: MouseEvent) => {
     const file = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data?.items))
     const target = event.currentTarget
@@ -109,6 +94,21 @@ export function LayoutLogs(props: LayoutLogsProps) {
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
       {withLogsNavigation && (
         <div className="absolute overflow-y-auto z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
+          {environment && (
+            <Link
+              data-testid="nav-environment"
+              className={`flex items-center h-full px-4 text-sm font-medium text-text-100 transition-colors transition-timing duration-250 hover:bg-element-light-darker-300 ${
+                applicationId ? 'bg-element-light-darker-500 ' : 'bg-element-light-darker-200'
+              }`}
+              to={DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)}
+            >
+              <StatusChip
+                status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
+                className="mr-2"
+              />
+              <span className="truncate">Deployment logs</span>
+            </Link>
+          )}
           {applications?.map((application: ApplicationEntity) => (
             <Link
               key={application.id}
@@ -131,21 +131,6 @@ export function LayoutLogs(props: LayoutLogsProps) {
               <Icon name={IconEnum.APPLICATION} width="14" className="ml-2" />
             </Link>
           ))}
-          {environment && (
-            <Link
-              data-testid="nav-environment"
-              className={`flex items-center h-full px-4 text-sm font-medium text-text-100 transition-colors transition-timing duration-250 hover:bg-element-light-darker-300 ${
-                applicationId ? 'bg-element-light-darker-500 ' : 'bg-element-light-darker-200'
-              }`}
-              to={DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)}
-            >
-              <StatusChip
-                status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
-                className="mr-2"
-              />
-              <span className="truncate">Deployment logs</span>
-            </Link>
-          )}
         </div>
       )}
       {!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded' ? (
