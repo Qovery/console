@@ -7,6 +7,7 @@ import {
   Icon,
   IconAwesomeEnum,
   InputSizeUnit,
+  InputText,
   Slider,
   WarningBox,
   WarningBoxEnum,
@@ -43,8 +44,6 @@ export function SettingResources(props: SettingResourcesProps) {
 
   let maxMemoryBySize =
     memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
-
-  const maxStorageBySize = memorySize === MemorySizeEnum.GB ? 20480 / 1024 : 20480 || 0
 
   if (!application) {
     maxMemoryBySize = memorySize === MemorySizeEnum.GB ? 8192 / 1024 : 8192
@@ -142,21 +141,16 @@ export function SettingResources(props: SettingResourcesProps) {
           <Controller
             name="storage"
             control={control}
-            rules={inputSizeUnitRules(maxStorageBySize)}
+            rules={{
+              pattern: {
+                value: /^[0-9]+$/,
+                message: 'Please enter a number.',
+              },
+            }}
             render={({ field, fieldState: { error } }) => (
-              <InputSizeUnit
-                name={field.name}
-                value={field.value}
-                onChange={field.onChange}
-                maxSize={maxStorageBySize}
-                error={error}
-                currentUnit={storageSize}
-                getUnit={getStorageUnit}
-                showConsumption={!!application}
-              />
+              <InputText name="storage" label="Size in GB" value={field.value} onChange={field.onChange} />
             )}
           />
-          <p className="text-text-400 pl-4 text-xs">Max consumption: 20GB</p>
         </BlockContent>
       )}
     </div>

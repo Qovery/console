@@ -1,5 +1,6 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
+import { DeployOtherCommitModalFeature } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
@@ -24,7 +25,6 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@qovery/shared/utils'
-import DeployOtherCommitModalFeature from '../../../../../../shared/console-shared/src/lib/deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity

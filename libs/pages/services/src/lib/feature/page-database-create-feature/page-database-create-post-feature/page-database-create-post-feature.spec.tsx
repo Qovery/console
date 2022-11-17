@@ -94,7 +94,7 @@ describe('PageDatabaseCreatePostFeature', () => {
         memory: 100,
         mode: DatabaseModeEnum.CONTAINER,
         name: 'test',
-        storage: 1024,
+        storage: 1,
         type: DatabaseTypeEnum.MYSQL,
         version: '1',
       },

@@ -56,10 +56,9 @@ export function PageDatabaseCreatePostFeature() {
       const memoryUnit = resourcesData.memory_unit
 
       const currentStorage = Number(resourcesData['storage'])
-      const storageUnit = resourcesData.storage_unit
 
       const memory = memoryUnit === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
-      const storage = storageUnit === MemorySizeEnum.GB ? currentStorage * 1024 : currentStorage
+      const storage = currentStorage
       const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
 
       const databaseRequest: DatabaseRequest = {

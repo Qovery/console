@@ -79,9 +79,9 @@ export function PageDatabaseCreatePost(props: PageDatabaseCreatePostProps) {
                   </strong>
                 </li>
                 <li>
-                  Instances:{' '}
+                  Storage:{' '}
                   <strong className="font-medium">
-                    {props.resourcesData.storage} - {props.resourcesData.storage_unit}
+                    {props.resourcesData.storage} {props.resourcesData.storage_unit}
                   </strong>
                 </li>
               </ul>
