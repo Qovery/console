@@ -85,6 +85,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                 <InputText
                   type="number"
                   name="storage"
+                  dataTestId="input-memory-storage"
                   label="Size in GB"
                   value={field.value}
                   onChange={field.onChange}
