@@ -1,20 +1,17 @@
 import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { createContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
-import { DeployOtherCommitModalFeature } from '@qovery/shared/console-shared'
-import { IconEnum, ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
-import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
+import { ApplicationButtonsActionsFeature } from '@qovery/shared/console-shared'
+import { IconEnum, getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   Button,
-  ButtonIconAction,
   ButtonSize,
   ButtonStyle,
   Header,
   Icon,
-  IconAwesomeEnum,
   Menu,
   MenuData,
   MenuItemProps,
@@ -23,9 +20,7 @@ import {
   Tag,
   TagMode,
   TagSize,
-  useModal,
 } from '@qovery/shared/ui'
-import { copyToClipboard, urlCodeEditor } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
@@ -47,14 +42,11 @@ export interface ContainerProps {
 }
 
 export function Container(props: ContainerProps) {
-  const { application, environment, children, statusActions, removeApplication } = props
-  const { organizationId, projectId, environmentId = '', applicationId = '' } = useParams()
+  const { application, environment, children } = props
+  const { environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
 
   const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
-
-  const { openModal } = useModal()
 
   const redeployApplication = () => {
     if (application) {
@@ -70,100 +62,7 @@ export function Container(props: ContainerProps) {
     }
   }
 
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${applicationId}`
-
   const menuLink: MenuData = []
-
-  const buttonActionsDefault = [
-    {
-      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-      menusClassName: 'border-r border-r-element-light-lighter-500',
-      statusActions: {
-        status: application?.status && application?.status.state,
-        actions: statusActions,
-      },
-    },
-    {
-      ...(application &&
-        (getServiceType(application) === ServiceTypeEnum.APPLICATION ||
-          getServiceType(application) === ServiceTypeEnum.CONTAINER) && {
-          iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-          menusClassName: 'border-r border-r-element-light-lighter-500',
-          menus: [
-            {
-              items: [
-                {
-                  name: 'Deployment logs',
-                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                  onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)),
-                },
-                {
-                  name: 'Application logs',
-                  contentLeft: <Icon name="icon-solid-scroll" className="text-brand-500 text-sm" />,
-                  onClick: () =>
-                    navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)),
-                },
-              ],
-            },
-          ],
-        }),
-    },
-    {
-      ...(removeApplication && {
-        iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
-        menus: [
-          {
-            items:
-              application && getServiceType(application) === ServiceTypeEnum.APPLICATION
-                ? [
-                    {
-                      name: 'Edit code',
-                      contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
-                      link: {
-                        url: urlCodeEditor((application as GitApplicationEntity)?.git_repository) || '',
-                        external: true,
-                      },
-                    },
-                    {
-                      name: 'Copy identifiers',
-                      contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
-                      onClick: () => copyToClipboard(copyContent),
-                    },
-                    {
-                      name: 'Deploy other version',
-                      contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
-                      onClick: () => {
-                        openModal({
-                          content: (
-                            <DeployOtherCommitModalFeature
-                              applicationId={application.id}
-                              environmentId={environmentId || ''}
-                            />
-                          ),
-                          options: { width: 596 },
-                        })
-                      },
-                    },
-                    {
-                      name: 'Remove',
-                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                      onClick: () => removeApplication(applicationId ? applicationId : ''),
-                    },
-                  ]
-                : [
-                    {
-                      name: 'Remove',
-                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                      onClick: () => removeApplication(applicationId ? applicationId : ''),
-                    },
-                  ],
-          },
-        ],
-      }),
-    },
-  ]
 
   if (application && application.links && application.links.items) {
     const items: MenuItemProps[] = application.links.items.map((link) => {
@@ -207,18 +106,7 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={32} show={!application?.status}>
         <div className="flex">
           {environment && application && application?.status && (
-            <>
-              <ButtonIconAction
-                className="!h-8"
-                actions={buttonActionsDefault}
-                statusInformation={{
-                  id: application?.id,
-                  name: application?.name,
-                  mode: environment?.mode,
-                }}
-              />
-              <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
-            </>
+            <ApplicationButtonsActionsFeature inHeader application={application} environmentMode={environment.mode} />
           )}
         </div>
       </Skeleton>

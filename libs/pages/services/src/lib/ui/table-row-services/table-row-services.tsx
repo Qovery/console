@@ -1,6 +1,6 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { DeployOtherCommitModalFeature } from '@qovery/shared/console-shared'
+import { ApplicationButtonsActionsFeature, DeployOtherCommitModalFeature } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
@@ -200,15 +200,24 @@ export function TableRowServices(props: TableRowServicesProps) {
                 )}
               </p>
               {data.name && (
-                <ButtonIconAction
-                  actions={type === ServiceTypeEnum.DATABASE ? buttonActionsDefaultDB : buttonActionsDefault}
-                  statusInformation={{
-                    id: data.id,
-                    name: data.name,
-                    mode: environmentMode,
-                  }}
-                  isService
-                />
+                <>
+                  {type === ServiceTypeEnum.APPLICATION ? (
+                    <ApplicationButtonsActionsFeature
+                      application={data as ApplicationEntity}
+                      environmentMode={environmentMode}
+                    />
+                  ) : (
+                    <ButtonIconAction
+                      actions={type === ServiceTypeEnum.DATABASE ? buttonActionsDefaultDB : buttonActionsDefault}
+                      statusInformation={{
+                        id: data.id,
+                        name: data.name,
+                        mode: environmentMode,
+                      }}
+                      isService
+                    />
+                  )}
+                </>
               )}
             </div>
           </Skeleton>

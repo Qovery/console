@@ -1,11 +1,6 @@
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  deleteApplicationAction,
-  postApplicationActionsDeploy,
-  postApplicationActionsRestart,
-  postApplicationActionsStop,
-} from '@qovery/domains/application'
+import { deleteApplicationAction } from '@qovery/domains/application'
 import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
@@ -44,24 +39,6 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const applicationActions: StatusMenuActions[] = [
-    {
-      name: 'redeploy',
-      action: (applicationId: string) =>
-        dispatch(postApplicationActionsRestart({ environmentId, applicationId, serviceType: getServiceType(data) })),
-    },
-    {
-      name: 'deploy',
-      action: (applicationId: string) =>
-        dispatch(postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(data) })),
-    },
-    {
-      name: 'stop',
-      action: (applicationId: string) =>
-        dispatch(postApplicationActionsStop({ environmentId, applicationId, serviceType: getServiceType(data) })),
-    },
-  ]
-
   const databaseActions: StatusMenuActions[] = [
     {
       name: 'redeploy',
@@ -94,8 +71,6 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
     })
   }
 
-  const actions = type === ServiceTypeEnum.DATABASE ? databaseActions : applicationActions
-
   return (
     <TableRowServices
       data={data}
@@ -104,7 +79,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
       environmentMode={environmentMode}
       dataHead={dataHead}
       link={link}
-      buttonActions={actions}
+      buttonActions={databaseActions}
       columnsWidth="25% 25% 25% 20%"
       removeService={data.status && isDeleteAvailable(data.status.state) ? removeService : undefined}
       isLoading={props.isLoading}

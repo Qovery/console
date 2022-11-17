@@ -3,3 +3,4 @@ export * from './lib/git-repository-settings/feature/git-repository-settings-fea
 export * from './lib/git-repository-settings/ui/git-repository-settings'
 export * from './lib/general-container-settings/ui/general-container-settings'
 export * from './lib/deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
+export * from './lib/application-buttons-actions/feature/application-buttons-actions-feature'
