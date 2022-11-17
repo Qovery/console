@@ -1,54 +1,55 @@
 import { DeploymentHistoryApplication, DeploymentHistoryDatabase, StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ContainerApplicationEntity, DeploymentService } from '@qovery/shared/interfaces'
-import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/router'
-import { ButtonIconAction, Skeleton, StatusChip, TableRow, Tag, TagCommit, Tooltip } from '@qovery/shared/ui'
+import { APPLICATION_GENERAL_URL, APPLICATION_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
+import {
+  ButtonIconAction,
+  IconAwesomeEnum,
+  Skeleton,
+  StatusChip,
+  TableRow,
+  Tag,
+  TagCommit,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { renameStatus, timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
 import Icon from '../../icon/icon'
 import { TableHeadProps } from '../table'
 
 export interface TableRowDeploymentProps {
-  id?: string
   data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
   dataHead: TableHeadProps[]
   columnsWidth?: string
   isLoading?: boolean
   startGroup?: boolean
   noCommit?: boolean
+  index?: number
 }
 
 export function TableRowDeployment(props: TableRowDeploymentProps) {
   const {
-    id,
     dataHead,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     isLoading,
     startGroup,
     data,
     noCommit,
+    index,
   } = props
 
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
   const { organizationId, projectId, environmentId } = useParams()
+  const navigate = useNavigate()
 
   const buttonActionsDefault = [
     {
-      iconLeft: <Icon name="icon-solid-scroll" />,
-      onClick: () =>
-        window
-          .open(
-            `https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications/${id}/summary?fullscreenLogs=true`,
-            '_blank'
-          )
-          ?.focus(),
+      iconLeft: <Icon name={IconAwesomeEnum.SCROLL} />,
+      onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)),
     },
-    /*{
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-    },*/
   ]
 
   const handleCopy = (e: React.MouseEvent) => {
@@ -136,7 +137,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
                   {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
-              {data?.name && !(data as ContainerApplicationEntity)?.image_name && (
+              {index === 0 && data?.name && !(data as ContainerApplicationEntity)?.image_name && (
                 <ButtonIconAction actions={buttonActionsDefault} />
               )}
             </>

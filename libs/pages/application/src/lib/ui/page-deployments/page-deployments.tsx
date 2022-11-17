@@ -3,14 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { BaseLink, HelpSection, Table, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
-  applicationId?: string
   deployments?: DeploymentHistoryApplication[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
 export function Deployments(props: PageDeploymentsProps) {
-  const { applicationId, deployments = [], listHelpfulLinks, isLoading = true } = props
+  const { deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryApplication[]>(deployments)
 
@@ -66,8 +65,8 @@ export function Deployments(props: PageDeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
-              id={applicationId}
               data={currentData as DeploymentHistoryApplication}
+              index={index}
               key={index}
               dataHead={tableHead}
               isLoading={isLoading}

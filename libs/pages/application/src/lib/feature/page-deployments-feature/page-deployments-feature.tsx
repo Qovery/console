@@ -55,7 +55,6 @@ export function PageDeploymentsFeature() {
 
   return (
     <PageDeployments
-      applicationId={application?.id}
       deployments={!isLoading ? application?.deployments?.items : loadingApplicationsDeployments}
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading}

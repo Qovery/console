@@ -3,14 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { BaseLink, HelpSection, Table, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
-  databaseId?: string
   deployments?: DeploymentHistoryDatabase[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
 }
 
 export function Deployments(props: PageDeploymentsProps) {
-  const { databaseId, deployments = [], listHelpfulLinks, isLoading = true } = props
+  const { deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryDatabase[]>(deployments)
 
@@ -62,9 +61,9 @@ export function Deployments(props: PageDeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
-              id={databaseId}
               data={currentData as DeploymentHistoryDatabase}
               key={index}
+              index={index}
               dataHead={tableHead}
               isLoading={isLoading}
               noCommit

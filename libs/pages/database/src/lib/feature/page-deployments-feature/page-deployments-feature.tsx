@@ -49,7 +49,6 @@ export function PageDeploymentsFeature() {
 
   return (
     <PageDeployments
-      databaseId={database?.id}
       deployments={!isLoading ? database?.deployments?.items : loadingDatabasesDeployments}
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading}
