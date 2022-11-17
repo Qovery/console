@@ -1,31 +1,24 @@
 import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { Route, Routes, useParams } from 'react-router-dom'
 import {
   databasesLoadingStatus,
-  deleteDatabaseAction,
   fetchDatabase,
   fetchDatabaseMasterCredentials,
   fetchDatabaseMetrics,
-  postDatabaseActionsDeploy,
-  postDatabaseActionsRestart,
-  postDatabaseActionsStop,
   selectDatabaseById,
 } from '@qovery/domains/database'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
-import { StatusMenuActions } from '@qovery/shared/ui'
-import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 
 export function PageDatabase() {
   useDocumentTitle('Database - Qovery')
-  const navigate = useNavigate()
-  const { organizationId = '', projectId = '', databaseId = '', environmentId = '' } = useParams()
+  const { databaseId = '', environmentId = '' } = useParams()
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
@@ -34,26 +27,6 @@ export function PageDatabase() {
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => databasesLoadingStatus(state))
 
   const dispatch = useDispatch<AppDispatch>()
-
-  const statusActions: StatusMenuActions[] = [
-    {
-      name: 'restart',
-      action: (databaseId: string) => dispatch(postDatabaseActionsRestart({ environmentId, databaseId })),
-    },
-    {
-      name: 'deploy',
-      action: (databaseId: string) => dispatch(postDatabaseActionsDeploy({ environmentId, databaseId })),
-    },
-    {
-      name: 'stop',
-      action: (databaseId: string) => dispatch(postDatabaseActionsStop({ environmentId, databaseId })),
-    },
-  ]
-
-  const removeDatabase = (databaseId: string) => {
-    dispatch(deleteDatabaseAction({ environmentId, databaseId }))
-    navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
-  }
 
   useEffect(() => {
     if (databaseId && loadingStatus === 'loaded') {
@@ -65,12 +38,7 @@ export function PageDatabase() {
   }, [databaseId, loadingStatus])
 
   return (
-    <Container
-      database={database}
-      environment={environment}
-      statusActions={statusActions}
-      removeDatabase={database?.status && isDeleteAvailable(database.status.state) ? removeDatabase : undefined}
-    >
+    <Container database={database} environment={environment}>
       <Routes>
         {ROUTER_DATABASE.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
