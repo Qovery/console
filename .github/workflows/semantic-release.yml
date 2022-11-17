@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 16
       - name: yarn install
-        run: pnpm
+        run: yarn
 
   semantic-release:
     runs-on: ubuntu-latest
