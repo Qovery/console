@@ -80,7 +80,12 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             <Controller
               name="storage"
               control={control}
-              rules={inputSizeUnitRules(maxMemoryBySize)}
+              rules={{
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Please enter a number.',
+                },
+              }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
                   type="number"
