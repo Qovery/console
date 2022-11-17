@@ -9,6 +9,7 @@ import {
   ButtonStyle,
   HelpSection,
   InputSizeUnit,
+  InputText,
   Slider,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
@@ -16,16 +17,14 @@ import { convertCpuToVCpu } from '@qovery/shared/utils'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  storageSize: MemorySizeEnum | string
   memorySize: MemorySizeEnum | string
   getMemoryUnit: (value: string | MemorySizeEnum) => void
-  getStorageUnit: (value: string | MemorySizeEnum) => void
   database?: DatabaseEntity
   loading?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, database, memorySize, getMemoryUnit, storageSize, getStorageUnit } = props
+  const { onSubmit, loading, database, memorySize, getMemoryUnit } = props
   const { control, formState, watch } = useFormContext()
 
   const maxMemoryBySize =
@@ -38,7 +37,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-text-700">Resources</h2>
         <form onSubmit={onSubmit}>
-          <p className="text-text-500 text-xs mb-3">Adapt the application's consumption accordingly</p>
+          <p className="text-text-500 text-xs mb-3">Adapt the database's consumption accordingly</p>
           <BlockContent title="vCPU">
             <p className="flex items-center text-text-600 mb-3 font-medium">{watch('cpu')}</p>
             <Controller
@@ -83,17 +82,18 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               control={control}
               rules={inputSizeUnitRules(maxMemoryBySize)}
               render={({ field, fieldState: { error } }) => (
-                <InputSizeUnit
-                  name={field.name}
+                <InputText
+                  type="number"
+                  name="storage"
+                  label="Size in GB"
                   value={field.value}
                   onChange={field.onChange}
-                  currentSize={database?.storage}
-                  currentUnit={storageSize}
-                  getUnit={getStorageUnit}
-                  error={error}
                 />
               )}
             />
+            <p data-testid="current-consumption" className="text-text-400 text-xs mt-1 ml-4">
+              Current consumption: {database.storage} GB
+            </p>
           </BlockContent>
           <div className="flex justify-end">
             <Button

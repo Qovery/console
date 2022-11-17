@@ -7,6 +7,7 @@ import {
   Icon,
   IconAwesomeEnum,
   InputSizeUnit,
+  InputText,
   Slider,
   WarningBox,
   WarningBoxEnum,
@@ -144,16 +145,7 @@ export function SettingResources(props: SettingResourcesProps) {
             control={control}
             rules={inputSizeUnitRules(maxStorageBySize)}
             render={({ field, fieldState: { error } }) => (
-              <InputSizeUnit
-                name={field.name}
-                value={field.value}
-                onChange={field.onChange}
-                maxSize={maxStorageBySize}
-                error={error}
-                currentUnit={storageSize}
-                getUnit={getStorageUnit}
-                showConsumption={!!application}
-              />
+              <InputText name="storage" label="Size in GB" value={field.value} onChange={field.onChange} />
             )}
           />
           <p className="text-text-400 pl-4 text-xs">Max consumption: 20GB</p>
