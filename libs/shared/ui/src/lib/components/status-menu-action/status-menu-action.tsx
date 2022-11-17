@@ -127,6 +127,7 @@ export function StatusMenuAction(props: StatusMenuActionProps) {
         setTopMenu((topMenu) => [...topMenu, stopButton])
       }
       if (!isService && isCancelBuildAvailable(statusActions.status)) {
+        console.log('hey do we enter here?')
         setBottomMenu((bottomMenu) => [...bottomMenu, cancelBuildButton])
       }
     }
