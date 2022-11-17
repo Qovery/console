@@ -1,4 +1,4 @@
-import { DatabaseAccessibilityEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DatabaseAccessibilityEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -11,6 +11,7 @@ export interface PageDatabaseCreateGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   databaseTypeOptions?: Value[]
   databaseVersionOptions?: { [Key: string]: Value[] }
+  cloudProvider?: string
 }
 
 export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps) {
@@ -55,17 +56,19 @@ export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps)
             <Controller
               name="mode"
               control={control}
-              render={({ field, fieldState: { error } }) => (
+              render={({ field }) => (
                 <>
-                  <InputRadio
-                    className="mb-3"
-                    value={DatabaseModeEnum.MANAGED}
-                    name={field.name}
-                    description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
-                    onChange={field.onChange}
-                    formValue={field.value}
-                    label="Mode managed"
-                  />
+                  {props.cloudProvider === CloudProviderEnum.AWS && (
+                    <InputRadio
+                      className="mb-3"
+                      value={DatabaseModeEnum.MANAGED}
+                      name={field.name}
+                      description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
+                      onChange={field.onChange}
+                      formValue={field.value}
+                      label="Mode managed"
+                    />
+                  )}
                   <InputRadio
                     value={DatabaseModeEnum.CONTAINER}
                     className="mb-3"

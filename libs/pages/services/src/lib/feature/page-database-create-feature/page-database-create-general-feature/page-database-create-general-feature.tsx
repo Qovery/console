@@ -163,6 +163,7 @@ export function PageDatabaseCreateGeneralFeature() {
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
         <PageDatabaseCreateGeneral
+          cloudProvider={environment?.cloud_provider.provider}
           onSubmit={onSubmit}
           databaseTypeOptions={databaseTypeOptions}
           databaseVersionOptions={databaseVersionOptions}
