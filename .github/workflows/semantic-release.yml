@@ -1,5 +1,8 @@
 name: Create new release
-on: [workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   install-deps:
