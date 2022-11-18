@@ -1,4 +1,4 @@
-import { Dispatch, MouseEvent, SetStateAction, useState } from 'react'
+import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
@@ -147,29 +147,49 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
 
   const [localFilter, setLocalFilter] = useState('')
   const [dataFilterNumber, setDataFilterNumber] = useState(0)
+  const [isOpen, setOpen] = useState(false)
 
-  function cleanFilter(event: MouseEvent) {
-    event.preventDefault()
+  function cleanFilter(event?: MouseEvent) {
+    event?.preventDefault()
     setCurrentFilter(ALL)
     setDataFilterNumber(0)
     // set global data by default
     defaultData && setFilterData && setFilterData(defaultData)
   }
 
+  const menus = createFilter(
+    dataHead,
+    defaultData,
+    ALL,
+    currentFilter,
+    setCurrentFilter,
+    setLocalFilter,
+    setDataFilterNumber,
+    setFilterData
+  )
+
+  // console.log(defaultData.map((data) => data.name))
+  // console.log('currentFilter: ' + currentFilter)
+  // console.log('dataFilterNumber: ' + dataFilterNumber)
+  // console.log('localFilter: ' + localFilter)
+
+  useEffect(() => {
+    const checkIfFilterAvailable = menus.find((menu) =>
+      menu.items.find((item) => item.name !== 'All' && item.name.toUpperCase().replace(' ', '_') === currentFilter)
+    )
+    if (checkIfFilterAvailable) {
+      console.log(menus)
+      // setCurrentFilter(ALL)
+      // setDataFilterNumber(0)
+    }
+  }, [menus, currentFilter, setCurrentFilter, setDataFilterNumber])
+
   return (
-    <div className="flex" key={Math.random()}>
+    <div className="flex">
       <Menu
-        key={Math.random()}
-        menus={createFilter(
-          dataHead,
-          defaultData,
-          ALL,
-          currentFilter,
-          setCurrentFilter,
-          setLocalFilter,
-          setDataFilterNumber,
-          setFilterData
-        )}
+        open={isOpen}
+        onOpen={setOpen}
+        menus={menus}
         width={280}
         isFilter
         trigger={
