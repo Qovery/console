@@ -73,7 +73,7 @@ export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps)
                     value={DatabaseModeEnum.CONTAINER}
                     className="mb-3"
                     name={field.name}
-                    description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor stansphots."
+                    description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
                     onChange={field.onChange}
                     formValue={field.value}
                     label="Mode container"
