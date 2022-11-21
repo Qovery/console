@@ -75,12 +75,12 @@ export function PageApplicationLogs() {
       title: 'Pod name',
       className: 'px-4 py-2 h-full text-text-300 w-[198px]',
       classNameTitle: 'text-text-300',
-      // filter: [
-      //   {
-      //     title: 'Filter by pod name',
-      //     key: 'pod_name',
-      //   },
-      // ],
+      filter: [
+        {
+          title: 'Filter by pod name',
+          key: 'pod_name',
+        },
+      ],
     },
     {
       title: 'Version',
