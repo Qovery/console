@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
-import TableRowEnvironments from '../table-row-environments/table-row-environments'
 import { BaseLink, EmptyState, HelpSection, Table, TableFilterProps } from '@qovery/shared/ui'
+import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface PageGeneralProps {
   environments: EnvironmentEntity[]

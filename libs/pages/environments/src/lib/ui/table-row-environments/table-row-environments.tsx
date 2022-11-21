@@ -1,21 +1,16 @@
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { RunningStatus } from '@qovery/shared/enums'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { Icon, Skeleton, StatusChip, StatusLabel, TableHeadProps, TableRow, TagMode, Tooltip } from '@qovery/shared/ui'
 import {
-  ButtonIconAction,
   Icon,
-  IconAwesomeEnum,
   Skeleton,
   StatusChip,
   StatusLabel,
-  StatusMenuActions,
   TableFilterProps,
   TableHeadProps,
   TableRow,
   TagMode,
   Tooltip,
-  useModal,
 } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/utils'
 
@@ -28,7 +23,7 @@ export interface TableRowEnvironmentsProps {
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, filter, } = props
+  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, filter } = props
 
   const isLoading = !data.status?.id
 
