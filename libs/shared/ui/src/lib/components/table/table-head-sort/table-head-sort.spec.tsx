@@ -11,7 +11,7 @@ describe('TableHeadSort', () => {
       title: 'Update',
       data: environmentFactoryMock(2),
       currentKey: '',
-      setFilterData: jest.fn(),
+      setData: jest.fn(),
     }
   })
   it('should render successfully', () => {
