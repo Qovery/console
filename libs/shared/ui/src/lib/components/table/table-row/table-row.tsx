@@ -15,7 +15,7 @@ export interface TableRowProps {
 }
 
 export function TableRow(props: TableRowProps) {
-  const { children, link, className = '', columnsWidth, disabled, data, filter } = props
+  const { children, link, className = '', columnsWidth, disabled, data, filter, isNew } = props
   const [highlighted, setHighlighted] = useState(false)
 
   const rowClasses = `grid items-center h-14 border-b-element-light-lighter-400 border-b ${
@@ -25,13 +25,13 @@ export function TableRow(props: TableRowProps) {
   } ${className} ${disabled ? 'pointer-events-none' : ''}`
 
   useEffect(() => {
-    if (props.isNew) {
+    if (isNew) {
       setHighlighted(true)
       setTimeout(() => {
         setHighlighted(false)
       }, 10000)
     }
-  }, [props.isNew, setHighlighted])
+  }, [isNew, setHighlighted])
 
   return (
     <TableRowFilter data={data} filter={filter}>
