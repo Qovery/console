@@ -31,7 +31,7 @@ export function PageApplicationLogs() {
 
   const [logs, setLogs] = useState<Log[]>([])
   const [pauseLogs, setPauseLogs] = useState<Log[]>([])
-  const [filterData, setFilterData] = useState<Log[]>([])
+  // const [filterData, setFilterData] = useState<Log[]>([])
   const [pauseStatusLogs, setPauseStatusLogs] = useState(false)
 
   const [loading, setLoading] = useState<LoadingStatus>('not loaded')
@@ -75,12 +75,12 @@ export function PageApplicationLogs() {
       title: 'Pod name',
       className: 'px-4 py-2 h-full text-text-300 w-[198px]',
       classNameTitle: 'text-text-300',
-      filter: [
-        {
-          title: 'Filter by pod name',
-          key: 'pod_name',
-        },
-      ],
+      // filter: [
+      //   {
+      //     title: 'Filter by pod name',
+      //     key: 'pod_name',
+      //   },
+      // ],
     },
     {
       title: 'Version',
@@ -119,9 +119,9 @@ export function PageApplicationLogs() {
         className="bg-transparent"
         classNameHead="!flex bg-element-light-darker-300 !border-transparent"
         dataHead={tableHead}
-        defaultData={logs}
-        setFilterData={setFilterData}
-        filterData={filterData}
+        data={logs}
+        // setFilterData={setFilterData}
+        // filterData={filterData}
       >
         <div className="pb-10">{memoRow}</div>
       </Table>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { DeploymentService } from '@qovery/shared/interfaces'
-import { BaseLink, HelpSection, Table, TableRowDeployment } from '@qovery/shared/ui'
+import { BaseLink, HelpSection, Table, TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentService[]
@@ -12,6 +12,7 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
   const { deployments = [], listHelpfulLinks, isLoading } = props
 
   const [data, setData] = useState<DeploymentService[]>([])
+  const [filter, setFilter] = useState<TableFilterProps>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -75,15 +76,16 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
     <>
       <Table
         dataHead={tableHead}
-        defaultData={deployments}
-        filterData={data}
-        setFilterData={setData}
+        data={deployments}
+        setFilter={setFilter}
+        setDataSort={setData}
         className="mt-2 rounded-sm flex-grow overflow-y-auto min-h-0"
       >
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
               data={currentData as DeploymentService}
+              filter={filter}
               index={index}
               key={index}
               dataHead={tableHead}

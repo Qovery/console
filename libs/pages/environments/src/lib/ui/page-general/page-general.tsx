@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
-import { BaseLink, EmptyState, HelpSection, StatusMenuActions, Table } from '@qovery/shared/ui'
+import { BaseLink, EmptyState, HelpSection, StatusMenuActions, Table, TableFilterProps } from '@qovery/shared/ui'
 import { isDeleteAvailable } from '@qovery/shared/utils'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
@@ -19,6 +19,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
   const { organizationId, projectId } = useParams()
 
   const [data, setData] = useState(environments)
+  const [filter, setFilter] = useState<TableFilterProps>({})
 
   useEffect(() => {
     setData(environments)
@@ -67,9 +68,9 @@ function PageGeneralMemo(props: PageGeneralProps) {
       {environments.length ? (
         <Table
           dataHead={tableHead}
-          defaultData={environments}
-          filterData={data}
-          setFilterData={setData}
+          data={environments}
+          setFilter={setFilter}
+          setDataSort={setData}
           className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
           columnsWidth={columnWidth}
         >
@@ -78,6 +79,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
               <TableRowEnvironments
                 key={currentData.id}
                 data={currentData}
+                filter={filter}
                 dataHead={tableHead}
                 link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
                 columnsWidth={columnWidth}

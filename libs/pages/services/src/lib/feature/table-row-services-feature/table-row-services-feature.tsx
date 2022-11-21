@@ -15,13 +15,14 @@ import {
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/router'
-import { StatusMenuActions, TableHeadProps, useModalConfirmation } from '@qovery/shared/ui'
+import { StatusMenuActions, TableFilterProps, TableHeadProps, useModalConfirmation } from '@qovery/shared/ui'
 import { isDeleteAvailable } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import TableRowServices from '../../ui/table-row-services/table-row-services'
 
 export interface TableRowServicesFeatureProps {
   data: ApplicationEntity | DatabaseEntity
+  filter: TableFilterProps
   environmentMode: string
   dataHead: TableHeadProps[]
   link: string
@@ -29,7 +30,7 @@ export interface TableRowServicesFeatureProps {
 }
 
 export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
-  const { data, environmentMode, dataHead } = props
+  const { data, filter, environmentMode, dataHead } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
   const { openModalConfirmation } = useModalConfirmation()
@@ -98,6 +99,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   return (
     <TableRowServices
       data={data}
+      filter={filter}
       type={type}
       environmentMode={environmentMode}
       dataHead={dataHead}

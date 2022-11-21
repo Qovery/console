@@ -2,15 +2,20 @@ import React, { Dispatch, SetStateAction, useState } from 'react'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
+export interface TableFilterProps {
+  key?: string
+  value?: string
+}
+
 export interface TableProps {
   children: React.ReactElement
   dataHead: TableHeadProps[]
   className?: string
   classNameHead?: string
   columnsWidth?: string
-  defaultData?: any[]
-  filterData?: any[]
-  setFilterData?: Dispatch<SetStateAction<any[]>>
+  data?: any[]
+  setFilter?: Dispatch<SetStateAction<TableFilterProps>>
+  setDataSort?: Dispatch<SetStateAction<any[]>>
 }
 
 export interface TableHeadProps {
@@ -34,9 +39,9 @@ export function Table(props: TableProps) {
     classNameHead = '',
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     children,
-    defaultData,
-    filterData,
-    setFilterData,
+    data,
+    setFilter,
+    setDataSort,
   } = props
 
   const ALL = 'ALL'
@@ -56,18 +61,18 @@ export function Table(props: TableProps) {
                 {title}
               </span>
             )}
-            {filter && defaultData && setFilterData && (
+            {filter && data && setFilter && (
               <TableHeadFilter
                 title={title}
                 dataHead={dataHead.filter((head) => head.title === title)}
-                defaultData={defaultData}
-                setFilterData={setFilterData}
+                defaultData={data}
+                setFilter={setFilter}
                 currentFilter={currentFilter}
                 setCurrentFilter={setCurrentFilter}
               />
             )}
-            {sort && filterData && setFilterData && (
-              <TableHeadSort title={title} currentKey={sort.key} data={filterData} setFilterData={setFilterData} />
+            {sort && data && setDataSort && (
+              <TableHeadSort title={title} currentKey={sort.key} data={data} setData={setDataSort} />
             )}
           </div>
         ))}

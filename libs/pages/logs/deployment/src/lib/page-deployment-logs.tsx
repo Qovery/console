@@ -114,7 +114,7 @@ export function PageDeploymentLogs() {
         classNameHead="bg-element-light-darker-300 !border-transparent"
         columnsWidth={columnsWidth}
         dataHead={tableHead}
-        defaultData={logs}
+        data={logs}
       >
         <div>{memoRow}</div>
       </Table>

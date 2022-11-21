@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/router'
-import { BaseLink, EmptyState, HelpSection, Table } from '@qovery/shared/ui'
+import { BaseLink, EmptyState, HelpSection, Table, TableFilterProps } from '@qovery/shared/ui'
 import TableRowServicesFeature from '../../feature/table-row-services-feature/table-row-services-feature'
 
 export interface PageGeneralProps {
@@ -17,6 +17,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
   const { organizationId, projectId, environmentId } = useParams()
 
   const [data, setData] = useState(services)
+  const [filter, setFilter] = useState<TableFilterProps>({})
   const [loading, setLoading] = useState(isLoading)
 
   useEffect(() => {
@@ -57,9 +58,9 @@ function PageGeneralMemo(props: PageGeneralProps) {
       {services.length ? (
         <Table
           dataHead={tableHead}
-          defaultData={services}
-          filterData={data}
-          setFilterData={setData}
+          data={services}
+          setFilter={setFilter}
+          setDataSort={setData}
           className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
           columnsWidth="30% 20% 25% 20%"
         >
@@ -68,9 +69,10 @@ function PageGeneralMemo(props: PageGeneralProps) {
               const isDatabase = !(currentData as GitApplicationEntity).build_mode
               return (
                 <TableRowServicesFeature
-                  isLoading={loading}
                   key={currentData.id}
+                  isLoading={loading}
                   data={currentData}
+                  filter={filter}
                   dataHead={tableHead}
                   link={
                     isDatabase

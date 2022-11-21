@@ -51,16 +51,14 @@ export function PageOrganizationMembersFeature() {
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
   const [loadingInviteMembers, setLoadingInviteMembers] = useState(false)
 
-  const [filterMembers, setFilterMembers] = useState<Member[]>(organization?.members?.items || membersDataMock)
-  const [filterInviteMembers, setFilterInviteMembers] = useState<InviteMember[]>(
-    organization?.inviteMembers?.items || []
-  )
+  const [dataMembers, setDataMembers] = useState<Member[]>(organization?.members?.items || membersDataMock)
+  const [dataInviteMembers, setDataInviteMembers] = useState<InviteMember[]>(organization?.inviteMembers?.items || [])
 
   const fetchMembersDispatch = useCallback((): void => {
     dispatch(fetchMembers({ organizationId }))
       .unwrap()
       .then((result?: Member[]) => {
-        result && setFilterMembers(result)
+        result && setDataMembers(result)
       })
       .catch((e) => console.error(e))
       .finally(() => setLoadingMembers(false))
@@ -77,7 +75,7 @@ export function PageOrganizationMembersFeature() {
       dispatch(fetchInviteMembers({ organizationId }))
         .unwrap()
         .then((result?: InviteMember[]) => {
-          result && setFilterInviteMembers(result)
+          result && setDataInviteMembers(result)
         })
         .catch((e) => console.error(e))
         .finally(() => setLoadingInviteMembers(false))
@@ -144,11 +142,11 @@ export function PageOrganizationMembersFeature() {
     <PageOrganizationMembers
       userId={userSub}
       members={!loadingMembers ? organization?.members?.items : membersDataMock}
-      filterMembers={filterMembers}
-      setFilterMembers={setFilterMembers}
+      dataMembers={dataMembers}
+      setDataMembers={setDataMembers}
       loadingMembers={loadingMembers}
-      filterInviteMembers={filterInviteMembers}
-      setFilterInviteMembers={setFilterInviteMembers}
+      dataInviteMembers={dataInviteMembers}
+      setDataInviteMembers={setDataInviteMembers}
       loadingInviteMembers={loadingInviteMembers}
       inviteMembers={organization?.inviteMembers?.items}
       availableRoles={organization?.availableRoles?.items}

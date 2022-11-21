@@ -1,6 +1,6 @@
 import { DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import React, { useEffect, useState } from 'react'
-import { BaseLink, HelpSection, Table, TableRowDeployment } from '@qovery/shared/ui'
+import { BaseLink, HelpSection, Table, TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
   deployments?: DeploymentHistoryDatabase[]
@@ -12,6 +12,7 @@ export function Deployments(props: PageDeploymentsProps) {
   const { deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryDatabase[]>(deployments)
+  const [filter, setFilter] = useState<TableFilterProps>({})
 
   useEffect(() => {
     deployments && setData(deployments)
@@ -53,16 +54,17 @@ export function Deployments(props: PageDeploymentsProps) {
     <>
       <Table
         dataHead={tableHead}
-        defaultData={deployments}
-        filterData={data}
-        setFilterData={setData}
+        data={deployments}
+        setFilter={setFilter}
+        setDataSort={setData}
         className="mt-2 rounded-sm"
       >
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
-              data={currentData as DeploymentHistoryDatabase}
               key={index}
+              data={currentData as DeploymentHistoryDatabase}
+              filter={filter}
               index={index}
               dataHead={tableHead}
               isLoading={isLoading}

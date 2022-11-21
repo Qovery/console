@@ -17,11 +17,12 @@ import {
 } from '@qovery/shared/ui'
 import { renameStatus, timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
 import Icon from '../../icon/icon'
-import { TableHeadProps } from '../table'
+import { TableFilterProps, TableHeadProps } from '../table'
 
 export interface TableRowDeploymentProps {
-  data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
   dataHead: TableHeadProps[]
+  data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
+  filter?: TableFilterProps
   columnsWidth?: string
   isLoading?: boolean
   startGroup?: boolean
@@ -38,6 +39,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
     data,
     noCommit,
     index,
+    filter,
   } = props
 
   const [copy, setCopy] = useState(false)
@@ -65,6 +67,8 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
 
   return (
     <TableRow
+      data={data}
+      filter={filter}
       columnsWidth={columnsWidth}
       className={`border-b last-of-type:border-b-0 bg-white ${startGroup ? 'mt-2' : ''}`}
     >
