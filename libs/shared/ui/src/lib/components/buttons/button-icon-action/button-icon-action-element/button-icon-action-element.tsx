@@ -1,10 +1,5 @@
-import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Menu, MenuAlign, MenuData } from '../../../menu/menu'
-import StatusMenuAction, {
-  StatusMenuActions,
-  StatusMenuInformation,
-} from '../../../status-menu-action/status-menu-action'
 
 export interface ButtonIconActionElementProps {
   iconLeft?: React.ReactNode
@@ -13,14 +8,7 @@ export interface ButtonIconActionElementProps {
   menus?: MenuData
   menusClassName?: string
   menuAlign?: MenuAlign
-  statusActions?: {
-    status: StateEnum | undefined
-    actions: StatusMenuActions[]
-    information?: StatusMenuInformation
-  }
-  statusInformation?: StatusMenuInformation
   triggerClassName?: string
-  isService?: boolean
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
@@ -31,10 +19,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
     menus,
     menusClassName = '',
     triggerClassName = '',
-    statusActions,
-    statusInformation,
     menuAlign = MenuAlign.START,
-    isService = false,
   } = props
 
   const [open, setOpen] = useState(false)
@@ -56,28 +41,6 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
             {iconRight}
           </div>
         }
-      />
-    )
-  } else if (statusActions && statusActions.status) {
-    return (
-      <StatusMenuAction
-        className={menusClassName}
-        width={248}
-        statusActions={{
-          status: statusActions.status,
-          actions: statusActions.actions,
-          information: statusInformation,
-        }}
-        setOpen={(isOpen) => setOpen(isOpen)}
-        paddingMenuX={8}
-        paddingMenuY={8}
-        trigger={
-          <div data-testid="element" className={`btn-icon-action__element ${open ? 'is-active' : ''}`}>
-            {iconLeft}
-            {iconRight}
-          </div>
-        }
-        isService={isService}
       />
     )
   } else {

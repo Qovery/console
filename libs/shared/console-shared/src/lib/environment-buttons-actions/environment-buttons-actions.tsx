@@ -269,17 +269,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     },
   ]
 
-  return (
-    <ButtonIconAction
-      className="!h-8"
-      actions={buttonActionsDefault}
-      statusInformation={{
-        id: environment?.id,
-        name: environment?.name,
-        mode: environment?.mode,
-      }}
-    />
-  )
+  return <ButtonIconAction className="!h-8" actions={buttonActionsDefault} />
 }
 
 export default EnvironmentButtonsActions

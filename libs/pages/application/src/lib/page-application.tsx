@@ -2,32 +2,25 @@ import equal from 'fast-deep-equal'
 import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes, useLocation, useParams } from 'react-router-dom'
+import { Route, Routes, useParams } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
-  deleteApplicationAction,
   fetchApplicationCommits,
   fetchApplicationInstances,
   fetchApplicationLinks,
   fetchApplicationStatus,
-  postApplicationActionsDeploy,
-  postApplicationActionsRestart,
-  postApplicationActionsStop,
   selectApplicationById,
 } from '@qovery/domains/application'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { APPLICATION_DEPLOYMENTS_URL, APPLICATION_URL } from '@qovery/shared/router'
-import { StatusMenuActions } from '@qovery/shared/ui'
-import { isDeleteAvailable, useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 
 export function PageApplication() {
-  const { applicationId = '', environmentId = '', organizationId, projectId } = useParams()
-  const { pathname } = useLocation()
+  const { applicationId = '', environmentId = '' } = useParams()
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
@@ -62,51 +55,8 @@ export function PageApplication() {
     return () => clearInterval(fetchApplicationStatusByInterval)
   }, [applicationId, loadingStatus, dispatch])
 
-  const payload = (applicationId: string) => ({
-    environmentId,
-    applicationId,
-    serviceType: application && getServiceType(application),
-    withDeployments:
-      pathname ===
-      APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-  })
-
-  const statusActions: StatusMenuActions[] = [
-    {
-      name: 'redeploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsRestart(payload(applicationId))),
-    },
-    {
-      name: 'deploy',
-      action: (applicationId: string) => dispatch(postApplicationActionsDeploy(payload(applicationId))),
-    },
-    {
-      name: 'stop',
-      action: (applicationId: string) => dispatch(postApplicationActionsStop(payload(applicationId))),
-    },
-  ]
-
-  const removeApplication = (applicationId: string) => {
-    if (application) {
-      dispatch(
-        deleteApplicationAction({
-          environmentId,
-          applicationId,
-          serviceType: getServiceType(application),
-        })
-      )
-    }
-  }
-
   return (
-    <Container
-      application={application}
-      environment={environment}
-      statusActions={statusActions}
-      removeApplication={
-        application?.status && isDeleteAvailable(application.status.state) ? removeApplication : undefined
-      }
-    >
+    <Container application={application} environment={environment}>
       <Routes>
         {ROUTER_APPLICATION.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />

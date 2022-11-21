@@ -16,7 +16,6 @@ import {
   MenuData,
   MenuItemProps,
   Skeleton,
-  StatusMenuActions,
   Tag,
   TagMode,
   TagSize,
@@ -34,11 +33,9 @@ export const ApplicationContext = createContext<{
 })
 
 export interface ContainerProps {
-  statusActions: StatusMenuActions[]
   application?: ApplicationEntity
   environment?: Environment
   children?: React.ReactNode
-  removeApplication?: (applicationId: string) => void
 }
 
 export function Container(props: ContainerProps) {

@@ -9,20 +9,9 @@ export interface ApplicationButtonsActionsProps {
 }
 
 export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps) {
-  const { application, environmentMode, buttonActionsDefault, inHeader } = props
+  const { buttonActionsDefault, inHeader } = props
 
-  return (
-    <ButtonIconAction
-      className={`${inHeader ? '!h-8' : ''}`}
-      actions={buttonActionsDefault}
-      statusInformation={{
-        id: application.id,
-        name: application.name,
-        mode: environmentMode,
-      }}
-      isService
-    />
-  )
+  return <ButtonIconAction className={`${inHeader ? '!h-8' : ''}`} actions={buttonActionsDefault} />
 }
 
 export default ApplicationButtonsActions

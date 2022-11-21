@@ -38,13 +38,13 @@ import { AppDispatch } from '@qovery/store'
 import DeployOtherCommitModalFeature from '../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import ApplicationButtonsActions from '../ui/application-buttons-actions'
 
-export interface ApplicationButtonsActionsProps {
+export interface ApplicationButtonsActionsFeatureProps {
   application: ApplicationEntity
   environmentMode: string
   inHeader?: boolean
 }
 
-export function ApplicationButtonsActionsFeature(props: ApplicationButtonsActionsProps) {
+export function ApplicationButtonsActionsFeature(props: ApplicationButtonsActionsFeatureProps) {
   const { application, environmentMode, inHeader = false } = props
   const { environmentId = '', projectId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()

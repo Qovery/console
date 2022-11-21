@@ -9,20 +9,9 @@ export interface DatabaseButtonsActionsProps {
 }
 
 export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
-  const { database, environmentMode, buttonActionsDefault, inHeader = false } = props
+  const { buttonActionsDefault, inHeader = false } = props
 
-  return (
-    <ButtonIconAction
-      className={`${inHeader ? '!h-8' : ''}`}
-      actions={buttonActionsDefault}
-      statusInformation={{
-        id: database.id,
-        name: database.name,
-        mode: environmentMode,
-      }}
-      isService
-    />
-  )
+  return <ButtonIconAction className={`${inHeader ? '!h-8' : ''}`} actions={buttonActionsDefault} />
 }
 
 export default DatabaseButtonsActions
