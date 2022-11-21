@@ -1,8 +1,8 @@
-import { Menu, MenuAlign, MenuData, MenuDirection, MenuProps } from './menu'
+import { select } from '@storybook/addon-knobs'
 import { Meta, Story } from '@storybook/react'
 import Button from '../buttons/button/button'
-import { select } from '@storybook/addon-knobs'
 import Icon from '../icon/icon'
+import { Menu, MenuAlign, MenuData, MenuDirection, MenuProps } from './menu'
 
 export default {
   component: Menu,
@@ -15,7 +15,7 @@ const menus: MenuData = [
       {
         name: 'Test 1',
         link: { url: '/', external: false },
-        contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400" />,
+        contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400 dark:text-brand-300" />,
       },
       {
         name: 'Test 2',

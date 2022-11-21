@@ -60,7 +60,7 @@ export function PageVariablesMemo(props: PageVariablesProps) {
 export const PageVariables = React.memo(PageVariablesMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior and so many value are necessary because updated_at is not
   // updated during an import... Problem from backend.
-  const prevProsIds = prevProps.variables.map((envVariables) => ({
+  const prevPropsIds = prevProps.variables.map((envVariables) => ({
     id: envVariables.id,
     updated_at: envVariables.updated_at,
     key: envVariables.key,
@@ -73,7 +73,7 @@ export const PageVariables = React.memo(PageVariablesMemo, (prevProps, nextProps
     value: (envVariables as EnvironmentVariableEntity).value || '',
   }))
 
-  return JSON.stringify(prevProsIds) === JSON.stringify(nextPropsIds)
+  return JSON.stringify(prevPropsIds) === JSON.stringify(nextPropsIds)
 })
 
 export default PageVariables
