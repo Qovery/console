@@ -124,7 +124,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
         openModalConfirmation({
           mode: environmentMode,
           title: 'Confirm cancel deployment',
-          description: 'To confirm the cancel deployment of your environment, please type the name:',
+          description: 'To confirm the cancel deployment of your service, please type the name:',
           name: application.name,
           action: () => {},
         })

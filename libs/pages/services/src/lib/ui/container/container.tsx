@@ -1,9 +1,12 @@
 import { StateEnum } from 'qovery-typescript-axios'
+import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
-  DEPLOYMENT_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
@@ -13,7 +16,6 @@ import {
 } from '@qovery/shared/router'
 import {
   Button,
-  ButtonIconAction,
   ButtonSize,
   Header,
   Icon,
@@ -23,69 +25,31 @@ import {
   MenuData,
   Skeleton,
   StatusChip,
-  StatusMenuActions,
   Tabs,
   Tag,
   TagMode,
   TagSize,
 } from '@qovery/shared/ui'
-import { copyToClipboard } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store'
 
 export interface ContainerProps {
-  statusActions: StatusMenuActions[]
   environment?: EnvironmentEntity
   children?: React.ReactNode
-  removeEnvironment?: () => void
-  servicesLength?: number
 }
 
 export function Container(props: ContainerProps) {
-  const { environment, children, statusActions, removeEnvironment, servicesLength } = props
+  const { environment, children } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}`
+  const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
+    selectApplicationsEntitiesByEnvId(state, environment?.id || '')
+  )
 
-  const buttonActionsDefault = [
-    {
-      ...(servicesLength &&
-        servicesLength > 0 && {
-          iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-          iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-          menusClassName: 'border-r border-r-element-light-lighter-500',
-          statusActions: {
-            status: environment?.status && environment?.status.state,
-            actions: statusActions,
-          },
-        }),
-    },
-    {
-      iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
-      onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)),
-    },
-    {
-      ...(removeEnvironment && {
-        iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
-        menus: [
-          {
-            items: [
-              {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeEnvironment(),
-              },
-              {
-                name: 'Copy identifiers',
-                contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
-                onClick: () => copyToClipboard(copyContent),
-              },
-            ],
-          },
-        ],
-      }),
-    },
-  ]
+  const databasesByEnv = useSelector<RootState, DatabaseEntity[]>((state: RootState) =>
+    selectDatabasesEntitiesByEnvId(state, environment?.id || '')
+  )
 
   const headerButtons = (
     <div>
@@ -95,7 +59,7 @@ export function Container(props: ContainerProps) {
         link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`}
         external
       />
-      <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} /> 
+      <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />
       <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} /> */}
     </div>
   )
@@ -105,14 +69,9 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={24} show={!environment?.status}>
         {environment?.status ? (
           <>
-            <ButtonIconAction
-              className="!h-8"
-              actions={buttonActionsDefault}
-              statusInformation={{
-                id: environment?.id,
-                name: environment?.name,
-                mode: environment?.mode,
-              }}
+            <EnvironmentButtonsActions
+              environment={environment}
+              hasServices={Boolean(applicationsByEnv?.length || databasesByEnv?.length)}
             />
             <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
           </>

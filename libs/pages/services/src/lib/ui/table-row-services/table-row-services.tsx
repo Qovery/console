@@ -91,7 +91,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <>
-                  {type === ServiceTypeEnum.APPLICATION ? (
+                  {type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER ? (
                     <ApplicationButtonsActionsFeature
                       application={data as ApplicationEntity}
                       environmentMode={environmentMode}

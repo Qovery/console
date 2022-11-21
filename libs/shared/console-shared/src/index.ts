@@ -1,3 +1,4 @@
+export * from './lib/environment-buttons-actions/environment-buttons-actions'
 export * from './lib/setting-resources/ui/setting-resources'
 export * from './lib/git-repository-settings/feature/git-repository-settings-feature'
 export * from './lib/git-repository-settings/ui/git-repository-settings'
