@@ -5,8 +5,8 @@ import {
   Member,
   OrganizationAvailableRole,
 } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction, useEffect } from 'react'
-import { Button, HelpSection, IconAwesomeEnum, Table } from '@qovery/shared/ui'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Button, HelpSection, IconAwesomeEnum, Table, TableFilterProps } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
@@ -15,13 +15,13 @@ export interface PageOrganizationMembersProps {
   deleteInviteMember: (inviteId: string) => void
   resendInvite: (inviteId: string, data: InviteMemberRequest) => void
   transferOwnership: (userId: string) => void
-  setFilterMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
-  setFilterInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
+  setDataMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
+  setDataInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
   loadingInviteMembers: boolean
   loadingUpdateRole: { userId: string; loading: boolean }
   loadingMembers: boolean
-  filterInviteMembers?: InviteMember[]
-  filterMembers?: Member[]
+  dataInviteMembers?: InviteMember[]
+  dataMembers?: Member[]
   members?: Member[]
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
@@ -85,11 +85,11 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const {
     members,
     inviteMembers,
-    filterMembers,
-    setFilterMembers,
-    filterInviteMembers,
+    dataMembers,
+    setDataMembers,
+    dataInviteMembers,
     deleteInviteMember,
-    setFilterInviteMembers,
+    setDataInviteMembers,
     loadingInviteMembers,
     availableRoles,
     editMemberRole,
@@ -104,15 +104,18 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
 
   const columnsWidth = '35% 22% 21% 21%'
 
-  useEffect(() => {
-    setFilterMembers(members)
-  }, [members, setFilterMembers])
+  const [filterMembers, setFilterMembers] = useState<TableFilterProps>({})
+  const [filterInviteMembers, setFilterInviteMembers] = useState<TableFilterProps>({})
 
   useEffect(() => {
-    setFilterInviteMembers(inviteMembers)
-  }, [inviteMembers, setFilterInviteMembers])
+    setDataMembers(members)
+  }, [members, setDataMembers])
 
-  const userIsOwner = filterMembers?.find((member) => member.id === userId)
+  useEffect(() => {
+    setDataInviteMembers(inviteMembers)
+  }, [inviteMembers, setDataInviteMembers])
+
+  const userIsOwner = dataMembers?.find((member) => member.id === userId)
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -134,15 +137,16 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           className="border border-element-light-lighter-400 rounded"
           classNameHead="rounded-t"
           dataHead={membersHead}
-          setFilterData={setFilterMembers}
-          filterData={filterMembers}
-          defaultData={members}
+          data={members}
+          setFilter={setFilterMembers}
+          setDataSort={setDataMembers}
           columnsWidth={columnsWidth}
         >
           <div>
-            {filterMembers?.map((member: Member) => (
+            {dataMembers?.map((member: Member) => (
               <RowMember
                 key={member.id}
+                filter={filterMembers}
                 userIsOwner={userIsOwner?.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER}
                 loading={loadingMembers}
                 member={member}
@@ -156,22 +160,23 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             ))}
           </div>
         </Table>
-        {!loadingMembers && filterInviteMembers && filterInviteMembers?.length > 0 && (
+        {!loadingMembers && dataInviteMembers && dataInviteMembers?.length > 0 && (
           <Table
             className="border border-element-light-lighter-400 rounded mt-5"
             classNameHead="rounded-t"
+            data={members}
             dataHead={inviteMembersHead}
-            setFilterData={setFilterInviteMembers}
-            filterData={filterInviteMembers}
-            defaultData={members}
+            setFilter={setFilterInviteMembers}
+            setDataSort={setDataInviteMembers}
             columnsWidth={columnsWidth}
           >
             <div>
-              {filterInviteMembers?.map((member: InviteMember) => (
+              {dataInviteMembers?.map((member: InviteMember) => (
                 <RowMember
                   key={member.id}
                   loading={loadingInviteMembers}
                   member={member}
+                  filter={filterInviteMembers}
                   availableRoles={availableRoles}
                   transferOwnership={transferOwnership}
                   deleteInviteMember={deleteInviteMember}

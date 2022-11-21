@@ -87,7 +87,9 @@ export function MenuGroup(props: MenuGroupProps) {
           ))}
         </div>
       )}
-      {!isFilter && !isLast && currentItems.length > 0 && <MenuDivider className="bg-element-light-lighter-400 m-0" />}
+      {!isFilter && !isLast && currentItems.length > 0 && (
+        <MenuDivider className="bg-element-light-lighter-400 dark:bg-element-dark-400 m-0" />
+      )}
     </div>
   )
 }

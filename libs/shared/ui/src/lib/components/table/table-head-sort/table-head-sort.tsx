@@ -5,13 +5,13 @@ export interface TableHeadSortProps {
   title: string
   data: any[]
   currentKey: string
-  setFilterData: Dispatch<SetStateAction<any[]>>
+  setData: Dispatch<SetStateAction<any>>
 }
 
 export const sortTable = (data: any[], key: string) => [...data].sort((a, b) => +new Date(b[key]) - +new Date(a[key]))
 
 export function TableHeadSort(props: TableHeadSortProps) {
-  const { title, data, setFilterData, currentKey } = props
+  const { title, data, setData, currentKey } = props
   const [isSort, setIsSort] = useState(false)
 
   const toggleSort = () => {
@@ -19,9 +19,9 @@ export function TableHeadSort(props: TableHeadSortProps) {
       setIsSort(!isSort)
       const dataSort = sortTable(data, currentKey)
       if (isSort) {
-        setFilterData(dataSort)
+        setData(dataSort)
       } else {
-        setFilterData(dataSort.reverse())
+        setData(dataSort.reverse())
       }
     }
   }

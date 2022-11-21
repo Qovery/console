@@ -1,35 +1,37 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
-import { HelpSection, Table, TableHeadProps } from '@qovery/shared/ui'
+import { HelpSection, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
 
 export interface PageVariablesProps {
   tableHead: TableHeadProps[]
   variables: EnvironmentVariableSecretOrPublic[]
-  setFilterData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
-  filterData: EnvironmentVariableSecretOrPublic[]
+  setData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   isLoading: boolean
   serviceType?: ServiceTypeEnum
 }
 
 export function PageVariablesMemo(props: PageVariablesProps) {
-  const { tableHead, variables, setFilterData, filterData } = props
+  const { setData, tableHead, variables } = props
   const columnsWidth = '30% 20% 22% 13% 15%'
+
+  const [filter, setFilter] = useState<TableFilterProps>({})
 
   return (
     <Table
       dataHead={tableHead}
-      defaultData={variables}
-      filterData={filterData}
-      setFilterData={setFilterData}
+      data={variables}
+      setDataSort={setData}
+      setFilter={setFilter}
       className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
       columnsWidth={columnsWidth}
     >
       <>
-        {filterData.map((envVariable) => (
+        {variables.map((envVariable) => (
           <TableRowEnvironmentVariableFeature
             key={envVariable.id}
+            filter={filter}
             variable={envVariable}
             dataHead={tableHead}
             columnsWidth={columnsWidth}
@@ -58,20 +60,20 @@ export function PageVariablesMemo(props: PageVariablesProps) {
 export const PageVariables = React.memo(PageVariablesMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior and so many value are necessary because updated_at is not
   // updated during an import... Problem from backend.
-  const prevProsIds = prevProps.filterData.map((envVariables) => ({
+  const prevPropsIds = prevProps.variables.map((envVariables) => ({
     id: envVariables.id,
     updated_at: envVariables.updated_at,
     key: envVariables.key,
     value: (envVariables as EnvironmentVariableEntity).value || '',
   }))
-  const nextPropsIds = nextProps.filterData.map((envVariables) => ({
+  const nextPropsIds = nextProps.variables.map((envVariables) => ({
     id: envVariables.id,
     updated_at: envVariables.updated_at,
     key: envVariables.key,
     value: (envVariables as EnvironmentVariableEntity).value || '',
   }))
 
-  return JSON.stringify(prevProsIds) === JSON.stringify(nextPropsIds)
+  return JSON.stringify(prevPropsIds) === JSON.stringify(nextPropsIds)
 })
 
 export default PageVariables

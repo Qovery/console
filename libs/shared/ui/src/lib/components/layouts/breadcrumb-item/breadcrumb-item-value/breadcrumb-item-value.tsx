@@ -14,7 +14,7 @@ export function BreadcrumbItemValue(props: BreadcrumbItemValueProps) {
 
   const notActiveClass = active
     ? 'text-text-700 dark:text-text-100'
-    : 'text-text-500 dark:text-text-400 dark:hover:text-text-500 hover:bg-element-light-lighter-300 active:bg-element-light-lighter-400'
+    : 'text-text-500 dark:text-text-400 dark:hover:text-text-500 hover:bg-element-light-lighter-300 active:bg-element-light-lighter-400 dark:hover:text-element-light-lighter-600 dark:hover:bg-element-light-darker-100'
 
   const limit = 50
   const truncatedName = name?.length > limit ? <Truncate delayDuration={400} truncateLimit={50} text={name} /> : name
@@ -22,7 +22,7 @@ export function BreadcrumbItemValue(props: BreadcrumbItemValueProps) {
   return (
     <div
       data-testid="breadcrumb-item-value"
-      className={`${className} flex items-center  text-sm font-medium gap-2 px-2 h-6 rounded-full ${notActiveClass}`}
+      className={`${className} flex items-center text-sm font-medium gap-2 px-2 h-6 rounded-full ${notActiveClass}`}
     >
       {logo}
 

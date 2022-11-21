@@ -141,11 +141,10 @@ export function PageVariablesFeature() {
 
   return (
     <PageVariables
-      key={sortVariableMemo.length}
+      key={data.length}
       tableHead={tableHead}
-      variables={!isLoading ? sortVariableMemo : placeholder}
-      setFilterData={setData}
-      filterData={data}
+      variables={!isLoading ? data : placeholder}
+      setData={setData}
       isLoading={isLoading}
       serviceType={serviceType}
     />

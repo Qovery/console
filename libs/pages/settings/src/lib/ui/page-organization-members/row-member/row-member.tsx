@@ -18,6 +18,8 @@ import {
   MenuData,
   MenuItemProps,
   Skeleton,
+  TableFilterProps,
+  TableRowFilter,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { copyToClipboard, dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -26,6 +28,7 @@ export interface RowMemberProps {
   member: Member | InviteMember
   loading: boolean
   columnsWidth: string
+  filter: TableFilterProps
   transferOwnership?: (userId: string) => void
   editMemberRole?: (userId: string, roleId: string) => void
   deleteMember?: (userId: string) => void
@@ -64,6 +67,7 @@ export function RowMember(props: RowMemberProps) {
     transferOwnership,
     resendInvite,
     userIsOwner,
+    filter,
   } = props
 
   const { organizationId = '' } = useParams()
@@ -228,60 +232,64 @@ export function RowMember(props: RowMemberProps) {
   )
 
   return (
-    <div
-      className="grid grid-cols-4 border-b border-element-light-lighter-400 last:border-0"
-      style={{ gridTemplateColumns: columnsWidth }}
-    >
-      <div className="flex items-center justify-between pr-4 border-r border-element-light-lighter-400 h-full">
-        <div className="flex items-center px-4 py-3">
-          {name && (
-            <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>
-              <Avatar firstName={name[0]} lastName={name[1]} url={(member as Member).profile_picture_url} />
+    <TableRowFilter data={member} filter={filter}>
+      <div
+        className="grid grid-cols-4 border-b border-element-light-lighter-400 last:border-0"
+        style={{ gridTemplateColumns: columnsWidth }}
+      >
+        <div className="flex items-center justify-between pr-4 border-r border-element-light-lighter-400 h-full">
+          <div className="flex items-center px-4 py-3">
+            {name && (
+              <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>
+                <Avatar firstName={name[0]} lastName={name[1]} url={(member as Member).profile_picture_url} />
+              </Skeleton>
+            )}
+            <div className="ml-3 text-xs truncate">
+              <Skeleton className="mb-1" show={loading} width={120} height={16}>
+                <p className="text-text-600 font-medium truncate">{(member as Member).name}</p>
+              </Skeleton>
+              <Skeleton show={loading} width={100} height={16}>
+                <span className="text-text-500 truncate">{member.email}</span>
+              </Skeleton>
+            </div>
+          </div>
+          {!isOwner && (
+            <Skeleton className="shrink-0" show={loading} width={28} height={26}>
+              {(member as Member).last_activity_at ? (
+                <ButtonIconAction actions={buttonActionMember} />
+              ) : (
+                <ButtonIconAction actions={buttonActionInviteMember} />
+              )}
             </Skeleton>
           )}
-          <div className="ml-3 text-xs truncate">
-            <Skeleton className="mb-1" show={loading} width={120} height={16}>
-              <p className="text-text-600 font-medium truncate">{(member as Member).name}</p>
-            </Skeleton>
-            <Skeleton show={loading} width={100} height={16}>
-              <span className="text-text-500 truncate">{member.email}</span>
-            </Skeleton>
-          </div>
         </div>
-        {!isOwner && (
-          <Skeleton className="shrink-0" show={loading} width={28} height={26}>
+        <div data-testid="row-member-menu" className="flex items-center px-4 w-[500px]">
+          {!isOwner && (member as Member).last_activity_at ? (
+            <Menu menus={menus} trigger={input(member.role_name)} />
+          ) : (
+            input(member.role_name)
+          )}
+        </div>
+        <div className="flex items-center px-4 text-text-500 text-xs font-medium">
+          <Skeleton className="shrink-0" show={loading} width={64} height={16}>
             {(member as Member).last_activity_at ? (
-              <ButtonIconAction actions={buttonActionMember} />
+              <span data-testid="last-activity">
+                {timeAgo(new Date((member as Member).last_activity_at || ''))} ago
+              </span>
             ) : (
-              <ButtonIconAction actions={buttonActionInviteMember} />
+              <span>{upperCaseFirstLetter((member as InviteMember).invitation_status)}</span>
             )}
           </Skeleton>
-        )}
+        </div>
+        <div className="flex items-center px-4 text-text-500 text-xs font-medium">
+          <Skeleton className="shrink-0" show={loading} width={64} height={16}>
+            <span data-testid="created-at">
+              {dateYearMonthDayHourMinuteSecond(new Date(member.created_at || ''), false)}
+            </span>
+          </Skeleton>
+        </div>
       </div>
-      <div data-testid="row-member-menu" className="flex items-center px-4 w-[500px]">
-        {!isOwner && (member as Member).last_activity_at ? (
-          <Menu menus={menus} trigger={input(member.role_name)} />
-        ) : (
-          input(member.role_name)
-        )}
-      </div>
-      <div className="flex items-center px-4 text-text-500 text-xs font-medium">
-        <Skeleton className="shrink-0" show={loading} width={64} height={16}>
-          {(member as Member).last_activity_at ? (
-            <span data-testid="last-activity">{timeAgo(new Date((member as Member).last_activity_at || ''))} ago</span>
-          ) : (
-            <span>{upperCaseFirstLetter((member as InviteMember).invitation_status)}</span>
-          )}
-        </Skeleton>
-      </div>
-      <div className="flex items-center px-4 text-text-500 text-xs font-medium">
-        <Skeleton className="shrink-0" show={loading} width={64} height={16}>
-          <span data-testid="created-at">
-            {dateYearMonthDayHourMinuteSecond(new Date(member.created_at || ''), false)}
-          </span>
-        </Skeleton>
-      </div>
-    </div>
+    </TableRowFilter>
   )
 }
 

@@ -17,6 +17,7 @@ import {
   StatusChip,
   StatusLabel,
   StatusMenuActions,
+  TableFilterProps,
   TableHeadProps,
   TableRow,
   Tag,
@@ -28,6 +29,7 @@ import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@qovery/shared/uti
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
+  filter: TableFilterProps
   type: ServiceTypeEnum
   environmentMode: string
   dataHead: TableHeadProps[]
@@ -42,6 +44,7 @@ export function TableRowServices(props: TableRowServicesProps) {
   const {
     type,
     data,
+    filter,
     dataHead,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     link,
@@ -153,7 +156,7 @@ export function TableRowServices(props: TableRowServicesProps) {
   ]
 
   return (
-    <TableRow columnsWidth={columnsWidth} link={link}>
+    <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link}>
       <>
         <div className="flex items-center px-4 gap-1">
           {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (

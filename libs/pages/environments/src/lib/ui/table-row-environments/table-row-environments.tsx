@@ -9,6 +9,7 @@ import {
   StatusChip,
   StatusLabel,
   StatusMenuActions,
+  TableFilterProps,
   TableHeadProps,
   TableRow,
   TagMode,
@@ -20,6 +21,7 @@ import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-envir
 
 export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
+  filter: TableFilterProps
   dataHead: TableHeadProps[]
   link: string
   buttonActions: StatusMenuActions[]
@@ -32,6 +34,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
 
   const {
     data,
+    filter,
     dataHead,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     link,
@@ -87,7 +90,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
   const isLoading = !data.status?.id
 
   return (
-    <TableRow columnsWidth={columnsWidth} link={link} disabled={isLoading}>
+    <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
           <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>

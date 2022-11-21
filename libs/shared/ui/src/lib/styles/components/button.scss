@@ -178,9 +178,9 @@
 }
 
 .btn-icon--circle {
-  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400;
+  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:hover:bg-element-light-darker-100;
 
   &.btn.is-active {
-    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400;
+    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-element-light-lighter-400 dark:bg-element-light-darker-100;
   }
 }

@@ -13,6 +13,7 @@ import {
   ButtonIconActionElementProps,
   Icon,
   MenuItemProps,
+  TableFilterProps,
   TableHeadProps,
   useModal,
   useModalConfirmation,
@@ -28,13 +29,14 @@ import CrudEnvironmentVariableModalFeature, {
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
   dataHead: TableHeadProps[]
-  columnsWidth?: string
+  filter: TableFilterProps
   isLoading: boolean
+  columnsWidth?: string
   serviceType?: ServiceTypeEnum
 }
 
 export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVariableFeatureProps) {
-  const { variable, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
+  const { variable, filter, dataHead, columnsWidth = '30% 10% 30% 15% 15%' } = props
   const { openModal, closeModal } = useModal()
   const { applicationId = '', projectId = '', environmentId = '' } = useParams()
   const { openModalConfirmation } = useModalConfirmation()
@@ -214,6 +216,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
   return (
     <TableRowEnvironmentVariable
       variable={variable}
+      filter={filter}
       dataHead={dataHead}
       rowActions={rowActions}
       isLoading={props.isLoading}

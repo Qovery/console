@@ -29,7 +29,7 @@ export function MenuItem(props: MenuItemProps) {
     copy,
     copyTooltip,
     isActive = false,
-    textClassName = 'text-text-500',
+    textClassName = 'text-text-500 dark:text-text-200',
     className = '',
     containerClassName = '',
     truncateLimit = 34,
@@ -41,7 +41,11 @@ export function MenuItem(props: MenuItemProps) {
       <div className={`flex items-center truncate ${className}`}>
         {copy && (
           <div onClick={(e) => e.preventDefault()}>
-            <CopyToClipboard content={copy} tooltipContent={copyTooltip} className="mr-4 text-text-500" />
+            <CopyToClipboard
+              content={copy}
+              tooltipContent={copyTooltip}
+              className="mr-4 text-text-500 dark:text-text-200"
+            />
           </div>
         )}
 

@@ -4,7 +4,7 @@ import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import Menu from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
-import { TableHeadProps } from '../table'
+import { TableFilterProps, TableHeadProps } from '../table'
 
 export interface TableHeadFilterProps {
   title: string
@@ -12,7 +12,7 @@ export interface TableHeadFilterProps {
   currentFilter: string
   setCurrentFilter: Dispatch<SetStateAction<string>>
   defaultData: any[]
-  setFilterData: Dispatch<SetStateAction<any[]>>
+  setFilter: Dispatch<SetStateAction<TableFilterProps>>
 }
 
 // create multiple filter
@@ -25,7 +25,7 @@ export function createFilter(
   setCurrentFilter: Function,
   setLocalFilter: Function,
   setDataFilterNumber: Function,
-  setFilterData: Function
+  setFilter: Function
 ) {
   const keys: string[] = []
   const menus = []
@@ -48,7 +48,7 @@ export function createFilter(
         setCurrentFilter,
         setLocalFilter,
         setDataFilterNumber,
-        setFilterData
+        setFilter
       )
 
     if (menu)
@@ -71,7 +71,7 @@ export function groupBy(
   setCurrentFilter: Function,
   setLocalFilter: Function,
   setDataFilterNumber: Function,
-  setFilterData: Function
+  setFilter: Function
 ) {
   const dataByKeys = data.reduce((acc, obj) => {
     // create global key for all objects
@@ -126,13 +126,17 @@ export function groupBy(
         setCurrentFilter(key)
         setLocalFilter(key)
         setDataFilterNumber(currentFilterData.length)
-        setFilterData && setFilterData(currentFilterData)
+        setFilter &&
+          setFilter({
+            key: property,
+            value: key,
+          })
       } else {
         // reset by default filter
         setCurrentFilter(defaultValue)
         setLocalFilter('')
         setDataFilterNumber(0)
-        setFilterData && setFilterData(data)
+        setFilter && setFilter({})
       }
     },
   }))
@@ -141,35 +145,39 @@ export function groupBy(
 }
 
 export function TableHeadFilter(props: TableHeadFilterProps) {
-  const { title, dataHead, defaultData, setFilterData, currentFilter, setCurrentFilter } = props
+  const { title, dataHead, defaultData, setFilter, currentFilter, setCurrentFilter } = props
 
   const ALL = 'ALL'
 
   const [localFilter, setLocalFilter] = useState('')
   const [dataFilterNumber, setDataFilterNumber] = useState(0)
+  const [isOpen, setOpen] = useState(false)
 
-  function cleanFilter(event: MouseEvent) {
-    event.preventDefault()
+  function cleanFilter(event?: MouseEvent) {
+    event?.preventDefault()
     setCurrentFilter(ALL)
     setDataFilterNumber(0)
     // set global data by default
-    defaultData && setFilterData && setFilterData(defaultData)
+    defaultData && setFilter && setFilter({})
   }
 
+  const menus = createFilter(
+    dataHead,
+    defaultData,
+    ALL,
+    currentFilter,
+    setCurrentFilter,
+    setLocalFilter,
+    setDataFilterNumber,
+    setFilter
+  )
+
   return (
-    <div className="flex" key={Math.random()}>
+    <div className="flex">
       <Menu
-        key={Math.random()}
-        menus={createFilter(
-          dataHead,
-          defaultData,
-          ALL,
-          currentFilter,
-          setCurrentFilter,
-          setLocalFilter,
-          setDataFilterNumber,
-          setFilterData
-        )}
+        open={isOpen}
+        onOpen={setOpen}
+        menus={menus}
         width={280}
         isFilter
         trigger={

@@ -15,6 +15,7 @@ import {
   PasswordShowHide,
   ScrollIntoView,
   Skeleton,
+  TableFilterProps,
   TableHeadProps,
   TableRow,
   Tooltip,
@@ -25,6 +26,7 @@ export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
   dataHead: TableHeadProps[]
   rowActions: ButtonIconActionElementProps[]
+  filter: TableFilterProps
   columnsWidth?: string
   isLoading: boolean
   defaultShowHidePassword?: boolean
@@ -34,6 +36,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
   const {
     variable,
     dataHead,
+    filter,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     isLoading,
     rowActions,
@@ -43,8 +46,8 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
 
   return (
     <>
-      {props.variable.is_new && <ScrollIntoView />}
-      <TableRow columnsWidth={columnsWidth} isNew={props.variable.is_new}>
+      {variable.is_new && <ScrollIntoView />}
+      <TableRow data={variable} filter={filter} columnsWidth={columnsWidth} isNew={props.variable.is_new}>
         <>
           <div className="flex items-center px-4">
             <div className="mx-3 w-full">

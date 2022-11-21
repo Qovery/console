@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import Button from '../buttons/button/button'
-import { Table, TableProps } from './table'
+import { Table, TableFilterProps, TableProps } from './table'
 import { TableRow } from './table-row/table-row'
 
 export default {
@@ -21,21 +21,17 @@ const addRow = (data: EnvironmentEntity[]): EnvironmentEntity[] => {
 
 const Template: Story<TableProps> = (args) => {
   const [data, setData] = useState<EnvironmentEntity[]>(environmentData)
+  const [filter, setFilter] = useState<TableFilterProps>({})
 
   return (
     <>
-      <Button
-        className="mb-4"
-        onClick={() => {
-          setData(addRow(data))
-        }}
-      >
+      <Button className="mb-4" onClick={() => setData(addRow(data))}>
         Add Row
       </Button>
-      <Table {...args} defaultData={environmentData} filterData={data} setFilterData={setData}>
+      <Table {...args} data={data} setFilter={setFilter} setDataSort={setData}>
         <>
           {data.map((currentData, index) => (
-            <TableRow key={index} columnsWidth={args.columnsWidth} link="/">
+            <TableRow key={index} columnsWidth={args.columnsWidth} data={currentData} filter={filter} link="/">
               <>
                 <div className="px-2 text-sm text-text-500">
                   {currentData.name} - {currentData.status?.state}
