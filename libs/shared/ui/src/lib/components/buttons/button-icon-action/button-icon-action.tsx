@@ -1,4 +1,4 @@
-import { StatusMenuInformation } from '@qovery/shared/ui'
+import { StatusMenuInformation } from '../../status-menu-action/status-menu-action'
 import ButtonIconActionElement, {
   ButtonIconActionElementProps,
 } from './button-icon-action-element/button-icon-action-element'
@@ -24,6 +24,7 @@ export function ButtonIconAction(props: ButtonIconActionProps) {
                 statusInformation={statusInformation}
                 isService={isService}
                 {...action}
+                menus={action.menus}
               />
             )
         )}

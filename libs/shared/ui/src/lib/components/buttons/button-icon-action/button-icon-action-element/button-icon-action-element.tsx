@@ -1,16 +1,16 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Menu, MenuAlign, StatusMenuActions, StatusMenuInformation } from '@qovery/shared/ui'
-import { MenuItemProps } from '../../../menu/menu-item/menu-item'
-import StatusMenuAction from '../../../status-menu-action/status-menu-action'
+import { Menu, MenuAlign, MenuData } from '../../../menu/menu'
+import StatusMenuAction, {
+  StatusMenuActions,
+  StatusMenuInformation,
+} from '../../../status-menu-action/status-menu-action'
 
 export interface ButtonIconActionElementProps {
   iconLeft?: React.ReactNode
   iconRight?: React.ReactNode
   onClick?: () => void
-  menus?: {
-    items: MenuItemProps[]
-  }[]
+  menus?: MenuData
   menusClassName?: string
   menuAlign?: MenuAlign
   statusActions?: {
