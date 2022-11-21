@@ -36,7 +36,7 @@ import {
   isStopAvailable,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
-import CreateCloneEnvironmentModalFeature from '../../../../../pages/environments/src/lib/feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
+import CreateCloneEnvironmentModalFeature from '../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
 
 export interface EnvironmentButtonsActionsProps {
   environment: EnvironmentEntity
@@ -59,7 +59,9 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   useEffect(() => {
     const deployButton: MenuItemProps = {
-      name: 'deploy',
+      name: 'Deploy',
+      contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+
       onClick: () =>
         dispatch(
           postEnvironmentActionsDeploy({

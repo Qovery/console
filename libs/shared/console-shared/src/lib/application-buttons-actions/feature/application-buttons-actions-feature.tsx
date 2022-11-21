@@ -69,7 +69,8 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
 
   useEffect(() => {
     const deployButton: MenuItemProps = {
-      name: 'deploy',
+      name: 'Deploy',
+      contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
       onClick: () =>
         dispatch(
           postApplicationActionsDeploy({
@@ -89,7 +90,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
         openModalConfirmation({
           mode: environmentMode,
           title: 'Confirm redeploy',
-          description: 'To confirm the redeploy of your environment, please type the name:',
+          description: 'To confirm the redeploy of your service, please type the name:',
           name: application.name,
           action: () => {
             dispatch(
@@ -106,14 +107,23 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
 
     const stopButton: MenuItemProps = {
       name: 'Stop',
-      onClick: () =>
-        dispatch(
-          postApplicationActionsStop({
-            environmentId,
-            applicationId: application.id,
-            serviceType: getServiceType(application),
-          })
-        ),
+      onClick: () => {
+        openModalConfirmation({
+          mode: environmentMode,
+          title: 'Confirm stop',
+          description: 'To confirm the stopping of your service, please type the name:',
+          name: application.name,
+          action: () => {
+            dispatch(
+              postApplicationActionsStop({
+                environmentId,
+                applicationId: application.id,
+                serviceType: getServiceType(application),
+              })
+            )
+          },
+        })
+      },
       contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
     }
 

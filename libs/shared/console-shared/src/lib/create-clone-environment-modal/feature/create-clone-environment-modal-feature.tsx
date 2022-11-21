@@ -12,7 +12,7 @@ import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organiza
 import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
-import CreateCloneEnvironmentModal from '../../ui/create-clone-environment-modal/create-clone-environment-modal'
+import CreateCloneEnvironmentModal from '../ui/create-clone-environment-modal'
 
 export interface CreateCloneEnvironmentModalFeatureProps {
   environmentToClone?: EnvironmentEntity
