@@ -7,7 +7,7 @@ import { selectApplicationById, selectApplicationsEntitiesByEnvId } from '@qover
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { LayoutLogs, Table } from '@qovery/shared/ui'
+import { LayoutLogs, Table, TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import Row from './ui/row/row'
@@ -31,7 +31,7 @@ export function PageApplicationLogs() {
 
   const [logs, setLogs] = useState<Log[]>([])
   const [pauseLogs, setPauseLogs] = useState<Log[]>([])
-  // const [filterData, setFilterData] = useState<Log[]>([])
+  const [filter, setFilter] = useState<TableFilterProps>({})
   const [pauseStatusLogs, setPauseStatusLogs] = useState(false)
 
   const [loading, setLoading] = useState<LoadingStatus>('not loaded')
@@ -99,7 +99,10 @@ export function PageApplicationLogs() {
     },
   ]
 
-  const memoRow = useMemo(() => logs?.map((log: Log, index: number) => <Row key={index} data={log} />), [logs])
+  const memoRow = useMemo(
+    () => logs?.map((log: Log, index: number) => <Row key={index} data={log} filter={filter} />),
+    [filter, logs]
+  )
 
   return (
     <LayoutLogs
@@ -120,8 +123,7 @@ export function PageApplicationLogs() {
         classNameHead="!flex bg-element-light-darker-300 !border-transparent"
         dataHead={tableHead}
         data={logs}
-        // setFilterData={setFilterData}
-        // filterData={filterData}
+        setFilter={setFilter}
       >
         <div className="pb-10">{memoRow}</div>
       </Table>
