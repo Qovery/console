@@ -73,6 +73,8 @@ const dataHead = [
         search: true,
         title: 'Filter by environment type',
         key: 'mode',
+        customName: (name: string) => <p>{name}</p>,
+        customContentLeft: (data: any) => <span>ok</span>,
       },
     ],
   },

@@ -2,9 +2,10 @@ import { Dispatch, MouseEvent, SetStateAction, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Menu from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
-import { TableFilterProps, TableHeadProps } from '../table'
+import { TableFilterProps, TableHeadCustomFilterProps, TableHeadProps } from '../table'
 
 export interface TableHeadFilterProps {
   title: string
@@ -48,7 +49,8 @@ export function createFilter(
         setCurrentFilter,
         setLocalFilter,
         setDataFilterNumber,
-        setFilter
+        setFilter,
+        dataHead[i].filter
       )
 
     if (menu)
@@ -71,7 +73,8 @@ export function groupBy(
   setCurrentFilter: Function,
   setLocalFilter: Function,
   setDataFilterNumber: Function,
-  setFilter: Function
+  setFilter: Function,
+  dataHeadFilter?: TableHeadCustomFilterProps[]
 ) {
   const dataByKeys = data.reduce((acc, obj) => {
     // create global key for all objects
@@ -105,14 +108,20 @@ export function groupBy(
 
   // create menus by keys
   const result: MenuItemProps[] = Object.keys(dataByKeys).map((key: string) => ({
-    name: upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' ') || '',
+    name:
+      dataHeadFilter && dataHeadFilter[0].customName
+        ? dataHeadFilter[0].customName(key.toLowerCase())
+        : upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' ') || '',
     truncateLimit: 20,
-    contentLeft: (
-      <Icon
-        name="icon-solid-check"
-        className={`text-sm ${currentFilter === key ? 'text-success-400' : 'text-transparent'}`}
-      />
-    ),
+    contentLeft:
+      dataHeadFilter && dataHeadFilter[0].customContentLeft ? (
+        dataHeadFilter[0].customContentLeft(dataByKeys[key][0])
+      ) : (
+        <Icon
+          name={IconAwesomeEnum.CHECK}
+          className={`text-sm ${currentFilter === key ? 'text-success-400' : 'text-transparent'}`}
+        />
+      ),
     contentRight: (
       <span className="px-1 bg-element-light-lighter-400 text-text-400 text-xs font-bold rounded-sm">
         {dataByKeys[key].length}
@@ -173,7 +182,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
   )
 
   return (
-    <div className="flex">
+    <div className="flex items-center">
       <Menu
         open={isOpen}
         onOpen={setOpen}
@@ -181,10 +190,10 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         width={280}
         isFilter
         trigger={
-          <div>
+          <div className="flex">
             {localFilter === currentFilter && localFilter !== ALL ? (
               <Button
-                className="whitespace-nowrap inline-block btn--active"
+                className="whitespace-nowrap flex btn--active !h-6"
                 size={ButtonSize.TINY}
                 style={ButtonStyle.TAB}
               >
@@ -192,10 +201,10 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
               </Button>
             ) : (
               <Button
-                className="inline-block"
+                className="flex !h-6"
                 size={ButtonSize.TINY}
                 style={ButtonStyle.TAB}
-                iconRight="icon-solid-angle-down"
+                iconRight={IconAwesomeEnum.ANGLE_DOWN}
               >
                 {title}
               </Button>
@@ -204,9 +213,9 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         }
       />
       {localFilter === currentFilter && localFilter !== ALL && (
-        <div className="btn btn--tiny btn--tab btn--active relative left-[-9px]">
+        <div className="btn btn--tiny btn--tab btn--active !h-6 relative left-[-9px]">
           <span onClick={(event) => cleanFilter(event)}>
-            <Icon name="icon-solid-circle-xmark" />
+            <Icon name={IconAwesomeEnum.CIRCLE_XMARK} />
           </span>
         </div>
       )}

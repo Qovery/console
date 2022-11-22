@@ -79,6 +79,8 @@ export function PageApplicationLogs() {
         {
           title: 'Filter by pod name',
           key: 'pod_name',
+          customName: (name: string) => name,
+          contentLeft: (data: any) => <p>hello</p>,
         },
       ],
     },
