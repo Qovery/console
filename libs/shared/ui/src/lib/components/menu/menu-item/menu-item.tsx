@@ -17,6 +17,7 @@ export interface MenuItemProps {
   textClassName?: string
   isActive?: boolean
   truncateLimit?: number
+  disabled?: boolean
 }
 
 export function MenuItem(props: MenuItemProps) {
@@ -33,8 +34,11 @@ export function MenuItem(props: MenuItemProps) {
     className = '',
     containerClassName = '',
     truncateLimit = 34,
+    disabled = false,
   } = props
   const navigate = useNavigate()
+
+  const disabledClassName = disabled ? 'opacity-50 cursor-not-allowed' : ''
 
   const itemContent = (
     <>
@@ -81,13 +85,15 @@ export function MenuItem(props: MenuItemProps) {
   } else {
     return (
       <Item
-        className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}
+        className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName} ${disabledClassName}`}
         data-testid="menuItem"
         defaultValue="prod"
         onClick={(e: ClickEvent) => {
           e.syntheticEvent.preventDefault()
-          link?.url && navigate(link?.url)
-          onClick && onClick(e)
+          if (!disabled) {
+            link?.url && navigate(link?.url)
+            onClick && onClick(e)
+          }
         }}
       >
         {itemContent}

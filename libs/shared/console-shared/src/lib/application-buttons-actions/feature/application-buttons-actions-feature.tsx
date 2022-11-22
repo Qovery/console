@@ -125,19 +125,21 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
       contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
     }
 
-    const cancelBuildButton = {
-      name: 'Cancel Deployment',
+    const cancelBuildButton: MenuItemProps = {
+      name: 'Cancel deployment',
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
         openModalConfirmation({
           mode: environmentMode,
           title: 'Confirm cancel deployment',
-          description: 'To confirm the cancel deployment of your service, please type the name:',
+          description:
+            'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
           name: application.name,
           action: () => {},
         })
       },
       contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
+      disabled: true,
     }
 
     const state = application.status?.state

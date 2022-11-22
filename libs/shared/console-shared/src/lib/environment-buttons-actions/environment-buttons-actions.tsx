@@ -131,7 +131,8 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         openModalConfirmation({
           mode: environment.mode,
           title: 'Confirm cancel',
-          description: 'To confirm the stopping of your environment, please type the name:',
+          description:
+            'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
           name: environment.name,
           action: () =>
             dispatch(
