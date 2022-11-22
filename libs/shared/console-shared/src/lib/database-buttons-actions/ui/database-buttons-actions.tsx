@@ -5,13 +5,12 @@ export interface DatabaseButtonsActionsProps {
   database: DatabaseEntity
   environmentMode: string
   buttonActionsDefault?: ButtonIconActionElementProps[] | undefined
-  inHeader?: boolean
 }
 
 export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
-  const { buttonActionsDefault, inHeader = false } = props
+  const { buttonActionsDefault } = props
 
-  return <ButtonIconAction className={`${inHeader ? '!h-8' : ''}`} actions={buttonActionsDefault} />
+  return <ButtonIconAction className="!h-8" actions={buttonActionsDefault} />
 }
 
 export default DatabaseButtonsActions

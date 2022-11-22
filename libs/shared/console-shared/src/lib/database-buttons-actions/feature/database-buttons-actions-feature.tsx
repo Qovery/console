@@ -18,11 +18,10 @@ import DatabaseButtonsActions from '../ui/database-buttons-actions'
 export interface DatabaseButtonsActionsFeatureProps {
   database: DatabaseEntity
   environmentMode: string
-  inHeader?: boolean
 }
 
 export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatureProps) {
-  const { database, environmentMode, inHeader = false } = props
+  const { database, environmentMode } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
 
@@ -166,7 +165,6 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
       database={database}
       buttonActionsDefault={buttonActionsDefault}
       environmentMode={environmentMode}
-      inHeader={inHeader}
     />
   )
 }

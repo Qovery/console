@@ -66,8 +66,8 @@ export function Container(props: ContainerProps) {
 
   const headerActions = (
     <>
-      <Skeleton width={150} height={24} show={!environment?.status}>
-        {environment?.status ? (
+      <Skeleton width={150} height={32} show={!environment}>
+        {environment ? (
           <>
             <EnvironmentButtonsActions
               environment={environment}
@@ -80,11 +80,11 @@ export function Container(props: ContainerProps) {
         )}
       </Skeleton>
       {environment && (
-        <Skeleton width={80} height={24} show={!environment?.mode}>
+        <Skeleton width={80} height={32} show={!environment?.mode}>
           <TagMode size={TagSize.BIG} status={environment?.mode} />
         </Skeleton>
       )}
-      <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
+      <Skeleton width={100} height={32} show={!environment?.cloud_provider}>
         <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>

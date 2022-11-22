@@ -148,22 +148,6 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
     }
 
-    const updateAllButton = {
-      name: 'Update all services',
-      contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-400" />,
-      onClick: (e: ClickEvent) => {
-        e.syntheticEvent.preventDefault()
-
-        openModalConfirmation({
-          mode: environment.mode,
-          title: 'Confirm update all',
-          description: 'To confirm the update of all the services of your environment, please type the name:',
-          name: environment.name,
-          action: () => console.log('todo: update all'),
-        })
-      },
-    }
-
     const state = environment.status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
@@ -182,7 +166,23 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         topItems.push(stopButton)
       }
 
-      bottomItems.push(updateAllButton)
+      // todo: not implemented yet on v3
+      //   const updateAllButton = {
+      //     name: 'Update all services',
+      //     contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-400" />,
+      //     onClick: (e: ClickEvent) => {
+      //       e.syntheticEvent.preventDefault()
+      //
+      //       openModalConfirmation({
+      //         mode: environment.mode,
+      //         title: 'Confirm update all',
+      //         description: 'To confirm the update of all the services of your environment, please type the name:',
+      //         name: environment.name,
+      //         action: () => console.log('todo: update all'),
+      //       })
+      //     },
+      //   }
+      // bottomItems.push(updateAllButton)
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])

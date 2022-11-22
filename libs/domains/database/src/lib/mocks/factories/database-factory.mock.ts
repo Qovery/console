@@ -1,9 +1,10 @@
 import { Chance } from 'chance'
-import { Database, DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { DatabaseEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 
-export const databaseFactoryMock = (howMany: number): Database[] =>
+export const databaseFactoryMock = (howMany: number): DatabaseEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: new Date().toString(),

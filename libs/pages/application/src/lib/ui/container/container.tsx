@@ -103,7 +103,10 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={32} show={!application?.status}>
         <div className="flex">
           {environment && application && application?.status && (
-            <ApplicationButtonsActionsFeature inHeader application={application} environmentMode={environment.mode} />
+            <>
+              <ApplicationButtonsActionsFeature application={application} environmentMode={environment.mode} />
+              <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
+            </>
           )}
         </div>
       </Skeleton>

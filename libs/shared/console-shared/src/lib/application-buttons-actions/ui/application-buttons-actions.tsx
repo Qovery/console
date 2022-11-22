@@ -5,13 +5,12 @@ export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
   environmentMode: string
   buttonActionsDefault: ButtonIconActionElementProps[] | undefined
-  inHeader?: boolean
 }
 
 export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps) {
-  const { buttonActionsDefault, inHeader } = props
+  const { buttonActionsDefault } = props
 
-  return <ButtonIconAction className={`${inHeader ? '!h-8' : ''}`} actions={buttonActionsDefault} />
+  return <ButtonIconAction className="!h-8" actions={buttonActionsDefault} />
 }
 
 export default ApplicationButtonsActions

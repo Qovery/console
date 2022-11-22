@@ -35,17 +35,15 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
-import DeployOtherCommitModalFeature from '../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import ApplicationButtonsActions from '../ui/application-buttons-actions'
 
 export interface ApplicationButtonsActionsFeatureProps {
   application: ApplicationEntity
   environmentMode: string
-  inHeader?: boolean
 }
 
 export function ApplicationButtonsActionsFeature(props: ApplicationButtonsActionsFeatureProps) {
-  const { application, environmentMode, inHeader = false } = props
+  const { application, environmentMode } = props
   const { environmentId = '', projectId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
@@ -142,17 +140,6 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
       contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
     }
 
-    const deployAnotherButton = {
-      name: 'Deploy other version',
-      contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
-      onClick: () => {
-        openModal({
-          content: <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />,
-          options: { width: 596 },
-        })
-      },
-    }
-
     const state = application.status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
@@ -171,7 +158,18 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
         topItems.push(stopButton)
       }
 
-      bottomItems.push(deployAnotherButton)
+      // todo uncomment when api is ready
+      //     const deployAnotherButton = {
+      //       name: 'Deploy other version',
+      //       contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+      //       onClick: () => {
+      //         openModal({
+      //           content: <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />,
+      //           options: { width: 596 },
+      //         })
+      //       },
+      //     }
+      //bottomItems.push(deployAnotherButton)
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
@@ -247,7 +245,6 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
       application={application}
       environmentMode={environmentMode}
       buttonActionsDefault={buttonActionsDefault}
-      inHeader={inHeader}
     />
   )
 }
