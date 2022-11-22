@@ -27,7 +27,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h1 className="h5 mb-10 text-text-700">General</h1>
         <form onSubmit={onSubmit}>
-          <BlockContent title="Organization profil">
+          <BlockContent title="Organization profile">
             <div className="flex items-center">
               <Controller
                 name="logo_url"

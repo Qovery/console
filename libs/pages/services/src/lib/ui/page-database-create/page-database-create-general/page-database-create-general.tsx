@@ -66,7 +66,7 @@ export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps)
                       description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
                       onChange={field.onChange}
                       formValue={field.value}
-                      label="Mode managed"
+                      label="Managed mode"
                     />
                   )}
                   <InputRadio
@@ -76,7 +76,7 @@ export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps)
                     description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor stansphots."
                     onChange={field.onChange}
                     formValue={field.value}
-                    label="Mode container"
+                    label="Container mode"
                   />
                 </>
               )}
