@@ -75,7 +75,7 @@ export const deleteDatabaseAction = createAsyncThunk<any, { environmentId: strin
         // refetch status after update
         await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
         // success message
-        toast(ToastEnum.SUCCESS, 'Your application is being deleted')
+        toast(ToastEnum.SUCCESS, 'Your database is being deleted')
       }
 
       return response

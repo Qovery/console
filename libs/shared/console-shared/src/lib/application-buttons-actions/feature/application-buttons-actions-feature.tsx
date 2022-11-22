@@ -15,6 +15,8 @@ import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_URL,
 } from '@qovery/shared/router'
 import {
   ButtonIconActionElementProps,
@@ -61,6 +63,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
         dispatch(
           deleteApplicationAction({ environmentId, applicationId: id, serviceType: getServiceType(application) })
         )
+        navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       },
     })
   }

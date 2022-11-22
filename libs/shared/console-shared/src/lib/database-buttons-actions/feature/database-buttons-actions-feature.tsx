@@ -1,9 +1,10 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { deleteDatabaseAction, postDatabaseActionsDeploy, postDatabaseActionsRestart } from '@qovery/domains/database'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { ButtonIconActionElementProps, Icon, MenuData, MenuItemProps, useModalConfirmation } from '@qovery/shared/ui'
 import {
   copyToClipboard,
@@ -24,6 +25,7 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
   const { database, environmentMode } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
+  const navigate = useNavigate()
 
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -37,6 +39,7 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
       isDelete: true,
       action: () => {
         dispatch(deleteDatabaseAction({ environmentId, databaseId: id }))
+        navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       },
     })
   }
