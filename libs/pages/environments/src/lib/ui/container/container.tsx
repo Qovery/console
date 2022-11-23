@@ -2,6 +2,7 @@ import { Project } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { getProjectsState } from '@qovery/domains/projects'
+import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
@@ -20,7 +21,6 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
-import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface ContainerProps {
   children: React.ReactNode

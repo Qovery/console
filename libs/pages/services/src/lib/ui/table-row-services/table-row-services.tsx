@@ -1,6 +1,5 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { useNavigate, useParams } from 'react-router-dom'
-import { DeployOtherCommitModalFeature } from '@qovery/shared/console-shared'
+import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
@@ -8,24 +7,19 @@ import {
   DatabaseEntity,
   GitApplicationEntity,
 } from '@qovery/shared/interfaces'
-import { APPLICATION_LOGS_URL } from '@qovery/shared/router'
 import {
-  ButtonIconAction,
   Icon,
-  IconAwesomeEnum,
   Skeleton,
   StatusChip,
   StatusLabel,
-  StatusMenuActions,
   TableFilterProps,
   TableHeadProps,
   TableRow,
   Tag,
   TagCommit,
   Tooltip,
-  useModal,
 } from '@qovery/shared/ui'
-import { timeAgo, upperCaseFirstLetter, urlCodeEditor } from '@qovery/shared/utils'
+import { timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface TableRowServicesProps {
   data: ApplicationEntity | DatabaseEntity
@@ -34,7 +28,6 @@ export interface TableRowServicesProps {
   environmentMode: string
   dataHead: TableHeadProps[]
   link: string
-  buttonActions: StatusMenuActions[]
   columnsWidth?: string
   removeService?: (applicationId: string, type: ServiceTypeEnum, name?: string) => void
   isLoading?: boolean
@@ -48,112 +41,9 @@ export function TableRowServices(props: TableRowServicesProps) {
     dataHead,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     link,
-    buttonActions,
     environmentMode,
-    removeService,
     isLoading,
   } = props
-
-  const { organizationId, projectId, environmentId } = useParams()
-  const navigate = useNavigate()
-  const { openModal } = useModal()
-
-  const buttonActionsDefault = [
-    {
-      iconLeft: <Icon name="icon-solid-play" />,
-      iconRight: <Icon name="icon-solid-angle-down" />,
-      menusClassName:
-        (type && type === ServiceTypeEnum.APPLICATION) || removeService
-          ? `border-r border-r-element-light-lighter-500`
-          : '',
-      statusActions: {
-        status: data.status && data.status.state,
-        actions: buttonActions,
-      },
-    },
-    {
-      ...((type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER) && {
-        iconLeft: <Icon name="icon-solid-scroll" />,
-        onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, data.id)),
-      }),
-    },
-    {
-      ...(removeService && {
-        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-        menus: [
-          {
-            items:
-              type === ServiceTypeEnum.APPLICATION
-                ? [
-                    {
-                      name: 'Edit code',
-                      contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
-                      link: {
-                        url: urlCodeEditor((data as GitApplicationEntity).git_repository) || '',
-                        external: true,
-                      },
-                    },
-                    {
-                      name: 'Deploy other version ',
-                      contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
-                      onClick: () => {
-                        openModal({
-                          content: (
-                            <DeployOtherCommitModalFeature
-                              applicationId={data.id}
-                              environmentId={environmentId || ''}
-                            />
-                          ),
-                          options: { width: 596 },
-                        })
-                      },
-                    },
-                    {
-                      name: 'Remove',
-                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                      onClick: () => removeService(data.id, ServiceTypeEnum.APPLICATION, data.name),
-                    },
-                  ]
-                : [
-                    {
-                      name: 'Remove',
-                      contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                      onClick: () => removeService(data.id, ServiceTypeEnum.CONTAINER, data.name),
-                    },
-                  ],
-          },
-        ],
-      }),
-    },
-  ]
-
-  const buttonActionsDefaultDB = [
-    {
-      iconLeft: <Icon name="icon-solid-play" />,
-      iconRight: <Icon name="icon-solid-angle-down" />,
-      menusClassName: removeService ? 'border-r border-r-element-light-lighter-500' : '',
-      statusActions: {
-        status: data.status && data.status.state,
-        actions: buttonActions,
-      },
-    },
-    {
-      ...(removeService && {
-        iconLeft: <Icon name="icon-solid-ellipsis-v" />,
-        menus: [
-          {
-            items: [
-              {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeService(data.id, ServiceTypeEnum.DATABASE, data.name),
-              },
-            ],
-          },
-        ],
-      }),
-    },
-  ]
 
   return (
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link}>
@@ -200,15 +90,16 @@ export function TableRowServices(props: TableRowServicesProps) {
                 )}
               </p>
               {data.name && (
-                <ButtonIconAction
-                  actions={type === ServiceTypeEnum.DATABASE ? buttonActionsDefaultDB : buttonActionsDefault}
-                  statusInformation={{
-                    id: data.id,
-                    name: data.name,
-                    mode: environmentMode,
-                  }}
-                  isService
-                />
+                <>
+                  {type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER ? (
+                    <ApplicationButtonsActions
+                      application={data as ApplicationEntity}
+                      environmentMode={environmentMode}
+                    />
+                  ) : (
+                    <DatabaseButtonsActions database={data as DatabaseEntity} environmentMode="environmentMode" />
+                  )}
+                </>
               )}
             </div>
           </Skeleton>

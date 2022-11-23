@@ -142,7 +142,7 @@ export function Menu(props: MenuProps) {
           <MenuGroup
             key={index}
             menu={menu}
-            isLast={index === menus.length - 1 ? true : false}
+            isLast={index === menus.length - 1}
             paddingMenuX={paddingMenuX}
             paddingMenuY={paddingMenuY}
             style={{ width }}

@@ -1,102 +1,46 @@
 import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router-dom'
+import { DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DATABASE_DEPLOYMENTS_URL,
-  DATABASE_GENERAL_URL, //DATABASE_METRICS_URL,
+  DATABASE_GENERAL_URL,
   DATABASE_SETTINGS_URL,
-  DATABASE_URL, //DATABASE_VARIABLES_URL,
+  DATABASE_URL,
 } from '@qovery/shared/router'
-import {
-  ButtonIconAction,
-  Header,
-  Icon,
-  Skeleton,
-  StatusChip,
-  StatusMenuActions,
-  Tabs,
-  Tag,
-  TagMode,
-  TagSize,
-} from '@qovery/shared/ui'
-import { copyToClipboard } from '@qovery/shared/utils'
+import { Header, Icon, Skeleton, StatusChip, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
 
 export interface ContainerProps {
-  statusActions: StatusMenuActions[]
   database?: DatabaseEntity
   environment?: Environment
   children?: React.ReactNode
-  removeDatabase?: (databaseId: string) => void
 }
 
 export function Container(props: ContainerProps) {
-  const { database, environment, children, statusActions, removeDatabase } = props
+  const { database, environment, children } = props
 
   const { organizationId, projectId, environmentId, databaseId } = useParams()
   const location = useLocation()
 
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${databaseId}`
-
-  const buttonActionsDefault = [
-    {
-      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
-      menusClassName: removeDatabase ? 'border-r border-r-element-light-lighter-500' : '',
-      statusActions: {
-        status: database?.status && database?.status.state,
-        actions: statusActions,
-      },
-    },
-    {
-      ...(removeDatabase && {
-        iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
-        menus: [
-          {
-            items: [
-              {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeDatabase(databaseId ? databaseId : ''),
-              },
-              {
-                name: 'Copy identifiers',
-                contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
-                onClick: () => copyToClipboard(copyContent),
-              },
-            ],
-          },
-        ],
-      }),
-    },
-  ]
-
   const headerActions = (
     <>
-      <Skeleton width={150} height={24} show={!database?.status}>
+      <Skeleton width={150} height={32} show={!database?.status}>
         <div className="flex">
           {environment && database && database?.status && (
             <>
-              <ButtonIconAction
-                className="!h-8"
-                actions={buttonActionsDefault}
-                statusInformation={{
-                  id: database?.id,
-                  name: database?.name,
-                  mode: environment?.mode,
-                }}
-              />
+              <DatabaseButtonsActions database={database} environmentMode={environment.mode} />
               <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
             </>
           )}
         </div>
       </Skeleton>
       {environment && (
-        <Skeleton width={80} height={24} show={!environment?.mode}>
+        <Skeleton width={80} height={32} show={!environment?.mode}>
           <TagMode status={environment?.mode} size={TagSize.BIG} />
         </Skeleton>
       )}
-      <Skeleton width={100} height={24} show={!environment?.cloud_provider}>
+      <Skeleton width={100} height={32} show={!environment?.cloud_provider}>
         <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
           <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>

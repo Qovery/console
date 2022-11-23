@@ -1,91 +1,29 @@
-import { useParams } from 'react-router-dom'
+import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { RunningStatus } from '@qovery/shared/enums'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
-  ButtonIconAction,
   Icon,
-  IconAwesomeEnum,
   Skeleton,
   StatusChip,
   StatusLabel,
-  StatusMenuActions,
   TableFilterProps,
   TableHeadProps,
   TableRow,
   TagMode,
   Tooltip,
-  useModal,
 } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/utils'
-import CreateCloneEnvironmentModalFeature from '../../feature/create-clone-environment-modal-feature/create-clone-environment-modal-feature'
 
 export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
   filter: TableFilterProps
   dataHead: TableHeadProps[]
   link: string
-  buttonActions: StatusMenuActions[]
-  removeEnvironment?: (environmentId: string, name: string) => void
   columnsWidth?: string
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { organizationId = '', projectId = '' } = useParams()
-
-  const {
-    data,
-    filter,
-    dataHead,
-    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
-    link,
-    buttonActions,
-    removeEnvironment,
-  } = props
-
-  const { openModal, closeModal } = useModal()
-
-  const buttonActionsDefault = [
-    {
-      iconLeft: <Icon name="icon-solid-play" />,
-      iconRight: <Icon name="icon-solid-angle-down" />,
-      statusActions: {
-        status: data.status && data.status.state,
-        actions: buttonActions,
-      },
-    },
-    {
-      ...(removeEnvironment && {
-        iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
-        menusClassName: 'border-l border-l-element-light-lighter-500',
-        menus: [
-          {
-            items: [
-              {
-                name: 'Clone',
-                contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
-                onClick: () =>
-                  openModal({
-                    content: (
-                      <CreateCloneEnvironmentModalFeature
-                        onClose={closeModal}
-                        projectId={projectId}
-                        organizationId={organizationId}
-                        environmentToClone={data}
-                      />
-                    ),
-                  }),
-              },
-              {
-                name: 'Remove',
-                contentLeft: <Icon name="icon-solid-trash" className="text-sm text-brand-400" />,
-                onClick: () => removeEnvironment(data.id, data.name),
-              },
-            ],
-          },
-        ],
-      }),
-    },
-  ]
+  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, filter } = props
 
   const isLoading = !data.status?.id
 
@@ -129,14 +67,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
                   </span>
                 )}
               </p>
-              <ButtonIconAction
-                actions={buttonActionsDefault}
-                statusInformation={{
-                  id: data.id,
-                  name: data.name,
-                  mode: data.mode,
-                }}
-              />
+              <EnvironmentButtonsActions environment={data} hasServices={true} />
             </div>
           </Skeleton>
         </div>

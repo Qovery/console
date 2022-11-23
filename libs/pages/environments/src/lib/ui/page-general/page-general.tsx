@@ -2,20 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
-import { BaseLink, EmptyState, HelpSection, StatusMenuActions, Table, TableFilterProps } from '@qovery/shared/ui'
-import { isDeleteAvailable } from '@qovery/shared/utils'
+import { BaseLink, EmptyState, HelpSection, Table, TableFilterProps } from '@qovery/shared/ui'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface PageGeneralProps {
   environments: EnvironmentEntity[]
-  buttonActions: StatusMenuActions[]
   listHelpfulLinks: BaseLink[]
-  removeEnvironment: (environmentId: string, name: string) => void
   isLoading?: boolean
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {
-  const { environments, buttonActions, listHelpfulLinks, removeEnvironment } = props
+  const { environments, listHelpfulLinks } = props
   const { organizationId, projectId } = useParams()
 
   const [data, setData] = useState(environments)
@@ -83,10 +80,6 @@ function PageGeneralMemo(props: PageGeneralProps) {
                 dataHead={tableHead}
                 link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
                 columnsWidth={columnWidth}
-                buttonActions={buttonActions}
-                removeEnvironment={
-                  currentData?.status && isDeleteAvailable(currentData?.status?.state) ? removeEnvironment : undefined
-                }
               />
             ))}
           </>

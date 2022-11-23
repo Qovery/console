@@ -1,15 +1,10 @@
 import { Chance } from 'chance'
-import {
-  Application,
-  StorageTypeEnum,
-  PortProtocolEnum,
-  BuildModeEnum,
-  BuildPackLanguageEnum,
-} from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 
-export const applicationFactoryMock = (howMany: number): Application[] =>
+export const applicationFactoryMock = (howMany: number): ApplicationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: new Date().toString(),

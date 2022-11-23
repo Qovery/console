@@ -1,8 +1,7 @@
-import { StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { ButtonSize, Icon, StatusMenuAction, StatusMenuActions, StatusMenuInformation } from '@qovery/shared/ui'
+import { ButtonSize, Icon } from '@qovery/shared/ui'
 import Menu, { MenuAlign } from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
 
@@ -23,11 +22,6 @@ export interface ButtonActionProps {
   className?: string
   onClick?: () => void
   menus?: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
-  statusActions?: {
-    status: StateEnum
-    actions: StatusMenuActions[]
-    information: StatusMenuInformation
-  }
   size?: ButtonSize
 }
 
@@ -42,7 +36,6 @@ export function ButtonAction(props: ButtonActionProps) {
     className = '',
     onClick,
     menus = [],
-    statusActions,
     size = ButtonSize.REGULAR,
   } = props
 
@@ -77,41 +70,23 @@ export function ButtonAction(props: ButtonActionProps) {
     )
   }
 
-  if (!statusActions) {
-    return (
-      <div data-testid="button-action" className={defineClass}>
-        {menus.length > 0 && (
-          <Menu
-            menus={menus}
-            arrowAlign={MenuAlign.END}
-            onOpen={(isOpen) => setMenuOpen(isOpen)}
-            trigger={
-              <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
-                <Icon name="icon-solid-ellipsis-vertical" />
-              </div>
-            }
-          />
-        )}
-        {contentBtn()}
-      </div>
-    )
-  } else {
-    return (
-      <div data-testid="button-action" className={defineClass}>
-        <StatusMenuAction
+  return (
+    <div data-testid="button-action" className={defineClass}>
+      {menus.length > 0 && (
+        <Menu
+          menus={menus}
           arrowAlign={MenuAlign.END}
-          setOpen={(isOpen: boolean) => setMenuOpen(isOpen)}
+          onOpen={(isOpen) => setMenuOpen(isOpen)}
           trigger={
             <div className={`btn-action__trigger btn-action__trigger--${menuOpen ? 'open' : 'closed'}`}>
               <Icon name="icon-solid-ellipsis-vertical" />
             </div>
           }
-          statusActions={statusActions}
         />
-        {contentBtn()}
-      </div>
-    )
-  }
+      )}
+      {contentBtn()}
+    </div>
+  )
 }
 
 export default ButtonAction
