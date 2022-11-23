@@ -75,12 +75,12 @@ export function PageApplicationLogs() {
       title: 'Pod name',
       className: 'px-4 py-2 h-full text-text-300 w-[198px]',
       classNameTitle: 'text-text-300',
-      filterMenuWidth: 360,
+      menuWidth: 360,
       filter: [
         {
           title: 'Filter by pod name',
           key: 'pod_name',
-          itemContentCustom: (data: any, currentFilter: string) => {
+          itemContentCustom: (data: Log, currentFilter: string) => {
             const isActive = data.pod_name === currentFilter
             const currentPod = application?.running_status?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (

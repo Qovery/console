@@ -9,7 +9,7 @@ import { TableFilterProps, TableHeadCustomFilterProps, TableHeadProps } from '..
 
 export interface TableHeadFilterProps {
   title: string
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps
   currentFilter: string
   setCurrentFilter: Dispatch<SetStateAction<string>>
   defaultData: any[]
@@ -19,7 +19,7 @@ export interface TableHeadFilterProps {
 // create multiple filter
 // need to output the function for testing
 export function createFilter(
-  dataHead: TableHeadProps[],
+  dataHead: TableHeadProps,
   defaultData: any[] | undefined,
   defaultValue = 'ALL',
   currentFilter: string,
@@ -31,10 +31,7 @@ export function createFilter(
   const keys: string[] = []
   const menus = []
   // get array of keys
-  for (let i = 0; i < dataHead.length; i++) {
-    const data = dataHead[i]
-    data.filter && data.filter.filter((currentData) => keys.push(currentData.key))
-  }
+  dataHead.filter && dataHead.filter.filter((currentData) => keys.push(currentData.key))
 
   // get menu by group of key
   for (let i = 0; i < keys.length; i++) {
@@ -50,13 +47,13 @@ export function createFilter(
         setLocalFilter,
         setDataFilterNumber,
         setFilter,
-        dataHead[i] && dataHead[i].filter
+        dataHead.filter && dataHead.filter[i]
       )
 
     if (menu)
       menus.push({
-        title: (dataHead[0].filter && dataHead[0].filter[i].title) || undefined,
-        search: (dataHead[0].filter && dataHead[0].filter[i].search) || false,
+        title: (dataHead.filter && dataHead.filter[i].title) || undefined,
+        search: (dataHead.filter && dataHead.filter[i].search) || false,
         items: menu,
       })
   }
@@ -74,7 +71,7 @@ export function groupBy(
   setLocalFilter: Function,
   setDataFilterNumber: Function,
   setFilter: Function,
-  dataHeadFilter?: TableHeadCustomFilterProps[]
+  dataHeadFilter?: TableHeadCustomFilterProps
 ) {
   const dataByKeys = data.reduce((acc, obj) => {
     // create global key for all objects
@@ -106,7 +103,7 @@ export function groupBy(
     return acc
   }, {})
 
-  if (dataHeadFilter && dataHeadFilter[0].itemContentCustom) {
+  if (dataHeadFilter?.itemContentCustom) {
     delete dataByKeys[defaultValue]
   }
 
@@ -127,9 +124,7 @@ export function groupBy(
     ),
     // set custom content hide name, contentLeft and contentRight (keep only the onClick)
     itemContentCustom:
-      dataHeadFilter &&
-      dataHeadFilter[0].itemContentCustom &&
-      dataHeadFilter[0].itemContentCustom(dataByKeys[key][0], currentFilter),
+      dataHeadFilter?.itemContentCustom && dataHeadFilter?.itemContentCustom(dataByKeys[key][0], currentFilter),
     onClick: () => {
       const currentFilterData = [...dataByKeys[key]]
 
@@ -190,7 +185,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         open={isOpen}
         onOpen={setOpen}
         menus={menus}
-        width={dataHead[0].filterMenuWidth || 280}
+        width={dataHead.menuWidth || 280}
         isFilter
         trigger={
           <div className="flex">

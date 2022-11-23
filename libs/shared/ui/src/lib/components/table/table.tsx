@@ -22,7 +22,7 @@ export interface TableHeadProps {
   title: string
   className?: string
   classNameTitle?: string
-  filterMenuWidth?: number
+  menuWidth?: number
   filter?: TableHeadCustomFilterProps[]
   sort?: {
     key: string
@@ -68,7 +68,7 @@ export function Table(props: TableProps) {
             {filter && data && setFilter && (
               <TableHeadFilter
                 title={title}
-                dataHead={dataHead.filter((head) => head.title === title)}
+                dataHead={dataHead.filter((head) => head.title === title)[0]}
                 defaultData={data}
                 setFilter={setFilter}
                 currentFilter={currentFilter}
