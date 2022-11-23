@@ -50,7 +50,7 @@ export function createFilter(
         setLocalFilter,
         setDataFilterNumber,
         setFilter,
-        dataHead[i].filter
+        dataHead[i] && dataHead[i].filter
       )
 
     if (menu)
@@ -106,27 +106,30 @@ export function groupBy(
     return acc
   }, {})
 
+  if (dataHeadFilter && dataHeadFilter[0].itemContentCustom) {
+    delete dataByKeys[defaultValue]
+  }
+
   // create menus by keys
   const result: MenuItemProps[] = Object.keys(dataByKeys).map((key: string) => ({
-    name:
-      dataHeadFilter && dataHeadFilter[0].customName
-        ? dataHeadFilter[0].customName(key.toLowerCase())
-        : upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' ') || '',
+    name: upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' ') || '',
     truncateLimit: 20,
-    contentLeft:
-      dataHeadFilter && dataHeadFilter[0].customContentLeft ? (
-        dataHeadFilter[0].customContentLeft(dataByKeys[key][0])
-      ) : (
-        <Icon
-          name={IconAwesomeEnum.CHECK}
-          className={`text-sm ${currentFilter === key ? 'text-success-400' : 'text-transparent'}`}
-        />
-      ),
+    contentLeft: (
+      <Icon
+        name={IconAwesomeEnum.CHECK}
+        className={`text-sm ${currentFilter === key ? 'text-success-400' : 'text-transparent'}`}
+      />
+    ),
     contentRight: (
       <span className="px-1 bg-element-light-lighter-400 text-text-400 text-xs font-bold rounded-sm">
         {dataByKeys[key].length}
       </span>
     ),
+    // set custom content hide name, contentLeft and contentRight (keep only the onClick)
+    itemContentCustom:
+      dataHeadFilter &&
+      dataHeadFilter[0].itemContentCustom &&
+      dataHeadFilter[0].itemContentCustom(dataByKeys[key][0], currentFilter),
     onClick: () => {
       const currentFilterData = [...dataByKeys[key]]
 
@@ -187,7 +190,7 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         open={isOpen}
         onOpen={setOpen}
         menus={menus}
-        width={280}
+        width={dataHead[0].filterMenuWidth || 280}
         isFilter
         trigger={
           <div className="flex">

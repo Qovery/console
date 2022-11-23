@@ -22,6 +22,7 @@ export interface TableHeadProps {
   title: string
   className?: string
   classNameTitle?: string
+  filterMenuWidth?: number
   filter?: TableHeadCustomFilterProps[]
   sort?: {
     key: string
@@ -32,8 +33,7 @@ export interface TableHeadCustomFilterProps {
   key: string
   search?: boolean
   title?: string
-  customName?: (name: string) => string
-  customContentLeft?: (data: any) => React.ReactNode
+  itemContentCustom?: (data: any, currentFilter: string) => React.ReactNode
 }
 
 export function Table(props: TableProps) {

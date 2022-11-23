@@ -7,7 +7,7 @@ import { selectApplicationById, selectApplicationsEntitiesByEnvId } from '@qover
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { LayoutLogs, Table, TableFilterProps } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, LayoutLogs, Table, TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import Row from './ui/row/row'
@@ -75,12 +75,28 @@ export function PageApplicationLogs() {
       title: 'Pod name',
       className: 'px-4 py-2 h-full text-text-300 w-[198px]',
       classNameTitle: 'text-text-300',
+      filterMenuWidth: 350,
       filter: [
         {
           title: 'Filter by pod name',
           key: 'pod_name',
-          customName: (name: string) => name,
-          contentLeft: (data: any) => <p>hello</p>,
+          itemContentCustom: (data: any, currentFilter: string) => {
+            const isActive = data.pod_name === currentFilter
+            return (
+              <div
+                className={`flex justify-between items-center w-[100%+24px] px-3 -mx-3  h-full ${
+                  isActive ? 'bg-element-light-darker-600' : ''
+                }`}
+              >
+                <p className="text-xs font-medium text-text-200 mr-6">{data.pod_name}</p>
+                <span className="block text-xxs text-text-400 mr-2">
+                  <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
+                  {data.version?.substring(0, 6)}
+                </span>
+                {isActive && <Icon name={IconAwesomeEnum.FILTER} className="text-warning-500 text-sm" />}
+              </div>
+            )
+          },
         },
       ],
     },

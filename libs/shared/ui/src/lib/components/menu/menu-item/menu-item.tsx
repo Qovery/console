@@ -18,6 +18,7 @@ export interface MenuItemProps {
   isActive?: boolean
   truncateLimit?: number
   disabled?: boolean
+  itemContentCustom?: React.ReactNode
 }
 
 export function MenuItem(props: MenuItemProps) {
@@ -35,12 +36,15 @@ export function MenuItem(props: MenuItemProps) {
     containerClassName = '',
     truncateLimit = 34,
     disabled = false,
+    itemContentCustom,
   } = props
-  const navigate = useNavigate()
 
+  const navigate = useNavigate()
   const disabledClassName = disabled ? 'opacity-50 cursor-not-allowed' : ''
 
-  const itemContent = (
+  const itemContent = itemContentCustom ? (
+    itemContentCustom
+  ) : (
     <>
       <div className={`flex items-center truncate ${className}`}>
         {copy && (
