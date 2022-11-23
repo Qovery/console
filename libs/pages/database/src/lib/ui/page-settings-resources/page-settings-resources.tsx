@@ -61,7 +61,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                 <InputText
                   type="number"
                   name={field.name}
-                  dataTestId="input-memory-ram"
                   label="Size in MB"
                   value={field.value}
                   onChange={field.onChange}

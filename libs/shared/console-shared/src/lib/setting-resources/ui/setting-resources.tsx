@@ -1,5 +1,4 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -19,8 +18,6 @@ export interface SettingResourcesProps {
   minInstances?: number
   maxInstances?: number
   isDatabase?: boolean
-  getStorageUnit?: (value: string | MemorySizeEnum) => string
-  storageSize?: MemorySizeEnum | string
 }
 
 export function SettingResources(props: SettingResourcesProps) {
@@ -76,7 +73,6 @@ export function SettingResources(props: SettingResourcesProps) {
             <InputText
               type="number"
               name={field.name}
-              dataTestId="input-memory-ram"
               label="Size in MB"
               value={field.value}
               onChange={field.onChange}
@@ -120,7 +116,7 @@ export function SettingResources(props: SettingResourcesProps) {
               },
             }}
             render={({ field }) => (
-              <InputText name="storage" label="Size in GB" value={field.value} onChange={field.onChange} />
+              <InputText name={field.name} label="Size in GB" value={field.value} onChange={field.onChange} />
             )}
           />
         </BlockContent>
