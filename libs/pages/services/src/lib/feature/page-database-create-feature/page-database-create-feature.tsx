@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -43,9 +42,7 @@ export function PageDatabaseCreateFeature() {
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
-    storage_unit: MemorySizeEnum.GB,
     storage: 10,
-    memory_unit: MemorySizeEnum.MB,
   })
 
   const navigate = useNavigate()

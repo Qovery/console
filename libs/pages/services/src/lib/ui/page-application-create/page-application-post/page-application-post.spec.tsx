@@ -5,7 +5,6 @@ import PageApplicationPost, { PageApplicationPostProps } from './page-applicatio
 const props: PageApplicationPostProps = {
   gotoResources: jest.fn(),
   resourcesData: {
-    memory_unit: 'MB',
     cpu: [0.5],
     instances: [1, 12],
     memory: 512,

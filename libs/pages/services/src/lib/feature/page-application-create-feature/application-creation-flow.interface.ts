@@ -26,7 +26,6 @@ export interface ResourcesData {
   memory: number
   cpu: [number]
   instances: [number, number]
-  memory_unit: string
 }
 
 export interface PortData {

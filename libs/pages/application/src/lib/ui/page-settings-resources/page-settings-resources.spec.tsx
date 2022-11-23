@@ -2,7 +2,6 @@ import ResizeObserver from '__tests__/utils/resize-observer'
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { applicationFactoryMock } from '@qovery/domains/application'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { ResourcesData } from '../../../../../services/src/lib/feature/page-application-create-feature/application-creation-flow.interface'
 import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
@@ -12,8 +11,6 @@ const application = applicationFactoryMock(1)[0]
 const props: PageSettingsResourcesProps = {
   loading: false,
   onSubmit: () => jest.fn(),
-  getMemoryUnit: jest.fn(),
-  memorySize: MemorySizeEnum.MB,
   application: application,
   displayWarningCpu: true,
 }
@@ -37,7 +34,6 @@ describe('PageSettingsResources', () => {
       instances: [1, 18],
       cpu: [3],
       memory: 1024,
-      memory_unit: MemorySizeEnum.MB,
     }
   })
 
@@ -68,7 +64,7 @@ describe('PageSettingsResources', () => {
 
     const { getByTestId, getAllByRole } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [10], instances: [1, 1], memory: 323, memory_unit: MemorySizeEnum.MB },
+        defaultValues: { cpu: [10], instances: [1, 1], memory: 323 },
       })
     )
 

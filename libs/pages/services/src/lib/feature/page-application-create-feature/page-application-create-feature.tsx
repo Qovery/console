@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -47,7 +46,6 @@ export function PageApplicationCreateFeature() {
     memory: 512,
     cpu: [0.5],
     instances: [1, 2],
-    memory_unit: MemorySizeEnum.MB,
   })
 
   const [portData, setPortData] = useState<PortData | undefined>({
