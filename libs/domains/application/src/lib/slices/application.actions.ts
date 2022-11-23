@@ -44,9 +44,9 @@ export const postApplicationActionsRestart = createAsyncThunk<
     }
 
     return response
-  } catch (err: any) {
+  } catch (err) {
     // error message
-    return toast(ToastEnum.ERROR, 'Redeploying error', err.message)
+    return toast(ToastEnum.ERROR, 'Redeploying error', (err as Error).message)
   }
 })
 
@@ -79,9 +79,9 @@ export const postApplicationActionsDeploy = createAsyncThunk<
     }
 
     return response
-  } catch (err: any) {
+  } catch (err) {
     // error message
-    return toast(ToastEnum.ERROR, 'Deploying error', err.message)
+    return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
   }
 })
 
@@ -101,9 +101,9 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk<
     }
 
     return response
-  } catch (err: any) {
+  } catch (err) {
     // error message
-    return toast(ToastEnum.ERROR, 'Deploying error', err.message)
+    return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
   }
 })
 
@@ -136,9 +136,9 @@ export const postApplicationActionsStop = createAsyncThunk<
     }
 
     return response
-  } catch (err: any) {
+  } catch (err) {
     // error message
-    return toast(ToastEnum.ERROR, 'Stopping error', err.message)
+    return toast(ToastEnum.ERROR, 'Stopping error', (err as Error).message)
   }
 })
 
@@ -162,8 +162,8 @@ export const deleteApplicationAction = createAsyncThunk<
     }
 
     return response
-  } catch (err: any) {
+  } catch (err) {
     // error message
-    return toast(ToastEnum.ERROR, 'Deleting error', err.message)
+    return toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
   }
 })
