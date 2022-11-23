@@ -59,6 +59,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               rules={inputSizeUnitRules(maxMemoryBySize)}
               render={({ field }) => (
                 <InputText
+                  dataTestId="input-memory-memory"
                   type="number"
                   name={field.name}
                   label="Size in MB"
