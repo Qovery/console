@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ButtonIcon, ButtonIconStyle, IconAwesomeEnum, InputText, InputToggle } from '@qovery/shared/ui'
+import { ButtonIcon, ButtonIconStyle, Icon, IconAwesomeEnum, InputText, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { PortData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
 export interface PortRowProps {
@@ -13,6 +13,7 @@ export function PortRow(props: PortRowProps) {
   const { control, watch, setValue, resetField } = useFormContext<PortData>()
 
   const isPublicWatch = watch(`ports.${index}.is_public`)
+  const externalPortWatch = watch(`ports.${index}.external_port`)
 
   useEffect(() => {
     setValue(`ports.${index}.external_port`, isPublicWatch ? 443 : undefined)
@@ -45,7 +46,7 @@ export function PortRow(props: PortRowProps) {
             className="flex-grow"
             name={field.name}
             onChange={field.onChange}
-            value={field.value}
+            value={externalPortWatch} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
             label={`External Port ${index + 1}`}
             error={error?.message}
             type="number"
@@ -53,6 +54,11 @@ export function PortRow(props: PortRowProps) {
           />
         )}
       />
+      <Tooltip content="Only HTTP protocol is supported">
+        <div>
+          <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+        </div>
+      </Tooltip>
       <Controller
         name={`ports.${index}.is_public`}
         control={control}

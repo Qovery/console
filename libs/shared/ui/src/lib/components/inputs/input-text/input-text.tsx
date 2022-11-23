@@ -35,8 +35,9 @@ export function InputText(props: InputTextProps) {
   const [currentType, setCurrentType] = useState(type)
 
   useEffect(() => {
+    console.log(value)
     setCurrentValue(value)
-  }, [value, setCurrentValue])
+  }, [props.value, setCurrentValue])
 
   const hasFocus = focused
   const hasLabelUp =
