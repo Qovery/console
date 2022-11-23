@@ -1,7 +1,6 @@
-import { FormEventHandler, useState } from 'react'
+import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SettingResources } from '@qovery/shared/console-shared'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 import { ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
@@ -11,22 +10,7 @@ export interface PageDatabaseCreateResourcesProps {
 }
 
 export function PageDatabaseCreateResources(props: PageDatabaseCreateResourcesProps) {
-  const { formState, setValue, getValues } = useFormContext<ResourcesData>()
-
-  const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(getValues().memory_unit || MemorySizeEnum.MB)
-  const [storageSize, setStorageSize] = useState<MemorySizeEnum | string>(getValues().storage_unit || MemorySizeEnum.MB)
-
-  const getMemoryUnit = (value: string) => {
-    setMemorySize(value)
-    setValue('memory_unit', value)
-    return value
-  }
-
-  const getStorageUnit = (value: string) => {
-    setStorageSize(value)
-    setValue('storage_unit', value)
-    return value
-  }
+  const { formState } = useFormContext<ResourcesData>()
 
   return (
     <>
@@ -35,14 +19,7 @@ export function PageDatabaseCreateResources(props: PageDatabaseCreateResourcesPr
       </div>
 
       <form onSubmit={props.onSubmit}>
-        <SettingResources
-          isDatabase={true}
-          getMemoryUnit={getMemoryUnit}
-          memorySize={memorySize}
-          displayWarningCpu={false}
-          storageSize={storageSize}
-          getStorageUnit={getStorageUnit}
-        />
+        <SettingResources isDatabase displayWarningCpu={false} />
 
         <div className="flex justify-between">
           <Button

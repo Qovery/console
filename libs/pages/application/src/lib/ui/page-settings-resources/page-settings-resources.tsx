@@ -1,21 +1,18 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SettingResources } from '@qovery/shared/console-shared'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  getMemoryUnit: (value: string | MemorySizeEnum) => string
-  memorySize: MemorySizeEnum | string
   displayWarningCpu: boolean
   application?: ApplicationEntity
   loading?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, getMemoryUnit, application, memorySize, displayWarningCpu } = props
+  const { onSubmit, loading, application, displayWarningCpu } = props
   const { formState } = useFormContext()
 
   if (!application) return null
@@ -25,12 +22,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-text-700">Resources</h2>
         <form onSubmit={onSubmit}>
-          <SettingResources
-            getMemoryUnit={getMemoryUnit}
-            memorySize={memorySize}
-            displayWarningCpu={displayWarningCpu}
-            application={application}
-          />
+          <SettingResources displayWarningCpu={displayWarningCpu} application={application} />
           <div className="flex justify-end">
             <Button
               dataTestId="submit-button"

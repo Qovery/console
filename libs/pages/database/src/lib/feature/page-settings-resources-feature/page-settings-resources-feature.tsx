@@ -3,25 +3,17 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editDatabase, selectDatabaseById } from '@qovery/domains/database'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (
-  data: FieldValues,
-  database: DatabaseEntity,
-  memorySize: MemorySizeEnum | string,
-  storageSize: MemorySizeEnum | string
-) => {
+export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
   const cloneDatabase = Object.assign({}, database)
-  const currentMemory = Number(data['memory'])
-  const currentStorage = Number(data['storage'])
 
   cloneDatabase.cpu = convertCpuToVCpu(data['cpu'][0], true)
-  cloneDatabase.memory = memorySize === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
-  cloneDatabase.storage = storageSize === MemorySizeEnum.GB ? currentStorage * 1024 : currentStorage
+  cloneDatabase.memory = Number(data['memory'])
+  cloneDatabase.storage = Number(data['storage'])
 
   return cloneDatabase
 }
@@ -43,9 +35,6 @@ export function PageSettingsResourcesFeature() {
     },
   })
 
-  const [memorySize, setMemorySize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
-  const [storageSize] = useState<MemorySizeEnum | string>(MemorySizeEnum.MB)
-
   useEffect(() => {
     methods.reset({
       memory: database?.memory,
@@ -58,7 +47,7 @@ export function PageSettingsResourcesFeature() {
     if (!database) return
 
     setLoading(true)
-    const cloneDatabase = handleSubmit(data, database, memorySize, storageSize)
+    const cloneDatabase = handleSubmit(data, database)
 
     dispatch(
       editDatabase({
@@ -73,13 +62,7 @@ export function PageSettingsResourcesFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsResources
-        onSubmit={onSubmit}
-        loading={loading}
-        database={database}
-        memorySize={memorySize}
-        getMemoryUnit={(value: string | MemorySizeEnum) => setMemorySize(value)}
-      />
+      <PageSettingsResources onSubmit={onSubmit} loading={loading} database={database} />
     </FormProvider>
   )
 }
