@@ -37,10 +37,10 @@
 }
 
 .btn--tab {
-  @apply bg-element-light-lighter-300 text-text-600 text-xs font-medium px-2;
+  @apply bg-element-light-lighter-300 text-text-600 dark:bg-element-light-darker-500 dark:text-text-300 text-xs font-medium px-2;
 
   &:hover:not(.is-active, .btn--active) {
-    @apply bg-element-light-lighter-400 text-text-700;
+    @apply bg-element-light-lighter-400 text-text-700 dark:bg-element-light-darker-600 dark:text-text-300;
   }
 
   &.is-active,

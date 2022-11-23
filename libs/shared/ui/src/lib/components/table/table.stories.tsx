@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import Button from '../buttons/button/button'
+import Icon from '../icon/icon'
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Table, TableFilterProps, TableProps } from './table'
 import { TableRow } from './table-row/table-row'
 
@@ -73,6 +75,15 @@ const dataHead = [
         search: true,
         title: 'Filter by environment type',
         key: 'mode',
+        itemContentCustom: (data: any, currentFilter: string) => {
+          const isActive = currentFilter === data.mode
+          return (
+            <p>
+              {isActive ? <Icon name={IconAwesomeEnum.CHECK} /> : ''}
+              {data.status.state} {data.mode}
+            </p>
+          )
+        },
       },
     ],
   },

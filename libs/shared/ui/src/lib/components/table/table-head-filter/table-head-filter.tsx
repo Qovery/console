@@ -2,13 +2,14 @@ import { Dispatch, MouseEvent, SetStateAction, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Menu from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
-import { TableFilterProps, TableHeadProps } from '../table'
+import { TableFilterProps, TableHeadCustomFilterProps, TableHeadProps } from '../table'
 
 export interface TableHeadFilterProps {
   title: string
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps
   currentFilter: string
   setCurrentFilter: Dispatch<SetStateAction<string>>
   defaultData: any[]
@@ -18,7 +19,7 @@ export interface TableHeadFilterProps {
 // create multiple filter
 // need to output the function for testing
 export function createFilter(
-  dataHead: TableHeadProps[],
+  dataHead: TableHeadProps,
   defaultData: any[] | undefined,
   defaultValue = 'ALL',
   currentFilter: string,
@@ -30,10 +31,7 @@ export function createFilter(
   const keys: string[] = []
   const menus = []
   // get array of keys
-  for (let i = 0; i < dataHead.length; i++) {
-    const data = dataHead[i]
-    data.filter && data.filter.filter((currentData) => keys.push(currentData.key))
-  }
+  dataHead.filter && dataHead.filter.filter((currentData) => keys.push(currentData.key))
 
   // get menu by group of key
   for (let i = 0; i < keys.length; i++) {
@@ -48,13 +46,14 @@ export function createFilter(
         setCurrentFilter,
         setLocalFilter,
         setDataFilterNumber,
-        setFilter
+        setFilter,
+        dataHead.filter && dataHead.filter[i]
       )
 
     if (menu)
       menus.push({
-        title: (dataHead[0].filter && dataHead[0].filter[i].title) || undefined,
-        search: (dataHead[0].filter && dataHead[0].filter[i].search) || false,
+        title: (dataHead.filter && dataHead.filter[i].title) || undefined,
+        search: (dataHead.filter && dataHead.filter[i].search) || false,
         items: menu,
       })
   }
@@ -71,7 +70,8 @@ export function groupBy(
   setCurrentFilter: Function,
   setLocalFilter: Function,
   setDataFilterNumber: Function,
-  setFilter: Function
+  setFilter: Function,
+  dataHeadFilter?: TableHeadCustomFilterProps
 ) {
   const dataByKeys = data.reduce((acc, obj) => {
     // create global key for all objects
@@ -103,13 +103,17 @@ export function groupBy(
     return acc
   }, {})
 
+  if (dataHeadFilter?.itemContentCustom) {
+    delete dataByKeys[defaultValue]
+  }
+
   // create menus by keys
   const result: MenuItemProps[] = Object.keys(dataByKeys).map((key: string) => ({
     name: upperCaseFirstLetter(key.toLowerCase())?.replace('_', ' ') || '',
     truncateLimit: 20,
     contentLeft: (
       <Icon
-        name="icon-solid-check"
+        name={IconAwesomeEnum.CHECK}
         className={`text-sm ${currentFilter === key ? 'text-success-400' : 'text-transparent'}`}
       />
     ),
@@ -118,6 +122,9 @@ export function groupBy(
         {dataByKeys[key].length}
       </span>
     ),
+    // set custom content hide name, contentLeft and contentRight (keep only the onClick)
+    itemContentCustom:
+      dataHeadFilter?.itemContentCustom && dataHeadFilter?.itemContentCustom(dataByKeys[key][0], currentFilter),
     onClick: () => {
       const currentFilterData = [...dataByKeys[key]]
 
@@ -173,18 +180,18 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
   )
 
   return (
-    <div className="flex">
+    <div className="flex items-center">
       <Menu
         open={isOpen}
         onOpen={setOpen}
         menus={menus}
-        width={280}
+        width={dataHead.menuWidth || 280}
         isFilter
         trigger={
-          <div>
+          <div className="flex">
             {localFilter === currentFilter && localFilter !== ALL ? (
               <Button
-                className="whitespace-nowrap inline-block btn--active"
+                className="whitespace-nowrap flex btn--active !h-6"
                 size={ButtonSize.TINY}
                 style={ButtonStyle.TAB}
               >
@@ -192,10 +199,10 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
               </Button>
             ) : (
               <Button
-                className="inline-block"
+                className="flex !h-6"
                 size={ButtonSize.TINY}
                 style={ButtonStyle.TAB}
-                iconRight="icon-solid-angle-down"
+                iconRight={IconAwesomeEnum.ANGLE_DOWN}
               >
                 {title}
               </Button>
@@ -204,9 +211,9 @@ export function TableHeadFilter(props: TableHeadFilterProps) {
         }
       />
       {localFilter === currentFilter && localFilter !== ALL && (
-        <div className="btn btn--tiny btn--tab btn--active relative left-[-9px]">
+        <div className="btn btn--tiny btn--tab btn--active !h-6 relative left-[-9px]">
           <span onClick={(event) => cleanFilter(event)}>
-            <Icon name="icon-solid-circle-xmark" />
+            <Icon name={IconAwesomeEnum.CIRCLE_XMARK} />
           </span>
         </div>
       )}

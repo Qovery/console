@@ -1,8 +1,8 @@
-import { render } from '__tests__/utils/setup-jest'
 import { screen } from '@testing-library/react'
-import { Menu, MenuDirection, MenuProps } from './menu'
+import { render } from '__tests__/utils/setup-jest'
 import Button from '../buttons/button/button'
 import Icon from '../icon/icon'
+import { Menu, MenuDirection, MenuProps } from './menu'
 
 let props: MenuProps
 
@@ -143,5 +143,24 @@ describe('Menu', () => {
     const search = screen.getByTestId('menu-search')
 
     expect(search).toBeTruthy()
+  })
+
+  it('should have a custom content on menu', () => {
+    props.menus = [
+      {
+        items: [
+          {
+            name: 'Test 1',
+            itemContentCustom: <p>hello</p>,
+          },
+        ],
+        search: true,
+      },
+    ]
+
+    render(<Menu {...props} />)
+
+    const menu = screen.getByTestId('menuItem')
+    expect(menu.textContent).toBe('hello')
   })
 })

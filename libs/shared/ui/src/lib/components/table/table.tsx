@@ -22,14 +22,18 @@ export interface TableHeadProps {
   title: string
   className?: string
   classNameTitle?: string
-  filter?: {
-    key: string
-    search?: boolean
-    title?: string
-  }[]
+  menuWidth?: number
+  filter?: TableHeadCustomFilterProps[]
   sort?: {
     key: string
   }
+}
+
+export interface TableHeadCustomFilterProps {
+  key: string
+  search?: boolean
+  title?: string
+  itemContentCustom?: (data: any, currentFilter: string) => React.ReactNode
 }
 
 export function Table(props: TableProps) {
@@ -51,7 +55,7 @@ export function Table(props: TableProps) {
     <div className={className}>
       <div
         data-testid="table-container"
-        className={`grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10 ${classNameHead}`}
+        className={`grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10 h-10 ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(({ title, className = 'px-4 py-2', classNameTitle = 'text-text-600 ', filter, sort }, index) => (
@@ -64,7 +68,7 @@ export function Table(props: TableProps) {
             {filter && data && setFilter && (
               <TableHeadFilter
                 title={title}
-                dataHead={dataHead.filter((head) => head.title === title)}
+                dataHead={dataHead.filter((head) => head.title === title)[0]}
                 defaultData={data}
                 setFilter={setFilter}
                 currentFilter={currentFilter}
