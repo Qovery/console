@@ -21,7 +21,7 @@ export const postDatabaseActionsRestart = createAsyncThunk<any, { environmentId:
       return response
     } catch (err) {
       // error message
-      return toast(ToastEnum.ERROR, 'Redeploying error')
+      return toast(ToastEnum.ERROR, 'Redeploying error', (err as Error).message)
     }
   }
 )
@@ -41,7 +41,7 @@ export const postDatabaseActionsDeploy = createAsyncThunk<any, { environmentId: 
       return response
     } catch (err) {
       // error message
-      return toast(ToastEnum.ERROR, 'Deploying error')
+      return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
     }
   }
 )
@@ -61,7 +61,7 @@ export const postDatabaseActionsStop = createAsyncThunk<any, { environmentId: st
       return response
     } catch (err) {
       // error message
-      return toast(ToastEnum.ERROR, 'Stopping error')
+      return toast(ToastEnum.ERROR, 'Stopping error', (err as Error).message)
     }
   }
 )
@@ -80,8 +80,7 @@ export const deleteDatabaseAction = createAsyncThunk<any, { environmentId: strin
 
       return response
     } catch (err) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Deleting error')
+      return toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
     }
   }
 )
