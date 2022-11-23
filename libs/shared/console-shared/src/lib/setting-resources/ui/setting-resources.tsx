@@ -71,6 +71,7 @@ export function SettingResources(props: SettingResourcesProps) {
           rules={inputSizeUnitRules(maxMemoryBySize)}
           render={({ field }) => (
             <InputText
+              dataTestId="input-memory-memory"
               type="number"
               name={field.name}
               label="Size in MB"

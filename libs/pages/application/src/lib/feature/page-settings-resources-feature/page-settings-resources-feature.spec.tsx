@@ -43,23 +43,10 @@ describe('PageSettingsResourcesFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should submit resources with converters with GB', () => {
-    const size = MemorySizeEnum.GB
-    const cpu = 3400
-    const memory = 16
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
-
-    expect(app.min_running_instances).toBe(1)
-    expect(app.max_running_instances).toBe(10)
-    expect(app.cpu).toBe(cpu * 1000)
-    expect(app.memory).toBe(memory * 1024)
-  })
-
   it('should submit resources with converters with MB', () => {
-    const size = MemorySizeEnum.MB
     const cpu = 3400
     const memory = 512
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication, size)
+    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication)
 
     expect(app.min_running_instances).toBe(1)
     expect(app.max_running_instances).toBe(10)
@@ -89,11 +76,7 @@ describe('PageSettingsResourcesFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    const cloneApplication = handleSubmit(
-      { memory: 9, cpu: [1], instances: [1, 3] },
-      mockApplication,
-      MemorySizeEnum.MB
-    )
+    const cloneApplication = handleSubmit({ memory: 9, cpu: [1], instances: [1, 3] }, mockApplication)
 
     expect(editApplicationSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
     expect(editApplicationSpy.mock.calls[0][0].data).toStrictEqual(cloneApplication)
