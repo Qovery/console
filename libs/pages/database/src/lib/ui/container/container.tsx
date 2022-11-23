@@ -1,6 +1,6 @@
 import { Environment } from 'qovery-typescript-axios'
 import { useLocation, useParams } from 'react-router-dom'
-import { DatabaseButtonsActionsFeature } from '@qovery/shared/console-shared'
+import { DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {
@@ -29,7 +29,7 @@ export function Container(props: ContainerProps) {
         <div className="flex">
           {environment && database && database?.status && (
             <>
-              <DatabaseButtonsActionsFeature database={database} environmentMode={environment.mode} />
+              <DatabaseButtonsActions database={database} environmentMode={environment.mode} />
               <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
             </>
           )}

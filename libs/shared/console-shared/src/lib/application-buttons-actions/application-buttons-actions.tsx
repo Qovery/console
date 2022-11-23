@@ -19,6 +19,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/router'
 import {
+  ButtonIconAction,
   ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
@@ -37,14 +38,13 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
-import ApplicationButtonsActions from '../ui/application-buttons-actions'
 
-export interface ApplicationButtonsActionsFeatureProps {
+export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
   environmentMode: string
 }
 
-export function ApplicationButtonsActionsFeature(props: ApplicationButtonsActionsFeatureProps) {
+export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps) {
   const { application, environmentMode } = props
   const { environmentId = '', projectId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
@@ -71,7 +71,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
   useEffect(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
-      contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
       onClick: () =>
         dispatch(
           postApplicationActionsDeploy({
@@ -84,7 +84,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
 
     const redeployButton: MenuItemProps = {
       name: 'Redeploy',
-      contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
@@ -125,7 +125,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
           },
         })
       },
-      contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.CIRCLE_STOP} className="text-sm text-brand-400" />,
     }
 
     const cancelBuildButton: MenuItemProps = {
@@ -141,7 +141,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
           action: () => {},
         })
       },
-      contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
       disabled: true,
     }
 
@@ -185,23 +185,23 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {
-      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      iconLeft: <Icon name={IconAwesomeEnum.PLAY} className="px-0.5" />,
+      iconRight: <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="px-0.5" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
       menus: buttonStatusActions,
     },
     {
-      iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+      iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
       onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)),
     },
     {
-      iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
+      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
       menus: [
         {
           items: [
             {
               name: 'Edit code',
-              contentLeft: <Icon name="icon-solid-code" className="text-sm text-brand-400" />,
+              contentLeft: <Icon name={IconAwesomeEnum.CODE} className="text-sm text-brand-400" />,
               link: {
                 url: urlCodeEditor((application as GitApplicationEntity)?.git_repository) || '',
                 external: true,
@@ -209,7 +209,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
             },
             {
               name: 'Copy identifiers',
-              contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
+              contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
               onClick: () => copyToClipboard(copyContent),
             },
             {
@@ -234,7 +234,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
                   {
                     name: 'Delete service',
                     containerClassName: 'text-error-600',
-                    contentLeft: <Icon name="icon-solid-trash" className="text-sm text-error-600" />,
+                    contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
                     onClick: () => removeService(application.id, application.name),
                   },
                 ],
@@ -245,13 +245,7 @@ export function ApplicationButtonsActionsFeature(props: ApplicationButtonsAction
     },
   ]
 
-  return (
-    <ApplicationButtonsActions
-      application={application}
-      environmentMode={environmentMode}
-      buttonActionsDefault={buttonActionsDefault}
-    />
-  )
+  return <ButtonIconAction className="!h-8" actions={buttonActionsDefault} />
 }
 
 export default ApplicationButtonsActions

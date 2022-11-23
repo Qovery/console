@@ -5,7 +5,15 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { deleteDatabaseAction, postDatabaseActionsDeploy, postDatabaseActionsRestart } from '@qovery/domains/database'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
-import { ButtonIconActionElementProps, Icon, MenuData, MenuItemProps, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  ButtonIconAction,
+  ButtonIconActionElementProps,
+  Icon,
+  IconAwesomeEnum,
+  MenuData,
+  MenuItemProps,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import {
   copyToClipboard,
   isDeleteAvailable,
@@ -14,14 +22,13 @@ import {
   isStopAvailable,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
-import DatabaseButtonsActions from '../ui/database-buttons-actions'
 
-export interface DatabaseButtonsActionsFeatureProps {
+export interface DatabaseButtonsActionsProps {
   database: DatabaseEntity
   environmentMode: string
 }
 
-export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatureProps) {
+export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const { database, environmentMode } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
@@ -47,7 +54,7 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
   useEffect(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
-      contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
       onClick: () =>
         dispatch(
           postDatabaseActionsDeploy({
@@ -59,7 +66,7 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
 
     const redeployButton: MenuItemProps = {
       name: 'Redeploy',
-      contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
@@ -100,7 +107,7 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
           },
         })
       },
-      contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.CIRCLE_STOP} className="text-sm text-brand-400" />,
     }
 
     const state = database.status?.state
@@ -128,13 +135,13 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {
-      iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-      iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+      iconLeft: <Icon name={IconAwesomeEnum.PLAY} className="px-0.5" />,
+      iconRight: <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="px-0.5" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
       menus: buttonStatusActions,
     },
     {
-      iconLeft: <Icon name="icon-solid-ellipsis-v" className="px-0.5" />,
+      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
       menus: [
         {
           items: [
@@ -152,7 +159,7 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
                   {
                     name: 'Delete database',
                     containerClassName: 'text-error-600',
-                    contentLeft: <Icon name="icon-solid-trash" className="text-sm" />,
+                    contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
                     onClick: () => removeDatabase(database.id, database.name),
                   },
                 ],
@@ -163,13 +170,7 @@ export function DatabaseButtonsActionsFeature(props: DatabaseButtonsActionsFeatu
     },
   ]
 
-  return (
-    <DatabaseButtonsActions
-      database={database}
-      buttonActionsDefault={buttonActionsDefault}
-      environmentMode={environmentMode}
-    />
-  )
+  return <ButtonIconAction className="!h-8" actions={buttonActionsDefault} />
 }
 
-export default DatabaseButtonsActionsFeature
+export default DatabaseButtonsActions

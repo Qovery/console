@@ -3,7 +3,7 @@ import { createContext, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
-import { ApplicationButtonsActionsFeature } from '@qovery/shared/console-shared'
+import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -104,7 +104,7 @@ export function Container(props: ContainerProps) {
         <div className="flex">
           {environment && application && application?.status && (
             <>
-              <ApplicationButtonsActionsFeature application={application} environmentMode={environment.mode} />
+              <ApplicationButtonsActions application={application} environmentMode={environment.mode} />
               <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
             </>
           )}

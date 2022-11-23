@@ -60,7 +60,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   useEffect(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
-      contentLeft: <Icon name="icon-solid-play" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
 
       onClick: () =>
         dispatch(
@@ -75,7 +75,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
     const redeployButton: MenuItemProps = {
       name: 'Redeploy',
-      contentLeft: <Icon name="icon-solid-rotate-right" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
@@ -100,7 +100,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
     const stopButton: MenuItemProps = {
       name: 'Stop',
-      contentLeft: <Icon name="icon-solid-circle-stop" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.CIRCLE_STOP} className="text-sm text-brand-400" />,
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
@@ -146,7 +146,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
             ),
         })
       },
-      contentLeft: <Icon name="icon-solid-xmark" className="text-sm text-brand-400" />,
+      contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
     }
 
     const state = environment.status?.state
@@ -214,15 +214,15 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     ...(hasServices
       ? [
           {
-            iconLeft: <Icon name="icon-solid-play" className="px-0.5" />,
-            iconRight: <Icon name="icon-solid-angle-down" className="px-0.5" />,
+            iconLeft: <Icon name={IconAwesomeEnum.PLAY} className="px-0.5" />,
+            iconRight: <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="px-0.5" />,
             menusClassName: 'border-r border-r-element-light-lighter-500',
             menus: buttonStatusActions,
           },
         ]
       : []),
     {
-      iconLeft: <Icon name="icon-solid-scroll" className="px-0.5" />,
+      iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
       onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environment.id)),
     },
     {
@@ -232,7 +232,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           items: [
             {
               name: 'Copy identifiers',
-              contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
+              contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
               onClick: () => copyToClipboard(copyContent),
             },
             {
@@ -259,7 +259,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
                   {
                     name: 'Delete environment',
                     containerClassName: 'text-error-600',
-                    contentLeft: <Icon name="icon-solid-trash" className="text-sm text-error-600" />,
+                    contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
                     onClick: () => removeEnvironment(),
                   },
                 ],

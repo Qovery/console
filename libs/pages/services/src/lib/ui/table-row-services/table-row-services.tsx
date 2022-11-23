@@ -1,5 +1,5 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { ApplicationButtonsActionsFeature, DatabaseButtonsActionsFeature } from '@qovery/shared/console-shared'
+import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
@@ -92,15 +92,12 @@ export function TableRowServices(props: TableRowServicesProps) {
               {data.name && (
                 <>
                   {type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER ? (
-                    <ApplicationButtonsActionsFeature
+                    <ApplicationButtonsActions
                       application={data as ApplicationEntity}
                       environmentMode={environmentMode}
                     />
                   ) : (
-                    <DatabaseButtonsActionsFeature
-                      database={data as DatabaseEntity}
-                      environmentMode="environmentMode"
-                    />
+                    <DatabaseButtonsActions database={data as DatabaseEntity} environmentMode="environmentMode" />
                   )}
                 </>
               )}

@@ -2,14 +2,11 @@ import { getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/domains/application'
-import {
-  ApplicationButtonsActionsFeature,
-  ApplicationButtonsActionsFeatureProps,
-} from './application-buttons-actions-feature'
+import { ApplicationButtonsActions, ApplicationButtonsActionsProps } from './application-buttons-actions'
 
 const mockApplication = applicationFactoryMock(1)[0]
 
-const props: ApplicationButtonsActionsFeatureProps = {
+const props: ApplicationButtonsActionsProps = {
   application: mockApplication,
   environmentMode: 'development',
 }
@@ -25,13 +22,13 @@ describe('ApplicationButtonsActionsFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<ApplicationButtonsActionsFeature {...props} />)
+    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render actions for RUNNING status', async () => {
     mockApplication.status.state = StateEnum.RUNNING
-    const { baseElement } = render(<ApplicationButtonsActionsFeature {...props} />)
+    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
 
     getByText(baseElement, 'Redeploy')
     getByText(baseElement, 'Stop')
@@ -44,7 +41,7 @@ describe('ApplicationButtonsActionsFeature', () => {
 
   it('should render actions for STOPPED status', async () => {
     mockApplication.status.state = StateEnum.STOPPED
-    const { baseElement } = render(<ApplicationButtonsActionsFeature {...props} />)
+    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
 
     getByText(baseElement, 'Deploy')
 

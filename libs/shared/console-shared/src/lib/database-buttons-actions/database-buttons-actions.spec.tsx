@@ -2,10 +2,10 @@ import { getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/domains/database'
-import { DatabaseButtonsActionsFeature, DatabaseButtonsActionsFeatureProps } from './database-buttons-actions-feature'
+import { DatabaseButtonsActions, DatabaseButtonsActionsProps } from './database-buttons-actions'
 
 const mockDatabase = databaseFactoryMock(1)[0]
-const props: DatabaseButtonsActionsFeatureProps = {
+const props: DatabaseButtonsActionsProps = {
   database: mockDatabase,
   environmentMode: 'development',
 }
@@ -21,13 +21,13 @@ describe('DatabaseButtonsActionsFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<DatabaseButtonsActionsFeature {...props} />)
+    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render actions for RUNNING status', async () => {
     mockDatabase.status.state = StateEnum.RUNNING
-    const { baseElement } = render(<DatabaseButtonsActionsFeature {...props} />)
+    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
     getByText(baseElement, 'Redeploy')
     getByText(baseElement, 'Stop')
@@ -38,7 +38,7 @@ describe('DatabaseButtonsActionsFeature', () => {
 
   it('should render actions for STOPPED status', async () => {
     mockDatabase.status.state = StateEnum.STOPPED
-    const { baseElement } = render(<DatabaseButtonsActionsFeature {...props} />)
+    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
     getByText(baseElement, 'Deploy')
 
