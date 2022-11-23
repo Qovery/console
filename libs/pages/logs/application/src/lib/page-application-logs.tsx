@@ -7,7 +7,7 @@ import { selectApplicationById, selectApplicationsEntitiesByEnvId } from '@qover
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { Icon, IconAwesomeEnum, LayoutLogs, Table, TableFilterProps } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, LayoutLogs, StatusChip, Table, TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import Row from './ui/row/row'
@@ -75,25 +75,34 @@ export function PageApplicationLogs() {
       title: 'Pod name',
       className: 'px-4 py-2 h-full text-text-300 w-[198px]',
       classNameTitle: 'text-text-300',
-      filterMenuWidth: 350,
+      filterMenuWidth: 360,
       filter: [
         {
           title: 'Filter by pod name',
           key: 'pod_name',
           itemContentCustom: (data: any, currentFilter: string) => {
             const isActive = data.pod_name === currentFilter
+            const currentPod = application?.running_status?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (
               <div
-                className={`flex justify-between items-center w-[100%+24px] px-3 -mx-3  h-full ${
+                className={`group flex justify-between items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
                   isActive ? 'bg-element-light-darker-600' : ''
                 }`}
               >
-                <p className="text-xs font-medium text-text-200 mr-6">{data.pod_name}</p>
+                <StatusChip status={currentPod?.state} className="mr-2.5" />
+                <p className="text-xs font-medium text-text-200 mr-5">{data.pod_name}</p>
                 <span className="block text-xxs text-text-400 mr-2">
                   <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
                   {data.version?.substring(0, 6)}
                 </span>
-                {isActive && <Icon name={IconAwesomeEnum.FILTER} className="text-warning-500 text-sm" />}
+                {
+                  <Icon
+                    name={IconAwesomeEnum.FILTER}
+                    className={`text-ssm group-hover:text-text-100 ${
+                      isActive ? 'text-warning-500' : 'text-transparent'
+                    }`}
+                  />
+                }
               </div>
             )
           },
