@@ -45,26 +45,11 @@ describe('PageSettingsResourcesFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should submit resources with converters with GB', () => {
-    const sizeMemory = MemorySizeEnum.GB
-    const sizeStorage = MemorySizeEnum.GB
-    const cpu = 3400
-    const memory = 16
-    const storage = 1024
-    const db = handleSubmit({ cpu: [cpu], memory: memory, storage: storage }, mockDatabase, sizeMemory, sizeStorage)
-
-    expect(db.cpu).toBe(cpu * 1000)
-    expect(db.memory).toBe(memory * 1024)
-    expect(db.storage).toBe(storage * 1024)
-  })
-
   it('should submit resources with converters with MB', () => {
-    const sizeMemory = MemorySizeEnum.MB
-    const sizeStorage = MemorySizeEnum.MB
     const cpu = 3400
     const memory = 512
     const storage = 1024
-    const db = handleSubmit({ cpu: [cpu], memory: memory, storage: storage }, mockDatabase, sizeMemory, sizeStorage)
+    const db = handleSubmit({ cpu: [cpu], memory: memory, storage: storage }, mockDatabase)
 
     expect(db.cpu).toBe(cpu * 1000)
     expect(db.memory).toBe(memory)
