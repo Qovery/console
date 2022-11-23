@@ -3,8 +3,10 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
+import { selectEnvironmentById } from '@qovery/domains/environment'
+import { selectClusterById } from '@qovery/domains/organization'
 import { MemorySizeEnum, getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
@@ -39,6 +41,13 @@ export function PageSettingsResourcesFeature() {
       a?.min_running_instances === b?.min_running_instances &&
       a?.max_running_instances === b?.max_running_instances &&
       JSON.stringify(a?.instances) === JSON.stringify(b?.instances)
+  )
+
+  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
+    selectEnvironmentById(state, environmentId)
+  )
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state) =>
+    selectClusterById(state, environment?.cluster_id || '')
   )
 
   const methods = useForm({
@@ -98,7 +107,7 @@ export function PageSettingsResourcesFeature() {
       .catch(() => setLoading(false))
   })
 
-  const displayWarningCpu: boolean = methods.watch('cpu')[0] > (application?.cpu || 0) / 1000
+  const displayWarningCpu: boolean = methods.watch('cpu')[0] > (cluster?.cpu || 0) / 1000
 
   return (
     <FormProvider {...methods}>
