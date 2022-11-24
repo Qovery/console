@@ -71,7 +71,14 @@ export function TableRowServices(props: TableRowServicesProps) {
           )}
           <div className="ml-2 mr-2">
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-              <Icon name={type === ServiceTypeEnum.APPLICATION ? IconEnum.APPLICATION : type} width="20" />
+              <Icon
+                name={
+                  type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER
+                    ? IconEnum.APPLICATION
+                    : type
+                }
+                width="20"
+              />
             </Skeleton>
           </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
