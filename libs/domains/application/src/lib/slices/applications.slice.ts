@@ -27,6 +27,7 @@ import {
   ContainersApi,
   DeploymentHistoryApplication,
   Instance,
+  JobsApi,
   Link,
   Status,
 } from 'qovery-typescript-axios'
@@ -48,6 +49,7 @@ import {
   shortToLongId,
 } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
+import { JobApplicationEntity } from './../../../../../shared/interfaces/src/lib/domain/job-application.entity'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
@@ -65,6 +67,8 @@ const containerMetricsApi = new ContainerMetricsApi()
 const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
 
+const jobsApi = new JobsApi()
+
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
   { environmentId: string; withoutStatus?: boolean }
@@ -74,6 +78,8 @@ export const fetchApplications = createAsyncThunk<
     applicationsApi.listApplication(data.environmentId),
     // fetch Container applications
     containersApi.listContainer(data.environmentId),
+    // fetch Jobs applications
+    jobsApi.listJobs(data.environmentId),
   ])
 
   if (!data.withoutStatus) {
@@ -83,6 +89,7 @@ export const fetchApplications = createAsyncThunk<
   return [
     ...(result[0].data.results as GitApplicationEntity[]),
     ...(result[1].data.results as ContainerApplicationEntity[]),
+    ...(result[2].data.results as JobApplicationEntity[]),
   ] as ApplicationEntity[]
 })
 

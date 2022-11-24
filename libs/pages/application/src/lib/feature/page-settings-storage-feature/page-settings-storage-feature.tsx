@@ -8,13 +8,13 @@ import {
   selectApplicationById,
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { GitContainerApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
 
-export const removeStorage = (storage: ServiceStorageStorage, application: ApplicationEntity) => {
+export const removeStorage = (storage: ServiceStorageStorage, application: GitContainerApplicationEntity) => {
   const app = { ...application }
   app.storage = app.storage?.filter((s) => s.id !== storage.id)
   return app
@@ -27,7 +27,7 @@ export function PageSettingsStorageFeature() {
   const { openModalConfirmation } = useModalConfirmation()
   const error = useSelector((state: RootState) => getApplicationsState(state).error)
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
+  const application = useSelector<RootState, GitContainerApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) => a?.id === b?.id && JSON.stringify(a?.storage) === JSON.stringify(b?.storage)
   )

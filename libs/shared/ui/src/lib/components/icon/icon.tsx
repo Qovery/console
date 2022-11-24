@@ -15,6 +15,7 @@ import AWSGrayIcon from './icons/aws-gray'
 import BuildpacksIcon from './icons/buildpacks'
 import ChildrenArrow from './icons/children-arrow'
 import { ContainerIcon } from './icons/container'
+import CronJobIcon from './icons/cron-job'
 import DatabaseIcon from './icons/database'
 import DOIcon from './icons/do'
 import DOGrayIcon from './icons/do-gray'
@@ -22,6 +23,7 @@ import DockerIcon from './icons/docker'
 import EnvironmentIcon from './icons/environment'
 import GitIcon from './icons/git'
 import InformationIcon from './icons/information'
+import LifecycleJobIcon from './icons/lifecycle-job'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
 import PostgresqlIcon from './icons/postgresql'
@@ -102,6 +104,10 @@ export function Icon(props: IconProps) {
       return <InformationIcon {...formattedProps} />
     case IconEnum.GIT:
       return <GitIcon {...formattedProps} />
+    case IconEnum.CRON_JOB:
+      return <CronJobIcon {...formattedProps} />
+    case IconEnum.LIFECYCLE_JOB:
+      return <LifecycleJobIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
