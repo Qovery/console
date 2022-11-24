@@ -20,7 +20,7 @@
     "@nrwl/cypress": "15.0.3",
     "@nrwl/devkit": "15.0.3",
     "@nrwl/eslint-plugin-nx": "15.0.3",
-    "@nrwl/linter": "15.0.3",
+    "@nrwl/linter": "15.1.0",
     "@nrwl/nx-cloud": "15.0.0",
     "@nrwl/storybook": "15.0.3",
     "@nrwl/tao": "15.0.3",
