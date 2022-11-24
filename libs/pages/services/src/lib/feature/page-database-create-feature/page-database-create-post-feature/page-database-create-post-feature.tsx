@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createDatabase, postDatabaseActionsDeploy } from '@qovery/domains/database'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import {
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
@@ -52,13 +51,8 @@ export function PageDatabaseCreatePostFeature() {
       if (withDeploy) setLoadingCreateAndDeploy(true)
       else setLoadingCreate(true)
 
-      const currentMemory = Number(resourcesData['memory'])
-      const memoryUnit = resourcesData.memory_unit
-
-      const currentStorage = Number(resourcesData['storage'])
-
-      const memory = memoryUnit === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
-      const storage = currentStorage
+      const memory = Number(resourcesData['memory'])
+      const storage = Number(resourcesData['storage'])
       const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
 
       const databaseRequest: DatabaseRequest = {
@@ -93,9 +87,7 @@ export function PageDatabaseCreatePostFeature() {
           }
           navigate(SERVICES_URL(organizationId, projectId, environmentId))
         })
-        .catch((e) => {
-          console.error(e)
-        })
+        .catch((e) => console.error(e))
         .finally(() => {
           if (withDeploy) setLoadingCreateAndDeploy(false)
           else setLoadingCreate(false)

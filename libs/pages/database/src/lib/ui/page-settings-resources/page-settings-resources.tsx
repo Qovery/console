@@ -1,6 +1,5 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -8,7 +7,6 @@ import {
   ButtonSize,
   ButtonStyle,
   HelpSection,
-  InputSizeUnit,
   InputText,
   Slider,
   inputSizeUnitRules,
@@ -17,18 +15,15 @@ import { convertCpuToVCpu } from '@qovery/shared/utils'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  memorySize: MemorySizeEnum | string
-  getMemoryUnit: (value: string | MemorySizeEnum) => void
   database?: DatabaseEntity
   loading?: boolean
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, database, memorySize, getMemoryUnit } = props
+  const { onSubmit, loading, database } = props
   const { control, formState, watch } = useFormContext()
 
-  const maxMemoryBySize =
-    memorySize === MemorySizeEnum.GB ? (database?.maximum_memory || 0) / 1024 : database?.maximum_memory || 0
+  const maxMemoryBySize = database?.maximum_memory
 
   if (!database) return null
 
@@ -63,15 +58,20 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               control={control}
               rules={inputSizeUnitRules(maxMemoryBySize)}
               render={({ field, fieldState: { error } }) => (
-                <InputSizeUnit
+                <InputText
+                  dataTestId="input-memory-memory"
+                  type="number"
                   name={field.name}
+                  label="Size in MB"
                   value={field.value}
                   onChange={field.onChange}
-                  maxSize={maxMemoryBySize}
-                  error={error}
-                  currentSize={database?.memory}
-                  currentUnit={memorySize}
-                  getUnit={getMemoryUnit}
+                  error={
+                    error?.type === 'required'
+                      ? 'Please enter a size.'
+                      : error?.type === 'max'
+                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                      : undefined
+                  }
                 />
               )}
             />
@@ -89,11 +89,12 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputText
                   type="number"
-                  name="storage"
+                  name={field.name}
                   dataTestId="input-memory-storage"
                   label="Size in GB"
                   value={field.value}
                   onChange={field.onChange}
+                  error={error?.message}
                 />
               )}
             />

@@ -37,9 +37,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         resourcesData: {
           storage: 1,
           cpu: [100],
-          storage_unit: 'GB',
           memory: 100,
-          memory_unit: 'MB',
         },
         setResourcesData: mockSetResourcesData,
       }}
@@ -88,9 +86,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
     expect(mockSetResourcesData).toHaveBeenCalledWith({
       storage: 1,
       cpu: [100],
-      storage_unit: 'GB',
       memory: 100,
-      memory_unit: 'MB',
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services/create/database/post')
   })

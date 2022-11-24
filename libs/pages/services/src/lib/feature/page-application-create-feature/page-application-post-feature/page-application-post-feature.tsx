@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
-import { MemorySizeEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -63,10 +63,7 @@ export function PageApplicationPostFeature() {
       if (withDeploy) setLoadingCreateAndDeploy(true)
       else setLoadingCreate(true)
 
-      const currentMemory = Number(resourcesData['memory'])
-      const memoryUnit = resourcesData.memory_unit
-
-      const memory = memoryUnit === MemorySizeEnum.GB ? currentMemory * 1024 : currentMemory
+      const memory = Number(resourcesData['memory'])
       const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
 
       if (generalData.serviceType === ServiceTypeEnum.APPLICATION) {
@@ -117,9 +114,7 @@ export function PageApplicationPostFeature() {
             }
             navigate(SERVICES_URL(organizationId, projectId, environmentId))
           })
-          .catch((e) => {
-            console.error(e)
-          })
+          .catch((e) => console.error(e))
           .finally(() => {
             if (withDeploy) setLoadingCreateAndDeploy(false)
             else setLoadingCreate(false)
@@ -165,9 +160,7 @@ export function PageApplicationPostFeature() {
             }
             navigate(SERVICES_URL(organizationId, projectId, environmentId))
           })
-          .catch((e) => {
-            console.error(e)
-          })
+          .catch((e) => console.error(e))
           .finally(() => {
             if (withDeploy) setLoadingCreateAndDeploy(false)
             else setLoadingCreate(false)

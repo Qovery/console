@@ -2,7 +2,6 @@ import ResizeObserver from '__tests__/utils/resize-observer'
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { databaseFactoryMock } from '@qovery/domains/database'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
 
 const database = databaseFactoryMock(1)[0]
@@ -10,10 +9,6 @@ const database = databaseFactoryMock(1)[0]
 const props: PageSettingsResourcesProps = {
   onSubmit: () => jest.fn(),
   loading: false,
-  memorySize: MemorySizeEnum.MB,
-  storageSize: MemorySizeEnum.MB,
-  getMemoryUnit: jest.fn(),
-  getStorageUnit: jest.fn(),
   database: database,
 }
 

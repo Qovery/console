@@ -52,7 +52,6 @@ const mockContext: ApplicationContainerCreateContextInterface = {
     memory: 512,
     cpu: [0.5],
     instances: [1, 12],
-    memory_unit: 'MB',
   },
   setResourcesData: jest.fn(),
   setPortData: jest.fn(),

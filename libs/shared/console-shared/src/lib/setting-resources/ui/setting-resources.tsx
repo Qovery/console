@@ -1,12 +1,9 @@
-import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { MemorySizeEnum } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Icon,
   IconAwesomeEnum,
-  InputSizeUnit,
   InputText,
   Slider,
   WarningBox,
@@ -16,49 +13,24 @@ import {
 import { convertCpuToVCpu } from '@qovery/shared/utils'
 
 export interface SettingResourcesProps {
-  getMemoryUnit: (value: string | MemorySizeEnum) => string
-  memorySize: MemorySizeEnum | string
   displayWarningCpu: boolean
   application?: ApplicationEntity
   minInstances?: number
   maxInstances?: number
   isDatabase?: boolean
-
-  getStorageUnit?: (value: string | MemorySizeEnum) => string
-  storageSize?: MemorySizeEnum | string
 }
 
 export function SettingResources(props: SettingResourcesProps) {
-  const {
-    getMemoryUnit,
-    memorySize,
-    displayWarningCpu,
-    application,
-    minInstances = 1,
-    maxInstances = 50,
-    isDatabase = false,
-    getStorageUnit,
-    storageSize,
-  } = props
-  const { control, watch, trigger } = useFormContext()
+  const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, isDatabase = false } = props
+  const { control, watch } = useFormContext()
 
-  let maxMemoryBySize =
-    memorySize === MemorySizeEnum.GB ? (application?.maximum_memory || 0) / 1024 : application?.maximum_memory || 0
+  let maxMemoryBySize = application?.maximum_memory
 
   if (!application) {
-    maxMemoryBySize = memorySize === MemorySizeEnum.GB ? 8192 / 1024 : 8192
+    maxMemoryBySize = 8192
   }
 
   const watchInstances = watch('instances')
-
-  // fix a bug where the validation of the memory field is done with the old maximum value but display the new one
-  // in the message error. Comment the useEffect to see the bug in action.
-  useEffect(() => {
-    setTimeout(() => {
-      // trigger && trigger is here to solve testing with the CI that goes in an infinite loop but not in local
-      trigger && trigger('memory').then()
-    })
-  }, [memorySize, trigger])
 
   return (
     <div>
@@ -98,16 +70,20 @@ export function SettingResources(props: SettingResourcesProps) {
           control={control}
           rules={inputSizeUnitRules(maxMemoryBySize)}
           render={({ field, fieldState: { error } }) => (
-            <InputSizeUnit
+            <InputText
+              dataTestId="input-memory-memory"
+              type="number"
               name={field.name}
+              label="Size in MB"
               value={field.value}
               onChange={field.onChange}
-              maxSize={maxMemoryBySize}
-              error={error}
-              currentSize={application?.memory}
-              currentUnit={memorySize}
-              getUnit={getMemoryUnit}
-              showConsumption={!!application}
+              error={
+                error?.type === 'required'
+                  ? 'Please enter a size.'
+                  : error?.type === 'max'
+                  ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                  : undefined
+              }
             />
           )}
         />
@@ -136,7 +112,7 @@ export function SettingResources(props: SettingResourcesProps) {
         </BlockContent>
       )}
 
-      {isDatabase && getStorageUnit && storageSize && (
+      {isDatabase && (
         <BlockContent title="Storage">
           <Controller
             name="storage"
@@ -148,7 +124,13 @@ export function SettingResources(props: SettingResourcesProps) {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <InputText name="storage" label="Size in GB" value={field.value} onChange={field.onChange} />
+              <InputText
+                name={field.name}
+                label="Size in GB"
+                value={field.value}
+                onChange={field.onChange}
+                error={error?.message}
+              />
             )}
           />
         </BlockContent>

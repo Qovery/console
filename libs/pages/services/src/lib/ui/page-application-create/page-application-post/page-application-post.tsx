@@ -109,10 +109,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
                 CPU: <strong className="font-medium">{props.resourcesData['cpu'][0]}</strong>
               </li>
               <li>
-                Memory:{' '}
-                <strong className="font-medium">
-                  {props.resourcesData.memory} {props.resourcesData.memory_unit}
-                </strong>
+                Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
               </li>
               <li>
                 Instances:{' '}

@@ -73,16 +73,10 @@ export function PageDatabaseCreatePost(props: PageDatabaseCreatePostProps) {
                   CPU: <strong className="font-medium">{props.resourcesData['cpu'][0]}</strong>
                 </li>
                 <li>
-                  Memory:{' '}
-                  <strong className="font-medium">
-                    {props.resourcesData.memory} {props.resourcesData.memory_unit}
-                  </strong>
+                  Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
                 </li>
                 <li>
-                  Storage:{' '}
-                  <strong className="font-medium">
-                    {props.resourcesData.storage} {props.resourcesData.storage_unit}
-                  </strong>
+                  Storage: <strong className="font-medium">{props.resourcesData.storage} GB</strong>
                 </li>
               </ul>
             </div>

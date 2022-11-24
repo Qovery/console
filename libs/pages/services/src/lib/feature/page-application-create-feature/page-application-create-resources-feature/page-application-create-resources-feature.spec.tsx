@@ -15,7 +15,6 @@ describe('PageApplicationCreateResourcesFeature', () => {
           generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
           setGeneralData: jest.fn(),
           resourcesData: {
-            memory_unit: 'MB',
             memory: 512,
             cpu: [0.5],
             instances: [1, 12],

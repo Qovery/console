@@ -14,9 +14,7 @@ const props: PageDatabaseCreatePostProps = {
   resourcesData: {
     storage: 1,
     cpu: [100],
-    storage_unit: 'GB',
     memory: 100,
-    memory_unit: 'MB',
   },
   gotoGlobalInformation: jest.fn(),
   gotoResources: jest.fn(),
