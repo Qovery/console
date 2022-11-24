@@ -1,10 +1,10 @@
+import equal from 'fast-deep-equal'
 import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useParams } from 'react-router-dom'
 import {
   databasesLoadingStatus,
-  fetchDatabase,
   fetchDatabaseMasterCredentials,
   fetchDatabaseMetrics,
   selectDatabaseById,
@@ -17,25 +17,28 @@ import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 
 export function PageDatabase() {
-  useDocumentTitle('Database - Qovery')
   const { databaseId = '', environmentId = '' } = useParams()
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
-  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
+
+  const database = useSelector<RootState, DatabaseEntity | undefined>(
+    (state) => selectDatabaseById(state, databaseId),
+    equal
+  )
+
+  useDocumentTitle(`${database?.name || 'Database'} - Qovery`)
 
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => databasesLoadingStatus(state))
 
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    if (databaseId && loadingStatus === 'loaded') {
+    if (database && databaseId && loadingStatus === 'loaded') {
       database?.metrics?.loadingStatus !== 'loaded' && dispatch(fetchDatabaseMetrics({ databaseId }))
       database?.credentials?.loadingStatus !== 'loaded' && dispatch(fetchDatabaseMasterCredentials({ databaseId }))
-    } else {
-      dispatch(fetchDatabase({ databaseId }))
     }
-  }, [databaseId, loadingStatus])
+  }, [database && databaseId, loadingStatus])
 
   return (
     <Container database={database} environment={environment}>
