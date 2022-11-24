@@ -80,7 +80,7 @@ export const isUpdateAvailable = (status: StateEnum): boolean => {
 }
 
 export const isCancelBuildAvailable = (status: StateEnum): boolean => {
-  return status === StateEnum.BUILDING || status === StateEnum.DEPLOYING
+  return status === StateEnum.BUILDING || status === StateEnum.DEPLOYING || status === StateEnum.DEPLOYMENT_QUEUED
 }
 
 export const isAvailable = (status: StateEnum): boolean => {
