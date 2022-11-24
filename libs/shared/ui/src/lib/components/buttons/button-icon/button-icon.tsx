@@ -26,6 +26,7 @@ export interface ButtonIconProps {
   iconClassName?: string
   external?: boolean
   dataTestId?: string
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export function ButtonIcon(props: ButtonIconProps) {
@@ -42,6 +43,7 @@ export function ButtonIcon(props: ButtonIconProps) {
     external = false,
     active = false,
     iconClassName = '',
+    type = 'button',
   } = props
 
   const defineClass = `btn btn-icon group ${size ? `btn--${size}` : ''} ${style ? `btn-icon--${style}` : ''} ${
@@ -52,7 +54,12 @@ export function ButtonIcon(props: ButtonIconProps) {
     return (
       <>
         {!link && (
-          <button data-testid={props.dataTestId} className={defineClass} onClick={(e) => onClick && onClick(e)}>
+          <button
+            type={type}
+            data-testid={props.dataTestId}
+            className={defineClass}
+            onClick={(e) => onClick && onClick(e)}
+          >
             {notification && (
               <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
             )}

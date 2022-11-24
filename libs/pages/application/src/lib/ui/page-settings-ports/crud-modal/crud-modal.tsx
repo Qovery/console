@@ -1,6 +1,7 @@
 import { ServicePort } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputText, InputToggle, ModalCrud } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   port?: ServicePort
@@ -14,11 +15,16 @@ export function CrudModal(props: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
   const watchPublicly = watch('publicly_accessible')
+  const watchExternalPort = watch('external_port')
 
   const pattern = {
     value: /^[0-9]+$/,
     message: 'Please enter a number.',
   }
+
+  useEffect(() => {
+    setValue(`external_port`, watchPublicly ? 443 : undefined)
+  }, [watchPublicly, setValue])
 
   return (
     <ModalCrud
@@ -61,10 +67,17 @@ export function CrudModal(props: CrudModalProps) {
             type="number"
             name={field.name}
             onChange={field.onChange}
-            value={field.value}
-            label="Public port"
+            value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
+            label="External port"
             error={error?.message}
-            disabled={!watchPublicly}
+            disabled
+            rightElement={
+              <Tooltip content="Only HTTP protocol is supported">
+                <div>
+                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                </div>
+              </Tooltip>
+            }
           />
         )}
       />
