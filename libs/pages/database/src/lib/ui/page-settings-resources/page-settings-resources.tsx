@@ -57,7 +57,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               name="memory"
               control={control}
               rules={inputSizeUnitRules(maxMemoryBySize)}
-              render={({ field }) => (
+              render={({ field, fieldState: { error } }) => (
                 <InputText
                   dataTestId="input-memory-memory"
                   type="number"
@@ -65,6 +65,13 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   label="Size in MB"
                   value={field.value}
                   onChange={field.onChange}
+                  error={
+                    error?.type === 'required'
+                      ? 'Please enter a size.'
+                      : error?.type === 'max'
+                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                      : undefined
+                  }
                 />
               )}
             />
@@ -79,7 +86,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   message: 'Please enter a number.',
                 },
               }}
-              render={({ field }) => (
+              render={({ field, fieldState: { error } }) => (
                 <InputText
                   type="number"
                   name={field.name}
@@ -87,6 +94,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   label="Size in GB"
                   value={field.value}
                   onChange={field.onChange}
+                  error={error?.message}
                 />
               )}
             />
