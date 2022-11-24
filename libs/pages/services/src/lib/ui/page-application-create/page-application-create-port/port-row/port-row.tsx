@@ -33,7 +33,7 @@ export function PortRow(props: PortRowProps) {
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label={`Application Port ${index + 1}`}
+            label={`Application port`}
             type="number"
           />
         )}
@@ -47,22 +47,26 @@ export function PortRow(props: PortRowProps) {
             name={field.name}
             onChange={field.onChange}
             value={externalPortWatch} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
-            label={`External Port ${index + 1}`}
+            label={`External port`}
             error={error?.message}
             type="number"
             disabled
+            rightElement={
+              <Tooltip content="Only HTTP protocol is supported">
+                <div>
+                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                </div>
+              </Tooltip>
+            }
           />
         )}
       />
-      <Tooltip content="Only HTTP protocol is supported">
-        <div>
-          <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
-        </div>
-      </Tooltip>
       <Controller
         name={`ports.${index}.is_public`}
         control={control}
-        render={({ field }) => <InputToggle onChange={field.onChange} value={field.value} title={'Public'} />}
+        render={({ field }) => (
+          <InputToggle small onChange={field.onChange} value={field.value} title="Publicly exposed" />
+        )}
       />
       <ButtonIcon
         dataTestId="delete-port"
