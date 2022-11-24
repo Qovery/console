@@ -6,12 +6,19 @@ import {
   SERVICES_CREATION_PORTS_URL,
   SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
+  SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_GENERAL_URL,
   SERVICES_DATABASE_CREATION_POST_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_JOB_CREATION_GENERAL_URL,
+  SERVICES_JOB_CREATION_PORT_URL,
+  SERVICES_JOB_CREATION_POST_URL,
+  SERVICES_JOB_CREATION_RESOURCES_URL,
+  SERVICES_JOB_CREATION_VARIABLE_URL,
+  SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_SETTINGS_ADVANCED_SETTINGS_URL,
   SERVICES_SETTINGS_DANGER_ZONE_URL,
   SERVICES_SETTINGS_DEPLOYMENT_URL,
@@ -29,6 +36,12 @@ import PageDatabaseCreatePostFeature from '../feature/page-database-create-featu
 import PageDatabaseCreateResourcesFeature from '../feature/page-database-create-feature/page-database-create-resources-feature/page-database-create-resources-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
+import GeneralFeature from '../feature/page-job-create-feature/general-feature/general-feature'
+import PageJobCreateFeature from '../feature/page-job-create-feature/page-job-create-feature'
+import PortFeature from '../feature/page-job-create-feature/port-feature/port-feature'
+import PostFeature from '../feature/page-job-create-feature/post-feature/post-feature'
+import ResourcesFeature from '../feature/page-job-create-feature/resources-feature/resources-feature'
+import VariableFeature from '../feature/page-job-create-feature/variable-feature/variable-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsDeploymentFeature from '../feature/page-settings-deployment-feature/page-settings-deployment-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
@@ -52,6 +65,14 @@ export const ROUTER_SERVICES: Route[] = [
   {
     path: `${SERVICES_DATABASE_CREATION_URL}/*`,
     component: <PageDatabaseCreateFeature />,
+  },
+  {
+    path: `${SERVICES_CRONJOB_CREATION_URL}/*`,
+    component: <PageJobCreateFeature />,
+  },
+  {
+    path: `${SERVICES_LIFECYCLE_CREATION_URL}/*`,
+    component: <PageJobCreateFeature />,
   },
   {
     path: `${SERVICES_APPLICATION_CREATION_URL}/*`,
@@ -113,5 +134,28 @@ export const ROUTER_SERVICE_DATABASE_CREATION: Route[] = [
   {
     path: SERVICES_DATABASE_CREATION_POST_URL,
     component: <PageDatabaseCreatePostFeature />,
+  },
+]
+
+export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
+  {
+    path: SERVICES_JOB_CREATION_GENERAL_URL,
+    component: <GeneralFeature />,
+  },
+  {
+    path: SERVICES_JOB_CREATION_RESOURCES_URL,
+    component: <ResourcesFeature />,
+  },
+  {
+    path: SERVICES_JOB_CREATION_PORT_URL,
+    component: <PortFeature />,
+  },
+  {
+    path: SERVICES_JOB_CREATION_VARIABLE_URL,
+    component: <VariableFeature />,
+  },
+  {
+    path: SERVICES_JOB_CREATION_POST_URL,
+    component: <PostFeature />,
   },
 ]
