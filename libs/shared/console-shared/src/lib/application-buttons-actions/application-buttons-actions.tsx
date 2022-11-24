@@ -1,13 +1,14 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   deleteApplicationAction,
   postApplicationActionsDeploy,
   postApplicationActionsRestart,
   postApplicationActionsStop,
 } from '@qovery/domains/application'
+import { postEnvironmentActionsCancelDeployment } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -15,6 +16,7 @@ import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
+  SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
@@ -38,6 +40,7 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
+import DeployOtherCommitModalFeature from '../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 
 export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
@@ -52,6 +55,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
+  const location = useLocation()
 
   const removeService = (id: string, name?: string) => {
     openModalConfirmation({
@@ -136,13 +140,22 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           mode: environmentMode,
           title: 'Confirm cancel deployment',
           description:
-            'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
+            'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
           name: application.name,
-          action: () => {},
+          action: () => {
+            dispatch(
+              postEnvironmentActionsCancelDeployment({
+                projectId,
+                environmentId: environmentId,
+                withDeployments:
+                  location.pathname ===
+                  SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+              })
+            )
+          },
         })
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
-      disabled: true,
     }
 
     const state = application.status?.state
@@ -163,18 +176,19 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         topItems.push(stopButton)
       }
 
-      // todo uncomment when api is ready
-      //     const deployAnotherButton = {
-      //       name: 'Deploy other version',
-      //       contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
-      //       onClick: () => {
-      //         openModal({
-      //           content: <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />,
-      //           options: { width: 596 },
-      //         })
-      //       },
-      //     }
-      //bottomItems.push(deployAnotherButton)
+      const deployAnotherButton = {
+        name: 'Deploy other version',
+        contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+        onClick: () => {
+          openModal({
+            content: (
+              <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />
+            ),
+            options: { width: 596 },
+          })
+        },
+      }
+      bottomItems.push(deployAnotherButton)
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
