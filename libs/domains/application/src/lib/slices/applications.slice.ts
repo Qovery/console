@@ -27,6 +27,7 @@ import {
   ContainersApi,
   DeploymentHistoryApplication,
   Instance,
+  JobDeploymentHistoryApi,
   JobsApi,
   Link,
   Status,
@@ -37,6 +38,7 @@ import {
   ApplicationsState,
   ContainerApplicationEntity,
   GitApplicationEntity,
+  JobApplicationEntity,
   LoadingStatus,
   ServiceRunningStatus,
 } from '@qovery/shared/interfaces'
@@ -49,7 +51,6 @@ import {
   shortToLongId,
 } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
-import { JobApplicationEntity } from './../../../../../shared/interfaces/src/lib/domain/job-application.entity'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 
@@ -68,6 +69,7 @@ const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
 
 const jobsApi = new JobsApi()
+const jobsDeploymentsApi = new JobDeploymentHistoryApi()
 
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
@@ -196,9 +198,12 @@ export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],
   { applicationId: string; serviceType?: ServiceTypeEnum; silently?: boolean }
 >('application/deployments', async (data) => {
+  console.log(data.serviceType)
   let response
   if (data.serviceType === ServiceTypeEnum.CONTAINER) {
     response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
+  } else if (data.serviceType === ServiceTypeEnum.LIFECYCLE_JOB || data.serviceType === ServiceTypeEnum.CRON_JOB) {
+    response = await jobsDeploymentsApi.listJobDeploymentHistory()
   } else {
     response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
   }
