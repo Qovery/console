@@ -1,4 +1,4 @@
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -6,6 +6,7 @@ import {
   ContainerApplicationEntity,
   DatabaseEntity,
   GitApplicationEntity,
+  JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 import {
   Icon,
@@ -45,28 +46,27 @@ export function TableRowServices(props: TableRowServicesProps) {
     isLoading,
   } = props
 
+  const dataDatabase = data as DatabaseEntity
+  const dataApplication = data as GitApplicationEntity
+  const dataContainer = data as ContainerApplicationEntity
+  const dataJobs = data as JobApplicationEntity
+
   return (
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link}>
       <>
         <div className="flex items-center px-4 gap-1">
-          {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
+          {dataDatabase.mode === DatabaseModeEnum.MANAGED ? (
             <Skeleton show={isLoading} width={16} height={16} rounded={true}>
               <StatusChip status={data.status?.state} />
             </Skeleton>
           ) : (
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-              {(data as DatabaseEntity).mode === DatabaseModeEnum.MANAGED ? (
-                <StatusChip status={data.status?.state} />
-              ) : (
-                <StatusChip
-                  status={data.running_status?.state || RunningStatus.STOPPED}
-                  appendTooltipMessage={
-                    data?.running_status?.state === RunningStatus.ERROR
-                      ? data.running_status.pods[0]?.state_message
-                      : ''
-                  }
-                />
-              )}
+              <StatusChip
+                status={data.running_status?.state || RunningStatus.STOPPED}
+                appendTooltipMessage={
+                  data?.running_status?.state === RunningStatus.ERROR ? data.running_status.pods[0]?.state_message : ''
+                }
+              />
             </Skeleton>
           )}
           <div className="ml-2 mr-2">
@@ -116,25 +116,34 @@ export function TableRowServices(props: TableRowServicesProps) {
           <Skeleton className="w-full" show={isLoading} width={160} height={16}>
             <div className="w-full flex gap-2 items-center -mt-[1px]">
               {type === ServiceTypeEnum.APPLICATION && (
-                <TagCommit commitId={(data as GitApplicationEntity).git_repository?.deployed_commit_id} />
+                <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />
               )}
-              {type === ServiceTypeEnum.CONTAINER && (
-                <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
-                  <span className="block truncate">
-                    <Tooltip
-                      content={`${(data as ContainerApplicationEntity).image_name}:${
-                        (data as ContainerApplicationEntity).tag
-                      }`}
-                    >
-                      <span>
-                        {(data as ContainerApplicationEntity).image_name}:{(data as ContainerApplicationEntity).tag}
-                      </span>
-                    </Tooltip>
-                  </span>
-                </Tag>
+              {dataJobs.source?.docker && (
+                <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
               )}
+              {type === ServiceTypeEnum.CONTAINER ||
+                (dataJobs.source?.image && (
+                  <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
+                    <div className="block truncate">
+                      {dataContainer.image_name && (
+                        <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
+                          <span>
+                            {dataContainer.image_name}:{dataContainer.tag}
+                          </span>
+                        </Tooltip>
+                      )}
+                      {dataJobs.source?.image && (
+                        <Tooltip content={`${dataJobs.source?.image?.image_name}:${dataJobs.source?.image?.tag}`}>
+                          <span>
+                            {dataJobs.source?.image?.image_name}:{dataJobs.source?.image?.tag}
+                          </span>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </Tag>
+                ))}
               {type === ServiceTypeEnum.DATABASE && (
-                <span className="block text-xs ml-2 text-text-600 font-medium">{(data as DatabaseEntity).version}</span>
+                <span className="block text-xs ml-2 text-text-600 font-medium">{dataDatabase.version}</span>
               )}
             </div>
           </Skeleton>
@@ -143,16 +152,18 @@ export function TableRowServices(props: TableRowServicesProps) {
           <Skeleton show={isLoading} width={30} height={16}>
             <div className="flex items-center">
               {type === ServiceTypeEnum.DATABASE && (
-                <Tooltip content={`${upperCaseFirstLetter((data as DatabaseEntity).mode)}`}>
+                <Tooltip content={`${upperCaseFirstLetter(dataDatabase.mode)}`}>
                   <div>
-                    <Icon name={(data as DatabaseEntity).type} width="20" height="20" />
+                    <Icon name={dataDatabase.type} width="20" height="20" />
                   </div>
                 </Tooltip>
               )}
-              {type === ServiceTypeEnum.APPLICATION && (
-                <Icon name={(data as GitApplicationEntity).build_mode || ''} width="20" height="20" />
+              {(type === ServiceTypeEnum.APPLICATION || dataJobs.source?.docker) && (
+                <Icon name={dataApplication.build_mode || BuildModeEnum.DOCKER} width="20" height="20" />
               )}
-              {type === ServiceTypeEnum.CONTAINER && <Icon name={IconEnum.CONTAINER} width="20" height="20" />}
+              {(type === ServiceTypeEnum.CONTAINER || dataJobs.source?.image) && (
+                <Icon name={IconEnum.CONTAINER} width="20" height="20" />
+              )}
             </div>
           </Skeleton>
         </div>

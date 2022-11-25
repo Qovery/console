@@ -2,7 +2,7 @@ import { IconProps } from '../icon'
 
 export function LifecycleJobIcon(props: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 22 22">
       <g opacity="0.7">
         <circle cx="10.875" cy="11" r="10.15" stroke="#42E8E0" strokeWidth="0.3"></circle>
         <ellipse cx="10.876" cy="11.077" fill="#EAEAFE" rx="7.669" ry="7.669"></ellipse>

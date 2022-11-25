@@ -101,9 +101,15 @@ export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentI
       applicationsApi.getEnvironmentApplicationStatus(data.environmentId),
       // fetch status Container applications
       containersApi.getEnvironmentContainerStatus(data.environmentId),
+      // fetch status Jobs applications
+      jobsApi.getEnvironmentJobStatus(data.environmentId),
     ])
 
-    return [...(result[0].data.results as Status[]), ...(result[1].data.results as Status[])]
+    return [
+      ...(result[0].data.results as Status[]),
+      ...(result[1].data.results as Status[]),
+      ...(result[2].data.results as Status[]),
+    ]
   }
 )
 
