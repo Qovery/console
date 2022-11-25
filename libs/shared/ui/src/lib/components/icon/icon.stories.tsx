@@ -41,6 +41,12 @@ const Template: Story<IconProps> = () => (
       <button onClick={() => copyName(IconEnum.DATABASE)}>
         <Icon name={IconEnum.DATABASE} />
       </button>
+      <button onClick={() => copyName(IconEnum.CRON_JOB)}>
+        <Icon name={IconEnum.CRON_JOB} />
+      </button>
+      <button onClick={() => copyName(IconEnum.LIFECYCLE_JOB)}>
+        <Icon name={IconEnum.LIFECYCLE_JOB} />
+      </button>
       <button onClick={() => copyName(IconEnum.AWS)}>
         <Icon name={IconEnum.AWS} />
       </button>

@@ -2,7 +2,7 @@ import { IconProps } from '../icon'
 
 export function CronJobIcon(props: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} viewBox="0 0 64 64">
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 64 64">
       <path
         fill="url(#paint0_linear_10120_221755)"
         d="M11.59 13.586a1.211 1.211 0 00-.542-.126c-.19 0-.377.043-.542.126L4.05 16.82a.144.144 0 00-.056.048.12.12 0 000 .133c.013.02.033.037.056.048l6.511 3.268c.146.073.31.111.478.111.168 0 .333-.038.478-.111l6.52-3.265a.145.145 0 00.056-.049.12.12 0 00.02-.066.12.12 0 00-.02-.066.144.144 0 00-.056-.049l-6.447-3.236z"

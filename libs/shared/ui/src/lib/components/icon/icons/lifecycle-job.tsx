@@ -2,30 +2,30 @@ import { IconProps } from '../icon'
 
 export function LifecycleJobIcon(props: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none">
       <g opacity="0.7">
         <circle cx="10.875" cy="11" r="10.15" stroke="#42E8E0" strokeWidth="0.3"></circle>
         <ellipse cx="10.876" cy="11.077" fill="#EAEAFE" rx="7.669" ry="7.669"></ellipse>
         <path
-          fill="url(#paint0_linear_10120_142620)"
+          fill="url(#paint0_linear_10128_95071)"
           fillRule="evenodd"
           d="M1.762 11.076a9.114 9.114 0 019.036-9.113v2.72a6.394 6.394 0 00-6.316 6.393h-2.72z"
           clipRule="evenodd"
         ></path>
         <path
-          fill="url(#paint1_linear_10120_142620)"
+          fill="url(#paint1_linear_10128_95071)"
           fillRule="evenodd"
           d="M10.688 1.963a9.218 9.218 0 019.218 9.14h-2.751a6.467 6.467 0 00-6.467-6.389V1.963z"
           clipRule="evenodd"
         ></path>
         <path
-          fill="url(#paint2_linear_10120_142620)"
+          fill="url(#paint2_linear_10128_95071)"
           fillRule="evenodd"
           d="M19.906 11a9.231 9.231 0 01-9.036 9.112v-2.756A6.476 6.476 0 0017.15 11h2.756z"
           clipRule="evenodd"
         ></path>
         <path
-          fill="url(#paint3_linear_10120_142620)"
+          fill="url(#paint3_linear_10128_95071)"
           fillRule="evenodd"
           d="M10.875 20.113a9.114 9.114 0 01-9.113-9.037h2.72a6.394 6.394 0 006.393 6.317v2.72z"
           clipRule="evenodd"
@@ -43,7 +43,7 @@ export function LifecycleJobIcon(props: IconProps) {
       </g>
       <defs>
         <linearGradient
-          id="paint0_linear_10120_142620"
+          id="paint0_linear_10128_95071"
           x1="11.349"
           x2="7.509"
           y1="17.65"
@@ -54,7 +54,7 @@ export function LifecycleJobIcon(props: IconProps) {
           <stop offset="1" stopColor="#BDBFFF"></stop>
         </linearGradient>
         <linearGradient
-          id="paint1_linear_10120_142620"
+          id="paint1_linear_10128_95071"
           x1="16.627"
           x2="13.808"
           y1="11.103"
@@ -65,7 +65,7 @@ export function LifecycleJobIcon(props: IconProps) {
           <stop offset="1" stopColor="#BDBFFF"></stop>
         </linearGradient>
         <linearGradient
-          id="paint2_linear_10120_142620"
+          id="paint2_linear_10128_95071"
           x1="16.527"
           x2="17.628"
           y1="17.334"
@@ -76,7 +76,7 @@ export function LifecycleJobIcon(props: IconProps) {
           <stop offset="1" stopColor="#BDBFFF"></stop>
         </linearGradient>
         <linearGradient
-          id="paint3_linear_10120_142620"
+          id="paint3_linear_10128_95071"
           x1="6.85"
           x2="1.762"
           y1="18.01"
