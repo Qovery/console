@@ -34,9 +34,17 @@ export function Row(props: RowProps) {
         : `${white ? 'text-text-200' : 'text-element-light-lighter-700'}`
     }`
 
-  const buildLinkHtml = (content = '') => {
-    const reg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g
-    return content.replace(reg, `<a class="link text-accent2-500" target="_blank" href='$1$2'>$1$2</a>`)
+  const buildHtml = (content = '') => {
+    const regexLink = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g
+    // eslint-disable-next-line no-control-regex
+    const regexANSI = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
+
+    return (
+      content
+        .replace(regexLink, `<a class="link text-accent2-500" target="_blank" href='$1$2'>$1$2</a>`)
+        // remove ANSI characters
+        .replace(regexANSI, '')
+    )
   }
 
   return (
@@ -87,7 +95,7 @@ export function Row(props: RowProps) {
         <span
           className="whitespace-pre-wrap truncate break-all"
           dangerouslySetInnerHTML={{
-            __html: error ? buildLinkHtml(data.error?.user_log_message) : buildLinkHtml(data.message?.safe_message),
+            __html: error ? buildHtml(data.error?.user_log_message) : buildHtml(data.message?.safe_message),
           }}
         />
         <CopyToClipboard
