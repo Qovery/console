@@ -1,8 +1,8 @@
-import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { getServiceType, isApplication } from '@qovery/shared/enums'
 import {
-  ApplicationEntity,
   ContainerApplicationEntity,
   GitApplicationEntity,
+  GitContainerApplicationEntity,
   LoadingStatus,
 } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -12,7 +12,7 @@ import About from '../about/about'
 import InstancesTable from '../instances-table/instances-table'
 
 export interface PageGeneralProps {
-  application?: ApplicationEntity
+  application?: GitContainerApplicationEntity
   listHelpfulLinks: BaseLink[]
   loadingStatus?: LoadingStatus
   serviceStability?: number
@@ -84,7 +84,7 @@ export function PageGeneral(props: PageGeneralProps) {
           type={application && getServiceType(application)}
         />
         {application &&
-          (getServiceType(application) === ServiceTypeEnum.APPLICATION ? (
+          (isApplication(application) ? (
             <LastCommitFeature />
           ) : (
             <div className="py-6 px-10">

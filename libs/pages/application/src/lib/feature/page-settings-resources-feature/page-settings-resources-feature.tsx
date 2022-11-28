@@ -6,12 +6,12 @@ import { editApplication, postApplicationActionsRestart, selectApplicationById }
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity, ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ClusterEntity, EnvironmentEntity, GitContainerApplicationEntity } from '@qovery/shared/interfaces'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
+export const handleSubmit = (data: FieldValues, application: GitContainerApplicationEntity) => {
   const cloneApplication = Object.assign({}, application)
 
   cloneApplication.memory = Number(data['memory'])
@@ -28,7 +28,7 @@ export function PageSettingsResourcesFeature() {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
 
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
+  const application = useSelector<RootState, GitContainerApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) =>
       a?.memory === b?.memory &&

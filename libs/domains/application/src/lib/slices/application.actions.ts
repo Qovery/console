@@ -5,7 +5,7 @@ import {
   ContainerActionsApi,
   ContainerMainCallsApi,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/toast'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 
@@ -21,7 +21,7 @@ export const postApplicationActionsRestart = createAsyncThunk<
 >('applicationActions/restart', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(data.serviceType)) {
       response = await containerActionApi.restartContainer(data.applicationId)
     } else {
       response = await applicationActionApi.restartApplication(data.applicationId)
@@ -56,7 +56,7 @@ export const postApplicationActionsDeploy = createAsyncThunk<
 >('applicationActions/deploy', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(data.serviceType)) {
       response = await containerActionApi.restartContainer(data.applicationId)
     } else {
       response = await applicationActionApi.restartApplication(data.applicationId)
@@ -113,7 +113,7 @@ export const postApplicationActionsStop = createAsyncThunk<
 >('applicationActions/stop', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(data.serviceType)) {
       response = await containerActionApi.stopContainer(data.applicationId)
     } else {
       response = await applicationActionApi.stopApplication(data.applicationId)
@@ -148,7 +148,7 @@ export const deleteApplicationAction = createAsyncThunk<
 >('applicationActions/delete', async (data, { dispatch }) => {
   try {
     let response
-    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(data.serviceType)) {
       response = await containerMainCallsApi.deleteContainer(data.applicationId)
     } else {
       response = await applicationMainCallsApi.deleteApplication(data.applicationId)

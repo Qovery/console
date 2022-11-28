@@ -9,7 +9,7 @@ import {
   Value,
 } from 'qovery-typescript-axios'
 import { Key } from 'qovery-typescript-axios/api'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
@@ -28,7 +28,7 @@ export const fetchSecretEnvironmentVariables = createAsyncThunk(
   'secretEnvironmentVariables/list',
   async (payload: { applicationId: string; serviceType: ServiceTypeEnum }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       response = await containerSecretApi.listContainerSecrets(payload.applicationId)
     } else {
       response = await applicationSecretApi.listApplicationSecrets(payload.applicationId)
@@ -62,7 +62,7 @@ export const createSecret = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerSecretApi.createContainerSecret(
             payload.entityId,
             payload.environmentVariableRequest
@@ -109,7 +109,7 @@ export const createOverrideSecret = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerSecretApi.createContainerSecretOverride(
             entityId,
             environmentVariableId,
@@ -159,7 +159,7 @@ export const createAliasSecret = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerSecretApi.createContainerSecretAlias(
             entityId,
             environmentVariableId,
@@ -208,7 +208,7 @@ export const editSecret = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerSecretApi.editContainerSecret(
             payload.entityId,
             payload.environmentVariableId,
@@ -247,7 +247,7 @@ export const deleteSecret = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerSecretApi.deleteContainerSecret(payload.entityId, payload.environmentVariableId)
         } else {
           response = await applicationSecretApi.deleteApplicationSecret(payload.entityId, payload.environmentVariableId)

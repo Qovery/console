@@ -11,7 +11,7 @@ import {
   VariableImportRequestVars,
 } from 'qovery-typescript-axios'
 import { Key } from 'qovery-typescript-axios/api'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
@@ -29,7 +29,7 @@ export const fetchEnvironmentVariables = createAsyncThunk(
   'environmentVariables/list',
   async (payload: { applicationId: string; serviceType: ServiceTypeEnum }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       response = await containerEnvironmentVariableApi.listContainerEnvironmentVariable(payload.applicationId)
     } else {
       response = await applicationEnvironmentVariableApi.listApplicationEnvironmentVariable(payload.applicationId)
@@ -48,7 +48,7 @@ export const importEnvironmentVariables = createAsyncThunk(
     serviceType: ServiceTypeEnum
   }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       response = await containerEnvironmentVariableApi.importContainerEnvironmentVariable(payload.applicationId, {
         overwrite: payload.overwriteEnabled,
         vars: payload.vars,
@@ -89,7 +89,7 @@ export const createEnvironmentVariablePayloadCreator = async (payload: {
       break
     case APIVariableScopeEnum.APPLICATION:
     default:
-      if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      if (isContainer(payload.serviceType)) {
         response = await containerEnvironmentVariableApi.createContainerEnvironmentVariable(
           payload.entityId,
           payload.environmentVariableRequest
@@ -138,7 +138,7 @@ export const createOverrideEnvironmentVariablesPayloadCreator = async (payload: 
       break
     case APIVariableScopeEnum.APPLICATION:
     default:
-      if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+      if (isContainer(payload.serviceType)) {
         response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableOverride(
           entityId,
           environmentVariableId,
@@ -192,7 +192,7 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableAlias(
             entityId,
             environmentVariableId,
@@ -241,7 +241,7 @@ export const editEnvironmentVariables = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerEnvironmentVariableApi.editContainerEnvironmentVariable(
             payload.entityId,
             payload.environmentVariableId,
@@ -286,7 +286,7 @@ export const deleteEnvironmentVariable = createAsyncThunk(
         break
       case APIVariableScopeEnum.APPLICATION:
       default:
-        if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+        if (isContainer(payload.serviceType)) {
           response = await containerEnvironmentVariableApi.deleteContainerEnvironmentVariable(
             payload.entityId,
             payload.environmentVariableId

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { getServiceType, isDatabase } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/router'
 import { TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
@@ -20,10 +20,9 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
 
   const type = getServiceType(data)
 
-  const link =
-    type === ServiceTypeEnum.DATABASE
-      ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
-      : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
+  const link = isDatabase(type)
+    ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
+    : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
 
   return (
     <TableRowServices

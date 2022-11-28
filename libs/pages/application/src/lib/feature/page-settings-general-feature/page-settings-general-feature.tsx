@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { getServiceType, isApplication, isContainer } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -89,7 +89,7 @@ export function PageSettingsGeneralFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     if (data && application) {
       let cloneApplication: ApplicationEntity
-      if (getServiceType(application) === ServiceTypeEnum.APPLICATION) {
+      if (isApplication(application)) {
         cloneApplication = handleSubmit(data, application)
       } else {
         try {
@@ -114,7 +114,7 @@ export function PageSettingsGeneralFeature() {
   useEffect(() => {
     if (!application) return
 
-    if (getServiceType(application) === ServiceTypeEnum.APPLICATION) {
+    if (isApplication(application)) {
       if (watchBuildMode === BuildModeEnum.DOCKER) {
         methods.setValue('dockerfile_path', 'Dockerfile')
       } else {
@@ -126,7 +126,7 @@ export function PageSettingsGeneralFeature() {
   useEffect(() => {
     methods.setValue('name', application?.name)
     if (application) {
-      if (getServiceType(application) === ServiceTypeEnum.APPLICATION) {
+      if (isApplication(application)) {
         methods.setValue('build_mode', (application as GitApplicationEntity).build_mode)
         methods.setValue(
           'buildpack_language',
@@ -142,7 +142,7 @@ export function PageSettingsGeneralFeature() {
         )
       }
 
-      if (getServiceType(application) === ServiceTypeEnum.CONTAINER) {
+      if (isContainer(application)) {
         methods.setValue('registry', (application as ContainerApplicationEntity).registry.id)
         methods.setValue('image_name', (application as ContainerApplicationEntity).image_name)
         methods.setValue('image_tag', (application as ContainerApplicationEntity).tag)

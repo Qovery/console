@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import { ContainerCustomDomainApi, CustomDomain, CustomDomainApi } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { CustomDomainsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
@@ -17,7 +17,7 @@ export const fetchCustomDomains = createAsyncThunk(
   'customDomains/fetch',
   async (payload: { applicationId: string; serviceType: ServiceTypeEnum }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       response = await customDomainContainerApi.listContainerCustomDomain(payload.applicationId)
     } else {
       response = await customDomainApplicationApi.listApplicationCustomDomain(payload.applicationId)
@@ -36,7 +36,7 @@ export const createCustomDomain = createAsyncThunk(
     toasterCallback: () => void
   }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       response = await customDomainContainerApi.createContainerCustomDomain(payload.applicationId, {
         domain: payload.domain,
       })
@@ -60,7 +60,7 @@ export const editCustomDomain = createAsyncThunk(
     toasterCallback: () => void
   }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       response = await customDomainContainerApi.editContainerCustomDomain(
         payload.applicationId,
         payload.customDomain.id,
@@ -81,7 +81,7 @@ export const editCustomDomain = createAsyncThunk(
 export const deleteCustomDomain = createAsyncThunk(
   'customDomains/delete',
   async (payload: { applicationId: string; customDomain: CustomDomain; serviceType: ServiceTypeEnum }) => {
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       return await customDomainContainerApi.deleteContainerCustomDomain(payload.applicationId, payload.customDomain.id)
     } else {
       return await customDomainApplicationApi.deleteCustomDomain(payload.applicationId, payload.customDomain.id)
