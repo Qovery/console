@@ -29,51 +29,51 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
 
 // Job
 export const isJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if (data as ApplicationEntity) {
+  if ((data as ApplicationEntity).id) {
     return (
       getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CRON_JOB ||
       getServiceType(data as ApplicationEntity) === ServiceTypeEnum.LIFECYCLE_JOB
     )
   } else {
-    return (data = ServiceTypeEnum.JOB)
+    return data === ServiceTypeEnum.JOB
   }
 }
 
 export const isCronJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if (data as ApplicationEntity) {
+  if ((data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CRON_JOB
   } else {
-    return (data = ServiceTypeEnum.CRON_JOB)
+    return data === ServiceTypeEnum.CRON_JOB
   }
 }
 export const isLifeCycleJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
   if (data as ApplicationEntity) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.LIFECYCLE_JOB
   } else {
-    return (data = ServiceTypeEnum.LIFECYCLE_JOB)
+    return data === ServiceTypeEnum.LIFECYCLE_JOB
   }
 }
 // Container
 export const isContainer = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if (data as ApplicationEntity) {
+  if ((data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CONTAINER
   } else {
-    return (data = ServiceTypeEnum.CONTAINER)
+    return data === ServiceTypeEnum.CONTAINER
   }
 }
 // Application
 export const isApplication = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if (data as ApplicationEntity) {
+  if ((data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.APPLICATION
   } else {
-    return (data = ServiceTypeEnum.APPLICATION)
+    return data === ServiceTypeEnum.APPLICATION
   }
 }
 // Database
 export const isDatabase = (data?: DatabaseEntity | ServiceTypeEnum) => {
-  if (data as DatabaseEntity) {
+  if ((data as DatabaseEntity).id) {
     return getServiceType(data as DatabaseEntity) === ServiceTypeEnum.DATABASE
   } else {
-    return (data = ServiceTypeEnum.DATABASE)
+    return data === ServiceTypeEnum.DATABASE
   }
 }
