@@ -1,5 +1,7 @@
 export * from './lib/common/value.interface'
 export * from './lib/common/websocket-running-status.interface'
+export * from './lib/common/flow-port-data.interface'
+export * from './lib/common/flow-variable-data.interface'
 export * from './lib/states/user-sign-up.interface'
 export * from './lib/states/environments.interface'
 export * from './lib/states/projects.interface'

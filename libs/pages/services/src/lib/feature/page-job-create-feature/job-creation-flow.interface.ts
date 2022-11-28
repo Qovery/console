@@ -31,11 +31,3 @@ export interface ResourcesData {
   memory: number
   cpu: [number]
 }
-
-export interface PortData {
-  ports: {
-    application_port: number | undefined
-    external_port: number | undefined
-    is_public: boolean
-  }[]
-}

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { FlowPortData } from '@qovery/shared/interfaces'
 import { ButtonIcon, ButtonIconStyle, Icon, IconAwesomeEnum, InputText, InputToggle, Tooltip } from '@qovery/shared/ui'
-import { PortData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
 export interface PortRowProps {
   index: number
@@ -10,7 +10,7 @@ export interface PortRowProps {
 
 export function PortRow(props: PortRowProps) {
   const { index } = props
-  const { control, watch, setValue, resetField } = useFormContext<PortData>()
+  const { control, watch, setValue, resetField } = useFormContext<FlowPortData>()
 
   const isPublicWatch = watch(`ports.${index}.is_public`)
   const externalPortWatch = watch(`ports.${index}.external_port`)

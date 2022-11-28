@@ -1,19 +1,19 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { FlowPortData, PortData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
-import { PortData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
 import PortRow from './port-row/port-row'
 
-export interface PageApplicationCreatePortProps {
+export interface FlowCreatePortProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   onAddPort: () => void
   onRemovePort: (index: number) => void
-  ports: { application_port: number | undefined; external_port: number | undefined; is_public: boolean }[]
+  ports: PortData[]
 }
 
-export function PageApplicationCreatePort(props: PageApplicationCreatePortProps) {
-  const { formState } = useFormContext<PortData>()
+export function FlowCreatePort(props: FlowCreatePortProps) {
+  const { formState } = useFormContext<FlowPortData>()
 
   return (
     <div>
@@ -64,4 +64,4 @@ export function PageApplicationCreatePort(props: PageApplicationCreatePortProps)
   )
 }
 
-export default PageApplicationCreatePort
+export default FlowCreatePort

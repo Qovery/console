@@ -1,10 +1,11 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { FlowPortData } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
-import { GeneralData, PortData, ResourcesData } from './application-creation-flow.interface'
+import { GeneralData, ResourcesData } from './application-creation-flow.interface'
 
 export interface ApplicationContainerCreateContextInterface {
   currentStep: number
@@ -13,8 +14,8 @@ export interface ApplicationContainerCreateContextInterface {
   setGeneralData: (data: GeneralData) => void
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
-  portData: PortData | undefined
-  setPortData: (data: PortData) => void
+  portData: FlowPortData | undefined
+  setPortData: (data: FlowPortData) => void
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
@@ -48,7 +49,7 @@ export function PageApplicationCreateFeature() {
     instances: [1, 2],
   })
 
-  const [portData, setPortData] = useState<PortData | undefined>({
+  const [portData, setPortData] = useState<FlowPortData | undefined>({
     ports: [],
   })
 

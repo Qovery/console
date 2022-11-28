@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { FlowPortData, FlowVariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -9,7 +10,7 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
-import { GeneralData, PortData, ResourcesData } from './job-creation-flow.interface'
+import { GeneralData, ResourcesData } from './job-creation-flow.interface'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
@@ -18,8 +19,12 @@ export interface JobContainerCreateContextInterface {
   setGeneralData: (data: GeneralData) => void
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
-  portData: PortData | undefined
-  setPortData: (data: PortData) => void
+  portData: FlowPortData | undefined
+  setPortData: (data: FlowPortData) => void
+
+  variableData: FlowVariableData | undefined
+  setVariableData: (data: FlowVariableData) => void
+
   jobType: 'cron' | 'lifecycle'
   jobURL: string | undefined
 }
@@ -56,8 +61,12 @@ export function PageJobCreateFeature() {
     cpu: [0.5],
   })
 
-  const [portData, setPortData] = useState<PortData | undefined>({
+  const [portData, setPortData] = useState<FlowPortData | undefined>({
     ports: [],
+  })
+
+  const [variableData, setVariableData] = useState<FlowVariableData | undefined>({
+    variables: [],
   })
 
   const navigate = useNavigate()
@@ -89,6 +98,8 @@ export function PageJobCreateFeature() {
         setPortData,
         jobType,
         jobURL,
+        variableData,
+        setVariableData,
       }}
     >
       <FunnelFlow

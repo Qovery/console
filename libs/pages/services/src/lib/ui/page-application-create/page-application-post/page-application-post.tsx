@@ -1,10 +1,11 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { FlowPortData } from '@qovery/shared/interfaces'
 import { isApplication, isContainer } from '@qovery/shared/enums'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import {
   GeneralData,
-  PortData,
   ResourcesData,
 } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
 
@@ -13,7 +14,7 @@ export interface PageApplicationPostProps {
   onPrevious: () => void
   generalData: GeneralData
   resourcesData: ResourcesData
-  portsData: PortData
+  portsData: FlowPortData
   gotoGlobalInformation: () => void
   gotoResources: () => void
   gotoPorts: () => void
