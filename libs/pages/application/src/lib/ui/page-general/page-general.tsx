@@ -1,4 +1,4 @@
-import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { getServiceType, isApplication } from '@qovery/shared/enums'
 import {
   ContainerApplicationEntity,
   GitApplicationEntity,
@@ -84,7 +84,7 @@ export function PageGeneral(props: PageGeneralProps) {
           type={application && getServiceType(application)}
         />
         {application &&
-          (getServiceType(application) === ServiceTypeEnum.APPLICATION ? (
+          (isApplication(application) ? (
             <LastCommitFeature />
           ) : (
             <div className="py-6 px-10">

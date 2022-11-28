@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -66,7 +66,7 @@ export function PageApplicationPostFeature() {
       const memory = Number(resourcesData['memory'])
       const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
 
-      if (generalData.serviceType === ServiceTypeEnum.APPLICATION) {
+      if (isApplication(generalData.serviceType)) {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
           ports:

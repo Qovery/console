@@ -1,6 +1,6 @@
 import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
-import { IconEnum, RunningStatus, ServiceTypeEnum } from '@qovery/shared/enums'
+import { IconEnum, RunningStatus, ServiceTypeEnum, isApplication, isContainer, isDatabase } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -71,14 +71,7 @@ export function TableRowServices(props: TableRowServicesProps) {
           )}
           <div className="ml-2 mr-2">
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-              <Icon
-                name={
-                  type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER
-                    ? IconEnum.APPLICATION
-                    : type
-                }
-                width="20"
-              />
+              <Icon name={isApplication(type) || isContainer(type) ? IconEnum.APPLICATION : type} width="20" />
             </Skeleton>
           </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
@@ -98,13 +91,13 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <>
-                  {(type === ServiceTypeEnum.APPLICATION || type === ServiceTypeEnum.CONTAINER) && (
+                  {(isApplication(type) || isContainer(type)) && (
                     <ApplicationButtonsActions
                       application={data as ApplicationEntity}
                       environmentMode={environmentMode}
                     />
                   )}
-                  {type === ServiceTypeEnum.DATABASE && (
+                  {isDatabase(type) && (
                     <DatabaseButtonsActions database={data as DatabaseEntity} environmentMode="environmentMode" />
                   )}
                 </>
@@ -115,34 +108,31 @@ export function TableRowServices(props: TableRowServicesProps) {
         <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full">
           <Skeleton className="w-full" show={isLoading} width={160} height={16}>
             <div className="w-full flex gap-2 items-center -mt-[1px]">
-              {type === ServiceTypeEnum.APPLICATION && (
-                <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />
-              )}
+              {isApplication(type) && <TagCommit commitId={dataApplication.git_repository?.deployed_commit_id} />}
               {dataJobs.source?.docker && (
                 <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
               )}
-              {type === ServiceTypeEnum.CONTAINER ||
-                (dataJobs.source?.image && (
-                  <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
-                    <div className="block truncate">
-                      {dataContainer.image_name && (
-                        <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
-                          <span>
-                            {dataContainer.image_name}:{dataContainer.tag}
-                          </span>
-                        </Tooltip>
-                      )}
-                      {dataJobs.source?.image && (
-                        <Tooltip content={`${dataJobs.source?.image?.image_name}:${dataJobs.source?.image?.tag}`}>
-                          <span>
-                            {dataJobs.source?.image?.image_name}:{dataJobs.source?.image?.tag}
-                          </span>
-                        </Tooltip>
-                      )}
-                    </div>
-                  </Tag>
-                ))}
-              {type === ServiceTypeEnum.DATABASE && (
+              {(isContainer(type) || dataJobs.source?.image) && (
+                <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
+                  <div className="block truncate">
+                    {dataContainer.image_name && (
+                      <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>
+                        <span>
+                          {dataContainer.image_name}:{dataContainer.tag}
+                        </span>
+                      </Tooltip>
+                    )}
+                    {dataJobs.source?.image && (
+                      <Tooltip content={`${dataJobs.source?.image?.image_name}:${dataJobs.source?.image?.tag}`}>
+                        <span>
+                          {dataJobs.source?.image?.image_name}:{dataJobs.source?.image?.tag}
+                        </span>
+                      </Tooltip>
+                    )}
+                  </div>
+                </Tag>
+              )}
+              {isDatabase(type) && (
                 <span className="block text-xs ml-2 text-text-600 font-medium">{dataDatabase.version}</span>
               )}
             </div>
@@ -151,17 +141,17 @@ export function TableRowServices(props: TableRowServicesProps) {
         <div className="flex items-center px-4">
           <Skeleton show={isLoading} width={30} height={16}>
             <div className="flex items-center">
-              {type === ServiceTypeEnum.DATABASE && (
+              {isDatabase(type) && (
                 <Tooltip content={`${upperCaseFirstLetter(dataDatabase.mode)}`}>
                   <div>
                     <Icon name={dataDatabase.type} width="20" height="20" />
                   </div>
                 </Tooltip>
               )}
-              {(type === ServiceTypeEnum.APPLICATION || dataJobs.source?.docker) && (
+              {(isApplication(type) || dataJobs.source?.docker) && (
                 <Icon name={dataApplication.build_mode || BuildModeEnum.DOCKER} width="20" height="20" />
               )}
-              {(type === ServiceTypeEnum.CONTAINER || dataJobs.source?.image) && (
+              {(isContainer(type) || dataJobs.source?.image) && (
                 <Icon name={IconEnum.CONTAINER} width="20" height="20" />
               )}
             </div>

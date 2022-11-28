@@ -2,7 +2,7 @@ import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { GeneralContainerSettings } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -52,12 +52,12 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
-          {type === ServiceTypeEnum.CONTAINER && (
+          {isContainer(type) && (
             <BlockContent title="Container settings">
               <GeneralContainerSettings organization={props.organization} />
             </BlockContent>
           )}
-          {type === ServiceTypeEnum.APPLICATION && (
+          {isApplication(type) && (
             <>
               <GitRepositorySettingsFeature />
               <BlockContent title="Build mode">

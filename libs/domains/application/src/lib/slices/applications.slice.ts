@@ -32,7 +32,7 @@ import {
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ApplicationsState,
@@ -125,7 +125,7 @@ export const editApplication = createAsyncThunk(
     silentToaster?: boolean
   }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       const cloneApplication = Object.assign({}, refactoContainerApplicationPayload(payload.data))
       response = await containerMainCallsApi.editContainer(payload.applicationId, cloneApplication as ContainerRequest)
     } else {
@@ -148,7 +148,7 @@ export const createApplication = createAsyncThunk(
     serviceType: ServiceTypeEnum
   }) => {
     let response
-    if (payload.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(payload.serviceType)) {
       response = await containersApi.createContainer(payload.environmentId, payload.data as ContainerRequest)
     } else {
       response = await applicationsApi.createApplication(payload.environmentId, payload.data as ApplicationRequest)
@@ -163,7 +163,7 @@ export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: s
   async (data) => {
     let response
 
-    if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(data.serviceType)) {
       response = await containerMainCallsApi.listContainerLinks(data.applicationId)
     } else {
       response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
@@ -178,7 +178,7 @@ export const fetchApplicationInstances = createAsyncThunk<
 >('application/instances', async (data) => {
   let response
 
-  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+  if (isContainer(data.serviceType)) {
     response = await containerMetricsApi.getContainerCurrentInstance(data.applicationId)
   } else {
     response = await applicationMetricsApi.getApplicationCurrentInstance(data.applicationId)
@@ -199,9 +199,9 @@ export const fetchApplicationDeployments = createAsyncThunk<
   { applicationId: string; serviceType?: ServiceTypeEnum; silently?: boolean }
 >('application/deployments', async (data) => {
   let response
-  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+  if (isContainer(data.serviceType)) {
     response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
-  } else if (data.serviceType === ServiceTypeEnum.LIFECYCLE_JOB || data.serviceType === ServiceTypeEnum.CRON_JOB) {
+  } else if (isJob(data.serviceType)) {
     response = await jobsDeploymentsApi.listJobDeploymentHistory()
   } else {
     response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
@@ -214,7 +214,7 @@ export const fetchApplicationStatus = createAsyncThunk<
   { applicationId: string; serviceType?: ServiceTypeEnum }
 >('application/status', async (data) => {
   let response
-  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+  if (isContainer(data.serviceType)) {
     response = await containerMainCallsApi.getContainerStatus(data.applicationId)
   } else {
     response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
@@ -228,7 +228,7 @@ export const fetchApplicationAdvancedSettings = createAsyncThunk<
   { applicationId: string; serviceType: ServiceTypeEnum }
 >('application/advancedSettings', async (data) => {
   let response
-  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+  if (isContainer(data.serviceType)) {
     response = await containerConfigurationApi.getContainerAdvancedSettings(data.applicationId)
   } else {
     response = await applicationConfigurationApi.getAdvancedSettings(data.applicationId)
@@ -246,7 +246,7 @@ export const editApplicationAdvancedSettings = createAsyncThunk<
   }
 >('application/advancedSettings/edit', async (data) => {
   let response
-  if (data.serviceType === ServiceTypeEnum.CONTAINER) {
+  if (isContainer(data.serviceType)) {
     response = await containerConfigurationApi.editContainerAdvancedSettings(
       data.applicationId,
       data.settings as ContainerAdvancedSettings[]

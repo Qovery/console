@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { isApplication, isContainer } from '@qovery/shared/enums'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import {
@@ -44,7 +44,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
               <li>
                 Name: <strong className="font-medium">{props.generalData.name}</strong>
               </li>
-              {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
+              {isApplication(props.generalData.serviceType) && (
                 <>
                   <li>
                     Repository: <strong className="font-medium">{props.generalData.repository}</strong>
@@ -70,7 +70,7 @@ export function PageApplicationPost(props: PageApplicationPostProps) {
                   )}
                 </>
               )}
-              {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
+              {isContainer(props.generalData.serviceType) && (
                 <>
                   <li>
                     Registry: <strong className="font-medium">{props.selectedRegistryName}</strong>

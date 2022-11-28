@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { isContainer } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/router'
 import { toastError } from '@qovery/shared/toast'
@@ -56,17 +56,17 @@ export function PageApplicationCreateGeneralFeature() {
   const watchServiceType = methods.watch('serviceType')
 
   useEffect(() => {
-    if (watchServiceType === ServiceTypeEnum.CONTAINER) {
+    if (isContainer(watchServiceType)) {
       dispatch(fetchOrganizationContainerRegistries({ organizationId }))
     }
-  }, [watchServiceType, dispatch])
+  }, [watchServiceType, dispatch, organizationId])
 
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {
       ...data,
     }
 
-    if (data.serviceType === ServiceTypeEnum.CONTAINER && data.cmd_arguments) {
+    if (isContainer(data.serviceType) && data.cmd_arguments) {
       try {
         cloneData.cmd = eval(data.cmd_arguments)
       } catch (e: any) {

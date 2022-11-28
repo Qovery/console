@@ -1,6 +1,6 @@
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/router'
 import { BaseLink, Button, ButtonStyle, Icon, IconAwesomeEnum, Skeleton } from '@qovery/shared/ui'
@@ -23,7 +23,7 @@ export function About(props: AboutProps) {
     <div className="pt-2 pb-8 px-8 flex flex-col items-start border-b border-element-light-lighter-400">
       <div className="text-subtitle mb-3 text-text-600">About</div>
       <p className="text-text-500 mb-5">{description ? description : 'No description provided yet'}</p>
-      {type === ServiceTypeEnum.CONTAINER && (
+      {isContainer(type) && (
         <Skeleton height={36} width={70} show={!loadingStatus || loadingStatus === 'loading'}>
           <Button
             onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_CONTAINER_REGISTRIES_URL}`)}
@@ -34,7 +34,7 @@ export function About(props: AboutProps) {
           </Button>
         </Skeleton>
       )}
-      {type === ServiceTypeEnum.APPLICATION && (
+      {isApplication(type) && (
         <>
           <Skeleton height={24} width={70} show={!loadingStatus || loadingStatus === 'loading'} className="mb-5">
             <div className="flex gap-2 items-center px-2 h-6 capitalize border leading-0 rounded border-element-light-lighter-500 text-text-500 text-sm font-medium">
