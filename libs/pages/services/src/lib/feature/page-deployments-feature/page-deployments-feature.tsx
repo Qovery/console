@@ -61,6 +61,15 @@ export function PageDeploymentsFeature() {
         }
         merged.push(d)
       })
+
+      deployment.jobs?.forEach((job) => {
+        const j: DeploymentService = {
+          ...job,
+          execution_id: deployment.id,
+          type: ServiceTypeEnum.CRON_JOB,
+        }
+        merged.push(j)
+      })
     })
     return merged
   }
