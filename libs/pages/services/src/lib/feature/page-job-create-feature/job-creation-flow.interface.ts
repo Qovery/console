@@ -30,7 +30,6 @@ export interface GeneralData {
 export interface ResourcesData {
   memory: number
   cpu: [number]
-  instances: [number, number]
 }
 
 export interface PortData {

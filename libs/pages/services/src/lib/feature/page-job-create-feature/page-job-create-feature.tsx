@@ -9,11 +9,7 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
-import {
-  GeneralData,
-  PortData,
-  ResourcesData,
-} from '../page-application-create-feature/application-creation-flow.interface'
+import { GeneralData, PortData, ResourcesData } from './job-creation-flow.interface'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
@@ -58,7 +54,6 @@ export function PageJobCreateFeature() {
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
-    instances: [1, 2],
   })
 
   const [portData, setPortData] = useState<PortData | undefined>({
