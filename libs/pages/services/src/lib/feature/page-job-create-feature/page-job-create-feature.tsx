@@ -31,7 +31,7 @@ export interface JobContainerCreateContextInterface {
 export const JobContainerCreateContext = createContext<JobContainerCreateContextInterface | undefined>(undefined)
 
 // this is to avoid to set initial value twice https://stackoverflow.com/questions/49949099/react-createcontext-point-of-defaultvalue
-export const useApplicationContainerCreateContext = () => {
+export const useJobContainerCreateContext = () => {
   const applicationContainerCreateContext = useContext(JobContainerCreateContext)
   if (!applicationContainerCreateContext)
     throw new Error('useJobContainerCreateContext must be used within a JobContainerCreateContext')

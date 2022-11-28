@@ -2,7 +2,12 @@ import { ServiceTypeEnum } from '@qovery/shared/enums'
 
 export interface GeneralData {
   name: string
+  description: string
   serviceType: ServiceTypeEnum
+
+  schedule: string
+  nb_restarts: number
+  max_duration: number
 
   // container
   registry?: string
