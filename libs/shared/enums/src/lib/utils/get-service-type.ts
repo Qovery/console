@@ -29,7 +29,7 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
 
 // Job
 export const isJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if ((data as ApplicationEntity).id) {
+  if (data && (data as ApplicationEntity).id) {
     return (
       getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CRON_JOB ||
       getServiceType(data as ApplicationEntity) === ServiceTypeEnum.LIFECYCLE_JOB
@@ -40,7 +40,7 @@ export const isJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
 }
 
 export const isCronJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if ((data as ApplicationEntity).id) {
+  if (data && (data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CRON_JOB
   } else {
     return data === ServiceTypeEnum.CRON_JOB
@@ -55,7 +55,7 @@ export const isLifeCycleJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
 }
 // Container
 export const isContainer = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if ((data as ApplicationEntity).id) {
+  if (data && (data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.CONTAINER
   } else {
     return data === ServiceTypeEnum.CONTAINER
@@ -63,7 +63,7 @@ export const isContainer = (data?: ApplicationEntity | ServiceTypeEnum) => {
 }
 // Application
 export const isApplication = (data?: ApplicationEntity | ServiceTypeEnum) => {
-  if ((data as ApplicationEntity).id) {
+  if (data && (data as ApplicationEntity).id) {
     return getServiceType(data as ApplicationEntity) === ServiceTypeEnum.APPLICATION
   } else {
     return data === ServiceTypeEnum.APPLICATION
