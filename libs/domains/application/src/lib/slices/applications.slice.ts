@@ -198,7 +198,6 @@ export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],
   { applicationId: string; serviceType?: ServiceTypeEnum; silently?: boolean }
 >('application/deployments', async (data) => {
-  console.log(data.serviceType)
   let response
   if (data.serviceType === ServiceTypeEnum.CONTAINER) {
     response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
