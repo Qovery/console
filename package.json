@@ -18,7 +18,7 @@
     "@elgorditosalsero/react-gtm-hook": "^2.6.0",
     "@nrwl/cli": "15.0.3",
     "@nrwl/cypress": "15.0.3",
-    "@nrwl/devkit": "15.0.3",
+    "@nrwl/devkit": "15.2.1",
     "@nrwl/eslint-plugin-nx": "15.0.3",
     "@nrwl/linter": "15.1.0",
     "@nrwl/nx-cloud": "15.0.0",
