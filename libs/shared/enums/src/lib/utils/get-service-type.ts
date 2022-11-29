@@ -35,7 +35,7 @@ export const isJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
       getServiceType(data as ApplicationEntity) === ServiceTypeEnum.LIFECYCLE_JOB
     )
   } else {
-    return data === ServiceTypeEnum.CRON_JOB || data === ServiceTypeEnum.LIFECYCLE_JOB
+    return data === ServiceTypeEnum.CRON_JOB || data === ServiceTypeEnum.LIFECYCLE_JOB || data === ServiceTypeEnum.JOB
   }
 }
 
