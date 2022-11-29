@@ -9,7 +9,7 @@ import {
   postApplicationActionsStop,
 } from '@qovery/domains/application'
 import { postEnvironmentActionsCancelDeployment } from '@qovery/domains/environment'
-import { getServiceType } from '@qovery/shared/enums'
+import { getServiceType, isApplication } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_LOGS_URL,
@@ -176,23 +176,35 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         topItems.push(stopButton)
       }
 
-      const deployAnotherButton = {
-        name: 'Deploy other version',
-        contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
-        onClick: () => {
-          openModal({
-            content: (
-              <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />
-            ),
-            options: { width: 596 },
-          })
-        },
+      if (isApplication(application)) {
+        const deployAnotherButton = {
+          name: 'Deploy other version',
+          contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+          onClick: () => {
+            openModal({
+              content: (
+                <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />
+              ),
+              options: { width: 596 },
+            })
+          },
+        }
+        bottomItems.push(deployAnotherButton)
       }
-      bottomItems.push(deployAnotherButton)
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
-  }, [application, environmentMode, environmentId, dispatch, openModal, openModalConfirmation])
+  }, [
+    application,
+    environmentMode,
+    environmentId,
+    dispatch,
+    openModal,
+    openModalConfirmation,
+    location.pathname,
+    organizationId,
+    projectId,
+  ])
 
   const canDelete = application.status && isDeleteAvailable(application.status.state)
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${application.id}`
@@ -213,6 +225,11 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       menus: [
         {
           items: [
+            {
+              name: 'Logs',
+              contentLeft: <Icon name={IconAwesomeEnum.SCROLL} className="text-sm text-brand-400" />,
+              onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)),
+            },
             {
               name: 'Edit code',
               contentLeft: <Icon name={IconAwesomeEnum.CODE} className="text-sm text-brand-400" />,

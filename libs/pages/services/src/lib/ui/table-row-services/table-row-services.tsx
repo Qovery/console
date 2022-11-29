@@ -1,6 +1,14 @@
 import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
-import { IconEnum, RunningStatus, ServiceTypeEnum, isApplication, isContainer, isDatabase } from '@qovery/shared/enums'
+import {
+  IconEnum,
+  RunningStatus,
+  ServiceTypeEnum,
+  isApplication,
+  isContainer,
+  isDatabase,
+  isJob,
+} from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -91,7 +99,7 @@ export function TableRowServices(props: TableRowServicesProps) {
               </p>
               {data.name && (
                 <>
-                  {(isApplication(type) || isContainer(type)) && (
+                  {(isApplication(type) || isContainer(type) || isJob(type)) && (
                     <ApplicationButtonsActions
                       application={data as ApplicationEntity}
                       environmentMode={environmentMode}

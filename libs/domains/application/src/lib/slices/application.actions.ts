@@ -4,8 +4,10 @@ import {
   ApplicationMainCallsApi,
   ContainerActionsApi,
   ContainerMainCallsApi,
+  JobActionsApi,
+  JobMainCallsApi,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/toast'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 
@@ -15,6 +17,9 @@ const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerActionApi = new ContainerActionsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
 
+const jobActionApi = new JobActionsApi()
+const jobMainCallsApi = new JobMainCallsApi()
+
 export const postApplicationActionsRestart = createAsyncThunk<
   any,
   { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
@@ -23,6 +28,8 @@ export const postApplicationActionsRestart = createAsyncThunk<
     let response
     if (isContainer(data.serviceType)) {
       response = await containerActionApi.restartContainer(data.applicationId)
+    } else if (isJob(data.serviceType)) {
+      response = await jobActionApi.restartJob(data.applicationId)
     } else {
       response = await applicationActionApi.restartApplication(data.applicationId)
     }
@@ -58,6 +65,8 @@ export const postApplicationActionsDeploy = createAsyncThunk<
     let response
     if (isContainer(data.serviceType)) {
       response = await containerActionApi.restartContainer(data.applicationId)
+    } else if (isJob(data.serviceType)) {
+      response = await jobActionApi.restartJob(data.applicationId)
     } else {
       response = await applicationActionApi.restartApplication(data.applicationId)
     }
@@ -115,6 +124,8 @@ export const postApplicationActionsStop = createAsyncThunk<
     let response
     if (isContainer(data.serviceType)) {
       response = await containerActionApi.stopContainer(data.applicationId)
+    } else if (isJob(data.serviceType)) {
+      response = await jobActionApi.stopJob(data.applicationId)
     } else {
       response = await applicationActionApi.stopApplication(data.applicationId)
     }
@@ -150,6 +161,8 @@ export const deleteApplicationAction = createAsyncThunk<
     let response
     if (isContainer(data.serviceType)) {
       response = await containerMainCallsApi.deleteContainer(data.applicationId)
+    } else if (isJob(data.serviceType)) {
+      response = await jobMainCallsApi.deleteJob(data.applicationId)
     } else {
       response = await applicationMainCallsApi.deleteApplication(data.applicationId)
     }

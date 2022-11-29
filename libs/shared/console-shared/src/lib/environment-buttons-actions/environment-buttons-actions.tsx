@@ -231,6 +231,11 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         {
           items: [
             {
+              name: 'Logs',
+              contentLeft: <Icon name={IconAwesomeEnum.SCROLL} className="text-sm text-brand-400" />,
+              onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environment.id)),
+            },
+            {
               name: 'Copy identifiers',
               contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
               onClick: () => copyToClipboard(copyContent),
