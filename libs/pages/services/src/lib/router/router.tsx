@@ -14,7 +14,6 @@ import {
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
-  SERVICES_JOB_CREATION_PORT_URL,
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
@@ -38,7 +37,6 @@ import PageDeploymentsFeature from '../feature/page-deployments-feature/page-dep
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import GeneralFeature from '../feature/page-job-create-feature/general-feature/general-feature'
 import PageJobCreateFeature from '../feature/page-job-create-feature/page-job-create-feature'
-import PortFeature from '../feature/page-job-create-feature/port-feature/port-feature'
 import PostFeature from '../feature/page-job-create-feature/post-feature/post-feature'
 import ResourcesFeature from '../feature/page-job-create-feature/resources-feature/resources-feature'
 import VariableFeature from '../feature/page-job-create-feature/variable-feature/variable-feature'
@@ -146,10 +144,7 @@ export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
     path: SERVICES_JOB_CREATION_RESOURCES_URL,
     component: <ResourcesFeature />,
   },
-  {
-    path: SERVICES_JOB_CREATION_PORT_URL,
-    component: <PortFeature />,
-  },
+
   {
     path: SERVICES_JOB_CREATION_VARIABLE_URL,
     component: <VariableFeature />,

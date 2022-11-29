@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { FlowPortData, FlowVariableData } from '@qovery/shared/interfaces'
+import { FlowVariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -19,8 +19,6 @@ export interface JobContainerCreateContextInterface {
   setGeneralData: (data: GeneralData) => void
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
-  portData: FlowPortData | undefined
-  setPortData: (data: FlowPortData) => void
 
   variableData: FlowVariableData | undefined
   setVariableData: (data: FlowVariableData) => void
@@ -61,10 +59,6 @@ export function PageJobCreateFeature() {
     cpu: [0.5],
   })
 
-  const [portData, setPortData] = useState<FlowPortData | undefined>({
-    ports: [],
-  })
-
   const [variableData, setVariableData] = useState<FlowVariableData | undefined>({
     variables: [],
   })
@@ -94,8 +88,6 @@ export function PageJobCreateFeature() {
         setGeneralData,
         resourcesData,
         setResourcesData,
-        portData,
-        setPortData,
         jobType,
         jobURL,
         variableData,

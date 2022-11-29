@@ -182,6 +182,29 @@ export function General(props: GeneralProps) {
         Maximum duration allowed for the job to run before killing it and mark it as failed
       </p>
 
+      <Controller
+        name="port"
+        control={control}
+        rules={{
+          required: 'Value required',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            type="number"
+            className="mb-2"
+            name={field.name}
+            onChange={field.onChange}
+            value={field.value}
+            label="Port"
+            error={error?.message}
+          />
+        )}
+      />
+
+      <p className="text-text-400 text-xs mb-3">
+        Port where to run readiness and liveliness probes checks. The port will not be exposed externally
+      </p>
+
       <form onSubmit={props.onSubmit}>
         <div className="flex justify-between">
           <Button

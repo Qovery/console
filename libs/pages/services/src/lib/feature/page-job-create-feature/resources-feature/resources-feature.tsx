@@ -5,7 +5,7 @@ import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
-  SERVICES_JOB_CREATION_PORT_URL,
+  SERVICES_JOB_CREATION_VARIABLE_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
@@ -65,7 +65,7 @@ export function ResourcesFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-    navigate(pathCreate + SERVICES_JOB_CREATION_PORT_URL)
+    navigate(pathCreate + SERVICES_JOB_CREATION_VARIABLE_URL)
   })
 
   const onBack = () => {

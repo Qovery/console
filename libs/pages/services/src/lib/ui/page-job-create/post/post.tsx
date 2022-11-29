@@ -1,6 +1,6 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { FlowPortData, FlowVariableData } from '@qovery/shared/interfaces'
+import { FlowVariableData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { GeneralData, ResourcesData } from '../../../feature/page-job-create-feature/job-creation-flow.interface'
@@ -10,11 +10,9 @@ export interface PostProps {
   onPrevious: () => void
   generalData: GeneralData
   resourcesData: ResourcesData
-  portsData: FlowPortData
   variableData: FlowVariableData
   gotoGlobalInformation: () => void
   gotoResources: () => void
-  gotoPorts: () => void
   gotoVariables: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
@@ -88,6 +86,9 @@ export function Post(props: PostProps) {
                   </li>
                 </>
               )}
+              <li>
+                Port: <strong>{props.generalData.port}</strong>
+              </li>
             </ul>
           </div>
 
@@ -115,33 +116,6 @@ export function Post(props: PostProps) {
 
           <ButtonIcon
             onClick={props.gotoResources}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
-          />
-        </div>
-
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
-            <ul className="text-text-400 text-sm">
-              {props.portsData.ports && props.portsData.ports.length > 0 ? (
-                props.portsData.ports?.map((port, index) => (
-                  <li key={index}>
-                    Application port: <strong className="font-medium">{port.application_port}</strong> – Public port:{' '}
-                    <strong className="font-medium">{port.external_port}</strong> – Public:{' '}
-                    <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
-                  </li>
-                ))
-              ) : (
-                <li>No port declared</li>
-              )}
-            </ul>
-          </div>
-
-          <ButtonIcon
-            onClick={props.gotoPorts}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
             className="text-text-500 hover:text-text-700"

@@ -8,6 +8,7 @@ export interface GeneralData {
   schedule: string
   nb_restarts: number
   max_duration: number
+  port: number
 
   // container
   registry?: string
