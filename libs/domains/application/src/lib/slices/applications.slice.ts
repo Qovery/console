@@ -29,11 +29,13 @@ import {
   Instance,
   JobDeploymentHistoryApi,
   JobMainCallsApi,
+  JobRequest,
+  JobResponse,
   JobsApi,
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ApplicationsState,
@@ -146,17 +148,19 @@ export const createApplication = createAsyncThunk(
   'application/create',
   async (payload: {
     environmentId: string
-    data: ApplicationRequest | ContainerRequest
+    data: ApplicationRequest | ContainerRequest | JobRequest
     serviceType: ServiceTypeEnum
   }) => {
     let response
     if (isContainer(payload.serviceType)) {
       response = await containersApi.createContainer(payload.environmentId, payload.data as ContainerRequest)
-    } else {
+    } else if (isApplication(payload.serviceType)) {
       response = await applicationsApi.createApplication(payload.environmentId, payload.data as ApplicationRequest)
+    } else {
+      response = await jobsApi.createJob(payload.environmentId, payload.data as JobRequest)
     }
 
-    return response.data as Application | ContainerResponse
+    return response.data as Application | ContainerResponse | JobResponse
   }
 )
 

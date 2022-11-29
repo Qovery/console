@@ -1,9 +1,9 @@
-import { ContainerRequest } from 'qovery-typescript-axios'
+import { ContainerRequest, JobRequest, JobScheduleEvent } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
-import { selectOrganizationById } from '@qovery/domains/organization'
+import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
@@ -13,7 +13,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
+import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import Post from '../../../ui/page-job-create/post/post'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
@@ -29,6 +29,8 @@ export function PostFeature() {
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
+  const repositories = useSelector(selectAllRepository)
+  const selectRepository = repositories.find((repository) => repository.name === generalData?.repository)
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
@@ -58,24 +60,47 @@ export function PostFeature() {
       const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
 
       if (jobType === 'cron') {
-        // const jobRequest: JobRequest = {
-        //   name: generalData.name,
-        //   port: 2,
-        //   cpu: cpu,
-        //   memory: memory,
-        // }
+        const jobRequest: JobRequest = {
+          name: generalData.name,
+          port: Number(generalData.port),
+          description: generalData.description || '',
+          cpu: cpu,
+          memory: memory,
+          arguments: generalData.cmd || [],
+          entrypoint: generalData.image_entry_point || '',
+          max_nb_restart: Number(generalData.nb_restarts) || 0,
+          max_duration_seconds: Number(generalData.max_duration) || 0,
+          schedule: {
+            scheduled_at: generalData.schedule || '',
+            event: JobScheduleEvent.CRON,
+          },
+        }
 
-        // if (generalData.build_mode === BuildModeEnum.DOCKER) {
-        //   jobRequest.dockerfile_path = generalData.dockerfile_path
-        // } else {
-        //   jobRequest.buildpack_language = generalData.buildpack_language as BuildPackLanguageEnum
-        // }
+        if (generalData.serviceType === ServiceTypeEnum.CONTAINER) {
+          jobRequest.source = {
+            image: {
+              tag: generalData.image_tag,
+              image_name: generalData.image_name,
+              registry_id: generalData.registry,
+            },
+          }
+        } else {
+          jobRequest.source = {
+            docker: {
+              git_repository: {
+                url: buildGitRepoUrl(generalData.provider || '', selectRepository?.url || '') || '',
+                root_path: generalData.root_path,
+                branch: generalData.branch,
+              },
+            },
+          }
+        }
 
         dispatch(
           createApplication({
             environmentId: environmentId,
-            data: {} as any,
-            serviceType: ServiceTypeEnum.APPLICATION,
+            data: jobRequest,
+            serviceType: ServiceTypeEnum.JOB,
           })
         )
           .unwrap()
