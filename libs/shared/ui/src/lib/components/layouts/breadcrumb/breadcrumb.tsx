@@ -1,7 +1,7 @@
 import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
-import React from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
@@ -41,6 +41,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
   const location = useLocation()
+  const navigate = useNavigate()
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
 
   const locationIsApplicationLogs = location.pathname.includes(
@@ -165,6 +166,21 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     </div>
   )
 
+  const linkToCloseLogs = locationIsApplicationLogs
+    ? `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_GENERAL_URL}`
+    : SERVICES_URL(organizationId, projectId, environmentId)
+
+  useEffect(() => {
+    const bindTouch = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') navigate(linkToCloseLogs)
+    }
+    document.addEventListener('keydown', bindTouch, false)
+
+    return () => {
+      document.removeEventListener('keydown', bindTouch, false)
+    }
+  }, [linkToCloseLogs, navigate])
+
   if (organizations?.length === 0) return <div />
 
   return (
@@ -272,16 +288,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             icon={IconAwesomeEnum.CROSS}
             style={ButtonIconStyle.DARK}
             size={ButtonSize.LARGE}
-            link={
-              locationIsApplicationLogs
-                ? `${APPLICATION_URL(
-                    organizationId,
-                    projectId,
-                    environmentId,
-                    applicationId
-                  )}${APPLICATION_GENERAL_URL}`
-                : SERVICES_URL(organizationId, projectId, environmentId)
-            }
+            link={linkToCloseLogs}
           />
         </div>
       )}
