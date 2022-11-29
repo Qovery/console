@@ -120,7 +120,7 @@
 .input__select--small {
   @apply pl-2 pr-6 pt-2 pb-2 bg-element-light-lighter-200 border border-element-light-lighter-500 text-text-700 rounded text-sm appearance-none w-full min-h-0;
 
-  @apply focus:outline-brand-500 focus:border-0 focus:outline-2;
+  @apply focus:outline-brand-500 focus:border-transparent focus:outline-2;
 }
 
 // time

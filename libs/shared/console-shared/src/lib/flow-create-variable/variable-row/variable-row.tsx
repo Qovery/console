@@ -15,22 +15,18 @@ export interface VariableRowProps {
   index: number
   onDelete: (index: number) => void
   availableScopes: APIVariableScopeEnum[]
+  gridTemplateColumns?: string
 }
 
 export function VariableRow(props: VariableRowProps) {
-  const { index, availableScopes } = props
+  const { index, availableScopes, gridTemplateColumns = '6fr 6fr 204px 2fr 1fr 1fr' } = props
   const { control, trigger } = useFormContext<FlowVariableData>()
 
   const pattern = /^[^\s]+$/
 
   return (
-    <div data-testid={'variable-row'} className="flex gap-3 mb-5 w-full items-center">
-      <div
-        key={index}
-        data-testid="form-row"
-        className="grid mb-3"
-        style={{ gridTemplateColumns: '6fr 6fr 204px 2fr 1fr' }}
-      >
+    <div data-testid={'variable-row'} className="w-full items-center mb-3">
+      <div key={index} data-testid="form-row" className="grid mb-3" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}
           control={control}
@@ -103,7 +99,7 @@ export function VariableRow(props: VariableRowProps) {
 
         <div className="flex items-center h-full w-full grow">
           <ButtonIcon
-            icon={IconAwesomeEnum.CROSS}
+            icon={IconAwesomeEnum.TRASH}
             style={ButtonIconStyle.STROKED}
             size={ButtonSize.TINY}
             onClick={() => props.onDelete(index)}

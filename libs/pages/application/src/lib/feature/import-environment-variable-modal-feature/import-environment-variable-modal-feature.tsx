@@ -16,10 +16,9 @@ import {
   SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { parseEnvText } from '@qovery/shared/utils'
+import { computeAvailableScope, parseEnvText } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
-import { computeAvailableScope } from '../../utils/compute-available-environment-variable-scope'
 import { changeScopeForAll } from './utils/change-scope-all'
 import { deleteEntry } from './utils/delete-entry'
 import { parsedToForm } from './utils/file-to-form'

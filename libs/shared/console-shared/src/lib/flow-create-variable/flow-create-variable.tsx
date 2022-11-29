@@ -1,3 +1,4 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FlowVariableData, VariableData } from '@qovery/shared/interfaces'
@@ -10,10 +11,12 @@ export interface FlowCreateVariableProps {
   onAdd: () => void
   onRemove: (index: number) => void
   variables: VariableData[]
+  availableScopes: APIVariableScopeEnum[]
 }
 
 export function FlowCreateVariable(props: FlowCreateVariableProps) {
   const { formState } = useFormContext<FlowVariableData>()
+  const gridTemplateColumns = '6fr 6fr 204px 2fr 1fr'
 
   return (
     <div>
@@ -33,9 +36,23 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
       </div>
 
       <form onSubmit={props.onSubmit}>
+        <div className="grid mb-3" style={{ gridTemplateColumns }}>
+          <span className="text-sm text-text-600 font-medium">Variable</span>
+          <span className="text-sm text-text-600 font-medium">Value</span>
+          <span className="text-sm text-text-600 font-medium">Scope</span>
+          <span className="text-sm text-text-600 font-medium pl-1.5">Secret</span>
+          <span></span>
+        </div>
+
         <div className="mb-10">
           {props.variables?.map((variable, index) => (
-            <VariableRow onDelete={props.onRemove} key={index} index={index} />
+            <VariableRow
+              gridTemplateColumns={gridTemplateColumns}
+              availableScopes={props.availableScopes}
+              onDelete={props.onRemove}
+              key={index}
+              index={index}
+            />
           ))}
         </div>
 

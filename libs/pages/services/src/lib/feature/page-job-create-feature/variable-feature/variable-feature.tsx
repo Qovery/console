@@ -1,3 +1,4 @@
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -5,12 +6,12 @@ import { FlowCreateVariable } from '@qovery/shared/console-shared'
 import { FlowVariableData, VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CREATION_GENERAL_URL,
-  SERVICES_CREATION_PORTS_URL,
-  SERVICES_CREATION_POST_URL,
+  SERVICES_JOB_CREATION_PORT_URL,
+  SERVICES_JOB_CREATION_POST_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { computeAvailableScope, useDocumentTitle } from '@qovery/shared/utils'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function VariableFeature() {
@@ -19,6 +20,7 @@ export function VariableFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
+  const [availableScopes] = useState<APIVariableScopeEnum[]>(computeAvailableScope())
 
   useEffect(() => {
     return
@@ -48,11 +50,6 @@ export function VariableFeature() {
       }}
     />
   )
-
-  useEffect(() => {
-    setCurrentStep(3)
-  }, [setCurrentStep])
-
   const methods = useForm<FlowVariableData>({
     defaultValues: variableData,
     mode: 'onChange',
@@ -60,11 +57,11 @@ export function VariableFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     setVariableData(data)
-    navigate(pathCreate + SERVICES_CREATION_POST_URL)
+    navigate(pathCreate + SERVICES_JOB_CREATION_POST_URL)
   })
 
   const onBack = () => {
-    navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
+    navigate(pathCreate + SERVICES_JOB_CREATION_PORT_URL)
   }
 
   const [variables, setVariables] = useState(methods.getValues().variables)
@@ -87,10 +84,18 @@ export function VariableFeature() {
     methods.reset({ variables: newVariables })
   }
 
+  useEffect(() => {
+    setCurrentStep(4)
+    if (variableData?.variables?.length === 0) {
+      onAddPort()
+    }
+  }, [setCurrentStep, variableData])
+
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
         <FlowCreateVariable
+          availableScopes={availableScopes}
           onBack={onBack}
           onSubmit={onSubmit}
           onAdd={onAddPort}
