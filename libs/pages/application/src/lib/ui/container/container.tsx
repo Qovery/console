@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
 import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
-import { IconEnum, getServiceType } from '@qovery/shared/enums'
+import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   Button,
@@ -137,7 +137,18 @@ export function Container(props: ContainerProps) {
     <ApplicationContext.Provider
       value={{ showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues }}
     >
-      <Header title={application?.name} icon={IconEnum.APPLICATION} buttons={headerButtons} actions={headerActions} />
+      <Header
+        title={application?.name}
+        icon={
+          isCronJob(application)
+            ? IconEnum.CRON_JOB
+            : isLifeCycleJob(application)
+            ? IconEnum.LIFECYCLE_JOB
+            : IconEnum.APPLICATION
+        }
+        buttons={headerButtons}
+        actions={headerActions}
+      />
       <TabsFeature />
       {application &&
         application.status &&

@@ -28,6 +28,7 @@ import {
   DeploymentHistoryApplication,
   Instance,
   JobDeploymentHistoryApi,
+  JobMainCallsApi,
   JobsApi,
   Link,
   Status,
@@ -69,7 +70,8 @@ const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
 
 const jobsApi = new JobsApi()
-const jobsDeploymentsApi = new JobDeploymentHistoryApi()
+const jobMainCallsApi = new JobMainCallsApi()
+const jobDeploymentsApi = new JobDeploymentHistoryApi()
 
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
@@ -202,7 +204,7 @@ export const fetchApplicationDeployments = createAsyncThunk<
   if (isContainer(data.serviceType)) {
     response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
   } else if (isJob(data.serviceType)) {
-    response = await jobsDeploymentsApi.listJobDeploymentHistory()
+    response = await jobDeploymentsApi.listJobDeploymentHistory(data.applicationId)
   } else {
     response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
   }
@@ -216,6 +218,8 @@ export const fetchApplicationStatus = createAsyncThunk<
   let response
   if (isContainer(data.serviceType)) {
     response = await containerMainCallsApi.getContainerStatus(data.applicationId)
+  } else if (isJob(data.serviceType)) {
+    response = await jobMainCallsApi.getJobStatus(data.applicationId)
   } else {
     response = await applicationMainCallsApi.getApplicationStatus(data.applicationId)
   }
