@@ -220,4 +220,31 @@ describe('Row', () => {
     expect(cellMsg).toHaveClass('py-1 pl-4 pr-6 font-code relative w-[calc(100%-502px)] overflow-hidden text-error-500')
     expect(cellMsg?.textContent).toBe(props.data.error?.user_log_message)
   })
+
+  it('should have cell message without ASCI but with links', () => {
+    props.data = {
+      type: LogsType.INFO,
+      timestamp: new Date().toString(),
+      details: {
+        stage: {
+          step: 'Deployed',
+        },
+        transmitter: {
+          name: 'message',
+        },
+      },
+      message: {
+        safe_message: '\x1b[F\x1b[31;1mmy message https://qovery.com\x1b[m\x1b[E',
+      },
+    }
+
+    render(<Row {...props} />)
+
+    const cellMsg = screen.getByTestId('cell-msg')
+
+    expect(cellMsg?.textContent).toBe('my message https://qovery.com')
+    expect(cellMsg.innerHTML.toString()).toContain(
+      '<a class="link text-accent2-500" target="_blank" href="https://qovery.com">https://qovery.com</a>'
+    )
+  })
 })
