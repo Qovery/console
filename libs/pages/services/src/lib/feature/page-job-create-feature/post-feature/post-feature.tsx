@@ -87,6 +87,7 @@ export function PostFeature() {
         } else {
           jobRequest.source = {
             docker: {
+              dockerfile_path: generalData.dockerfile_path,
               git_repository: {
                 url: buildGitRepoUrl(generalData.provider || '', selectRepository?.url || '') || '',
                 root_path: generalData.root_path,
