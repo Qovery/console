@@ -127,7 +127,7 @@ export function Menu(props: MenuProps) {
         {!triggerTooltip ? (
           trigger
         ) : (
-          <Tooltip content={triggerTooltip}>
+          <Tooltip content={triggerTooltip} delayDuration={100}>
             <span>{trigger}</span>
           </Tooltip>
         )}

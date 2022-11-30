@@ -13,6 +13,7 @@ export const Primary = Template.bind({})
 Primary.args = {
   actions: [
     {
+      triggerTooltip: 'More actions',
       iconLeft: <Icon name="icon-solid-ellipsis-v" />,
       menus: [
         {

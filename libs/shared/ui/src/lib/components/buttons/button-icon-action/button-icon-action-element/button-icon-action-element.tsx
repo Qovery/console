@@ -30,7 +30,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
   const hasTooltip = (content: React.ReactNode, withRightBorder = false) => {
     if (triggerTooltip) {
       return (
-        <Tooltip content={triggerTooltip}>
+        <Tooltip content={triggerTooltip} delayDuration={100}>
           <span className={`flex ${withRightBorder ? 'border-r border-r-element-light-lighter-500' : ''}`}>
             {content}
           </span>

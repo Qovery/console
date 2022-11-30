@@ -211,7 +211,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {
-      triggerTooltip: 'Manage Deployment',
+      triggerTooltip: 'Manage deployment',
       iconLeft: <Icon name={IconAwesomeEnum.PLAY} className="px-0.5" />,
       iconRight: <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="px-0.5" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
