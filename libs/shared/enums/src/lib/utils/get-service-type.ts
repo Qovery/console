@@ -1,3 +1,4 @@
+import { JobScheduleEvent } from 'qovery-typescript-axios'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -16,9 +17,9 @@ export const getServiceType = (data: ApplicationEntity | DatabaseEntity) => {
     currentType = ServiceTypeEnum.CONTAINER
   } else if (!(data as GitApplicationEntity).build_mode && !(data as ContainerApplicationEntity).image_name && !isJob) {
     currentType = ServiceTypeEnum.DATABASE
-  } else if (isJob && !(data as JobApplicationEntity).schedule) {
+  } else if (isJob && (data as JobApplicationEntity).schedule?.event !== JobScheduleEvent.CRON) {
     currentType = ServiceTypeEnum.CRON_JOB
-  } else if (isJob && (data as JobApplicationEntity).schedule) {
+  } else if (isJob && (data as JobApplicationEntity).schedule?.event === JobScheduleEvent.CRON) {
     currentType = ServiceTypeEnum.LIFECYCLE_JOB
   } else {
     currentType = ServiceTypeEnum.APPLICATION

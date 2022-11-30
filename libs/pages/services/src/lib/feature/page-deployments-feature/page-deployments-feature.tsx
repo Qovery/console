@@ -1,3 +1,4 @@
+import { JobScheduleEvent } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -66,7 +67,8 @@ export function PageDeploymentsFeature() {
         const j: DeploymentService = {
           ...job,
           execution_id: deployment.id,
-          type: ServiceTypeEnum.CRON_JOB,
+          type:
+            job.schedule?.event === JobScheduleEvent.CRON ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB,
         }
         merged.push(j)
       })
