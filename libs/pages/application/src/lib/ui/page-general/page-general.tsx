@@ -3,6 +3,7 @@ import {
   ContainerApplicationEntity,
   GitApplicationEntity,
   GitContainerApplicationEntity,
+  JobApplicationEntity,
   LoadingStatus,
 } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -91,10 +92,12 @@ export function PageGeneral(props: PageGeneralProps) {
               <div className="text-subtitle mb-3 text-text-600">Image information</div>
               <div className="mb-3">
                 <p className="text-text-500 mb-2">
-                  Image name: {(application as ContainerApplicationEntity).image_name}
+                  Image name: {(application as ContainerApplicationEntity).image_name}{' '}
+                  {(application as JobApplicationEntity).source?.image?.image_name}
                 </p>
                 <p className="text-text-500 mb-2">
-                  Latest deployed tag: {(application as ContainerApplicationEntity).tag}
+                  Latest deployed tag: {(application as ContainerApplicationEntity).tag}{' '}
+                  {(application as JobApplicationEntity).source?.image?.tag}
                 </p>
                 <p className="text-text-400 text-sm">
                   {timeAgo(new Date((application as ContainerApplicationEntity)?.updated_at || ''))}

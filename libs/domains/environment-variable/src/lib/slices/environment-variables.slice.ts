@@ -5,13 +5,14 @@ import {
   ContainerEnvironmentVariableApi,
   EnvironmentVariableApi,
   EnvironmentVariableRequest,
+  JobEnvironmentVariableApi,
   ProjectEnvironmentVariableApi,
   Value,
   VariableImport,
   VariableImportRequestVars,
 } from 'qovery-typescript-axios'
 import { Key } from 'qovery-typescript-axios/api'
-import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
@@ -22,6 +23,7 @@ export const environmentVariablesAdapter = createEntityAdapter<EnvironmentVariab
 
 const applicationEnvironmentVariableApi = new ApplicationEnvironmentVariableApi()
 const containerEnvironmentVariableApi = new ContainerEnvironmentVariableApi()
+const jobEnvironmentVariableApi = new JobEnvironmentVariableApi()
 const environmentEnvironmentVariableApi = new EnvironmentVariableApi()
 const projectEnvironmentVariableApi = new ProjectEnvironmentVariableApi()
 
@@ -31,6 +33,8 @@ export const fetchEnvironmentVariables = createAsyncThunk(
     let response
     if (isContainer(payload.serviceType)) {
       response = await containerEnvironmentVariableApi.listContainerEnvironmentVariable(payload.applicationId)
+    } else if (isJob(payload.serviceType)) {
+      response = await jobEnvironmentVariableApi.listJobEnvironmentVariable(payload.applicationId)
     } else {
       response = await applicationEnvironmentVariableApi.listApplicationEnvironmentVariable(payload.applicationId)
     }
@@ -50,6 +54,11 @@ export const importEnvironmentVariables = createAsyncThunk(
     let response
     if (isContainer(payload.serviceType)) {
       response = await containerEnvironmentVariableApi.importContainerEnvironmentVariable(payload.applicationId, {
+        overwrite: payload.overwriteEnabled,
+        vars: payload.vars,
+      })
+    } else if (isJob(payload.serviceType)) {
+      response = await jobEnvironmentVariableApi.importJobEnvironmentVariable(payload.applicationId, {
         overwrite: payload.overwriteEnabled,
         vars: payload.vars,
       })
@@ -91,6 +100,11 @@ export const createEnvironmentVariablePayloadCreator = async (payload: {
     default:
       if (isContainer(payload.serviceType)) {
         response = await containerEnvironmentVariableApi.createContainerEnvironmentVariable(
+          payload.entityId,
+          payload.environmentVariableRequest
+        )
+      } else if (isJob(payload.serviceType)) {
+        response = await jobEnvironmentVariableApi.createJobEnvironmentVariable(
           payload.entityId,
           payload.environmentVariableRequest
         )
