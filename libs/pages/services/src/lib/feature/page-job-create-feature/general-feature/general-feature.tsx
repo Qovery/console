@@ -1,22 +1,22 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
+import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/router'
 import { toastError } from '@qovery/shared/toast'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 import General from '../../../ui/page-job-create/general/general'
 import { GeneralData } from '../job-creation-flow.interface'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function GeneralFeature() {
   useDocumentTitle('General - Create Job')
-  const { setGeneralData, generalData, setCurrentStep, jobURL } = useJobContainerCreateContext()
+  const { setGeneralData, generalData, setCurrentStep, jobURL, jobType } = useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
@@ -55,6 +55,15 @@ export function GeneralFeature() {
     mode: 'onChange',
   })
 
+  const dispatch = useDispatch<AppDispatch>()
+  const watchServiceType = methods.watch('serviceType')
+
+  useEffect(() => {
+    if (isContainer(watchServiceType)) {
+      dispatch(fetchOrganizationContainerRegistries({ organizationId }))
+    }
+  }, [watchServiceType, dispatch, organizationId])
+
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {
       ...data,
@@ -76,7 +85,7 @@ export function GeneralFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <General organization={organization} onSubmit={onSubmit} />
+        <General organization={organization} onSubmit={onSubmit} jobType={jobType} />
       </FormProvider>
     </FunnelFlowBody>
   )

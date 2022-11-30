@@ -5,10 +5,11 @@ export interface GeneralData {
   description: string
   serviceType: ServiceTypeEnum
 
-  schedule: string
-  nb_restarts: number
-  max_duration: number
-  port: number
+  schedule?: string
+  event?: string
+  nb_restarts?: number
+  max_duration?: number
+  port?: number
 
   // container
   registry?: string

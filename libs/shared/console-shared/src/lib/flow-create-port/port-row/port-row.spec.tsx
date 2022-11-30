@@ -1,6 +1,6 @@
 import { act, getAllByTestId, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { wrapWithReactHookForm } from '../../../../../../../../../__tests__/utils/wrap-with-react-hook-form'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import PortRow, { PortRowProps } from './port-row'
 
 const props: PortRowProps = {

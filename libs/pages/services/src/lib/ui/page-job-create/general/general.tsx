@@ -12,6 +12,7 @@ import CreateGeneralGitApplication from '../../page-application-create/page-appl
 export interface GeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: OrganizationEntity
+  jobType: 'cron' | 'lifecycle'
 }
 
 export function General(props: GeneralProps) {
@@ -109,23 +110,27 @@ export function General(props: GeneralProps) {
 
       <p className="text-text-500 text-sm mb-3">Job configuration</p>
 
-      <Controller
-        name="schedule"
-        control={control}
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            className="mb-2"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Schedule - Cron expression"
-            error={error?.message}
-          />
-        )}
-      />
+      {props.jobType === 'cron' ? (
+        <Controller
+          name="schedule"
+          control={control}
+          rules={{
+            required: 'Value required',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-2"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Schedule - Cron expression"
+              error={error?.message}
+            />
+          )}
+        />
+      ) : (
+        <p>lifecycle event widget</p>
+      )}
 
       <div className="mb-3 flex justify-between">
         <p className="text-text-500 text-xs ">Every minutes</p>
