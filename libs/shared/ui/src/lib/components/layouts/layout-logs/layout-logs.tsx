@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
+import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
@@ -166,13 +166,17 @@ export function LayoutLogs(props: LayoutLogsProps) {
             )}
             <div className="flex">
               {setPauseLogs && (
-                <ButtonIcon
-                  className="mr-2"
-                  icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
-                  size={ButtonSize.TINY}
-                  style={ButtonIconStyle.DARK}
-                  onClick={() => setPauseLogs(!pauseLogs)}
-                />
+                <Tooltip side="top" content="Paused, show next logs" open={pauseLogs}>
+                  <div>
+                    <ButtonIcon
+                      className="mr-2"
+                      icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
+                      size={ButtonSize.TINY}
+                      style={!pauseLogs ? ButtonIconStyle.DARK : ButtonIconStyle.BASIC}
+                      onClick={() => setPauseLogs(!pauseLogs)}
+                    />
+                  </div>
+                </Tooltip>
               )}
               <ButtonIcon
                 icon={IconAwesomeEnum.ARROW_UP_TO_LINE}

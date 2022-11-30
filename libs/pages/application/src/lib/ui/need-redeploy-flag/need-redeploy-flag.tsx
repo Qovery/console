@@ -25,6 +25,7 @@ export function NeedRedeployFlag(props: NeedRedeployFlagProps) {
         {props.application.status?.service_deployment_status === ServiceDeploymentStatusEnum.OUT_OF_DATE
           ? 'redeployed'
           : 'deployed'}{' '}
+        to apply the configuration changes
       </p>
     </Banner>
   )
