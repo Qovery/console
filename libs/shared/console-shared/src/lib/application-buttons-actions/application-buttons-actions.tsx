@@ -211,16 +211,19 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {
+      triggerTooltip: 'Manage Deployment',
       iconLeft: <Icon name={IconAwesomeEnum.PLAY} className="px-0.5" />,
       iconRight: <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="px-0.5" />,
       menusClassName: 'border-r border-r-element-light-lighter-500',
       menus: buttonStatusActions,
     },
     {
+      triggerTooltip: 'Logs',
       iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
       onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)),
     },
     {
+      triggerTooltip: 'Other actions',
       iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
       menus: [
         {
