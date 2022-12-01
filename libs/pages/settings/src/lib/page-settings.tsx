@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import {
   SETTINGS_BILLING_URL,
@@ -22,7 +22,6 @@ import { Container } from './ui/container/container'
 export function PageSettings() {
   const { organizationId = '' } = useParams()
 
-  const navigate = useNavigate()
   const pathSettings = SETTINGS_URL(organizationId)
 
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
@@ -74,11 +73,11 @@ export function PageSettings() {
     subLinks: [
       {
         title: 'General',
-        onClick: () => navigate(pathSettings + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_GENERAL_URL),
+        url: pathSettings + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_GENERAL_URL,
       },
       {
         title: 'Danger zone',
-        onClick: () => navigate(pathSettings + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_DANGER_ZONE_URL),
+        url: pathSettings + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_DANGER_ZONE_URL,
       },
     ],
   }))
