@@ -48,6 +48,10 @@ export const editProject = createAsyncThunk(
   }
 )
 
+export const deleteProject = createAsyncThunk('project/delete', async (payload: { projectId: string }) => {
+  return await projectMainCalls.deleteProject(payload.projectId)
+})
+
 export const initialProjectsState: ProjectsState = projectsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -111,6 +115,21 @@ export const projectsSlice = createSlice({
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message
+      })
+      // delete project
+      .addCase(deleteProject.pending, (state: ProjectsState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(deleteProject.fulfilled, (state: ProjectsState, action) => {
+        projectsAdapter.removeOne(state, action.meta.arg.projectId)
+        state.loadingStatus = 'loaded'
+        state.error = null
+        toast(ToastEnum.SUCCESS, `Your project has been deleted`)
+      })
+      .addCase(deleteProject.rejected, (state: ProjectsState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
+        toastError(action.error)
       })
   },
 })

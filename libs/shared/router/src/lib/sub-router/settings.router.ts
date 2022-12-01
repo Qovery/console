@@ -11,3 +11,4 @@ export const SETTINGS_DANGER_ZONE_URL = '/danger-zone'
 // project settings
 export const SETTINGS_PROJECT_URL = (projectId = ':projectId') => `/${projectId}/project`
 export const SETTINGS_PROJECT_GENERAL_URL = '/general'
+export const SETTINGS_PROJECT_DANGER_ZONE_URL = '/danger-zone'
