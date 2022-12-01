@@ -27,7 +27,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
 
   const [open, setOpen] = useState(false)
 
-  const hasTooltip = (content: React.ReactNode, withRightBorder = false) => {
+  const tooltipWrapper = (content: React.ReactNode, withRightBorder = false) => {
     if (triggerTooltip) {
       return (
         <Tooltip content={triggerTooltip} delayDuration={100}>
@@ -64,7 +64,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
   } else {
     return (
       <>
-        {hasTooltip(
+        {tooltipWrapper(
           <div data-testid="element" className="btn-icon-action__element" onClick={onClick}>
             {iconLeft}
             {iconRight}
