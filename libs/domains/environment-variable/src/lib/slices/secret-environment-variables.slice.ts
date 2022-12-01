@@ -25,6 +25,7 @@ const containerSecretApi = new ContainerSecretApi()
 const jobSecretApi = new JobSecretApi()
 const environmentSecretApi = new EnvironmentSecretApi()
 const projectSecretApi = new ProjectSecretApi()
+const jobSecretApi = new JobSecretApi()
 
 export const fetchSecretEnvironmentVariables = createAsyncThunk(
   'secretEnvironmentVariables/list',
@@ -32,6 +33,8 @@ export const fetchSecretEnvironmentVariables = createAsyncThunk(
     let response
     if (isContainer(payload.serviceType)) {
       response = await containerSecretApi.listContainerSecrets(payload.applicationId)
+    } else if (isJob(payload.serviceType)) {
+      response = await jobSecretApi.listJobSecrets(payload.applicationId)
     } else {
       response = await applicationSecretApi.listApplicationSecrets(payload.applicationId)
     }

@@ -185,8 +185,8 @@ export function PostFeature() {
   }
 
   const toggleLoading = (value: boolean, withDeploy = false) => {
-    if (withDeploy) setLoadingCreateAndDeploy(false)
-    else setLoadingCreate(false)
+    if (withDeploy) setLoadingCreateAndDeploy(value)
+    else setLoadingCreate(value)
   }
 
   useEffect(() => {
