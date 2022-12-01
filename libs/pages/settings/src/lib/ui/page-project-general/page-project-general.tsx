@@ -66,8 +66,8 @@ export function PageProjectGeneral(props: PageProjectGeneralProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#creating-an-organization',
-            linkLabel: 'How to configure my organization',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/project/#edit-project-general-settings',
+            linkLabel: 'How to configure my project',
             external: true,
           },
         ]}
