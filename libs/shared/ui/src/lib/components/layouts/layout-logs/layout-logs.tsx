@@ -169,7 +169,6 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 <Tooltip side="top" content="Paused, show next logs" open={pauseLogs}>
                   <div>
                     <ButtonIcon
-                      className="mr-2"
                       icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
                       size={ButtonSize.TINY}
                       style={!pauseLogs ? ButtonIconStyle.DARK : ButtonIconStyle.BASIC}
@@ -180,7 +179,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
               )}
               <ButtonIcon
                 icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
-                className="mr-px !rounded-tr-none !rounded-br-none"
+                className="ml-2 mr-px !rounded-tr-none !rounded-br-none"
                 size={ButtonSize.TINY}
                 style={ButtonIconStyle.DARK}
                 onClick={() => forcedScroll()}
