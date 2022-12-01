@@ -214,6 +214,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     ...(hasServices
       ? [
           {
+            triggerTooltip: 'Manage deployment',
             iconLeft: <Icon name={IconAwesomeEnum.PLAY} className="px-0.5" />,
             iconRight: <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="px-0.5" />,
             menusClassName: 'border-r border-r-element-light-lighter-500',
@@ -222,10 +223,12 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         ]
       : []),
     {
+      triggerTooltip: 'Logs',
       iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
       onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environment.id)),
     },
     {
+      triggerTooltip: 'Other actions',
       iconLeft: <Icon name="icon-solid-ellipsis-vertical" />,
       menus: [
         {

@@ -1,5 +1,6 @@
 import { ControlledMenu, MenuCloseEvent } from '@szhsin/react-menu'
 import React, { useEffect, useRef, useState } from 'react'
+import Tooltip from '../tooltip/tooltip'
 import MenuGroup from './menu-group/menu-group'
 import { MenuItemProps } from './menu-item/menu-item'
 
@@ -18,6 +19,7 @@ export enum MenuAlign {
 
 export type MenuData = {
   items: MenuItemProps[]
+  label?: string
   title?: string
   button?: string
   buttonLink?: string
@@ -26,11 +28,12 @@ export type MenuData = {
 
 export interface MenuProps {
   trigger: React.ReactElement
+  menus: MenuData
   children?: React.ReactNode
   direction?: MenuDirection
   open?: boolean
   arrowAlign?: MenuAlign
-  menus: MenuData
+  triggerTooltip?: string
   className?: string
   header?: React.ReactNode
   onClose?: (e: MenuCloseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>) => void
@@ -56,6 +59,7 @@ export function Menu(props: MenuProps) {
     paddingMenuY = 12,
     onOpen,
     isFilter,
+    triggerTooltip,
   } = props
 
   const ref = useRef(null)
@@ -120,7 +124,13 @@ export function Menu(props: MenuProps) {
         ref={ref}
         onMouseDown={() => handleClick(null)}
       >
-        {trigger}
+        {!triggerTooltip ? (
+          trigger
+        ) : (
+          <Tooltip content={triggerTooltip} delayDuration={100}>
+            <span>{trigger}</span>
+          </Tooltip>
+        )}
       </div>
       <ControlledMenu
         state={isOpen ? 'open' : 'closed'}
