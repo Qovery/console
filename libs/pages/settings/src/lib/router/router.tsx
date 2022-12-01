@@ -6,6 +6,9 @@ import {
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_MEMBERS_URL,
+  SETTINGS_PROJECT_DANGER_ZONE_URL,
+  SETTINGS_PROJECT_GENERAL_URL,
+  SETTINGS_PROJECT_URL,
   SETTINGS_ROLES_EDIT_URL,
   SETTINGS_ROLES_URL,
 } from '@qovery/shared/router'
@@ -16,6 +19,8 @@ import { PageOrganizationGeneralFeature } from '../feature/page-organization-gen
 import { PageOrganizationMembersFeature } from '../feature/page-organization-members-feature/page-organization-members-feature'
 import { PageOrganizationRolesEditFeature } from '../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import { PageOrganizationRolesFeature } from '../feature/page-organization-roles-feature/page-organization-roles-feature'
+import PageProjectDangerZoneFeature from '../feature/page-project-danger-zone-feature/page-project-danger-zone-feature'
+import PageProjectGeneralFeature from '../feature/page-project-general-feature/page-project-general-feature'
 import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_SETTINGS: Route[] = [
@@ -50,5 +55,13 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_DANGER_ZONE_URL,
     component: <PageOrganizationDangerZoneFeature />,
+  },
+  {
+    path: SETTINGS_PROJECT_URL() + SETTINGS_PROJECT_GENERAL_URL,
+    component: <PageProjectGeneralFeature />,
+  },
+  {
+    path: SETTINGS_PROJECT_URL() + SETTINGS_PROJECT_DANGER_ZONE_URL,
+    component: <PageProjectDangerZoneFeature />,
   },
 ]

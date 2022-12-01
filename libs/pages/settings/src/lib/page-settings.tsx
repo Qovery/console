@@ -8,6 +8,9 @@ import {
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_MEMBERS_URL,
+  SETTINGS_PROJECT_DANGER_ZONE_URL,
+  SETTINGS_PROJECT_GENERAL_URL,
+  SETTINGS_PROJECT_URL,
   SETTINGS_ROLES_URL,
   SETTINGS_URL,
 } from '@qovery/shared/router'
@@ -70,17 +73,11 @@ export function PageSettings() {
     subLinks: [
       {
         title: 'General',
-        onClick: () =>
-          window.open(
-            `https://console.qovery.com/platform/organization/${organizationId}/projects/${project.id}/environments`
-          ),
+        url: pathSettings + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_GENERAL_URL,
       },
       {
         title: 'Danger zone',
-        onClick: () =>
-          window.open(
-            `https://console.qovery.com/platform/organization/${organizationId}/projects/${project.id}/environments`
-          ),
+        url: pathSettings + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_DANGER_ZONE_URL,
       },
     ],
   }))
