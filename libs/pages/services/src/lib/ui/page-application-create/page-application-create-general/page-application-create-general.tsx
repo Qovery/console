@@ -1,7 +1,7 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { GeneralContainerSettings } from '@qovery/shared/console-shared'
+import { EntrypointCmdInputs, GeneralContainerSettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
@@ -81,7 +81,12 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
         {isApplication(getValues().serviceType) && <CreateGeneralGitApplication />}
 
-        {isContainer(getValues().serviceType) && <GeneralContainerSettings organization={props.organization} />}
+        {isContainer(getValues().serviceType) && (
+          <>
+            <GeneralContainerSettings organization={props.organization} />
+            <EntrypointCmdInputs />
+          </>
+        )}
 
         <div className="flex justify-between">
           <Button
