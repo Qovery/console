@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import {
   SETTINGS_BILLING_URL,
@@ -8,6 +8,8 @@ import {
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_MEMBERS_URL,
+  SETTINGS_PROJECT_GENERAL_URL,
+  SETTINGS_PROJECT_URL,
   SETTINGS_ROLES_URL,
   SETTINGS_URL,
 } from '@qovery/shared/router'
@@ -19,6 +21,7 @@ import { Container } from './ui/container/container'
 export function PageSettings() {
   const { organizationId = '' } = useParams()
 
+  const navigate = useNavigate()
   const pathSettings = SETTINGS_URL(organizationId)
 
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
@@ -70,10 +73,7 @@ export function PageSettings() {
     subLinks: [
       {
         title: 'General',
-        onClick: () =>
-          window.open(
-            `https://console.qovery.com/platform/organization/${organizationId}/projects/${project.id}/environments`
-          ),
+        onClick: () => navigate(pathSettings + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_GENERAL_URL),
       },
       {
         title: 'Danger zone',
