@@ -19,6 +19,7 @@ export enum ButtonStyle {
   TAB = 'tab',
   ERROR = 'error',
   CONFIRM = 'confirm',
+  DARK = 'dark',
 }
 
 export interface ButtonProps {

@@ -12,7 +12,19 @@ import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  Menu,
+  MenuData,
+  StatusChip,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
 
@@ -90,6 +102,22 @@ export function LayoutLogs(props: LayoutLogsProps) {
     if (row) scrollParentToChild(section, row, 100)
   }
 
+  const menus: MenuData = [
+    {
+      title: 'Time format',
+      items: [
+        {
+          name: 'Local browser time',
+          contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400 dark:text-brand-300" />,
+        },
+        {
+          name: 'UTC',
+          contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400 dark:text-brand-300" />,
+        },
+      ],
+    },
+  ]
+
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
       {withLogsNavigation && (
@@ -165,6 +193,20 @@ export function LayoutLogs(props: LayoutLogsProps) {
               </p>
             )}
             <div className="flex">
+              <Menu
+                open={true}
+                menus={menus}
+                trigger={
+                  <Button
+                    className="mr-2"
+                    size={ButtonSize.TINY}
+                    style={ButtonStyle.DARK}
+                    iconRight={IconAwesomeEnum.ANGLE_DOWN}
+                  >
+                    Time format
+                  </Button>
+                }
+              />
               {setPauseLogs && (
                 <Tooltip side="top" content="Paused, show next logs" open={pauseLogs}>
                   <div>
