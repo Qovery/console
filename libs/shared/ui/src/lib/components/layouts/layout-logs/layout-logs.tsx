@@ -103,17 +103,17 @@ export function LayoutLogs(props: LayoutLogsProps) {
     if (row) scrollParentToChild(section, row, 100)
   }
 
-  const menus: MenuData = [
+  const menusTimeFormat: MenuData = [
     {
       title: 'Time format',
       items: [
         {
           name: 'Local browser time',
-          contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400 dark:text-brand-300" />,
+          contentLeft: <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />,
         },
         {
           name: 'UTC',
-          contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400 dark:text-brand-300" />,
+          contentLeft: <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 opacity-0" />,
         },
       ],
     },
@@ -196,7 +196,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
             <div className="flex">
               <Menu
                 open={true}
-                menus={menus}
+                menus={menusTimeFormat}
                 arrowAlign={MenuAlign.END}
                 trigger={
                   <Button
