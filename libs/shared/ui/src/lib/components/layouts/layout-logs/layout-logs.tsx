@@ -21,6 +21,7 @@ import {
   Icon,
   IconAwesomeEnum,
   Menu,
+  MenuAlign,
   MenuData,
   StatusChip,
   Tooltip,
@@ -196,6 +197,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
               <Menu
                 open={true}
                 menus={menus}
+                arrowAlign={MenuAlign.END}
                 trigger={
                   <Button
                     className="mr-2"
