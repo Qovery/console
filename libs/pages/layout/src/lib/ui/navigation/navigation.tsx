@@ -85,7 +85,7 @@ export function Navigation(props: NavigationProps) {
         <img className="w-[28px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
       </Link>
 
-      <div className="flex flex-col justify-between px-2.5 py-5 mb-auto">
+      <div className="flex flex-col justify-between px-2.5 py-5 flex-grow">
         <div className="flex flex-col gap-3">
           <ButtonIcon
             className={matchOrganizationRoute ? 'is-active' : ''}
