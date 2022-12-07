@@ -34,7 +34,7 @@
 
 .input--focused,
 .input__button--focused {
-  outline: 1px solid theme('colors.brand.500');
+  outline: 3px solid theme('colors.brand.100');
   label {
     @apply text-xs translate-y-0;
   }
