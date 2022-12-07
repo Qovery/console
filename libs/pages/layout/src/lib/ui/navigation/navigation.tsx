@@ -77,7 +77,7 @@ export function Navigation(props: NavigationProps) {
   ]
 
   return (
-    <div className="w-16 h-screen dark:bg-element-light-darker-400 bg-white">
+    <div className="w-16 h-screen dark:bg-element-light-darker-400 bg-white flex flex-col">
       <Link
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
         className="flex w-16 h-16 items-center justify-center border-b z-10 dark:border-element-light-darker-100 border-element-light-lighter-400"
@@ -85,7 +85,7 @@ export function Navigation(props: NavigationProps) {
         <img className="w-[28px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
       </Link>
 
-      <div className="flex flex-col justify-between h-[calc(100%-8rem)] px-2.5 py-5">
+      <div className="flex flex-col justify-between px-2.5 py-5 mb-auto">
         <div className="flex flex-col gap-3">
           <ButtonIcon
             className={matchOrganizationRoute ? 'is-active' : ''}
