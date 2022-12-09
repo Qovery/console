@@ -116,9 +116,19 @@ export function PageSettingsGeneralFeature() {
 
     if (isApplication(application)) {
       if (watchBuildMode === BuildModeEnum.DOCKER) {
-        methods.setValue('dockerfile_path', 'Dockerfile')
+        methods.setValue(
+          'dockerfile_path',
+          (application as GitApplicationEntity).dockerfile_path
+            ? (application as GitApplicationEntity).dockerfile_path
+            : 'Dockerfile'
+        )
       } else {
-        methods.setValue('buildpack_language', BuildPackLanguageEnum.PYTHON)
+        methods.setValue(
+          'buildpack_language',
+          (application as GitApplicationEntity).buildpack_language
+            ? (application as GitApplicationEntity).buildpack_language
+            : BuildPackLanguageEnum.PYTHON
+        )
       }
     }
   }, [watchBuildMode, methods, application])
