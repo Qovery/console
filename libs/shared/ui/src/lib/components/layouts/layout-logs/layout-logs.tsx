@@ -6,7 +6,7 @@ import {
   EnvironmentLogsError,
   Log,
 } from 'qovery-typescript-axios'
-import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
@@ -28,6 +28,7 @@ import {
 } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
+import { UpdateTimeContext, defaultUpdateTimeContext } from './update-time-context/update-time-context'
 
 export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
@@ -70,6 +71,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
+  const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
+
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const forcedScroll = (down?: boolean) => {
@@ -109,11 +112,23 @@ export function LayoutLogs(props: LayoutLogsProps) {
       items: [
         {
           name: 'Local browser time',
-          contentLeft: <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />,
+          contentLeft: (
+            <Icon
+              name={IconAwesomeEnum.CHECK}
+              className={`text-success-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ),
+          onClick: () => setUpdateTimeContext({ utc: false }),
         },
         {
           name: 'UTC',
-          contentLeft: <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 opacity-0" />,
+          contentLeft: (
+            <Icon
+              name={IconAwesomeEnum.CHECK}
+              className={`text-success-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ),
+          onClick: () => setUpdateTimeContext({ utc: true }),
         },
       ],
     },
@@ -195,7 +210,6 @@ export function LayoutLogs(props: LayoutLogsProps) {
             )}
             <div className="flex">
               <Menu
-                open={true}
                 menus={menusTimeFormat}
                 arrowAlign={MenuAlign.END}
                 trigger={
@@ -210,7 +224,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 }
               />
               {setPauseLogs && (
-                <Tooltip side="top" content="Paused, show next logs" open={pauseLogs}>
+                <Tooltip side="top" content="Resume real-time logs" open={pauseLogs}>
                   <div>
                     <ButtonIcon
                       icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
@@ -249,7 +263,14 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 : ''
             } ${withLogsNavigation ? 'mt-[76px]' : 'mt-[36px]'}`}
           >
-            <div className="relative z-10">{children}</div>
+            <UpdateTimeContext.Provider
+              value={{
+                ...updateTimeContextValue,
+                setUpdateTimeContext,
+              }}
+            >
+              <div className="relative z-10">{children}</div>
+            </UpdateTimeContext.Provider>
           </div>
           {tabInformation && <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />}
         </>
