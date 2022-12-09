@@ -44,8 +44,8 @@ export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
 
 // 15 Sep, 10:23:20:20
 export const dateFullFormat = (date: string, timeZone?: string) => {
-  const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  return formatInTimeZone(new Date(date), 'dd MMM, HH:mm:ss:SS', timeZone ? timeZone : currentTimeZone)
+  const localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  return formatInTimeZone(new Date(date), 'dd MMM, HH:mm:ss:SS', timeZone ? timeZone : localTimeZone)
 }
 
 export const dateToFormat = (date: string, format: string) => {
