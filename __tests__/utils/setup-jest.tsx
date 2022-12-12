@@ -1,27 +1,7 @@
 import '@testing-library/jest-dom'
-import { RenderOptions, cleanup, render } from '@testing-library/react'
+import { RenderOptions, render } from '@testing-library/react'
 import React from 'react'
-import { server } from '../server'
 import { Props, Wrapper } from './providers'
-
-beforeAll(() =>
-  server.listen({
-    onUnhandledRequest: ({ method, url }) => {
-      if (url.pathname.indexOf('__test') === -1) {
-        throw new Error(`Unhandled ${method} request to ${url}`)
-      }
-    },
-  })
-)
-
-afterEach(() => {
-  server.resetHandlers()
-  cleanup()
-})
-
-afterAll(() => {
-  server.close()
-})
 
 type CustomRenderOptions = {
   wrapperProps?: Props
