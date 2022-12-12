@@ -1,4 +1,5 @@
 import { Auth0Provider } from '@auth0/auth0-react'
+import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { configureStore } from '@reduxjs/toolkit'
 import posthog from 'posthog-js'
 import React, { ComponentType, ReactNode } from 'react'
@@ -33,9 +34,11 @@ export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootSta
   return (
     <Auth0Provider clientId="__test_client_id__" domain="__test_domain__">
       <Provider store={store}>
-        <ModalProvider>
-          <MemoryRouter>{children}</MemoryRouter>
-        </ModalProvider>
+        <TooltipPrimitive.Provider>
+          <ModalProvider>
+            <MemoryRouter>{children}</MemoryRouter>
+          </ModalProvider>
+        </TooltipPrimitive.Provider>
       </Provider>
     </Auth0Provider>
   )

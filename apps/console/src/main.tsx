@@ -1,4 +1,5 @@
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
+import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import { createBrowserHistory } from 'history'
 import posthog from 'posthog-js'
 import { createRoot } from 'react-dom/client'
@@ -40,10 +41,12 @@ root.render(
     >
       <Provider store={store}>
         <BrowserRouter>
-          <ModalProvider>
-            <App />
-            <ToastBehavior />
-          </ModalProvider>
+          <TooltipPrimitive.Provider>
+            <ModalProvider>
+              <App />
+              <ToastBehavior />
+            </ModalProvider>
+          </TooltipPrimitive.Provider>
         </BrowserRouter>
       </Provider>
     </Auth0Provider>
