@@ -7,7 +7,7 @@ module.exports = {
   testPathIgnorePatterns: ['./node_modules/', './.next/', './__tests__/utils/setup-jest.tsx'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': 'babel-jest',
+    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
     '^.+\\.scss$': 'jest-scss-transform',
   },
   transformIgnorePatterns: [
