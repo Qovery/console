@@ -4,13 +4,13 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ organizationId: '1' }),
 }))
 
-// describe('PagesSettings', () => {
-//   it('should render successfully', () => {
-//     const { baseElement } = render(
-//       <Routes location="/organization/1/settings">
-//         <Route path="/organization/1/settings/*" element={<PagesSettings />} />
-//       </Routes>
-//     )
-//     expect(baseElement).toBeTruthy()
-//   })
-// })
+describe('PagesSettings', () => {
+  it('should render successfully', () => {
+    // const { baseElement } = render(
+    //   <Routes location="/organization/1/settings">
+    //     <Route path="/organization/1/settings/*" element={<PagesSettings />} />
+    //   </Routes>
+    // )
+    // expect(baseElement).toBeTruthy()
+  })
+})
