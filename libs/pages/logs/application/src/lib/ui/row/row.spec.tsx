@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { dateFullFormat } from '@qovery/shared/utils'
-import Row, { RowProps, getColorByPod } from './row'
+import Row, { RowProps, formatVersion, getColorByPod } from './row'
 
 jest.mock('date-fns-tz', () => ({
   format: jest.fn(() => '20 Sept, 19:44:44:44'),
@@ -58,5 +58,12 @@ describe('Row', () => {
 
     const cellVersion = screen.getByTestId('cell-version')
     expect(cellVersion?.textContent).toBe('53d...727')
+  })
+
+  it('should have function to format version', () => {
+    const { baseElement } = render(<div>{formatVersion('53deb16f853aef759b8be84fbeec96e9727')}</div>)
+
+    expect(baseElement.textContent).toBe('53d...727')
+    expect(formatVersion('53deb')).toBe('53deb')
   })
 })
