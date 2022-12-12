@@ -25,28 +25,32 @@ export function Tooltip(props: TooltipProps) {
   } = props
 
   return (
-    <TooltipPrimitive.Root
-      open={open}
-      defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}
-      delayDuration={delayDuration}
-    >
-      <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
-      <TooltipPrimitive.Content
-        className="bg-element-dark-400 text-text-100 dark:bg-element-light-lighter-200 dark:text-text-700 rounded-sm px-2 py-1 text-xs font-medium"
-        side={side}
-        sideOffset={6}
-        align={align}
+    <TooltipPrimitive.Provider>
+      <TooltipPrimitive.Root
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={onOpenChange}
+        delayDuration={delayDuration}
       >
-        {content}
-        <TooltipPrimitive.Arrow
-          className="fill-element-dark-400 dark:fill-element-light-lighter-200"
-          offset={10}
-          width={11}
-          height={5}
-        />
-      </TooltipPrimitive.Content>
-    </TooltipPrimitive.Root>
+        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Portal>
+          <TooltipPrimitive.Content
+            className="bg-element-dark-400 text-text-100 dark:bg-element-light-lighter-200 dark:text-text-700 rounded-sm px-2 py-1 text-xs font-medium z-50"
+            side={side}
+            sideOffset={6}
+            align={align}
+          >
+            {content}
+            <TooltipPrimitive.Arrow
+              className="fill-element-dark-400 dark:fill-element-light-lighter-200"
+              offset={10}
+              width={11}
+              height={5}
+            />
+          </TooltipPrimitive.Content>
+        </TooltipPrimitive.Portal>
+      </TooltipPrimitive.Root>
+    </TooltipPrimitive.Provider>
   )
 }
 
