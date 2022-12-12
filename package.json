@@ -67,7 +67,8 @@
     "react-use-websocket": "^4.2.0",
     "regenerator-runtime": "0.13.7",
     "tailwindcss": "3.1.8",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "history": "^5.2.0"
   },
   "resolutions": {
     "axios": "0.27.2"
@@ -109,7 +110,6 @@
     "eslint-plugin-react": "7.31.8",
     "eslint-plugin-react-hooks": "4.6.0",
     "faker": "^6.6.6",
-    "history": "^5.2.0",
     "husky": "^8.0.2",
     "identity-obj-proxy": "^3.0.0",
     "jest": "28.1.1",
