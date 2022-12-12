@@ -2,7 +2,7 @@ import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
@@ -12,15 +12,7 @@ import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { PageOnboarding } from '@qovery/pages/onboarding'
 import { useAuth } from '@qovery/shared/auth'
 import { UserInterface } from '@qovery/shared/interfaces'
-import {
-  BetaRoute,
-  LOGIN_URL,
-  LOGOUT_URL,
-  NO_BETA_ACCESS_URL,
-  NoBetaAccess,
-  ONBOARDING_URL,
-  ProtectedRoute,
-} from '@qovery/shared/router'
+import { LOGIN_URL, LOGOUT_URL, ONBOARDING_URL, ProtectedRoute } from '@qovery/shared/router'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useAuthInterceptor, useDocumentTitle } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
@@ -29,8 +21,6 @@ import { ROUTER } from './router/main.router'
 export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
-
-  const [, setBetaAccess] = useState(false)
 
   const gtmParams = { id: environment.gtm }
 
@@ -67,7 +57,6 @@ export function App() {
     // if (process.env['NODE_ENV'] === 'production') {
 
     // if onboarding feature flag activated we add onboarding routes to router
-    // const isOnboarding = posthog && posthog.isFeatureEnabled('v3-onboarding')
     const isOnboarding = environment.onboarding === 'true'
     if (isOnboarding) {
       ROUTER.push({
@@ -86,10 +75,7 @@ export function App() {
 
   useEffect(() => {
     if (user && user.sub) {
-      if (process.env['NODE_ENV'] !== 'production') {
-        posthog.feature_flags.override(['v3-beta'])
-        setBetaAccess(posthog.isFeatureEnabled('v3-beta'))
-      } else {
+      if (process.env['NODE_ENV'] === 'production') {
         initMonitorings(user)
       }
     }
@@ -104,14 +90,6 @@ export function App() {
       <Routes>
         <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
         <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
-        <Route
-          path={NO_BETA_ACCESS_URL}
-          element={
-            <ProtectedRoute>
-              <NoBetaAccess />
-            </ProtectedRoute>
-          }
-        />
         {ROUTER.map(
           (route) =>
             !route.layout && (
@@ -135,11 +113,9 @@ export function App() {
                     </DarkModeEnabler>
                   ) : (
                     <ProtectedRoute>
-                      <BetaRoute>
-                        <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
-                          <Layout topBar={route.topBar}>{route.component}</Layout>
-                        </DarkModeEnabler>
-                      </BetaRoute>
+                      <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
+                        <Layout topBar={route.topBar}>{route.component}</Layout>
+                      </DarkModeEnabler>
                     </ProtectedRoute>
                   )
                 }

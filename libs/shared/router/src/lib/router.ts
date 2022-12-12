@@ -11,7 +11,6 @@ export const INDEX_URL = '/'
 export const ORGANIZATION_URL = (organizationId = ':organizationId') => `/organization/${organizationId}`
 export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
   `/organization/${organizationId}/project/${projectId}/overview`
-export const NO_BETA_ACCESS_URL = '/no-beta-access'
 export interface Route {
   component: React.ReactElement
   path: string
