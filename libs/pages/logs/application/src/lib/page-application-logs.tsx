@@ -111,12 +111,12 @@ export function PageApplicationLogs() {
     },
     {
       title: 'Version',
-      className: 'pl-4 pr-5 text-right',
+      className: 'pl-4 pr-10 text-right',
       classNameTitle: 'text-text-300',
     },
     {
       title: 'Time',
-      className: 'px-4 w-[156px]',
+      className: 'pl-5 pr-4 w-[156px]',
       classNameTitle: 'text-text-300',
     },
     {

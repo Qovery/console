@@ -57,6 +57,6 @@ describe('Row', () => {
     render(<Row {...props} />)
 
     const cellVersion = screen.getByTestId('cell-version')
-    expect(cellVersion?.textContent).toBe('53deb1')
+    expect(cellVersion?.textContent).toBe('53d...727')
   })
 })

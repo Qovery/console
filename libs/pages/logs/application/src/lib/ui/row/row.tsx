@@ -35,6 +35,20 @@ export const getColorByPod = (pod?: string) => {
   return stringToColor(pod)
 }
 
+export const formatVersion = (version: string) => {
+  if (version.length < 6) {
+    return version
+  } else {
+    return (
+      <Tooltip content={version}>
+        <span>
+          {version.substring(0, 3)}...{version.slice(-3)}
+        </span>
+      </Tooltip>
+    )
+  }
+}
+
 export interface RowProps {
   data: Log
   filter: TableFilterProps
@@ -57,11 +71,11 @@ export function Row(props: RowProps) {
             </span>
           </Tooltip>
         </div>
-        <div data-testid="cell-version" className="flex whitespace-nowrap py-1 pl-4 text-text-100 min-w-[78px]">
+        <div data-testid="cell-version" className="flex whitespace-nowrap py-1 pl-4 text-text-100 min-w-[100px]">
           {data.version && (
             <span>
               <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
-              {data.version?.substring(0, 6)}
+              {formatVersion(data.version)}
             </span>
           )}
         </div>
