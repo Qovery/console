@@ -60,6 +60,7 @@ describe('PageSettingsAdvanced', () => {
 
     await act(() => {
       const input = getByLabelText('build.timeout_max_sec')
+      fireEvent.input(input, { target: { value: '79' } })
       fireEvent.input(input, { target: { value: '' } })
     })
 

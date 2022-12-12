@@ -27,7 +27,7 @@ const WrapperForm = ({ children }) => {
       value: 'asdas',
       isSecret: false,
     },
-    mode: 'onChange',
+    mode: 'all',
   })
 
   return <FormProvider {...methods}>{children}</FormProvider>
@@ -73,8 +73,10 @@ describe('CrudEnvironmentVariableModal', () => {
         fireEvent.change(textarea, { target: { value: '' } })
       })
 
-      const error = screen.getByText('Please enter a value.')
-      expect(error).toBeTruthy()
+      await waitFor(async () => {
+        const error = screen.getByText('Please enter a value.')
+        expect(error).toBeTruthy()
+      })
 
       await waitFor(async () => {
         const button = await getByRole(baseElement, 'button', { name: 'Confirm' })

@@ -95,8 +95,10 @@ describe('ImportEnvironmentVariableModal', () => {
         fireEvent.input(input, { target: { value: '' } })
       })
 
-      const warningIcon = screen.getByTestId('warning-icon-left')
-      expect(warningIcon).toBeInTheDocument()
+      await waitFor(() => {
+        const warningIcon = screen.getByTestId('warning-icon-left')
+        expect(warningIcon).toBeInTheDocument()
+      })
 
       await waitFor(async () => {
         const button = await getByTestId(baseElement, 'submit-button')
