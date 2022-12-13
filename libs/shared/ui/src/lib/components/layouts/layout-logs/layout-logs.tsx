@@ -6,15 +6,29 @@ import {
   EnvironmentLogsError,
   Log,
 } from 'qovery-typescript-axios'
-import { MouseEvent, ReactNode, useEffect, useRef } from 'react'
+import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
-import { ButtonIcon, ButtonIconStyle, ButtonSize, Icon, IconAwesomeEnum, StatusChip, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  Menu,
+  MenuAlign,
+  MenuData,
+  StatusChip,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import TabsLogs from './tabs-logs/tabs-logs'
+import { UpdateTimeContext, defaultUpdateTimeContext } from './update-time-context/update-time-context'
 
 export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
@@ -57,6 +71,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
 
   const refScrollSection = useRef<HTMLDivElement>(null)
 
+  const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
+
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const forcedScroll = (down?: boolean) => {
@@ -89,6 +105,34 @@ export function LayoutLogs(props: LayoutLogsProps) {
     const row = section.querySelector('.row-error')
     if (row) scrollParentToChild(section, row, 100)
   }
+
+  const menusTimeFormat: MenuData = [
+    {
+      title: 'Time format',
+      items: [
+        {
+          name: 'Local browser time',
+          contentLeft: (
+            <Icon
+              name={IconAwesomeEnum.CHECK}
+              className={`text-success-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ),
+          onClick: () => setUpdateTimeContext({ utc: false }),
+        },
+        {
+          name: 'UTC',
+          contentLeft: (
+            <Icon
+              name={IconAwesomeEnum.CHECK}
+              className={`text-success-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ),
+          onClick: () => setUpdateTimeContext({ utc: true }),
+        },
+      ],
+    },
+  ]
 
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
@@ -165,8 +209,22 @@ export function LayoutLogs(props: LayoutLogsProps) {
               </p>
             )}
             <div className="flex">
+              <Menu
+                menus={menusTimeFormat}
+                arrowAlign={MenuAlign.END}
+                trigger={
+                  <Button
+                    className="mr-2"
+                    size={ButtonSize.TINY}
+                    style={ButtonStyle.DARK}
+                    iconRight={IconAwesomeEnum.ANGLE_DOWN}
+                  >
+                    Time format
+                  </Button>
+                }
+              />
               {setPauseLogs && (
-                <Tooltip side="top" content="Paused, show next logs" open={pauseLogs}>
+                <Tooltip side="top" content="Resume real-time logs" open={pauseLogs}>
                   <div>
                     <ButtonIcon
                       icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
@@ -205,7 +263,14 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 : ''
             } ${withLogsNavigation ? 'mt-[76px]' : 'mt-[36px]'}`}
           >
-            <div className="relative z-10">{children}</div>
+            <UpdateTimeContext.Provider
+              value={{
+                ...updateTimeContextValue,
+                setUpdateTimeContext,
+              }}
+            >
+              <div className="relative z-10">{children}</div>
+            </UpdateTimeContext.Provider>
           </div>
           {tabInformation && <TabsLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />}
         </>

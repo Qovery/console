@@ -1,6 +1,7 @@
 import { EnvironmentLogs } from 'qovery-typescript-axios'
+import { useContext } from 'react'
 import { LogsType } from '@qovery/shared/enums'
-import { CopyToClipboard, Tooltip } from '@qovery/shared/ui'
+import { CopyToClipboard, Tooltip, UpdateTimeContext } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 export interface RowProps {
@@ -10,6 +11,8 @@ export interface RowProps {
 
 export function Row(props: RowProps) {
   const { index, data } = props
+
+  const { utc } = useContext(UpdateTimeContext)
 
   const type = data.type
   const step = data.details?.stage?.step
@@ -74,7 +77,7 @@ export function Row(props: RowProps) {
         )}
       </div>
       <div data-testid="cell-date" className={`py-1 px-2 font-code shrink-0 w-[154px] ${colorsCellClassName()}`}>
-        {dateFullFormat(data.timestamp)}
+        {dateFullFormat(data.timestamp, utc ? 'UTC' : undefined)}
       </div>
       <div
         data-testid="cell-scope"

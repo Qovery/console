@@ -1,17 +1,6 @@
-import {
-  fireEvent,
-  getByRole,
-  getByTestId,
-  queryByRole,
-  queryByTestId,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react'
-import exp from 'constants'
-import { useContext, useEffect } from 'react'
-import { useEventSource } from 'react-use-websocket'
-import ModalRoot, { ModalContext } from './modal-root'
+import { fireEvent, getByRole, getByTestId, queryByTestId, render, waitFor } from '@testing-library/react'
+import { useEffect } from 'react'
+import ModalRoot from './modal-root'
 import useModal from './use-modal/use-modal'
 
 function Content(props: { shouldConfirm?: boolean }) {
@@ -19,7 +8,7 @@ function Content(props: { shouldConfirm?: boolean }) {
 
   useEffect(() => {
     enableAlertClickOutside(props.shouldConfirm || false)
-  }, [enableAlertClickOutside])
+  }, [enableAlertClickOutside, props.shouldConfirm])
 
   return (
     <div>
