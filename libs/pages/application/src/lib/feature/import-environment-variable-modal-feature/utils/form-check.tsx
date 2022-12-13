@@ -1,18 +1,20 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { getScopeHierarchy } from '../../../utils/compute-available-environment-variable-scope'
 
 export const validateKey = (
   value: string,
   existingVars: EnvironmentVariableSecretOrPublic[],
-  currentScope: APIVariableScopeEnum
+  currentScope: APIVariableScopeEnum,
+  serviceType?: ServiceTypeEnum
 ): string | boolean => {
   if (value.toLowerCase().startsWith('qovery')) {
     return 'Variable name cannot begin with "QOVERY"'
   }
 
   const existingVar = existingVars.find((envVar) => envVar.key === value)
-  if (existingVar && getScopeHierarchy(existingVar.scope) > getScopeHierarchy(currentScope)) {
+  if (existingVar && getScopeHierarchy(existingVar.scope, serviceType) > getScopeHierarchy(currentScope, serviceType)) {
     return 'This variable name already exists on a lower scope'
   }
 
@@ -23,11 +25,12 @@ export const warningMessage = (
   value: string,
   existingVars: EnvironmentVariableSecretOrPublic[],
   currentScope: APIVariableScopeEnum,
-  overwriteEnabled = false
+  overwriteEnabled = false,
+  serviceType?: ServiceTypeEnum
 ): string | undefined => {
   const existingVar = existingVars.find((envVar) => envVar.key === value)
 
-  if (existingVar && getScopeHierarchy(currentScope) > getScopeHierarchy(existingVar.scope)) {
+  if (existingVar && getScopeHierarchy(currentScope, serviceType) > getScopeHierarchy(existingVar.scope, serviceType)) {
     return 'This variable name already exists on a higher scope. An override will be created.'
   }
 

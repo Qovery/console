@@ -72,7 +72,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           rules={{
             required: 'Please select a value.',
           }}
-          render={({ field, fieldState: { error } }) => (
+          render={({ field }) => (
             <InputSelect
               className="mb-6"
               portal

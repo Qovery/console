@@ -11603,13 +11603,6 @@ history@5.0.0:
   dependencies:
     "@babel/runtime" "^7.7.6"
 
-history@^5.2.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/history/-/history-5.3.0.tgz#1548abaa245ba47992f063a0783db91ef201c73b"
-  integrity sha512-ZqaKwjjrAYUYfLG+htGaIIZ4nioX2L70ZUMIFysS3xvBsSG4x/n1V6TXV3N8ZYNuFGlDirFg32T7B6WOUPDYcQ==
-  dependencies:
-    "@babel/runtime" "^7.7.6"
-
 hmac-drbg@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -16675,10 +16668,10 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==
 
-qovery-typescript-axios@^1.1.53:
-  version "1.1.53"
-  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.53.tgz#01946045441fa54ae35abce5fee9dd3ec0a96be7"
-  integrity sha512-mKX0HRFwt/7bLN5rlnwUKvNdPhz7J5ylY5bQc7ZvmP4gvV9pJNrOsAhGLEOxihXeEwAFpSHN4mTJsqdneBO+zg==
+qovery-typescript-axios@^1.1.54:
+  version "1.1.54"
+  resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.54.tgz#f3a82274af0f936fda420df45693e474069d8abf"
+  integrity sha512-HeH6CCLRJUX9avEw7natPoRbpTZKDqtG/e2AJ1i4BnvIc0GBJUSYhO1z5LZbgg7ur306tiwXaIJhURvE4FyAjQ==
   dependencies:
     axios "^0.21.4"
 
