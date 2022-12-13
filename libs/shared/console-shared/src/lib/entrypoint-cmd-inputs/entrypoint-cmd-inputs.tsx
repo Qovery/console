@@ -5,19 +5,24 @@ export interface EntrypointCmdInputsProps {
   className?: string
   entrypointRequired?: boolean
   cmdRequired?: boolean
+  imageEntryPointFieldName?: string
+  cmdArgumentsFieldName?: string
 }
 
 export function EntrypointCmdInputs(props: EntrypointCmdInputsProps) {
-  const { className = 'mb-6', entrypointRequired = false, cmdRequired = false } = props
-  const { control } = useFormContext<{
-    image_entry_point?: string
-    cmd_arguments?: string
-  }>()
+  const {
+    className = 'mb-6',
+    entrypointRequired = false,
+    cmdRequired = false,
+    imageEntryPointFieldName = 'image_entry_point',
+    cmdArgumentsFieldName = 'cmd_arguments',
+  } = props
+  const { control } = useFormContext()
 
   return (
     <div className={className}>
       <Controller
-        name="image_entry_point"
+        name={imageEntryPointFieldName}
         control={control}
         rules={{
           required: entrypointRequired && 'Please enter an entrypoint.',
@@ -35,7 +40,7 @@ export function EntrypointCmdInputs(props: EntrypointCmdInputsProps) {
         )}
       />
       <Controller
-        name="cmd_arguments"
+        name={cmdArgumentsFieldName}
         control={control}
         rules={{
           required: cmdRequired && 'Please enter an command.',

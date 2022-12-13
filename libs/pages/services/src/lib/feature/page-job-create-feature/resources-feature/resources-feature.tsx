@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
-  SERVICES_JOB_CREATION_GENERAL_URL,
+  SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
@@ -54,7 +54,7 @@ export function ResourcesFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(2)
+    setCurrentStep(3)
   }, [setCurrentStep])
 
   const methods = useForm<ResourcesData>({
@@ -70,7 +70,7 @@ export function ResourcesFeature() {
 
   const onBack = () => {
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-    navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
+    navigate(pathCreate + SERVICES_JOB_CREATION_CONFIGURE_URL)
   }
 
   return (

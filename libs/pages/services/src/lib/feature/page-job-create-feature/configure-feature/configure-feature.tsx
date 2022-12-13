@@ -1,28 +1,22 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/router'
-import { toastError } from '@qovery/shared/toast'
+import {
+  SERVICES_JOB_CREATION_GENERAL_URL,
+  SERVICES_JOB_CREATION_RESOURCES_URL,
+  SERVICES_URL,
+} from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
-import General from '../../../ui/page-job-create/general/general'
-import { GeneralData } from '../job-creation-flow.interface'
+import Configure from '../../../ui/page-job-create/configure/configure'
+import { ConfigureData } from '../job-creation-flow.interface'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
-export function GeneralFeature() {
-  useDocumentTitle('General - Create Job')
-  const { setGeneralData, generalData, setCurrentStep, jobURL, jobType } = useJobContainerCreateContext()
+export function ConfigureFeature() {
+  useDocumentTitle('Configure - Create Job')
+  const { configureData, setConfigureData, setCurrentStep, jobURL, jobType } = useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
-
-  const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
-    selectOrganizationById(state, organizationId)
-  )
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -47,48 +41,36 @@ export function GeneralFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(1)
+    setCurrentStep(2)
   }, [setCurrentStep])
 
-  const methods = useForm<GeneralData>({
-    defaultValues: generalData,
+  const methods = useForm<ConfigureData>({
+    defaultValues: configureData,
     mode: 'onChange',
   })
-
-  const dispatch = useDispatch<AppDispatch>()
-  const watchServiceType = methods.watch('serviceType')
-
-  useEffect(() => {
-    if (isContainer(watchServiceType)) {
-      dispatch(fetchOrganizationContainerRegistries({ organizationId }))
-    }
-  }, [watchServiceType, dispatch, organizationId])
 
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {
       ...data,
     }
 
-    if (data.serviceType === ServiceTypeEnum.CONTAINER && data.cmd_arguments) {
-      try {
-        cloneData.cmd = eval(data.cmd_arguments)
-      } catch (e: any) {
-        toastError(e, 'Invalid CMD array')
-        return
-      }
-    }
-    setGeneralData(cloneData)
+    setConfigureData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-    navigate(pathCreate + SERVICES_JOB_CREATION_CONFIGURE_URL)
+    navigate(pathCreate + SERVICES_JOB_CREATION_RESOURCES_URL)
   })
+
+  const onBack = () => {
+    const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
+    navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
+  }
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <General organization={organization} onSubmit={onSubmit} jobType={jobType} />
+        <Configure onSubmit={onSubmit} onBack={onBack} jobType={jobType} />
       </FormProvider>
     </FunnelFlowBody>
   )
 }
 
-export default GeneralFeature
+export default ConfigureFeature

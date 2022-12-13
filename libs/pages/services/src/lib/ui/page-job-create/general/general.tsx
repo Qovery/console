@@ -5,7 +5,7 @@ import { EntrypointCmdInputs, GeneralContainerSettings } from '@qovery/shared/co
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
-import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText, InputTextArea, Link } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
 import { GeneralData } from '../../../feature/page-job-create-feature/job-creation-flow.interface'
 import CreateGeneralGitApplication from '../../page-application-create/page-application-create-general/create-general-git-application/create-general-git-application'
 
@@ -107,110 +107,6 @@ export function General(props: GeneralProps) {
       )}
 
       <EntrypointCmdInputs entrypointRequired />
-
-      <div className="border-b border-b-element-light-lighter-400 mb-3"></div>
-
-      <p className="text-text-500 text-sm mb-3">Job configuration</p>
-
-      {props.jobType === 'cron' ? (
-        <Controller
-          name="schedule"
-          control={control}
-          rules={{
-            required: 'Value required',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-2"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Schedule - Cron expression"
-              error={error?.message}
-            />
-          )}
-        />
-      ) : (
-        <p>lifecycle event widget</p>
-      )}
-
-      <div className="mb-3 flex justify-between">
-        <p className="text-text-500 text-xs ">Every minutes</p>
-        <Link
-          external={true}
-          link="https://docs.qovery.com/docs/faq#what-is-a-cron-expression"
-          className="text-text-400 !text-xs"
-          linkLabel="CRON expression builder"
-        />
-      </div>
-
-      <Controller
-        name="nb_restarts"
-        control={control}
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            className="mb-2"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Number of restarts"
-            error={error?.message}
-          />
-        )}
-      />
-      <p className="text-text-400 text-xs mb-3">
-        Maximum number of restarts allowed in case of job failure (0 means no failure)
-      </p>
-
-      <Controller
-        name="max_duration"
-        control={control}
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            className="mb-2"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Max duration in seconds"
-            error={error?.message}
-          />
-        )}
-      />
-
-      <p className="text-text-400 text-xs mb-3">
-        Maximum duration allowed for the job to run before killing it and mark it as failed
-      </p>
-
-      <Controller
-        name="port"
-        control={control}
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            className="mb-2"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Port"
-            error={error?.message}
-          />
-        )}
-      />
-
-      <p className="text-text-400 text-xs mb-3">
-        Port where to run readiness and liveliness probes checks. The port will not be exposed externally
-      </p>
 
       <form onSubmit={props.onSubmit}>
         <div className="flex justify-between">

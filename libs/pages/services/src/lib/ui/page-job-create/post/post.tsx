@@ -3,13 +3,18 @@ import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { FlowVariableData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { GeneralData, ResourcesData } from '../../../feature/page-job-create-feature/job-creation-flow.interface'
+import {
+  ConfigureData,
+  GeneralData,
+  ResourcesData,
+} from '../../../feature/page-job-create-feature/job-creation-flow.interface'
 
 export interface PostProps {
   onSubmit: (withDeploy: boolean) => void
   onPrevious: () => void
   generalData: GeneralData
   resourcesData: ResourcesData
+  configureData: ConfigureData
   variableData: FlowVariableData
   gotoGlobalInformation: () => void
   gotoResources: () => void
@@ -87,7 +92,7 @@ export function Post(props: PostProps) {
                 </>
               )}
               <li>
-                Port: <strong>{props.generalData.port}</strong>
+                Port: <strong>{props.configureData.port}</strong>
               </li>
             </ul>
           </div>

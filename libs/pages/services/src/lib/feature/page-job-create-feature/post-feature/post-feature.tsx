@@ -17,11 +17,12 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import Post from '../../../ui/page-job-create/post/post'
-import { GeneralData, ResourcesData } from '../job-creation-flow.interface'
+import { ConfigureData, GeneralData, ResourcesData } from '../job-creation-flow.interface'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 function prepareJobRequest(
   generalData: GeneralData,
+  configureData: ConfigureData,
   resourcesData: ResourcesData,
   selectedRepository: RepositoryEntity | undefined,
   jobType: 'cron' | 'lifecycle'
@@ -31,24 +32,24 @@ function prepareJobRequest(
 
   const jobRequest: JobRequest = {
     name: generalData.name,
-    port: Number(generalData.port),
+    port: Number(configureData.port),
     description: generalData.description || '',
     cpu: cpu,
     memory: memory,
     arguments: generalData.cmd || [],
     entrypoint: generalData.image_entry_point || '',
-    max_nb_restart: Number(generalData.nb_restarts) || 0,
-    max_duration_seconds: Number(generalData.max_duration) || 0,
+    max_nb_restart: Number(configureData.nb_restarts) || 0,
+    max_duration_seconds: Number(configureData.max_duration) || 0,
   }
 
   if (jobType === 'cron') {
     jobRequest.schedule = {
-      scheduled_at: generalData.schedule || '',
+      scheduled_at: configureData.schedule || '',
       event: JobScheduleEvent.CRON,
     }
   } else {
     jobRequest.schedule = {
-      event: generalData.event as JobScheduleEvent,
+      event: configureData.event as JobScheduleEvent,
     }
   }
 
@@ -94,7 +95,8 @@ function prepareVariableRequest(variablesData: FlowVariableData): VariableImport
 
 export function PostFeature() {
   useDocumentTitle('Summary - Create Application')
-  const { generalData, resourcesData, setCurrentStep, jobURL, variableData, jobType } = useJobContainerCreateContext()
+  const { generalData, resourcesData, configureData, setCurrentStep, jobURL, variableData, jobType } =
+    useJobContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
@@ -126,10 +128,16 @@ export function PostFeature() {
   const dispatch = useDispatch<AppDispatch>()
 
   const onSubmit = (withDeploy: boolean) => {
-    if (generalData && resourcesData && variableData) {
+    if (generalData && resourcesData && variableData && configureData) {
       toggleLoading(true, withDeploy)
 
-      const jobRequest: JobRequest = prepareJobRequest(generalData, resourcesData, selectedRepository, jobType)
+      const jobRequest: JobRequest = prepareJobRequest(
+        generalData,
+        configureData,
+        resourcesData,
+        selectedRepository,
+        jobType
+      )
       const variableRequest = prepareVariableRequest(variableData)
 
       dispatch(
@@ -195,7 +203,7 @@ export function PostFeature() {
 
   return (
     <FunnelFlowBody>
-      {generalData && resourcesData && variableData && (
+      {generalData && resourcesData && variableData && configureData && (
         <Post
           isLoadingCreate={loadingCreate}
           isLoadingCreateAndDeploy={loadingCreateAndDeploy}
@@ -204,6 +212,7 @@ export function PostFeature() {
           generalData={generalData}
           resourcesData={resourcesData}
           gotoResources={gotoResources}
+          configureData={configureData}
           gotoVariables={gotoVariable}
           gotoGlobalInformation={gotoGlobalInformations}
           variableData={variableData}

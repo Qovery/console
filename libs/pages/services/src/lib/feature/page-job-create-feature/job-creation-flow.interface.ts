@@ -5,12 +5,6 @@ export interface GeneralData {
   description: string
   serviceType: ServiceTypeEnum
 
-  schedule?: string
-  event?: string
-  nb_restarts?: number
-  max_duration?: number
-  port?: number
-
   // container
   registry?: string
   image_name?: string
@@ -27,6 +21,32 @@ export interface GeneralData {
   root_path?: string
   buildpack_language?: string
   dockerfile_path?: string
+}
+
+export interface ConfigureData {
+  schedule?: string
+  event?: string
+  nb_restarts?: number
+  max_duration?: number
+  port?: number
+
+  on_stop?: {
+    enabled?: boolean
+    arguments?: string[]
+    entrypoint?: string
+  }
+
+  on_start?: {
+    enabled?: boolean
+    arguments?: string[]
+    entrypoint?: string
+  }
+
+  on_delete?: {
+    enabled?: boolean
+    arguments?: string[]
+    entrypoint?: string
+  }
 }
 
 export interface ResourcesData {

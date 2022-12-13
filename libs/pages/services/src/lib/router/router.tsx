@@ -13,6 +13,7 @@ import {
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
@@ -35,6 +36,7 @@ import PageDatabaseCreatePostFeature from '../feature/page-database-create-featu
 import PageDatabaseCreateResourcesFeature from '../feature/page-database-create-feature/page-database-create-resources-feature/page-database-create-resources-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
+import ConfigureFeature from '../feature/page-job-create-feature/configure-feature/configure-feature'
 import { GeneralFeature } from '../feature/page-job-create-feature/general-feature/general-feature'
 import { PageJobCreateFeature } from '../feature/page-job-create-feature/page-job-create-feature'
 import { PostFeature } from '../feature/page-job-create-feature/post-feature/post-feature'
@@ -139,6 +141,10 @@ export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
   {
     path: SERVICES_JOB_CREATION_GENERAL_URL,
     component: <GeneralFeature />,
+  },
+  {
+    path: SERVICES_JOB_CREATION_CONFIGURE_URL,
+    component: <ConfigureFeature />,
   },
   {
     path: SERVICES_JOB_CREATION_RESOURCES_URL,

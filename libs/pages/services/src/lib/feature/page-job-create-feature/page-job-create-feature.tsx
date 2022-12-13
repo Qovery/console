@@ -10,13 +10,17 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
-import { GeneralData, ResourcesData } from './job-creation-flow.interface'
+import { ConfigureData, GeneralData, ResourcesData } from './job-creation-flow.interface'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalData: GeneralData | undefined
   setGeneralData: (data: GeneralData) => void
+
+  configureData: ConfigureData | undefined
+  setConfigureData: (data: ConfigureData) => void
+
   resourcesData: ResourcesData | undefined
   setResourcesData: (data: ResourcesData) => void
 
@@ -39,6 +43,7 @@ export const useJobContainerCreateContext = () => {
 
 export const steps: { title: string }[] = [
   { title: 'Create new job' },
+  { title: 'Job Configuration' },
   { title: 'Set resources' },
   { title: 'Set port' },
   { title: 'Set variable environments' },
@@ -54,6 +59,7 @@ export function PageJobCreateFeature() {
   const [generalData, setGeneralData] = useState<GeneralData | undefined>()
   const [jobType, setJobType] = useState<'cron' | 'lifecycle'>('cron')
   const [jobURL, setJobURL] = useState<string | undefined>()
+  const [configureData, setConfigureData] = useState<ConfigureData | undefined>()
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
@@ -92,6 +98,8 @@ export function PageJobCreateFeature() {
         jobURL,
         variableData,
         setVariableData,
+        configureData,
+        setConfigureData,
       }}
     >
       <FunnelFlow
