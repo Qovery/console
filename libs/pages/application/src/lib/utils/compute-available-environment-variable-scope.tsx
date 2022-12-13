@@ -24,11 +24,6 @@ const environmentScopes = (serviceType?: ServiceTypeEnum) => [
   },
 ]
 
-// : {
-//   name: APIVariableScopeEnum
-//   hierarchy: number
-// }[]
-
 export const computeAvailableScope = (
   scope?: APIVariableScopeEnum,
   includeBuiltIn?: boolean,
