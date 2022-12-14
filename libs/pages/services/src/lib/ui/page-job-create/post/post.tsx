@@ -89,7 +89,7 @@ export function Post(props: PostProps) {
                     Image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
                   </li>
                   <li>
-                    CMD arguments: <strong>{props.generalData.cmd_arguments}</strong>
+                    CMD arguments: <strong>{props.configureData.cmd_arguments}</strong>
                   </li>
                 </>
               )}

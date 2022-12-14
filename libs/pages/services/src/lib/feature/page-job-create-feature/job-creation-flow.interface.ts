@@ -10,8 +10,6 @@ export interface GeneralData {
   image_name?: string
   image_tag?: string
   image_entry_point?: string
-  cmd_arguments?: string
-  cmd?: string[]
 
   // application
   build_mode?: string
@@ -30,21 +28,27 @@ export interface ConfigureData {
   max_duration?: number
   port?: number
 
+  cmd_arguments?: string
+  cmd?: string[]
+
   on_stop?: {
     enabled?: boolean
     arguments?: string[]
+    arguments_string?: string
     entrypoint?: string
   }
 
   on_start?: {
     enabled?: boolean
     arguments?: string[]
+    arguments_string?: string
     entrypoint?: string
   }
 
   on_delete?: {
     enabled?: boolean
     arguments?: string[]
+    arguments_string?: string
     entrypoint?: string
   }
 }

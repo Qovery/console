@@ -118,6 +118,7 @@ export function Configure(props: ConfigureProps) {
               linkLabel="CRON expression builder"
             />
           </div>
+          <EntrypointCmdInputs entrypointRequired />
         </>
       ) : (
         <div className="mt-8 mb-10">
@@ -140,7 +141,7 @@ export function Configure(props: ConfigureProps) {
           >
             <EntrypointCmdInputs
               className="mt-4"
-              cmdArgumentsFieldName="on_start.arguments"
+              cmdArgumentsFieldName="on_start.arguments_string"
               imageEntryPointFieldName="on_start.entrypoint"
             />
           </EnableBox>
@@ -156,7 +157,7 @@ export function Configure(props: ConfigureProps) {
           >
             <EntrypointCmdInputs
               className="mt-4"
-              cmdArgumentsFieldName="on_stop.arguments"
+              cmdArgumentsFieldName="on_stop.arguments_string"
               imageEntryPointFieldName="on_stop.entrypoint"
             />
           </EnableBox>
@@ -172,7 +173,7 @@ export function Configure(props: ConfigureProps) {
           >
             <EntrypointCmdInputs
               className="mt-4"
-              cmdArgumentsFieldName="on_delete.arguments"
+              cmdArgumentsFieldName="on_delete.arguments_string"
               imageEntryPointFieldName="on_delete.entrypoint"
             />
           </EnableBox>

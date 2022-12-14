@@ -6,6 +6,7 @@ import {
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
+import { toastError } from '@qovery/shared/toast'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import Configure from '../../../ui/page-job-create/configure/configure'
@@ -50,8 +51,48 @@ export function ConfigureFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    const cloneData = {
+    const cloneData: ConfigureData = {
       ...data,
+    }
+
+    if (jobType === 'cron') {
+      if (data.cmd_arguments) {
+        try {
+          cloneData.cmd = eval(data.cmd_arguments)
+        } catch (e: any) {
+          toastError(e, 'Invalid CMD array')
+          return
+        }
+      }
+    }
+
+    if (jobType === 'lifecycle') {
+      if (cloneData.on_start?.enabled && cloneData.on_start?.arguments_string) {
+        try {
+          cloneData.on_start.arguments = eval(cloneData.on_start.arguments_string)
+        } catch (e: any) {
+          toastError(e, 'Invalid CMD array')
+          return
+        }
+      }
+
+      if (cloneData.on_stop?.enabled && cloneData.on_stop?.arguments_string) {
+        try {
+          cloneData.on_stop.arguments = eval(cloneData.on_stop.arguments_string)
+        } catch (e: any) {
+          toastError(e, 'Invalid CMD array')
+          return
+        }
+      }
+
+      if (cloneData.on_delete?.enabled && cloneData.on_delete?.arguments_string) {
+        try {
+          cloneData.on_delete.arguments = eval(cloneData.on_delete.arguments_string)
+        } catch (e: any) {
+          toastError(e, 'Invalid CMD array')
+          return
+        }
+      }
     }
 
     setConfigureData(cloneData)

@@ -1,7 +1,7 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { EntrypointCmdInputs, GeneralContainerSettings } from '@qovery/shared/console-shared'
+import { GeneralContainerSettings } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
@@ -105,8 +105,6 @@ export function General(props: GeneralProps) {
           )}
         </>
       )}
-
-      <EntrypointCmdInputs entrypointRequired />
 
       <form onSubmit={props.onSubmit}>
         <div className="flex justify-between">

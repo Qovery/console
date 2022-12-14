@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum, JobRequest, JobScheduleEvent, VariableImportRequest } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, JobRequest, VariableImportRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -37,20 +37,45 @@ function prepareJobRequest(
     description: generalData.description || '',
     cpu: cpu,
     memory: memory,
-    arguments: generalData.cmd || [],
-    entrypoint: generalData.image_entry_point || '',
     max_nb_restart: Number(configureData.nb_restarts) || 0,
     max_duration_seconds: Number(configureData.max_duration) || 0,
+    auto_preview: true,
   }
 
   if (jobType === 'cron') {
     jobRequest.schedule = {
-      scheduled_at: configureData.schedule || '',
-      event: JobScheduleEvent.CRON,
+      cronjob: {
+        entrypoint: generalData.image_entry_point,
+        scheduled_at: configureData.schedule || '',
+        arguments: configureData.cmd || [''],
+      },
     }
   } else {
     jobRequest.schedule = {
-      event: configureData.event as JobScheduleEvent,
+      on_start: {
+        entrypoint: configureData.on_start?.entrypoint,
+        arguments: configureData.on_start?.arguments,
+      },
+      on_stop: {
+        entrypoint: configureData.on_stop?.entrypoint,
+        arguments: configureData.on_stop?.arguments,
+      },
+      on_delete: {
+        entrypoint: configureData.on_delete?.entrypoint,
+        arguments: configureData.on_delete?.arguments,
+      },
+    }
+
+    if (!configureData.on_start?.enabled) {
+      delete jobRequest.schedule.on_start
+    }
+
+    if (!configureData.on_stop?.enabled) {
+      delete jobRequest.schedule.on_stop
+    }
+
+    if (!configureData.on_delete?.enabled) {
+      delete jobRequest.schedule.on_delete
     }
   }
 

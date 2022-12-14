@@ -3,10 +3,9 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
+import { isContainer } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/router'
-import { toastError } from '@qovery/shared/toast'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -69,14 +68,6 @@ export function GeneralFeature() {
       ...data,
     }
 
-    if (data.serviceType === ServiceTypeEnum.CONTAINER && data.cmd_arguments) {
-      try {
-        cloneData.cmd = eval(data.cmd_arguments)
-      } catch (e: any) {
-        toastError(e, 'Invalid CMD array')
-        return
-      }
-    }
     setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
     navigate(pathCreate + SERVICES_JOB_CREATION_CONFIGURE_URL)
