@@ -1,6 +1,6 @@
 import { Link, matchPath, useLocation, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { CLUSTER_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { CLUSTERS_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -28,7 +28,7 @@ export function Navigation(props: NavigationProps) {
   const matchLogInfraRoute = matchPath(pathname, INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
-  const matchClusterRoute = pathname.includes(CLUSTER_URL(organizationId))
+  const matchClusterRoute = pathname.includes(CLUSTERS_URL(organizationId))
 
   const infosMenu = [
     {
@@ -93,7 +93,7 @@ export function Navigation(props: NavigationProps) {
             icon={IconAwesomeEnum.CLOUD_WORD}
             style={ButtonIconStyle.ALT}
             size={ButtonSize.XLARGE}
-            link={CLUSTER_URL(organizationId)}
+            link={CLUSTERS_URL(organizationId)}
           />
         </div>
         <div>

@@ -1,6 +1,6 @@
 import { JSXElementConstructor, ReactElement } from 'react'
 import { PageApplication } from '@qovery/pages/application'
-import { PageCluster } from '@qovery/pages/cluster'
+import { PageClusters } from '@qovery/pages/clusters'
 import { PageDatabase } from '@qovery/pages/database'
 import { PageEnvironments } from '@qovery/pages/environments'
 import { PageApplicationLogs } from '@qovery/pages/logs/application'
@@ -12,7 +12,7 @@ import { PageSettings } from '@qovery/pages/settings'
 import {
   APPLICATION_LOGS_URL,
   APPLICATION_URL,
-  CLUSTER_URL,
+  CLUSTERS_URL,
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_URL,
@@ -78,8 +78,8 @@ export const ROUTER: RouterProps[] = [
     layout: true,
   },
   {
-    path: CLUSTER_URL(),
-    component: <PageCluster />,
+    path: `${CLUSTERS_URL()}/*`,
+    component: <PageClusters />,
     protected: true,
     layout: true,
     topBar: false,

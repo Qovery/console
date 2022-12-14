@@ -25,7 +25,7 @@
       "@qovery/domains/projects": ["libs/domains/projects/src/index.ts"],
       "@qovery/domains/user": ["libs/domains/user/src/index.ts"],
       "@qovery/pages/application": ["libs/pages/application/src/index.ts"],
-      "@qovery/pages/cluster": ["libs/pages/cluster/src/index.ts"],
+      "@qovery/pages/clusters": ["libs/pages/clusters/src/index.ts"],
       "@qovery/pages/database": ["libs/pages/database/src/index.ts"],
       "@qovery/pages/environments": ["libs/pages/environments/src/index.ts"],
       "@qovery/pages/layout": ["libs/pages/layout/src/index.ts"],

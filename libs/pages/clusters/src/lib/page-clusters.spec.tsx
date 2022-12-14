@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react'
-import PageCluster from './page-cluster'
+import PageClusters from './page-clusters'
 
-describe('PageCluster', () => {
+describe('PageClusters', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageCluster />)
+    const { baseElement } = render(<PageClusters />)
     expect(baseElement).toBeTruthy()
   })
 })

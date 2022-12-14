@@ -213,7 +213,7 @@ export function RowMember(props: RowMemberProps) {
         data-testid="input"
         className={`flex relative px-3 py-2 border rounded select-none w-44 ${
           role?.toUpperCase() === InviteMemberRoleEnum.OWNER || !(member as Member).last_activity_at
-            ? 'bg-element-light-lighter-200 border-element-light-ligther-500 text-text-400'
+            ? 'bg-element-light-lighter-200 border-element-light-lighter-500 text-text-400'
             : 'border-element-light-ligther-600 text-text-600 cursor-pointer'
         }`}
       >
