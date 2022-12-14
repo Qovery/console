@@ -134,7 +134,7 @@ export function Configure(props: ConfigureProps) {
             checked={getValues().on_start?.enabled || false}
             title="Start"
             name="on_start"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget aliquam"
+            description="Execute this job when the environment starts"
             setChecked={(checked) => {
               setValue('on_start.enabled', checked)
             }}
@@ -153,7 +153,7 @@ export function Configure(props: ConfigureProps) {
               setValue('on_stop.enabled', checked)
             }}
             title="Stop"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget aliquam"
+            description="Execute this job when the environment stops"
           >
             <EntrypointCmdInputs
               className="mt-4"
@@ -169,7 +169,7 @@ export function Configure(props: ConfigureProps) {
               setValue('on_delete.enabled', checked)
             }}
             title="Delete"
-            description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget aliquam"
+            description="Execute this job when the environment is deleted"
           >
             <EntrypointCmdInputs
               className="mt-4"
