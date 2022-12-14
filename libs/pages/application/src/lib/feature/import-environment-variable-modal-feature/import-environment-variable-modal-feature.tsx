@@ -116,6 +116,7 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
         }}
         overwriteEnabled={overwriteEnabled}
         setOverwriteEnabled={setOverwriteEnabled}
+        serviceType={props.serviceType}
       />
     </FormProvider>
   )

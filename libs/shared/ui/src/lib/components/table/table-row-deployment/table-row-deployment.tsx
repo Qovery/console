@@ -4,7 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ContainerApplicationEntity, DeploymentService } from '@qovery/shared/interfaces'
-import { APPLICATION_GENERAL_URL, APPLICATION_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
+import {
+  APPLICATION_GENERAL_URL,
+  APPLICATION_URL,
+  DATABASE_GENERAL_URL,
+  DATABASE_URL,
+  DEPLOYMENT_LOGS_URL,
+} from '@qovery/shared/router'
 import {
   ButtonIconAction,
   IconAwesomeEnum,
@@ -122,7 +128,13 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
         {(data as DeploymentService).type && (
           <div className="px-3">
             <Skeleton show={isLoading} width={120} height={20}>
-              <Link to={APPLICATION_URL(organizationId, projectId, environmentId, data?.id) + APPLICATION_GENERAL_URL}>
+              <Link
+                to={
+                  (data as DeploymentService)?.type === ServiceTypeEnum.DATABASE
+                    ? `${DATABASE_URL(organizationId, projectId, environmentId, data?.id) + DATABASE_GENERAL_URL}`
+                    : `${APPLICATION_URL(organizationId, projectId, environmentId, data?.id) + APPLICATION_GENERAL_URL}`
+                }
+              >
                 <div className="flex items-center">
                   <div className="w-8 text-center">
                     <Icon name={(data as DeploymentService)?.type || ServiceTypeEnum.APPLICATION} className="w-5 h-5" />

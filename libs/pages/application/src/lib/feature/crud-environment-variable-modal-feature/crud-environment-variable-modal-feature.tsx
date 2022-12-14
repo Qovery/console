@@ -121,7 +121,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         onSubmit={onSubmit}
         closeModal={props.closeModal}
         type={props.type}
-        availableScopes={computeAvailableScope(variable?.scope)}
+        availableScopes={computeAvailableScope(variable?.scope, false, props.serviceType)}
         loading={loading}
       />
     </FormProvider>

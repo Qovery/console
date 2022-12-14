@@ -1,9 +1,7 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 
-const environmentScopes: {
-  name: APIVariableScopeEnum
-  hierarchy: number
-}[] = [
+const environmentScopes = (serviceType?: ServiceTypeEnum) => [
   {
     name: APIVariableScopeEnum.BUILT_IN,
     hierarchy: -1,
@@ -17,14 +15,19 @@ const environmentScopes: {
     hierarchy: 2,
   },
   {
-    name: APIVariableScopeEnum.APPLICATION,
+    name: isJob(serviceType)
+      ? APIVariableScopeEnum.JOB
+      : isContainer(serviceType)
+      ? APIVariableScopeEnum.CONTAINER
+      : APIVariableScopeEnum.APPLICATION,
     hierarchy: 3,
   },
 ]
 
 export const computeAvailableScope = (
   scope?: APIVariableScopeEnum,
-  includeBuiltIn?: boolean
+  includeBuiltIn?: boolean,
+  serviceType?: ServiceTypeEnum
 ): APIVariableScopeEnum[] => {
   if (!scope) {
     const scopeToReturn = []
@@ -37,23 +40,27 @@ export const computeAvailableScope = (
       ...scopeToReturn,
       APIVariableScopeEnum.PROJECT,
       APIVariableScopeEnum.ENVIRONMENT,
-      APIVariableScopeEnum.APPLICATION,
+      isJob(serviceType)
+        ? APIVariableScopeEnum.JOB
+        : isContainer(serviceType)
+        ? APIVariableScopeEnum.CONTAINER
+        : APIVariableScopeEnum.APPLICATION,
     ]
   }
 
-  const theScope = environmentScopes.find((s) => s.name === scope)
+  const theScope = environmentScopes(serviceType).find((s) => s.name === scope)
 
-  return environmentScopes
+  return environmentScopes(serviceType)
     .filter((scope) => {
       return scope.hierarchy >= (theScope?.hierarchy || -1) && scope.hierarchy >= 0
     })
     .map((scope) => scope.name)
 }
 
-export function getScopeHierarchy(scope?: APIVariableScopeEnum): number {
+export function getScopeHierarchy(scope?: APIVariableScopeEnum, serviceType?: ServiceTypeEnum): number {
   if (!scope) return -1
 
-  const hierarchy = environmentScopes.find((s) => s.name === scope)?.hierarchy
+  const hierarchy = environmentScopes(serviceType).find((s) => s.name === scope)?.hierarchy
 
   return hierarchy || -1
 }

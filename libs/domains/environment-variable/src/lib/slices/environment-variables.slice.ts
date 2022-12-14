@@ -97,6 +97,8 @@ export const createEnvironmentVariablePayloadCreator = async (payload: {
 
       break
     case APIVariableScopeEnum.APPLICATION:
+    case APIVariableScopeEnum.CONTAINER:
+    case APIVariableScopeEnum.JOB:
     default:
       if (isContainer(payload.serviceType)) {
         response = await containerEnvironmentVariableApi.createContainerEnvironmentVariable(
@@ -151,6 +153,8 @@ export const createOverrideEnvironmentVariablesPayloadCreator = async (payload: 
       )
       break
     case APIVariableScopeEnum.APPLICATION:
+    case APIVariableScopeEnum.CONTAINER:
+    case APIVariableScopeEnum.JOB:
     default:
       if (isContainer(payload.serviceType)) {
         response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableOverride(
@@ -205,9 +209,17 @@ export const createAliasEnvironmentVariables = createAsyncThunk(
         )
         break
       case APIVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.CONTAINER:
+      case APIVariableScopeEnum.JOB:
       default:
         if (isContainer(payload.serviceType)) {
           response = await containerEnvironmentVariableApi.createContainerEnvironmentVariableAlias(
+            entityId,
+            environmentVariableId,
+            environmentVariableRequest
+          )
+        } else if (isJob(payload.serviceType)) {
+          response = await jobEnvironmentVariableApi.createJobEnvironmentVariableAlias(
             entityId,
             environmentVariableId,
             environmentVariableRequest
@@ -254,9 +266,17 @@ export const editEnvironmentVariables = createAsyncThunk(
 
         break
       case APIVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.CONTAINER:
+      case APIVariableScopeEnum.JOB:
       default:
         if (isContainer(payload.serviceType)) {
           response = await containerEnvironmentVariableApi.editContainerEnvironmentVariable(
+            payload.entityId,
+            payload.environmentVariableId,
+            payload.environmentVariableRequest
+          )
+        } else if (isJob(payload.serviceType)) {
+          response = await jobEnvironmentVariableApi.editJobEnvironmentVariable(
             payload.entityId,
             payload.environmentVariableId,
             payload.environmentVariableRequest
@@ -299,9 +319,16 @@ export const deleteEnvironmentVariable = createAsyncThunk(
 
         break
       case APIVariableScopeEnum.APPLICATION:
+      case APIVariableScopeEnum.CONTAINER:
+      case APIVariableScopeEnum.JOB:
       default:
         if (isContainer(payload.serviceType)) {
           response = await containerEnvironmentVariableApi.deleteContainerEnvironmentVariable(
+            payload.entityId,
+            payload.environmentVariableId
+          )
+        } else if (isJob(payload.serviceType)) {
+          response = await jobEnvironmentVariableApi.deleteJobEnvironmentVariable(
             payload.entityId,
             payload.environmentVariableId
           )
