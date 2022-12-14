@@ -1,4 +1,4 @@
-import { Link, matchPath, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTERS_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
@@ -25,10 +25,10 @@ export function Navigation(props: NavigationProps) {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
-  const matchLogInfraRoute = matchPath(pathname, INFRA_LOGS_URL(organizationId, clusterId))
+  const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
-  const matchClusterRoute = pathname.includes(CLUSTERS_URL(organizationId))
+  const matchClusterRoute = pathname.includes(CLUSTERS_URL(organizationId)) || matchLogInfraRoute
 
   const infosMenu = [
     {

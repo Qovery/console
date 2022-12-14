@@ -3,7 +3,6 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import {
   SETTINGS_BILLING_URL,
-  SETTINGS_CLUSTER_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
@@ -55,11 +54,6 @@ export function PageSettings() {
       title: 'Container registries',
       icon: IconAwesomeEnum.BOX,
       url: pathSettings + SETTINGS_CONTAINER_REGISTRIES_URL,
-    },
-    {
-      title: 'Cluster',
-      icon: IconAwesomeEnum.CLOUD,
-      url: pathSettings + SETTINGS_CLUSTER_URL,
     },
     {
       title: 'Danger zone',
