@@ -6,8 +6,8 @@ import { FlowCreateVariable } from '@qovery/shared/console-shared'
 import { FlowVariableData, VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CREATION_GENERAL_URL,
-  SERVICES_JOB_CREATION_PORT_URL,
   SERVICES_JOB_CREATION_POST_URL,
+  SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
@@ -61,7 +61,7 @@ export function VariableFeature() {
   })
 
   const onBack = () => {
-    navigate(pathCreate + SERVICES_JOB_CREATION_PORT_URL)
+    navigate(pathCreate + SERVICES_JOB_CREATION_RESOURCES_URL)
   }
 
   const [variables, setVariables] = useState(methods.getValues().variables)

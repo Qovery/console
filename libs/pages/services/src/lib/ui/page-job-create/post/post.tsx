@@ -19,9 +19,11 @@ export interface PostProps {
   gotoGlobalInformation: () => void
   gotoResources: () => void
   gotoVariables: () => void
+  gotoConfigureJob: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
+  jobType: 'cron' | 'lifecycle'
 }
 
 export function Post(props: PostProps) {
@@ -91,14 +93,58 @@ export function Post(props: PostProps) {
                   </li>
                 </>
               )}
-              <li>
-                Port: <strong>{props.configureData.port}</strong>
-              </li>
             </ul>
           </div>
 
           <ButtonIcon
             onClick={props.gotoGlobalInformation}
+            icon={IconAwesomeEnum.WHEEL}
+            style={ButtonIconStyle.FLAT}
+            className="text-text-500 hover:text-text-700"
+          />
+        </div>
+
+        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
+          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <div className="flex-grow mr-2">
+            <div className="text-sm text-text-600 font-bold mb-2">Configure job</div>
+            <ul className="text-text-400 text-sm list-none">
+              <li>
+                Number of restarts: <strong className="font-medium">{props.configureData.nb_restarts}</strong>
+              </li>
+              <li>
+                Max duration in seconds: <strong className="font-medium">{props.configureData.max_duration}</strong>
+              </li>
+              <li>
+                Port: <strong>{props.configureData.port}</strong>
+              </li>
+              {props.jobType === 'lifecycle' && (
+                <>
+                  {props.configureData.on_start?.enabled && (
+                    <li>
+                      <strong>On Start</strong> – Entrypoint: {props.configureData.on_start?.entrypoint || 'null'} –
+                      Entrypoint: {props.configureData.on_start?.arguments || 'null'}
+                    </li>
+                  )}
+                  {props.configureData.on_stop?.enabled && (
+                    <li>
+                      <strong>On Stop</strong> – Entrypoint: {props.configureData.on_stop?.entrypoint || 'null'} –
+                      Entrypoint: {props.configureData.on_stop?.arguments || 'null'}
+                    </li>
+                  )}
+                  {props.configureData.on_delete?.enabled && (
+                    <li>
+                      <strong>On Delete</strong> – Entrypoint: {props.configureData.on_delete?.entrypoint || 'null'} –
+                      Entrypoint: {props.configureData.on_delete?.arguments || 'null'}
+                    </li>
+                  )}
+                </>
+              )}
+            </ul>
+          </div>
+
+          <ButtonIcon
+            onClick={props.gotoConfigureJob}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
             className="text-text-500 hover:text-text-700"

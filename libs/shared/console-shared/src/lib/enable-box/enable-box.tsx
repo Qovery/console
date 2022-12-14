@@ -8,10 +8,11 @@ export interface EnableBoxProps {
   title: string
   description: string
   className?: string
+  name?: string
 }
 
 export function EnableBox(props: EnableBoxProps) {
-  const { checked, children, setChecked, title, description, className = '' } = props
+  const { checked, children, setChecked, title, description, className = '', name = 'checkbox' } = props
 
   const [currentChecked, setCurrentChecked] = useState(checked)
 
@@ -32,9 +33,9 @@ export function EnableBox(props: EnableBoxProps) {
       <InputCheckbox
         className="mb-1"
         onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
-        name={'checkbox'}
+        name={name}
         label={title}
-        value="checkbox"
+        value={name}
         isChecked={checked}
         big
       />

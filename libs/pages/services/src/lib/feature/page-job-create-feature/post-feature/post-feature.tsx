@@ -8,6 +8,7 @@ import { selectAllRepository, selectOrganizationById } from '@qovery/domains/org
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { FlowVariableData, OrganizationEntity, RepositoryEntity } from '@qovery/shared/interfaces'
 import {
+  SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
@@ -116,6 +117,10 @@ export function PostFeature() {
     navigate(pathCreate + SERVICES_JOB_CREATION_RESOURCES_URL)
   }
 
+  const gotoConfigureJob = () => {
+    navigate(pathCreate + SERVICES_JOB_CREATION_CONFIGURE_URL)
+  }
+
   const gotoVariable = () => {
     navigate(pathCreate + SERVICES_JOB_CREATION_VARIABLE_URL)
   }
@@ -219,6 +224,8 @@ export function PostFeature() {
           selectedRegistryName={
             organization?.containerRegistries?.items?.find((registry) => registry.id === generalData.registry)?.name
           }
+          jobType={jobType}
+          gotoConfigureJob={gotoConfigureJob}
         />
       )}
     </FunnelFlowBody>

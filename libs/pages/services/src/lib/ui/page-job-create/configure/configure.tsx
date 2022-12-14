@@ -132,6 +132,7 @@ export function Configure(props: ConfigureProps) {
             className="mb-3"
             checked={getValues().on_start?.enabled || false}
             title="Start"
+            name="on_start"
             description="lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget aliquam"
             setChecked={(checked) => {
               setValue('on_start.enabled', checked)
@@ -145,6 +146,7 @@ export function Configure(props: ConfigureProps) {
           </EnableBox>
           <EnableBox
             className="mb-3"
+            name="on_stop"
             checked={getValues().on_stop?.enabled || false}
             setChecked={(checked) => {
               setValue('on_stop.enabled', checked)
@@ -160,6 +162,7 @@ export function Configure(props: ConfigureProps) {
           </EnableBox>
           <EnableBox
             className="mb-3"
+            name="on_delete"
             checked={getValues().on_delete?.enabled || false}
             setChecked={(checked) => {
               setValue('on_delete.enabled', checked)
