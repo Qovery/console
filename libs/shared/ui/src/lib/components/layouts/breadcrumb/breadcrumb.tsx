@@ -170,14 +170,14 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
 
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') navigate(linkToCloseLogs)
+      if (event.key === 'Escape' && matchLogsRoute) navigate(linkToCloseLogs)
     }
     document.addEventListener('keydown', bindTouch, false)
 
     return () => {
       document.removeEventListener('keydown', bindTouch, false)
     }
-  }, [linkToCloseLogs, navigate])
+  }, [linkToCloseLogs, navigate, matchLogsRoute])
 
   if (organizations?.length === 0) return <div />
 
