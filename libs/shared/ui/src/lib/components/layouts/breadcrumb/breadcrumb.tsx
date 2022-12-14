@@ -166,9 +166,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     </div>
   )
 
-  const linkToCloseLogs = locationIsApplicationLogs
-    ? `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_GENERAL_URL}`
-    : SERVICES_URL(organizationId, projectId, environmentId)
+  const linkToCloseLogs = SERVICES_URL(organizationId, projectId, environmentId)
 
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {
