@@ -1,6 +1,6 @@
 import { Link, matchPath, useLocation, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { CLUSTER_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -28,6 +28,7 @@ export function Navigation(props: NavigationProps) {
   const matchLogInfraRoute = matchPath(pathname, INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
+  const matchClusterRoute = pathname.includes(CLUSTER_URL(organizationId))
 
   const infosMenu = [
     {
@@ -65,13 +66,6 @@ export function Navigation(props: NavigationProps) {
           },
           contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
         },
-        /*{
-          name: 'Shortcuts',
-          link: {
-            url: 'https://discord.qovery.com/',
-          },
-          contentLeft: <Icon name="icon-solid-keyboard" className="text-sm text-brand-400" />,
-        },*/
       ],
     },
   ]
@@ -94,15 +88,13 @@ export function Navigation(props: NavigationProps) {
             size={ButtonSize.XLARGE}
             link={ORGANIZATION_URL(organizationId)}
           />
-          {/*
           <ButtonIcon
-            icon="icon-solid-gauge-high"
+            className={matchClusterRoute ? 'is-active' : ''}
+            icon={IconAwesomeEnum.CLOUD_WORD}
             style={ButtonIconStyle.ALT}
             size={ButtonSize.XLARGE}
-            active={true}
+            link={CLUSTER_URL(organizationId)}
           />
-          <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
-          */}
         </div>
         <div>
           <div className="flex flex-col gap-3">

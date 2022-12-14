@@ -6,6 +6,7 @@ export * from './sub-router/onboarding.router'
 export * from './sub-router/login.router'
 export * from './sub-router/settings.router'
 export * from './sub-router/logs.router'
+export * from './sub-router/cluster.router'
 
 export const INDEX_URL = '/'
 export const ORGANIZATION_URL = (organizationId = ':organizationId') => `/organization/${organizationId}`
