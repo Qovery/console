@@ -7,7 +7,7 @@ import {
   Log,
 } from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
@@ -69,8 +69,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
     lineNumbers,
   } = props
 
+  const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
-
   const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
 
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -209,20 +209,24 @@ export function LayoutLogs(props: LayoutLogsProps) {
               </p>
             )}
             <div className="flex">
-              <Menu
-                menus={menusTimeFormat}
-                arrowAlign={MenuAlign.END}
-                trigger={
-                  <Button
-                    className="mr-2"
-                    size={ButtonSize.TINY}
-                    style={ButtonStyle.DARK}
-                    iconRight={IconAwesomeEnum.ANGLE_DOWN}
-                  >
-                    Time format
-                  </Button>
-                }
-              />
+              {location.pathname.includes(
+                APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)
+              ) && (
+                <Menu
+                  menus={menusTimeFormat}
+                  arrowAlign={MenuAlign.END}
+                  trigger={
+                    <Button
+                      className="mr-2"
+                      size={ButtonSize.TINY}
+                      style={ButtonStyle.DARK}
+                      iconRight={IconAwesomeEnum.ANGLE_DOWN}
+                    >
+                      Time format
+                    </Button>
+                  }
+                />
+              )}
               {setPauseLogs && (
                 <Tooltip side="top" content="Resume real-time logs" open={pauseLogs}>
                   <div>
