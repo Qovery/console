@@ -5,7 +5,11 @@ import { ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
-export function CreateGeneralGitApplication() {
+export interface PageSettingsGeneralProps {
+  buildModeDisabled?: boolean
+}
+
+export function CreateGeneralGitApplication(props: PageSettingsGeneralProps) {
   const { control, watch } = useFormContext<ApplicationGeneralData>()
   const watchBuildMode = watch('build_mode')
 
@@ -44,6 +48,7 @@ export function CreateGeneralGitApplication() {
               dataTestId="input-select-mode"
               label="Mode"
               className="mb-3"
+              disabled={props.buildModeDisabled}
               options={buildModeItems}
               onChange={field.onChange}
               value={field.value}

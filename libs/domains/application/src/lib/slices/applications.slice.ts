@@ -51,6 +51,7 @@ import {
   getEntitiesByIds,
   refactoContainerApplicationPayload,
   refactoGitApplicationPayload,
+  refactoJobPayload,
   shortToLongId,
 } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
@@ -132,6 +133,9 @@ export const editApplication = createAsyncThunk(
     if (isContainer(payload.serviceType)) {
       const cloneApplication = Object.assign({}, refactoContainerApplicationPayload(payload.data))
       response = await containerMainCallsApi.editContainer(payload.applicationId, cloneApplication as ContainerRequest)
+    } else if (isJob(payload.serviceType)) {
+      const cloneJob = Object.assign({}, refactoJobPayload(payload.data as Partial<JobApplicationEntity>))
+      response = await jobMainCallsApi.editJob(payload.applicationId, cloneJob as JobRequest)
     } else {
       const cloneApplication = Object.assign({}, refactoGitApplicationPayload(payload.data))
       response = await applicationMainCallsApi.editApplication(

@@ -30,6 +30,7 @@ export interface JobConfigureData {
 
   cmd_arguments?: string
   cmd?: string[]
+  image_entry_point?: string
 
   on_stop?: {
     enabled?: boolean

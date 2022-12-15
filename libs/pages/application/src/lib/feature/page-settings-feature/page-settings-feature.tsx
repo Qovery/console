@@ -1,6 +1,12 @@
+import { useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import { getApplicationsState } from '@qovery/domains/application'
+import { isJob } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
+  APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
@@ -10,7 +16,9 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
 } from '@qovery/shared/router'
+import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store'
 import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
 
@@ -26,46 +34,69 @@ export function PageSettingsFeature() {
     applicationId
   )}${APPLICATION_SETTINGS_URL}`
 
-  const links = [
-    {
-      title: 'General',
-      icon: 'icon-solid-wheel',
-      url: pathSettings + APPLICATION_SETTINGS_GENERAL_URL,
-    },
-    {
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
+    (state) => getApplicationsState(state).entities[applicationId]
+  )
+
+  const getLinks = useCallback(() => {
+    const links = [
+      {
+        title: 'General',
+        icon: IconAwesomeEnum.WHEEL,
+        url: pathSettings + APPLICATION_SETTINGS_GENERAL_URL,
+      },
+    ]
+
+    if (isJob(application)) {
+      links.push({
+        title: 'Configure Job',
+        icon: IconAwesomeEnum.GEARS,
+        url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
+      })
+    }
+
+    links.push({
       title: 'Resources',
-      icon: 'icon-solid-chart-bullet',
+      icon: IconAwesomeEnum.CHART_BULLET,
       url: pathSettings + APPLICATION_SETTINGS_RESOURCES_URL,
-    },
-    {
-      title: 'Storage',
-      icon: 'icon-solid-hard-drive',
-      url: pathSettings + APPLICATION_SETTINGS_STORAGE_URL,
-    },
-    {
-      title: 'Domain',
-      icon: 'icon-solid-earth-americas',
-      url: pathSettings + APPLICATION_SETTINGS_DOMAIN_URL,
-    },
-    {
-      title: 'Port',
-      icon: 'icon-solid-plug',
-      url: pathSettings + APPLICATION_SETTINGS_PORT_URL,
-    },
-    {
-      title: 'Advanced settings',
-      icon: 'icon-solid-gears',
-      url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
-    },
-    {
+    })
+
+    if (!isJob(application)) {
+      links.push(
+        {
+          title: 'Storage',
+          icon: IconAwesomeEnum.HARD_DRIVE,
+          url: pathSettings + APPLICATION_SETTINGS_STORAGE_URL,
+        },
+        {
+          title: 'Domain',
+          icon: IconAwesomeEnum.EARTH_AMERICAS,
+          url: pathSettings + APPLICATION_SETTINGS_DOMAIN_URL,
+        },
+        {
+          title: 'Port',
+          icon: IconAwesomeEnum.PLUG,
+          url: pathSettings + APPLICATION_SETTINGS_PORT_URL,
+        },
+        {
+          title: 'Advanced settings',
+          icon: IconAwesomeEnum.GEARS,
+          url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
+        }
+      )
+    }
+
+    links.push({
       title: 'Danger zone',
-      icon: 'icon-solid-skull',
+      icon: IconAwesomeEnum.SKULL,
       url: pathSettings + APPLICATION_SETTINGS_DANGER_ZONE_URL,
-    },
-  ]
+    })
+
+    return links
+  }, [application, pathSettings])
 
   return (
-    <PageSettings links={links}>
+    <PageSettings links={getLinks()}>
       <Routes>
         {ROUTER_APPLICATION_SETTINGS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />

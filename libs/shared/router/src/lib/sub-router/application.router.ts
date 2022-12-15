@@ -12,6 +12,7 @@ export const APPLICATION_SETTINGS_URL = '/settings'
 
 export const APPLICATION_SETTINGS_GENERAL_URL = '/general'
 export const APPLICATION_SETTINGS_RESOURCES_URL = '/resources'
+export const APPLICATION_SETTINGS_CONFIGURE_URL = '/configure'
 export const APPLICATION_SETTINGS_STORAGE_URL = '/storage'
 export const APPLICATION_SETTINGS_DOMAIN_URL = '/domain'
 export const APPLICATION_SETTINGS_PORT_URL = '/port'

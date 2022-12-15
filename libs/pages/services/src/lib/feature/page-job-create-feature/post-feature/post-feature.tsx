@@ -51,7 +51,7 @@ function prepareJobRequest(
   if (jobType === 'cron') {
     jobRequest.schedule = {
       cronjob: {
-        entrypoint: generalData.image_entry_point,
+        entrypoint: configureData.image_entry_point,
         scheduled_at: configureData.schedule || '',
         arguments: configureData.cmd || [''],
       },

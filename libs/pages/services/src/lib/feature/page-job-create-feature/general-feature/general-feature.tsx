@@ -1,3 +1,4 @@
+import { BuildModeEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -55,6 +56,10 @@ export function GeneralFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
   const watchServiceType = methods.watch('serviceType')
+
+  useEffect(() => {
+    methods.setValue('build_mode', BuildModeEnum.DOCKER)
+  }, [methods])
 
   useEffect(() => {
     if (isContainer(watchServiceType)) {

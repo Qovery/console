@@ -1,10 +1,11 @@
-/* eslint-disable-next-line */
+import { BuildModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
-import { Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
+import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import CreateGeneralGitApplication from '../create-general-git-application/create-general-git-application'
 import GeneralContainerSettings from '../general-container-settings/ui/general-container-settings'
+import EditGitRepositorySettingsFeature from '../git-repository-settings/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
 
 export interface JobGeneralSettingProps {
   organization?: OrganizationEntity
@@ -19,40 +20,6 @@ export function JobGeneralSetting(props: JobGeneralSettingProps) {
 
   return (
     <>
-      <Controller
-        name="name"
-        control={control}
-        rules={{
-          required: 'Value required',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            className="mb-3"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Application name"
-            error={error?.message}
-          />
-        )}
-      />
-
-      <Controller
-        name="description"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <InputTextArea
-            dataTestId="input-textarea-description"
-            name="description"
-            className="mb-3"
-            onChange={field.onChange}
-            value={field.value}
-            label="Description"
-            error={error?.message}
-          />
-        )}
-      />
-
       {!props.isEdition && (
         <Controller
           name="serviceType"
@@ -88,11 +55,66 @@ export function JobGeneralSetting(props: JobGeneralSettingProps) {
       {getValues('serviceType') && (
         <>
           <div className="border-b border-b-element-light-lighter-400 mb-3"></div>
-          {getValues().serviceType === ServiceTypeEnum.APPLICATION && <CreateGeneralGitApplication />}
+          {getValues().serviceType === ServiceTypeEnum.APPLICATION &&
+            (props.isEdition ? (
+              <>
+                <EditGitRepositorySettingsFeature />
+                <BlockContent title="Build mode">
+                  <Controller
+                    name="build_mode"
+                    control={control}
+                    rules={{
+                      required: 'Please select a mode.',
+                    }}
+                    defaultValue={'DOCKER'}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputSelect
+                        dataTestId="input-select-mode"
+                        label="Mode"
+                        className="mb-3"
+                        disabled={true}
+                        options={[{ label: 'Docker', value: BuildModeEnum.DOCKER }]}
+                        onChange={field.onChange}
+                        value={field.value}
+                        error={error?.message}
+                      />
+                    )}
+                  />
 
-          {getValues().serviceType === ServiceTypeEnum.CONTAINER && (
-            <GeneralContainerSettings organization={props.organization} />
-          )}
+                  <Controller
+                    data-testid="input-text-dockerfile-path"
+                    key="dockerfile_path"
+                    name="dockerfile_path"
+                    defaultValue={'Dockerfile'}
+                    control={control}
+                    rules={{
+                      required: 'Value required',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-text-dockerfile"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Dockerfile path"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                </BlockContent>
+              </>
+            ) : (
+              <CreateGeneralGitApplication buildModeDisabled={true} />
+            ))}
+
+          {getValues().serviceType === ServiceTypeEnum.CONTAINER &&
+            (props.isEdition ? (
+              <BlockContent title="Container Settings">
+                <GeneralContainerSettings organization={props.organization} />
+              </BlockContent>
+            ) : (
+              <GeneralContainerSettings organization={props.organization} />
+            ))}
         </>
       )}
     </>

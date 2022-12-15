@@ -2,6 +2,8 @@ import {
   ApplicationEditRequest,
   ApplicationGitRepositoryRequest,
   DatabaseEditRequest,
+  JobRequest,
+  JobResponse,
   Organization,
   OrganizationCustomRole,
   OrganizationCustomRoleUpdateRequest,
@@ -80,6 +82,46 @@ export function refactoContainerApplicationPayload(application: Partial<Containe
   }
 
   return containerRequestPayload
+}
+
+export function refactoJobPayload(job: Partial<JobResponse>): JobRequest {
+  const jobRequest: JobRequest = {
+    name: job.name || '',
+    description: job.description || '',
+    cpu: job.cpu,
+    memory: job.memory,
+    auto_preview: false,
+    max_duration_seconds: job.max_duration_seconds,
+    port: job.port,
+    max_nb_restart: job.max_nb_restart,
+  }
+
+  if (job.source?.docker) {
+    jobRequest.source = {
+      docker: {
+        dockerfile_path: job.source.docker.dockerfile_path,
+        git_repository: {
+          url: job.source.docker.git_repository?.url || '',
+          branch: job.source.docker.git_repository?.branch,
+          root_path: job.source.docker.git_repository?.root_path,
+        },
+      },
+    }
+  } else {
+    jobRequest.source = {
+      image: {
+        registry_id: job.source?.image?.registry_id,
+        image_name: job.source?.image?.image_name,
+        tag: job.source?.image?.tag,
+      },
+    }
+  }
+
+  jobRequest.schedule = job.schedule
+
+  console.log(job)
+
+  return jobRequest
 }
 
 export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {

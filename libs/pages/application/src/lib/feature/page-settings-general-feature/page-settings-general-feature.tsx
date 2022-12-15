@@ -174,7 +174,6 @@ export function PageSettingsGeneralFeature() {
     }
 
     if (isJob(application)) {
-      console.log(application)
       methods.setValue('description', (application as JobResponse).description)
 
       const serviceType = (application as JobResponse).source?.docker
@@ -183,11 +182,14 @@ export function PageSettingsGeneralFeature() {
       methods.setValue('serviceType', serviceType)
 
       if (serviceType === ServiceTypeEnum.CONTAINER) {
-        // todo needs to fetch the registries somewhere
+        dispatch(fetchOrganizationContainerRegistries({ organizationId }))
 
         methods.setValue('registry', (application as JobResponse).source?.image?.registry_id)
         methods.setValue('image_name', (application as JobResponse).source?.image?.image_name)
         methods.setValue('image_tag', (application as JobResponse).source?.image?.tag)
+      } else {
+        methods.setValue('build_mode', BuildModeEnum.DOCKER)
+        methods.setValue('dockerfile_path', (application as JobResponse).source?.docker?.dockerfile_path)
       }
     }
   }, [methods, application, dispatch, organizationId])

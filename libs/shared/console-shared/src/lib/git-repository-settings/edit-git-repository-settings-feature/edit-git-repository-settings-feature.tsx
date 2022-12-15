@@ -1,5 +1,5 @@
-import { GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { GitAuthProvider, GitProviderEnum, JobResponse } from 'qovery-typescript-axios'
+import { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -13,28 +13,32 @@ import {
   selectAllAuthProvider,
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
-import { GitRepositorySettings } from '@qovery/shared/console-shared'
+import { isJob } from '@qovery/shared/enums'
 import { GitApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
+import { authProvidersValues } from '../auth-providers-values'
+import GitRepositorySettings from '../ui/git-repository-settings'
 
-export const authProvidersValues = (authProviders: GitAuthProvider[]) => {
-  return authProviders.map((provider: GitAuthProvider) => ({
-    label: `${upperCaseFirstLetter(provider.name)} (${provider.owner})`,
-    value: provider.name || '',
-    icon: <Icon width="16px" height="16px" name={provider.name} />,
-  }))
-}
-
-export function GitRepositorySettingsFeature() {
+export function EditGitRepositorySettingsFeature() {
   const { organizationId = '', applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
-  const application = useSelector<RootState, GitApplicationEntity | undefined>(
+  const application = useSelector<RootState, GitApplicationEntity | JobResponse | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
-    (a, b) => JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository)
+    (a, b) =>
+      JSON.stringify((a as GitApplicationEntity)?.git_repository) ===
+        JSON.stringify((b as GitApplicationEntity)?.git_repository) ||
+      JSON.stringify((a as JobResponse)?.source?.docker?.git_repository) ===
+        JSON.stringify((b as JobResponse)?.source?.docker?.git_repository)
   )
+
+  const getGitRepositoryFromApplication = useCallback(() => {
+    return isJob(application)
+      ? (application as JobResponse).source?.docker?.git_repository
+      : (application as GitApplicationEntity).git_repository
+  }, [application])
 
   const { setValue, watch, getValues } = useFormContext<{
     provider: string
@@ -54,8 +58,8 @@ export function GitRepositorySettingsFeature() {
 
   const [gitDisabled, setGitDisabled] = useState(true)
 
-  const currentAuthProvider = `${upperCaseFirstLetter(application?.git_repository?.provider)} (${
-    application?.git_repository?.owner
+  const currentAuthProvider = `${upperCaseFirstLetter(getGitRepositoryFromApplication()?.provider)} (${
+    getGitRepositoryFromApplication()?.owner
   })`
   const currentRepository = repositories.find((repository) => repository.name === watchRepository)
 
@@ -66,13 +70,16 @@ export function GitRepositorySettingsFeature() {
   }, [dispatch, organizationId, watchAuthProvider])
 
   useEffect(() => {
-    if (gitDisabled && application?.git_repository) {
-      setValue('provider', `${application?.git_repository?.provider} (${application?.git_repository?.owner})`)
-      setValue('repository', application?.git_repository?.url)
-      setValue('branch', application?.git_repository?.branch)
-      setValue('root_path', application?.git_repository?.root_path)
+    if (gitDisabled && getGitRepositoryFromApplication()) {
+      setValue(
+        'provider',
+        `${getGitRepositoryFromApplication()?.provider} (${getGitRepositoryFromApplication()?.owner})`
+      )
+      setValue('repository', getGitRepositoryFromApplication()?.url)
+      setValue('branch', getGitRepositoryFromApplication()?.branch)
+      setValue('root_path', getGitRepositoryFromApplication()?.root_path)
     }
-  }, [application?.git_repository, setValue, gitDisabled, authProviders, repositories])
+  }, [getGitRepositoryFromApplication, setValue, gitDisabled, authProviders, repositories])
 
   // fetch branches by repository and set default branch
   useEffect(() => {
@@ -94,13 +101,13 @@ export function GitRepositorySettingsFeature() {
   const editGitSettings = () => {
     setGitDisabled(false)
     dispatch(fetchAuthProvider({ organizationId }))
-    if (application?.git_repository?.provider) {
-      setValue('provider', application?.git_repository?.provider)
+    if (getGitRepositoryFromApplication()?.provider) {
+      setValue('provider', getGitRepositoryFromApplication()?.provider || '')
       setValue('repository', undefined, { shouldValidate: false })
     }
   }
 
-  if (!application?.git_repository?.name) return null
+  if (!getGitRepositoryFromApplication()?.name) return null
 
   return (
     <GitRepositorySettings
@@ -114,8 +121,8 @@ export function GitRepositorySettingsFeature() {
           : application && [
               {
                 label: currentAuthProvider,
-                value: `${application?.git_repository?.provider} (${application.git_repository?.owner})`,
-                icon: <Icon width="16px" height="16px" name={application?.git_repository?.provider || ''} />,
+                value: `${getGitRepositoryFromApplication()?.provider} (${getGitRepositoryFromApplication()?.owner})`,
+                icon: <Icon width="16px" height="16px" name={getGitRepositoryFromApplication()?.provider || ''} />,
               },
             ]
       }
@@ -128,18 +135,18 @@ export function GitRepositorySettingsFeature() {
             }))
           : [
               {
-                label: upperCaseFirstLetter(application?.git_repository?.name) || '',
-                value: application?.git_repository?.url || '',
+                label: upperCaseFirstLetter(getGitRepositoryFromApplication()?.name) || '',
+                value: getGitRepositoryFromApplication()?.url || '',
               },
             ]
       }
       loadingStatusBranches={!currentRepository ? 'not loaded' : currentRepository?.branches?.loadingStatus}
       branches={
-        gitDisabled && application?.git_repository?.branch
+        gitDisabled && getGitRepositoryFromApplication()?.branch
           ? [
               {
-                label: application?.git_repository?.branch,
-                value: application?.git_repository?.branch,
+                label: getGitRepositoryFromApplication()?.branch || '',
+                value: getGitRepositoryFromApplication()?.branch || '',
               },
             ]
           : currentRepository?.branches?.items
@@ -153,4 +160,4 @@ export function GitRepositorySettingsFeature() {
   )
 }
 
-export default GitRepositorySettingsFeature
+export default EditGitRepositorySettingsFeature
