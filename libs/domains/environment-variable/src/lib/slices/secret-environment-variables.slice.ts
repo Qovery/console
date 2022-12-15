@@ -25,7 +25,6 @@ const containerSecretApi = new ContainerSecretApi()
 const jobSecretApi = new JobSecretApi()
 const environmentSecretApi = new EnvironmentSecretApi()
 const projectSecretApi = new ProjectSecretApi()
-const jobSecretApi = new JobSecretApi()
 
 export const fetchSecretEnvironmentVariables = createAsyncThunk(
   'secretEnvironmentVariables/list',

@@ -10,7 +10,7 @@ jest.mock('react-router-dom', () => ({
 describe('PageJobCreateFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      <Routes location="/organization/1/project/2/environment/3/services/create/cron-job">
+      <Routes location="/organization/1/project/2/environment/3/services/create/cron-job/general">
         <Route
           path="/organization/1/project/2/environment/3/services/create/cron-job/*"
           element={<PageJobCreateFeature />}
