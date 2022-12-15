@@ -3,9 +3,6 @@ import Container, { ContainerProps } from './container'
 
 describe('Container', () => {
   const props: ContainerProps = {
-    organizationLinks: [],
-    projectLinks: [],
-    accountLinks: [],
     children: <p>hello</p>,
   }
 

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import { clusterFactoryMock } from '@qovery/domains/organization'
 import CardCluster, { CardClusterProps } from './card-cluster'
 
@@ -26,6 +26,6 @@ describe('CardCluster', () => {
   it('should have a name', () => {
     const { baseElement } = render(<CardCluster {...props} />)
 
-    expect(baseElement.querySelector('h2')).toBe(props.cluster.name)
+    expect(baseElement.querySelector('h2')?.textContent).toBe(props.cluster.name)
   })
 })

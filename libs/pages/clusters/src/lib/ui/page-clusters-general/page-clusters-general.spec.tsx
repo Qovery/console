@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import { clusterFactoryMock } from '@qovery/domains/organization'
 import PageClustersGeneral, { PageClustersGeneralProps } from './page-clusters-general'
 
