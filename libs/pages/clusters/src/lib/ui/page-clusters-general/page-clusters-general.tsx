@@ -10,7 +10,6 @@ export interface PageClustersGeneralProps {
 
 export function PageClustersGeneral(props: PageClustersGeneralProps) {
   const { loading, clusters } = props
-
   const { organizationId = '' } = useParams()
 
   return (

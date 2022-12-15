@@ -22,6 +22,11 @@ export function CardCluster(props: CardClusterProps) {
         <ClusterButtonsActions cluster={cluster} />
       </div>
       <div className="flex">
+        {cluster.production && (
+          <Tag dataTestId="tag-prod" className="text-brand-500 border border-brand-500 bg-brand-50 truncate mr-2">
+            PROD
+          </Tag>
+        )}
         {cluster.is_default && (
           <Tag
             dataTestId="tag-default"

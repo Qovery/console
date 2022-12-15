@@ -14,9 +14,11 @@ describe('CardCluster', () => {
 
   it('should have tags', () => {
     props.cluster.is_default = true
+    props.cluster.production = true
 
     const { getByTestId } = render(<CardCluster {...props} />)
 
+    expect(getByTestId('tag-prod')).toBeInTheDocument()
     expect(getByTestId('tag-default')).toBeInTheDocument()
     expect(getByTestId('tag-region').textContent).toBe(props.cluster.region)
     expect(getByTestId('tag-version').textContent).toBe(props.cluster.version)
