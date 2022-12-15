@@ -21,12 +21,12 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
           {/* <Button iconRight={IconAwesomeEnum.CIRCLE_PLUS}>Add Cluster</Button> */}
         </div>
         {(loading === 'not loaded' || loading === 'loading') && clusters?.length === 0 ? (
-          <div data-testid="registries-loader" className="flex justify-center">
+          <div data-testid="clusters-loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
         ) : clusters && clusters.length > 0 ? (
           <div className="grid grid-cols-3 gap-5">
-            {clusters.reverse().map((cluster) => (
+            {clusters.map((cluster) => (
               <CardCluster key={cluster.id} cluster={cluster} />
             ))}
           </div>

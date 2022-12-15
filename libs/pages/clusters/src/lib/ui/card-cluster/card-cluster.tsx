@@ -10,7 +10,7 @@ export function CardCluster(props: CardClusterProps) {
   const { cluster } = props
 
   return (
-    <div className="border border-element-light-lighter-400 rounded p-5">
+    <div data-testid={`cluster-list-${cluster.id}`} className="border border-element-light-lighter-400 rounded p-5">
       <div className="flex justify-between mb-5">
         <div className="flex">
           <Icon className="relative top-0.5 mr-3" name={cluster.cloud_provider} />
