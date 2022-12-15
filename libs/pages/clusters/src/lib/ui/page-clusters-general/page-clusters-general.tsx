@@ -45,9 +45,19 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
           clusters?.length === 0 && (
             <EmptyState
               dataTestId="empty-state"
+              imageWidth="160"
               title="No cluster set"
               description="A cluster is necessary to run your applications with Qovery"
-            />
+            >
+              <Button
+                className="mt-5"
+                onClick={() =>
+                  window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`)
+                }
+              >
+                Add Cluster
+              </Button>
+            </EmptyState>
           )
         )}
       </div>
