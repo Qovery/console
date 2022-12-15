@@ -1,6 +1,6 @@
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 
-export interface GeneralData {
+export interface ApplicationGeneralData {
   name: string
   serviceType: ServiceTypeEnum
 
@@ -22,7 +22,7 @@ export interface GeneralData {
   dockerfile_path?: string
 }
 
-export interface ResourcesData {
+export interface ApplicationResourcesData {
   memory: number
   cpu: [number]
   instances: [number, number]

@@ -1,6 +1,6 @@
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 
-export interface GeneralData {
+export interface JobGeneralData {
   name: string
   description: string
   serviceType: ServiceTypeEnum
@@ -21,7 +21,7 @@ export interface GeneralData {
   dockerfile_path?: string
 }
 
-export interface ConfigureData {
+export interface JobConfigureData {
   schedule?: string
   event?: string
   nb_restarts?: number
@@ -53,7 +53,7 @@ export interface ConfigureData {
   }
 }
 
-export interface ResourcesData {
+export interface JobResourcesData {
   memory: number
   cpu: [number]
 }

@@ -1,19 +1,18 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { FlowPortData } from '@qovery/shared/interfaces'
+import { ApplicationGeneralData, ApplicationResourcesData, FlowPortData } from '@qovery/shared/interfaces'
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
-import { GeneralData, ResourcesData } from './application-creation-flow.interface'
 
 export interface ApplicationContainerCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
-  generalData: GeneralData | undefined
-  setGeneralData: (data: GeneralData) => void
-  resourcesData: ResourcesData | undefined
-  setResourcesData: (data: ResourcesData) => void
+  generalData: ApplicationGeneralData | undefined
+  setGeneralData: (data: ApplicationGeneralData) => void
+  resourcesData: ApplicationResourcesData | undefined
+  setResourcesData: (data: ApplicationResourcesData) => void
   portData: FlowPortData | undefined
   setPortData: (data: FlowPortData) => void
 }
@@ -42,8 +41,8 @@ export function PageApplicationCreateFeature() {
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [generalData, setGeneralData] = useState<GeneralData | undefined>()
-  const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
+  const [generalData, setGeneralData] = useState<ApplicationGeneralData | undefined>()
+  const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
     instances: [1, 2],

@@ -1,12 +1,12 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { GitRepositorySettingsFeature } from '@qovery/shared/console-shared'
+import { ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { GeneralData } from '../../../../feature/page-application-create-feature/application-creation-flow.interface'
 
 export function CreateGeneralGitApplication() {
-  const { control, watch } = useFormContext<GeneralData>()
+  const { control, watch } = useFormContext<ApplicationGeneralData>()
   const watchBuildMode = watch('build_mode')
 
   const buildModeItems = Object.values(BuildModeEnum).map((value) => ({

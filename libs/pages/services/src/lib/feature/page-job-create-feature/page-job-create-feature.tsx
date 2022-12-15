@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { FlowVariableData } from '@qovery/shared/interfaces'
+import { FlowVariableData, JobConfigureData, JobGeneralData, JobResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -10,19 +10,18 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
-import { ConfigureData, GeneralData, ResourcesData } from './job-creation-flow.interface'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
-  generalData: GeneralData | undefined
-  setGeneralData: (data: GeneralData) => void
+  generalData: JobGeneralData | undefined
+  setGeneralData: (data: JobGeneralData) => void
 
-  configureData: ConfigureData | undefined
-  setConfigureData: (data: ConfigureData) => void
+  configureData: JobConfigureData | undefined
+  setConfigureData: (data: JobConfigureData) => void
 
-  resourcesData: ResourcesData | undefined
-  setResourcesData: (data: ResourcesData) => void
+  resourcesData: JobResourcesData | undefined
+  setResourcesData: (data: JobResourcesData) => void
 
   variableData: FlowVariableData | undefined
   setVariableData: (data: FlowVariableData) => void
@@ -56,11 +55,11 @@ export function PageJobCreateFeature() {
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [generalData, setGeneralData] = useState<GeneralData | undefined>()
+  const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
   const [jobType, setJobType] = useState<'cron' | 'lifecycle'>('cron')
   const [jobURL, setJobURL] = useState<string | undefined>()
-  const [configureData, setConfigureData] = useState<ConfigureData | undefined>()
-  const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
+  const [configureData, setConfigureData] = useState<JobConfigureData | undefined>()
+  const [resourcesData, setResourcesData] = useState<JobResourcesData | undefined>({
     memory: 512,
     cpu: [0.5],
   })

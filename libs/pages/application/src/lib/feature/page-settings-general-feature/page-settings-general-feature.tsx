@@ -1,11 +1,11 @@
-import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum, JobResponse } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { getServiceType, isApplication, isContainer } from '@qovery/shared/enums'
+import { ServiceTypeEnum, getServiceType, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -170,6 +170,24 @@ export function PageSettingsGeneralFeature() {
         methods.unregister('build_mode')
 
         dispatch(fetchOrganizationContainerRegistries({ organizationId }))
+      }
+    }
+
+    if (isJob(application)) {
+      console.log(application)
+      methods.setValue('description', (application as JobResponse).description)
+
+      const serviceType = (application as JobResponse).source?.docker
+        ? ServiceTypeEnum.APPLICATION
+        : ServiceTypeEnum.CONTAINER
+      methods.setValue('serviceType', serviceType)
+
+      if (serviceType === ServiceTypeEnum.CONTAINER) {
+        // todo needs to fetch the registries somewhere
+
+        methods.setValue('registry', (application as JobResponse).source?.image?.registry_id)
+        methods.setValue('image_name', (application as JobResponse).source?.image?.image_name)
+        methods.setValue('image_tag', (application as JobResponse).source?.image?.tag)
       }
     }
   }, [methods, application, dispatch, organizationId])

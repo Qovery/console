@@ -1,8 +1,8 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SettingResources } from '@qovery/shared/console-shared'
+import { ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
-import { ResourcesData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
 
 export interface PageApplicationCreateResourcesProps {
   onBack: () => void
@@ -11,7 +11,7 @@ export interface PageApplicationCreateResourcesProps {
 }
 
 export function PageApplicationCreateResources(props: PageApplicationCreateResourcesProps) {
-  const { formState } = useFormContext<ResourcesData>()
+  const { formState } = useFormContext<ApplicationResourcesData>()
 
   return (
     <>

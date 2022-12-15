@@ -1,8 +1,8 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { EnableBox, EntrypointCmdInputs } from '@qovery/shared/console-shared'
+import { JobConfigureData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, InputText, Link } from '@qovery/shared/ui'
-import { ConfigureData } from '../../../feature/page-job-create-feature/job-creation-flow.interface'
 
 export interface ConfigureProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -11,7 +11,7 @@ export interface ConfigureProps {
 }
 
 export function Configure(props: ConfigureProps) {
-  const { control, formState, setValue, getValues } = useFormContext<ConfigureData>()
+  const { control, formState, setValue, getValues } = useFormContext<JobConfigureData>()
 
   return (
     <div>

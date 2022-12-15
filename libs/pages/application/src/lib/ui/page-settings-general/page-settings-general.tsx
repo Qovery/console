@@ -1,8 +1,8 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { EntrypointCmdInputs, GeneralContainerSettings } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
+import { EntrypointCmdInputs, GeneralContainerSettings, JobGeneralSetting } from '@qovery/shared/console-shared'
+import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -52,6 +52,13 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
+          {isJob(type) && (
+            <JobGeneralSetting
+              isEdition={true}
+              jobType={isCronJob(type) ? 'cron' : 'lifecycle'}
+              organization={props.organization}
+            />
+          )}
           {isContainer(type) && (
             <BlockContent title="Container settings">
               <GeneralContainerSettings organization={props.organization} />

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { JobConfigureData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
@@ -10,7 +11,6 @@ import { toastError } from '@qovery/shared/toast'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import Configure from '../../../ui/page-job-create/configure/configure'
-import { ConfigureData } from '../job-creation-flow.interface'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function ConfigureFeature() {
@@ -45,13 +45,13 @@ export function ConfigureFeature() {
     setCurrentStep(2)
   }, [setCurrentStep])
 
-  const methods = useForm<ConfigureData>({
+  const methods = useForm<JobConfigureData>({
     defaultValues: configureData,
     mode: 'onChange',
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    const cloneData: ConfigureData = {
+    const cloneData: JobConfigureData = {
       ...data,
     }
 

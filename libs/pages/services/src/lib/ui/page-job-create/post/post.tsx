@@ -1,20 +1,15 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { FlowVariableData } from '@qovery/shared/interfaces'
+import { FlowVariableData, JobConfigureData, JobGeneralData, JobResourcesData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import {
-  ConfigureData,
-  GeneralData,
-  ResourcesData,
-} from '../../../feature/page-job-create-feature/job-creation-flow.interface'
 
 export interface PostProps {
   onSubmit: (withDeploy: boolean) => void
   onPrevious: () => void
-  generalData: GeneralData
-  resourcesData: ResourcesData
-  configureData: ConfigureData
+  generalData: JobGeneralData
+  resourcesData: JobResourcesData
+  configureData: JobConfigureData
   variableData: FlowVariableData
   gotoGlobalInformation: () => void
   gotoResources: () => void

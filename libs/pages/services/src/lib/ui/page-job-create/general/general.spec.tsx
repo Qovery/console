@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { GeneralData } from '../../../feature/page-job-create-feature/job-creation-flow.interface'
+import { JobGeneralData } from '../../../feature/page-job-create-feature/job-creation-flow.interface'
 import General, { GeneralProps } from './general'
 
 const props: GeneralProps = {
@@ -12,7 +12,7 @@ const props: GeneralProps = {
 describe('General', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      wrapWithReactHookForm<GeneralData>(<General {...props} />, {
+      wrapWithReactHookForm<JobGeneralData>(<General {...props} />, {
         defaultValues: {
           name: 'test',
           serviceType: ServiceTypeEnum.CONTAINER,

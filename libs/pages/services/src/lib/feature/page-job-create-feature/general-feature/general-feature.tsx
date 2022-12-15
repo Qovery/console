@@ -4,13 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { isContainer } from '@qovery/shared/enums'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import General from '../../../ui/page-job-create/general/general'
-import { GeneralData } from '../job-creation-flow.interface'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function GeneralFeature() {
@@ -49,7 +48,7 @@ export function GeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const methods = useForm<GeneralData>({
+  const methods = useForm<JobGeneralData>({
     defaultValues: generalData,
     mode: 'onChange',
   })

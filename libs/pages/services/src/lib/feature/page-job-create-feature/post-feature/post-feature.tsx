@@ -6,7 +6,14 @@ import { createApplication, postApplicationActionsDeploy } from '@qovery/domains
 import { importEnvironmentVariables } from '@qovery/domains/environment-variable'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { FlowVariableData, OrganizationEntity, RepositoryEntity } from '@qovery/shared/interfaces'
+import {
+  FlowVariableData,
+  JobConfigureData,
+  JobGeneralData,
+  JobResourcesData,
+  OrganizationEntity,
+  RepositoryEntity,
+} from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -18,13 +25,12 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import Post from '../../../ui/page-job-create/post/post'
-import { ConfigureData, GeneralData, ResourcesData } from '../job-creation-flow.interface'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 function prepareJobRequest(
-  generalData: GeneralData,
-  configureData: ConfigureData,
-  resourcesData: ResourcesData,
+  generalData: JobGeneralData,
+  configureData: JobConfigureData,
+  resourcesData: JobResourcesData,
   selectedRepository: RepositoryEntity | undefined,
   jobType: 'cron' | 'lifecycle'
 ): JobRequest {

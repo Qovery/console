@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -11,7 +12,6 @@ import {
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import Resources from '../../../ui/page-job-create/resources/resources'
-import { ResourcesData } from '../../page-application-create-feature/application-creation-flow.interface'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function ResourcesFeature() {
@@ -57,7 +57,7 @@ export function ResourcesFeature() {
     setCurrentStep(3)
   }, [setCurrentStep])
 
-  const methods = useForm<ResourcesData>({
+  const methods = useForm<ApplicationResourcesData>({
     defaultValues: resourcesData,
     mode: 'onChange',
   })
