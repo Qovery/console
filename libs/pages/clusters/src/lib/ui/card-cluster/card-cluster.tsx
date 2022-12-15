@@ -23,11 +23,22 @@ export function CardCluster(props: CardClusterProps) {
       </div>
       <div className="flex">
         {cluster.is_default && (
-          <Tag className="text-accent2-500 border border-accent2-500 bg-accent2-50 mr-2">DEFAULT</Tag>
+          <Tag
+            dataTestId="tag-default"
+            className="text-accent2-500 border border-accent2-500 bg-accent2-50 truncate mr-2"
+          >
+            DEFAULT
+          </Tag>
         )}
-        <Tag className="text-text-400 border border-element-light-lighter-500 mr-2">{cluster.region}</Tag>
-        <Tag className="text-text-400 border border-element-light-lighter-500 mr-2">{cluster.version}</Tag>
-        <Tag className="text-text-400 border border-element-light-lighter-500">{cluster.instance_type}</Tag>
+        <Tag dataTestId="tag-region" className="text-text-400 border border-element-light-lighter-500 truncate mr-2">
+          {cluster.region}
+        </Tag>
+        <Tag dataTestId="tag-version" className="text-text-400 border border-element-light-lighter-500 truncate mr-2">
+          {cluster.version}
+        </Tag>
+        <Tag dataTestId="tag-instance" className="text-text-400 border border-element-light-lighter-500 truncate">
+          {cluster.instance_type}
+        </Tag>
       </div>
     </div>
   )

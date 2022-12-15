@@ -17,6 +17,9 @@ export const clusterFactoryMock = (howMany: number): ClusterEntity[] =>
     max_running_nodes: 5,
     disk_size: 10,
     status: chance.pickone(Object.values(StateEnum)),
+    is_default: false,
+    version: '1.22',
+    instance_type: chance.name(),
     extendedStatus: {
       loadingStatus: 'loaded',
       status: {
