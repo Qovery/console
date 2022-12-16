@@ -3,12 +3,7 @@ import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  deleteClusterAction,
-  postClusterActionsDeploy,
-  postClusterActionsStop,
-  postClusterActionsUpdate,
-} from '@qovery/domains/organization'
+import { deleteClusterAction, postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { INFRA_LOGS_URL } from '@qovery/shared/router'
 import {
@@ -79,7 +74,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
           name: cluster.name,
           action: () =>
             dispatch(
-              postClusterActionsUpdate({
+              postClusterActionsDeploy({
                 organizationId,
                 clusterId: cluster.id,
               })
@@ -136,8 +131,6 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
     cluster.extendedStatus?.status?.status &&
     (isDeployAvailable(cluster.extendedStatus?.status?.status) ||
       isDeleteAvailable(cluster.extendedStatus?.status?.status))
-
-  console.log(cluster.extendedStatus?.status?.status && isDeleteAvailable(cluster.extendedStatus?.status.status))
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     deploymentActions

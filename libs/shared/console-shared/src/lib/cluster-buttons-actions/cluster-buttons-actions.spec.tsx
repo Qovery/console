@@ -20,23 +20,50 @@ describe('ClusterButtonsActionsFeature', () => {
   })
 
   it('should render actions for RUNNING status', async () => {
-    mockCluster.status = StateEnum.RUNNING
+    props.cluster.extendedStatus = {
+      loadingStatus: 'loaded',
+      status: {
+        status: StateEnum.RUNNING,
+      },
+    }
     const { baseElement } = render(<ClusterButtonsActions {...props} />)
 
-    // getByText(baseElement, 'Redeploy')
-    // getByText(baseElement, 'Stop')
+    getByText(baseElement, 'Update')
+    getByText(baseElement, 'Stop')
 
     getByText(baseElement, 'Copy identifier')
-    // getByText(baseElement, 'Delete cluster')
+    getByText(baseElement, 'Delete cluster')
   })
 
   it('should render actions for STOPPED status', async () => {
-    mockCluster.status = StateEnum.STOPPED
+    props.cluster.extendedStatus = {
+      loadingStatus: 'loaded',
+      status: {
+        is_deployed: true,
+        status: StateEnum.STOPPED,
+      },
+    }
+
     const { baseElement } = render(<ClusterButtonsActions {...props} />)
 
-    // getByText(baseElement, 'Deploy')
-
+    getByText(baseElement, 'Deploy')
     getByText(baseElement, 'Copy identifier')
-    // getByText(baseElement, 'Delete cluster')
+    getByText(baseElement, 'Delete cluster')
+  })
+
+  it('should render actions for READY status', async () => {
+    props.cluster.extendedStatus = {
+      loadingStatus: 'loaded',
+      status: {
+        is_deployed: false,
+        status: StateEnum.READY,
+      },
+    }
+
+    const { baseElement } = render(<ClusterButtonsActions {...props} />)
+
+    getByText(baseElement, 'Install')
+    getByText(baseElement, 'Copy identifier')
+    getByText(baseElement, 'Delete cluster')
   })
 })
