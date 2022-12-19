@@ -56,6 +56,38 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   }
 }
 
+export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity): JobResponse => {
+  if ((application as JobResponse).source?.docker) {
+    const git_repository = {
+      url: buildGitRepoUrl(data['provider'], data['repository']),
+      branch: data['branch'],
+      root_path: data['root_path'],
+    }
+
+    return {
+      ...(application as JobResponse),
+      name: data['name'],
+      source: {
+        docker: {
+          git_repository,
+          dockerfile_path: data['dockerfile_path'],
+        },
+      },
+    }
+  } else {
+    return {
+      ...(application as JobResponse),
+      source: {
+        image: {
+          tag: data['image_tag'] || '',
+          image_name: data['image_name'] || '',
+          registry_id: data['registry'] || '',
+        },
+      },
+    }
+  }
+}
+
 export function PageSettingsGeneralFeature() {
   const { applicationId = '', environmentId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
@@ -91,6 +123,8 @@ export function PageSettingsGeneralFeature() {
       let cloneApplication: ApplicationEntity
       if (isApplication(application)) {
         cloneApplication = handleSubmit(data, application)
+      } else if (isJob(application)) {
+        cloneApplication = handleJobSubmit(data, application)
       } else {
         try {
           cloneApplication = handleContainerSubmit(data, application)

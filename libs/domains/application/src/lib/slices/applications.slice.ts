@@ -371,7 +371,7 @@ export const applicationsSlice = createSlice({
         if (!action.meta.arg.silentToaster) {
           toast(
             ToastEnum.SUCCESS,
-            `Application updated`,
+            `${isJob(action.payload) ? 'Job' : 'Application'} updated`,
             'You must redeploy to apply the settings update',
             action.meta.arg.toasterCallback,
             undefined,

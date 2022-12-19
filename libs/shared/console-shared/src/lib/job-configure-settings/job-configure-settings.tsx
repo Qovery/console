@@ -56,7 +56,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
               linkLabel="CRON expression builder"
             />
           </div>
-          <EntrypointCmdInputs entrypointRequired />
+          <EntrypointCmdInputs />
         </>
       ) : (
         <div className="mb-10">
@@ -165,9 +165,6 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
       <Controller
         name="port"
         control={control}
-        rules={{
-          required: 'Value required',
-        }}
         render={({ field, fieldState: { error } }) => (
           <InputText
             type="number"

@@ -1,4 +1,5 @@
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { Banner, BannerStyle, IconAwesomeEnum } from '@qovery/shared/ui'
 
@@ -21,7 +22,7 @@ export function NeedRedeployFlag(props: NeedRedeployFlagProps) {
       onClickButton={props.onClickCTA}
     >
       <p>
-        This application needs to be{' '}
+        This {isJob(props.application) ? 'job' : 'application'} needs to be{' '}
         {props.application.status?.service_deployment_status === ServiceDeploymentStatusEnum.OUT_OF_DATE
           ? 'redeployed'
           : 'deployed'}{' '}

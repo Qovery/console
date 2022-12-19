@@ -214,7 +214,7 @@ export function PostFeature() {
                 postApplicationActionsDeploy({
                   environmentId,
                   applicationId: app.id,
-                  serviceType: ServiceTypeEnum.APPLICATION,
+                  serviceType: ServiceTypeEnum.JOB,
                 })
               )
             }

@@ -86,9 +86,6 @@ export function VariableFeature() {
 
   useEffect(() => {
     setCurrentStep(4)
-    if (variableData?.variables?.length === 0) {
-      onAddPort()
-    }
   }, [setCurrentStep, variableData])
 
   return (

@@ -1,6 +1,5 @@
 import { Auth0Provider } from '@auth0/auth0-react'
 import { configureStore } from '@reduxjs/toolkit'
-import posthog from 'posthog-js'
 import React, { ComponentType, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
@@ -20,10 +19,6 @@ export type Props = {
 
 export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootState(), route = '/' }) => {
   window.history.pushState({}, 'Test page', route)
-
-  posthog.init('__test__posthog__token', {
-    api_host: '__test__environment__posthog__apihost',
-  })
 
   const store = configureStore({
     reducer: rootReducer,

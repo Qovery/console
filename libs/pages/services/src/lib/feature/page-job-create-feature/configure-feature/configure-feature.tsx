@@ -43,6 +43,14 @@ export function ConfigureFeature() {
 
   useEffect(() => {
     setCurrentStep(2)
+
+    if (configureData?.nb_restarts === undefined) {
+      methods.setValue('nb_restarts', 0)
+    }
+
+    if (configureData?.max_duration === undefined) {
+      methods.setValue('max_duration', 300)
+    }
   }, [setCurrentStep])
 
   const methods = useForm<JobConfigureData>({

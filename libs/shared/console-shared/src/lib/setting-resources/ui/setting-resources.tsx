@@ -1,4 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
+import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -89,7 +90,7 @@ export function SettingResources(props: SettingResourcesProps) {
         />
       </BlockContent>
 
-      {watchInstances && (
+      {!isJob(application) && watchInstances && (
         <BlockContent title="Instances">
           <p className="text-text-600 mb-3 font-medium">{`${watchInstances[0]} - ${watchInstances[1]}`}</p>
           <Controller

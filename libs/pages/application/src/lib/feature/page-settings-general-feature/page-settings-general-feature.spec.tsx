@@ -2,7 +2,8 @@ import { render } from '__tests__/utils/setup-jest'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/domains/application'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
+import { cronjobFactoryMock } from '../../../../../../domains/application/src/lib/mocks/factories/job-factory.mock'
+import PageSettingsGeneralFeature, { handleJobSubmit, handleSubmit } from './page-settings-general-feature'
 
 describe('PageSettingsGeneralFeature', () => {
   let application: ApplicationEntity
@@ -73,5 +74,41 @@ describe('PageSettingsGeneralFeature', () => {
     expect(app.git_repository?.branch).toBe('main')
     expect(app.git_repository?.root_path).toBe('/')
     expect(app.git_repository?.url).toBe('https://github.com/qovery/console.git')
+  })
+
+  it('should update the job with git repository', () => {
+    const job = cronjobFactoryMock(1)[0]
+    const app = handleJobSubmit(
+      {
+        name: 'hello',
+        dockerfile_path: '/',
+        provider: GitProviderEnum.GITHUB,
+        repository: 'qovery/console',
+        branch: 'main',
+        root_path: '/',
+      },
+      job
+    )
+
+    expect(app.source?.docker?.git_repository?.branch).toBe('main')
+    expect(app.source?.docker?.git_repository?.root_path).toBe('/')
+    expect(app.source?.docker?.git_repository?.url).toBe('https://github.com/qovery/console.git')
+  })
+
+  it('should update the job with image', () => {
+    const job = cronjobFactoryMock(1, true)[0]
+    const app = handleJobSubmit(
+      {
+        name: 'hello',
+        image_tag: 'latest',
+        image_name: 'qovery/console',
+        registry: 'docker.io',
+      },
+      job
+    )
+
+    expect(app.source?.image?.tag).toBe('latest')
+    expect(app.source?.image?.image_name).toBe('qovery/console')
+    expect(app.source?.image?.registry_id).toBe('docker.io')
   })
 })

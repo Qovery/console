@@ -33,7 +33,7 @@ export function Configure(props: ConfigureProps) {
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
           >
-            Cancel
+            Back
           </Button>
           <Button
             dataTestId="button-submit"

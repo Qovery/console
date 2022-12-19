@@ -3,15 +3,15 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, selectApplicationById } from '@qovery/domains/application'
-import { ServiceTypeEnum, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
+import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
+import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { ApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsConfigure from '../../ui/page-settings-configure/page-settings-configure'
 
 export function PageSettingsConfigureFeature() {
-  const { applicationId = '' } = useParams()
+  const { applicationId = '', environmentId = '' } = useParams()
   const methods = useForm<JobConfigureData>()
 
   const application: JobResponse | undefined = useSelector<RootState, ApplicationEntity | undefined>(
@@ -22,6 +22,14 @@ export function PageSettingsConfigureFeature() {
   const [loading, setLoading] = useState(false)
 
   const dispatch = useDispatch<AppDispatch>()
+
+  const toasterCallback = () => {
+    if (application) {
+      dispatch(
+        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+      )
+    }
+  }
 
   useEffect(() => {
     methods.setValue('max_duration', application?.max_duration_seconds)
@@ -130,9 +138,7 @@ export function PageSettingsConfigureFeature() {
         data: job,
         applicationId: job.id as string,
         serviceType: ServiceTypeEnum.JOB,
-        toasterCallback: () => {
-          console.log('toaster')
-        },
+        toasterCallback,
       })
     )
       .unwrap()
