@@ -118,7 +118,7 @@ export function Navigation(props: NavigationProps) {
                 />
               </div>
             </Tooltip>
-            <Tooltip content="Informations" side="right">
+            <Tooltip content="Helps" side="right">
               <div>
                 <Menu
                   trigger={
