@@ -21,6 +21,7 @@ import {
   isDeployAvailable,
   isRestartAvailable,
   isStopAvailable,
+  isUpdateAvailable,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 
@@ -130,7 +131,8 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const deploymentActions =
     cluster.extendedStatus?.status?.status &&
     (isDeployAvailable(cluster.extendedStatus?.status?.status) ||
-      isDeleteAvailable(cluster.extendedStatus?.status?.status))
+      isDeleteAvailable(cluster.extendedStatus?.status?.status) ||
+      isUpdateAvailable(cluster.extendedStatus?.status?.status))
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     deploymentActions

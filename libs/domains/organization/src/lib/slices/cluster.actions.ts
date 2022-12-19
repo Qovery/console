@@ -48,6 +48,7 @@ export const postClusterActionsDeploy = createAsyncThunk<any, { organizationId: 
 export const postClusterActionsStop = createAsyncThunk<any, { organizationId: string; clusterId: string }>(
   'clusterActions/stop',
   async (data, { dispatch }) => {
+    console.log(data)
     try {
       const response = await clusterApi.stopCluster(data.organizationId, data.clusterId)
       if (response.status === 202 || response.status === 200) {
