@@ -16,13 +16,12 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function ResourcesFeature() {
   useDocumentTitle('Resources - Create Job')
-  const { setCurrentStep, resourcesData, setResourcesData, generalData, jobURL } = useJobContainerCreateContext()
+  const { setCurrentStep, resourcesData, setResourcesData, generalData, jobURL, jobType } =
+    useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
   useEffect(() => {
-    return
-
     !generalData?.name &&
       navigate(
         `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}` +
@@ -32,7 +31,7 @@ export function ResourcesFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Setting the right resources"
+      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job resources`}
       items={[
         'Application are deployed as containers on your Kubernetes cluster',
         'Set the vCPU/RAM based on your application need',

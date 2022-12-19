@@ -16,6 +16,7 @@ export function Resources(props: ResourcesProps) {
     <>
       <div className="mb-10">
         <h3 className="text-text-700 text-lg mb-2">Set resources</h3>
+        <p className="text-xs text-text-500">Configure the resources required to run your job</p>
       </div>
 
       <form onSubmit={props.onSubmit}>

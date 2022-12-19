@@ -16,7 +16,7 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function VariableFeature() {
   useDocumentTitle('Environment Variable - Create Job')
-  const { setCurrentStep, generalData, setVariableData, variableData, jobURL } = useJobContainerCreateContext()
+  const { setCurrentStep, generalData, setVariableData, variableData, jobURL, jobType } = useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
@@ -30,24 +30,12 @@ export function VariableFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Configuring the application port"
+      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job variables`}
       items={[
-        'Declare the ports used internally by your application',
-        'Declared ports are accessible from other applications within the same environment',
-        'You can also expose them on the internet by making them public.',
-        'Declared ports are also used to check the liveness/readiness of your application.',
+        'Define the environment variables required by your job',
+        'Note: variables declared in this screen are injected together with the one already defined within your environment (see environment variables section)',
+        'Any additional environment variable can be added later from the environment variable section',
       ]}
-      helpSectionProps={{
-        description: 'This is still a description',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#ports',
-            linkLabel: 'How to configure my application',
-            external: true,
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
-        ],
-      }}
     />
   )
   const methods = useForm<FlowVariableData>({

@@ -31,9 +31,7 @@ export function GeneralContainerSettings(props: GeneralContainerSettingsProps) {
 
   return (
     <div className={className}>
-      <p className="mb-3 text-sm text-text-500">
-        For Applications created from a Registry, fill the informations below
-      </p>
+      <h3 className="text-sm font-semibold mb-3">For applications created from a registry</h3>
       <Controller
         name="registry"
         control={control}

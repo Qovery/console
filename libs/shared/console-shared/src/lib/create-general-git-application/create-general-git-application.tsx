@@ -26,9 +26,8 @@ export function CreateGeneralGitApplication(props: PageSettingsGeneralProps) {
 
   return (
     <>
-      <p className="mb-3 text-sm text-text-500">
-        For Applications created from a Git Provider, fill the informations below
-      </p>
+      <h3 className="text-sm font-semibold mb-3">For applications created from a Git Provider</h3>
+
       <div className="mb-6">
         <GitRepositorySettingsFeature withBlockWrapper={false} />
       </div>

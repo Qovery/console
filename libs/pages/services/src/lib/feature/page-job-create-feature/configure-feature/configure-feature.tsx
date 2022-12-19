@@ -21,23 +21,12 @@ export function ConfigureFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Cronjob creation"
+      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job Information`}
       items={[
-        'You can deploy an application from a git repository or a container registry',
-        'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',
-        'Container Registry: Qovery will pull the image from container registry and deploy it on your kubernetes cluster',
+        'Define if the job shall be triggered when the environment Starts, Stops or is being deleted',
+        'You can customize the job behaviour by defining an entrypoint and arguments to be used at running time',
+        'For long running job it is recommended to properly set the max duration and a port to test the job liveness',
       ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#general',
-            linkLabel: 'How to configure my application',
-            external: true,
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
-        ],
-      }}
     />
   )
 

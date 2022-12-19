@@ -157,9 +157,8 @@ export function PostFeature() {
   }
 
   useEffect(() => {
-    return
     !generalData?.name && gotoGlobalInformations()
-  }, [generalData, navigate, environmentId, organizationId, projectId])
+  }, [generalData, navigate, environmentId, organizationId, projectId, gotoGlobalInformations])
 
   const dispatch = useDispatch<AppDispatch>()
 

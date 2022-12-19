@@ -30,7 +30,7 @@ export function JobGeneralSetting(props: JobGeneralSettingProps) {
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               dataTestId="input-select-source"
-              className="mb-6"
+              className="mb-12"
               onChange={field.onChange}
               value={field.value}
               options={[
@@ -54,7 +54,6 @@ export function JobGeneralSetting(props: JobGeneralSettingProps) {
 
       {getValues('serviceType') && (
         <>
-          <div className="border-b border-b-element-light-lighter-400 mb-3"></div>
           {getValues().serviceType === ServiceTypeEnum.APPLICATION &&
             (props.isEdition ? (
               <>

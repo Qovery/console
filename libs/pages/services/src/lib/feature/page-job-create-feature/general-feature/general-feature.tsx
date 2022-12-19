@@ -25,23 +25,12 @@ export function GeneralFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title="Cronjob creation"
+      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job creation`}
       items={[
         'You can deploy an application from a git repository or a container registry',
         'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',
         'Container Registry: Qovery will pull the image from container registry and deploy it on your kubernetes cluster',
       ]}
-      helpSectionProps={{
-        description: 'Need help? You may find these links useful',
-        links: [
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#general',
-            linkLabel: 'How to configure my application',
-            external: true,
-          },
-          { link: 'https://discuss.qovery.com/', linkLabel: 'Still need help? Ask on our Forum', external: true },
-        ],
-      }}
     />
   )
 

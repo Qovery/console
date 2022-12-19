@@ -28,11 +28,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
           </Button>
         </div>
 
-        <p className="text-xs text-text-500">
-          Blabla Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem eveniet praesentium sunt veritatis.
-          Aliquid aperiam commodi corporis doloremque eos molestiae omnis perspiciatis provident quia saepe tempora
-          tenetur totam, voluptates! A.
-        </p>
+        <p className="text-xs text-text-500">Define here the variables required by your job</p>
       </div>
 
       <form onSubmit={props.onSubmit}>
