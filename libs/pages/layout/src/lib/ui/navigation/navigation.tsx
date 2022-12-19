@@ -1,6 +1,6 @@
-import { Link, matchPath, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { CLUSTERS_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
   Avatar,
   ButtonIcon,
@@ -13,6 +13,7 @@ import {
   MenuDirection,
   Modal,
   ModalUser,
+  Tooltip,
 } from '@qovery/shared/ui'
 
 export interface NavigationProps {
@@ -25,9 +26,10 @@ export function Navigation(props: NavigationProps) {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
-  const matchLogInfraRoute = matchPath(pathname, INFRA_LOGS_URL(organizationId, clusterId))
+  const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
+  const matchClusterRoute = pathname.includes(CLUSTERS_URL(organizationId)) || matchLogInfraRoute
 
   const infosMenu = [
     {
@@ -65,13 +67,6 @@ export function Navigation(props: NavigationProps) {
           },
           contentLeft: <Icon name="icon-solid-envelope" className="text-sm text-brand-400" />,
         },
-        /*{
-          name: 'Shortcuts',
-          link: {
-            url: 'https://discord.qovery.com/',
-          },
-          contentLeft: <Icon name="icon-solid-keyboard" className="text-sm text-brand-400" />,
-        },*/
       ],
     },
   ]
@@ -87,40 +82,58 @@ export function Navigation(props: NavigationProps) {
 
       <div className="flex flex-col justify-between px-2.5 py-5 flex-grow">
         <div className="flex flex-col gap-3">
-          <ButtonIcon
-            className={matchOrganizationRoute ? 'is-active' : ''}
-            icon={IconAwesomeEnum.LAYER_GROUP}
-            style={ButtonIconStyle.ALT}
-            size={ButtonSize.XLARGE}
-            link={ORGANIZATION_URL(organizationId)}
-          />
-          {/*
-          <ButtonIcon
-            icon="icon-solid-gauge-high"
-            style={ButtonIconStyle.ALT}
-            size={ButtonSize.XLARGE}
-            active={true}
-          />
-          <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
-          */}
+          <Tooltip content="Environments" side="right">
+            <div>
+              <ButtonIcon
+                className={matchOrganizationRoute ? 'is-active' : ''}
+                icon={IconAwesomeEnum.LAYER_GROUP}
+                style={ButtonIconStyle.ALT}
+                size={ButtonSize.XLARGE}
+                link={ORGANIZATION_URL(organizationId)}
+              />
+            </div>
+          </Tooltip>
+          <Tooltip content="Clusters" side="right">
+            <div>
+              <ButtonIcon
+                className={matchClusterRoute ? 'is-active' : ''}
+                icon={IconAwesomeEnum.CLOUD_WORD}
+                style={ButtonIconStyle.ALT}
+                size={ButtonSize.XLARGE}
+                link={CLUSTERS_URL(organizationId)}
+              />
+            </div>
+          </Tooltip>
         </div>
         <div>
           <div className="flex flex-col gap-3">
-            <ButtonIcon
-              className={matchSettingsRoute ? 'is-active' : ''}
-              icon={IconAwesomeEnum.WHEEL}
-              style={ButtonIconStyle.ALT}
-              size={ButtonSize.XLARGE}
-              link={SETTINGS_URL(organizationId)}
-            />
-            <Menu
-              trigger={
-                <ButtonIcon icon={IconAwesomeEnum.CIRCLE_INFO} style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
-              }
-              direction={MenuDirection.RIGHT}
-              arrowAlign={MenuAlign.END}
-              menus={infosMenu}
-            />
+            <Tooltip content="Settings" side="right">
+              <div>
+                <ButtonIcon
+                  className={matchSettingsRoute ? 'is-active' : ''}
+                  icon={IconAwesomeEnum.WHEEL}
+                  style={ButtonIconStyle.ALT}
+                  size={ButtonSize.XLARGE}
+                  link={SETTINGS_URL(organizationId)}
+                />
+              </div>
+            </Tooltip>
+            <Tooltip content="Helps" side="right">
+              <div>
+                <Menu
+                  trigger={
+                    <ButtonIcon
+                      icon={IconAwesomeEnum.CIRCLE_INFO}
+                      style={ButtonIconStyle.ALT}
+                      size={ButtonSize.XLARGE}
+                    />
+                  }
+                  direction={MenuDirection.RIGHT}
+                  arrowAlign={MenuAlign.END}
+                  menus={infosMenu}
+                />
+              </div>
+            </Tooltip>
           </div>
         </div>
       </div>

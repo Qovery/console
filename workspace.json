@@ -12,6 +12,7 @@
     "domains-projects": "libs/domains/projects",
     "domains-user": "libs/domains/user",
     "pages-application": "libs/pages/application",
+    "pages-clusters": "libs/pages/clusters",
     "pages-database": "libs/pages/database",
     "pages-environments": "libs/pages/environments",
     "pages-layout": "libs/pages/layout",

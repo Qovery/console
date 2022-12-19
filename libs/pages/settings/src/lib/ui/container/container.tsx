@@ -12,7 +12,7 @@ export function Container(props: ContainerProps) {
   const { organizationLinks, projectLinks, accountLinks, children } = props
 
   return (
-    <div className="bg-white flex rounded">
+    <div className="bg-white flex rounded-t">
       <div className="w-72 border-r border-element-light-lighter-400 relative shrink-0 min-h-[calc(100vh-10px)] pb-10">
         <div className="sticky top-7">
           <NavigationLeft title="Organization" links={organizationLinks} className="py-6" />

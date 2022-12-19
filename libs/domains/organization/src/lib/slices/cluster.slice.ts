@@ -1,4 +1,11 @@
-import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import {
+  PayloadAction,
+  Update,
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit'
 import { Cluster, ClusterLogs, ClusterStatus, ClustersApi } from 'qovery-typescript-axios'
 import { ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
@@ -23,6 +30,14 @@ export const fetchClusterStatus = createAsyncThunk<ClusterStatus, { organization
   }
 )
 
+export const fetchClustersStatus = createAsyncThunk<ClusterStatus[], { organizationId: string }>(
+  'clusters-status/fetch',
+  async (data) => {
+    const response = await clusterApi.getOrganizationClusterStatus(data.organizationId)
+    return response.data.results as ClusterStatus[]
+  }
+)
+
 export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizationId: string; clusterId: string }>(
   'cluster-infra-logs/fetch',
   async (data) => {
@@ -35,6 +50,7 @@ export const initialClusterState: ClustersState = clusterAdapter.getInitialState
   loadingStatus: 'not loaded',
   error: null,
   joinOrganizationClusters: {},
+  statusLoadingStatus: 'not loaded',
 })
 
 export const clusterSlice = createSlice({
@@ -99,6 +115,27 @@ export const clusterSlice = createSlice({
         }
         clusterAdapter.updateOne(state, update)
       })
+      // fetch clusters status
+      .addCase(fetchClustersStatus.pending, (state: ClustersState) => {
+        state.statusLoadingStatus = 'loading'
+      })
+      .addCase(fetchClustersStatus.fulfilled, (state: ClustersState, action: PayloadAction<ClusterStatus[]>) => {
+        const update = action.payload.map((status: ClusterStatus) => ({
+          id: status.cluster_id,
+          changes: {
+            extendedStatus: {
+              status: status,
+              loadingStatus: 'loaded',
+            },
+          },
+        }))
+        clusterAdapter.updateMany(state, update as Update<Cluster>[])
+        state.statusLoadingStatus = 'loaded'
+      })
+      .addCase(fetchClustersStatus.rejected, (state: ClustersState, action) => {
+        state.error = action.error.message
+        state.statusLoadingStatus = 'error'
+      })
       // fetch cluster logs
       .addCase(fetchClusterInfraLogs.pending, (state: ClustersState, action) => {
         const clusterId = action.meta.arg.clusterId
@@ -155,6 +192,10 @@ export const selectClustersEntitiesByOrganizationId = createSelector(
     return getEntitiesByIds<Cluster>(items.entities, items?.joinOrganizationClusters[organizationId])
   }
 )
+
+export const selectClustersStatusLoadingStatus = createSelector(getClusterState, (state) => state.statusLoadingStatus)
+
+export const selectClustersLoadingStatus = createSelector(getClusterState, (state) => state.loadingStatus)
 
 export const selectClusterEntities = createSelector(getClusterState, selectEntities)
 

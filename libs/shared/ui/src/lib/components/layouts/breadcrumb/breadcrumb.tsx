@@ -8,6 +8,7 @@ import {
   APPLICATION_GENERAL_URL,
   APPLICATION_LOGS_URL,
   APPLICATION_URL,
+  CLUSTERS_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
@@ -50,6 +51,8 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   const locationIsDeploymentLogs = location.pathname.includes(
     DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)
   )
+
+  const locationIsClusterLogs = location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
 
   const matchLogsRoute =
     location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
@@ -166,7 +169,9 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     </div>
   )
 
-  const linkToCloseLogs = SERVICES_URL(organizationId, projectId, environmentId)
+  const linkToCloseLogs = locationIsClusterLogs
+    ? CLUSTERS_URL(organizationId)
+    : SERVICES_URL(organizationId, projectId, environmentId)
 
   useEffect(() => {
     const bindTouch = (event: KeyboardEvent) => {
@@ -280,7 +285,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
           </div>
         )}
       </div>
-      {(locationIsApplicationLogs || locationIsDeploymentLogs) && (
+      {(locationIsApplicationLogs || locationIsDeploymentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
           <ButtonIcon
             icon={IconAwesomeEnum.CROSS}

@@ -112,3 +112,41 @@ export const isWarning = (status: StateEnum): boolean => {
 export const isRunning = (status: StateEnum): boolean => {
   return status === StateEnum.DEPLOYING || status === StateEnum.STOPPING
 }
+
+export const getStatusClusterMessage = (status?: StateEnum, isAlreadyDeployed?: boolean): string => {
+  switch (status) {
+    case StateEnum.DEPLOYMENT_QUEUED:
+      if (!isAlreadyDeployed) return 'Installation queued'
+      else return 'Update queued'
+    case StateEnum.DEPLOYMENT_ERROR:
+      if (!isAlreadyDeployed) return 'Installation error'
+      else return 'Update error'
+    case StateEnum.DEPLOYING:
+      if (!isAlreadyDeployed) return 'Installing...'
+      else return 'Updating...'
+    case StateEnum.QUEUED:
+      if (!isAlreadyDeployed) return 'Installing queued'
+      else return 'Updating queued'
+    case StateEnum.STOP_QUEUED:
+      return 'Pause queued'
+    case StateEnum.STOP_ERROR:
+      return 'Pause error'
+    case StateEnum.STOPPING:
+      return 'Pausing...'
+    case StateEnum.STOPPED:
+      return 'Paused'
+    // case StateEnum.RUNNING_ERROR:
+    //   return 'Error'
+    case StateEnum.DELETE_QUEUED:
+      return 'Deletion queued'
+    case StateEnum.DELETING:
+      return 'Deleting...'
+    case StateEnum.DELETE_ERROR:
+      return 'Deletion error'
+    case StateEnum.READY:
+    case StateEnum.DELETED:
+    case StateEnum.RUNNING:
+    default:
+      return ''
+  }
+}
