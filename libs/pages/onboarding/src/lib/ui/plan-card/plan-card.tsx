@@ -10,13 +10,12 @@ export function PlanCard(props: PlanCardProps) {
   const { name, title, text, onClick } = props
 
   return (
-    <div className="" onClick={() => onClick(name)}>
-      <div className="flex items-start gap-3">
-        <h2 className="leading-none text-base font-normal mb-1">
-          <b className="font-bold">{title}</b> <span className="text-text-500">plan</span>
-        </h2>
-        <p className="text-sm text-text-500">{text}</p>
-      </div>
+    <div
+      className="bg-element-light-lighter-200 border border-element-light-lighter-500 px-5 py-4 rounded"
+      onClick={() => onClick(name)}
+    >
+      <h2 className="h5 mb-1">{title}</h2>
+      <p className="text-sm text-text-500">{text}</p>
       {/* {name !== OrganizationPlanType.ENTERPRISE && (
         <p className="text-xl font-bold flex items-center gap-1">
           {'$'}

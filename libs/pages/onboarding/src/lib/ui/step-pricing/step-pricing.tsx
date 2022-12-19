@@ -33,17 +33,18 @@ export function StepPricing(props: StepPricingProps) {
         .
       </p>
       <form>
-        {plans.map((plan: OrganizationPlan) => (
-          <PlanCard
-            key={plan.name}
-            name={plan.name}
-            title={plan.title}
-            text={plan.text}
-            price={plan.price}
-            onClick={() => setSelectPlan(plan.name)}
-          />
-        ))}
-        <p className="text-xs text-text-400 text-right mt-1">Price plan does not include your AWS costs</p>
+        <div className="grid md:grid-cols-3 gap-5">
+          {plans.map((plan: OrganizationPlan) => (
+            <PlanCard
+              key={plan.name}
+              name={plan.name}
+              title={plan.title}
+              text={plan.text}
+              price={plan.price}
+              onClick={() => setSelectPlan(plan.name)}
+            />
+          ))}
+        </div>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
