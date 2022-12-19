@@ -50,7 +50,6 @@ export const postClusterActionsStop = createAsyncThunk<any, { organizationId: st
   async (data, { dispatch }) => {
     try {
       const response = await clusterApi.stopCluster(data.organizationId, data.clusterId)
-      console.log(response)
       if (response.status === 202 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchClusterStatus({ organizationId: data.organizationId, clusterId: data.clusterId }))
@@ -73,6 +72,7 @@ export const deleteClusterAction = createAsyncThunk<any, { organizationId: strin
       if (response.status === 204 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchClusterStatus({ organizationId: data.organizationId, clusterId: data.clusterId }))
+
         // success message
         toast(ToastEnum.SUCCESS, 'Your cluster is being deleted')
       }

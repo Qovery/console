@@ -1,6 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
+import { StateEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/domains/organization'
-import CardCluster, { CardClusterProps } from './card-cluster'
+import { getStatusClusterMessage } from '@qovery/shared/utils'
+import CardCluster, { CardClusterProps, getColorForStatus } from './card-cluster'
 
 describe('CardCluster', () => {
   const props: CardClusterProps = {
@@ -29,5 +31,19 @@ describe('CardCluster', () => {
     const { baseElement } = render(<CardCluster {...props} />)
 
     expect(baseElement.querySelector('h2')?.textContent).toBe(props.cluster.name)
+  })
+
+  it('should have a status message', () => {
+    const status = props.cluster.extendedStatus?.status?.status || StateEnum.BUILDING
+
+    const { baseElement } = render(<CardCluster {...props} />)
+
+    expect(baseElement.textContent).toContain(getStatusClusterMessage(status))
+  })
+
+  it('should have a function to display color by status', () => {
+    expect(getColorForStatus(StateEnum.BUILDING)).toBe('text-progressing-500')
+    expect(getColorForStatus(StateEnum.STOP_ERROR)).toBe('text-error-500')
+    expect(getColorForStatus(StateEnum.READY)).toBe('text-brand-500')
   })
 })

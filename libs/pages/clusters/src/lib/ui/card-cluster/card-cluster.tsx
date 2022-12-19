@@ -47,10 +47,7 @@ export function CardCluster(props: CardClusterProps) {
               </h2>
             </div>
             {cluster.extendedStatus?.status?.status && (
-              <p
-                date-testid="status-message"
-                className={`text-xxs mt-0.5 font-medium ${getColorForStatus(cluster.extendedStatus?.status?.status)}`}
-              >
+              <p className={`text-xxs mt-0.5 font-medium ${getColorForStatus(cluster.extendedStatus?.status?.status)}`}>
                 {getStatusClusterMessage(
                   cluster.extendedStatus?.status?.status,
                   cluster.extendedStatus.status.is_deployed
