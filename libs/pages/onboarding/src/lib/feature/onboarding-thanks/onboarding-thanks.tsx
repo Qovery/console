@@ -10,14 +10,12 @@ export function OnboardingThanks() {
   const { update } = useIntercom()
 
   useEffect(() => {
-    // if (process.env['NODE_ENV'] === 'production') {
     // update user intercom
     update({
       email: userSignUp?.user_email,
       name: `${userSignUp?.first_name} ${userSignUp?.last_name}`,
       userId: user.sub,
     })
-    // }
   }, [user, userSignUp, update])
 
   return (

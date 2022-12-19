@@ -1,12 +1,6 @@
 import { createContext, useEffect, useState } from 'react'
 import { Params, useNavigate } from 'react-router-dom'
-import {
-  ONBOARDING_PRICING_FREE_URL,
-  ONBOARDING_PRICING_URL,
-  ONBOARDING_PROJECT_URL,
-  ONBOARDING_URL,
-  Route,
-} from '@qovery/shared/router'
+import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, Route } from '@qovery/shared/router'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
 import { LayoutOnboarding } from '../../ui/layout-onboarding/layout-onboarding'
 
@@ -40,10 +34,6 @@ export function Container(props: ContainerProps) {
 
   useEffect(() => {
     setStep(params['*'])
-
-    if (step === ONBOARDING_PRICING_URL.replace('/', '')) {
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PRICING_FREE_URL}`)
-    }
   }, [params, setStep, step, navigate])
 
   const stepsNumber: number = firstStep ? ROUTER_ONBOARDING_STEP_1.length : ROUTER_ONBOARDING_STEP_2.length
@@ -68,6 +58,7 @@ export function Container(props: ContainerProps) {
         stepsNumber={stepsNumber}
         currentStepPosition={currentStepPosition(currentRoutes)}
         step={step}
+        withoutRightContent={`/${params['*']}` === ONBOARDING_PRICING_URL}
         catchline={
           firstStep
             ? 'Just a few questions'

@@ -10,10 +10,12 @@ export interface LayoutOnboardingProps {
   step: string | undefined
   catchline: string
   routes: Route[]
+  withoutRightContent: boolean
 }
 
 export function LayoutOnboarding(props: LayoutOnboardingProps) {
-  const { children, currentStepPosition, stepsNumber, getProgressPercentValue, step, catchline } = props
+  const { children, currentStepPosition, stepsNumber, getProgressPercentValue, step, catchline, withoutRightContent } =
+    props
 
   return (
     <main className="layout-onboarding h-full min-h-screen bg-white">
@@ -29,14 +31,18 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
           </div>
         }
       />
-      <div className="flex h-full min-h-screen max-w-screen-2xl ml-auto mr-auto relative">
-        <div className="flex-[2_1_0%] px-4 md:px-24 bg-white">
-          <div className="max-w-lg mt-36 mx-auto">{children}</div>
+      {withoutRightContent ? (
+        <div className="relative top-16 mt-14 px-4 flex justify-center">{children}</div>
+      ) : (
+        <div className="flex h-full min-h-screen max-w-screen-2xl ml-auto mr-auto relative">
+          <div className="flex-[2_1_0%] px-4 md:px-24 bg-white">
+            <div className="max-w-lg mt-36 mx-auto">{children}</div>
+          </div>
+          <div className="hidden xl:block flex-[1_1_0%] pl-20 bg-element-light-lighter-300 overflow-hidden max-w-2xl before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">
+            <OnboardingRightContent step={step} />
+          </div>
         </div>
-        <div className="hidden xl:block flex-[1_1_0%] pl-20 bg-element-light-lighter-300 overflow-hidden max-w-2xl before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">
-          <OnboardingRightContent step={step} />
-        </div>
-      </div>
+      )}
     </main>
   )
 }
