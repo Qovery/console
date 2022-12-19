@@ -13,6 +13,7 @@ import {
   MenuDirection,
   Modal,
   ModalUser,
+  Tooltip,
 } from '@qovery/shared/ui'
 
 export interface NavigationProps {
@@ -81,38 +82,58 @@ export function Navigation(props: NavigationProps) {
 
       <div className="flex flex-col justify-between px-2.5 py-5 flex-grow">
         <div className="flex flex-col gap-3">
-          <ButtonIcon
-            className={matchOrganizationRoute ? 'is-active' : ''}
-            icon={IconAwesomeEnum.LAYER_GROUP}
-            style={ButtonIconStyle.ALT}
-            size={ButtonSize.XLARGE}
-            link={ORGANIZATION_URL(organizationId)}
-          />
-          <ButtonIcon
-            className={matchClusterRoute ? 'is-active' : ''}
-            icon={IconAwesomeEnum.CLOUD_WORD}
-            style={ButtonIconStyle.ALT}
-            size={ButtonSize.XLARGE}
-            link={CLUSTERS_URL(organizationId)}
-          />
+          <Tooltip content="Environments" side="right">
+            <div>
+              <ButtonIcon
+                className={matchOrganizationRoute ? 'is-active' : ''}
+                icon={IconAwesomeEnum.LAYER_GROUP}
+                style={ButtonIconStyle.ALT}
+                size={ButtonSize.XLARGE}
+                link={ORGANIZATION_URL(organizationId)}
+              />
+            </div>
+          </Tooltip>
+          <Tooltip content="Clusters" side="right">
+            <div>
+              <ButtonIcon
+                className={matchClusterRoute ? 'is-active' : ''}
+                icon={IconAwesomeEnum.CLOUD_WORD}
+                style={ButtonIconStyle.ALT}
+                size={ButtonSize.XLARGE}
+                link={CLUSTERS_URL(organizationId)}
+              />
+            </div>
+          </Tooltip>
         </div>
         <div>
           <div className="flex flex-col gap-3">
-            <ButtonIcon
-              className={matchSettingsRoute ? 'is-active' : ''}
-              icon={IconAwesomeEnum.WHEEL}
-              style={ButtonIconStyle.ALT}
-              size={ButtonSize.XLARGE}
-              link={SETTINGS_URL(organizationId)}
-            />
-            <Menu
-              trigger={
-                <ButtonIcon icon={IconAwesomeEnum.CIRCLE_INFO} style={ButtonIconStyle.ALT} size={ButtonSize.XLARGE} />
-              }
-              direction={MenuDirection.RIGHT}
-              arrowAlign={MenuAlign.END}
-              menus={infosMenu}
-            />
+            <Tooltip content="Settings" side="right">
+              <div>
+                <ButtonIcon
+                  className={matchSettingsRoute ? 'is-active' : ''}
+                  icon={IconAwesomeEnum.WHEEL}
+                  style={ButtonIconStyle.ALT}
+                  size={ButtonSize.XLARGE}
+                  link={SETTINGS_URL(organizationId)}
+                />
+              </div>
+            </Tooltip>
+            <Tooltip content="Informations" side="right">
+              <div>
+                <Menu
+                  trigger={
+                    <ButtonIcon
+                      icon={IconAwesomeEnum.CIRCLE_INFO}
+                      style={ButtonIconStyle.ALT}
+                      size={ButtonSize.XLARGE}
+                    />
+                  }
+                  direction={MenuDirection.RIGHT}
+                  arrowAlign={MenuAlign.END}
+                  menus={infosMenu}
+                />
+              </div>
+            </Tooltip>
           </div>
         </div>
       </div>

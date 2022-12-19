@@ -1,14 +1,14 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { Icon, StatusChip, Tag } from '@qovery/shared/ui'
+import { Icon, Skeleton, StatusChip, Tag } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/utils'
 
 export interface CardClusterProps {
   cluster: ClusterEntity
 }
 
-export const getColorForStatus = (status: StateEnum): string => {
+export const getColorForStatus = (status?: StateEnum): string => {
   switch (status) {
     case StateEnum.DEPLOYMENT_QUEUED:
     case StateEnum.DEPLOYING:
@@ -33,6 +33,8 @@ export const getColorForStatus = (status: StateEnum): string => {
 export function CardCluster(props: CardClusterProps) {
   const { cluster } = props
 
+  const statusLoading = !!cluster.extendedStatus?.status?.status
+
   return (
     <div data-testid={`cluster-list-${cluster.id}`} className="border border-element-light-lighter-400 rounded p-5">
       <div className="flex justify-between mb-5">
@@ -45,17 +47,19 @@ export function CardCluster(props: CardClusterProps) {
                 <StatusChip status={cluster.extendedStatus?.status?.status} />
               </h2>
             </div>
-            {cluster.extendedStatus?.status?.status && (
+            <Skeleton height={12} width={100} show={!statusLoading}>
               <p className={`text-xxs mt-0.5 font-medium ${getColorForStatus(cluster.extendedStatus?.status?.status)}`}>
                 {getStatusClusterMessage(
                   cluster.extendedStatus?.status?.status,
-                  cluster.extendedStatus.status.is_deployed
+                  cluster.extendedStatus?.status?.is_deployed
                 )}
               </p>
-            )}
+            </Skeleton>
           </div>
         </div>
-        <ClusterButtonsActions cluster={cluster} />
+        <Skeleton height={32} width={146} show={!statusLoading}>
+          <ClusterButtonsActions cluster={cluster} />
+        </Skeleton>
       </div>
       <div className="flex">
         {cluster.production && (

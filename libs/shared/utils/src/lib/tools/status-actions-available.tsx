@@ -113,7 +113,7 @@ export const isRunning = (status: StateEnum): boolean => {
   return status === StateEnum.DEPLOYING || status === StateEnum.STOPPING
 }
 
-export const getStatusClusterMessage = (status: StateEnum, isAlreadyDeployed?: boolean): string => {
+export const getStatusClusterMessage = (status?: StateEnum, isAlreadyDeployed?: boolean): string => {
   switch (status) {
     case StateEnum.DEPLOYMENT_QUEUED:
       if (!isAlreadyDeployed) return 'Installation queued'

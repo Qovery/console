@@ -195,6 +195,8 @@ export const selectClustersEntitiesByOrganizationId = createSelector(
 
 export const selectClustersStatusLoadingStatus = createSelector(getClusterState, (state) => state.statusLoadingStatus)
 
+export const selectClustersLoadingStatus = createSelector(getClusterState, (state) => state.loadingStatus)
+
 export const selectClusterEntities = createSelector(getClusterState, selectEntities)
 
 export const selectClusterById = (state: RootState, applicationId: string): ClusterEntity | undefined =>

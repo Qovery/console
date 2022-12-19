@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import {
   fetchClustersStatus,
   selectClustersEntitiesByOrganizationId,
+  selectClustersLoadingStatus,
   selectClustersStatusLoadingStatus,
 } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -15,6 +16,7 @@ export function PageClustersGeneralFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
   const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
+  const clustersLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
   const clustersStatusLoading = useSelector((state: RootState) => selectClustersStatusLoadingStatus(state))
 
   useDocumentTitle('General - Clusters')
@@ -27,7 +29,9 @@ export function PageClustersGeneralFeature() {
     return () => clearInterval(fetchClustersStatusByInterval)
   }, [dispatch, organizationId, clusters.length])
 
-  return <PageClustersGeneral clusters={clusters} loading={clustersStatusLoading} />
+  return (
+    <PageClustersGeneral clusters={clusters} loading={clusters.length > 0 ? clustersStatusLoading : clustersLoading} />
+  )
 }
 
 export default PageClustersGeneralFeature
