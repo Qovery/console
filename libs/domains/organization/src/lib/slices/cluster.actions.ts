@@ -50,13 +50,13 @@ export const postClusterActionsStop = createAsyncThunk<any, { organizationId: st
   async (data, { dispatch }) => {
     try {
       const response = await clusterApi.stopCluster(data.organizationId, data.clusterId)
+      console.log(response)
       if (response.status === 202 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchClusterStatus({ organizationId: data.organizationId, clusterId: data.clusterId }))
         // success message
         toast(ToastEnum.SUCCESS, 'Your cluster is stopping')
       }
-
       return response
     } catch (err) {
       // error message
