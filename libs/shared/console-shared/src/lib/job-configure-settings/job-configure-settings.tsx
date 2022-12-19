@@ -1,3 +1,5 @@
+import cronstrue from 'cronstrue'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { JobConfigureData } from '@qovery/shared/interfaces'
 import { InputText, Link } from '@qovery/shared/ui'
@@ -9,7 +11,19 @@ export interface JobConfigureSettingsProps {
 }
 
 export function JobConfigureSettings(props: JobConfigureSettingsProps) {
-  const { control, setValue, getValues } = useFormContext<JobConfigureData>()
+  const { control, setValue, getValues, watch } = useFormContext<JobConfigureData>()
+  const watchSchedule = watch('schedule')
+  const [cronDescription, setCronDescription] = useState('')
+
+  useEffect(() => {
+    if (watchSchedule) {
+      // check if watchSchedule is a valid cron expression
+      const isValidCron = cronstrue.toString(watchSchedule, { throwExceptionOnParseError: false })
+      if (isValidCron.indexOf('An error') === -1) {
+        setCronDescription(isValidCron)
+      }
+    }
+  }, [watchSchedule])
 
   return (
     <div>
@@ -34,10 +48,10 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             )}
           />
           <div className="mb-3 flex justify-between">
-            <p className="text-text-500 text-xs ">Every minutes</p>
+            <p className="text-text-500 text-xs ">{cronDescription}</p>
             <Link
               external={true}
-              link="https://docs.qovery.com/docs/faq#what-is-a-cron-expression"
+              link="https://crontab.guru/"
               className="text-text-400 !text-xs"
               linkLabel="CRON expression builder"
             />
