@@ -2,7 +2,6 @@ import { BuildModeEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { FlowVariableData, JobConfigureData, JobGeneralData, JobResourcesData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PostProps {
   onSubmit: (withDeploy: boolean) => void
@@ -38,57 +37,44 @@ export function Post(props: PostProps) {
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">General informations</div>
+            <div className="text-sm text-text-600 font-bold mb-5">General informations</div>
+
+            <div className="text-text-600 text-ssm mb-2 font-medium">General</div>
+
             <ul className="text-text-400 text-sm list-none">
-              <li>
-                Cronjob name: <strong className="font-medium">{props.generalData.name}</strong>
-              </li>
-              {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
-                <>
-                  <li>
-                    Repository: <strong className="font-medium">{props.generalData.repository}</strong>
-                  </li>
-                  <li>
-                    Branch: <strong>{props.generalData.branch}</strong>
-                  </li>
-                  <li>
-                    Root application path: <strong>{props.generalData.root_path}</strong>
-                  </li>
-                  <li>
-                    Build mode: <strong>{upperCaseFirstLetter(props.generalData.build_mode)}</strong>
-                  </li>
-                  {props.generalData.build_mode === BuildModeEnum.BUILDPACKS && (
-                    <li>
-                      Buildpack language: <strong>{props.generalData.buildpack_language}</strong>
-                    </li>
-                  )}
-                  {props.generalData.build_mode === BuildModeEnum.DOCKER && (
-                    <li>
-                      Dockerfile path: <strong>{props.generalData.dockerfile_path}</strong>
-                    </li>
-                  )}
-                </>
-              )}
-              {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
-                <>
-                  <li>
-                    Registry: <strong className="font-medium">{props.selectedRegistryName}</strong>
-                  </li>
-                  <li>
-                    Image name: <strong>{props.generalData.image_name}</strong>
-                  </li>
-                  <li>
-                    Image tag: <strong>{props.generalData.image_tag}</strong>
-                  </li>
-                  <li>
-                    Image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
-                  </li>
-                  <li>
-                    CMD arguments: <strong>{props.configureData.cmd_arguments}</strong>
-                  </li>
-                </>
-              )}
+              <li>{props.generalData.name}</li>
+              <li>{props.generalData.description}</li>
             </ul>
+
+            <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+
+            {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
+              <>
+                <div className="text-text-600 text-ssm mb-2 font-medium">
+                  For application created from a Git provider
+                </div>
+                <ul className="text-text-400 text-sm list-none">
+                  <li>{props.generalData.repository}</li>
+                  <li>{props.generalData.branch}</li>
+                  <li>{props.generalData.root_path}</li>
+                  {props.generalData.build_mode === BuildModeEnum.DOCKER && (
+                    <li>{props.generalData.dockerfile_path}</li>
+                  )}
+                </ul>
+              </>
+            )}
+            {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
+              <>
+                <div className="text-text-600 text-ssm mb-2 font-medium">For application created from a Registry</div>
+                <ul className="text-text-400 text-sm list-none">
+                  <li>{props.selectedRegistryName}</li>
+                  <li>Image name: {props.generalData.image_name}</li>
+                  <li>Image tag: {props.generalData.image_tag}</li>
+                  <li>Image entrypoint: {props.generalData.image_entry_point}</li>
+                  <li>CMD arguments: {props.configureData.cmd_arguments}</li>
+                </ul>
+              </>
+            )}
           </div>
 
           <ButtonIcon
@@ -102,39 +88,53 @@ export function Post(props: PostProps) {
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Configure job</div>
-            <ul className="text-text-400 text-sm list-none">
-              <li>
-                Number of restarts: <strong className="font-medium">{props.configureData.nb_restarts}</strong>
-              </li>
-              <li>
-                Max duration in seconds: <strong className="font-medium">{props.configureData.max_duration}</strong>
-              </li>
-              <li>
-                Port: <strong>{props.configureData.port}</strong>
-              </li>
-              {props.jobType === 'lifecycle' && (
-                <>
+            <div className="text-sm text-text-600 font-bold mb-5">Configure job</div>
+
+            {props.jobType === 'lifecycle' && (
+              <>
+                <div className="text-text-600 text-ssm mb-2 font-medium">Lifecycle job</div>
+                <ul className="text-text-400 text-sm list-none">
                   {props.configureData.on_start?.enabled && (
                     <li>
-                      <strong>On Start</strong> – Entrypoint: {props.configureData.on_start?.entrypoint || 'null'} –
-                      Entrypoint: {props.configureData.on_start?.arguments || 'null'}
+                      On start – Entrypoint: {props.configureData.on_start?.entrypoint || 'null'} / CMD:{' '}
+                      {props.configureData.on_start?.arguments || 'null'}
                     </li>
                   )}
                   {props.configureData.on_stop?.enabled && (
                     <li>
-                      <strong>On Stop</strong> – Entrypoint: {props.configureData.on_stop?.entrypoint || 'null'} –
-                      Entrypoint: {props.configureData.on_stop?.arguments || 'null'}
+                      On Stop – Entrypoint: {props.configureData.on_stop?.entrypoint || 'null'} / CMD:{' '}
+                      {props.configureData.on_stop?.arguments || 'null'}
                     </li>
                   )}
                   {props.configureData.on_delete?.enabled && (
                     <li>
-                      <strong>On Delete</strong> – Entrypoint: {props.configureData.on_delete?.entrypoint || 'null'} –
-                      Entrypoint: {props.configureData.on_delete?.arguments || 'null'}
+                      On Delete – Entrypoint: {props.configureData.on_delete?.entrypoint || 'null'} / CMD:{' '}
+                      {props.configureData.on_delete?.arguments || 'null'}
                     </li>
                   )}
-                </>
-              )}
+                </ul>
+              </>
+            )}
+
+            {props.jobType === 'cron' && (
+              <>
+                <div className="text-text-600 text-ssm mb-2 font-medium">CRON</div>
+                <ul className="text-text-400 text-sm list-none">
+                  <li>{props.configureData.schedule}</li>
+                  {props.configureData.image_entry_point && <li>{props.configureData.image_entry_point}</li>}
+                  {props.configureData.cmd_arguments && <li>{props.configureData.cmd_arguments}</li>}
+                </ul>
+              </>
+            )}
+
+            <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+
+            <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
+
+            <ul className="text-text-400 text-sm list-none">
+              <li>Max restarts: {props.configureData.nb_restarts}</li>
+              <li>Max duration: {props.configureData.max_duration}</li>
+              <li>Port: {props.configureData.port}</li>
             </ul>
           </div>
 
@@ -149,14 +149,12 @@ export function Post(props: PostProps) {
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
+            <div className="text-sm text-text-600 font-bold mb-5">Resources</div>
+
+            <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
             <ul className="text-text-400 text-sm list-none">
-              <li>
-                CPU: <strong className="font-medium">{props.resourcesData['cpu'][0]}</strong>
-              </li>
-              <li>
-                Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
-              </li>
+              <li>CPU: {props.resourcesData['cpu'][0]}</li>
+              <li>Memory: {props.resourcesData.memory} MB</li>
             </ul>
           </div>
 
@@ -171,7 +169,14 @@ export function Post(props: PostProps) {
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Environment variables</div>
+            <div className="text-sm text-text-600 font-bold mb-5">Environment variables</div>
+
+            <div className="text-text-600 text-ssm mb-2 font-medium">
+              Parameters{' '}
+              {props.variableData.variables && props.variableData.variables.length
+                ? `(${props.variableData.variables.length})`
+                : ''}
+            </div>
             <ul className="text-text-400 text-sm">
               {props.variableData.variables && props.variableData.variables.length > 0 ? (
                 props.variableData.variables?.map((variable, index) => (
