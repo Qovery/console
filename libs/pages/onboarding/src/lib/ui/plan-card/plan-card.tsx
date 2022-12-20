@@ -38,7 +38,7 @@ export function PlanCard(props: PlanCardProps) {
       </Button>
       <ul>
         {list.map((line: string, index: number) => (
-          <li key={index} className="text-text-500 text-xs mb-2 last:mb-6">
+          <li key={index} className="text-text-500 text-xs mb-2 last:mb-10">
             <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 mr-1.5" />
             {line}
           </li>
