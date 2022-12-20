@@ -48,7 +48,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             )}
           />
           <div className="mb-3 flex justify-between">
-            <p className="text-text-500 text-xs ">{cronDescription}</p>
+            <p className="text-text-500 text-xs">{cronDescription}</p>
             <Link
               external={true}
               link="https://crontab.guru/"

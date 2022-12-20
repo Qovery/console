@@ -9,10 +9,20 @@ export interface EnableBoxProps {
   description: string
   className?: string
   name?: string
+  dataTestId?: string
 }
 
 export function EnableBox(props: EnableBoxProps) {
-  const { checked, children, setChecked, title, description, className = '', name = 'checkbox' } = props
+  const {
+    checked,
+    children,
+    setChecked,
+    title,
+    description,
+    className = '',
+    name = 'checkbox',
+    dataTestId = 'enabled-box',
+  } = props
 
   const [currentChecked, setCurrentChecked] = useState(checked)
 
@@ -29,7 +39,7 @@ export function EnableBox(props: EnableBoxProps) {
     : ' bg-element-light-lighter-200  border-element-light-lighter-500'
 
   return (
-    <div className={`p-4 border transition-all rounded ${checkedClasses} ${className}`}>
+    <div data-testid={dataTestId} className={`p-4 border transition-all rounded ${checkedClasses} ${className}`}>
       <InputCheckbox
         className="mb-1"
         onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
