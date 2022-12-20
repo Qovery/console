@@ -1,10 +1,15 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Icon } from '../icon/icon'
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'
 
 export interface NavigationLeftProps {
   links: NavigationLeftLinkProps[]
   title?: string
+  link?: {
+    title: string
+    onClick: () => void
+  }
   className?: string
 }
 
@@ -28,7 +33,7 @@ export const linkClassName = (pathname: string, url?: string) =>
   }`
 
 export function NavigationLeft(props: NavigationLeftProps) {
-  const { title, links, className = '' } = props
+  const { title, links, link, className = '' } = props
 
   const { pathname } = useLocation()
 
@@ -41,7 +46,15 @@ export function NavigationLeft(props: NavigationLeftProps) {
 
   return (
     <div className={`flex flex-col px-5 ${className}`}>
-      {title && <span className="text-text-400 uppercase text-xxs font-bold mb-4 pl-3">{title}</span>}
+      <div className="flex justify-between items-center mb-4">
+        {title && <span className="text-text-400 uppercase text-xxs font-bold pl-3">{title}</span>}
+        {link && (
+          <span className="link cursor-pointer text-sm text-brand-500 font-medium" onClick={() => link.onClick()}>
+            {link.title}
+            <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-1" />
+          </span>
+        )}
+      </div>
       {links.map((link, index) =>
         !link.onClick && !link.subLinks && link.url ? (
           <Link data-testid="link" key={index} to={link.url} className={linkClassName(link.url, pathname)}>

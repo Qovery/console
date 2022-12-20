@@ -22,7 +22,6 @@ export function PageSettings() {
   const { organizationId = '' } = useParams()
 
   const pathSettings = SETTINGS_URL(organizationId)
-
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
 
   const organizationLinks = [
