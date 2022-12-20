@@ -21,4 +21,21 @@ describe('PlanCard', () => {
     const { baseElement } = render(<PlanCard {...props} />)
     expect(baseElement).toBeTruthy()
   })
+
+  it('should have text content', () => {
+    const { baseElement } = render(<PlanCard {...props} />)
+
+    expect(baseElement.textContent).toContain(props.title)
+    expect(baseElement.textContent).toContain(props.text)
+    expect(baseElement.textContent).toContain(`$${props.price}`)
+    expect(baseElement.textContent).toContain(props.list[0])
+  })
+
+  it('should Custom text for Enterprise plan', () => {
+    props.name = PlanEnum.ENTERPRISE
+
+    const { baseElement } = render(<PlanCard {...props} />)
+
+    expect(baseElement.textContent).toContain('Custom')
+  })
 })
