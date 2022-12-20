@@ -17,6 +17,7 @@ export interface OrganizationPlan {
   title: string
   text: string
   price: number
+  list: string[]
 }
 
 const PLANS: OrganizationPlan[] = [
@@ -25,18 +26,41 @@ const PLANS: OrganizationPlan[] = [
     title: 'Free plan',
     text: 'Adapted for start',
     price: 0,
+    list: [
+      'Deploy on your AWS account',
+      'Unlimited Developers',
+      'Up to 1 cluster',
+      'Up to 5 Environments',
+      'Preview Environment in one-click',
+      'Community support (forum)',
+    ],
   },
   {
     name: PlanEnum.TEAM,
     title: 'Team plan',
     text: 'Adapted to scale',
     price: 49,
+    list: [
+      'All FREE features',
+      'Up to 3 clusters',
+      'Unlimited Deployments',
+      'Unlimited Environments',
+      '24/5 support (email and chat)',
+    ],
   },
   {
     name: PlanEnum.ENTERPRISE,
     title: 'Enterprise plan',
     text: 'Adapted for 100+ team',
     price: 899,
+    list: [
+      'All TEAM features',
+      'Unlimited Clusters',
+      'Role-Based Access Control',
+      'Extended security and compliance',
+      'Usage Report',
+      'Custom support',
+    ],
   },
 ]
 
@@ -48,49 +72,43 @@ export function OnboardingPricing() {
   const { showNewMessages } = useIntercom()
   const { organization_name, project_name } = useContext(ContextOnboarding)
   const { createAuthCookies, getAccessTokenSilently } = useAuth()
-  const [selectPlan, setSelectPlan] = useState(PlanEnum.FREE)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState('')
 
-  const onSubmit = async () => {
-    setLoading(true)
+  const onSubmit = async (plan: PlanEnum) => {
+    setLoading(plan)
 
-    const organization: Organization = await dispatch(
+    await dispatch(
       postOrganization({
         name: organization_name,
-        plan: selectPlan,
+        plan: plan,
       })
-    ).unwrap()
-    // refresh token needed after created an organization
-    await getAccessTokenSilently({ ignoreCache: true })
+    )
+      .then(async (result) => {
+        // refresh token needed after created an organization
+        await getAccessTokenSilently({ ignoreCache: true })
 
-    if (organization) {
-      const project: Project = await dispatch(
-        postProject({ organizationId: organization.id, name: project_name })
-      ).unwrap()
+        const organization = result.payload as Organization
 
-      if (project) {
-        await createAuthCookies()
-        setLoading(false)
-        // redirect on the project page
-        navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
-      }
-    } else {
-      setLoading(false)
-    }
+        if (result.payload) {
+          const project: Project = await dispatch(
+            postProject({ organizationId: organization.id, name: project_name })
+          ).unwrap()
+          if (project) {
+            await createAuthCookies()
+            setLoading('')
+            // redirect on the project page
+            navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
+          }
+        } else {
+          setLoading('')
+        }
+      })
+      .catch(() => setLoading(''))
   }
 
   const onClickContact = () => showNewMessages()
 
-  return (
-    <StepPricing
-      selectPlan={selectPlan}
-      setSelectPlan={setSelectPlan}
-      plans={PLANS}
-      onSubmit={onSubmit}
-      loading={loading}
-      onClickContact={onClickContact}
-    />
-  )
+  return <StepPricing plans={PLANS} onSubmit={onSubmit} loading={loading} onClickContact={onClickContact} />
 }
 
 export default OnboardingPricing

@@ -53,13 +53,9 @@ export const fetchOrganizationById = createAsyncThunk(
 
 export const postOrganization = createAsyncThunk<OrganizationEntity, OrganizationRequest>(
   'organization/post',
-  async (data: OrganizationRequest, { rejectWithValue }) => {
-    try {
-      const result = await organizationMainCalls.createOrganization(data)
-      return result.data
-    } catch (err) {
-      return rejectWithValue(err)
-    }
+  async (data: OrganizationRequest) => {
+    const result = await organizationMainCalls.createOrganization(data)
+    return result.data
   }
 )
 
@@ -259,12 +255,14 @@ export const organizationSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(postOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<OrganizationEntity>) => {
-        organizationAdapter.setOne(state, action.payload)
+        organizationAdapter.addOne(state, action.payload)
         state.loadingStatus = 'loaded'
+        toast(ToastEnum.SUCCESS, 'Your organization has been created')
       })
       .addCase(postOrganization.rejected, (state: OrganizationState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+        toastError(action.error)
       })
       // delete organization
       .addCase(deleteOrganization.pending, (state: OrganizationState) => {

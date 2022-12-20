@@ -5,21 +5,19 @@ import { OrganizationPlan } from '../../feature/onboarding-pricing/onboarding-pr
 import PlanCard from '../plan-card/plan-card'
 
 export interface StepPricingProps {
-  selectPlan: PlanEnum
-  setSelectPlan: (value: PlanEnum) => void
   plans: OrganizationPlan[]
-  onSubmit: () => void
-  loading: boolean
+  onSubmit: (plan: PlanEnum) => void
+  loading: string
   onClickContact: () => void
 }
 
 export function StepPricing(props: StepPricingProps) {
-  const { selectPlan, onSubmit, plans, loading, setSelectPlan, onClickContact } = props
+  const { onSubmit, plans, loading } = props
 
   return (
     <div className="pb-10">
-      <h1 className="h3 text-text-700 mb-3">Simple, transparent pricing</h1>
-      <p className="text-sm mb-10 text-text-500">
+      <h1 className="h3 text-text-700 mb-3 text-center">Simple, transparent pricing</h1>
+      <p className="text-sm mb-10 text-text-500 text-center">
         14 days trial with no credit card required for all paid plans
         <a
           href="https://qovery.com/pricing"
@@ -30,19 +28,11 @@ export function StepPricing(props: StepPricingProps) {
           see details plan
           <Icon name="icon-solid-arrow-up-right-from-square" className="ml-1" />
         </a>
-        .
       </p>
       <form>
         <div className="grid md:grid-cols-3 gap-5">
           {plans.map((plan: OrganizationPlan) => (
-            <PlanCard
-              key={plan.name}
-              name={plan.name}
-              title={plan.title}
-              text={plan.text}
-              price={plan.price}
-              onClick={() => setSelectPlan(plan.name)}
-            />
+            <PlanCard key={plan.name} onClick={() => onSubmit(plan.name)} loading={loading} {...plan} />
           ))}
         </div>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
@@ -54,19 +44,6 @@ export function StepPricing(props: StepPricingProps) {
           >
             Back
           </Button>
-          {selectPlan === PlanEnum.ENTERPRISE && (
-            <Button onClick={onClickContact} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
-              Contact us
-            </Button>
-          )}
-          {selectPlan !== PlanEnum.ENTERPRISE && (
-            <Button size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} onClick={onSubmit} loading={loading}>
-              Let’s go
-              <span className="ml-1" role="img" aria-label="star">
-                💫
-              </span>
-            </Button>
-          )}
         </div>
       </form>
     </div>

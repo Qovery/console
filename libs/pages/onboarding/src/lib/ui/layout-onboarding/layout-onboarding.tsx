@@ -32,7 +32,7 @@ export function LayoutOnboarding(props: LayoutOnboardingProps) {
         }
       />
       {withoutRightContent ? (
-        <div className="relative top-16 mt-14 px-4 flex justify-center">{children}</div>
+        <div className="relative top-16 pt-14 px-4 flex justify-center">{children}</div>
       ) : (
         <div className="flex h-full min-h-screen max-w-screen-2xl ml-auto mr-auto relative">
           <div className="flex-[2_1_0%] px-4 md:px-24 bg-white">
