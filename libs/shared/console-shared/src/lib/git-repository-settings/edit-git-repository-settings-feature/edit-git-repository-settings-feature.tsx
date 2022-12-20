@@ -37,7 +37,7 @@ export function EditGitRepositorySettingsFeature() {
   const getGitRepositoryFromApplication = useCallback(() => {
     return isJob(application)
       ? (application as JobResponse).source?.docker?.git_repository
-      : (application as GitApplicationEntity).git_repository
+      : (application as GitApplicationEntity)?.git_repository
   }, [application])
 
   const { setValue, watch, getValues } = useFormContext<{

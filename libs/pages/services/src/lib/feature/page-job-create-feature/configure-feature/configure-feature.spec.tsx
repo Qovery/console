@@ -1,7 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobContainerCreateContext } from '../page-job-create-feature'
-import ConfigureFeature from './general-feature'
+import ConfigureFeature from './configure-feature'
 
 describe('GeneralFeature', () => {
   it('should render successfully', () => {

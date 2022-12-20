@@ -2,7 +2,8 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { authProviderFactoryMock } from '@qovery/domains/organization'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import EditGitRepositorySettingsFeature, { authProvidersValues } from './edit-git-repository-settings-feature'
+import { authProvidersValues } from '../auth-providers-values'
+import EditGitRepositorySettingsFeature from './edit-git-repository-settings-feature'
 
 describe('GitRepositorySettingsFeature', () => {
   it('should render successfully', () => {

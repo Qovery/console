@@ -153,7 +153,7 @@ export function Container(props: ContainerProps) {
         },
         {
           name: 'Create lifecycle job',
-          contentLeft: <Icon name={IconAwesomeEnum.DATABASE} className="text-brand-500 text-sm" />,
+          contentLeft: <Icon name={IconAwesomeEnum.CLOCK} className="text-brand-500 text-sm" />,
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_LIFECYCLE_CREATION_URL}`)
           },

@@ -14,8 +14,7 @@ export interface JobGeneralSettingProps {
 }
 
 export function JobGeneralSetting(props: JobGeneralSettingProps) {
-  const { watch } = useFormContext<JobGeneralData>()
-  const { control, getValues } = useFormContext<JobGeneralData>()
+  const { control, getValues, watch } = useFormContext<JobGeneralData>()
   watch('serviceType')
 
   return (

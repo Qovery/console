@@ -32,7 +32,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
       </div>
 
       <form onSubmit={props.onSubmit}>
-        {props.variables.length > 0 && (
+        {props.variables?.length > 0 && (
           <div className="grid mb-3" style={{ gridTemplateColumns }}>
             <span className="text-sm text-text-600 font-medium">Variable</span>
             <span className="text-sm text-text-600 font-medium">Value</span>
