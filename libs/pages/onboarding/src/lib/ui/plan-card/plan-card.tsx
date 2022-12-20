@@ -15,7 +15,7 @@ export function PlanCard(props: PlanCardProps) {
   const { name, title, text, price, loading, onClick, list } = props
 
   return (
-    <div className="bg-element-light-lighter-200 border border-element-light-lighter-500 px-5 py-4 rounded w-80">
+    <div className="bg-element-light-lighter-200 border border-element-light-lighter-500 px-5 py-4 rounded lg:w-80">
       <h2 className="h5 mb-1">{title}</h2>
       <p className="text-sm text-text-500 mb-2">{text}</p>
       <p className="flex items-center text-text-600 text-xs mb-4">
