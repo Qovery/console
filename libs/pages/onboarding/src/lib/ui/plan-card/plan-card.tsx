@@ -1,3 +1,4 @@
+import { PlanEnum } from 'qovery-typescript-axios'
 import { Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PlanCardProps {
@@ -18,7 +19,13 @@ export function PlanCard(props: PlanCardProps) {
       <h2 className="h5 mb-1">{title}</h2>
       <p className="text-sm text-text-500 mb-2">{text}</p>
       <p className="flex items-center text-text-600 text-xs mb-4">
-        <span className="h5 block mr-2">${price}</span> per user/month
+        {name !== PlanEnum.ENTERPRISE ? (
+          <>
+            <span className="h5 block mr-2">${price}</span> per user/month
+          </>
+        ) : (
+          <span className="h5">Custom</span>
+        )}
       </p>
       <Button
         className="w-full mb-4"
