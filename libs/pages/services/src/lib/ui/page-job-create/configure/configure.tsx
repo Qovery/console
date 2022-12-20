@@ -1,4 +1,4 @@
-import { FormEventHandler } from 'react'
+import { FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { JobConfigureData } from '@qovery/shared/interfaces'
@@ -11,7 +11,14 @@ export interface ConfigureProps {
 }
 
 export function Configure(props: ConfigureProps) {
-  const { formState } = useFormContext<JobConfigureData>()
+  const { formState, watch } = useFormContext<JobConfigureData>()
+  const [isValid, setIsValid] = useState(true)
+
+  watch((data) => {
+    if (props.jobType === 'lifecycle') {
+      setIsValid(Boolean(data.on_start?.enabled || data.on_stop?.enabled || data.on_delete?.enabled))
+    }
+  })
 
   return (
     <div>
@@ -36,7 +43,7 @@ export function Configure(props: ConfigureProps) {
           <Button
             dataTestId="button-submit"
             type="submit"
-            disabled={!formState.isValid}
+            disabled={!(formState.isValid && isValid)}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.BASIC}
           >
