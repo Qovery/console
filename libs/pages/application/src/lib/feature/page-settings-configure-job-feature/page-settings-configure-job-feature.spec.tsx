@@ -2,7 +2,7 @@ import { act, fireEvent, getAllByLabelText, getByLabelText, getByTestId } from '
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/domains/application'
-import PageSettingsConfigureFeature from './page-settings-configure-feature'
+import PageSettingsConfigureJobFeature from './page-settings-configure-job-feature'
 
 import SpyInstance = jest.SpyInstance
 
@@ -32,7 +32,7 @@ jest.mock('react-redux', () => ({
 
 describe('PageSettingsPortsFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsConfigureFeature />)
+    const { baseElement } = render(<PageSettingsConfigureJobFeature />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -50,7 +50,7 @@ describe('PageSettingsPortsFeature', () => {
         ...mockJobApplication,
       }))
 
-      const { baseElement } = render(<PageSettingsConfigureFeature />)
+      const { baseElement } = render(<PageSettingsConfigureJobFeature />)
 
       await act(() => {
         fireEvent.change(getByLabelText(baseElement, 'Schedule - Cron expression'), {
@@ -100,7 +100,7 @@ describe('PageSettingsPortsFeature', () => {
         ...mockLifecycleJobApplication,
       }))
 
-      const { baseElement, debug } = render(<PageSettingsConfigureFeature />)
+      const { baseElement } = render(<PageSettingsConfigureJobFeature />)
 
       const checkbox = getByLabelText(baseElement, 'Start')
       await act(() => {

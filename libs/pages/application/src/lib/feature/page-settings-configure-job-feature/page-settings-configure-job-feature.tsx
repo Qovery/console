@@ -8,15 +8,17 @@ import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qov
 import { ApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
 import { AppDispatch, RootState } from '@qovery/store'
-import PageSettingsConfigure from '../../ui/page-settings-configure/page-settings-configure'
+import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
-export function PageSettingsConfigureFeature() {
+export function PageSettingsConfigureJobFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
   const methods = useForm<JobConfigureData>()
 
   const application: JobResponse | undefined = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
-    (a, b) => JSON.stringify(a?.id) === JSON.stringify(b?.id)
+    (a, b) => {
+      return JSON.stringify(a?.id) === JSON.stringify(b?.id)
+    }
   ) as JobResponse | undefined
 
   const [loading, setLoading] = useState(false)
@@ -32,26 +34,30 @@ export function PageSettingsConfigureFeature() {
   }
 
   useEffect(() => {
-    methods.setValue('max_duration', application?.max_duration_seconds)
-    methods.setValue('nb_restarts', application?.max_nb_restart)
-    methods.setValue('port', application?.port || undefined)
+    if (application) {
+      methods.setValue('max_duration', application.max_duration_seconds)
+      methods.setValue('nb_restarts', application.max_nb_restart)
+      methods.setValue('port', application.port || undefined)
 
-    if (isCronJob(application)) {
-      methods.setValue('schedule', application?.schedule?.cronjob?.scheduled_at || undefined)
-      methods.setValue('cmd_arguments', JSON.stringify(application?.schedule?.cronjob?.arguments) || undefined)
-      methods.setValue('image_entry_point', application?.schedule?.cronjob?.entrypoint || undefined)
-    } else {
-      methods.setValue('on_start.enabled', !!application?.schedule?.on_start)
-      methods.setValue('on_start.arguments_string', JSON.stringify(application?.schedule?.on_start?.arguments))
-      methods.setValue('on_start.entrypoint', application?.schedule?.on_start?.entrypoint)
+      if (isCronJob(application)) {
+        methods.setValue('schedule', application.schedule?.cronjob?.scheduled_at || undefined)
+        methods.setValue('cmd_arguments', JSON.stringify(application.schedule?.cronjob?.arguments) || undefined)
+        methods.setValue('image_entry_point', application.schedule?.cronjob?.entrypoint || undefined)
+      } else {
+        methods.setValue('on_start.enabled', !!application.schedule?.on_start)
+        methods.setValue('on_start.arguments_string', JSON.stringify(application.schedule?.on_start?.arguments))
+        methods.setValue('on_start.entrypoint', application.schedule?.on_start?.entrypoint)
 
-      methods.setValue('on_stop.enabled', !!application?.schedule?.on_stop)
-      methods.setValue('on_stop.arguments_string', JSON.stringify(application?.schedule?.on_stop?.arguments))
-      methods.setValue('on_stop.entrypoint', application?.schedule?.on_stop?.entrypoint)
+        methods.setValue('on_stop.enabled', !!application.schedule?.on_stop)
+        methods.setValue('on_stop.arguments_string', JSON.stringify(application.schedule?.on_stop?.arguments))
+        methods.setValue('on_stop.entrypoint', application.schedule?.on_stop?.entrypoint)
 
-      methods.setValue('on_delete.enabled', !!application?.schedule?.on_delete)
-      methods.setValue('on_delete.arguments_string', JSON.stringify(application?.schedule?.on_delete?.arguments))
-      methods.setValue('on_delete.entrypoint', application?.schedule?.on_delete?.entrypoint)
+        methods.setValue('on_delete.enabled', !!application.schedule?.on_delete)
+        methods.setValue('on_delete.arguments_string', JSON.stringify(application.schedule?.on_delete?.arguments))
+        methods.setValue('on_delete.entrypoint', application.schedule?.on_delete?.entrypoint)
+      }
+
+      console.log('defaultValues', methods.getValues())
     }
   }, [application, methods])
 
@@ -149,9 +155,9 @@ export function PageSettingsConfigureFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsConfigure application={application} loading={loading} onSubmit={onSubmit} />
+      <PageSettingsConfigureJob application={application} loading={loading} onSubmit={onSubmit} />
     </FormProvider>
   )
 }
 
-export default PageSettingsConfigureFeature
+export default PageSettingsConfigureJobFeature

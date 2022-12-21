@@ -4,13 +4,13 @@ import { isCronJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
-export interface PageSettingsConfigureProps {
+export interface PageSettingsConfigureJobProps {
   application?: ApplicationEntity
   loading?: boolean
   onSubmit: () => void
 }
 
-export function PageSettingsConfigure(props: PageSettingsConfigureProps) {
+export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
   const { loading, onSubmit } = props
   const { formState } = useFormContext()
 
@@ -19,7 +19,10 @@ export function PageSettingsConfigure(props: PageSettingsConfigureProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <form onSubmit={onSubmit}>
           <BlockContent title="Configuration job">
-            <JobConfigureSettings jobType={isCronJob(props.application) ? 'cron' : 'lifecycle'} />
+            <JobConfigureSettings
+              loading={!props.application}
+              jobType={isCronJob(props.application) ? 'cron' : 'lifecycle'}
+            />
           </BlockContent>
           <div className="flex justify-end">
             <Button
@@ -50,4 +53,4 @@ export function PageSettingsConfigure(props: PageSettingsConfigureProps) {
   )
 }
 
-export default PageSettingsConfigure
+export default PageSettingsConfigureJob

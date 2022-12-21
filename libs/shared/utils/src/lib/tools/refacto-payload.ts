@@ -119,8 +119,6 @@ export function refactoJobPayload(job: Partial<JobResponse>): JobRequest {
 
   jobRequest.schedule = job.schedule
 
-  console.log(job)
-
   return jobRequest
 }
 

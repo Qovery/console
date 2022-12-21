@@ -6,10 +6,12 @@ import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
 import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
 
+export type JobType = 'cron' | 'lifecycle'
+
 export interface GeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: OrganizationEntity
-  jobType: 'cron' | 'lifecycle'
+  jobType: JobType
 }
 
 export function General(props: GeneralProps) {

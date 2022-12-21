@@ -2,16 +2,20 @@ import cronstrue from 'cronstrue'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { JobConfigureData } from '@qovery/shared/interfaces'
-import { InputText, Link } from '@qovery/shared/ui'
+import { InputText, Link, LoaderSpinner } from '@qovery/shared/ui'
 import EnableBox from '../enable-box/enable-box'
 import EntrypointCmdInputs from '../entrypoint-cmd-inputs/entrypoint-cmd-inputs'
 
 export interface JobConfigureSettingsProps {
   jobType: 'cron' | 'lifecycle'
+  loading?: boolean
 }
 
 export function JobConfigureSettings(props: JobConfigureSettingsProps) {
+  const { loading } = props
   const { control, setValue, getValues, watch } = useFormContext<JobConfigureData>()
+  const { on_start, on_stop, on_delete } = getValues()
+
   const watchSchedule = watch('schedule')
   const [cronDescription, setCronDescription] = useState('')
 
@@ -25,7 +29,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
     }
   }, [watchSchedule])
 
-  return (
+  return loading ? (
+    <LoaderSpinner />
+  ) : (
     <div>
       {props.jobType === 'cron' ? (
         <>
@@ -67,12 +73,12 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
 
           <EnableBox
             className="mb-3"
-            checked={getValues().on_start?.enabled || false}
+            checked={on_start?.enabled}
             title="Start"
             name="on_start"
             description="Execute this job when the environment starts"
             setChecked={(checked) => {
-              setValue('on_start.enabled', checked)
+              if (checked !== undefined) setValue('on_start.enabled', checked)
             }}
           >
             <EntrypointCmdInputs
@@ -81,12 +87,13 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
               imageEntryPointFieldName="on_start.entrypoint"
             />
           </EnableBox>
+
           <EnableBox
             className="mb-3"
             name="on_stop"
-            checked={getValues().on_stop?.enabled || false}
+            checked={on_stop?.enabled}
             setChecked={(checked) => {
-              setValue('on_stop.enabled', checked)
+              if (checked !== undefined) setValue('on_stop.enabled', checked)
             }}
             title="Stop"
             description="Execute this job when the environment stops"
@@ -100,9 +107,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           <EnableBox
             className="mb-3"
             name="on_delete"
-            checked={getValues().on_delete?.enabled || false}
+            checked={on_delete?.enabled}
             setChecked={(checked) => {
-              setValue('on_delete.enabled', checked)
+              if (checked !== undefined) setValue('on_delete.enabled', checked)
             }}
             title="Delete"
             description="Execute this job when the environment is deleted"

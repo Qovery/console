@@ -35,6 +35,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
   const bigClasses = big ? 'mr-6 before:w-5 before:h-5' : 'mr-5 before:w-4 before:h-4'
 
   useEffect(() => {
+    console.log('isChecked', isChecked)
     setCheck(isChecked)
   }, [isChecked])
 

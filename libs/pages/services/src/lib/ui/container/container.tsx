@@ -153,14 +153,18 @@ export function Container(props: ContainerProps) {
         },
         {
           name: 'Create lifecycle job',
-          contentLeft: <Icon name={IconAwesomeEnum.CLOCK} className="text-brand-500 text-sm" />,
+          contentLeft: (
+            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+          ),
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_LIFECYCLE_CREATION_URL}`)
           },
         },
         {
           name: 'Create cronjob',
-          contentLeft: <Icon name={IconAwesomeEnum.CLOCK} className="text-brand-500 text-sm" />,
+          contentLeft: (
+            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-brand-500 text-sm" />
+          ),
           onClick: () => {
             navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
           },

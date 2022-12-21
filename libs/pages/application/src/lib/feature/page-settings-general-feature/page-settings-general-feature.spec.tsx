@@ -1,8 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@qovery/domains/application'
+import { applicationFactoryMock, cronjobFactoryMock } from '@qovery/domains/application'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { cronjobFactoryMock } from '../../../../../../domains/application/src/lib/mocks/factories/job-factory.mock'
 import PageSettingsGeneralFeature, { handleJobSubmit, handleSubmit } from './page-settings-general-feature'
 
 describe('PageSettingsGeneralFeature', () => {

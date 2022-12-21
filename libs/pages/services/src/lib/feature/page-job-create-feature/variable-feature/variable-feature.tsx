@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreateVariable } from '@qovery/shared/console-shared'
 import { FlowVariableData, VariableData } from '@qovery/shared/interfaces'
 import {
-  SERVICES_CREATION_GENERAL_URL,
+  SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
@@ -23,9 +23,7 @@ export function VariableFeature() {
   const [availableScopes] = useState<APIVariableScopeEnum[]>(computeAvailableScope())
 
   useEffect(() => {
-    return
-
-    !generalData?.name && navigate(pathCreate + SERVICES_CREATION_GENERAL_URL)
+    !generalData?.name && navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
   }, [generalData, navigate, environmentId, organizationId, projectId, pathCreate])
 
   const funnelCardHelp = (

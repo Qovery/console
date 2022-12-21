@@ -3,9 +3,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
-  SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_CONFIGURE_URL,
+  SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
   SERVICES_URL,
 } from '@qovery/shared/router'
@@ -23,10 +22,7 @@ export function ResourcesFeature() {
 
   useEffect(() => {
     !generalData?.name &&
-      navigate(
-        `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}` +
-          SERVICES_CREATION_GENERAL_URL
-      )
+      navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}` + SERVICES_JOB_CREATION_GENERAL_URL)
   }, [generalData, navigate, environmentId, organizationId, projectId])
 
   const funnelCardHelp = (

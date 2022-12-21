@@ -2,9 +2,9 @@ import { FormEvent, ReactNode, useEffect, useState } from 'react'
 import { InputCheckbox } from '@qovery/shared/ui'
 
 export interface EnableBoxProps {
-  checked: boolean
+  checked: boolean | undefined
   children: ReactNode
-  setChecked: (checked: boolean) => void
+  setChecked: (checked: boolean | undefined) => void
   title: string
   description: string
   className?: string
@@ -27,7 +27,7 @@ export function EnableBox(props: EnableBoxProps) {
   const [currentChecked, setCurrentChecked] = useState(checked)
 
   useEffect(() => {
-    setCurrentChecked(checked)
+    if (checked !== undefined) setCurrentChecked(checked)
   }, [checked])
 
   useEffect(() => {

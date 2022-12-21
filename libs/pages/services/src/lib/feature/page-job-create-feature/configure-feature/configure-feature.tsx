@@ -15,8 +15,10 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function ConfigureFeature() {
   useDocumentTitle('Configure - Create Job')
-  const { configureData, setConfigureData, setCurrentStep, jobURL, jobType } = useJobContainerCreateContext()
+  const { configureData, setConfigureData, setCurrentStep, generalData, jobURL, jobType } =
+    useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
   const navigate = useNavigate()
 
   const funnelCardHelp = (
@@ -29,6 +31,10 @@ export function ConfigureFeature() {
       ]}
     />
   )
+
+  useEffect(() => {
+    !generalData?.name && navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
+  }, [generalData, navigate, environmentId, organizationId, projectId, pathCreate])
 
   useEffect(() => {
     setCurrentStep(2)

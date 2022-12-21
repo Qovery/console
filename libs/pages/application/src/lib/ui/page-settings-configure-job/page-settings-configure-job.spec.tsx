@@ -2,9 +2,9 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { cronjobFactoryMock } from '@qovery/domains/application'
 import { JobConfigureData } from '@qovery/shared/interfaces'
-import PageSettingsConfigure, { PageSettingsConfigureProps } from './page-settings-configure'
+import PageSettingsConfigureJob, { PageSettingsConfigureJobProps } from './page-settings-configure-job'
 
-const props: PageSettingsConfigureProps = {
+const props: PageSettingsConfigureJobProps = {
   application: cronjobFactoryMock(1)[0],
   loading: false,
   onSubmit: jest.fn(),
@@ -13,7 +13,7 @@ const props: PageSettingsConfigureProps = {
 describe('PageSettingsDangerZone', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      wrapWithReactHookForm<JobConfigureData>(<PageSettingsConfigure {...props} />, {
+      wrapWithReactHookForm<JobConfigureData>(<PageSettingsConfigureJob {...props} />, {
         defaultValues: {
           max_duration: 1,
           nb_restarts: 1,
