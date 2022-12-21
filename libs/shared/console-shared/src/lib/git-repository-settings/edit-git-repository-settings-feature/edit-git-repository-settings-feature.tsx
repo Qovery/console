@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { getApplicationsState } from '@qovery/domains/application'
+import { selectApplicationById } from '@qovery/domains/application'
 import {
   authProviderLoadingStatus,
   fetchAuthProvider,
@@ -26,7 +26,7 @@ export function EditGitRepositorySettingsFeature() {
   const dispatch = useDispatch<AppDispatch>()
 
   const application = useSelector<RootState, GitApplicationEntity | JobResponse | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId],
+    (state) => selectApplicationById(state, applicationId),
     (a, b) =>
       JSON.stringify((a as GitApplicationEntity)?.git_repository) ===
         JSON.stringify((b as GitApplicationEntity)?.git_repository) ||

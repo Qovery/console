@@ -1,10 +1,10 @@
 import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, getByText, render } from '@testing-library/react'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { JobConfigureData } from '@qovery/shared/interfaces'
-import { wrapWithReactHookForm } from '../../../../../../__tests__/utils/wrap-with-react-hook-form'
 import JobConfigureSettings, { JobConfigureSettingsProps } from './job-configure-settings'
 
 const props: JobConfigureSettingsProps = {
-  jobType: 'cron',
+  jobType: 'CRON',
 }
 
 const defaultValues: JobConfigureData = {
@@ -29,11 +29,11 @@ describe('JobConfigureSettings', () => {
   })
 
   describe('job is a lifecycle', () => {
-    props.jobType = 'lifecycle'
+    props.jobType = 'LIFECYCLE'
 
     it('should render 3 enabled box and 3 inputs', () => {
       const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="lifecycle" />, {
+        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="LIFECYCLE" />, {
           defaultValues,
         })
       )
@@ -45,11 +45,11 @@ describe('JobConfigureSettings', () => {
   })
 
   describe('job is a cron', () => {
-    props.jobType = 'cron'
+    props.jobType = 'CRON'
 
     it('should render 5 input and 1 textarea', async () => {
       const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="cron" />, {
+        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="CRON" />, {
           defaultValues,
         })
       )
@@ -63,7 +63,7 @@ describe('JobConfigureSettings', () => {
 
     it('should display the cron value in a human readable way', async () => {
       const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="cron" />, {
+        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="CRON" />, {
           defaultValues,
         })
       )

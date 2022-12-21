@@ -1,11 +1,11 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { JobGeneralData } from '../../../feature/page-job-create-feature/job-creation-flow.interface'
+import { JobGeneralData } from '@qovery/shared/interfaces'
 import General, { GeneralProps } from './general'
 
 const props: GeneralProps = {
-  jobType: 'cron',
+  jobType: 'CRON',
   onSubmit: jest.fn(),
 }
 

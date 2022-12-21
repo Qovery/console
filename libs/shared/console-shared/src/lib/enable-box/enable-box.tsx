@@ -39,14 +39,20 @@ export function EnableBox(props: EnableBoxProps) {
     : ' bg-element-light-lighter-200  border-element-light-lighter-500'
 
   return (
-    <div data-testid={dataTestId} className={`p-4 border transition-all rounded ${checkedClasses} ${className}`}>
+    <div
+      data-testid={dataTestId}
+      className={`p-4 border transition-all rounded ${checkedClasses} ${className}`}
+      onClick={() => {
+        if (!currentChecked) setCurrentChecked(!currentChecked)
+      }}
+    >
       <InputCheckbox
         className="mb-1"
         onChange={(e) => setCurrentChecked((e as FormEvent<HTMLInputElement>).currentTarget.checked)}
         name={name}
         label={title}
         value={name}
-        isChecked={checked}
+        isChecked={currentChecked}
         big
       />
       {description && <p className="ml-8 text-text-500 text-sm">{description}</p>}

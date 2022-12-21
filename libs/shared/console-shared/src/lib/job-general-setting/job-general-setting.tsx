@@ -1,6 +1,6 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
+import { IconEnum, JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import CreateGeneralGitApplication from '../create-general-git-application/create-general-git-application'
@@ -9,7 +9,7 @@ import EditGitRepositorySettingsFeature from '../git-repository-settings/edit-gi
 
 export interface JobGeneralSettingProps {
   organization?: OrganizationEntity
-  jobType: 'cron' | 'lifecycle'
+  jobType: JobType
   isEdition?: boolean
 }
 
@@ -55,7 +55,7 @@ export function JobGeneralSetting(props: JobGeneralSettingProps) {
         <>
           {getValues().serviceType === ServiceTypeEnum.APPLICATION &&
             (props.isEdition ? (
-              <>
+              <div data-testid="git-fields">
                 <EditGitRepositorySettingsFeature />
                 <BlockContent title="Build mode">
                   <Controller
@@ -100,18 +100,22 @@ export function JobGeneralSetting(props: JobGeneralSettingProps) {
                     )}
                   />
                 </BlockContent>
-              </>
+              </div>
             ) : (
               <CreateGeneralGitApplication buildModeDisabled={true} />
             ))}
 
           {getValues().serviceType === ServiceTypeEnum.CONTAINER &&
             (props.isEdition ? (
-              <BlockContent title="Container Settings">
-                <GeneralContainerSettings organization={props.organization} />
-              </BlockContent>
+              <div data-testid="container-fields">
+                <BlockContent title="Container Settings">
+                  <GeneralContainerSettings organization={props.organization} />
+                </BlockContent>
+              </div>
             ) : (
-              <GeneralContainerSettings organization={props.organization} />
+              <div data-testid="container-fields">
+                <GeneralContainerSettings organization={props.organization} />
+              </div>
             ))}
         </>
       )}

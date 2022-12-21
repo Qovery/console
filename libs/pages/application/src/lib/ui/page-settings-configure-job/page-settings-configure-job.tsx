@@ -21,7 +21,7 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
           <BlockContent title="Configuration job">
             <JobConfigureSettings
               loading={!props.application}
-              jobType={isCronJob(props.application) ? 'cron' : 'lifecycle'}
+              jobType={isCronJob(props.application) ? 'CRON' : 'LIFECYCLE'}
             />
           </BlockContent>
           <div className="flex justify-end">

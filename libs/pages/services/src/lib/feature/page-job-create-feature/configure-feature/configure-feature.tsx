@@ -23,7 +23,7 @@ export function ConfigureFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job Information`}
+      title={`${jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job Information`}
       items={[
         'Define if the job shall be triggered when the environment Starts, Stops or is being deleted',
         'You can customize the job behaviour by defining an entrypoint and arguments to be used at running time',
@@ -58,7 +58,7 @@ export function ConfigureFeature() {
       ...data,
     }
 
-    if (jobType === 'cron') {
+    if (jobType === 'CRON') {
       if (data.cmd_arguments) {
         try {
           cloneData.cmd = eval(data.cmd_arguments)
@@ -69,7 +69,7 @@ export function ConfigureFeature() {
       }
     }
 
-    if (jobType === 'lifecycle') {
+    if (jobType === 'LIFECYCLE') {
       if (cloneData.on_start?.enabled && cloneData.on_start?.arguments_string) {
         try {
           cloneData.on_start.arguments = eval(cloneData.on_start.arguments_string)

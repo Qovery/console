@@ -27,7 +27,7 @@ export function ResourcesFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job resources`}
+      title={`${jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job resources`}
       items={[
         'Application are deployed as containers on your Kubernetes cluster',
         'Set the vCPU/RAM based on your application need',

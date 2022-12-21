@@ -1,13 +1,14 @@
 import { FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
+import { JobType } from '@qovery/shared/enums'
 import { JobConfigureData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface ConfigureProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   onBack: () => void
-  jobType: 'cron' | 'lifecycle'
+  jobType: JobType
 }
 
 export function Configure(props: ConfigureProps) {
@@ -15,7 +16,7 @@ export function Configure(props: ConfigureProps) {
   const [isValid, setIsValid] = useState(true)
 
   watch((data) => {
-    if (props.jobType === 'lifecycle') {
+    if (props.jobType === 'LIFECYCLE') {
       setIsValid(Boolean(data.on_start?.enabled || data.on_stop?.enabled || data.on_delete?.enabled))
     }
   })

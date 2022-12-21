@@ -59,7 +59,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           {isJob(type) && (
             <JobGeneralSetting
               isEdition={true}
-              jobType={isCronJob(type) ? 'cron' : 'lifecycle'}
+              jobType={isCronJob(type) ? 'CRON' : 'LIFECYCLE'}
               organization={props.organization}
             />
           )}

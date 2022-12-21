@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { FlowVariableData, JobConfigureData, JobGeneralData, JobResourcesData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 
@@ -17,7 +17,7 @@ export interface PostProps {
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
-  jobType: 'cron' | 'lifecycle'
+  jobType: JobType
 }
 
 export function Post(props: PostProps) {
@@ -90,7 +90,7 @@ export function Post(props: PostProps) {
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-5">Configure job</div>
 
-            {props.jobType === 'lifecycle' && (
+            {props.jobType === 'LIFECYCLE' && (
               <>
                 <div className="text-text-600 text-ssm mb-2 font-medium">Lifecycle job</div>
                 <ul className="text-text-400 text-sm list-none">
@@ -116,7 +116,7 @@ export function Post(props: PostProps) {
               </>
             )}
 
-            {props.jobType === 'cron' && (
+            {props.jobType === 'CRON' && (
               <>
                 <div className="text-text-600 text-ssm mb-2 font-medium">CRON</div>
                 <ul className="text-text-400 text-sm list-none">

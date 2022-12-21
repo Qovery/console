@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { JobType } from '@qovery/shared/enums'
 import { FlowVariableData, JobConfigureData, JobGeneralData, JobResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
@@ -26,7 +27,7 @@ export interface JobContainerCreateContextInterface {
   variableData: FlowVariableData | undefined
   setVariableData: (data: FlowVariableData) => void
 
-  jobType: 'cron' | 'lifecycle'
+  jobType: JobType
   jobURL: string | undefined
 }
 
@@ -56,7 +57,7 @@ export function PageJobCreateFeature() {
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
-  const [jobType, setJobType] = useState<'cron' | 'lifecycle'>('cron')
+  const [jobType, setJobType] = useState<JobType>('CRON')
   const [jobURL, setJobURL] = useState<string | undefined>()
   const [configureData, setConfigureData] = useState<JobConfigureData | undefined>()
   const [resourcesData, setResourcesData] = useState<JobResourcesData | undefined>({
@@ -75,9 +76,9 @@ export function PageJobCreateFeature() {
   useEffect(() => {
     if (location.pathname.indexOf('cron') !== -1) {
       setJobURL(SERVICES_CRONJOB_CREATION_URL)
-      setJobType('cron')
+      setJobType('CRON')
     } else {
-      setJobType('lifecycle')
+      setJobType('LIFECYCLE')
       setJobURL(SERVICES_LIFECYCLE_CREATION_URL)
     }
   }, [])

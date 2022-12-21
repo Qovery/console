@@ -28,7 +28,7 @@ export function VariableFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job variables`}
+      title={`${jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job variables`}
       items={[
         'Define the environment variables required by your job',
         'Note: variables declared in this screen are injected together with the one already defined within your environment (see environment variables section)',

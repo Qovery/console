@@ -14,7 +14,7 @@ describe('VariableFeature', () => {
           setGeneralData: jest.fn(),
           resourcesData: undefined,
           setResourcesData: jest.fn(),
-          jobType: 'cron',
+          jobType: 'CRON',
           jobURL: '#',
           variableData: undefined,
           setVariableData: jest.fn(),

@@ -5,7 +5,7 @@ import { JobConfigureData } from '@qovery/shared/interfaces'
 import Configure, { ConfigureProps } from './configure'
 
 const props: ConfigureProps = {
-  jobType: 'cron',
+  jobType: 'CRON',
   onSubmit: jest.fn(),
 }
 
@@ -27,7 +27,7 @@ describe('Configure', () => {
 
   it('for a cron job, with these defaultValues submit button should be enabled', async () => {
     const { baseElement } = render(
-      wrapWithReactHookForm<JobConfigureData>(<Configure {...props} jobType="cron" />, {
+      wrapWithReactHookForm<JobConfigureData>(<Configure {...props} jobType="CRON" />, {
         defaultValues: {
           ...defaultValues,
           schedule: '0 0 * * *',
@@ -44,7 +44,7 @@ describe('Configure', () => {
 
   it('for a lifecycle job, should have at least one of three event check to be valid', async () => {
     const { baseElement } = render(
-      wrapWithReactHookForm<JobConfigureData>(<Configure {...props} jobType="lifecycle" />, {
+      wrapWithReactHookForm<JobConfigureData>(<Configure {...props} jobType="LIFECYCLE" />, {
         defaultValues,
       })
     )

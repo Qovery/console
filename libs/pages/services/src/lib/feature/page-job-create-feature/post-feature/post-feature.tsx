@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { createApplication, postApplicationActionsDeploy } from '@qovery/domains/application'
 import { importEnvironmentVariables } from '@qovery/domains/environment-variable'
 import { selectAllRepository, selectOrganizationById } from '@qovery/domains/organization'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   FlowVariableData,
   JobConfigureData,
@@ -32,7 +32,7 @@ function prepareJobRequest(
   configureData: JobConfigureData,
   resourcesData: JobResourcesData,
   selectedRepository: RepositoryEntity | undefined,
-  jobType: 'cron' | 'lifecycle'
+  jobType: JobType
 ): JobRequest {
   const memory = Number(resourcesData['memory'])
   const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
@@ -48,7 +48,7 @@ function prepareJobRequest(
     auto_preview: true,
   }
 
-  if (jobType === 'cron') {
+  if (jobType === 'CRON') {
     jobRequest.schedule = {
       cronjob: {
         entrypoint: configureData.image_entry_point,

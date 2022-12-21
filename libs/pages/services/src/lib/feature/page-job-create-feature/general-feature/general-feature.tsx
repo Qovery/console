@@ -25,7 +25,7 @@ export function GeneralFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title={`${jobType === 'cron' ? 'Cron' : 'Lifecycle'} job creation`}
+      title={`${jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job creation`}
       items={[
         'You can deploy an application from a git repository or a container registry',
         'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',

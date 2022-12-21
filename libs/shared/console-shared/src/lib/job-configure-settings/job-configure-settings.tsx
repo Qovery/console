@@ -1,13 +1,14 @@
 import cronstrue from 'cronstrue'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { JobType } from '@qovery/shared/enums'
 import { JobConfigureData } from '@qovery/shared/interfaces'
 import { InputText, Link, LoaderSpinner } from '@qovery/shared/ui'
 import EnableBox from '../enable-box/enable-box'
 import EntrypointCmdInputs from '../entrypoint-cmd-inputs/entrypoint-cmd-inputs'
 
 export interface JobConfigureSettingsProps {
-  jobType: 'cron' | 'lifecycle'
+  jobType: JobType
   loading?: boolean
 }
 
@@ -33,7 +34,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
     <LoaderSpinner />
   ) : (
     <div>
-      {props.jobType === 'cron' ? (
+      {props.jobType === 'CRON' ? (
         <>
           <h3 className="text-sm font-semibold mb-3">CRON</h3>
           <Controller
