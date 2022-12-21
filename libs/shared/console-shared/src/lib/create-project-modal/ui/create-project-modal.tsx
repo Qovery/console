@@ -29,6 +29,7 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
         render={({ field, fieldState: { error } }) => (
           <InputText
             className="mb-3"
+            dataTestId="input-name"
             label="Project name"
             name={field.name}
             onChange={field.onChange}
@@ -43,6 +44,7 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
         render={({ field }) => (
           <InputText
             className="mb-6"
+            dataTestId="input-description"
             label="Description"
             name={field.name}
             onChange={field.onChange}
