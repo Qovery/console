@@ -1,52 +1,49 @@
-import { OrganizationPlanType, OrganizationPrice } from '@qovery/domains/organization'
-import { InputRadio } from '@qovery/shared/ui'
+import { PlanEnum } from 'qovery-typescript-axios'
+import { Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PlanCardProps {
-  name: string
-  selected: string
   title: string
+  name: string
   text: string
-  price?: number
-  listPrice?: OrganizationPrice[]
-  currentValue?: { [name: string]: { number?: string | undefined } }
-  onClick: (plan: string) => void
-  disable?: boolean | undefined
+  onClick: () => void
+  loading: string
+  price: number
+  list: string[]
 }
 
 export function PlanCard(props: PlanCardProps) {
-  const { name, selected, title, text, price, listPrice = [], currentValue = {}, onClick, disable = false } = props
+  const { name, title, text, price, loading, onClick, list } = props
 
   return (
-    <div
-      className={`${
-        selected === name ? 'bg-white text-text-700' : 'text-text-500 bg-element-light-lighter-200 hover:bg-white'
-      } p-5 mb-2 border border-element-light-lighter-500 rounded flex justify-between items-center  transition-all ${
-        disable ? 'opacity-50' : 'cursor-pointer hover:text-text-700'
-      }`}
-      onClick={() => (!disable ? onClick(name) : null)}
-    >
-      <div className="flex items-start gap-3">
-        <InputRadio name="plan" value={name} isChecked={selected === name} disable={disable} />
-        <div>
-          <h2 className="leading-none text-base font-normal mb-1">
-            <b className="font-bold">{title}</b> <span className="text-text-500">plan</span>
-          </h2>
-          <p className="text-sm text-text-500">{text}</p>
-        </div>
-      </div>
-      {name !== OrganizationPlanType.ENTERPRISE && (
-        <p className="text-xl font-bold flex items-center gap-1">
-          {'$'}
-          {name === OrganizationPlanType.PROFESSIONAL}
-          {name === OrganizationPlanType.FREE && price}
-          {name === OrganizationPlanType.BUSINESS &&
-            listPrice.find((p) => p.number === currentValue[OrganizationPlanType.BUSINESS].number)?.price}
-          {name === OrganizationPlanType.PROFESSIONAL &&
-            listPrice.find((p) => p.number === currentValue[OrganizationPlanType.PROFESSIONAL].number)?.price}
-          <span className="text-sm font-normal text-text-500">/ Month</span>
-        </p>
-      )}
-      {name === OrganizationPlanType.ENTERPRISE && <p className="text-xs font-bold uppercase">Contact us</p>}
+    <div className="bg-element-light-lighter-200 border border-element-light-lighter-500 px-5 py-4 rounded lg:w-80">
+      <h2 className="h5 mb-1">{title}</h2>
+      <p className="text-sm text-text-500 mb-2">{text}</p>
+      <p className="flex items-center text-text-600 text-xs mb-4">
+        {name !== PlanEnum.ENTERPRISE ? (
+          <>
+            <span className="h5 block mr-2">${price}</span> per user/month
+          </>
+        ) : (
+          <span className="h5">Custom</span>
+        )}
+      </p>
+      <Button
+        className="w-full mb-4"
+        size={ButtonSize.XLARGE}
+        style={ButtonStyle.BASIC}
+        onClick={() => onClick()}
+        loading={loading === name}
+      >
+        Select plan
+      </Button>
+      <ul>
+        {list.map((line: string, index: number) => (
+          <li key={index} className="text-text-500 text-xs mb-2 last:mb-10">
+            <Icon name={IconAwesomeEnum.CHECK} className="text-success-500 mr-1.5" />
+            {line}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

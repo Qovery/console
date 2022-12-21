@@ -29,18 +29,20 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
             <h4 className="text-text-600 text-sm font-medium">{props.currentTitle}</h4>
           </div>
         </div>
-        <div className="border-l border-l-element-light-lighter-400 pl-4 h-full flex items-center">
-          <Button onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
-            Close <Icon name={IconAwesomeEnum.CROSS} className="ml-2" />
-          </Button>
-        </div>
+        {props.onExit && (
+          <div className="border-l border-l-element-light-lighter-400 pl-4 h-full flex items-center">
+            <Button onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
+              Close <Icon name={IconAwesomeEnum.CROSS} className="ml-2" />
+            </Button>
+          </div>
+        )}
       </header>
       <div data-testid="progress-bar-wrapper" className="h-[6px] bg-element-light-lighter-500 relative shrink-0">
         <div
           data-testid="progress-bar"
           style={{ transform: `scaleX(${props.currentStep / props.totalSteps})` }}
           className="h-full absolute origin-left transition-transform duration-700 ease-in-out inset-0 bg-brand-500"
-        ></div>
+        />
       </div>
       <div data-testid="funnel-content" className="flex-grow min-h-0 flex relative">
         {props.children}

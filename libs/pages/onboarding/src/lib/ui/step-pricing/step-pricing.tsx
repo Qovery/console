@@ -1,61 +1,23 @@
 import { PlanEnum } from 'qovery-typescript-axios'
-import { OrganizationPlan } from '@qovery/domains/organization'
 import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from '@qovery/shared/router'
-import { Button, ButtonSize, ButtonStyle, Icon, Slider } from '@qovery/shared/ui'
-import { PlanCard } from '../plan-card/plan-card'
+import { Button, ButtonSize, ButtonStyle, Icon } from '@qovery/shared/ui'
+import { OrganizationPlan } from '../../feature/onboarding-pricing/onboarding-pricing'
+import PlanCard from '../plan-card/plan-card'
 
 export interface StepPricingProps {
-  selectPlan: PlanEnum
-  setSelectPlan: (value: PlanEnum) => void
   plans: OrganizationPlan[]
-  chooseDeploy: (value: number | null) => void
-  currentValue: { [name: string]: { number?: string | undefined; disable: boolean | undefined } }
-  currentDeploy: number
-  onSubmit: () => void
-  loading: boolean
+  onSubmit: (plan: PlanEnum) => void
+  loading: string
   onClickContact: () => void
 }
 
 export function StepPricing(props: StepPricingProps) {
-  const {
-    selectPlan,
-    setSelectPlan,
-    plans,
-    chooseDeploy,
-    currentValue,
-    currentDeploy,
-    onSubmit,
-    loading,
-    onClickContact,
-  } = props
-
-  const priceParagraph = () => {
-    const currentPlans = plans.find((plan) => plan.name === selectPlan)
-
-    if (currentPlans && currentPlans.price > 0) {
-      const nbDeploy = selectPlan === PlanEnum.TEAM ? 1000 : 300
-      let deploymentPrice = 0
-
-      if (currentDeploy > nbDeploy) {
-        deploymentPrice = ((currentDeploy - nbDeploy) / 100) * 50
-      }
-
-      return (
-        <p className="text-xs text-text-400 text-right mt-2">
-          {`Price computed as: Base Plan (${
-            currentPlans?.price
-          }$) + ${currentDeploy} Deployments (${deploymentPrice}$) = ${currentPlans?.price + deploymentPrice}$`}
-        </p>
-      )
-    } else {
-      return null
-    }
-  }
+  const { onSubmit, plans, loading } = props
 
   return (
     <div className="pb-10">
-      <h1 className="h3 text-text-700 mb-3">Simple, transparent pricing</h1>
-      <p className="text-sm mb-10 text-text-500">
+      <h1 className="h3 text-text-700 mb-3 text-center">Simple, transparent pricing</h1>
+      <p className="text-sm mb-10 text-text-500 text-center">
         14 days trial with no credit card required for all paid plans
         <a
           href="https://qovery.com/pricing"
@@ -66,37 +28,13 @@ export function StepPricing(props: StepPricingProps) {
           see details plan
           <Icon name="icon-solid-arrow-up-right-from-square" className="ml-1" />
         </a>
-        .
       </p>
       <form>
-        <div className="flex mb-4">
-          <Slider
-            min={100}
-            max={4000}
-            step={100}
-            label="Number of deployments needed"
-            valueLabel="/month"
-            value={[currentDeploy]}
-            onChange={(value: number[]) => chooseDeploy(value[0])}
-          />
+        <div className="grid md:grid-cols-3 gap-5">
+          {plans.map((plan: OrganizationPlan) => (
+            <PlanCard key={plan.name} onClick={() => onSubmit(plan.name)} loading={loading} {...plan} />
+          ))}
         </div>
-
-        {plans.map((plan: OrganizationPlan) => (
-          <PlanCard
-            key={plan.name}
-            name={plan.name}
-            selected={selectPlan}
-            title={plan.title}
-            text={plan.text}
-            price={plan.price}
-            listPrice={plan.listPrice}
-            currentValue={currentValue}
-            onClick={() => setSelectPlan(plan.name)}
-            disable={currentValue[plan.name] && currentValue[plan.name].disable}
-          />
-        ))}
-        {priceParagraph()}
-        <p className="text-xs text-text-400 text-right mt-1">Price plan does not include your AWS costs</p>
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
           <Button
             link={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`}
@@ -106,19 +44,6 @@ export function StepPricing(props: StepPricingProps) {
           >
             Back
           </Button>
-          {selectPlan === PlanEnum.ENTERPRISE && (
-            <Button onClick={onClickContact} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
-              Contact us
-            </Button>
-          )}
-          {selectPlan !== PlanEnum.ENTERPRISE && (
-            <Button size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} onClick={onSubmit} loading={loading}>
-              Let’s go
-              <span className="ml-1" role="img" aria-label="star">
-                💫
-              </span>
-            </Button>
-          )}
         </div>
       </form>
     </div>

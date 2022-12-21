@@ -33,7 +33,7 @@ export const ROUTER_ONBOARDING_STEP_2: Route[] = [
     component: <OnboardingProject />,
   },
   {
-    path: `${ONBOARDING_PRICING_URL}/:plan`,
+    path: ONBOARDING_PRICING_URL,
     component: <OnboardingPricing />,
   },
 ]
