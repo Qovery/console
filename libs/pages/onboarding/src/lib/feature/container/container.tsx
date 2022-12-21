@@ -1,8 +1,9 @@
 import { createContext, useEffect, useState } from 'react'
 import { Params, useNavigate } from 'react-router-dom'
 import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, Route } from '@qovery/shared/router'
+import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
-import { LayoutOnboarding } from '../../ui/layout-onboarding/layout-onboarding'
+import OnboardingRightContent from '../../ui/onboarding-right-content/onboarding-right-content'
 
 interface DefaultContextProps {
   organization_name: string
@@ -36,14 +37,10 @@ export function Container(props: ContainerProps) {
     setStep(params['*'])
   }, [params, setStep, step, navigate])
 
-  const stepsNumber: number = firstStep ? ROUTER_ONBOARDING_STEP_1.length : ROUTER_ONBOARDING_STEP_2.length
-
   const currentStepPosition = (routes: Route[]) =>
     routes.findIndex((route: Route) => route.path.replace('/:plan', '') === `/${step?.split('/')[0]}`) + 1
 
-  function getProgressPercentValue(): number {
-    return (100 * currentStepPosition(currentRoutes)) / stepsNumber
-  }
+  const isNotStepPricing = `/${step}` !== ONBOARDING_PRICING_URL
 
   return (
     <ContextOnboarding.Provider
@@ -52,23 +49,26 @@ export function Container(props: ContainerProps) {
         setContextValue,
       }}
     >
-      <LayoutOnboarding
-        getProgressPercentValue={getProgressPercentValue()}
-        routes={ROUTER_ONBOARDING_STEP_2}
-        stepsNumber={stepsNumber}
-        currentStepPosition={currentStepPosition(currentRoutes)}
-        step={step}
-        withoutRightContent={`/${params['*']}` === ONBOARDING_PRICING_URL}
-        catchline={
+      <FunnelFlow
+        totalSteps={currentRoutes.length}
+        currentStep={currentStepPosition(currentRoutes)}
+        currentTitle={
           firstStep
             ? 'Just a few questions'
             : `/${step}` === ONBOARDING_PROJECT_URL
             ? 'Organization and Project Creation'
             : 'Select your plan'
         }
+        portal
       >
-        {children}
-      </LayoutOnboarding>
+        <FunnelFlowBody
+          helpSectionClassName="!p-0 !bg-transparent !border-transparent"
+          helpSection={isNotStepPricing && <OnboardingRightContent step={step} />}
+          customContentWidth={!isNotStepPricing ? 'max-w-[1096px]' : undefined}
+        >
+          {children}
+        </FunnelFlowBody>
+      </FunnelFlow>
     </ContextOnboarding.Provider>
   )
 }

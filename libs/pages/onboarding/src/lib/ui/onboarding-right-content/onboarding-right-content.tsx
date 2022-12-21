@@ -11,7 +11,7 @@ export function OnboardingRightContent(props: OnboardingRightContentProps) {
   const detectCurrentStep = (path: string) => step === path.replace('/', '')
 
   return (
-    <div className="relative mt-32">
+    <div>
       {detectCurrentStep(ONBOARDING_PROJECT_URL) ? (
         <BenefitsCard />
       ) : (
