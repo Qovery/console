@@ -1,4 +1,4 @@
-import { GitAuthProvider, GitProviderEnum, JobResponse } from 'qovery-typescript-axios'
+import { GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,7 +14,7 @@ import {
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
 import { isJob } from '@qovery/shared/enums'
-import { GitApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
+import { GitApplicationEntity, JobApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -25,18 +25,18 @@ export function EditGitRepositorySettingsFeature() {
   const { organizationId = '', applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
-  const application = useSelector<RootState, GitApplicationEntity | JobResponse | undefined>(
+  const application = useSelector<RootState, GitApplicationEntity | JobApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) =>
       JSON.stringify((a as GitApplicationEntity)?.git_repository) ===
         JSON.stringify((b as GitApplicationEntity)?.git_repository) ||
-      JSON.stringify((a as JobResponse)?.source?.docker?.git_repository) ===
-        JSON.stringify((b as JobResponse)?.source?.docker?.git_repository)
+      JSON.stringify((a as JobApplicationEntity)?.source?.docker?.git_repository) ===
+        JSON.stringify((b as JobApplicationEntity)?.source?.docker?.git_repository)
   )
 
   const getGitRepositoryFromApplication = useCallback(() => {
     return isJob(application)
-      ? (application as JobResponse).source?.docker?.git_repository
+      ? (application as JobApplicationEntity).source?.docker?.git_repository
       : (application as GitApplicationEntity)?.git_repository
   }, [application])
 

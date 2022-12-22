@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { isContainer } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
@@ -25,7 +25,7 @@ export function GeneralFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title={`${jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job creation`}
+      title={`${jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job creation`}
       items={[
         'You can deploy an application from a git repository or a container registry',
         'Git Repository: Qovery will pull the repository, build the application and deploy it on your kubernetes cluster',

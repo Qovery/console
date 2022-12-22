@@ -1,9 +1,10 @@
 import { Chance } from 'chance'
-import { GitProviderEnum, JobResponse, StorageTypeEnum } from 'qovery-typescript-axios'
+import { GitProviderEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { JobApplicationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 
-export const cronjobFactoryMock = (howMany: number, withContainer: boolean = false): JobResponse[] =>
+export const cronjobFactoryMock = (howMany: number, withContainer: boolean = false): JobApplicationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => {
     let source
     if (!withContainer) {
@@ -74,7 +75,7 @@ export const cronjobFactoryMock = (howMany: number, withContainer: boolean = fal
     }
   })
 
-export const lifecycleJobFactoryMock = (howMany: number, withContainer: boolean = false): JobResponse[] =>
+export const lifecycleJobFactoryMock = (howMany: number, withContainer: boolean = false): JobApplicationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => {
     let source
     if (!withContainer) {

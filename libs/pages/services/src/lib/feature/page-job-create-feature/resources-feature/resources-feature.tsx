@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
@@ -27,7 +28,7 @@ export function ResourcesFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title={`${jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job resources`}
+      title={`${jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job resources`}
       items={[
         'Application are deployed as containers on your Kubernetes cluster',
         'Set the vCPU/RAM based on your application need',

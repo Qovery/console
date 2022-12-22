@@ -25,7 +25,7 @@ export function VariableRow(props: VariableRowProps) {
   const pattern = /^[^\s]+$/
 
   return (
-    <div data-testid={'variable-row'} className="w-full items-center mb-3">
+    <div data-testid="variable-row" className="w-full items-center mb-3">
       <div key={index} data-testid="form-row" className="grid mb-3" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}
@@ -74,7 +74,7 @@ export function VariableRow(props: VariableRowProps) {
         <Controller
           name={`variables.${index}.scope`}
           control={control}
-          render={({ field, fieldState: { error } }) => (
+          render={({ field }) => (
             <InputSelectSmall
               data-testid="scope"
               className="w-[188px]"

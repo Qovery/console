@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { FlowVariableData } from '@qovery/shared/interfaces'
-import { wrapWithReactHookForm } from '../../../../../../__tests__/utils/wrap-with-react-hook-form'
 import FlowCreateVariable, { FlowCreateVariableProps } from './flow-create-variable'
 
 const props: FlowCreateVariableProps = {

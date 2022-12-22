@@ -1,12 +1,14 @@
 import { act, getByLabelText, getByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobConfigureData } from '@qovery/shared/interfaces'
 import Configure, { ConfigureProps } from './configure'
 
 const props: ConfigureProps = {
-  jobType: 'CRON',
+  jobType: ServiceTypeEnum.CRON_JOB,
   onSubmit: jest.fn(),
+  onBack: jest.fn(),
 }
 
 const defaultValues: JobConfigureData = {

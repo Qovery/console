@@ -137,7 +137,7 @@ export function TabsLogs(props: TabsLogsProps) {
                       <Button
                         className="mr-2"
                         iconLeft="icon-solid-wheel"
-                        external={true}
+                        external
                         link={`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`}
                         style={ButtonStyle.BASIC}
                         size={ButtonSize.TINY}
@@ -147,7 +147,7 @@ export function TabsLogs(props: TabsLogsProps) {
                       {currentError.link && (
                         <Button
                           iconLeft="icon-solid-book"
-                          external={true}
+                          external
                           link={currentError.link}
                           style={ButtonStyle.STROKED}
                           size={ButtonSize.TINY}
@@ -175,7 +175,7 @@ export function TabsLogs(props: TabsLogsProps) {
             className="font-medium"
             link="https://discuss.qovery.com"
             linkLabel="Ask for support on our forum"
-            external={true}
+            external
             iconRight="icon-solid-arrow-up-right-from-square"
           />
         </div>

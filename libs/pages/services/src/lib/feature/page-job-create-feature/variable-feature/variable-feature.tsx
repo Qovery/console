@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreateVariable } from '@qovery/shared/console-shared'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { FlowVariableData, VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -28,7 +29,7 @@ export function VariableFeature() {
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
-      title={`${jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job variables`}
+      title={`${jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job variables`}
       items={[
         'Define the environment variables required by your job',
         'Note: variables declared in this screen are injected together with the one already defined within your environment (see environment variables section)',

@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
-import { isCronJob } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isCronJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
@@ -21,7 +21,7 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
           <BlockContent title="Configuration job">
             <JobConfigureSettings
               loading={!props.application}
-              jobType={isCronJob(props.application) ? 'CRON' : 'LIFECYCLE'}
+              jobType={isCronJob(props.application) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
             />
           </BlockContent>
           <div className="flex justify-end">
@@ -43,8 +43,13 @@ export function PageSettingsConfigureJob(props: PageSettingsConfigureJobProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#delete-an-application',
-            linkLabel: 'How to delete my application',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/cronjob/',
+            linkLabel: 'How to configure my cron job',
+            external: true,
+          },
+          {
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/lifecycle-job/',
+            linkLabel: 'How to configure my lifecycle job',
             external: true,
           },
         ]}

@@ -1,4 +1,4 @@
-import { BuildModeEnum, BuildPackLanguageEnum, JobResponse } from 'qovery-typescript-axios'
+import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,6 +10,7 @@ import {
   ApplicationEntity,
   ContainerApplicationEntity,
   GitApplicationEntity,
+  JobApplicationEntity,
   OrganizationEntity,
 } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
@@ -56,8 +57,8 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   }
 }
 
-export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity): JobResponse => {
-  if ((application as JobResponse).source?.docker) {
+export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity): JobApplicationEntity => {
+  if ((application as JobApplicationEntity).source?.docker) {
     const git_repository = {
       url: buildGitRepoUrl(data['provider'], data['repository']),
       branch: data['branch'],
@@ -65,7 +66,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     }
 
     return {
-      ...(application as JobResponse),
+      ...(application as JobApplicationEntity),
       name: data['name'],
       source: {
         docker: {
@@ -76,7 +77,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     }
   } else {
     return {
-      ...(application as JobResponse),
+      ...(application as JobApplicationEntity),
       source: {
         image: {
           tag: data['image_tag'] || '',
@@ -208,9 +209,9 @@ export function PageSettingsGeneralFeature() {
     }
 
     if (isJob(application)) {
-      methods.setValue('description', (application as JobResponse).description)
+      methods.setValue('description', (application as JobApplicationEntity).description)
 
-      const serviceType = (application as JobResponse).source?.docker
+      const serviceType = (application as JobApplicationEntity).source?.docker
         ? ServiceTypeEnum.APPLICATION
         : ServiceTypeEnum.CONTAINER
       methods.setValue('serviceType', serviceType)
@@ -218,12 +219,12 @@ export function PageSettingsGeneralFeature() {
       if (serviceType === ServiceTypeEnum.CONTAINER) {
         dispatch(fetchOrganizationContainerRegistries({ organizationId }))
 
-        methods.setValue('registry', (application as JobResponse).source?.image?.registry_id)
-        methods.setValue('image_name', (application as JobResponse).source?.image?.image_name)
-        methods.setValue('image_tag', (application as JobResponse).source?.image?.tag)
+        methods.setValue('registry', (application as JobApplicationEntity).source?.image?.registry_id)
+        methods.setValue('image_name', (application as JobApplicationEntity).source?.image?.image_name)
+        methods.setValue('image_tag', (application as JobApplicationEntity).source?.image?.tag)
       } else {
         methods.setValue('build_mode', BuildModeEnum.DOCKER)
-        methods.setValue('dockerfile_path', (application as JobResponse).source?.docker?.dockerfile_path)
+        methods.setValue('dockerfile_path', (application as JobApplicationEntity).source?.docker?.dockerfile_path)
       }
     }
   }, [methods, application, dispatch, organizationId])

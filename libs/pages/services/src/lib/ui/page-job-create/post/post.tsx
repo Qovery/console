@@ -90,7 +90,7 @@ export function Post(props: PostProps) {
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-5">Configure job</div>
 
-            {props.jobType === 'LIFECYCLE' && (
+            {props.jobType === ServiceTypeEnum.LIFECYCLE_JOB && (
               <>
                 <div className="text-text-600 text-ssm mb-2 font-medium">Lifecycle job</div>
                 <ul className="text-text-400 text-sm list-none">
@@ -116,7 +116,7 @@ export function Post(props: PostProps) {
               </>
             )}
 
-            {props.jobType === 'CRON' && (
+            {props.jobType === ServiceTypeEnum.CRON_JOB && (
               <>
                 <div className="text-text-600 text-ssm mb-2 font-medium">CRON</div>
                 <ul className="text-text-400 text-sm list-none">

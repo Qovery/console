@@ -1,6 +1,5 @@
 export * from './lib/job-configure-settings/job-configure-settings'
 export * from './lib/job-general-setting/job-general-setting'
-export * from './lib/enable-box/enable-box'
 export * from './lib/entrypoint-cmd-inputs/entrypoint-cmd-inputs'
 export * from './lib/environment-buttons-actions/environment-buttons-actions'
 export * from './lib/setting-resources/ui/setting-resources'

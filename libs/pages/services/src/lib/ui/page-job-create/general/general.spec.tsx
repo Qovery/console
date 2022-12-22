@@ -5,7 +5,7 @@ import { JobGeneralData } from '@qovery/shared/interfaces'
 import General, { GeneralProps } from './general'
 
 const props: GeneralProps = {
-  jobType: 'CRON',
+  jobType: ServiceTypeEnum.CRON_JOB,
   onSubmit: jest.fn(),
 }
 
@@ -16,7 +16,7 @@ describe('General', () => {
         defaultValues: {
           name: 'test',
           serviceType: ServiceTypeEnum.CONTAINER,
-          description: 'Remi is a bg',
+          description: 'Application Description',
         },
       })
     )

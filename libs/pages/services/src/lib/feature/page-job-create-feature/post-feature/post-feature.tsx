@@ -48,7 +48,7 @@ function prepareJobRequest(
     auto_preview: true,
   }
 
-  if (jobType === 'CRON') {
+  if (jobType === ServiceTypeEnum.CRON_JOB) {
     jobRequest.schedule = {
       cronjob: {
         entrypoint: configureData.image_entry_point,

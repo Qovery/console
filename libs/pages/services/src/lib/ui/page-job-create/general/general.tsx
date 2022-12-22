@@ -2,7 +2,7 @@ import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { JobGeneralSetting } from '@qovery/shared/console-shared'
-import { JobType } from '@qovery/shared/enums'
+import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
 import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
@@ -22,7 +22,7 @@ export function General(props: GeneralProps) {
     <div>
       <div className="mb-10">
         <h3 className="text-text-700 text-lg mb-2">
-          {props.jobType === 'CRON' ? 'Cron' : 'Lifecycle'} job informations
+          {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job informations
         </h3>
         <p className="text-text-500 text-sm mb-2">
           General settings allow you to set up your application name, git repository or container settings.

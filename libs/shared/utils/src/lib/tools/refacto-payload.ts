@@ -3,14 +3,18 @@ import {
   ApplicationGitRepositoryRequest,
   DatabaseEditRequest,
   JobRequest,
-  JobResponse,
   Organization,
   OrganizationCustomRole,
   OrganizationCustomRoleUpdateRequest,
   OrganizationEditRequest,
   ServiceStorageStorage,
 } from 'qovery-typescript-axios'
-import { ContainerApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import {
+  ContainerApplicationEntity,
+  DatabaseEntity,
+  GitApplicationEntity,
+  JobApplicationEntity,
+} from '@qovery/shared/interfaces'
 
 export function refactoPayload(response: any) {
   delete response['id']
@@ -84,7 +88,7 @@ export function refactoContainerApplicationPayload(application: Partial<Containe
   return containerRequestPayload
 }
 
-export function refactoJobPayload(job: Partial<JobResponse>): JobRequest {
+export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobRequest {
   const jobRequest: JobRequest = {
     name: job.name || '',
     description: job.description || '',

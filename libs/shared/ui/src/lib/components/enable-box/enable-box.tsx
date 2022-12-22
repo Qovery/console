@@ -1,5 +1,5 @@
 import { FormEvent, ReactNode, useEffect, useState } from 'react'
-import { InputCheckbox } from '@qovery/shared/ui'
+import InputCheckbox from '../inputs/input-checkbox/input-checkbox'
 
 export interface EnableBoxProps {
   checked: boolean | undefined

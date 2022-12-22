@@ -1,7 +1,7 @@
 import { FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
-import { JobType } from '@qovery/shared/enums'
+import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobConfigureData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
@@ -16,7 +16,7 @@ export function Configure(props: ConfigureProps) {
   const [isValid, setIsValid] = useState(true)
 
   watch((data) => {
-    if (props.jobType === 'LIFECYCLE') {
+    if (props.jobType === ServiceTypeEnum.LIFECYCLE_JOB) {
       setIsValid(Boolean(data.on_start?.enabled || data.on_stop?.enabled || data.on_delete?.enabled))
     }
   })

@@ -1,11 +1,10 @@
-import { JobResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
 import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { ApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
+import { ApplicationEntity, JobApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
@@ -14,12 +13,12 @@ export function PageSettingsConfigureJobFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
   const methods = useForm<JobConfigureData>()
 
-  const application: JobResponse | undefined = useSelector<RootState, ApplicationEntity | undefined>(
+  const application: JobApplicationEntity | undefined = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) => {
       return JSON.stringify(a?.id) === JSON.stringify(b?.id)
     }
-  ) as JobResponse | undefined
+  ) as JobApplicationEntity | undefined
 
   const [loading, setLoading] = useState(false)
 
@@ -56,8 +55,6 @@ export function PageSettingsConfigureJobFeature() {
         methods.setValue('on_delete.arguments_string', JSON.stringify(application.schedule?.on_delete?.arguments))
         methods.setValue('on_delete.entrypoint', application.schedule?.on_delete?.entrypoint)
       }
-
-      console.log('defaultValues', methods.getValues())
     }
   }, [application, methods])
 

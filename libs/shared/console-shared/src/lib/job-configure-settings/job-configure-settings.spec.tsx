@@ -1,10 +1,11 @@
 import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, getByText, render } from '@testing-library/react'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobConfigureData } from '@qovery/shared/interfaces'
 import JobConfigureSettings, { JobConfigureSettingsProps } from './job-configure-settings'
 
 const props: JobConfigureSettingsProps = {
-  jobType: 'CRON',
+  jobType: ServiceTypeEnum.CRON_JOB,
 }
 
 const defaultValues: JobConfigureData = {
@@ -29,11 +30,11 @@ describe('JobConfigureSettings', () => {
   })
 
   describe('job is a lifecycle', () => {
-    props.jobType = 'LIFECYCLE'
+    props.jobType = ServiceTypeEnum.LIFECYCLE_JOB
 
     it('should render 3 enabled box and 3 inputs', () => {
       const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="LIFECYCLE" />, {
+        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType={ServiceTypeEnum.LIFECYCLE_JOB} />, {
           defaultValues,
         })
       )
@@ -45,11 +46,11 @@ describe('JobConfigureSettings', () => {
   })
 
   describe('job is a cron', () => {
-    props.jobType = 'CRON'
+    props.jobType = ServiceTypeEnum.CRON_JOB
 
     it('should render 5 input and 1 textarea', async () => {
       const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="CRON" />, {
+        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
           defaultValues,
         })
       )
@@ -63,7 +64,7 @@ describe('JobConfigureSettings', () => {
 
     it('should display the cron value in a human readable way', async () => {
       const { baseElement } = render(
-        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType="CRON" />, {
+        wrapWithReactHookForm<JobConfigureData>(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
           defaultValues,
         })
       )

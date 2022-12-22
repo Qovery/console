@@ -10,11 +10,15 @@ describe('VariableFeature', () => {
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION, description: 'Remi is a bg' },
+          generalData: {
+            name: 'test',
+            serviceType: ServiceTypeEnum.APPLICATION,
+            description: 'Application Description',
+          },
           setGeneralData: jest.fn(),
           resourcesData: undefined,
           setResourcesData: jest.fn(),
-          jobType: 'CRON',
+          jobType: ServiceTypeEnum.CRON_JOB,
           jobURL: '#',
           variableData: undefined,
           setVariableData: jest.fn(),

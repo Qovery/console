@@ -1,10 +1,9 @@
 import cronstrue from 'cronstrue'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { JobType } from '@qovery/shared/enums'
+import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobConfigureData } from '@qovery/shared/interfaces'
-import { InputText, Link, LoaderSpinner } from '@qovery/shared/ui'
-import EnableBox from '../enable-box/enable-box'
+import { EnableBox, InputText, Link, LoaderSpinner } from '@qovery/shared/ui'
 import EntrypointCmdInputs from '../entrypoint-cmd-inputs/entrypoint-cmd-inputs'
 
 export interface JobConfigureSettingsProps {
@@ -34,7 +33,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
     <LoaderSpinner />
   ) : (
     <div>
-      {props.jobType === 'CRON' ? (
+      {props.jobType === ServiceTypeEnum.CRON_JOB ? (
         <>
           <h3 className="text-sm font-semibold mb-3">CRON</h3>
           <Controller
@@ -57,7 +56,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           <div className="mb-3 flex justify-between">
             <p className="text-text-500 text-xs">{cronDescription}</p>
             <Link
-              external={true}
+              external
               link="https://crontab.guru/"
               className="text-text-400 !text-xs"
               linkLabel="CRON expression builder"
