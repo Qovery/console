@@ -1,11 +1,18 @@
 import { Organization, Project } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
+import { selectUserSignUp } from '@qovery/domains/user'
 import { useAuth } from '@qovery/shared/auth'
-import { ORGANIZATION_URL, OVERVIEW_URL } from '@qovery/shared/router'
+import {
+  ONBOARDING_PERSONALIZE_URL,
+  ONBOARDING_PROJECT_URL,
+  ONBOARDING_URL,
+  ORGANIZATION_URL,
+  OVERVIEW_URL,
+} from '@qovery/shared/router'
 import { AppDispatch } from '@qovery/store'
 import {
   getCurrentOrganizationIdFromStorage,
@@ -17,6 +24,7 @@ export function useRedirectIfLogged() {
   const navigate = useNavigate()
   const { createAuthCookies, checkIsAuthenticated } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
+  const userSignUp = useSelector(selectUserSignUp)
 
   useEffect(() => {
     async function fetchData() {
@@ -35,8 +43,15 @@ export function useRedirectIfLogged() {
         const projects: Project[] = await dispatch(fetchProjects({ organizationId })).unwrap()
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
         else navigate(ORGANIZATION_URL(organizationId))
+      } else {
+        if (userSignUp.dx_auth) {
+          navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
+        } else {
+          navigate(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
+        }
       }
     }
+
     if (checkIsAuthenticated) {
       const currentOrganization = getCurrentOrganizationIdFromStorage()
       const currentProject = getCurrentProjectIdFromStorage()
@@ -55,7 +70,7 @@ export function useRedirectIfLogged() {
 
       fetchData()
     }
-  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch])
+  }, [navigate, checkIsAuthenticated, createAuthCookies, dispatch, userSignUp.dx_auth])
 }
 
 export default useRedirectIfLogged
