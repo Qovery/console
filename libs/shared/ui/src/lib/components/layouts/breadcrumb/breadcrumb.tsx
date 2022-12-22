@@ -30,6 +30,7 @@ import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
   organizations: Organization[]
+  createProjectModal: () => void
   clusters?: ClusterEntity[]
   projects?: Project[]
   environments?: Environment[]
@@ -38,7 +39,7 @@ export interface BreadcrumbProps {
 }
 
 export function BreadcrumbMemo(props: BreadcrumbProps) {
-  const { organizations, clusters, projects, environments, applications, databases } = props
+  const { organizations, clusters, projects, environments, applications, databases, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
   const location = useLocation()
@@ -91,6 +92,14 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     {
       title: 'Projects',
       search: true,
+      button: {
+        label: (
+          <span>
+            New <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="ml-0.5" />
+          </span>
+        ),
+        onClick: () => createProjectModal(),
+      },
       items: projects
         ? projects?.map((project: Project) => ({
             name: project.name,

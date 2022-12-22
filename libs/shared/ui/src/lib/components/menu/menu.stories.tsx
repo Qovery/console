@@ -27,9 +27,13 @@ const menus: MenuData = [
       { name: 'Test 3', link: { url: '/', external: false }, copy: 'Test 3' },
     ],
     title: 'Test',
-    button: 'Link',
-    buttonLink: '/',
     search: true,
+    button: {
+      label: 'Create',
+      onClick: () => {
+        alert('Create')
+      },
+    },
   },
   {
     items: [

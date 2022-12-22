@@ -19,7 +19,7 @@ import {
   ButtonStyle,
   Icon,
   IconAwesomeEnum,
-  MenuItemProps,
+  MenuData,
   Skeleton,
   StatusChip,
   Tabs,
@@ -102,13 +102,7 @@ export function TabsFeature() {
     APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL
   )
 
-  let menuForContentRight: {
-    items: MenuItemProps[]
-    title?: string
-    button?: string
-    buttonLink?: string
-    search?: boolean
-  }[] = []
+  let menuForContentRight: MenuData = []
 
   if (matchEnvVariableRoute) {
     menuForContentRight = [

@@ -1,5 +1,7 @@
 import { ReactNode } from 'react'
-import { NavigationLeft, NavigationLeftLinkProps } from '@qovery/shared/ui'
+import { useParams } from 'react-router-dom'
+import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
+import { NavigationLeft, NavigationLeftLinkProps, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   organizationLinks: NavigationLeftLinkProps[]
@@ -9,7 +11,9 @@ export interface ContainerProps {
 }
 
 export function Container(props: ContainerProps) {
+  const { organizationId = '' } = useParams()
   const { organizationLinks, projectLinks, accountLinks, children } = props
+  const { openModal, closeModal } = useModal()
 
   return (
     <div className="bg-white flex rounded-t">
@@ -19,6 +23,14 @@ export function Container(props: ContainerProps) {
           <NavigationLeft
             title="Projects"
             links={projectLinks}
+            link={{
+              title: 'New',
+              onClick: () => {
+                openModal({
+                  content: <CreateProjectModalFeature onClose={closeModal} organizationId={organizationId} />,
+                })
+              },
+            }}
             className="py-6 border-t border-element-light-lighter-400"
           />
           <NavigationLeft

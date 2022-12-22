@@ -15,6 +15,7 @@ import { LOGIN_URL, LOGOUT_URL, ProtectedRoute } from '@qovery/shared/router'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useAuthInterceptor, useDocumentTitle } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
+import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
 
 export function App() {
@@ -73,6 +74,7 @@ export function App() {
 
   return (
     <GTMProvider state={gtmParams}>
+      <ScrollToTop />
       <Routes>
         <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
         <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />

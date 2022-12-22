@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { ButtonSize, Icon } from '@qovery/shared/ui'
-import Menu, { MenuAlign } from '../../menu/menu'
-import { MenuItemProps } from '../../menu/menu-item/menu-item'
+import Menu, { MenuAlign, MenuData } from '../../menu/menu'
 
 export enum ButtonActionStyle {
   BASIC = 'basic',
@@ -21,7 +20,7 @@ export interface ButtonActionProps {
   disabled?: boolean
   className?: string
   onClick?: () => void
-  menus?: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
+  menus?: MenuData
   size?: ButtonSize
 }
 

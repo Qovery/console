@@ -89,6 +89,9 @@ export const projectsSlice = createSlice({
       })
       .addCase(postProject.fulfilled, (state: ProjectsState, action: PayloadAction<Project>) => {
         projectsAdapter.upsertOne(state, action.payload)
+        state.joinOrganizationProject = addOneToManyRelation(action.payload.organization?.id, action.payload.id, {
+          ...state.joinOrganizationProject,
+        })
         state.loadingStatus = 'loaded'
       })
       .addCase(postProject.rejected, (state: ProjectsState, action) => {

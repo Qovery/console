@@ -17,7 +17,11 @@ const Template: Story<NavigationLeftProps> = (args) => <NavigationLeft {...args}
 export const Primary = Template.bind({})
 
 Primary.args = {
-  title: '',
+  title: 'Navigation',
+  link: {
+    title: 'New',
+    onClick: () => console.log('on click'),
+  },
   links: [
     {
       title: 'General',

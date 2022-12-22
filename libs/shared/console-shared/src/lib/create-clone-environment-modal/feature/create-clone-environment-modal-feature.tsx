@@ -39,9 +39,7 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
     },
   })
 
-  methods.watch((data) => {
-    enableAlertClickOutside(methods.formState.isDirty)
-  })
+  methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const dispatch = useDispatch<AppDispatch>()
 
