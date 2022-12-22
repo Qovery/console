@@ -34,7 +34,7 @@ describe('CardCluster', () => {
   })
 
   it('should have a status message', () => {
-    const status = props.cluster.extendedStatus?.status?.status || StateEnum.BUILDING
+    const status = props.cluster.extendedStatus?.status?.status
 
     const { baseElement } = render(<CardCluster {...props} />)
 
