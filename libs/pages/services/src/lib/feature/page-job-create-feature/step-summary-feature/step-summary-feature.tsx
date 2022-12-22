@@ -53,7 +53,7 @@ function prepareJobRequest(
       cronjob: {
         entrypoint: configureData.image_entry_point,
         scheduled_at: configureData.schedule || '',
-        arguments: configureData.cmd || [''],
+        arguments: configureData.cmd,
       },
     }
   } else {

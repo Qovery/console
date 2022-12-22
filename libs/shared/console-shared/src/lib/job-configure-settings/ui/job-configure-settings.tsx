@@ -24,6 +24,8 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
       const isValidCron = cronstrue.toString(watchSchedule, { throwExceptionOnParseError: false })
       if (isValidCron.indexOf('An error') === -1) {
         setCronDescription(isValidCron)
+      } else {
+        setCronDescription('')
       }
     }
   }, [watchSchedule])
@@ -40,6 +42,12 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             control={control}
             rules={{
               required: 'Value required',
+              validate: (value) => {
+                return (
+                  cronstrue.toString(value || '', { throwExceptionOnParseError: false }).indexOf('An error') === -1 ||
+                  'Invalid cron expression'
+                )
+              },
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText

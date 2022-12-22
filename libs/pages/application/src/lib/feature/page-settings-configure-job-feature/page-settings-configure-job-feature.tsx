@@ -11,7 +11,7 @@ import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-
 
 export function PageSettingsConfigureJobFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
-  const methods = useForm<JobConfigureData>()
+  const methods = useForm<JobConfigureData>({ mode: 'onChange' })
 
   const application: JobApplicationEntity | undefined = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
@@ -44,15 +44,21 @@ export function PageSettingsConfigureJobFeature() {
         methods.setValue('image_entry_point', application.schedule?.cronjob?.entrypoint || undefined)
       } else {
         methods.setValue('on_start.enabled', !!application.schedule?.on_start)
-        methods.setValue('on_start.arguments_string', JSON.stringify(application.schedule?.on_start?.arguments))
+        if (application.schedule?.on_start?.arguments && application.schedule?.on_start?.arguments.length > 0) {
+          methods.setValue('on_start.arguments_string', JSON.stringify(application.schedule.on_start.arguments))
+        }
         methods.setValue('on_start.entrypoint', application.schedule?.on_start?.entrypoint)
 
         methods.setValue('on_stop.enabled', !!application.schedule?.on_stop)
-        methods.setValue('on_stop.arguments_string', JSON.stringify(application.schedule?.on_stop?.arguments))
+        if (application.schedule?.on_stop?.arguments && application.schedule?.on_stop?.arguments.length > 0) {
+          methods.setValue('on_stop.arguments_string', JSON.stringify(application.schedule?.on_stop?.arguments))
+        }
         methods.setValue('on_stop.entrypoint', application.schedule?.on_stop?.entrypoint)
 
         methods.setValue('on_delete.enabled', !!application.schedule?.on_delete)
-        methods.setValue('on_delete.arguments_string', JSON.stringify(application.schedule?.on_delete?.arguments))
+        if (application.schedule?.on_delete?.arguments && application.schedule?.on_delete?.arguments.length > 0) {
+          methods.setValue('on_delete.arguments_string', JSON.stringify(application.schedule?.on_delete?.arguments))
+        }
         methods.setValue('on_delete.entrypoint', application.schedule?.on_delete?.entrypoint)
       }
     }
@@ -80,6 +86,8 @@ export function PageSettingsConfigureJobFeature() {
             toastError(e, 'Invalid CMD array')
             return
           }
+        } else {
+          schedule.cronjob.arguments = undefined
         }
         schedule.cronjob.entrypoint = data.image_entry_point
       }
@@ -91,45 +99,48 @@ export function PageSettingsConfigureJobFeature() {
       if (data.on_start?.enabled) {
         schedule.on_start = {
           entrypoint: data.on_start.entrypoint,
+          arguments: undefined,
         }
 
-        try {
-          if (data.on_start?.arguments_string) {
+        if (data.on_start?.arguments_string && data.on_start?.arguments_string.length > 0) {
+          try {
             schedule.on_start.arguments = eval(data.on_start.arguments_string)
+          } catch (e: any) {
+            toastError(e, 'Invalid CMD array')
+            return
           }
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
-          return
         }
       }
 
       if (data.on_stop?.enabled) {
         schedule.on_stop = {
           entrypoint: data.on_stop.entrypoint,
+          arguments: undefined,
         }
 
-        try {
-          if (data.on_stop?.arguments_string) {
+        if (data.on_stop?.arguments_string && data.on_stop?.arguments_string.length > 0) {
+          try {
             schedule.on_stop.arguments = eval(data.on_stop.arguments_string)
+          } catch (e: any) {
+            toastError(e, 'Invalid CMD array')
+            return
           }
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
-          return
         }
       }
 
       if (data.on_delete?.enabled) {
         schedule.on_delete = {
           entrypoint: data.on_delete.entrypoint,
+          arguments: undefined,
         }
 
-        try {
-          if (data.on_delete?.arguments_string) {
+        if (data.on_delete?.arguments_string && data.on_delete?.arguments_string.length > 0) {
+          try {
             schedule.on_delete.arguments = eval(data.on_delete.arguments_string)
+          } catch (e: any) {
+            toastError(e, 'Invalid CMD array')
+            return
           }
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
-          return
         }
       }
 

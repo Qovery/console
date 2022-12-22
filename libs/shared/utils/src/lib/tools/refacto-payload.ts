@@ -121,6 +121,7 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
     }
   }
 
+  console.log('jobRequest', job.schedule)
   jobRequest.schedule = job.schedule
 
   return jobRequest

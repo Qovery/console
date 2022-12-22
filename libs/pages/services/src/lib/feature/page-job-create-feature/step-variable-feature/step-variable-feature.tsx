@@ -21,7 +21,7 @@ export function StepVariableFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-  const [availableScopes] = useState<APIVariableScopeEnum[]>(computeAvailableScope())
+  const [availableScopes] = useState<APIVariableScopeEnum[]>(computeAvailableScope(undefined, false, jobType))
 
   useEffect(() => {
     !generalData?.name &&
@@ -56,7 +56,12 @@ export function StepVariableFeature() {
   const [variables, setVariables] = useState(methods.getValues().variables)
 
   const onAddPort = () => {
-    const newVariableRow: VariableData = { variable: undefined, isSecret: false, value: undefined, scope: undefined }
+    const newVariableRow: VariableData = {
+      variable: '',
+      isSecret: false,
+      value: '',
+      scope: APIVariableScopeEnum.JOB,
+    }
     if (variables.length) {
       setVariables([...variables, newVariableRow])
       methods.setValue(`variables.${variables.length}`, newVariableRow)
