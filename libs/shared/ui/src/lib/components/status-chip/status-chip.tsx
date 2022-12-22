@@ -18,7 +18,7 @@ export function StatusChip(props: StatusChipProps) {
     switch (status) {
       case StateEnum.DEPLOYED:
       case StateEnum.RUNNING:
-      case StateEnum.COMPLETED:
+      case RunningStatus.COMPLETED:
         return true
       default:
         return false
@@ -61,7 +61,6 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
       case RunningStatus.ERROR:
-      case RunningStatus.WARNING:
         return true
       default:
         return false
@@ -99,6 +98,15 @@ export function StatusChip(props: StatusChipProps) {
     }
   }
 
+  function showWarning(): boolean {
+    switch (status) {
+      case RunningStatus.WARNING:
+        return true
+      default:
+        return false
+    }
+  }
+
   return (
     <Tooltip
       content={
@@ -112,6 +120,7 @@ export function StatusChip(props: StatusChipProps) {
     >
       <div data-testid="status-chip" className={className}>
         {showRunningIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.SUCCESS} />}
+        {showWarning() && <Icon width="0.875rem" viewBox="0 0 14 14" pathColor="#F4C004" name={IconEnum.SUCCESS} />}
         {showReadyIcon() && (
           <Icon
             className="min-w-[14px]"

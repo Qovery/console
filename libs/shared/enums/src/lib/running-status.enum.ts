@@ -7,4 +7,5 @@ export enum RunningStatus {
   STOPPED = 'STOPPED',
   TERMINATED = 'TERMINATED',
   UNKNOWN = 'UNKNOWN',
+  COMPLETED = 'COMPLETED',
 }
