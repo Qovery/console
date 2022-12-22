@@ -17,8 +17,8 @@ export function StatusChip(props: StatusChipProps) {
   function showRunningIcon(): boolean {
     switch (status) {
       case StateEnum.DEPLOYED:
-        return true
       case StateEnum.RUNNING:
+      case StateEnum.COMPLETED:
         return true
       default:
         return false
@@ -61,6 +61,7 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
       case RunningStatus.ERROR:
+      case RunningStatus.WARNING:
         return true
       default:
         return false

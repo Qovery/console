@@ -5,6 +5,7 @@ export interface WebsocketRunningStatusInterface {
   applications?: ServiceRunningStatus[]
   containers?: ServiceRunningStatus[]
   databases?: ServiceRunningStatus[]
+  jobs?: ServiceRunningStatus[]
   id: string
   project_id: string
   state: RunningStatus
