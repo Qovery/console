@@ -59,7 +59,10 @@ export function MenuGroup(props: MenuGroupProps) {
             </p>
           )}
           {menu?.button && (
-            <span className="link text-sm text-brand-500 cursor-pointer font-medium" onClick={menu?.button.onClick}>
+            <span
+              className="link text-sm text-brand-500 cursor-pointer font-medium inline-block"
+              onClick={menu?.button.onClick}
+            >
               {menu?.button.label}
             </span>
           )}
