@@ -49,8 +49,6 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
     (message: { environments: WebsocketRunningStatusInterface[] }, listEnvironmentIdFromCluster: string[]): void => {
       let runningApplication: ServiceRunningStatus[] = []
       message.environments.forEach((env) => {
-        console.log(env)
-
         if (env.applications && env.applications.length) {
           runningApplication = [...runningApplication, ...env.applications]
         }
