@@ -13,8 +13,7 @@ export interface JobConfigureSettingsProps {
 
 export function JobConfigureSettings(props: JobConfigureSettingsProps) {
   const { loading } = props
-  const { control, setValue, getValues, watch } = useFormContext<JobConfigureData>()
-  const { on_start, on_stop, on_delete } = getValues()
+  const { control, watch } = useFormContext<JobConfigureData>()
 
   const watchSchedule = watch('schedule')
   const [cronDescription, setCronDescription] = useState('')
@@ -71,55 +70,68 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             Select one or more environment event where the job should be executed
           </p>
 
-          <EnableBox
-            className="mb-3"
-            checked={on_start?.enabled}
-            title="Start"
-            name="on_start"
-            description="Execute this job when the environment starts"
-            setChecked={(checked) => {
-              if (checked !== undefined) setValue('on_start.enabled', checked)
-            }}
-          >
-            <EntrypointCmdInputs
-              className="mt-4"
-              cmdArgumentsFieldName="on_start.arguments_string"
-              imageEntryPointFieldName="on_start.entrypoint"
-            />
-          </EnableBox>
+          <Controller
+            name="on_start.enabled"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <EnableBox
+                className="mb-3"
+                checked={field.value}
+                title="Start"
+                name="on_start"
+                description="Execute this job when the environment starts"
+                setChecked={field.onChange}
+              >
+                <EntrypointCmdInputs
+                  className="mt-4"
+                  cmdArgumentsFieldName="on_start.arguments_string"
+                  imageEntryPointFieldName="on_start.entrypoint"
+                />
+              </EnableBox>
+            )}
+          />
 
-          <EnableBox
-            className="mb-3"
-            name="on_stop"
-            checked={on_stop?.enabled}
-            setChecked={(checked) => {
-              if (checked !== undefined) setValue('on_stop.enabled', checked)
-            }}
-            title="Stop"
-            description="Execute this job when the environment stops"
-          >
-            <EntrypointCmdInputs
-              className="mt-4"
-              cmdArgumentsFieldName="on_stop.arguments_string"
-              imageEntryPointFieldName="on_stop.entrypoint"
-            />
-          </EnableBox>
-          <EnableBox
-            className="mb-3"
-            name="on_delete"
-            checked={on_delete?.enabled}
-            setChecked={(checked) => {
-              if (checked !== undefined) setValue('on_delete.enabled', checked)
-            }}
-            title="Delete"
-            description="Execute this job when the environment is deleted"
-          >
-            <EntrypointCmdInputs
-              className="mt-4"
-              cmdArgumentsFieldName="on_delete.arguments_string"
-              imageEntryPointFieldName="on_delete.entrypoint"
-            />
-          </EnableBox>
+          <Controller
+            name="on_stop.enabled"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <EnableBox
+                className="mb-3"
+                checked={field.value}
+                title="Stop"
+                name="on_stop"
+                description="Execute this job when the environment stops"
+                setChecked={field.onChange}
+              >
+                <EntrypointCmdInputs
+                  className="mt-4"
+                  cmdArgumentsFieldName="on_stop.arguments_string"
+                  imageEntryPointFieldName="on_stop.entrypoint"
+                />
+              </EnableBox>
+            )}
+          />
+
+          <Controller
+            name="on_delete.enabled"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <EnableBox
+                className="mb-3"
+                checked={field.value}
+                title="Delete"
+                name="on_delete"
+                description="Execute this job when the environment is deleted"
+                setChecked={field.onChange}
+              >
+                <EntrypointCmdInputs
+                  className="mt-4"
+                  cmdArgumentsFieldName="on_delete.arguments_string"
+                  imageEntryPointFieldName="on_delete.entrypoint"
+                />
+              </EnableBox>
+            )}
+          />
         </div>
       )}
 

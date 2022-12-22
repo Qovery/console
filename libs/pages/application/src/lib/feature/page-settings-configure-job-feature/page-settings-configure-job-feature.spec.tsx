@@ -1,4 +1,4 @@
-import { act, fireEvent, getAllByLabelText, getByLabelText, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getAllByLabelText, getByLabelText, getByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/domains/application'
@@ -16,7 +16,7 @@ jest.mock('@qovery/domains/application', () => {
       loadingStatus: 'loaded',
       ids: [mockJobApplication.id],
       entities: {
-        [mockJobApplication.id]: mockJobApplication,
+        [mockJobApplication.id]: { mockJobApplication },
       },
       error: null,
     }),
@@ -102,13 +102,29 @@ describe('PageSettingsPortsFeature', () => {
 
       const { baseElement } = render(<PageSettingsConfigureJobFeature />)
 
-      const checkbox = getByLabelText(baseElement, 'Start')
+      let checkbox = getByLabelText(baseElement, 'Start')
       await act(() => {
         checkbox.click()
       })
 
-      const entrypoints = getAllByLabelText(baseElement, 'Image Entrypoint')
-      const cmds = getAllByLabelText(baseElement, 'CMD Arguments')
+      checkbox = getByLabelText(baseElement, 'Delete')
+      await act(() => {
+        checkbox.click()
+      })
+      let entrypoints: HTMLElement[]
+      let cmds: HTMLElement[]
+
+      await waitFor(() => {
+        entrypoints = getAllByLabelText(baseElement, 'Image Entrypoint')
+        cmds = getAllByLabelText(baseElement, 'CMD Arguments')
+
+        // must have close the Start inputs and open the Delete inputs
+        // because we fetch the inputs by label and there are two elements with the same label on the page
+        // which create a bug
+        expect(entrypoints.length).toBe(1)
+        expect(cmds.length).toBe(1)
+      })
+
       await act(() => {
         fireEvent.change(entrypoints[0], { target: { value: '/' } })
         fireEvent.change(cmds[0], { target: { value: '["string"]' } })
@@ -129,7 +145,7 @@ describe('PageSettingsPortsFeature', () => {
       expect(editApplicationSpy.mock.calls[0][0].data).toStrictEqual({
         ...mockLifecycleJobApplication,
         schedule: {
-          on_start: {
+          on_delete: {
             arguments: ['string'],
             entrypoint: '/',
           },

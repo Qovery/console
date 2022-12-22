@@ -19,7 +19,6 @@ export function StepConfigureFeature() {
   const { configureData, setConfigureData, setCurrentStep, generalData, jobURL, jobType } =
     useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
   const navigate = useNavigate()
 
   const funnelCardHelp = (
@@ -34,8 +33,10 @@ export function StepConfigureFeature() {
   )
 
   useEffect(() => {
-    !generalData?.name && navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
-  }, [generalData, navigate, environmentId, organizationId, projectId, pathCreate])
+    !generalData?.name &&
+      jobURL &&
+      navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}` + SERVICES_JOB_CREATION_GENERAL_URL)
+  }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
 
   useEffect(() => {
     setCurrentStep(2)

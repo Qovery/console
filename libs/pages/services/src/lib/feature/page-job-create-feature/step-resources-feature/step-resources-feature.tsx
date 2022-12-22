@@ -23,8 +23,9 @@ export function StepResourcesFeature() {
 
   useEffect(() => {
     !generalData?.name &&
+      jobURL &&
       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}` + SERVICES_JOB_CREATION_GENERAL_URL)
-  }, [generalData, navigate, environmentId, organizationId, projectId])
+  }, [generalData, navigate, environmentId, organizationId, jobURL, projectId])
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard

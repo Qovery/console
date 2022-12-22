@@ -31,8 +31,8 @@ export function EnableBox(props: EnableBoxProps) {
   }, [checked])
 
   useEffect(() => {
-    setChecked(currentChecked)
-  }, [currentChecked, setChecked])
+    if (currentChecked !== checked) setChecked(currentChecked)
+  }, [currentChecked, setChecked, checked])
 
   const checkedClasses = currentChecked
     ? 'bg-brand-50 border border-brand-500'

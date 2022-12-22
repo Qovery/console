@@ -81,7 +81,7 @@ export function PageJobCreateFeature() {
       setJobType(ServiceTypeEnum.LIFECYCLE_JOB)
       setJobURL(SERVICES_LIFECYCLE_CREATION_URL)
     }
-  }, [])
+  }, [setJobURL, setJobType, location.pathname])
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
 

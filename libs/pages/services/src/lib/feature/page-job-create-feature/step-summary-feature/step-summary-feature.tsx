@@ -157,8 +157,10 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    !generalData?.name && gotoGlobalInformations()
-  }, [generalData, navigate, environmentId, organizationId, projectId, gotoGlobalInformations])
+    !generalData?.name &&
+      jobURL &&
+      navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}` + SERVICES_JOB_CREATION_GENERAL_URL)
+  }, [generalData, navigate, environmentId, organizationId, projectId, jobURL, gotoGlobalInformations])
 
   const dispatch = useDispatch<AppDispatch>()
 
