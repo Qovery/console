@@ -2,7 +2,6 @@ import equal from 'fast-deep-equal'
 import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
@@ -26,7 +25,6 @@ import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
-import useModal from '../../modal/use-modal/use-modal'
 import StatusChip from '../../status-chip/status-chip'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
@@ -45,7 +43,6 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
 
   const location = useLocation()
   const navigate = useNavigate()
-  const { openModal, closeModal } = useModal()
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
 
   const locationIsApplicationLogs = location.pathname.includes(
@@ -101,10 +98,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
           </span>
         ),
         onClick: () => {
-          organizationId &&
-            openModal({
-              content: <CreateProjectModalFeature onClose={closeModal} organizationId={organizationId} />,
-            })
+          console.log('hello')
         },
       },
       items: projects
