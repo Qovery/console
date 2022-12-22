@@ -1,15 +1,17 @@
 import { MenuDivider } from '@szhsin/react-menu'
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { ReactNode, useEffect, useState } from 'react'
 import InputSearch from '../../inputs/input-search/input-search'
 import { MenuItem, MenuItemProps } from '../menu-item/menu-item'
 
 export interface MenuGroupProps {
   menu: {
     items: MenuItemProps[]
+    label?: string
     title?: string
-    button?: string
-    buttonLink?: string
+    button?: {
+      label?: string | ReactNode
+      onClick?: () => void
+    }
     search?: boolean
   }
   isLast: boolean
@@ -56,12 +58,10 @@ export function MenuGroup(props: MenuGroupProps) {
               {menu?.title}
             </p>
           )}
-          {menu?.button && menu?.buttonLink ? (
-            <Link className="text-sm text-brand-400" to={menu?.buttonLink}>
-              {menu?.button}
-            </Link>
-          ) : (
-            ''
+          {menu?.button && (
+            <span className="link text-sm text-brand-500 cursor-pointer font-medium" onClick={menu?.button.onClick}>
+              {menu?.button.label}
+            </span>
           )}
         </div>
       )}

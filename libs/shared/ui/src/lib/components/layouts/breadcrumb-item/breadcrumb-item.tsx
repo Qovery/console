@@ -1,13 +1,12 @@
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
-import Menu, { MenuAlign } from '../../menu/menu'
-import { MenuItemProps } from '../../menu/menu-item/menu-item'
+import Menu, { MenuAlign, MenuData } from '../../menu/menu'
 import BreadcrumbItemValue from './breadcrumb-item-value/breadcrumb-item-value'
 
 export interface BreadcrumbItemProps {
   data: Array<any> | undefined
   label?: string
   paramId: string
-  menuItems: { items: MenuItemProps[]; title?: string; button?: string; buttonLink?: string; search?: boolean }[]
+  menuItems: MenuData
   link: string
   logo?: React.ReactElement
   isLast?: boolean

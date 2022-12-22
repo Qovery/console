@@ -3,23 +3,17 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { postProject } from '@qovery/domains/projects'
-import {
-  ENVIRONMENTS_URL,
-  SETTINGS_PROJECT_GENERAL_URL,
-  SETTINGS_PROJECT_URL,
-  SETTINGS_URL,
-} from '@qovery/shared/router'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
 import { AppDispatch } from '@qovery/store'
 import CreateProjectModal from '../ui/create-project-modal'
 
 export interface CreateProjectModalFeatureProps {
   onClose: () => void
   organizationId: string
-  goToEnvironment?: boolean
 }
 
 export function CreateProjectModalFeature(props: CreateProjectModalFeatureProps) {
-  const { onClose, organizationId, goToEnvironment } = props
+  const { onClose, organizationId } = props
 
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
@@ -40,11 +34,7 @@ export function CreateProjectModalFeature(props: CreateProjectModalFeatureProps)
     )
       .unwrap()
       .then((project) => {
-        if (goToEnvironment) {
-          navigate(ENVIRONMENTS_URL(organizationId, project.id))
-        } else {
-          navigate(SETTINGS_URL(organizationId) + SETTINGS_PROJECT_URL(project.id) + SETTINGS_PROJECT_GENERAL_URL)
-        }
+        navigate(ENVIRONMENTS_URL(organizationId, project.id) + ENVIRONMENTS_GENERAL_URL)
         setLoading(false)
         onClose()
       })

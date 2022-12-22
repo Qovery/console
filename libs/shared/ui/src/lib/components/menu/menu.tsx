@@ -1,5 +1,5 @@
 import { ControlledMenu, MenuCloseEvent } from '@szhsin/react-menu'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import Tooltip from '../tooltip/tooltip'
 import MenuGroup from './menu-group/menu-group'
 import { MenuItemProps } from './menu-item/menu-item'
@@ -21,8 +21,10 @@ export type MenuData = {
   items: MenuItemProps[]
   label?: string
   title?: string
-  button?: string
-  buttonLink?: string
+  button?: {
+    label: string | ReactNode
+    onClick: () => void
+  }
   search?: boolean
 }[]
 
