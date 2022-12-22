@@ -235,7 +235,7 @@ export const organizationSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchOrganization.fulfilled, (state: OrganizationState, action: PayloadAction<OrganizationEntity[]>) => {
-        organizationAdapter.setAll(state, action.payload)
+        organizationAdapter.upsertMany(state, action.payload)
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchOrganization.rejected, (state: OrganizationState, action) => {
@@ -246,7 +246,7 @@ export const organizationSlice = createSlice({
       .addCase(
         fetchOrganizationById.fulfilled,
         (state: OrganizationState, action: PayloadAction<OrganizationEntity>) => {
-          organizationAdapter.addOne(state, action.payload)
+          organizationAdapter.upsertOne(state, action.payload)
           state.loadingStatus = 'loaded'
         }
       )

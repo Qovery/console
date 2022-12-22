@@ -14,7 +14,5 @@ describe('CreateGeneralContainer', () => {
     getByTestId(baseElement, 'input-select-registry')
     getByTestId(baseElement, 'input-text-image-name')
     getByTestId(baseElement, 'input-text-image-tag')
-    getByTestId(baseElement, 'input-text-image-entry-point')
-    getByTestId(baseElement, 'input-textarea-cmd-arguments')
   })
 })

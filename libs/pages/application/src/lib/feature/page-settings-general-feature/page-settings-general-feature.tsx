@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
-import { getServiceType, isApplication, isContainer } from '@qovery/shared/enums'
+import { ServiceTypeEnum, getServiceType, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
   GitApplicationEntity,
+  JobApplicationEntity,
   OrganizationEntity,
 } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
@@ -56,6 +57,38 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   }
 }
 
+export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity): JobApplicationEntity => {
+  if ((application as JobApplicationEntity).source?.docker) {
+    const git_repository = {
+      url: buildGitRepoUrl(data['provider'], data['repository']),
+      branch: data['branch'],
+      root_path: data['root_path'],
+    }
+
+    return {
+      ...(application as JobApplicationEntity),
+      name: data['name'],
+      source: {
+        docker: {
+          git_repository,
+          dockerfile_path: data['dockerfile_path'],
+        },
+      },
+    }
+  } else {
+    return {
+      ...(application as JobApplicationEntity),
+      source: {
+        image: {
+          tag: data['image_tag'] || '',
+          image_name: data['image_name'] || '',
+          registry_id: data['registry'] || '',
+        },
+      },
+    }
+  }
+}
+
 export function PageSettingsGeneralFeature() {
   const { applicationId = '', environmentId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
@@ -91,6 +124,8 @@ export function PageSettingsGeneralFeature() {
       let cloneApplication: ApplicationEntity
       if (isApplication(application)) {
         cloneApplication = handleSubmit(data, application)
+      } else if (isJob(application)) {
+        cloneApplication = handleJobSubmit(data, application)
       } else {
         try {
           cloneApplication = handleContainerSubmit(data, application)
@@ -170,6 +205,26 @@ export function PageSettingsGeneralFeature() {
         methods.unregister('build_mode')
 
         dispatch(fetchOrganizationContainerRegistries({ organizationId }))
+      }
+    }
+
+    if (isJob(application)) {
+      methods.setValue('description', (application as JobApplicationEntity).description)
+
+      const serviceType = (application as JobApplicationEntity).source?.docker
+        ? ServiceTypeEnum.APPLICATION
+        : ServiceTypeEnum.CONTAINER
+      methods.setValue('serviceType', serviceType)
+
+      if (serviceType === ServiceTypeEnum.CONTAINER) {
+        dispatch(fetchOrganizationContainerRegistries({ organizationId }))
+
+        methods.setValue('registry', (application as JobApplicationEntity).source?.image?.registry_id)
+        methods.setValue('image_name', (application as JobApplicationEntity).source?.image?.image_name)
+        methods.setValue('image_tag', (application as JobApplicationEntity).source?.image?.tag)
+      } else {
+        methods.setValue('build_mode', BuildModeEnum.DOCKER)
+        methods.setValue('dockerfile_path', (application as JobApplicationEntity).source?.docker?.dockerfile_path)
       }
     }
   }, [methods, application, dispatch, organizationId])

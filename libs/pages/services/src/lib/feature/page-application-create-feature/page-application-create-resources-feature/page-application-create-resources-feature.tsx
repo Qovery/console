@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ApplicationResourcesData, ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -16,7 +16,6 @@ import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import PageApplicationCreateResources from '../../../ui/page-application-create/page-application-create-resources/page-application-create-resources'
-import { ResourcesData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreateResourcesFeature() {
@@ -68,7 +67,7 @@ export function PageApplicationCreateResourcesFeature() {
     setCurrentStep(2)
   }, [setCurrentStep])
 
-  const methods = useForm<ResourcesData>({
+  const methods = useForm<ApplicationResourcesData>({
     defaultValues: resourcesData,
     mode: 'onChange',
   })

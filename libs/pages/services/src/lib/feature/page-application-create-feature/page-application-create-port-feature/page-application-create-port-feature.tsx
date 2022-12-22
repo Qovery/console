@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { FlowCreatePort } from '@qovery/shared/console-shared'
+import { FlowPortData } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -10,8 +12,6 @@ import {
 } from '@qovery/shared/router'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import PageApplicationCreatePort from '../../../ui/page-application-create/page-application-create-port/page-application-create-port'
-import { PortData } from '../application-creation-flow.interface'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function PageApplicationCreatePortFeature() {
@@ -56,7 +56,7 @@ export function PageApplicationCreatePortFeature() {
     setCurrentStep(3)
   }, [setCurrentStep])
 
-  const methods = useForm<PortData>({
+  const methods = useForm<FlowPortData>({
     defaultValues: portData,
     mode: 'onChange',
   })
@@ -93,7 +93,7 @@ export function PageApplicationCreatePortFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <PageApplicationCreatePort
+        <FlowCreatePort
           onBack={onBack}
           onSubmit={onSubmit}
           onAddPort={onAddPort}

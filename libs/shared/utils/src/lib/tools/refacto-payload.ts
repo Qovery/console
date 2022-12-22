@@ -2,13 +2,19 @@ import {
   ApplicationEditRequest,
   ApplicationGitRepositoryRequest,
   DatabaseEditRequest,
+  JobRequest,
   Organization,
   OrganizationCustomRole,
   OrganizationCustomRoleUpdateRequest,
   OrganizationEditRequest,
   ServiceStorageStorage,
 } from 'qovery-typescript-axios'
-import { ContainerApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import {
+  ContainerApplicationEntity,
+  DatabaseEntity,
+  GitApplicationEntity,
+  JobApplicationEntity,
+} from '@qovery/shared/interfaces'
 
 export function refactoPayload(response: any) {
   delete response['id']
@@ -80,6 +86,44 @@ export function refactoContainerApplicationPayload(application: Partial<Containe
   }
 
   return containerRequestPayload
+}
+
+export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobRequest {
+  const jobRequest: JobRequest = {
+    name: job.name || '',
+    description: job.description || '',
+    cpu: job.cpu,
+    memory: job.memory,
+    auto_preview: false,
+    max_duration_seconds: job.max_duration_seconds,
+    port: job.port,
+    max_nb_restart: job.max_nb_restart,
+  }
+
+  if (job.source?.docker) {
+    jobRequest.source = {
+      docker: {
+        dockerfile_path: job.source.docker.dockerfile_path,
+        git_repository: {
+          url: job.source.docker.git_repository?.url || '',
+          branch: job.source.docker.git_repository?.branch,
+          root_path: job.source.docker.git_repository?.root_path,
+        },
+      },
+    }
+  } else {
+    jobRequest.source = {
+      image: {
+        registry_id: job.source?.image?.registry_id,
+        image_name: job.source?.image?.image_name,
+        tag: job.source?.image?.tag,
+      },
+    }
+  }
+
+  jobRequest.schedule = job.schedule
+
+  return jobRequest
 }
 
 export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {

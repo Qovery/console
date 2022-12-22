@@ -1,4 +1,4 @@
-import { act, fireEvent, getByLabelText } from '@testing-library/react'
+import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import PageSettingsAdvanced, { PageSettingsAdvancedProps } from './page-settings-advanced'

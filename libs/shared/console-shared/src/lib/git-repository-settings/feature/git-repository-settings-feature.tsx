@@ -13,21 +13,13 @@ import {
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
 import { LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
-import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
+import { authProvidersValues } from '../auth-providers-values'
 import GitRepositorySettings from '../ui/git-repository-settings'
 
 export interface GitRepositorySettingsFeatureProps {
   withBlockWrapper?: boolean
-}
-
-export const authProvidersValues = (authProviders: GitAuthProvider[]) => {
-  return authProviders.map((provider: GitAuthProvider) => ({
-    label: `${upperCaseFirstLetter(provider.name)} (${provider.owner})`,
-    value: provider.name || '',
-    icon: <Icon width="16px" height="16px" name={provider.name} />,
-  }))
 }
 
 export function GitRepositorySettingsFeature(props?: GitRepositorySettingsFeatureProps) {

@@ -29,11 +29,13 @@ import {
   Instance,
   JobDeploymentHistoryApi,
   JobMainCallsApi,
+  JobRequest,
+  JobResponse,
   JobsApi,
   Link,
   Status,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ApplicationsState,
@@ -49,6 +51,7 @@ import {
   getEntitiesByIds,
   refactoContainerApplicationPayload,
   refactoGitApplicationPayload,
+  refactoJobPayload,
   shortToLongId,
 } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
@@ -130,6 +133,9 @@ export const editApplication = createAsyncThunk(
     if (isContainer(payload.serviceType)) {
       const cloneApplication = Object.assign({}, refactoContainerApplicationPayload(payload.data))
       response = await containerMainCallsApi.editContainer(payload.applicationId, cloneApplication as ContainerRequest)
+    } else if (isJob(payload.serviceType)) {
+      const cloneJob = Object.assign({}, refactoJobPayload(payload.data as Partial<JobApplicationEntity>))
+      response = await jobMainCallsApi.editJob(payload.applicationId, cloneJob as JobRequest)
     } else {
       const cloneApplication = Object.assign({}, refactoGitApplicationPayload(payload.data))
       response = await applicationMainCallsApi.editApplication(
@@ -146,17 +152,19 @@ export const createApplication = createAsyncThunk(
   'application/create',
   async (payload: {
     environmentId: string
-    data: ApplicationRequest | ContainerRequest
+    data: ApplicationRequest | ContainerRequest | JobRequest
     serviceType: ServiceTypeEnum
   }) => {
     let response
     if (isContainer(payload.serviceType)) {
       response = await containersApi.createContainer(payload.environmentId, payload.data as ContainerRequest)
-    } else {
+    } else if (isApplication(payload.serviceType)) {
       response = await applicationsApi.createApplication(payload.environmentId, payload.data as ApplicationRequest)
+    } else {
+      response = await jobsApi.createJob(payload.environmentId, payload.data as JobRequest)
     }
 
-    return response.data as Application | ContainerResponse
+    return response.data as Application | ContainerResponse | JobResponse
   }
 )
 
@@ -363,7 +371,7 @@ export const applicationsSlice = createSlice({
         if (!action.meta.arg.silentToaster) {
           toast(
             ToastEnum.SUCCESS,
-            `Application updated`,
+            `${isJob(action.payload) ? 'Job' : 'Application'} updated`,
             'You must redeploy to apply the settings update',
             action.meta.arg.toasterCallback,
             undefined,

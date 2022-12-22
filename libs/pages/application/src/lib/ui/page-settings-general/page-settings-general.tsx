@@ -1,12 +1,16 @@
 import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { GeneralContainerSettings } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
+import {
+  EditGitRepositorySettingsFeature,
+  EntrypointCmdInputs,
+  GeneralContainerSettings,
+  JobGeneralSettings,
+} from '@qovery/shared/console-shared'
+import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import GitRepositorySettingsFeature from '../../feature/git-repository-settings-feature/git-repository-settings-feature'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -52,14 +56,22 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             />
           </BlockContent>
+          {isJob(type) && (
+            <JobGeneralSettings
+              isEdition={true}
+              jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+              organization={props.organization}
+            />
+          )}
           {isContainer(type) && (
             <BlockContent title="Container settings">
               <GeneralContainerSettings organization={props.organization} />
+              <EntrypointCmdInputs />
             </BlockContent>
           )}
           {isApplication(type) && (
             <>
-              <GitRepositorySettingsFeature />
+              <EditGitRepositorySettingsFeature />
               <BlockContent title="Build mode">
                 <Controller
                   name="build_mode"

@@ -1,13 +1,15 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { GeneralContainerSettings } from '@qovery/shared/console-shared'
+import {
+  CreateGeneralGitApplication,
+  EntrypointCmdInputs,
+  GeneralContainerSettings,
+} from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { ApplicationGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
 import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText } from '@qovery/shared/ui'
-import { GeneralData } from '../../../feature/page-application-create-feature/application-creation-flow.interface'
-import CreateGeneralGitApplication from './create-general-git-application/create-general-git-application'
 
 export interface PageApplicationCreateGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -15,11 +17,11 @@ export interface PageApplicationCreateGeneralProps {
 }
 
 export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneralProps) {
-  const { control, getValues, watch, formState } = useFormContext<GeneralData>()
+  const { control, watch, formState } = useFormContext<ApplicationGeneralData>()
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
 
-  watch('serviceType')
+  const watchServiceType = watch('serviceType')
 
   return (
     <div>
@@ -79,9 +81,14 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
         />
 
         <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
-        {isApplication(getValues().serviceType) && <CreateGeneralGitApplication />}
+        {isApplication(watchServiceType) && <CreateGeneralGitApplication />}
 
-        {isContainer(getValues().serviceType) && <GeneralContainerSettings organization={props.organization} />}
+        {isContainer(watchServiceType) && (
+          <>
+            <GeneralContainerSettings organization={props.organization} />
+            <EntrypointCmdInputs />
+          </>
+        )}
 
         <div className="flex justify-between">
           <Button

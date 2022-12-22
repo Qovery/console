@@ -21,6 +21,7 @@ export * from './lib/tools/convert-cpu-to-vcpu'
 export * from './lib/tools/copy-to-clipboard'
 export * from './lib/tools/url-code-editor'
 export * from './lib/tools/build-git-repo-url'
+export * from './lib/tools/compute-available-environment-variable-scope'
 // constants
 export * from './lib/constants/environment-mode-values'
 export * from './lib/constants/timezone-values'
