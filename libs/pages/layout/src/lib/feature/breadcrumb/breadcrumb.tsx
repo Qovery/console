@@ -5,7 +5,8 @@ import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { selectEnvironmentsEntitiesByProjectId } from '@qovery/domains/environment'
 import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
-import { Breadcrumb } from '@qovery/shared/ui'
+import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
+import { Breadcrumb, useModal } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
 
 export function BreadcrumbFeature() {
@@ -16,6 +17,13 @@ export function BreadcrumbFeature() {
   const databases = useSelector((state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId))
   const environments = useSelector((state: RootState) => selectEnvironmentsEntitiesByProjectId(state, projectId))
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
+  const { openModal, closeModal } = useModal()
+
+  const createProjectModal = () => {
+    openModal({
+      content: <CreateProjectModalFeature onClose={closeModal} organizationId={organizationId} />,
+    })
+  }
 
   return (
     <Breadcrumb
@@ -25,6 +33,7 @@ export function BreadcrumbFeature() {
       databases={databases}
       environments={environments}
       projects={projects}
+      createProjectModal={createProjectModal}
     />
   )
 }
