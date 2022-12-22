@@ -5,7 +5,7 @@ import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
   GeneralContainerSettings,
-  JobGeneralSetting,
+  JobGeneralSettings,
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
@@ -57,7 +57,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
             />
           </BlockContent>
           {isJob(type) && (
-            <JobGeneralSetting
+            <JobGeneralSettings
               isEdition={true}
               jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
               organization={props.organization}

@@ -1,36 +1,35 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  CreateGeneralGitApplication,
-  EntrypointCmdInputs,
-  GeneralContainerSettings,
-} from '@qovery/shared/console-shared'
-import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
-import { ApplicationGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
+import { JobGeneralSettings } from '@qovery/shared/console-shared'
+import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
+import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
-import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
 
-export interface PageApplicationCreateGeneralProps {
+export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: OrganizationEntity
+  jobType: JobType
 }
 
-export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneralProps) {
-  const { control, watch, formState } = useFormContext<ApplicationGeneralData>()
+export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
-
-  const watchServiceType = watch('serviceType')
+  const { formState, control } = useFormContext<JobGeneralData>()
 
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-text-700 text-lg mb-2">General informations</h3>
+        <h3 className="text-text-700 text-lg mb-2">
+          {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job informations
+        </h3>
         <p className="text-text-500 text-sm mb-2">
           General settings allow you to set up your application name, git repository or container settings.
         </p>
       </div>
+
+      <h3 className="text-sm font-semibold mb-3">General</h3>
 
       <form onSubmit={props.onSubmit}>
         <Controller
@@ -50,45 +49,24 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
             />
           )}
         />
+
         <Controller
-          name="serviceType"
+          name="description"
           control={control}
-          rules={{
-            required: 'Please select a source.',
-          }}
           render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              dataTestId="input-select-source"
-              className="mb-6"
+            <InputTextArea
+              dataTestId="input-textarea-description"
+              name="description"
+              className="mb-3"
               onChange={field.onChange}
               value={field.value}
-              options={[
-                {
-                  value: ServiceTypeEnum.APPLICATION,
-                  label: 'Git provider',
-                  icon: <Icon name={IconEnum.GIT} className="w-4" />,
-                },
-                {
-                  value: ServiceTypeEnum.CONTAINER,
-                  label: 'Container Registry',
-                  icon: <Icon name={IconEnum.CONTAINER} className="w-4" />,
-                },
-              ]}
-              label="Application source"
+              label="Description"
               error={error?.message}
             />
           )}
         />
 
-        <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
-        {isApplication(watchServiceType) && <CreateGeneralGitApplication />}
-
-        {isContainer(watchServiceType) && (
-          <>
-            <GeneralContainerSettings organization={props.organization} />
-            <EntrypointCmdInputs />
-          </>
-        )}
+        <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
 
         <div className="flex justify-between">
           <Button
@@ -115,4 +93,4 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
   )
 }
 
-export default PageApplicationCreateGeneral
+export default StepGeneral

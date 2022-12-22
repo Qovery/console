@@ -36,12 +36,12 @@ import PageDatabaseCreatePostFeature from '../feature/page-database-create-featu
 import PageDatabaseCreateResourcesFeature from '../feature/page-database-create-feature/page-database-create-resources-feature/page-database-create-resources-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
-import ConfigureFeature from '../feature/page-job-create-feature/configure-feature/configure-feature'
-import { GeneralFeature } from '../feature/page-job-create-feature/general-feature/general-feature'
 import { PageJobCreateFeature } from '../feature/page-job-create-feature/page-job-create-feature'
-import { PostFeature } from '../feature/page-job-create-feature/post-feature/post-feature'
-import { ResourcesFeature } from '../feature/page-job-create-feature/resources-feature/resources-feature'
-import { VariableFeature } from '../feature/page-job-create-feature/variable-feature/variable-feature'
+import StepConfigureFeature from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
+import { StepGeneralFeature } from '../feature/page-job-create-feature/step-general-feature/step-general-feature'
+import { StepResourcesFeature } from '../feature/page-job-create-feature/step-resources-feature/step-resources-feature'
+import { StepSummaryFeature } from '../feature/page-job-create-feature/step-summary-feature/step-summary-feature'
+import { StepVariableFeature } from '../feature/page-job-create-feature/step-variable-feature/step-variable-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsDeploymentFeature from '../feature/page-settings-deployment-feature/page-settings-deployment-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
@@ -140,23 +140,23 @@ export const ROUTER_SERVICE_DATABASE_CREATION: Route[] = [
 export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
   {
     path: SERVICES_JOB_CREATION_GENERAL_URL,
-    component: <GeneralFeature />,
+    component: <StepGeneralFeature />,
   },
   {
     path: SERVICES_JOB_CREATION_CONFIGURE_URL,
-    component: <ConfigureFeature />,
+    component: <StepConfigureFeature />,
   },
   {
     path: SERVICES_JOB_CREATION_RESOURCES_URL,
-    component: <ResourcesFeature />,
+    component: <StepResourcesFeature />,
   },
 
   {
     path: SERVICES_JOB_CREATION_VARIABLE_URL,
-    component: <VariableFeature />,
+    component: <StepVariableFeature />,
   },
   {
     path: SERVICES_JOB_CREATION_POST_URL,
-    component: <PostFeature />,
+    component: <StepSummaryFeature />,
   },
 ]
