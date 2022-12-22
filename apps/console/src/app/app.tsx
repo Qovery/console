@@ -9,10 +9,9 @@ import { useIntercom } from 'react-use-intercom'
 import { selectUser } from '@qovery/domains/user'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
-import { PageOnboarding } from '@qovery/pages/onboarding'
 import { useAuth } from '@qovery/shared/auth'
 import { UserInterface } from '@qovery/shared/interfaces'
-import { LOGIN_URL, LOGOUT_URL, ONBOARDING_URL, ProtectedRoute } from '@qovery/shared/router'
+import { LOGIN_URL, LOGOUT_URL, ProtectedRoute } from '@qovery/shared/router'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useAuthInterceptor, useDocumentTitle } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
@@ -54,19 +53,6 @@ export function App() {
   useAuthInterceptor(axios, environment.api)
 
   useEffect(() => {
-    // if (process.env['NODE_ENV'] === 'production') {
-
-    // if onboarding feature flag activated we add onboarding routes to router
-    const isOnboarding = environment.onboarding === 'true'
-    if (isOnboarding) {
-      ROUTER.push({
-        path: `${ONBOARDING_URL}/*`,
-        component: <PageOnboarding />,
-        protected: true,
-        layout: false,
-      })
-    }
-
     // init logrocket
     if (process.env['NODE_ENV'] === 'production') {
       LogRocket.init(environment.logrocket)

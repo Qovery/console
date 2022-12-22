@@ -9,5 +9,4 @@ export const environment = {
   posthog_apihost: process.env?.['NX_POSTHOG_APIHOST'] || '',
   logrocket: process.env?.['NX_LOGROCKET'] || '',
   gtm: process.env?.['NX_GTM'] || '',
-  onboarding: process.env?.['NX_ONBOARDING'] || '',
 }

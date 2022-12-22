@@ -6,6 +6,7 @@ import { PageEnvironments } from '@qovery/pages/environments'
 import { PageApplicationLogs } from '@qovery/pages/logs/application'
 import { PageDeploymentLogs } from '@qovery/pages/logs/deployment'
 import { PageInfraLogs } from '@qovery/pages/logs/infra'
+import { PageOnboarding } from '@qovery/pages/onboarding'
 import { OverviewPage } from '@qovery/pages/overview/feature'
 import { PageServices } from '@qovery/pages/services'
 import { PageSettings } from '@qovery/pages/settings'
@@ -17,6 +18,7 @@ import {
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
+  ONBOARDING_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
   SERVICES_URL,
@@ -34,6 +36,12 @@ interface RouterProps {
 }
 
 export const ROUTER: RouterProps[] = [
+  {
+    path: `${ONBOARDING_URL}/*`,
+    component: <PageOnboarding />,
+    protected: true,
+    layout: false,
+  },
   {
     path: ORGANIZATION_URL(),
     component: <RedirectOverview />,
