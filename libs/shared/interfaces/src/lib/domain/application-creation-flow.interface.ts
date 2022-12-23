@@ -2,6 +2,7 @@ import { ServiceTypeEnum } from '@qovery/shared/enums'
 
 export interface ApplicationGeneralData {
   name: string
+  description: string
   serviceType: ServiceTypeEnum
 
   // container

@@ -18,9 +18,10 @@ import { buildGitRepoUrl } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
+export const handleGitApplicationSubmit = (data: FieldValues, application: GitApplicationEntity) => {
   const cloneApplication = Object.assign({}, application)
   cloneApplication.name = data['name']
+  cloneApplication.description = data['description']
 
   if ('build_mode' in cloneApplication) {
     cloneApplication.build_mode = data['build_mode']
@@ -68,6 +69,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     return {
       ...(application as JobApplicationEntity),
       name: data['name'],
+      description: data['description'],
       source: {
         docker: {
           git_repository,
@@ -78,6 +80,8 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
   } else {
     return {
       ...(application as JobApplicationEntity),
+      name: data['name'],
+      description: data['description'],
       source: {
         image: {
           tag: data['image_tag'] || '',
@@ -123,7 +127,7 @@ export function PageSettingsGeneralFeature() {
     if (data && application) {
       let cloneApplication: ApplicationEntity
       if (isApplication(application)) {
-        cloneApplication = handleSubmit(data, application)
+        cloneApplication = handleGitApplicationSubmit(data, application)
       } else if (isJob(application)) {
         cloneApplication = handleJobSubmit(data, application)
       } else {
@@ -170,8 +174,10 @@ export function PageSettingsGeneralFeature() {
 
   useEffect(() => {
     methods.setValue('name', application?.name)
+
     if (application) {
       if (isApplication(application)) {
+        methods.setValue('description', (application as GitApplicationEntity).description)
         methods.setValue('build_mode', (application as GitApplicationEntity).build_mode)
         methods.setValue(
           'buildpack_language',

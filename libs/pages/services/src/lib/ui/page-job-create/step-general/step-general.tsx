@@ -36,7 +36,7 @@ export function StepGeneral(props: StepGeneralProps) {
           name="name"
           control={control}
           rules={{
-            required: 'Value required',
+            required: 'Please enter a name.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText

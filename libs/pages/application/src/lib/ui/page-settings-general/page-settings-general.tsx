@@ -9,7 +9,16 @@ import {
 } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputSelect, InputText } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  HelpSection,
+  InputSelect,
+  InputText,
+  InputTextArea,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageSettingsGeneralProps {
@@ -47,12 +56,20 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               render={({ field, fieldState: { error } }) => (
                 <InputText
                   dataTestId="input-name"
+                  className="mb-3"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value}
                   label="Application name"
                   error={error?.message}
                 />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <InputTextArea name={field.name} onChange={field.onChange} value={field.value} label="Description" />
               )}
             />
           </BlockContent>

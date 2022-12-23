@@ -23,6 +23,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
+          description: 'test',
           serviceType: ServiceTypeEnum.APPLICATION,
           build_mode: BuildModeEnum.DOCKER,
           branch: 'main',
@@ -51,6 +52,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
+          description: 'test',
           serviceType: ServiceTypeEnum.APPLICATION,
         },
       })
@@ -66,6 +68,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
+          description: 'test',
           serviceType: ServiceTypeEnum.CONTAINER,
         },
       })
@@ -81,6 +84,7 @@ describe('PageApplicationCreateGeneral', () => {
       wrapWithReactHookForm(<PageApplicationCreateGeneral {...props} />, {
         defaultValues: {
           name: 'test',
+          description: 'test',
           serviceType: undefined,
         },
       })
