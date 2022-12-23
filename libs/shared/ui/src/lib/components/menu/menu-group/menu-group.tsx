@@ -32,7 +32,7 @@ export function MenuGroup(props: MenuGroupProps) {
 
   const filterData = (value: string) => {
     value = value.toUpperCase()
-    const items = menu.items.filter((item) => item.name.toUpperCase().includes(value))
+    const items = menu.items.filter((item) => item.name?.toUpperCase().includes(value))
     setCurrentItems(items)
   }
 

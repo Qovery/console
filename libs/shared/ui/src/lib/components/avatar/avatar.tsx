@@ -12,6 +12,8 @@ export interface AvatarProps {
   url?: string
   style?: AvatarStyle
   icon?: string
+  logoUrl?: string
+  logoText?: string
   className?: string
   alt?: string
   onClick?: () => void
@@ -26,6 +28,8 @@ export function Avatar(props: AvatarProps) {
     url,
     style,
     icon,
+    logoUrl,
+    logoText,
     className = '',
     alt,
     onClick,
@@ -56,6 +60,20 @@ export function Avatar(props: AvatarProps) {
       )}
       {icon && (
         <Icon data-testid="avatar-icon" name={icon} className="absolute -bottom-1 -right-1 w-4 h-4 drop-shadow-sm" />
+      )}
+      {(logoUrl || logoText) && (
+        <div
+          data-testid="avatar-logo"
+          className="flex items-center text-sm font-medium w-4 h-4 rounded-full absolute top-[24px] -right-[2px]"
+        >
+          {logoUrl ? (
+            <img src={logoUrl} alt="Logo Organization" />
+          ) : (
+            <span className="w-full h-full text-xxs text-text-400 bg-element-light-lighter-200 border border-element-light-lighter-100 rounded-full flex items-center justify-center uppercase">
+              {logoText}
+            </span>
+          )}
+        </div>
       )}
     </div>
   )

@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { fetchEnvironments } from '@qovery/domains/environment'
 import { fetchClusters, fetchOrganization, fetchOrganizationById } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
-import { fetchUserSignUp, selectUserSignUp } from '@qovery/domains/user'
+import { fetchUserSignUp } from '@qovery/domains/user'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/router'
 import { WebsocketContainer } from '@qovery/shared/websockets'
@@ -22,7 +22,6 @@ export interface LayoutProps {
 export function Layout(props: LayoutProps) {
   const { children, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const userSignUp = useSelector(selectUserSignUp)
 
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
@@ -45,10 +44,10 @@ export function Layout(props: LayoutProps) {
             .catch(() => navigate(ORGANIZATION_URL(result[0].id)))
         }
       })
-      .catch((error) => console.log(error))
+      .catch((error) => console.error(error))
 
     dispatch(fetchUserSignUp())
-  }, [dispatch])
+  }, [dispatch, organizationId, navigate])
 
   useEffect(() => {
     dispatch(fetchOrganization())
@@ -79,7 +78,7 @@ export function Layout(props: LayoutProps) {
   }, [organizationId, projectId])
 
   return (
-    <LayoutPage user={userSignUp} topBar={topBar}>
+    <LayoutPage topBar={topBar}>
       <>
         <WebsocketContainer />
         {children}
