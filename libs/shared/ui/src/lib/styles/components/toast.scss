@@ -18,7 +18,7 @@
 }
 
 .toast__content {
-  @apply pl-3 pr-4 py-2;
+  @apply pl-3 pr-4 py-2 break-words w-64;
 }
 
 .toast__close {
