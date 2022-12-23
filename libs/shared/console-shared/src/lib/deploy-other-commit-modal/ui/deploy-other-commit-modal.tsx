@@ -84,7 +84,12 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                         <div className="w-full">
                           <div className="flex justify-between w-full">
                             <p className="text-text-500 font-medium mb-1.5">
-                              <a href={commit.commit_page_url} target="_blank" className="hover:text-brand-500">
+                              <a
+                                href={commit.commit_page_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="hover:text-brand-500"
+                              >
                                 <Truncate truncateLimit={45} text={commit.message} />
                               </a>
                             </p>

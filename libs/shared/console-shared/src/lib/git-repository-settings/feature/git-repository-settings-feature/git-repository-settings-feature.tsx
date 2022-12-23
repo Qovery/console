@@ -15,8 +15,8 @@ import {
 import { LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
-import { authProvidersValues } from '../auth-providers-values'
-import GitRepositorySettings from '../ui/git-repository-settings'
+import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
+import { authProvidersValues } from '../../utils/auth-providers-values'
 
 export interface GitRepositorySettingsFeatureProps {
   withBlockWrapper?: boolean

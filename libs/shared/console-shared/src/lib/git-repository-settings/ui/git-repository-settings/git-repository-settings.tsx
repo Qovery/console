@@ -164,7 +164,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
                   <ConfirmationGitModal
                     currentAuthProvider={currentAuthProvider}
                     onClose={closeModal}
-                    onSubmit={editGitSettings || (() => {})}
+                    onSubmit={editGitSettings}
                   />
                 ),
               })

@@ -3,7 +3,7 @@ import { Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum, WarningBox } fr
 
 export interface ConfirmationGitModalProps {
   currentAuthProvider?: string
-  onSubmit: () => void
+  onSubmit?: () => void
   onClose: () => void
 }
 
@@ -43,7 +43,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
           dataTestId="submit-button"
           size={ButtonSize.XLARGE}
           onClick={() => {
-            props.onSubmit()
+            props.onSubmit && props.onSubmit()
             props.onClose()
           }}
         >

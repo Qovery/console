@@ -40,7 +40,7 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
-import DeployOtherCommitModalFeature from '../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
+import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 
 export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
