@@ -15,7 +15,6 @@ import {
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
-  ORGANIZATION_URL,
   OVERVIEW_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
@@ -59,34 +58,6 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
     locationIsApplicationLogs ||
     locationIsDeploymentLogs
-
-  const organizationsMenu = [
-    {
-      title: 'Organizations',
-      search: true,
-      items: organizations
-        ? organizations?.map((organization: Organization) => ({
-            name: organization.name,
-            link: {
-              url: ORGANIZATION_URL(organization.id),
-            },
-            contentLeft: (
-              <Icon
-                name="icon-solid-check"
-                className={`text-sm ${organizationId === organization.id ? 'text-success-400' : 'text-transparent'}`}
-              />
-            ),
-            contentRight: (
-              <>
-                {organization.logo_url && (
-                  <img className="w-4 h-auto" src={organization.logo_url} alt={organization.name} />
-                )}
-              </>
-            ),
-          }))
-        : [],
-    },
-  ]
 
   const projectMenu = [
     {
@@ -199,51 +170,37 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     <div className="flex justify-between w-full">
       <div className="flex h-full items-center">
         {organizationId && (
-          <BreadcrumbItem
-            isLast={!organizationId}
-            label="Organization"
-            data={organizations}
-            menuItems={organizationsMenu}
-            paramId={organizationId}
-            link={ORGANIZATION_URL(organizationId)}
-            logo={
-              currentOrganization?.logo_url ? (
-                <img
-                  src={currentOrganization?.logo_url}
-                  className="h-4"
-                  alt={`${currentOrganization?.name} organization`}
-                />
-              ) : (
-                squareContent(currentOrganization?.name.charAt(0), '')
-              )
-            }
-          />
+          <div className="mr-2">
+            {currentOrganization?.logo_url ? (
+              <img
+                src={currentOrganization?.logo_url}
+                className="h-4"
+                alt={`${currentOrganization?.name} organization`}
+              />
+            ) : (
+              squareContent(currentOrganization?.name.charAt(0), '')
+            )}
+          </div>
         )}
         {clusterId && (
-          <>
-            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
-            <BreadcrumbItem
-              isLast={!projectId}
-              label="Cluster"
-              data={clusters}
-              menuItems={[]}
-              paramId={clusterId}
-              link={INFRA_LOGS_URL(organizationId, clusterId)}
-            />
-          </>
+          <BreadcrumbItem
+            isLast={!projectId}
+            label="Cluster"
+            data={clusters}
+            menuItems={[]}
+            paramId={clusterId}
+            link={INFRA_LOGS_URL(organizationId, clusterId)}
+          />
         )}
         {projectId && (
-          <>
-            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
-            <BreadcrumbItem
-              isLast={!environmentId}
-              label="Project"
-              data={projects}
-              menuItems={projectMenu}
-              paramId={projectId}
-              link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}
-            />
-          </>
+          <BreadcrumbItem
+            isLast={!environmentId}
+            label="Project"
+            data={projects}
+            menuItems={projectMenu}
+            paramId={projectId}
+            link={`${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`}
+          />
         )}
         {environmentId && (
           <>

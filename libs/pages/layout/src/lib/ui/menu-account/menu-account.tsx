@@ -1,7 +1,7 @@
 import { SignUp } from 'qovery-typescript-axios'
 import { useNavigate } from 'react-router-dom'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/router'
+import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL } from '@qovery/shared/router'
 import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
@@ -36,6 +36,10 @@ export function MenuAccount(props: MenuAccountProps) {
   const menus = [
     {
       title: 'Organizations',
+      button: {
+        label: <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500 link !text-base mr-3" />,
+        onClick: () => navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL),
+      },
       items: organizations.map((organization: OrganizationEntity) => ({
         itemContentCustom: blockOrganization(organization),
         containerClassName: '!h-14',
