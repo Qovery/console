@@ -36,9 +36,9 @@ describe('CardCluster', () => {
   it('should have a status message', () => {
     const status = props.cluster.extendedStatus?.status?.status
 
-    const { baseElement } = render(<CardCluster {...props} />)
+    const { getByTestId } = render(<CardCluster {...props} />)
 
-    expect(baseElement.textContent).toContain(getStatusClusterMessage(status))
+    expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(status))
   })
 
   it('should have a function to display color by status', () => {
