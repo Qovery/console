@@ -20,7 +20,8 @@ export interface VariableRowProps {
 
 export function VariableRow(props: VariableRowProps) {
   const { index, availableScopes, gridTemplateColumns = '6fr 6fr 204px 2fr 1fr 1fr' } = props
-  const { control, trigger } = useFormContext<FlowVariableData>()
+  const { control, trigger, watch } = useFormContext<FlowVariableData>()
+  const watchSecret = watch().variables[index]?.isSecret
 
   const pattern = /^[^\s]+$/
 
@@ -65,8 +66,8 @@ export function VariableRow(props: VariableRowProps) {
               value={field.value}
               error={error?.message}
               errorMessagePosition="left"
-              type="password"
-              hasShowPasswordButton={true}
+              type={watchSecret ? 'password' : 'text'}
+              hasShowPasswordButton={watchSecret}
             />
           )}
         />
