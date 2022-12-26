@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/domains/organization'
 import { getStatusClusterMessage } from '@qovery/shared/utils'
@@ -33,12 +33,14 @@ describe('CardCluster', () => {
     expect(baseElement.querySelector('h2')?.textContent).toBe(props.cluster.name)
   })
 
-  it('should have a status message', () => {
+  it('should have a status message', async () => {
     const status = props.cluster.extendedStatus?.status?.status
 
     const { getByTestId } = render(<CardCluster {...props} />)
 
-    expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(status))
+    await act(() => {
+      expect(getByTestId('status-message').textContent).toContain(getStatusClusterMessage(status))
+    })
   })
 
   it('should have a function to display color by status', () => {
