@@ -45,7 +45,6 @@ export const steps: { title: string }[] = [
   { title: 'Create new job' },
   { title: 'Job Configuration' },
   { title: 'Set resources' },
-  { title: 'Set port' },
   { title: 'Set variable environments' },
   { title: 'Ready to install' },
 ]

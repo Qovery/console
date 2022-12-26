@@ -1,4 +1,4 @@
-import { getServiceType, isApplication } from '@qovery/shared/enums'
+import { getServiceType, isApplication, isJob } from '@qovery/shared/enums'
 import {
   ContainerApplicationEntity,
   GitApplicationEntity,
@@ -7,9 +7,9 @@ import {
   LoadingStatus,
 } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { timeAgo } from '@qovery/shared/utils'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 import About from '../about/about'
+import ContainerCard from '../container-card/container-card'
 import InstancesTable from '../instances-table/instances-table'
 
 export interface PageGeneralProps {
@@ -87,23 +87,14 @@ export function PageGeneral(props: PageGeneralProps) {
         {application &&
           (isApplication(application) ? (
             <LastCommitFeature />
+          ) : isJob(application) ? (
+            (application as JobApplicationEntity).source?.docker ? (
+              <LastCommitFeature />
+            ) : (
+              <ContainerCard application={application as JobApplicationEntity} />
+            )
           ) : (
-            <div className="py-6 px-10">
-              <div className="text-subtitle mb-3 text-text-600">Image information</div>
-              <div className="mb-3">
-                <p className="text-text-500 mb-2">
-                  Image name: {(application as ContainerApplicationEntity).image_name}{' '}
-                  {(application as JobApplicationEntity).source?.image?.image_name}
-                </p>
-                <p className="text-text-500 mb-2">
-                  Latest deployed tag: {(application as ContainerApplicationEntity).tag}{' '}
-                  {(application as JobApplicationEntity).source?.image?.tag}
-                </p>
-                <p className="text-text-400 text-sm">
-                  {timeAgo(new Date((application as ContainerApplicationEntity)?.updated_at || ''))}
-                </p>
-              </div>
-            </div>
+            <ContainerCard application={application as ContainerApplicationEntity | JobApplicationEntity} />
           ))}
       </div>
     </div>

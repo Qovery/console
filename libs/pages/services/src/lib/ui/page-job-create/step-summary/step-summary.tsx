@@ -25,7 +25,9 @@ export function StepSummary(props: StepSummaryProps) {
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">Ready to create your Cronjob</h3>
+          <h3 className="text-text-700 text-lg">
+            Ready to create your {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job
+          </h3>
         </div>
         <p className="text-xs text-text-500 mb-2">
           The basic application setup is done, you can now deploy your application or move forward with some advanced
