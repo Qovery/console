@@ -5,7 +5,7 @@ import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { BlockContent, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import CreateGeneralGitApplication from '../../create-general-git-application/ui/create-general-git-application'
 import GeneralContainerSettings from '../../general-container-settings/ui/general-container-settings'
-import EditGitRepositorySettingsFeature from '../../git-repository-settings/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
+import EditGitRepositorySettingsFeature from '../../git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
 
 export interface JobGeneralSettingProps {
   organization?: OrganizationEntity
