@@ -17,9 +17,10 @@ describe('testing payload refactoring', () => {
       created_at: new Date(),
       updated_at: new Date(),
       name: 'hello',
+      description: 'test',
     }
 
-    expect(refactoPayload(response)).toEqual({ name: 'hello' })
+    expect(refactoPayload(response)).toEqual({ name: 'hello', description: 'test' })
   })
 
   it('should remove useless application values', () => {
@@ -89,6 +90,7 @@ describe('testing payload refactoring', () => {
       maximum_cpu: 10,
       maximum_memory: 10,
       name: 'hello-2',
+      description: 'test',
       entrypoint: '/',
       cpu: 3000,
       auto_preview: false,
@@ -106,6 +108,7 @@ describe('testing payload refactoring', () => {
 
     expect(refactoContainerApplicationPayload(response)).toEqual({
       name: 'hello-2',
+      description: 'test',
       storage: [
         {
           id: '1',
@@ -131,6 +134,7 @@ describe('testing payload refactoring', () => {
   it('should remove useless database values', () => {
     let response = databaseFactoryMock(2)[0]
     response.name = 'hello'
+    response.description = 'test'
     response.version = '12'
     response.accessibility = DatabaseAccessibilityEnum.PRIVATE
     response.cpu = 1024
@@ -139,6 +143,7 @@ describe('testing payload refactoring', () => {
 
     expect(refactoDatabasePayload(response)).toEqual({
       name: 'hello',
+      description: 'test',
       version: '12',
       accessibility: DatabaseAccessibilityEnum.PRIVATE,
       cpu: 1024,
