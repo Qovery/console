@@ -1,4 +1,4 @@
-import PageApplicationCreatePortFeature from 'libs/pages/services/src/lib/feature/page-application-create-feature/page-application-create-port-feature/page-application-create-port-feature'
+import { StepPortFeature as ApplicationStepPortFeature } from 'libs/pages/services/src/lib/feature/page-application-create-feature/step-port-feature/step-port-feature'
 import {
   Route,
   SERVICES_APPLICATION_CREATION_URL,
@@ -27,13 +27,13 @@ import {
   SERVICES_SETTINGS_URL,
 } from '@qovery/shared/router'
 import { PageApplicationCreateFeature } from '../feature/page-application-create-feature/page-application-create-feature'
-import PageApplicationCreateGeneralFeature from '../feature/page-application-create-feature/page-application-create-general-feature/page-application-create-general-feature'
-import PageApplicationCreateResourcesFeature from '../feature/page-application-create-feature/page-application-create-resources-feature/page-application-create-resources-feature'
-import PageApplicationPostFeature from '../feature/page-application-create-feature/page-application-post-feature/page-application-post-feature'
+import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
+import { StepResourcesFeature as ApplicationStepResourcesFeature } from '../feature/page-application-create-feature/step-resources-feature/step-resources-feature'
+import { StepSummaryFeature as ApplicationStepSummaryFeature } from '../feature/page-application-create-feature/step-summary-feature/step-summary-feature'
 import { PageDatabaseCreateFeature } from '../feature/page-database-create-feature/page-database-create-feature'
-import PageDatabaseCreateGeneralFeature from '../feature/page-database-create-feature/page-database-create-general-feature/page-database-create-general-feature'
-import PageDatabaseCreatePostFeature from '../feature/page-database-create-feature/page-database-create-post-feature/page-database-create-post-feature'
-import PageDatabaseCreateResourcesFeature from '../feature/page-database-create-feature/page-database-create-resources-feature/page-database-create-resources-feature'
+import { StepGeneralFeature as DatabaseStepGeneralFeature } from '../feature/page-database-create-feature/step-general-feature/step-general-feature'
+import { StepResourcesFeature as DatabaseStepResourcesFeature } from '../feature/page-database-create-feature/step-resources-feature/step-resources-feature'
+import { StepSummaryFeature as DatabaseStepSummaryFeature } from '../feature/page-database-create-feature/step-summary-feature/step-summary-feature'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
 import { PageJobCreateFeature } from '../feature/page-job-create-feature/page-job-create-feature'
@@ -106,34 +106,34 @@ export const ROUTER_ENVIRONMENTS_SETTINGS: Route[] = [
 export const ROUTER_SERVICE_CREATION: Route[] = [
   {
     path: SERVICES_CREATION_GENERAL_URL,
-    component: <PageApplicationCreateGeneralFeature />,
+    component: <ApplicationStepGeneralFeature />,
   },
   {
     path: SERVICES_CREATION_RESOURCES_URL,
-    component: <PageApplicationCreateResourcesFeature />,
+    component: <ApplicationStepResourcesFeature />,
   },
   {
     path: SERVICES_CREATION_PORTS_URL,
-    component: <PageApplicationCreatePortFeature />,
+    component: <ApplicationStepPortFeature />,
   },
   {
     path: SERVICES_CREATION_POST_URL,
-    component: <PageApplicationPostFeature />,
+    component: <ApplicationStepSummaryFeature />,
   },
 ]
 
 export const ROUTER_SERVICE_DATABASE_CREATION: Route[] = [
   {
     path: SERVICES_DATABASE_CREATION_GENERAL_URL,
-    component: <PageDatabaseCreateGeneralFeature />,
+    component: <DatabaseStepGeneralFeature />,
   },
   {
     path: SERVICES_DATABASE_CREATION_RESOURCES_URL,
-    component: <PageDatabaseCreateResourcesFeature />,
+    component: <DatabaseStepResourcesFeature />,
   },
   {
     path: SERVICES_DATABASE_CREATION_POST_URL,
-    component: <PageDatabaseCreatePostFeature />,
+    component: <DatabaseStepSummaryFeature />,
   },
 ]
 
