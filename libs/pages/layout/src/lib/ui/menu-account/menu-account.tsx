@@ -2,7 +2,7 @@ import { SignUp } from 'qovery-typescript-axios'
 import { useNavigate } from 'react-router-dom'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL } from '@qovery/shared/router'
-import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuDirection } from '@qovery/shared/ui'
+import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
   organizations: OrganizationEntity[]
@@ -22,9 +22,9 @@ export function MenuAccount(props: MenuAccountProps) {
       />
       <span className="w-8 h-8 rounded-sm flex items-center justify-center mr-3">
         {organization.logo_url ? (
-          <img className="p-1" src={organization.logo_url} alt="" />
+          <img className="p-1" src={organization.logo_url} alt="Organization logo" />
         ) : (
-          <span className="w-full h-full font-medium text-xs text-text-400 bg-element-light-lighter-400 flex items-center justify-center uppercase rounded-sm">
+          <span className="w-full h-full font-medium text-xs text-text-400 bg-element-light-lighter-400 flex items-center justify-center uppercase rounded">
             {organization.name.charAt(0)}
           </span>
         )}
@@ -33,7 +33,7 @@ export function MenuAccount(props: MenuAccountProps) {
     </div>
   )
 
-  const menus = [
+  const menus: MenuData = [
     {
       title: 'Organizations',
       button: {

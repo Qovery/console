@@ -35,10 +35,10 @@ export function PageOrganizationGeneralFeature() {
   useEffect(() => {
     methods.reset({
       name: organization?.name || '',
-      logo_url: organization?.logo_url || null,
-      description: organization?.description || null,
-      website_url: organization?.website_url || null,
-      admin_emails: organization?.admin_emails || null,
+      logo_url: organization?.logo_url || '',
+      description: organization?.description || '',
+      website_url: organization?.website_url || '',
+      admin_emails: organization?.admin_emails || '',
     })
   }, [
     methods,
