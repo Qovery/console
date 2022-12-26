@@ -50,6 +50,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   return {
     ...application,
     name: data['name'],
+    description: data['description'] || '',
     tag: data['image_tag'] || '',
     image_name: data['image_name'] || '',
     arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
@@ -100,6 +101,7 @@ export function PageSettingsGeneralFeature() {
     (state) => getApplicationsState(state).entities[applicationId],
     (a, b) =>
       a?.name === b?.name &&
+      a?.description === b?.description &&
       (a as GitApplicationEntity)?.build_mode === (b as GitApplicationEntity)?.build_mode &&
       (a as GitApplicationEntity)?.buildpack_language === (b as GitApplicationEntity)?.buildpack_language &&
       (a as GitApplicationEntity)?.dockerfile_path === (b as GitApplicationEntity)?.dockerfile_path
@@ -174,10 +176,10 @@ export function PageSettingsGeneralFeature() {
 
   useEffect(() => {
     methods.setValue('name', application?.name)
+    methods.setValue('description', application?.description)
 
     if (application) {
       if (isApplication(application)) {
-        methods.setValue('description', (application as GitApplicationEntity).description)
         methods.setValue('build_mode', (application as GitApplicationEntity).build_mode)
         methods.setValue(
           'buildpack_language',

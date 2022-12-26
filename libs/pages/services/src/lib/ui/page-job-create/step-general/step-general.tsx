@@ -60,7 +60,7 @@ export function StepGeneral(props: StepGeneralProps) {
               className="mb-3"
               onChange={field.onChange}
               value={field.value}
-              label="Description"
+              label="Description (optional)"
               error={error?.message}
             />
           )}

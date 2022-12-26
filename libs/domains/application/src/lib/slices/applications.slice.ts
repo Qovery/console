@@ -131,7 +131,10 @@ export const editApplication = createAsyncThunk(
   }) => {
     let response
     if (isContainer(payload.serviceType)) {
-      const cloneApplication = Object.assign({}, refactoContainerApplicationPayload(payload.data))
+      const cloneApplication = Object.assign(
+        {},
+        refactoContainerApplicationPayload(payload.data as Partial<ContainerApplicationEntity>)
+      )
       response = await containerMainCallsApi.editContainer(payload.applicationId, cloneApplication as ContainerRequest)
     } else if (isJob(payload.serviceType)) {
       const cloneJob = Object.assign({}, refactoJobPayload(payload.data as Partial<JobApplicationEntity>))

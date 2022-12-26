@@ -10,6 +10,7 @@ import {
   Icon,
   InputSelect,
   InputText,
+  InputTextArea,
   Link,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -58,6 +59,19 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   value={field.value}
                   label="Database name"
                   error={error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <InputTextArea
+                  className="mb-3"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Description"
                 />
               )}
             />

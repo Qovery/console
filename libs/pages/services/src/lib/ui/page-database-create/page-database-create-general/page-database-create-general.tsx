@@ -4,7 +4,16 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Value } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
-import { BlockContent, Button, ButtonSize, ButtonStyle, InputRadio, InputSelect, InputText } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  InputRadio,
+  InputSelect,
+  InputText,
+  InputTextArea,
+} from '@qovery/shared/ui'
 import { GeneralData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
 export interface PageDatabaseCreateGeneralProps {
@@ -46,6 +55,21 @@ export function PageDatabaseCreateGeneral(props: PageDatabaseCreateGeneralProps)
               onChange={field.onChange}
               value={field.value}
               label="Database name"
+              error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="description"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <InputTextArea
+              dataTestId="input-textarea-description"
+              name="description"
+              className="mb-3"
+              onChange={field.onChange}
+              value={field.value}
+              label="Description (optional)"
               error={error?.message}
             />
           )}

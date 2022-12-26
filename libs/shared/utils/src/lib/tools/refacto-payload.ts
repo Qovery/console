@@ -71,6 +71,7 @@ export function refactoContainerApplicationPayload(application: Partial<Containe
   // todo type with the ContainerEditRequest interface but for now api doc is not updated, does not take auto_preview into account
   const containerRequestPayload = {
     name: application.name || '',
+    description: application.description || '',
     storage: application.storage,
     ports: application.ports,
     cpu: application.cpu,
@@ -129,6 +130,7 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
 export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
   const databaseRequestPayload: DatabaseEditRequest = {
     name: database.name,
+    description: database.description || '',
     version: database.version,
     accessibility: database.accessibility,
     cpu: database.cpu,

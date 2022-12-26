@@ -69,6 +69,7 @@ export function PageApplicationPostFeature() {
       if (isApplication(generalData.serviceType)) {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
+          description: generalData.description || '',
           ports:
             portData.ports?.map((port) => ({
               internal_port: port.application_port || 80,
@@ -122,6 +123,7 @@ export function PageApplicationPostFeature() {
       } else {
         const containerRequest: ContainerRequest = {
           name: generalData.name,
+          description: generalData.description || '',
           ports:
             portData.ports?.map((port) => ({
               internal_port: port.application_port || 80,
