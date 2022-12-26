@@ -129,7 +129,7 @@ export function Navigation() {
         </div>
       </div>
 
-      <div className="flex w-16 h-16 mb-2 items-center justify-center border-t dark:border-element-light-darker-100 border-element-light-lighter-400">
+      <div className="flex w-16 h-16 mb-5 items-center justify-center border-t dark:border-element-light-darker-100 border-element-light-lighter-400">
         <MenuAccountFeature />
       </div>
     </div>

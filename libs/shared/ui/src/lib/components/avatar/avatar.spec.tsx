@@ -41,4 +41,25 @@ describe('Avatar', () => {
 
     expect(icon).toBeTruthy()
   })
+
+  it('should have an avatar logo with img', () => {
+    props.logoUrl = 'https://qovery.com/image'
+
+    render(<Avatar {...props} />)
+
+    const logo = screen.getByTestId('avatar-logo')
+
+    expect(logo.querySelector('img'))
+  })
+
+  it('should have an avatar logo with placeholder', () => {
+    props.logoText = 'Orga'
+
+    render(<Avatar {...props} />)
+
+    const logo = screen.getByTestId('avatar-logo')
+
+    expect(logo.querySelector('span'))
+    expect(logo.textContent).toBe('Orga')
+  })
 })

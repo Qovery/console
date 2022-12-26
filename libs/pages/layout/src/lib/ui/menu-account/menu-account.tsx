@@ -20,11 +20,11 @@ export function MenuAccount(props: MenuAccountProps) {
         name={IconAwesomeEnum.CHECK}
         className={`mr-4 ${currentOrganization.id === organization.id ? 'text-success-500' : 'opacity-0'}`}
       />
-      <span className="w-8 h-8 p-1 rounded-sm flex items-center justify-center mr-3">
+      <span className="w-8 h-8 rounded-sm flex items-center justify-center mr-3">
         {organization.logo_url ? (
-          <img src={organization.logo_url} alt="" />
+          <img className="p-1" src={organization.logo_url} alt="" />
         ) : (
-          <span className="w-full h-full font-medium text-xxs text-text-400 bg-element-light-lighter-200 flex items-center justify-center uppercase">
+          <span className="w-full h-full font-medium text-xs text-text-400 bg-element-light-lighter-400 flex items-center justify-center uppercase rounded-sm">
             {organization.name.charAt(0)}
           </span>
         )}
@@ -92,7 +92,7 @@ export function MenuAccount(props: MenuAccountProps) {
   return (
     <Menu
       trigger={
-        <div className="cursor-pointer">
+        <div className="cursor-pointer select-none">
           <Avatar
             size={40}
             firstName={user?.first_name || ''}

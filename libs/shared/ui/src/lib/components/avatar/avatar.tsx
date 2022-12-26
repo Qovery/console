@@ -69,7 +69,7 @@ export function Avatar(props: AvatarProps) {
           {logoUrl ? (
             <img src={logoUrl} alt="Logo Organization" />
           ) : (
-            <span className="w-full h-full text-xxs text-text-400 bg-element-light-lighter-200 border border-element-light-lighter-100 rounded-full flex items-center justify-center uppercase">
+            <span className="w-full h-full text-xxs text-text-400 bg-element-light-lighter-300 border border-element-light-lighter-100 rounded-full flex items-center justify-center uppercase">
               {logoText}
             </span>
           )}

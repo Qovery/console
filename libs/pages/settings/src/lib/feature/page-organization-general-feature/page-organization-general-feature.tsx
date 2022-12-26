@@ -34,11 +34,11 @@ export function PageOrganizationGeneralFeature() {
 
   useEffect(() => {
     methods.reset({
-      logo_url: organization?.logo_url || '',
       name: organization?.name || '',
-      description: organization?.description || '',
-      website_url: organization?.website_url || '',
-      admin_emails: organization?.admin_emails,
+      logo_url: organization?.logo_url || null,
+      description: organization?.description || null,
+      website_url: organization?.website_url || null,
+      admin_emails: organization?.admin_emails || null,
     })
   }, [
     methods,
