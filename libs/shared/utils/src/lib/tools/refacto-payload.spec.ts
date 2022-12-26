@@ -159,7 +159,6 @@ describe('testing payload refactoring', () => {
       updated_at: '',
       name: 'hello',
       description: 'hello world',
-      icon_url: 'https://qovery.com',
       logo_url: 'https://qovery.com',
       website_url: 'https://qovery.com',
       admin_emails: ['test@test.com'],
@@ -168,7 +167,6 @@ describe('testing payload refactoring', () => {
     expect(refactoOrganizationPayload(response)).toEqual({
       name: 'hello',
       description: 'hello world',
-      icon_url: 'https://qovery.com',
       logo_url: 'https://qovery.com',
       website_url: 'https://qovery.com',
       admin_emails: ['test@test.com'],

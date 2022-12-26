@@ -4,9 +4,9 @@ import { userSignUpFactoryMock } from '@qovery/domains/user'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import MenuAccountFeature from './menu-account-feature'
 
-const organizations = organizationFactoryMock(2)
-const user = userSignUpFactoryMock()
-const mockOrganization: OrganizationEntity = organizations[0]
+const mockOrganizations = organizationFactoryMock(2)
+const mockUser = userSignUpFactoryMock()
+const mockOrganization: OrganizationEntity = mockOrganizations[0]
 
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
@@ -16,8 +16,8 @@ jest.mock('react-router-dom', () => ({
 jest.mock('react-redux', () => ({
   ...(jest.requireActual('react-redux') as any),
   selectOrganizationById: () => mockOrganization,
-  selectAllOrganization: () => organizations,
-  selectUserSignUp: () => user,
+  selectAllOrganization: () => mockOrganizations,
+  selectUserSignUp: () => mockUser,
 }))
 
 describe('MenuAccountFeature', () => {

@@ -7,8 +7,8 @@ import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/router'
 import MenuAccount, { MenuAccountProps } from './menu-account'
 
 const mockNavigate = jest.fn()
-const organizations: OrganizationEntity[] = organizationFactoryMock(2)
-const user: SignUp = userSignUpFactoryMock()
+const mockOrganizations: OrganizationEntity[] = organizationFactoryMock(2)
+const mockUser: SignUp = userSignUpFactoryMock()
 
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
@@ -17,9 +17,9 @@ jest.mock('react-router-dom', () => ({
 
 describe('MenuAccount', () => {
   const props: MenuAccountProps = {
-    organizations: organizations,
-    currentOrganization: organizations[0],
-    user: user,
+    organizations: mockOrganizations,
+    currentOrganization: mockOrganizations[0],
+    user: mockUser,
   }
 
   it('should render successfully', () => {
@@ -37,7 +37,7 @@ describe('MenuAccount', () => {
       items[1]?.click()
     })
 
-    expect(items[1]?.textContent).toBe(organizations[1].name)
+    expect(items[1]?.textContent).toBe(mockOrganizations[1].name)
     expect(mockNavigate).toHaveBeenCalledWith(ORGANIZATION_URL('1'))
   })
 
