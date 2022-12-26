@@ -1,9 +1,56 @@
-import { render } from '@testing-library/react'
-import MenuAccount from './menu-account'
+import { act, render } from '@testing-library/react'
+import { SignUp } from 'qovery-typescript-axios'
+import { organizationFactoryMock } from '@qovery/domains/organization'
+import { userSignUpFactoryMock } from '@qovery/domains/user'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/router'
+import MenuAccount, { MenuAccountProps } from './menu-account'
+
+const mockNavigate = jest.fn()
+const organizations: OrganizationEntity[] = organizationFactoryMock(2)
+const user: SignUp = userSignUpFactoryMock()
+
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
+  useNavigate: () => mockNavigate,
+}))
 
 describe('MenuAccount', () => {
+  const props: MenuAccountProps = {
+    organizations: organizations,
+    currentOrganization: organizations[0],
+    user: user,
+  }
+
   it('should render successfully', () => {
-    const { baseElement } = render(<MenuAccount />)
+    const { baseElement } = render(<MenuAccount {...props} />)
+
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should have navigate to organization', async () => {
+    const { getAllByTestId } = render(<MenuAccount {...props} />)
+
+    const items = getAllByTestId('menuItem')
+
+    await act(() => {
+      items[1]?.click()
+    })
+
+    expect(items[1]?.textContent).toBe(organizations[1].name)
+    expect(mockNavigate).toHaveBeenCalledWith(ORGANIZATION_URL('1'))
+  })
+
+  it('should have navigate to logout', async () => {
+    const { getAllByTestId } = render(<MenuAccount {...props} />)
+
+    const items = getAllByTestId('menuItem')
+
+    await act(() => {
+      // 3 is menu for logout
+      items[3]?.click()
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith(LOGOUT_URL)
   })
 })
