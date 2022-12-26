@@ -1,16 +1,16 @@
 import { render } from '__tests__/utils/setup-jest'
 import { applicationFactoryMock } from '@qovery/domains/application'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
-import ContainerCard, { ContainerCardProps } from './container-card'
+import AboutContentContainer, { AboutContentContainerProps } from './about-content-container'
 
 const mockApplication = applicationFactoryMock(1)[0]
-const props: ContainerCardProps = {
+const props: AboutContentContainerProps = {
   application: mockApplication as ContainerApplicationEntity,
 }
 
-describe('ContainerCard', () => {
+describe('AboutContentContainer', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ContainerCard {...props} />)
+    const { baseElement } = render(<AboutContentContainer {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

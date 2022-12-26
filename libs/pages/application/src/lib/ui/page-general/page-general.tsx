@@ -8,8 +8,8 @@ import {
 } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
+import AboutContentContainer from '../about-content-container/about-content-container'
 import About from '../about/about'
-import ContainerCard from '../container-card/container-card'
 import InstancesTable from '../instances-table/instances-table'
 
 export interface PageGeneralProps {
@@ -91,10 +91,10 @@ export function PageGeneral(props: PageGeneralProps) {
             (application as JobApplicationEntity).source?.docker ? (
               <LastCommitFeature />
             ) : (
-              <ContainerCard application={application as JobApplicationEntity} />
+              <AboutContentContainer application={application as JobApplicationEntity} />
             )
           ) : (
-            <ContainerCard application={application as ContainerApplicationEntity | JobApplicationEntity} />
+            <AboutContentContainer application={application as ContainerApplicationEntity | JobApplicationEntity} />
           ))}
       </div>
     </div>

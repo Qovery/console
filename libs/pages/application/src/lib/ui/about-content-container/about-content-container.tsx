@@ -1,11 +1,11 @@
 import { ContainerApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
 import { timeAgo } from '@qovery/shared/utils'
 
-export interface ContainerCardProps {
+export interface AboutContentContainerProps {
   application: ContainerApplicationEntity | JobApplicationEntity
 }
 
-export function ContainerCard(props: ContainerCardProps) {
+export function AboutContentContainer(props: AboutContentContainerProps) {
   const { application } = props
 
   return (
@@ -28,4 +28,4 @@ export function ContainerCard(props: ContainerCardProps) {
   )
 }
 
-export default ContainerCard
+export default AboutContentContainer
