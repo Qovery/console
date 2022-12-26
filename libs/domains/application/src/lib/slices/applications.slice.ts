@@ -138,7 +138,6 @@ export const editApplication = createAsyncThunk(
       response = await jobMainCallsApi.editJob(payload.applicationId, cloneJob as JobRequest)
     } else {
       const cloneApplication = Object.assign({}, refactoGitApplicationPayload(payload.data))
-      console.log(cloneApplication)
       response = await applicationMainCallsApi.editApplication(
         payload.applicationId,
         cloneApplication as ApplicationEditRequest
