@@ -15,7 +15,7 @@ export function MenuAccount(props: MenuAccountProps) {
   const navigate = useNavigate()
 
   const blockOrganization = (organization: OrganizationEntity) => (
-    <div className="flex items-center">
+    <div data-testid={`content-${organization.id}`} className="flex items-center">
       <Icon
         name={IconAwesomeEnum.CHECK}
         className={`mr-4 ${currentOrganization.id === organization.id ? 'text-success-500' : 'opacity-0'}`}

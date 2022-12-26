@@ -28,6 +28,14 @@ describe('MenuAccount', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should have a active organization on the menu', async () => {
+    const { getByTestId } = render(<MenuAccount {...props} />)
+
+    const item = getByTestId('content-0')
+
+    expect(item.textContent).toBe(props.currentOrganization.name)
+  })
+
   it('should have navigate to organization', async () => {
     const { getAllByTestId } = render(<MenuAccount {...props} />)
 
