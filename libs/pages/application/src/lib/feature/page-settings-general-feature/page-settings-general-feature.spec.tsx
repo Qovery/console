@@ -87,6 +87,7 @@ describe('PageSettingsGeneralFeature', () => {
     const app = handleJobSubmit(
       {
         name: 'hello',
+        description: 'description',
         dockerfile_path: '/',
         provider: GitProviderEnum.GITHUB,
         repository: 'qovery/console',
@@ -106,6 +107,7 @@ describe('PageSettingsGeneralFeature', () => {
     const app = handleJobSubmit(
       {
         name: 'hello',
+        description: 'description',
         image_tag: 'latest',
         image_name: 'qovery/console',
         registry: 'docker.io',

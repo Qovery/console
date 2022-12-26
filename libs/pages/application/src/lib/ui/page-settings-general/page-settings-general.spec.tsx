@@ -14,6 +14,7 @@ describe('PageSettingsGeneral', () => {
 
   const defaultValues = (mode = BuildModeEnum.DOCKER) => ({
     name: 'hello-world',
+    description: 'desc',
     build_mode: mode,
     buildpack_language: BuildPackLanguageEnum.CLOJURE,
     dockerfile_path: 'Dockerfile',
