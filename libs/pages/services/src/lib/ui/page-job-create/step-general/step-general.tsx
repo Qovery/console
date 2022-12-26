@@ -36,7 +36,7 @@ export function StepGeneral(props: StepGeneralProps) {
           name="name"
           control={control}
           rules={{
-            required: 'Value required',
+            required: 'Please enter a name.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -60,7 +60,7 @@ export function StepGeneral(props: StepGeneralProps) {
               className="mb-3"
               onChange={field.onChange}
               value={field.value}
-              label="Description"
+              label="Description (optional)"
               error={error?.message}
             />
           )}

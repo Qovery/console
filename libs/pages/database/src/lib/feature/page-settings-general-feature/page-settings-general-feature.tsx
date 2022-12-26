@@ -10,6 +10,7 @@ import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-ge
 export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
   const cloneDatabase = Object.assign({}, database as DatabaseEntity)
   cloneDatabase.name = data['name']
+  cloneDatabase.description = data['description']
   cloneDatabase.accessibility = data['accessibility']
 
   return cloneDatabase
@@ -50,12 +51,21 @@ export function PageSettingsGeneralFeature() {
   useEffect(() => {
     methods.reset({
       name: database?.name,
+      description: database?.description,
       type: database?.type,
       mode: database?.mode,
       version: database?.version,
       accessibility: database?.accessibility,
     })
-  }, [methods, database?.name, database?.type, database?.mode, database?.version, database?.accessibility])
+  }, [
+    methods,
+    database?.name,
+    database?.description,
+    database?.type,
+    database?.mode,
+    database?.version,
+    database?.accessibility,
+  ])
 
   return (
     <FormProvider {...methods}>

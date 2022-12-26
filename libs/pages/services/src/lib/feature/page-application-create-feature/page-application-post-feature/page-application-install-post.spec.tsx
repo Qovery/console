@@ -118,6 +118,7 @@ describe('PageApplicationPostFeature', () => {
       environmentId: '',
       data: {
         name: 'test',
+        description: '',
         ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
         cpu: 500,
         memory: 512,
@@ -147,6 +148,7 @@ describe('PageApplicationPostFeature', () => {
           generalData: {
             ...mockContext.generalData,
             name: 'test',
+            description: '',
             serviceType: ServiceTypeEnum.CONTAINER,
             cmd_arguments: '["test"]',
             cmd: ['test'],
@@ -171,6 +173,7 @@ describe('PageApplicationPostFeature', () => {
       environmentId: '',
       data: {
         name: 'test',
+        description: '',
         ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
         cpu: 500,
         memory: 512,

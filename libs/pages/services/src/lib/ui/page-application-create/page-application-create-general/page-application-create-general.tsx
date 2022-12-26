@@ -9,7 +9,7 @@ import {
 import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { ApplicationGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/router'
-import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface PageApplicationCreateGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -37,7 +37,7 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
           name="name"
           control={control}
           rules={{
-            required: 'Value required',
+            required: 'Please enter a name.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -47,6 +47,19 @@ export function PageApplicationCreateGeneral(props: PageApplicationCreateGeneral
               value={field.value}
               label="Application name"
               error={error?.message}
+            />
+          )}
+        />
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <InputTextArea
+              className="mb-3"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Description"
             />
           )}
         />

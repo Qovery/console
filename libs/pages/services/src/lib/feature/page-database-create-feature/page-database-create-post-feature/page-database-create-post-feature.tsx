@@ -57,6 +57,7 @@ export function PageDatabaseCreatePostFeature() {
 
       const databaseRequest: DatabaseRequest = {
         name: generalData.name,
+        description: generalData.description || '',
         type: generalData.type,
         version: generalData.version,
         accessibility: generalData.accessibility,

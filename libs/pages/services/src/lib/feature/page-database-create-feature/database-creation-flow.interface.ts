@@ -2,6 +2,7 @@ import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'q
 
 export interface GeneralData {
   name: string
+  description?: string
   mode: DatabaseModeEnum
   type: DatabaseTypeEnum
   version: string

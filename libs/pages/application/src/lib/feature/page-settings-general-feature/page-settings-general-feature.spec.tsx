@@ -2,7 +2,10 @@ import { render } from '__tests__/utils/setup-jest'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock, cronjobFactoryMock } from '@qovery/domains/application'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import PageSettingsGeneralFeature, { handleJobSubmit, handleSubmit } from './page-settings-general-feature'
+import PageSettingsGeneralFeature, {
+  handleGitApplicationSubmit,
+  handleJobSubmit,
+} from './page-settings-general-feature'
 
 describe('PageSettingsGeneralFeature', () => {
   let application: ApplicationEntity
@@ -17,9 +20,10 @@ describe('PageSettingsGeneralFeature', () => {
 
   it('should update the application with Docker', () => {
     application.buildpack_language = BuildPackLanguageEnum.GO
-    const app = handleSubmit(
+    const app = handleGitApplicationSubmit(
       {
         name: 'hello',
+        description: 'description',
         build_mode: BuildModeEnum.DOCKER,
         buildpack_language: BuildPackLanguageEnum.GO,
         dockerfile_path: '/',
@@ -31,15 +35,17 @@ describe('PageSettingsGeneralFeature', () => {
       application
     )
     expect(app.name).toBe('hello')
+    expect(app.description).toBe('description')
     expect(app.buildpack_language).toBe(null)
     expect(app.dockerfile_path).toBe('/')
   })
 
   it('should update the application with Buildpack', () => {
     application.dockerfile_path = 'Dockerfile'
-    const app = handleSubmit(
+    const app = handleGitApplicationSubmit(
       {
         name: 'hello',
+        description: 'description',
         build_mode: BuildModeEnum.BUILDPACKS,
         buildpack_language: BuildPackLanguageEnum.GO,
         dockerfile_path: '/',
@@ -51,12 +57,13 @@ describe('PageSettingsGeneralFeature', () => {
       application
     )
     expect(app.name).toBe('hello')
+    expect(app.description).toBe('description')
     expect(app.dockerfile_path).toBe(null)
     expect(app.buildpack_language).toBe(BuildPackLanguageEnum.GO)
   })
 
   it('should update the application with git repository', () => {
-    const app = handleSubmit(
+    const app = handleGitApplicationSubmit(
       {
         name: 'hello',
         build_mode: BuildModeEnum.BUILDPACKS,
@@ -80,6 +87,7 @@ describe('PageSettingsGeneralFeature', () => {
     const app = handleJobSubmit(
       {
         name: 'hello',
+        description: 'description',
         dockerfile_path: '/',
         provider: GitProviderEnum.GITHUB,
         repository: 'qovery/console',
@@ -99,6 +107,7 @@ describe('PageSettingsGeneralFeature', () => {
     const app = handleJobSubmit(
       {
         name: 'hello',
+        description: 'description',
         image_tag: 'latest',
         image_name: 'qovery/console',
         registry: 'docker.io',

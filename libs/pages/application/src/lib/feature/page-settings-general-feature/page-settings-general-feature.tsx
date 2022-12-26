@@ -18,9 +18,10 @@ import { buildGitRepoUrl } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
+export const handleGitApplicationSubmit = (data: FieldValues, application: GitApplicationEntity) => {
   const cloneApplication = Object.assign({}, application)
   cloneApplication.name = data['name']
+  cloneApplication.description = data['description']
 
   if ('build_mode' in cloneApplication) {
     cloneApplication.build_mode = data['build_mode']
@@ -49,6 +50,7 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   return {
     ...application,
     name: data['name'],
+    description: data['description'] || '',
     tag: data['image_tag'] || '',
     image_name: data['image_name'] || '',
     arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
@@ -68,6 +70,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     return {
       ...(application as JobApplicationEntity),
       name: data['name'],
+      description: data['description'],
       source: {
         docker: {
           git_repository,
@@ -78,6 +81,8 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
   } else {
     return {
       ...(application as JobApplicationEntity),
+      name: data['name'],
+      description: data['description'],
       source: {
         image: {
           tag: data['image_tag'] || '',
@@ -96,6 +101,7 @@ export function PageSettingsGeneralFeature() {
     (state) => getApplicationsState(state).entities[applicationId],
     (a, b) =>
       a?.name === b?.name &&
+      a?.description === b?.description &&
       (a as GitApplicationEntity)?.build_mode === (b as GitApplicationEntity)?.build_mode &&
       (a as GitApplicationEntity)?.buildpack_language === (b as GitApplicationEntity)?.buildpack_language &&
       (a as GitApplicationEntity)?.dockerfile_path === (b as GitApplicationEntity)?.dockerfile_path
@@ -123,7 +129,7 @@ export function PageSettingsGeneralFeature() {
     if (data && application) {
       let cloneApplication: ApplicationEntity
       if (isApplication(application)) {
-        cloneApplication = handleSubmit(data, application)
+        cloneApplication = handleGitApplicationSubmit(data, application)
       } else if (isJob(application)) {
         cloneApplication = handleJobSubmit(data, application)
       } else {
@@ -170,6 +176,8 @@ export function PageSettingsGeneralFeature() {
 
   useEffect(() => {
     methods.setValue('name', application?.name)
+    methods.setValue('description', application?.description)
+
     if (application) {
       if (isApplication(application)) {
         methods.setValue('build_mode', (application as GitApplicationEntity).build_mode)
