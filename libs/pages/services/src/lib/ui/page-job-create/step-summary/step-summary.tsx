@@ -44,36 +44,54 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="text-text-600 text-ssm mb-2 font-medium">General</div>
 
             <ul className="text-text-400 text-sm list-none">
-              <li>{props.generalData.name}</li>
-              <li>{props.generalData.description}</li>
+              <li>
+                <span className="font-medium">Name:</span> {props.generalData.name}
+              </li>
+              <li>
+                <span className="font-medium">Description:</span> {props.generalData.description}
+              </li>
             </ul>
 
             <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
 
             {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
               <>
-                <div className="text-text-600 text-ssm mb-2 font-medium">
-                  For application created from a Git provider
-                </div>
                 <ul className="text-text-400 text-sm list-none">
-                  <li>{props.generalData.repository}</li>
-                  <li>{props.generalData.branch}</li>
-                  <li>{props.generalData.root_path}</li>
+                  <li>
+                    <span className="font-medium">Repository:</span> {props.generalData.repository}
+                  </li>
+                  <li>
+                    <span className="font-medium">Branch:</span> {props.generalData.branch}
+                  </li>
+                  <li>
+                    <span className="font-medium">Root path:</span> {props.generalData.root_path}
+                  </li>
                   {props.generalData.build_mode === BuildModeEnum.DOCKER && (
-                    <li>{props.generalData.dockerfile_path}</li>
+                    <li>
+                      <span className="font-medium">Dockerfile path:</span> {props.generalData.dockerfile_path}
+                    </li>
                   )}
                 </ul>
               </>
             )}
             {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
               <>
-                <div className="text-text-600 text-ssm mb-2 font-medium">For application created from a Registry</div>
                 <ul className="text-text-400 text-sm list-none">
-                  <li>{props.selectedRegistryName}</li>
-                  <li>Image name: {props.generalData.image_name}</li>
-                  <li>Image tag: {props.generalData.image_tag}</li>
-                  <li>Image entrypoint: {props.generalData.image_entry_point}</li>
-                  <li>CMD arguments: {props.configureData.cmd_arguments}</li>
+                  <li>
+                    <span className="font-medium">Registry:</span> {props.selectedRegistryName}
+                  </li>
+                  <li>
+                    <span className="font-medium">Image name:</span> {props.generalData.image_name}
+                  </li>
+                  <li>
+                    <span className="font-medium">Image tag:</span> {props.generalData.image_tag}
+                  </li>
+                  <li>
+                    <span className="font-medium">Image entrypoint:</span> {props.generalData.image_entry_point}
+                  </li>
+                  <li>
+                    <span className="font-medium">CMD arguments:</span> {props.configureData.cmd_arguments}
+                  </li>
                 </ul>
               </>
             )}
@@ -94,49 +112,102 @@ export function StepSummary(props: StepSummaryProps) {
 
             {props.jobType === ServiceTypeEnum.LIFECYCLE_JOB && (
               <>
-                <div className="text-text-600 text-ssm mb-2 font-medium">Lifecycle job</div>
-                <ul className="text-text-400 text-sm list-none">
-                  {props.configureData.on_start?.enabled && (
-                    <li>
-                      On start – Entrypoint: {props.configureData.on_start?.entrypoint || 'null'} / CMD:{' '}
-                      {props.configureData.on_start?.arguments || 'null'}
-                    </li>
-                  )}
-                  {props.configureData.on_stop?.enabled && (
-                    <li>
-                      On Stop – Entrypoint: {props.configureData.on_stop?.entrypoint || 'null'} / CMD:{' '}
-                      {props.configureData.on_stop?.arguments || 'null'}
-                    </li>
-                  )}
-                  {props.configureData.on_delete?.enabled && (
-                    <li>
-                      On Delete – Entrypoint: {props.configureData.on_delete?.entrypoint || 'null'} / CMD:{' '}
-                      {props.configureData.on_delete?.arguments || 'null'}
-                    </li>
-                  )}
-                </ul>
+                {props.configureData.on_start?.enabled && (
+                  <>
+                    <ul className="text-text-400 text-sm list-none">
+                      <li>
+                        <div className="font-medium text-ssm text-text-600">
+                          <span className="mr-2 inline-block">Events</span>Environment Start
+                        </div>
+                      </li>
+                      <li>
+                        <span className="font-medium">Entrypoint:</span>{' '}
+                        {props.configureData.on_start?.entrypoint || 'null'}
+                      </li>
+                      <li>
+                        <span className="font-medium">CMD Arguments:</span>{' '}
+                        {props.configureData.on_start?.arguments || 'null'}
+                      </li>
+                    </ul>
+                    <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+                  </>
+                )}
+                {props.configureData.on_stop?.enabled && (
+                  <>
+                    <ul className="text-text-400 text-sm list-none">
+                      <li>
+                        <div className="font-medium text-ssm text-text-600">
+                          <span className="mr-2 inline-block">Events</span>Environment Stop
+                        </div>
+                      </li>
+                      <li>
+                        <span className="font-medium">Entrypoint:</span>{' '}
+                        {props.configureData.on_stop?.entrypoint || 'null'}
+                      </li>
+                      <li>
+                        <span className="font-medium">CMD Arguments:</span>{' '}
+                        {props.configureData.on_stop?.arguments || 'null'}
+                      </li>
+                    </ul>
+                    <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+                  </>
+                )}
+                {props.configureData.on_delete?.enabled && (
+                  <>
+                    <ul className="text-text-400 text-sm list-none">
+                      <li>
+                        <div className="font-medium text-ssm text-text-600">
+                          <span className="mr-2 inline-block">Events</span>Environment Delete
+                        </div>
+                      </li>
+                      <li>
+                        <span className="font-medium">Entrypoint:</span>{' '}
+                        {props.configureData.on_delete?.entrypoint || 'null'}
+                      </li>
+                      <li>
+                        <span className="font-medium">CMD Arguments:</span>{' '}
+                        {props.configureData.on_delete?.arguments || 'null'}
+                      </li>
+                    </ul>
+                    <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+                  </>
+                )}
               </>
             )}
 
             {props.jobType === ServiceTypeEnum.CRON_JOB && (
               <>
-                <div className="text-text-600 text-ssm mb-2 font-medium">CRON</div>
                 <ul className="text-text-400 text-sm list-none">
-                  <li>{props.configureData.schedule}</li>
-                  {props.configureData.image_entry_point && <li>{props.configureData.image_entry_point}</li>}
-                  {props.configureData.cmd_arguments && <li>{props.configureData.cmd_arguments}</li>}
+                  <li>
+                    <span className="font-medium">Scheduled at:</span> {props.configureData.schedule}
+                  </li>
+                  {props.configureData.image_entry_point && (
+                    <li>
+                      <span className="font-medium">Entrypoint:</span> {props.configureData.image_entry_point}
+                    </li>
+                  )}
+                  {props.configureData.cmd_arguments && (
+                    <li>
+                      <span className="font-medium">CMD arguments:</span> {props.configureData.cmd_arguments}
+                    </li>
+                  )}
                 </ul>
+                <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
               </>
             )}
-
-            <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
 
             <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
 
             <ul className="text-text-400 text-sm list-none">
-              <li>Max restarts: {props.configureData.nb_restarts}</li>
-              <li>Max duration: {props.configureData.max_duration}</li>
-              <li>Port: {props.configureData.port}</li>
+              <li>
+                <span className="font-medium">Max restarts:</span> {props.configureData.nb_restarts}
+              </li>
+              <li>
+                <span className="font-medium">Max duration:</span> {props.configureData.max_duration}
+              </li>
+              <li>
+                <span className="font-medium">Port:</span> {props.configureData.port}
+              </li>
             </ul>
           </div>
 
@@ -155,8 +226,12 @@ export function StepSummary(props: StepSummaryProps) {
 
             <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
             <ul className="text-text-400 text-sm list-none">
-              <li>CPU: {props.resourcesData['cpu'][0]}</li>
-              <li>Memory: {props.resourcesData.memory} MB</li>
+              <li>
+                <span className="font-medium">CPU:</span> {props.resourcesData['cpu'][0]}
+              </li>
+              <li>
+                <span className="font-medium">Memory:</span> {props.resourcesData.memory} MB
+              </li>
             </ul>
           </div>
 
