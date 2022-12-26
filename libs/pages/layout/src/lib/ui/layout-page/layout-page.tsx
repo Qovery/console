@@ -1,16 +1,16 @@
-import { SignUp } from 'qovery-typescript-axios'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { WarningScreenMobile } from '@qovery/shared/ui'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 
 export interface LayoutPageProps {
   children?: React.ReactElement
-  user: SignUp
   topBar?: boolean
+  organization?: OrganizationEntity
 }
 
 export function LayoutPage(props: LayoutPageProps) {
-  const { children, user, topBar = true } = props
+  const { children, topBar = true } = props
 
   return (
     <>
@@ -18,7 +18,7 @@ export function LayoutPage(props: LayoutPageProps) {
       <main className="dark:bg-element-light-darker-600 dark:h-screen bg-element-light-lighter-400">
         <div className="flex">
           <div className="h-full sticky top-0 z-20">
-            <Navigation firstName={user?.first_name} lastName={user?.last_name} />
+            <Navigation />
           </div>
           <div className="w-full">
             {topBar && <TopBar />}

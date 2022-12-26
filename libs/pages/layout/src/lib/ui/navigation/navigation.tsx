@@ -1,8 +1,6 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTERS_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/router'
 import {
-  Avatar,
   ButtonIcon,
   ButtonIconStyle,
   ButtonSize,
@@ -11,18 +9,11 @@ import {
   Menu,
   MenuAlign,
   MenuDirection,
-  Modal,
-  ModalUser,
   Tooltip,
 } from '@qovery/shared/ui'
+import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-feature'
 
-export interface NavigationProps {
-  firstName: string
-  lastName: string
-}
-
-export function Navigation(props: NavigationProps) {
-  const { firstName, lastName } = props
+export function Navigation() {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
@@ -138,17 +129,8 @@ export function Navigation(props: NavigationProps) {
         </div>
       </div>
 
-      <div className="flex w-16 h-16 mb-2 items-center justify-center border-t dark:border-element-light-darker-100 border-element-light-lighter-400">
-        <Modal
-          buttonClose={false}
-          trigger={
-            <div className="cursor-pointer">
-              <Avatar firstName={firstName} lastName={lastName} icon={IconEnum.GITLAB} noTooltip />
-            </div>
-          }
-        >
-          <ModalUser firstName={firstName} lastName={lastName} />
-        </Modal>
+      <div className="flex w-16 h-16 mb-5 items-center justify-center border-t dark:border-element-light-darker-100 border-element-light-lighter-400">
+        <MenuAccountFeature />
       </div>
     </div>
   )

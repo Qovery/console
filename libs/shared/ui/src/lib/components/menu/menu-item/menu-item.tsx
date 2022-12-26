@@ -5,7 +5,7 @@ import { CopyToClipboard } from '../../copy-to-clipboard/copy-to-clipboard'
 import { Truncate } from '../../truncate/truncate'
 
 export interface MenuItemProps {
-  name: string
+  name?: string
   link?: { url: string; external?: boolean }
   contentLeft?: React.ReactNode
   contentRight?: React.ReactNode
@@ -62,9 +62,11 @@ export function MenuItem(props: MenuItemProps) {
             {contentLeft}
           </span>
         )}
-        <span className={`menu-item__name text-sm font-medium ${textClassName}`}>
-          <Truncate text={name} truncateLimit={truncateLimit} />
-        </span>
+        {name && (
+          <span className={`menu-item__name text-sm font-medium ${textClassName}`}>
+            <Truncate text={name} truncateLimit={truncateLimit} />
+          </span>
+        )}
       </div>
       <div className="flex items-center">{contentRight && <span className="ml-3">{contentRight}</span>}</div>
     </>

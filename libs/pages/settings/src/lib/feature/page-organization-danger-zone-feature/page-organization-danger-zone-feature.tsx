@@ -25,10 +25,9 @@ export function PageOrganizationDangerZoneFeature() {
 
     dispatch(deleteOrganization({ organizationId }))
       .unwrap()
-      .then(() => {
-        setLoading(false)
-        navigate('/')
-      })
+      .then(() => navigate('/'))
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false))
   }
 
   return (
