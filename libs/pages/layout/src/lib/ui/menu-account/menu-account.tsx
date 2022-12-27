@@ -1,4 +1,3 @@
-import { SignUp } from 'qovery-typescript-axios'
 import { useNavigate } from 'react-router-dom'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL } from '@qovery/shared/router'
@@ -7,7 +6,12 @@ import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, MenuDirection
 export interface MenuAccountProps {
   organizations: OrganizationEntity[]
   currentOrganization: OrganizationEntity
-  user: SignUp
+  user: {
+    firstName?: string
+    lastName?: string
+    email?: string
+    picture?: string
+  }
 }
 
 export function MenuAccount(props: MenuAccountProps) {
@@ -55,15 +59,16 @@ export function MenuAccount(props: MenuAccountProps) {
                 <Avatar
                   className="mr-3"
                   size={40}
-                  firstName={user?.first_name || ''}
-                  lastName={user?.last_name}
+                  url={user?.picture}
+                  firstName={user?.firstName || ''}
+                  lastName={user?.lastName}
                   noTooltip
                 />
                 <div>
                   <p className="text-text-700 text-sm font-medium">
-                    {user?.first_name} {user?.last_name}
+                    {user?.firstName} {user?.lastName}
                   </p>
-                  <span className="text-text-400 text-xs">{user.user_email}</span>
+                  <span className="text-text-400 text-xs">{user.email}</span>
                 </div>
               </div>
               <Icon name={IconAwesomeEnum.WHEEL} className="text-brand-500 link" />
@@ -95,8 +100,9 @@ export function MenuAccount(props: MenuAccountProps) {
         <div className="cursor-pointer select-none">
           <Avatar
             size={40}
-            firstName={user?.first_name || ''}
-            lastName={user?.last_name}
+            firstName={user?.firstName || ''}
+            lastName={user?.lastName}
+            url={user?.picture}
             logoUrl={currentOrganization?.logo_url || undefined}
             logoText={!currentOrganization?.logo_url ? currentOrganization?.name.charAt(0) : undefined}
             noTooltip

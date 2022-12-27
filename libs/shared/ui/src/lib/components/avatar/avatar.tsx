@@ -64,10 +64,12 @@ export function Avatar(props: AvatarProps) {
       {(logoUrl || logoText) && (
         <div
           data-testid="avatar-logo"
-          className="flex items-center text-sm font-medium w-4 h-4 rounded-full absolute top-[24px] -right-[2px]"
+          className="flex items-center text-sm font-medium w-[18px] h-[18px] rounded-full absolute top-[24px] -right-[2px]"
         >
           {logoUrl ? (
-            <img src={logoUrl} alt="Logo Organization" />
+            <span className="flex items-center justify-center w-full h-full bg-element-light-lighter-100 rounded-full p-[2px]">
+              <img src={logoUrl} alt="Logo Organization" />
+            </span>
           ) : (
             <span className="w-full h-full text-xxs text-text-400 bg-element-light-lighter-300 border border-element-light-lighter-100 rounded-full flex items-center justify-center uppercase">
               {logoText}
