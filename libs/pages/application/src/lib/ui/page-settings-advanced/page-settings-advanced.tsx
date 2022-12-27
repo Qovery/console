@@ -41,7 +41,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
           className: '!p-1',
         },
       ],
-      className: 'font-medium',
+      className: 'font-medium hover:bg-white',
     },
   ]
 
@@ -100,7 +100,11 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   name={key}
                   control={control}
                   rules={{
-                    required: 'Please enter a value.',
+                    required:
+                      props.defaultAdvancedSettings &&
+                      props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString().length === 0
+                        ? false
+                        : 'Please enter a value.',
                   }}
                   defaultValue=""
                   render={({ field, fieldState: { error } }) => (
