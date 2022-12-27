@@ -38,7 +38,8 @@ export function PropertyCard(props: PropertyCardProps) {
         icon={IconAwesomeEnum.WHEEL}
         style={ButtonIconStyle.FLAT}
         dataTestId="property-card-settings-button"
-        className="text-text-400 flex-shrink-0 text-text-400 hover:text-text-700"
+        className=" flex-shrink-0 -mr-4 !text-text-400 hover:!text-text-600"
+        iconClassName="cursor-pointer"
         onClick={onSettingsClick}
       />
     </div>

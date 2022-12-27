@@ -9,7 +9,11 @@ export function JobOverview(props: JobOverviewProps) {
   const { application } = props
   return (
     <div>
-      <PropertyCard name="Max restarts" value={application.max_nb_restart?.toString() || ''} />
+      <div className="grid grid-cols-3 gap-3">
+        <PropertyCard name="Max restarts" value={application.max_nb_restart?.toString() || ''} isLoading={false} />
+        <PropertyCard name="Max restarts" value={application.max_nb_restart?.toString() || ''} isLoading={false} />
+        <PropertyCard name="Max restarts" value={application.max_nb_restart?.toString() || ''} isLoading={false} />
+      </div>
     </div>
   )
 }
