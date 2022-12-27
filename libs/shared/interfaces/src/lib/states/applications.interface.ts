@@ -1,4 +1,4 @@
-import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
+import { ApplicationAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
 import { ApplicationEntity } from '../domain/application.entity'
 import { LoadingStatus } from '../types/loading-status.type'
 import { DefaultEntityState } from './default-entity-state.interface'
@@ -8,6 +8,6 @@ export interface ApplicationsState extends DefaultEntityState<ApplicationEntity>
   statusLoadingStatus: LoadingStatus
   defaultApplicationAdvancedSettings: {
     loadingStatus: LoadingStatus
-    settings?: ApplicationAdvancedSettings
+    settings?: ApplicationAdvancedSettings | JobAdvancedSettings
   }
 }

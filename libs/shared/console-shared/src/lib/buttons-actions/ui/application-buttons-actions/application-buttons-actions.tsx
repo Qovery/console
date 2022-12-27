@@ -9,7 +9,7 @@ import {
   postApplicationActionsStop,
 } from '@qovery/domains/application'
 import { postEnvironmentActionsCancelDeployment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isContainer } from '@qovery/shared/enums'
+import { getServiceType, isApplication, isGitJob, isJob, isContainer } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_LOGS_URL,
@@ -176,7 +176,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         topItems.push(stopButton)
       }
 
-      if (isApplication(application)) {
+      if (isApplication(application) || (isJob(application) && isGitJob(application as JobApplicationEntity))) {
         const deployAnotherButton = {
           name: 'Deploy other version',
           contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,

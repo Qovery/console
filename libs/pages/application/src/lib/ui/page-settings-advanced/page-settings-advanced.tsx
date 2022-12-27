@@ -1,4 +1,4 @@
-import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
+import { ApplicationAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { LoadingStatus } from '@qovery/shared/interfaces'
@@ -16,8 +16,8 @@ import {
 
 export interface PageSettingsAdvancedProps {
   keys?: string[]
-  defaultAdvancedSettings?: ApplicationAdvancedSettings
-  advancedSettings?: ApplicationAdvancedSettings
+  defaultAdvancedSettings?: ApplicationAdvancedSettings | JobAdvancedSettings
+  advancedSettings?: ApplicationAdvancedSettings | JobAdvancedSettings
   loading: LoadingStatus
   onSubmit?: () => void
   discardChanges: () => void
@@ -52,8 +52,10 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
             showOverriddenOnly &&
             props.defaultAdvancedSettings &&
             props.advancedSettings &&
-            props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString() ===
-              props.advancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()
+            props.defaultAdvancedSettings[
+              key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+            ]?.toString() ===
+              props.advancedSettings[key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)]?.toString()
               ? 'hidden'
               : ''
           }`,
@@ -72,20 +74,26 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   <Tooltip
                     content={
                       (props.defaultAdvancedSettings &&
-                        props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()) ||
+                        props.defaultAdvancedSettings[
+                          key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+                        ]?.toString()) ||
                       ''
                     }
                   >
                     <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">
                       {props.defaultAdvancedSettings &&
-                        props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()}
+                        props.defaultAdvancedSettings[
+                          key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+                        ]?.toString()}
                     </div>
                   </Tooltip>
                   <CopyToClipboard
                     className="ml-2 text-text-300 invisible group-hover:visible"
                     content={
                       (props.defaultAdvancedSettings &&
-                        props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString()) ||
+                        props.defaultAdvancedSettings[
+                          key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+                        ]?.toString()) ||
                       ''
                     }
                   />
@@ -102,7 +110,9 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   rules={{
                     required:
                       props.defaultAdvancedSettings &&
-                      props.defaultAdvancedSettings[key as keyof ApplicationAdvancedSettings]?.toString().length === 0
+                      props.defaultAdvancedSettings[
+                        key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+                      ]?.toString().length === 0
                         ? false
                         : 'Please enter a value.',
                   }}

@@ -1,4 +1,4 @@
-import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
+import { ApplicationAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,7 +27,7 @@ export function PageSettingsAdvancedFeature() {
       return a?.id === b?.id && a?.advanced_settings?.loadingStatus === b?.advanced_settings?.loadingStatus
     }
   )
-  const defaultSettings = useSelector<RootState, ApplicationAdvancedSettings | undefined>(
+  const defaultSettings = useSelector<RootState, ApplicationAdvancedSettings | JobAdvancedSettings | undefined>(
     (state) => getApplicationsState(state).defaultApplicationAdvancedSettings.settings
   )
   const [keys, setKeys] = useState<string[]>([])
@@ -37,7 +37,7 @@ export function PageSettingsAdvancedFeature() {
 
   // at the init fetch the default settings advanced settings
   useEffect(() => {
-    dispatch(fetchDefaultApplicationAdvancedSettings())
+    if (application) dispatch(fetchDefaultApplicationAdvancedSettings({ serviceType: getServiceType(application) }))
   }, [dispatch, application])
 
   // when application is ready, and advanced setting has never been fetched before

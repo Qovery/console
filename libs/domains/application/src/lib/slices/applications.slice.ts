@@ -27,6 +27,8 @@ import {
   ContainersApi,
   DeploymentHistoryApplication,
   Instance,
+  JobAdvancedSettings,
+  JobConfigurationApi,
   JobDeploymentHistoryApi,
   JobMainCallsApi,
   JobRequest,
@@ -75,6 +77,7 @@ const containerConfigurationApi = new ContainerConfigurationApi()
 const jobsApi = new JobsApi()
 const jobMainCallsApi = new JobMainCallsApi()
 const jobDeploymentsApi = new JobDeploymentHistoryApi()
+const jobConfigurationApi = new JobConfigurationApi()
 
 export const fetchApplications = createAsyncThunk<
   Application[] | ContainerResponse[],
@@ -245,6 +248,8 @@ export const fetchApplicationAdvancedSettings = createAsyncThunk<
   let response
   if (isContainer(data.serviceType)) {
     response = await containerConfigurationApi.getContainerAdvancedSettings(data.applicationId)
+  } else if (isJob(data.serviceType)) {
+    response = await jobConfigurationApi.getJobAdvancedSettings(data.applicationId)
   } else {
     response = await applicationConfigurationApi.getAdvancedSettings(data.applicationId)
   }
@@ -252,10 +257,10 @@ export const fetchApplicationAdvancedSettings = createAsyncThunk<
 })
 
 export const editApplicationAdvancedSettings = createAsyncThunk<
-  ApplicationAdvancedSettings,
+  ApplicationAdvancedSettings | JobAdvancedSettings,
   {
     applicationId: string
-    settings: ApplicationAdvancedSettings | ContainerAdvancedSettings
+    settings: ApplicationAdvancedSettings | ContainerAdvancedSettings | JobAdvancedSettings
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
   }
@@ -266,6 +271,11 @@ export const editApplicationAdvancedSettings = createAsyncThunk<
       data.applicationId,
       data.settings as ContainerAdvancedSettings[]
     )
+  } else if (isJob(data.serviceType)) {
+    response = await jobConfigurationApi.editJobAdvancedSettings(
+      data.applicationId,
+      data.settings as JobAdvancedSettings
+    )
   } else {
     response = await applicationConfigurationApi.editAdvancedSettings(
       data.applicationId,
@@ -275,13 +285,24 @@ export const editApplicationAdvancedSettings = createAsyncThunk<
   return response.data as ApplicationAdvancedSettings
 })
 
-export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<ApplicationAdvancedSettings>(
-  'application/defaultAdvancedSettings',
-  async () => {
-    const response = await applicationsApi.getDefaultApplicationAdvancedSettings()
-    return response.data as ApplicationAdvancedSettings
+export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
+  ApplicationAdvancedSettings | JobAdvancedSettings,
+  {
+    serviceType: ServiceTypeEnum
   }
-)
+>('application/defaultAdvancedSettings', async (data) => {
+  let response
+
+  if (isApplication(data.serviceType) || isContainer(data.serviceType)) {
+    response = await applicationsApi.getDefaultApplicationAdvancedSettings()
+  } else if (isJob(data.serviceType)) {
+    console.log('yes it is')
+    response = await jobsApi.getDefaultJobAdvancedSettings()
+  } else {
+    response = { data: {} }
+  }
+  return response.data
+})
 
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -553,7 +574,7 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'loaded',
-              current_settings: action.payload,
+              current_settings: action.payload as ApplicationAdvancedSettings,
             },
           },
         }

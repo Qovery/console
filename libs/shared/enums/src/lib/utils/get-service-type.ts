@@ -53,6 +53,15 @@ export const isLifeCycleJob = (data?: ApplicationEntity | ServiceTypeEnum) => {
     return data === ServiceTypeEnum.LIFECYCLE_JOB
   }
 }
+
+export const isGitJob = (data: JobApplicationEntity) => {
+  return data && Boolean((data as JobApplicationEntity).source?.docker)
+}
+
+export const isContainerJob = (data: JobApplicationEntity | ServiceTypeEnum) => {
+  return data && Boolean((data as JobApplicationEntity).source?.image)
+}
+
 // Container
 export const isContainer = (data?: ApplicationEntity | ServiceTypeEnum) => {
   if (data && (data as ApplicationEntity).id) {

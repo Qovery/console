@@ -77,20 +77,22 @@ export function PageSettingsFeature() {
           title: 'Port',
           icon: IconAwesomeEnum.PLUG,
           url: pathSettings + APPLICATION_SETTINGS_PORT_URL,
-        },
-        {
-          title: 'Advanced settings',
-          icon: IconAwesomeEnum.GEARS,
-          url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
         }
       )
     }
 
-    links.push({
-      title: 'Danger zone',
-      icon: IconAwesomeEnum.SKULL,
-      url: pathSettings + APPLICATION_SETTINGS_DANGER_ZONE_URL,
-    })
+    links.push(
+      {
+        title: 'Advanced settings',
+        icon: IconAwesomeEnum.GEARS,
+        url: pathSettings + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
+      },
+      {
+        title: 'Danger zone',
+        icon: IconAwesomeEnum.SKULL,
+        url: pathSettings + APPLICATION_SETTINGS_DANGER_ZONE_URL,
+      }
+    )
 
     return links
   }, [application, pathSettings])
