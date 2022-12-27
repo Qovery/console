@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
-import { BaseLink, EmptyState, HelpSection, Table, TableFilterProps } from '@qovery/shared/ui'
+import {
+  BaseLink,
+  Button,
+  ButtonSize,
+  EmptyState,
+  HelpSection,
+  IconAwesomeEnum,
+  Table,
+  TableFilterProps,
+  useModal,
+} from '@qovery/shared/ui'
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface PageGeneralProps {
   environments: EnvironmentEntity[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
+  clusterAvailable?: boolean
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {
-  const { environments, listHelpfulLinks } = props
-  const { organizationId, projectId } = useParams()
+  const { environments, listHelpfulLinks, clusterAvailable } = props
+  const { organizationId = '', projectId = '' } = useParams()
 
+  const { openModal, closeModal } = useModal()
   const [data, setData] = useState(environments)
   const [filter, setFilter] = useState<TableFilterProps>({})
 
@@ -60,6 +73,8 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
   const columnWidth = '30% 25% 40%'
 
+  console.log(clusterAvailable)
+
   return (
     <>
       {environments.length ? (
@@ -88,10 +103,38 @@ function PageGeneralMemo(props: PageGeneralProps) {
         !props.isLoading && (
           <EmptyState
             className="bg-white rounded-t-sm mt-2 pt-10"
-            title="No environment found"
-            description="Please create your first environment"
+            title={`${clusterAvailable ? 'Create your first environment 💫' : 'Create your Cluster first 💫'}`}
+            description={`${
+              clusterAvailable
+                ? 'Please create your environment to start using Qovery and create your first service'
+                : 'Deploying a cluster is necessary to start using Qovery and create your first environment'
+            }`}
             imageWidth="w-[160px]"
-          />
+          >
+            <Button
+              className="mt-5"
+              size={ButtonSize.LARGE}
+              iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+              onClick={() => {
+                clusterAvailable
+                  ? openModal({
+                      content: (
+                        <CreateCloneEnvironmentModalFeature
+                          onClose={closeModal}
+                          projectId={projectId}
+                          organizationId={organizationId}
+                        />
+                      ),
+                    })
+                  : window.open(
+                      `https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`,
+                      '_blank'
+                    )
+              }}
+            >
+              {clusterAvailable ? 'New environment' : 'Create a Cluster'}
+            </Button>
+          </EmptyState>
         )
       )}
 

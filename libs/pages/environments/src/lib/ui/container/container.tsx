@@ -1,7 +1,5 @@
 import { Project } from 'qovery-typescript-axios'
-import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
-import { getProjectsState } from '@qovery/domains/projects'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -20,18 +18,18 @@ import {
   Tabs,
   useModal,
 } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
 
 export interface ContainerProps {
   children: React.ReactNode
+  project?: Project
+  clusterAvailable?: boolean
 }
 
 export function Container(props: ContainerProps) {
-  const { children } = props
+  const { children, project, clusterAvailable } = props
   const { organizationId = '', projectId = '' } = useParams()
   const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
-  const project = useSelector<RootState, Project | undefined>((state) => getProjectsState(state).entities[projectId])
 
   const headerButtons = (
     <div className="hidden">
@@ -65,13 +63,14 @@ export function Container(props: ContainerProps) {
       <Button
         size={ButtonSize.LARGE}
         iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+        disabled={!clusterAvailable}
         onClick={() => {
           openModal({
             content: (
               <CreateCloneEnvironmentModalFeature
                 onClose={closeModal}
-                projectId={projectId || ''}
-                organizationId={organizationId || ''}
+                projectId={projectId}
+                organizationId={organizationId}
               />
             ),
           })

@@ -1,3 +1,4 @@
+import { Cluster } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -7,6 +8,7 @@ import {
   fetchEnvironmentsStatus,
   selectEnvironmentsEntitiesByProjectId,
 } from '@qovery/domains/environment'
+import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -15,10 +17,13 @@ import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {
   useDocumentTitle('Environments - Qovery')
-  const { projectId = '' } = useParams()
+  const { organizationId = '', projectId = '' } = useParams()
   const loadingEnvironments = environmentFactoryMock(3, true)
 
   const loadingStatus = useSelector(environmentsLoadingStatus)
+  const clusters = useSelector<RootState, Cluster[]>((state) =>
+    selectClustersEntitiesByOrganizationId(state, organizationId)
+  )
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -44,6 +49,7 @@ export function PageGeneralFeature() {
       isLoading={loadingStatus === 'loading'}
       environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
       listHelpfulLinks={listHelpfulLinks}
+      clusterAvailable={clusters.length > 0}
     />
   )
 }
