@@ -25,6 +25,7 @@ import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
 import StatusChip from '../../status-chip/status-chip'
+import Tooltip from '../../tooltip/tooltip'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
@@ -170,17 +171,19 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     <div className="flex justify-between w-full">
       <div className="flex h-full items-center">
         {organizationId && (
-          <div className="mr-2">
-            {currentOrganization?.logo_url ? (
-              <img
-                src={currentOrganization?.logo_url}
-                className="h-4"
-                alt={`${currentOrganization?.name} organization`}
-              />
-            ) : (
-              squareContent(currentOrganization?.name.charAt(0), '')
-            )}
-          </div>
+          <Tooltip content={currentOrganization?.name || ''}>
+            <div className="mr-2">
+              {currentOrganization?.logo_url ? (
+                <img
+                  src={currentOrganization?.logo_url}
+                  className="h-4"
+                  alt={`${currentOrganization?.name} organization`}
+                />
+              ) : (
+                squareContent(currentOrganization?.name.charAt(0), '')
+              )}
+            </div>
+          </Tooltip>
         )}
         {clusterId && (
           <BreadcrumbItem
