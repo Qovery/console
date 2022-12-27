@@ -73,8 +73,6 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
   const columnWidth = '30% 25% 40%'
 
-  console.log(clusterAvailable)
-
   return (
     <>
       {environments.length ? (
@@ -147,19 +145,22 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
 export const PageGeneral = React.memo(PageGeneralMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
-  const isEqual =
-    JSON.stringify(
-      prevProps.environments.map((environment) => ({
-        status: environment.status?.state,
-        running_status: environment.running_status?.state,
-      }))
-    ) ===
-    JSON.stringify(
-      nextProps.environments.map((environment) => ({
-        status: environment.status?.state,
-        running_status: environment.running_status?.state,
-      }))
-    )
+  if (nextProps.environments.length > 0) {
+    const isEqual =
+      JSON.stringify(
+        prevProps.environments.map((environment) => ({
+          status: environment.status?.state,
+          running_status: environment.running_status?.state,
+        }))
+      ) ===
+      JSON.stringify(
+        nextProps.environments.map((environment) => ({
+          status: environment.status?.state,
+          running_status: environment.running_status?.state,
+        }))
+      )
+    return isEqual
+  }
 
-  return isEqual
+  return false
 })
