@@ -23,18 +23,16 @@ export function JobOverview(props: JobOverviewProps) {
   const eventsToString = (): string => {
     if (!application) return ''
     const events: string[] = []
-    if (application) {
-      if (application.schedule?.on_start) events.push('Start')
-      if (application.schedule?.on_stop) events.push('Stop')
-      if (application.schedule?.on_delete) events.push('Delete')
-    }
+    if (application.schedule?.on_start) events.push('Start')
+    if (application.schedule?.on_stop) events.push('Stop')
+    if (application.schedule?.on_delete) events.push('Delete')
 
     return events.length === 0 ? 'No events' : events.join(' - ')
   }
 
   return (
     <div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
         {isCronJob(application) && (
           <PropertyCard
             name="Scheduling"
@@ -46,7 +44,7 @@ export function JobOverview(props: JobOverviewProps) {
         {isLifeCycleJob(application) && (
           <PropertyCard
             name="Environment Event"
-            value={`${eventsToString()}`}
+            value={eventsToString()}
             isLoading={false}
             onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_CONFIGURE_URL}`)}
             helperText="Execute this job at some given event"
@@ -74,7 +72,7 @@ export function JobOverview(props: JobOverviewProps) {
         />
         <PropertyCard
           name="RAM"
-          value={application.memory.toString() + ' mb'}
+          value={application.memory.toString() + ' MB'}
           isLoading={false}
           onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_RESOURCES_URL}`)}
         />
