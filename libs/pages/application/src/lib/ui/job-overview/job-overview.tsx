@@ -49,6 +49,7 @@ export function JobOverview(props: JobOverviewProps) {
             value={`${eventsToString()}`}
             isLoading={false}
             onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_CONFIGURE_URL}`)}
+            helperText="Execute this job at some given event"
           />
         )}
         <PropertyCard
@@ -56,12 +57,14 @@ export function JobOverview(props: JobOverviewProps) {
           value={application.max_nb_restart?.toString() || ''}
           isLoading={false}
           onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_CONFIGURE_URL}`)}
+          helperText="Maximum number of restarts allowed in case of job failure (0 means no failure)"
         />
         <PropertyCard
           name="Max Duration"
           value={application.max_duration_seconds?.toString() || ''}
           isLoading={false}
           onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_CONFIGURE_URL}`)}
+          helperText="Maximum duration allowed for the job to run before killing it and mark it as failed"
         />
         <PropertyCard
           name="VCPU"
@@ -80,6 +83,7 @@ export function JobOverview(props: JobOverviewProps) {
           value={application.port?.toString() || '–'}
           isLoading={false}
           onSettingsClick={() => navigate(`${path}${APPLICATION_SETTINGS_CONFIGURE_URL}`)}
+          helperText="Port where to run readiness and liveliness probes checks. The port will not be exposed externally"
         />
       </div>
     </div>
