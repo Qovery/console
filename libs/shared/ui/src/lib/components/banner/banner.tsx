@@ -35,13 +35,13 @@ export function Banner(props: BannerProps) {
 
   return (
     <div data-testid="banner" className={`${classNameStyle || ''}`}>
-      <div className="flex gap-4 h-10 items-center justify-center font-medium text-sm">
+      <div className="flex h-10 items-center justify-center font-medium text-sm">
         {children}
         {props.buttonLabel && (
           <Button
             style={ButtonStyle.RAISED}
             size={ButtonSize.TINY}
-            className={classNameButton || ''}
+            className={`ml-4 ${classNameButton || ''}`}
             iconRight={props.buttonIconRight}
             onClick={props.onClickButton}
           >

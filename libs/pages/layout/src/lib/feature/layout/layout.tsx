@@ -1,16 +1,22 @@
+import { Cluster } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { fetchEnvironments } from '@qovery/domains/environment'
-import { fetchClusters, fetchOrganization, fetchOrganizationById } from '@qovery/domains/organization'
+import {
+  fetchClusters,
+  fetchOrganization,
+  fetchOrganizationById,
+  selectClustersEntitiesByOrganizationId,
+} from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
 import { fetchUserSignUp } from '@qovery/domains/user'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/router'
 import { WebsocketContainer } from '@qovery/shared/websockets'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 
@@ -25,6 +31,9 @@ export function Layout(props: LayoutProps) {
 
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
+  const clusters = useSelector<RootState, Cluster[]>((state) =>
+    selectClustersEntitiesByOrganizationId(state, organizationId)
+  )
 
   useEffect(() => {
     dispatch(fetchOrganization())
@@ -78,7 +87,7 @@ export function Layout(props: LayoutProps) {
   }, [organizationId, projectId])
 
   return (
-    <LayoutPage topBar={topBar}>
+    <LayoutPage topBar={topBar} cluster={clusters[0]}>
       <>
         <WebsocketContainer />
         {children}
