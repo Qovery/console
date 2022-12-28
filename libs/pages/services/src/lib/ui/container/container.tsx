@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { selectClusterById } from '@qovery/domains/organization'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { ApplicationEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -53,6 +54,10 @@ export function Container(props: ContainerProps) {
     selectDatabasesEntitiesByEnvId(state, environment?.id || '')
   )
 
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
+    selectClusterById(state, environment?.cluster_id || '')
+  )
+
   const headerButtons = (
     <div>
       {/* <ButtonIcon
@@ -86,10 +91,10 @@ export function Container(props: ContainerProps) {
           <TagMode size={TagSize.BIG} status={environment?.mode} />
         </Skeleton>
       )}
-      <Skeleton width={100} height={32} show={!environment?.cloud_provider}>
+      <Skeleton width={120} height={32} show={!cluster}>
         <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
-          <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>
+          <p className="max-w-[120px] truncate">{cluster?.name}</p>
         </div>
       </Skeleton>
       <Tag className="bg-element-light-lighter-300 gap-2 hidden">
