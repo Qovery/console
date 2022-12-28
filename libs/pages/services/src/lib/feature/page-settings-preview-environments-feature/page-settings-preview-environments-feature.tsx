@@ -31,7 +31,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
   const loadingStatusEnvironmentDeploymentRules = useSelector(environmentsLoadingEnvironmentDeploymentRules)
 
   const applications = useSelector<RootState, GitApplicationEntity[] | undefined>(
-    (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
+    (state) => selectApplicationsEntitiesByEnvId(state, environmentId) as GitApplicationEntity[] | undefined,
     (a, b) =>
       JSON.stringify(a?.map((application) => application.auto_preview)) ===
       JSON.stringify(b?.map((application) => application.auto_preview))

@@ -110,9 +110,12 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   rules={{
                     required:
                       props.defaultAdvancedSettings &&
-                      props.defaultAdvancedSettings[
+                      (props.defaultAdvancedSettings[
                         key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
-                      ]?.toString().length === 0
+                      ] === null ||
+                        props.defaultAdvancedSettings[
+                          key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+                        ]?.toString().length === 0)
                         ? false
                         : 'Please enter a value.',
                   }}

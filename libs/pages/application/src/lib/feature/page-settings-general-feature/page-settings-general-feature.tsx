@@ -129,7 +129,7 @@ export function PageSettingsGeneralFeature() {
     if (data && application) {
       let cloneApplication: ApplicationEntity
       if (isApplication(application)) {
-        cloneApplication = handleGitApplicationSubmit(data, application)
+        cloneApplication = handleGitApplicationSubmit(data, application as GitApplicationEntity)
       } else if (isJob(application)) {
         cloneApplication = handleJobSubmit(data, application)
       } else {

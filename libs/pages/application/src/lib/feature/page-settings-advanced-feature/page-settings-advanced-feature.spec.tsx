@@ -1,20 +1,20 @@
 import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
+import { JobAdvancedSettings } from 'qovery-typescript-axios'
 import React from 'react'
 import * as storeApplication from '@qovery/domains/application'
-import { applicationFactoryMock } from '@qovery/domains/application'
-import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import { cronjobFactoryMock } from '@qovery/domains/application'
+import { GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 import * as Utils from './utils'
 
 import SpyInstance = jest.SpyInstance
 
-const mockApplication: ApplicationEntity = applicationFactoryMock(1)[0]
-const mockAdvancedSettings: Partial<ApplicationAdvancedSettings> = {
-  'build.timeout_max_sec': 60,
-  'deployment.custom_domain_check_enabled': true,
+const mockApplication: JobApplicationEntity = cronjobFactoryMock(1)[0]
+const mockAdvancedSettings: Partial<JobAdvancedSettings> = {
   'liveness_probe.http_get.path': '/',
+  'cronjob.success_jobs_history_limit': 1,
+  'job.delete_ttl_seconds_after_finished': null,
 }
 
 jest.mock('./utils', () => ({
@@ -38,7 +38,10 @@ jest.mock('@qovery/domains/application', () => {
     fetchApplicationAdvancedSettings: jest.fn(),
     fetchDefaultApplicationAdvancedSettings: jest.fn(),
     getApplicationsState: () => ({
-      defaultApplicationAdvancedSettings: mockAdvancedSettings,
+      defaultApplicationAdvancedSettings: {
+        loadingStatus: 'loaded',
+        settings: mockAdvancedSettings,
+      },
       loadingStatus: 'loaded',
       ids: [mockApplication.id],
       entities: {
@@ -58,7 +61,7 @@ describe('PageSettingsAdvancedFeature', () => {
   let promise: Promise
 
   beforeEach(() => {
-    ;(mockApplication as GitApplicationEntity).advanced_settings = {
+    ;(mockApplication as JobApplicationEntity).advanced_settings = {
       loadingStatus: 'not loaded',
       current_settings: mockAdvancedSettings,
     }
@@ -127,12 +130,19 @@ describe('PageSettingsAdvancedFeature', () => {
       'editApplicationAdvancedSettings'
     )
 
-    const { getByLabelText, getByTestId } = render(<PageSettingsAdvancedFeature />)
+    const { getByLabelText, getByTestId, baseElement, debug } = render(<PageSettingsAdvancedFeature />)
 
     await act(() => {
-      const input = getByLabelText('build.timeout_max_sec')
+      const input = getByLabelText('cronjob.success_jobs_history_limit')
       fireEvent.input(input, { target: { value: '63' } })
+
+      fireEvent.input(getByLabelText('job.delete_ttl_seconds_after_finished'), { target: { value: '999999' } })
     })
+
+    await act(() => {
+      fireEvent.input(getByLabelText('job.delete_ttl_seconds_after_finished'), { target: { value: null } })
+    })
+
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
     await act(() => {
@@ -143,9 +153,9 @@ describe('PageSettingsAdvancedFeature', () => {
       (mockApplication as GitApplicationEntity).id
     )
     expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].settings).toStrictEqual({
-      'build.timeout_max_sec': 63,
-      'deployment.custom_domain_check_enabled': true,
       'liveness_probe.http_get.path': '/',
+      'cronjob.success_jobs_history_limit': 63,
+      'job.delete_ttl_seconds_after_finished': null, // getting null here is pretty important to fix an inconsitency with backend between numbers and string
     })
 
     await act(async () => {

@@ -28,8 +28,11 @@ export function PageSettingsStorageFeature() {
   const error = useSelector((state: RootState) => getApplicationsState(state).error)
 
   const application = useSelector<RootState, GitContainerApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, applicationId),
-    (a, b) => a?.id === b?.id && JSON.stringify(a?.storage) === JSON.stringify(b?.storage)
+    (state) => selectApplicationById(state, applicationId) as GitContainerApplicationEntity | undefined,
+    (a, b) =>
+      a?.id === b?.id &&
+      JSON.stringify((a as GitContainerApplicationEntity)?.storage) ===
+        JSON.stringify((b as GitContainerApplicationEntity)?.storage)
   )
 
   const toasterCallback = () => {

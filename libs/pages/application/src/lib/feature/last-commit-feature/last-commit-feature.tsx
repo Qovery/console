@@ -11,7 +11,7 @@ export function LastCommitFeature() {
   const { applicationId = '' } = useParams()
   const commitDeltaCount = useSelector(getCountNewCommitsToDeploy(applicationId))
   const application = useSelector<RootState, GitApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId]
+    (state) => getApplicationsState(state).entities[applicationId] as GitApplicationEntity | undefined
   )
 
   const getCommitById = (commits?: Commit[]) => {

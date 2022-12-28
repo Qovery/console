@@ -1,8 +1,8 @@
 import {
-  ApplicationAdvancedSettings,
   Commit,
   DeploymentHistoryApplication,
   Instance,
+  JobAdvancedSettings,
   JobResponse,
   Link,
   Status,
@@ -31,10 +31,10 @@ export interface JobApplicationEntity extends JobResponse {
   }
   advanced_settings?: {
     loadingStatus: LoadingStatus
-    current_settings?: ApplicationAdvancedSettings
+    current_settings?: JobAdvancedSettings
   }
   default_advanced_settings?: {
     loadingStatus: LoadingStatus
-    default_settings?: ApplicationAdvancedSettings
+    default_settings?: JobAdvancedSettings
   }
 }

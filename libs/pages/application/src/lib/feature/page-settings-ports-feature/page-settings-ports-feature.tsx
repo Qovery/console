@@ -26,7 +26,7 @@ export function PageSettingsPortsFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
 
   const application = useSelector<RootState, GitContainerApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, applicationId),
+    (state) => selectApplicationById(state, applicationId) as GitContainerApplicationEntity | undefined,
     (a, b) => JSON.stringify(a?.ports) === JSON.stringify(b?.ports)
   )
 
