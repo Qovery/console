@@ -13,7 +13,7 @@ export interface TagProps {
 export function Tag(props: TagProps) {
   const { children, className = '', size = TagSize.NORMAL, dataTestId = 'tag' } = props
 
-  const normalClassName = size === TagSize.NORMAL ? 'h-6 px-2' : ''
+  const normalClassName = size === TagSize.NORMAL ? 'h-7 px-2' : ''
   const bigClassName = size === TagSize.BIG ? 'h-8 px-3' : ''
 
   return (

@@ -1,5 +1,7 @@
 import { Commit } from 'qovery-typescript-axios'
 import {
+  Avatar,
+  AvatarStyle,
   Button,
   ButtonSize,
   ButtonStyle,
@@ -75,6 +77,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                             ? 'bg-brand-50 outline-brand-500 outline'
                             : ''
                         } ${commitsByDay[date].length - 1 === index ? '' : 'border-b'}
+                        ${selectedCommitId === commit.git_commit_id ? 'z-50' : ''}
                     ${currentCommitId === commit.git_commit_id ? 'bg-green-50' : ''}
                     ${index === 0 ? 'rounded-t-md' : ''} ${
                           index === commitsByDay[date].length - 1 ? 'rounded-b-md' : ''
@@ -93,7 +96,16 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                                 <Truncate truncateLimit={45} text={commit.message} />
                               </a>
                             </p>
-                            <TagCommit commitId={commit.git_commit_id} />
+                            <div className="flex items-center">
+                              <Avatar
+                                size={28}
+                                className="mr-2"
+                                style={AvatarStyle.STROKED}
+                                firstName={commit.author_name}
+                                url={commit.author_avatar_url}
+                              />
+                              <TagCommit commitId={commit.git_commit_id} />
+                            </div>
                           </div>
 
                           <div className="flex justify-between w-full">

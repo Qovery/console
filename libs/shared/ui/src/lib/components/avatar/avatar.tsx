@@ -37,7 +37,7 @@ export function Avatar(props: AvatarProps) {
     noTooltip = false,
   } = props
 
-  const defineClass = `${style === AvatarStyle.STROKED ? 'border-2 border-element-light-lighter-400' : ''} ${
+  const defineClass = `${style === AvatarStyle.STROKED ? 'border border-element-light-lighter-400' : ''} ${
     onClick ? 'cursor-pointer' : ''
   }`
 

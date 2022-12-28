@@ -49,7 +49,7 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
       data-testid="scroll-shadow-wrapper"
       ref={wrapperRef}
       style={style}
-      className={`relative overflow-auto ${className}`}
+      className={`relative overflow-y-auto pr-[1px] ${className}`}
       onScroll={onScrollHandler}
     >
       <div
