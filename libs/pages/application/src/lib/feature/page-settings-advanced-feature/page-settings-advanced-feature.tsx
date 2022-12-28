@@ -11,7 +11,7 @@ import {
   postApplicationActionsRestart,
   selectApplicationById,
 } from '@qovery/domains/application'
-import { getServiceType } from '@qovery/shared/enums'
+import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { GitApplicationEntity } from '@qovery/shared/interfaces'
 import { objectFlattener } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -34,11 +34,16 @@ export function PageSettingsAdvancedFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({ mode: 'onChange' })
+  const [serviceType, setServiceType] = useState<ServiceTypeEnum>()
+
+  useEffect(() => {
+    if (application) setServiceType(getServiceType(application))
+  }, [application])
 
   // at the init fetch the default settings advanced settings
   useEffect(() => {
-    if (application) dispatch(fetchDefaultApplicationAdvancedSettings({ serviceType: getServiceType(application) }))
-  }, [dispatch, application])
+    if (serviceType) dispatch(fetchDefaultApplicationAdvancedSettings({ serviceType: serviceType }))
+  }, [dispatch, serviceType])
 
   // when application is ready, and advanced setting has never been fetched before
   useEffect(() => {
