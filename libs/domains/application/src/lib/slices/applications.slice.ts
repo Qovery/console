@@ -296,7 +296,6 @@ export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
   if (isApplication(data.serviceType) || isContainer(data.serviceType)) {
     response = await applicationsApi.getDefaultApplicationAdvancedSettings()
   } else if (isJob(data.serviceType)) {
-    console.log('yes it is')
     response = await jobsApi.getDefaultJobAdvancedSettings()
   } else {
     response = { data: {} }
