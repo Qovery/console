@@ -124,6 +124,36 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk<
   }
 })
 
+export const postApplicationActionsDeployByTag = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; tag: string; serviceType: ServiceTypeEnum }
+>('applicationActions/deploy', async (data, { dispatch }) => {
+  try {
+    let response
+
+    if (isContainer(data.serviceType)) {
+      response = await containerActionApi.deployContainer(data.applicationId, {
+        image_tag: data.tag,
+      })
+    } else {
+      response = await jobActionApi.deployJob(data.applicationId, false, {
+        image_tag: data.tag,
+      })
+    }
+
+    if (response.status === 202) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      toast(ToastEnum.SUCCESS, `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`)
+    }
+
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
+  }
+})
+
 export const postApplicationActionsStop = createAsyncThunk<
   any,
   { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }

@@ -41,6 +41,7 @@ import {
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
+import DeployOtherTagModalFeature from '../../../deploy-other-tag-modal/feature/deploy-other-tag-modal-feature'
 
 export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
@@ -184,6 +185,22 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
             openModal({
               content: (
                 <DeployOtherCommitModalFeature applicationId={application.id} environmentId={environmentId || ''} />
+              ),
+              options: { width: 596 },
+            })
+          },
+        }
+        bottomItems.push(deployAnotherButton)
+      }
+
+      if (isContainer(application) || isContainerJob(application as JobApplicationEntity)) {
+        const deployAnotherButton = {
+          name: 'Deploy other version',
+          contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+          onClick: () => {
+            openModal({
+              content: (
+                <DeployOtherTagModalFeature applicationId={application.id} environmentId={environmentId || ''} />
               ),
               options: { width: 596 },
             })

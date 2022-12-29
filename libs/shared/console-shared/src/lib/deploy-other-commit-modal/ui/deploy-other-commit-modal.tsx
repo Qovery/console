@@ -48,7 +48,9 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
     <div className="p-6">
       <h2 className="h4 text-text-600 max-w-sm truncate mb-1">Deploy another version</h2>
       <p className="mb-2 text-text-400 text-sm">Select the commit you want to deploy.</p>
-      <p className="mb-6 flex items-center text-text-500 text-sm">For {serviceName}</p>
+      <p className="mb-6 text-text-500 text-sm">
+        For <strong className="font-medium">{serviceName}</strong>
+      </p>
 
       <div className="mb-6">
         <InputSearch placeholder="Search by commit message or commit id" onChange={onSearch} />
