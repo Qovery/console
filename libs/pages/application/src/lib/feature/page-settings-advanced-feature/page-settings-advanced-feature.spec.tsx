@@ -5,8 +5,8 @@ import React from 'react'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock } from '@qovery/domains/application'
 import { GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
+import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
-import * as Utils from './utils'
 
 import SpyInstance = jest.SpyInstance
 
@@ -17,8 +17,8 @@ const mockAdvancedSettings: Partial<JobAdvancedSettings> = {
   'job.delete_ttl_seconds_after_finished': null,
 }
 
-jest.mock('./utils', () => ({
-  ...jest.requireActual('./utils'),
+jest.mock('./init-form-values/init-form-values', () => ({
+  ...jest.requireActual('./init-form-values/init-form-values'),
 }))
 
 jest.mock('react-router-dom', () => ({
@@ -165,7 +165,7 @@ describe('PageSettingsAdvancedFeature', () => {
 
   it('should init the form', async () => {
     ;(mockApplication as GitApplicationEntity).advanced_settings!.loadingStatus = 'loaded'
-    const spy = jest.spyOn(Utils, 'initFormValues')
+    const spy = jest.spyOn(InitFormValues, 'initFormValues')
     render(<PageSettingsAdvancedFeature />)
     expect(spy).toHaveBeenCalled()
 

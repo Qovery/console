@@ -16,7 +16,7 @@ import { GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/inter
 import { objectFlattener } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
-import { initFormValues } from './utils'
+import { initFormValues } from './init-form-values/init-form-values'
 
 export function PageSettingsAdvancedFeature() {
   const { applicationId = '', environmentId = '' } = useParams()

@@ -21,9 +21,9 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
 
   cloneApplication.memory = Number(data['memory'])
   cloneApplication.cpu = convertCpuToVCpu(data['cpu'][0], true)
-  if (!isJob(application)) {
-    ;(cloneApplication as GitContainerApplicationEntity).min_running_instances = data['instances'][0]
-    ;(cloneApplication as GitContainerApplicationEntity).max_running_instances = data['instances'][1]
+  if (!isJob(application) && 'min_running_instances' in cloneApplication) {
+    cloneApplication.min_running_instances = data['instances'][0]
+    cloneApplication.max_running_instances = data['instances'][1]
   }
 
   return cloneApplication
@@ -75,13 +75,7 @@ export function PageSettingsResourcesFeature() {
         (application as GitContainerApplicationEntity)?.max_running_instances || 1,
       ],
     })
-  }, [
-    methods,
-    application?.memory,
-    application?.cpu,
-    (application as GitContainerApplicationEntity)?.min_running_instances,
-    (application as GitContainerApplicationEntity)?.max_running_instances,
-  ])
+  }, [methods, application?.memory, application?.cpu, application])
 
   const toasterCallback = () => {
     if (application) {
