@@ -85,9 +85,14 @@ export function MenuGroup(props: MenuGroupProps) {
       )}
       {currentItems.length > 0 && (
         <div style={paddingStyle} className="overflow-y-auto max-h-80">
-          {currentItems.map((item, index) => (
-            <MenuItem key={index} {...item} />
-          ))}
+          {currentItems.map((item, index) => {
+            // if object empty not return item
+            if (Object.keys(item).length === 0) {
+              return null
+            } else {
+              return <MenuItem key={index} {...item} />
+            }
+          })}
         </div>
       )}
       {!isFilter && !isLast && currentItems.length > 0 && (

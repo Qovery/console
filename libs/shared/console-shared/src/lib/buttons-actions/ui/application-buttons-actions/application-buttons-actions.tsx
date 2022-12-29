@@ -9,8 +9,8 @@ import {
   postApplicationActionsStop,
 } from '@qovery/domains/application'
 import { postEnvironmentActionsCancelDeployment } from '@qovery/domains/environment'
-import { getServiceType, isApplication } from '@qovery/shared/enums'
-import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import { getServiceType, isApplication, isContainer } from '@qovery/shared/enums'
+import { ApplicationEntity, GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_LOGS_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
@@ -234,12 +234,18 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)),
             },
             {
-              name: 'Edit code',
-              contentLeft: <Icon name={IconAwesomeEnum.CODE} className="text-sm text-brand-400" />,
-              link: {
-                url: urlCodeEditor((application as GitApplicationEntity)?.git_repository) || '',
-                external: true,
-              },
+              ...(!isContainer(application) && {
+                name: 'Edit code',
+                contentLeft: <Icon name={IconAwesomeEnum.CODE} className="text-sm text-brand-400" />,
+                link: {
+                  url:
+                    urlCodeEditor(
+                      (application as GitApplicationEntity)?.git_repository ||
+                        (application as JobApplicationEntity).source?.docker?.git_repository
+                    ) || '',
+                  external: true,
+                },
+              }),
             },
             {
               name: 'Copy identifiers',
