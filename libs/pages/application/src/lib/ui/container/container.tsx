@@ -1,11 +1,12 @@
 import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { createContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
+import { selectClusterById } from '@qovery/domains/organization'
 import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, ClusterEntity } from '@qovery/shared/interfaces'
 import {
   Button,
   ButtonSize,
@@ -20,7 +21,7 @@ import {
   TagMode,
   TagSize,
 } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
@@ -42,6 +43,10 @@ export function Container(props: ContainerProps) {
   const { application, environment, children } = props
   const { environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)
+
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
+    selectClusterById(state, environment?.cluster_id || '')
+  )
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -120,10 +125,10 @@ export function Container(props: ContainerProps) {
           {application && <Icon name={getServiceType(application)} width="16" height="16" />}
         </div>
       </Skeleton>
-      <Skeleton width={100} height={32} show={!environment?.cloud_provider}>
+      <Skeleton width={120} height={32} show={!cluster}>
         <div className="border border-element-light-lighter-400 bg-white h-8 px-3 rounded text-xs items-center inline-flex font-medium gap-2">
           <Icon name={environment?.cloud_provider.provider as IconEnum} width="16" />
-          <p className="max-w-[54px] truncate">{environment?.cloud_provider.cluster}</p>
+          <p className="max-w-[120px] truncate">{cluster?.name}</p>
         </div>
       </Skeleton>
       <Tag className="bg-element-light-lighter-300 gap-2 hidden">

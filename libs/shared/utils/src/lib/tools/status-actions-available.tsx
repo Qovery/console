@@ -39,6 +39,7 @@ export const isStopAvailable = (status: StateEnum): boolean => {
       status === StateEnum.RUNNING ||
       status === StateEnum.DEPLOYMENT_ERROR ||
       status === StateEnum.DEPLOYMENT_QUEUED ||
+      status === StateEnum.STOP_ERROR ||
       status === StateEnum.CANCELED) &&
     !isCancelBuildAvailable(status)
   )
