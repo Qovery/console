@@ -9,14 +9,10 @@ import {
 } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import DeployOtherCommitModalFeature, { DeployOtherCommitModalFeatureProps } from './deploy-other-commit-modal-feature'
 
 import SpyInstance = jest.SpyInstance
-
-const props: DeployOtherCommitModalFeatureProps = {
-  applicationId: 'applicationId',
-  environmentId: 'environmentId',
-}
 
 jest.mock('react-redux', () => ({
   ...(jest.requireActual('react-redux') as any),
@@ -31,7 +27,7 @@ jest.mock('react-redux', () => ({
   },
 }))
 
-const mockApplication = storeApplication.applicationFactoryMock(0)[0]
+const mockApplication = storeApplication.applicationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/application', () => ({
   ...(jest.requireActual('@qovery/domains/application') as any),
@@ -70,6 +66,11 @@ jest.mock('@qovery/domains/application', () => ({
   postApplicationActionsDeployByCommitId: jest.fn(),
 }))
 
+const props: DeployOtherCommitModalFeatureProps = {
+  applicationId: 'applicationId',
+  environmentId: 'environmentId',
+}
+
 describe('DeployOtherCommitModalFeature', () => {
   it('should render successfully', async () => {
     const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
@@ -100,6 +101,7 @@ describe('DeployOtherCommitModalFeature', () => {
       applicationId: 'applicationId',
       git_commit_id: '2',
       environmentId: 'environmentId',
+      serviceType: ServiceTypeEnum.APPLICATION,
     })
   })
 

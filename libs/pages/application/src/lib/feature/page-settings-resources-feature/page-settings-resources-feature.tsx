@@ -22,9 +22,8 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
   cloneApplication.memory = Number(data['memory'])
   cloneApplication.cpu = convertCpuToVCpu(data['cpu'][0], true)
   if (!isJob(application)) {
-    ;(application as GitContainerApplicationEntity).min_running_instances = data['instances'][0](
-      application as GitContainerApplicationEntity
-    ).max_running_instances = data['instances'][1]
+    ;(cloneApplication as GitContainerApplicationEntity).min_running_instances = data['instances'][0]
+    ;(cloneApplication as GitContainerApplicationEntity).max_running_instances = data['instances'][1]
   }
 
   return cloneApplication

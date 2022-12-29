@@ -1,5 +1,6 @@
 import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { initFormValues } from './utils'
 
@@ -19,7 +20,8 @@ describe('InitFormValues', () => {
     expect(
       initFormValues(
         ['build.timeout_max_sec', 'deployment.custom_domain_check_enabled', 'liveness_probe.http_get.path'],
-        mockApplication
+        mockApplication,
+        getServiceType(mockApplication)
       )
     ).toStrictEqual({
       'build.timeout_max_sec': '60',
