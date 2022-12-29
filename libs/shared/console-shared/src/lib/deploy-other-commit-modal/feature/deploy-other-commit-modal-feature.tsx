@@ -104,6 +104,7 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
       handleDeploy={handleDeploy}
       deployLoading={deployLoading}
       onSearch={onSearch}
+      serviceName={application?.name}
     />
   )
 }

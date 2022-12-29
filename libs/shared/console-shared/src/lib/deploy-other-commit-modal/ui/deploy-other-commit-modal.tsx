@@ -26,6 +26,7 @@ export interface DeployOtherCommitModalProps {
   handleDeploy: () => void
   deployLoading: boolean
   onSearch: (value: string) => void
+  serviceName?: string
 }
 
 export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
@@ -39,13 +40,15 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
     deployLoading,
     onSearch,
     isLoading = false,
+    serviceName = 'application service',
   } = props
   const { closeModal } = useModal()
 
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 max-w-sm truncate mb-1">Deploy another version</h2>
-      <p className="mb-6 text-text-400 text-sm">Select the commit you want to deploy.</p>
+      <p className="mb-2 text-text-400 text-sm">Select the commit you want to deploy.</p>
+      <p className="mb-6 flex items-center text-text-500 text-sm">For {serviceName}</p>
 
       <div className="mb-6">
         <InputSearch placeholder="Search by commit message or commit id" onChange={onSearch} />
@@ -60,11 +63,12 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
       {!isLoading && Object.keys(commitsByDay).length > 0 && (
         <ScrollShadowWrapper className="max-h-[440px]">
           {Object.keys(commitsByDay).map((date) => (
-            <div key={date} className="pl-1">
-              <h3 data-testid="commit-date" className="text-sm pl-4 text-text-400 font-medium">
+            <div key={date} className="pl-2">
+              <h3 data-testid="commit-date" className="text-sm pl-5 text-text-400 font-medium relative">
+                <Icon name={IconAwesomeEnum.CODE_COMMIT} className="absolute left-0 text-text-300 -translate-x-1/2" />
                 Commit{commitsByDay[date].length > 1 ? 's' : ''} on {dateToFormat(date, 'MMM dd, yyyy')}
               </h3>
-              <div className="border-l border-element-light-lighter-600 pt-2">
+              <div className="border-l border-element-light-lighter-500 pt-2">
                 <div className="pl-5 pb-4">
                   <div className="flex flex-col rounded-md border border-element-light-lighter-500">
                     {commitsByDay[date].map((commit, index) => (
