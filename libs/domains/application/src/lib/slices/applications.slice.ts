@@ -205,13 +205,19 @@ export const fetchApplicationInstances = createAsyncThunk<
   return response.data.results as Instance[]
 })
 
-export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationId: string }>(
-  'application/commits',
-  async (data) => {
-    const response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
-    return response.data.results as Commit[]
+export const fetchApplicationCommits = createAsyncThunk<
+  Commit[],
+  { applicationId: string; serviceType: ServiceTypeEnum }
+>('application/commits', async (data) => {
+  let response
+  if (isApplication(data.serviceType)) {
+    response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
+  } else {
+    response = await jobMainCallsApi.listJobCommit(data.applicationId)
   }
-)
+
+  return response.data.results as Commit[]
+})
 
 export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],

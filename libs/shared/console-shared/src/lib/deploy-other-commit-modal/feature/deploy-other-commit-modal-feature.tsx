@@ -7,6 +7,7 @@ import {
   postApplicationActionsDeployByCommitId,
   selectApplicationById,
 } from '@qovery/domains/application'
+import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -46,21 +47,23 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
 
   useEffect(() => {
     if (
-      !(application as GitApplicationEntity)?.commits ||
-      (application as GitApplicationEntity)?.commits?.loadingStatus === 'not loaded'
+      application &&
+      (!(application as GitApplicationEntity)?.commits ||
+        (application as GitApplicationEntity)?.commits?.loadingStatus === 'not loaded')
     ) {
-      dispatch(fetchApplicationCommits({ applicationId }))
+      dispatch(fetchApplicationCommits({ applicationId, serviceType: getServiceType(application) }))
     }
   }, [props.applicationId, application, applicationId, dispatch])
 
   const handleDeploy = () => {
-    if (selectedCommitId) {
+    if (selectedCommitId && application) {
       setDeployLoading(true)
       dispatch(
         postApplicationActionsDeployByCommitId({
           applicationId,
           git_commit_id: selectedCommitId,
           environmentId: props.environmentId,
+          serviceType: getServiceType(application),
         })
       ).then(() => {
         closeModal()
