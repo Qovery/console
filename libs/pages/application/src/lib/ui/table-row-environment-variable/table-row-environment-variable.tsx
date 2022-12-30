@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { LinkedServiceTypeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
@@ -7,7 +7,7 @@ import {
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
-import { APPLICATION_URL } from '@qovery/shared/router'
+import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/router'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -116,12 +116,19 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
             </Skeleton>
           </div>
           <div className="text-text-600 text-ssm font-medium px-4">
-            {variable.scope === APIVariableScopeEnum.BUILT_IN && variable.service_type ? (
+            {variable.service_name && variable.service_type && variable.service_id ? (
               <NavLink
                 className="flex gap-2 items-center"
-                to={APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) + '/general'}
+                to={
+                  variable.service_type !== LinkedServiceTypeEnum.DATABASE
+                    ? APPLICATION_URL(organizationId, projectId, environmentId, variable.service_id) +
+                      APPLICATION_GENERAL_URL
+                    : DATABASE_URL(organizationId, projectId, environmentId, variable.service_id) + DATABASE_GENERAL_URL
+                }
               >
-                <Icon name={variable.service_type?.toString() || ''} className="w-4" />
+                {variable.service_type !== LinkedServiceTypeEnum.JOB && (
+                  <Icon name={variable.service_type?.toString() || ''} className="w-4" />
+                )}
                 {variable.service_name}
               </NavLink>
             ) : (
