@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { Application, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
+import { Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
@@ -34,7 +34,7 @@ export interface BreadcrumbProps {
   clusters?: ClusterEntity[]
   projects?: Project[]
   environments?: Environment[]
-  applications?: Application[]
+  applications?: ApplicationEntity[]
   databases?: Database[]
 }
 

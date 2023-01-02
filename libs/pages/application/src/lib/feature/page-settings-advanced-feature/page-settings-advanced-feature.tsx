@@ -1,4 +1,3 @@
-import { ApplicationAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,7 +11,7 @@ import {
   selectApplicationById,
 } from '@qovery/domains/application'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
-import { GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
+import { AdvancedSettings, ApplicationEntity } from '@qovery/shared/interfaces'
 import { objectFlattener } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
@@ -21,13 +20,13 @@ import { initFormValues } from './init-form-values/init-form-values'
 export function PageSettingsAdvancedFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
 
-  const application = useSelector<RootState, GitApplicationEntity | JobApplicationEntity | undefined>(
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) => {
       return a?.id === b?.id && a?.advanced_settings?.loadingStatus === b?.advanced_settings?.loadingStatus
     }
   )
-  const defaultSettings = useSelector<RootState, ApplicationAdvancedSettings | JobAdvancedSettings | undefined>(
+  const defaultSettings = useSelector<RootState, AdvancedSettings | undefined>(
     (state) => getApplicationsState(state).defaultApplicationAdvancedSettings.settings
   )
   const [keys, setKeys] = useState<string[]>([])
@@ -99,9 +98,7 @@ export function PageSettingsAdvancedFeature() {
     // so if field is empty string replace by value found in defaultSettings (because default value is well typed)
     Object.keys(dataFormatted).forEach((key) => {
       if (dataFormatted[key] === '') {
-        dataFormatted[key] = defaultSettings
-          ? defaultSettings[key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)]
-          : ''
+        dataFormatted[key] = defaultSettings ? defaultSettings[key as keyof AdvancedSettings] : ''
       }
     })
 

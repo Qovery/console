@@ -7,7 +7,6 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import {
-  Application,
   ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
@@ -23,7 +22,6 @@ import {
   ContainerMainCallsApi,
   ContainerMetricsApi,
   ContainerRequest,
-  ContainerResponse,
   ContainersApi,
   DeploymentHistoryApplication,
   Instance,
@@ -32,13 +30,13 @@ import {
   JobDeploymentHistoryApi,
   JobMainCallsApi,
   JobRequest,
-  JobResponse,
   JobsApi,
   Link,
   Status,
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
+  AdvancedSettings,
   ApplicationEntity,
   ApplicationsState,
   ContainerApplicationEntity,
@@ -80,7 +78,7 @@ const jobDeploymentsApi = new JobDeploymentHistoryApi()
 const jobConfigurationApi = new JobConfigurationApi()
 
 export const fetchApplications = createAsyncThunk<
-  Application[] | ContainerResponse[],
+  ApplicationEntity[],
   { environmentId: string; withoutStatus?: boolean }
 >('applications/fetch', async (data, thunkApi) => {
   const result = await Promise.all([
@@ -153,7 +151,7 @@ export const editApplication = createAsyncThunk(
       )
     }
 
-    return response.data as Application
+    return response.data as ApplicationEntity
   }
 )
 
@@ -173,7 +171,7 @@ export const createApplication = createAsyncThunk(
       response = await jobsApi.createJob(payload.environmentId, payload.data as JobRequest)
     }
 
-    return response.data as Application | ContainerResponse | JobResponse
+    return response.data as ApplicationEntity
   }
 )
 
@@ -295,7 +293,7 @@ export const editApplicationAdvancedSettings = createAsyncThunk<
 })
 
 export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
-  ApplicationAdvancedSettings | JobAdvancedSettings,
+  AdvancedSettings,
   {
     serviceType: ServiceTypeEnum
   }
@@ -374,7 +372,7 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       // fetch applications
-      .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<Application[]>) => {
+      .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<ApplicationEntity[]>) => {
         applicationsAdapter.upsertMany(state, action.payload)
         action.payload.forEach((app) => {
           state.joinEnvApplication = addOneToManyRelation(app.environment?.id, app.id, { ...state.joinEnvApplication })
@@ -390,7 +388,7 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(editApplication.fulfilled, (state: ApplicationsState, action) => {
-        const update: Update<Application> = {
+        const update: Update<ApplicationEntity> = {
           id: action.meta.arg.applicationId,
           changes: {
             ...action.payload,
@@ -449,7 +447,7 @@ export const applicationsSlice = createSlice({
             },
           })
         )
-        applicationsAdapter.updateMany(state, update as Update<Application>[])
+        applicationsAdapter.updateMany(state, update as Update<ApplicationEntity>[])
         state.statusLoadingStatus = 'loaded'
       })
       .addCase(fetchApplicationsStatus.rejected, (state: ApplicationsState, action) => {
@@ -568,8 +566,7 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'loading',
-              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
-                ?.current_settings,
+              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
             },
           },
         }
@@ -582,7 +579,7 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'loaded',
-              current_settings: action.payload as ApplicationAdvancedSettings,
+              current_settings: action.payload,
             },
           },
         }
@@ -603,11 +600,11 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'error',
-              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
-                ?.current_settings,
+              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
             },
           },
         }
+
         toast(
           ToastEnum.ERROR,
           `Your advanced settings have not been updated. Something must be wrong with the values provided`
@@ -663,7 +660,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       .addCase(fetchApplicationDeployments.fulfilled, (state: ApplicationsState, action) => {
         const update = {
@@ -675,7 +672,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       .addCase(fetchApplicationDeployments.rejected, (state: ApplicationsState, action) => {
         const update = {
@@ -686,7 +683,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       // get application status
       .addCase(fetchApplicationStatus.pending, (state: ApplicationsState, action) => {
@@ -698,7 +695,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       .addCase(fetchApplicationStatus.fulfilled, (state: ApplicationsState, action) => {
         const update = {
@@ -707,7 +704,7 @@ export const applicationsSlice = createSlice({
             status: action.payload,
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
         state.statusLoadingStatus = 'loaded'
       })
       .addCase(fetchApplicationStatus.rejected, (state: ApplicationsState, action) => {
@@ -741,7 +738,7 @@ export const selectApplicationsEntities = createSelector(getApplicationsState, s
 
 export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): ApplicationEntity[] => {
   const appState = getApplicationsState(state)
-  return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApplication[environmentId])
+  return getEntitiesByIds<ApplicationEntity>(appState.entities, appState?.joinEnvApplication[environmentId])
 }
 
 export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>

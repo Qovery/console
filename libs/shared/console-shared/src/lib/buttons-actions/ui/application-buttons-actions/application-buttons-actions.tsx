@@ -177,7 +177,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         topItems.push(stopButton)
       }
 
-      if (isApplication(application) || (isJob(application) && isGitJob(application as JobApplicationEntity))) {
+      if (isApplication(application) || (isJob(application) && isGitJob(application))) {
         const deployAnotherButton = {
           name: 'Deploy other version',
           contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
@@ -193,7 +193,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         bottomItems.push(deployAnotherButton)
       }
 
-      if (isContainer(application) || isContainerJob(application as JobApplicationEntity)) {
+      if (isContainer(application) || isContainerJob(application)) {
         const deployAnotherButton = {
           name: 'Deploy other version',
           contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,

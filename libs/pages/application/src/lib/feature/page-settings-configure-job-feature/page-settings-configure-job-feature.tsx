@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
 import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { ApplicationEntity, JobApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
+import { ApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
@@ -13,12 +13,12 @@ export function PageSettingsConfigureJobFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
   const methods = useForm<JobConfigureData>({ mode: 'onChange' })
 
-  const application: JobApplicationEntity | undefined = useSelector<RootState, ApplicationEntity | undefined>(
+  const application: ApplicationEntity | undefined = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) => {
       return JSON.stringify(a?.id) === JSON.stringify(b?.id)
     }
-  ) as JobApplicationEntity | undefined
+  ) as ApplicationEntity | undefined
 
   const [loading, setLoading] = useState(false)
 

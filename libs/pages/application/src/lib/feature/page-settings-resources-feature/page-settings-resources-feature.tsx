@@ -6,12 +6,7 @@ import { editApplication, postApplicationActionsRestart, selectApplicationById }
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { getServiceType, isJob } from '@qovery/shared/enums'
-import {
-  ApplicationEntity,
-  ClusterEntity,
-  EnvironmentEntity,
-  GitContainerApplicationEntity,
-} from '@qovery/shared/interfaces'
+import { ApplicationEntity, ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
@@ -21,7 +16,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
 
   cloneApplication.memory = Number(data['memory'])
   cloneApplication.cpu = convertCpuToVCpu(data['cpu'][0], true)
-  if (!isJob(application) && 'min_running_instances' in cloneApplication) {
+  if (!isJob(application)) {
     cloneApplication.min_running_instances = data['instances'][0]
     cloneApplication.max_running_instances = data['instances'][1]
   }
@@ -40,10 +35,8 @@ export function PageSettingsResourcesFeature() {
     (a, b) =>
       a?.memory === b?.memory &&
       a?.cpu === b?.cpu &&
-      (a as GitContainerApplicationEntity)?.min_running_instances ===
-        (b as GitContainerApplicationEntity)?.min_running_instances &&
-      (a as GitContainerApplicationEntity)?.max_running_instances ===
-        (b as GitContainerApplicationEntity)?.max_running_instances &&
+      a?.min_running_instances === b?.min_running_instances &&
+      a?.max_running_instances === b?.max_running_instances &&
       JSON.stringify(a?.instances) === JSON.stringify(b?.instances)
   )
 
@@ -59,10 +52,7 @@ export function PageSettingsResourcesFeature() {
     defaultValues: {
       memory: application?.memory,
       cpu: [convertCpuToVCpu(application?.cpu)],
-      instances: [
-        (application as GitContainerApplicationEntity)?.min_running_instances || 1,
-        (application as GitContainerApplicationEntity)?.max_running_instances || 1,
-      ],
+      instances: [application?.min_running_instances || 1, application?.max_running_instances || 1],
     },
   })
 
@@ -70,10 +60,7 @@ export function PageSettingsResourcesFeature() {
     methods.reset({
       memory: application?.memory,
       cpu: [convertCpuToVCpu(application?.cpu)],
-      instances: [
-        (application as GitContainerApplicationEntity)?.min_running_instances || 1,
-        (application as GitContainerApplicationEntity)?.max_running_instances || 1,
-      ],
+      instances: [application?.min_running_instances || 1, application?.max_running_instances || 1],
     })
   }, [methods, application?.memory, application?.cpu, application])
 

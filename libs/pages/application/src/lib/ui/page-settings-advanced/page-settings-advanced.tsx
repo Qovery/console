@@ -1,7 +1,7 @@
 import { ApplicationAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { AdvancedSettings, LoadingStatus } from '@qovery/shared/interfaces'
 import {
   CopyToClipboard,
   HelpSection,
@@ -16,8 +16,8 @@ import {
 
 export interface PageSettingsAdvancedProps {
   keys?: string[]
-  defaultAdvancedSettings?: ApplicationAdvancedSettings | JobAdvancedSettings
-  advancedSettings?: ApplicationAdvancedSettings | JobAdvancedSettings
+  defaultAdvancedSettings?: AdvancedSettings
+  advancedSettings?: AdvancedSettings
   loading: LoadingStatus
   onSubmit?: () => void
   discardChanges: () => void

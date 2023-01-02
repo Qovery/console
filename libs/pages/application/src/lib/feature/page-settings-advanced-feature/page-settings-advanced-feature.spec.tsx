@@ -4,7 +4,7 @@ import { JobAdvancedSettings } from 'qovery-typescript-axios'
 import React from 'react'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock } from '@qovery/domains/application'
-import { GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
+import { JobApplicationEntity } from '@qovery/shared/interfaces'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 
@@ -61,7 +61,7 @@ describe('PageSettingsAdvancedFeature', () => {
   let promise: Promise
 
   beforeEach(() => {
-    ;(mockApplication as JobApplicationEntity).advanced_settings = {
+    mockApplication.advanced_settings = {
       loadingStatus: 'not loaded',
       current_settings: mockAdvancedSettings,
     }
@@ -96,7 +96,7 @@ describe('PageSettingsAdvancedFeature', () => {
   })
 
   it('should dispatch fetchApplicationAdvancedSettings if advanced_settings does not exist', async () => {
-    ;(mockApplication as GitApplicationEntity).advanced_settings = undefined
+    mockApplication.advanced_settings = undefined
     const fetchApplicationAdvancedSettingsSpy: SpyInstance = jest.spyOn(
       storeApplication,
       'fetchApplicationAdvancedSettings'
@@ -111,12 +111,12 @@ describe('PageSettingsAdvancedFeature', () => {
 
   // I think the useForm hook also use useState, this is why the first 4th call are to ignored. https://gist.github.com/mauricedb/eb2bae5592e3ddc64fa965cde4afe7bc
   it('should set the keys if application and advanced_settings are defined', async () => {
-    ;(mockApplication as GitApplicationEntity).advanced_settings!.loadingStatus = 'loaded'
+    mockApplication.advanced_settings!.loadingStatus = 'loaded'
     jest.spyOn(React, 'useState').mockImplementation(useStateMock)
     render(<PageSettingsAdvancedFeature />)
     expect(setState).toHaveBeenNthCalledWith(
       10,
-      Object.keys((mockApplication as GitApplicationEntity).advanced_settings?.current_settings || {}).sort()
+      Object.keys(mockApplication.advanced_settings?.current_settings || {}).sort()
     )
     await act(async () => {
       await promise
@@ -124,13 +124,13 @@ describe('PageSettingsAdvancedFeature', () => {
   })
 
   it('should dispatch editApplicationAdvancedSettings if form is submitted', async () => {
-    ;(mockApplication as GitApplicationEntity).advanced_settings!.loadingStatus = 'loaded'
+    mockApplication.advanced_settings!.loadingStatus = 'loaded'
     const editApplicationAdvancedSettingsSpy: SpyInstance = jest.spyOn(
       storeApplication,
       'editApplicationAdvancedSettings'
     )
 
-    const { getByLabelText, getByTestId, baseElement, debug } = render(<PageSettingsAdvancedFeature />)
+    const { getByLabelText, getByTestId } = render(<PageSettingsAdvancedFeature />)
 
     await act(() => {
       const input = getByLabelText('cronjob.success_jobs_history_limit')
@@ -149,9 +149,7 @@ describe('PageSettingsAdvancedFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].applicationId).toBe(
-      (mockApplication as GitApplicationEntity).id
-    )
+    expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
     expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].settings).toStrictEqual({
       'liveness_probe.http_get.path': '/',
       'cronjob.success_jobs_history_limit': 63,
@@ -164,7 +162,7 @@ describe('PageSettingsAdvancedFeature', () => {
   })
 
   it('should init the form', async () => {
-    ;(mockApplication as GitApplicationEntity).advanced_settings!.loadingStatus = 'loaded'
+    mockApplication.advanced_settings!.loadingStatus = 'loaded'
     const spy = jest.spyOn(InitFormValues, 'initFormValues')
     render(<PageSettingsAdvancedFeature />)
     expect(spy).toHaveBeenCalled()
