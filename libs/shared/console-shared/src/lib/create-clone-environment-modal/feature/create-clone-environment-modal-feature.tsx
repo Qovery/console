@@ -7,9 +7,11 @@ import {
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { cloneEnvironment, createEnvironment } from '@qovery/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import CreateCloneEnvironmentModal from '../ui/create-clone-environment-modal'
@@ -43,6 +45,8 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const navigate = useNavigate()
+
   const onSubmit = methods.handleSubmit(async (data) => {
     const dataFormatted: { name: string; cluster?: string; mode?: string } = {
       name: data.name,
@@ -63,7 +67,8 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
       }
       dispatch(cloneEnvironment({ environmentId: props.environmentToClone.id, cloneRequest }))
         .unwrap()
-        .then(() => {
+        .then((result) => {
+          navigate(SERVICES_URL(props.organizationId, props.projectId, result.id) + SERVICES_GENERAL_URL)
           setLoading(false)
           props.onClose()
         })
@@ -79,7 +84,8 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
       }
       dispatch(createEnvironment({ projectId: props.projectId, environmentRequest }))
         .unwrap()
-        .then(() => {
+        .then((result) => {
+          navigate(SERVICES_URL(props.organizationId, props.projectId, result.id) + SERVICES_GENERAL_URL)
           setLoading(false)
           props.onClose()
         })
