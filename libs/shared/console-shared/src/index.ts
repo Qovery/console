@@ -1,3 +1,4 @@
+export * from './lib/invite-details/feature/invite-details-feature'
 export * from './lib/job-configure-settings/ui/job-configure-settings'
 export * from './lib/job-general-settings/ui/job-general-settings'
 export * from './lib/entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'

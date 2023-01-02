@@ -13,7 +13,7 @@ import { useAuth } from '@qovery/shared/auth'
 import { UserInterface } from '@qovery/shared/interfaces'
 import { LOGIN_URL, LOGOUT_URL, ProtectedRoute } from '@qovery/shared/router'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { useAuthInterceptor, useDocumentTitle } from '@qovery/shared/utils'
+import { useAuthInterceptor, useDocumentTitle, useInviteMember } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
 import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
@@ -21,6 +21,7 @@ import { ROUTER } from './router/main.router'
 export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
+  useInviteMember()
 
   const gtmParams = { id: environment.gtm }
 
