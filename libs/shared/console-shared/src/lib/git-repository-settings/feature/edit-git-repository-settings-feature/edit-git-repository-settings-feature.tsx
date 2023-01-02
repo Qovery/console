@@ -14,7 +14,7 @@ import {
   selectRepositoriesByProvider,
 } from '@qovery/domains/organization'
 import { isJob } from '@qovery/shared/enums'
-import { GitApplicationEntity, JobApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -25,19 +25,15 @@ export function EditGitRepositorySettingsFeature() {
   const { organizationId = '', applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
-  const application = useSelector<RootState, GitApplicationEntity | JobApplicationEntity | undefined>(
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) =>
-      JSON.stringify((a as GitApplicationEntity)?.git_repository) ===
-        JSON.stringify((b as GitApplicationEntity)?.git_repository) ||
-      JSON.stringify((a as JobApplicationEntity)?.source?.docker?.git_repository) ===
-        JSON.stringify((b as JobApplicationEntity)?.source?.docker?.git_repository)
+      JSON.stringify(a?.git_repository) === JSON.stringify(b?.git_repository) ||
+      JSON.stringify(a?.source?.docker?.git_repository) === JSON.stringify(b?.source?.docker?.git_repository)
   )
 
   const getGitRepositoryFromApplication = useCallback(() => {
-    return isJob(application)
-      ? (application as JobApplicationEntity).source?.docker?.git_repository
-      : (application as GitApplicationEntity)?.git_repository
+    return isJob(application) ? application?.source?.docker?.git_repository : application?.git_repository
   }, [application])
 
   const { setValue, watch, getValues } = useFormContext<{

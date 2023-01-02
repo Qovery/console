@@ -6,19 +6,13 @@ import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum, getServiceType, isApplication, isContainer, isJob } from '@qovery/shared/enums'
-import {
-  ApplicationEntity,
-  ContainerApplicationEntity,
-  GitApplicationEntity,
-  JobApplicationEntity,
-  OrganizationEntity,
-} from '@qovery/shared/interfaces'
+import { ApplicationEntity, OrganizationEntity } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/toast'
 import { buildGitRepoUrl } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleGitApplicationSubmit = (data: FieldValues, application: GitApplicationEntity) => {
+export const handleGitApplicationSubmit = (data: FieldValues, application: ApplicationEntity) => {
   const cloneApplication = Object.assign({}, application)
   cloneApplication.name = data['name']
   cloneApplication.description = data['description']
@@ -59,8 +53,8 @@ export const handleContainerSubmit = (data: FieldValues, application: Applicatio
   }
 }
 
-export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity): JobApplicationEntity => {
-  if ((application as JobApplicationEntity).source?.docker) {
+export const handleJobSubmit = (data: FieldValues, application: ApplicationEntity): ApplicationEntity => {
+  if (application.source?.docker) {
     const git_repository = {
       url: buildGitRepoUrl(data['provider'], data['repository']),
       branch: data['branch'],
@@ -68,7 +62,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     }
 
     return {
-      ...(application as JobApplicationEntity),
+      ...application,
       name: data['name'],
       description: data['description'],
       source: {
@@ -80,7 +74,7 @@ export const handleJobSubmit = (data: FieldValues, application: ApplicationEntit
     }
   } else {
     return {
-      ...(application as JobApplicationEntity),
+      ...application,
       name: data['name'],
       description: data['description'],
       source: {
@@ -102,9 +96,9 @@ export function PageSettingsGeneralFeature() {
     (a, b) =>
       a?.name === b?.name &&
       a?.description === b?.description &&
-      (a as GitApplicationEntity)?.build_mode === (b as GitApplicationEntity)?.build_mode &&
-      (a as GitApplicationEntity)?.buildpack_language === (b as GitApplicationEntity)?.buildpack_language &&
-      (a as GitApplicationEntity)?.dockerfile_path === (b as GitApplicationEntity)?.dockerfile_path
+      a?.build_mode === b?.build_mode &&
+      a?.buildpack_language === b?.buildpack_language &&
+      a?.dockerfile_path === b?.dockerfile_path
   )
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
@@ -157,18 +151,11 @@ export function PageSettingsGeneralFeature() {
 
     if (isApplication(application)) {
       if (watchBuildMode === BuildModeEnum.DOCKER) {
-        methods.setValue(
-          'dockerfile_path',
-          (application as GitApplicationEntity).dockerfile_path
-            ? (application as GitApplicationEntity).dockerfile_path
-            : 'Dockerfile'
-        )
+        methods.setValue('dockerfile_path', application.dockerfile_path ? application.dockerfile_path : 'Dockerfile')
       } else {
         methods.setValue(
           'buildpack_language',
-          (application as GitApplicationEntity).buildpack_language
-            ? (application as GitApplicationEntity).buildpack_language
-            : BuildPackLanguageEnum.PYTHON
+          application.buildpack_language ? application.buildpack_language : BuildPackLanguageEnum.PYTHON
         )
       }
     }
@@ -180,32 +167,22 @@ export function PageSettingsGeneralFeature() {
 
     if (application) {
       if (isApplication(application)) {
-        methods.setValue('build_mode', (application as GitApplicationEntity).build_mode)
+        methods.setValue('build_mode', application.build_mode)
         methods.setValue(
           'buildpack_language',
-          (application as GitApplicationEntity).buildpack_language
-            ? (application as GitApplicationEntity).buildpack_language
-            : BuildPackLanguageEnum.PYTHON
+          application.buildpack_language ? application.buildpack_language : BuildPackLanguageEnum.PYTHON
         )
-        methods.setValue(
-          'dockerfile_path',
-          (application as GitApplicationEntity).dockerfile_path
-            ? (application as GitApplicationEntity).dockerfile_path
-            : 'Dockerfile'
-        )
+        methods.setValue('dockerfile_path', application.dockerfile_path ? application.dockerfile_path : 'Dockerfile')
       }
 
       if (isContainer(application)) {
-        methods.setValue('registry', (application as ContainerApplicationEntity).registry.id)
-        methods.setValue('image_name', (application as ContainerApplicationEntity).image_name)
-        methods.setValue('image_tag', (application as ContainerApplicationEntity).tag)
-        methods.setValue('image_entry_point', (application as ContainerApplicationEntity).entrypoint)
+        methods.setValue('registry', application.registry?.id)
+        methods.setValue('image_name', application.image_name)
+        methods.setValue('image_tag', application.tag)
+        methods.setValue('image_entry_point', application.entrypoint)
         methods.setValue(
           'cmd_arguments',
-          (application as ContainerApplicationEntity).arguments &&
-            (application as ContainerApplicationEntity).arguments?.length
-            ? JSON.stringify((application as ContainerApplicationEntity).arguments)
-            : ''
+          application.arguments && application.arguments?.length ? JSON.stringify(application.arguments) : ''
         )
         methods.unregister('buildpack_language')
         methods.unregister('dockerfile_path')
@@ -217,22 +194,20 @@ export function PageSettingsGeneralFeature() {
     }
 
     if (isJob(application)) {
-      methods.setValue('description', (application as JobApplicationEntity).description)
+      methods.setValue('description', application?.description)
 
-      const serviceType = (application as JobApplicationEntity).source?.docker
-        ? ServiceTypeEnum.APPLICATION
-        : ServiceTypeEnum.CONTAINER
+      const serviceType = application?.source?.docker ? ServiceTypeEnum.APPLICATION : ServiceTypeEnum.CONTAINER
       methods.setValue('serviceType', serviceType)
 
       if (serviceType === ServiceTypeEnum.CONTAINER) {
         dispatch(fetchOrganizationContainerRegistries({ organizationId }))
 
-        methods.setValue('registry', (application as JobApplicationEntity).source?.image?.registry_id)
-        methods.setValue('image_name', (application as JobApplicationEntity).source?.image?.image_name)
-        methods.setValue('image_tag', (application as JobApplicationEntity).source?.image?.tag)
+        methods.setValue('registry', application?.source?.image?.registry_id)
+        methods.setValue('image_name', application?.source?.image?.image_name)
+        methods.setValue('image_tag', application?.source?.image?.tag)
       } else {
         methods.setValue('build_mode', BuildModeEnum.DOCKER)
-        methods.setValue('dockerfile_path', (application as JobApplicationEntity).source?.docker?.dockerfile_path)
+        methods.setValue('dockerfile_path', application?.source?.docker?.dockerfile_path)
       }
     }
   }, [methods, application, dispatch, organizationId])

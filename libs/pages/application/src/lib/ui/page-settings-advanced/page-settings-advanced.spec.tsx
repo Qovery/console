@@ -4,23 +4,23 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import PageSettingsAdvanced, { PageSettingsAdvancedProps } from './page-settings-advanced'
 
 const keys = [
-  'build.timeout_max_sec',
-  'deployment.custom_domain_check_enabled',
   'liveness_probe.http_get.path',
-  'network.ingress.proxy_body_size_mb',
+  'cronjob.success_jobs_history_limit',
+  'test_empty',
+  'job.delete_ttl_seconds_after_finished',
 ]
-const defaultValues: { [key: string]: string } = {
-  'build.timeout_max_sec': '60',
-  'deployment.custom_domain_check_enabled': 'true',
+const defaultValues: { [key: string]: string | number | null } = {
   'liveness_probe.http_get.path': '/',
-  'network.ingress.proxy_body_size_mb': 'sd',
+  'cronjob.success_jobs_history_limit': 3,
+  test_empty: '',
+  'job.delete_ttl_seconds_after_finished': 3,
 }
 
-const defaultAdvancedSetting: { [key: string]: string } = {
-  'build.timeout_max_sec': '62',
-  'deployment.custom_domain_check_enabled': 'true',
+const defaultAdvancedSetting: { [key: string]: string | number | null } = {
   'liveness_probe.http_get.path': '/',
-  'network.ingress.proxy_body_size_mb': '',
+  'cronjob.success_jobs_history_limit': 1,
+  test_empty: '',
+  'job.delete_ttl_seconds_after_finished': null,
 }
 
 const props: PageSettingsAdvancedProps = {
@@ -53,8 +53,8 @@ describe('PageSettingsAdvanced', () => {
     )
 
     await act(() => {
-      const input = getByLabelText('build.timeout_max_sec')
-      fireEvent.input(input, { target: { value: '9999' } })
+      const input = getByLabelText('liveness_probe.http_get.path')
+      fireEvent.input(input, { target: { value: 'hello' } })
     })
 
     expect(getByTestId('sticky-action-form-toaster')).toHaveClass('visible')
@@ -66,7 +66,7 @@ describe('PageSettingsAdvanced', () => {
     )
 
     await act(() => {
-      const input = getByLabelText('build.timeout_max_sec')
+      const input = getByLabelText('liveness_probe.http_get.path')
       fireEvent.input(input, { target: { value: '79' } })
       fireEvent.input(input, { target: { value: '' } })
     })
@@ -80,7 +80,7 @@ describe('PageSettingsAdvanced', () => {
     )
 
     await act(() => {
-      const input = getByLabelText('network.ingress.proxy_body_size_mb')
+      const input = getByLabelText('test_empty')
       fireEvent.input(input, { target: { value: '79' } })
       fireEvent.input(input, { target: { value: '' } })
     })

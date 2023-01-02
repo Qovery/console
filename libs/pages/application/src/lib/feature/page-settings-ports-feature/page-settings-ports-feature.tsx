@@ -8,13 +8,13 @@ import {
   selectApplicationById,
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
-import { GitContainerApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
-export const deletePort = (application?: GitContainerApplicationEntity, portId?: string) => {
+export const deletePort = (application?: ApplicationEntity, portId?: string) => {
   const cloneApplication = Object.assign({}, application)
   cloneApplication.ports = cloneApplication.ports?.filter((port) => port.id !== portId)
   return cloneApplication
@@ -25,7 +25,7 @@ export function PageSettingsPortsFeature() {
 
   const { applicationId = '', environmentId = '' } = useParams()
 
-  const application = useSelector<RootState, GitContainerApplicationEntity | undefined>(
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) => JSON.stringify(a?.ports) === JSON.stringify(b?.ports)
   )

@@ -12,8 +12,8 @@ import {
   selectApplicationById,
 } from '@qovery/domains/application'
 import { selectEnvironmentById } from '@qovery/domains/environment'
-import { getServiceType, isApplication } from '@qovery/shared/enums'
-import { ApplicationEntity, GitApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { getServiceType, isApplication, isGitJob } from '@qovery/shared/enums'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_APPLICATION } from './router/router'
@@ -41,8 +41,8 @@ export function PageApplication() {
         dispatch(fetchApplicationLinks({ applicationId, serviceType: getServiceType(application) }))
       if (application.instances?.loadingStatus !== 'loaded')
         dispatch(fetchApplicationInstances({ applicationId, serviceType: getServiceType(application) }))
-      if ((application as GitApplicationEntity)?.commits?.loadingStatus !== 'loaded' && isApplication(application))
-        dispatch(fetchApplicationCommits({ applicationId }))
+      if (application?.commits?.loadingStatus !== 'loaded' && (isApplication(application) || isGitJob(application)))
+        dispatch(fetchApplicationCommits({ applicationId, serviceType: getServiceType(application) }))
     }
     const fetchApplicationStatusByInterval = setInterval(
       () =>

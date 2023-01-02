@@ -7,7 +7,8 @@ import {
   postApplicationActionsDeployByCommitId,
   selectApplicationById,
 } from '@qovery/domains/application'
-import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import { getServiceType } from '@qovery/shared/enums'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import DeployOtherCommitModal from '../ui/deploy-other-commit-modal'
@@ -35,32 +36,27 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
   )
-  const isLoading = (application as GitApplicationEntity)?.commits?.loadingStatus
+  const isLoading = application?.commits?.loadingStatus
 
   const buttonDisabled = () => {
-    return (
-      selectedCommitId === null ||
-      selectedCommitId === (application as GitApplicationEntity)?.git_repository?.deployed_commit_id
-    )
+    return selectedCommitId === null || selectedCommitId === application?.git_repository?.deployed_commit_id
   }
 
   useEffect(() => {
-    if (
-      !(application as GitApplicationEntity)?.commits ||
-      (application as GitApplicationEntity)?.commits?.loadingStatus === 'not loaded'
-    ) {
-      dispatch(fetchApplicationCommits({ applicationId }))
+    if (application && (!application?.commits || application?.commits?.loadingStatus === 'not loaded')) {
+      dispatch(fetchApplicationCommits({ applicationId, serviceType: getServiceType(application) }))
     }
   }, [props.applicationId, application, applicationId, dispatch])
 
   const handleDeploy = () => {
-    if (selectedCommitId) {
+    if (selectedCommitId && application) {
       setDeployLoading(true)
       dispatch(
         postApplicationActionsDeployByCommitId({
           applicationId,
           git_commit_id: selectedCommitId,
           environmentId: props.environmentId,
+          serviceType: getServiceType(application),
         })
       ).then(() => {
         closeModal()
@@ -96,11 +92,12 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
       isLoading={isLoading === 'loading'}
       selectedCommitId={selectedCommitId}
       setSelectedCommitId={setSelectedCommitId}
-      currentCommitId={(application as GitApplicationEntity)?.git_repository?.deployed_commit_id}
+      currentCommitId={application?.git_repository?.deployed_commit_id}
       buttonDisabled={buttonDisabled()}
       handleDeploy={handleDeploy}
       deployLoading={deployLoading}
       onSearch={onSearch}
+      serviceName={application?.name}
     />
   )
 }

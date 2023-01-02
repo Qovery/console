@@ -3,20 +3,20 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
-import { GitContainerApplicationEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
 
 export interface StorageModalFeatureProps {
   storage?: ServiceStorageStorage
-  application?: GitContainerApplicationEntity
+  application?: ApplicationEntity
   applicationId: string
   onClose: () => void
 }
 
 export const handleSubmit = (
   data: { size: number; type: StorageTypeEnum; mount_point: string },
-  application: GitContainerApplicationEntity,
+  application: ApplicationEntity,
   storage?: ServiceStorageStorage
 ) => {
   const app = { ...application }

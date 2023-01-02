@@ -1,7 +1,6 @@
 import { DeploymentHistoryApplication, DeploymentHistoryDatabase, StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ContainerApplicationEntity, DeploymentService } from '@qovery/shared/interfaces'
 import {

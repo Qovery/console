@@ -4,22 +4,18 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editApplication, postApplicationActionsRestart } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
-import { GitContainerApplicationEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
   port?: ServicePort
-  application?: GitContainerApplicationEntity
+  application?: ApplicationEntity
   onClose: () => void
 }
 
-export const handleSubmit = (
-  data: FieldValues,
-  application: GitContainerApplicationEntity,
-  currentPort?: ServicePort
-) => {
+export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePort) => {
   const cloneApplication = Object.assign({}, application)
 
   const ports: ServicePort[] | [] = cloneApplication.ports || []

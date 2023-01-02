@@ -1,24 +1,24 @@
 import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { ApplicationAdvancedSettings } from 'qovery-typescript-axios'
+import { JobAdvancedSettings } from 'qovery-typescript-axios'
 import React from 'react'
 import * as storeApplication from '@qovery/domains/application'
-import { applicationFactoryMock } from '@qovery/domains/application'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { cronjobFactoryMock } from '@qovery/domains/application'
+import { JobApplicationEntity } from '@qovery/shared/interfaces'
+import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
-import * as Utils from './utils'
 
 import SpyInstance = jest.SpyInstance
 
-const mockApplication: ApplicationEntity = applicationFactoryMock(1)[0]
-const mockAdvancedSettings: Partial<ApplicationAdvancedSettings> = {
-  'build.timeout_max_sec': 60,
-  'deployment.custom_domain_check_enabled': true,
+const mockApplication: JobApplicationEntity = cronjobFactoryMock(1)[0]
+const mockAdvancedSettings: Partial<JobAdvancedSettings> = {
   'liveness_probe.http_get.path': '/',
+  'cronjob.success_jobs_history_limit': 1,
+  'job.delete_ttl_seconds_after_finished': null,
 }
 
-jest.mock('./utils', () => ({
-  ...jest.requireActual('./utils'),
+jest.mock('./init-form-values/init-form-values', () => ({
+  ...jest.requireActual('./init-form-values/init-form-values'),
 }))
 
 jest.mock('react-router-dom', () => ({
@@ -38,7 +38,10 @@ jest.mock('@qovery/domains/application', () => {
     fetchApplicationAdvancedSettings: jest.fn(),
     fetchDefaultApplicationAdvancedSettings: jest.fn(),
     getApplicationsState: () => ({
-      defaultApplicationAdvancedSettings: mockAdvancedSettings,
+      defaultApplicationAdvancedSettings: {
+        loadingStatus: 'loaded',
+        settings: mockAdvancedSettings,
+      },
       loadingStatus: 'loaded',
       ids: [mockApplication.id],
       entities: {
@@ -112,7 +115,7 @@ describe('PageSettingsAdvancedFeature', () => {
     jest.spyOn(React, 'useState').mockImplementation(useStateMock)
     render(<PageSettingsAdvancedFeature />)
     expect(setState).toHaveBeenNthCalledWith(
-      9,
+      10,
       Object.keys(mockApplication.advanced_settings?.current_settings || {}).sort()
     )
     await act(async () => {
@@ -130,9 +133,16 @@ describe('PageSettingsAdvancedFeature', () => {
     const { getByLabelText, getByTestId } = render(<PageSettingsAdvancedFeature />)
 
     await act(() => {
-      const input = getByLabelText('build.timeout_max_sec')
+      const input = getByLabelText('cronjob.success_jobs_history_limit')
       fireEvent.input(input, { target: { value: '63' } })
+
+      fireEvent.input(getByLabelText('job.delete_ttl_seconds_after_finished'), { target: { value: '999999' } })
     })
+
+    await act(() => {
+      fireEvent.input(getByLabelText('job.delete_ttl_seconds_after_finished'), { target: { value: null } })
+    })
+
     expect(getByTestId('submit-button')).not.toBeDisabled()
 
     await act(() => {
@@ -141,9 +151,9 @@ describe('PageSettingsAdvancedFeature', () => {
 
     expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
     expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].settings).toStrictEqual({
-      'build.timeout_max_sec': 63,
-      'deployment.custom_domain_check_enabled': true,
       'liveness_probe.http_get.path': '/',
+      'cronjob.success_jobs_history_limit': 63,
+      'job.delete_ttl_seconds_after_finished': null, // getting null here is pretty important to fix an inconsitency with backend between numbers and string
     })
 
     await act(async () => {
@@ -153,7 +163,7 @@ describe('PageSettingsAdvancedFeature', () => {
 
   it('should init the form', async () => {
     mockApplication.advanced_settings!.loadingStatus = 'loaded'
-    const spy = jest.spyOn(Utils, 'initFormValues')
+    const spy = jest.spyOn(InitFormValues, 'initFormValues')
     render(<PageSettingsAdvancedFeature />)
     expect(spy).toHaveBeenCalled()
 

@@ -7,7 +7,6 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import {
-  Application,
   ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
   ApplicationDeploymentHistoryApi,
@@ -23,20 +22,21 @@ import {
   ContainerMainCallsApi,
   ContainerMetricsApi,
   ContainerRequest,
-  ContainerResponse,
   ContainersApi,
   DeploymentHistoryApplication,
   Instance,
+  JobAdvancedSettings,
+  JobConfigurationApi,
   JobDeploymentHistoryApi,
   JobMainCallsApi,
   JobRequest,
-  JobResponse,
   JobsApi,
   Link,
   Status,
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import {
+  AdvancedSettings,
   ApplicationEntity,
   ApplicationsState,
   ContainerApplicationEntity,
@@ -75,9 +75,10 @@ const containerConfigurationApi = new ContainerConfigurationApi()
 const jobsApi = new JobsApi()
 const jobMainCallsApi = new JobMainCallsApi()
 const jobDeploymentsApi = new JobDeploymentHistoryApi()
+const jobConfigurationApi = new JobConfigurationApi()
 
 export const fetchApplications = createAsyncThunk<
-  Application[] | ContainerResponse[],
+  ApplicationEntity[],
   { environmentId: string; withoutStatus?: boolean }
 >('applications/fetch', async (data, thunkApi) => {
   const result = await Promise.all([
@@ -140,14 +141,17 @@ export const editApplication = createAsyncThunk(
       const cloneJob = Object.assign({}, refactoJobPayload(payload.data as Partial<JobApplicationEntity>))
       response = await jobMainCallsApi.editJob(payload.applicationId, cloneJob as JobRequest)
     } else {
-      const cloneApplication = Object.assign({}, refactoGitApplicationPayload(payload.data))
+      const cloneApplication = Object.assign(
+        {},
+        refactoGitApplicationPayload(payload.data as Partial<GitApplicationEntity>)
+      )
       response = await applicationMainCallsApi.editApplication(
         payload.applicationId,
         cloneApplication as ApplicationEditRequest
       )
     }
 
-    return response.data as Application
+    return response.data as ApplicationEntity
   }
 )
 
@@ -167,7 +171,7 @@ export const createApplication = createAsyncThunk(
       response = await jobsApi.createJob(payload.environmentId, payload.data as JobRequest)
     }
 
-    return response.data as Application | ContainerResponse | JobResponse
+    return response.data as ApplicationEntity
   }
 )
 
@@ -199,13 +203,19 @@ export const fetchApplicationInstances = createAsyncThunk<
   return response.data.results as Instance[]
 })
 
-export const fetchApplicationCommits = createAsyncThunk<Commit[], { applicationId: string }>(
-  'application/commits',
-  async (data) => {
-    const response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
-    return response.data.results as Commit[]
+export const fetchApplicationCommits = createAsyncThunk<
+  Commit[],
+  { applicationId: string; serviceType: ServiceTypeEnum }
+>('application/commits', async (data) => {
+  let response
+  if (isApplication(data.serviceType)) {
+    response = await applicationMainCallsApi.listApplicationCommit(data.applicationId)
+  } else {
+    response = await jobMainCallsApi.listJobCommit(data.applicationId)
   }
-)
+
+  return response.data.results as Commit[]
+})
 
 export const fetchApplicationDeployments = createAsyncThunk<
   DeploymentHistoryApplication[],
@@ -245,6 +255,8 @@ export const fetchApplicationAdvancedSettings = createAsyncThunk<
   let response
   if (isContainer(data.serviceType)) {
     response = await containerConfigurationApi.getContainerAdvancedSettings(data.applicationId)
+  } else if (isJob(data.serviceType)) {
+    response = await jobConfigurationApi.getJobAdvancedSettings(data.applicationId)
   } else {
     response = await applicationConfigurationApi.getAdvancedSettings(data.applicationId)
   }
@@ -252,10 +264,10 @@ export const fetchApplicationAdvancedSettings = createAsyncThunk<
 })
 
 export const editApplicationAdvancedSettings = createAsyncThunk<
-  ApplicationAdvancedSettings,
+  ApplicationAdvancedSettings | JobAdvancedSettings,
   {
     applicationId: string
-    settings: ApplicationAdvancedSettings | ContainerAdvancedSettings
+    settings: ApplicationAdvancedSettings | ContainerAdvancedSettings | JobAdvancedSettings
     serviceType: ServiceTypeEnum
     toasterCallback: () => void
   }
@@ -266,6 +278,11 @@ export const editApplicationAdvancedSettings = createAsyncThunk<
       data.applicationId,
       data.settings as ContainerAdvancedSettings[]
     )
+  } else if (isJob(data.serviceType)) {
+    response = await jobConfigurationApi.editJobAdvancedSettings(
+      data.applicationId,
+      data.settings as JobAdvancedSettings
+    )
   } else {
     response = await applicationConfigurationApi.editAdvancedSettings(
       data.applicationId,
@@ -275,13 +292,23 @@ export const editApplicationAdvancedSettings = createAsyncThunk<
   return response.data as ApplicationAdvancedSettings
 })
 
-export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<ApplicationAdvancedSettings>(
-  'application/defaultAdvancedSettings',
-  async () => {
-    const response = await applicationsApi.getDefaultApplicationAdvancedSettings()
-    return response.data as ApplicationAdvancedSettings
+export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
+  AdvancedSettings,
+  {
+    serviceType: ServiceTypeEnum
   }
-)
+>('application/defaultAdvancedSettings', async (data) => {
+  let response
+
+  if (isApplication(data.serviceType) || isContainer(data.serviceType)) {
+    response = await applicationsApi.getDefaultApplicationAdvancedSettings()
+  } else if (isJob(data.serviceType)) {
+    response = await jobsApi.getDefaultJobAdvancedSettings()
+  } else {
+    response = { data: {} }
+  }
+  return response.data
+})
 
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -345,7 +372,7 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       // fetch applications
-      .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<Application[]>) => {
+      .addCase(fetchApplications.fulfilled, (state: ApplicationsState, action: PayloadAction<ApplicationEntity[]>) => {
         applicationsAdapter.upsertMany(state, action.payload)
         action.payload.forEach((app) => {
           state.joinEnvApplication = addOneToManyRelation(app.environment?.id, app.id, { ...state.joinEnvApplication })
@@ -361,7 +388,7 @@ export const applicationsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(editApplication.fulfilled, (state: ApplicationsState, action) => {
-        const update: Update<Application> = {
+        const update: Update<ApplicationEntity> = {
           id: action.meta.arg.applicationId,
           changes: {
             ...action.payload,
@@ -420,7 +447,7 @@ export const applicationsSlice = createSlice({
             },
           })
         )
-        applicationsAdapter.updateMany(state, update as Update<Application>[])
+        applicationsAdapter.updateMany(state, update as Update<ApplicationEntity>[])
         state.statusLoadingStatus = 'loaded'
       })
       .addCase(fetchApplicationsStatus.rejected, (state: ApplicationsState, action) => {
@@ -539,8 +566,7 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'loading',
-              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
-                ?.current_settings,
+              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
             },
           },
         }
@@ -574,11 +600,11 @@ export const applicationsSlice = createSlice({
           changes: {
             advanced_settings: {
               loadingStatus: 'error',
-              current_settings: (state.entities[applicationId] as GitApplicationEntity)?.advanced_settings
-                ?.current_settings,
+              current_settings: state.entities[applicationId]?.advanced_settings?.current_settings,
             },
           },
         }
+
         toast(
           ToastEnum.ERROR,
           `Your advanced settings have not been updated. Something must be wrong with the values provided`
@@ -634,7 +660,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       .addCase(fetchApplicationDeployments.fulfilled, (state: ApplicationsState, action) => {
         const update = {
@@ -646,7 +672,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       .addCase(fetchApplicationDeployments.rejected, (state: ApplicationsState, action) => {
         const update = {
@@ -657,7 +683,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       // get application status
       .addCase(fetchApplicationStatus.pending, (state: ApplicationsState, action) => {
@@ -669,7 +695,7 @@ export const applicationsSlice = createSlice({
             },
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
       })
       .addCase(fetchApplicationStatus.fulfilled, (state: ApplicationsState, action) => {
         const update = {
@@ -678,7 +704,7 @@ export const applicationsSlice = createSlice({
             status: action.payload,
           },
         }
-        applicationsAdapter.updateOne(state, update as Update<Application>)
+        applicationsAdapter.updateOne(state, update as Update<ApplicationEntity>)
         state.statusLoadingStatus = 'loaded'
       })
       .addCase(fetchApplicationStatus.rejected, (state: ApplicationsState, action) => {
@@ -712,7 +738,7 @@ export const selectApplicationsEntities = createSelector(getApplicationsState, s
 
 export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): ApplicationEntity[] => {
   const appState = getApplicationsState(state)
-  return getEntitiesByIds<Application>(appState.entities, appState?.joinEnvApplication[environmentId])
+  return getEntitiesByIds<ApplicationEntity>(appState.entities, appState?.joinEnvApplication[environmentId])
 }
 
 export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>

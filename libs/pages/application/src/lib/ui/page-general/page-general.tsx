@@ -1,12 +1,5 @@
 import { getServiceType, isApplication, isJob } from '@qovery/shared/enums'
-import {
-  ApplicationEntity,
-  ContainerApplicationEntity,
-  GitApplicationEntity,
-  GitContainerApplicationEntity,
-  JobApplicationEntity,
-  LoadingStatus,
-} from '@qovery/shared/interfaces'
+import { ApplicationEntity, JobApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
 import AboutContentContainer from '../about-content-container/about-content-container'
@@ -34,8 +27,7 @@ export function PageGeneral(props: PageGeneralProps) {
                 <div className="flex-1 border-r border-element-light-lighter-400 p-5">
                   <Skeleton height={24} width={48} show={application?.instances?.loadingStatus === 'loading'}>
                     <span className="text-text-600 font-bold">
-                      {application?.instances?.items?.length || '–'}/
-                      {(application as GitContainerApplicationEntity)?.max_running_instances || '-'}
+                      {application?.instances?.items?.length || '–'}/{application?.max_running_instances || '-'}
                     </span>
                   </Skeleton>
                   <span className="flex text-xs text-text-400 font-medium">
@@ -82,14 +74,14 @@ export function PageGeneral(props: PageGeneralProps) {
       </div>
       <div className="w-right-help-sidebar py-10 border-l border-element-light-lighter-400">
         <About
-          description={(application as GitApplicationEntity)?.description || ''}
+          description={application?.description || ''}
           link={{
-            link: (application as GitApplicationEntity)?.git_repository?.url || '',
-            linkLabel: (application as GitApplicationEntity)?.git_repository?.provider,
+            link: application?.git_repository?.url || '',
+            linkLabel: application?.git_repository?.provider,
             external: true,
           }}
-          buildMode={(application as GitApplicationEntity)?.build_mode}
-          gitProvider={(application as GitApplicationEntity)?.git_repository?.provider}
+          buildMode={application?.build_mode}
+          gitProvider={application?.git_repository?.provider}
           loadingStatus={loadingStatus}
           type={application && getServiceType(application)}
         />
@@ -97,13 +89,13 @@ export function PageGeneral(props: PageGeneralProps) {
           (isApplication(application) ? (
             <LastCommitFeature />
           ) : isJob(application) ? (
-            (application as JobApplicationEntity).source?.docker ? (
+            application.source?.docker ? (
               <LastCommitFeature />
             ) : (
-              <AboutContentContainer application={application as JobApplicationEntity} />
+              <AboutContentContainer application={application} />
             )
           ) : (
-            <AboutContentContainer application={application as ContainerApplicationEntity | JobApplicationEntity} />
+            <AboutContentContainer application={application} />
           ))}
       </div>
     </div>

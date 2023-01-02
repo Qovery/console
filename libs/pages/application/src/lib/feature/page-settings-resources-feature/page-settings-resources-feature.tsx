@@ -5,19 +5,21 @@ import { useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
-import { getServiceType } from '@qovery/shared/enums'
-import { ClusterEntity, EnvironmentEntity, GitContainerApplicationEntity } from '@qovery/shared/interfaces'
+import { getServiceType, isJob } from '@qovery/shared/enums'
+import { ApplicationEntity, ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
-export const handleSubmit = (data: FieldValues, application: GitContainerApplicationEntity) => {
+export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {
   const cloneApplication = Object.assign({}, application)
 
   cloneApplication.memory = Number(data['memory'])
   cloneApplication.cpu = convertCpuToVCpu(data['cpu'][0], true)
-  cloneApplication.min_running_instances = data['instances'][0]
-  cloneApplication.max_running_instances = data['instances'][1]
+  if (!isJob(application)) {
+    cloneApplication.min_running_instances = data['instances'][0]
+    cloneApplication.max_running_instances = data['instances'][1]
+  }
 
   return cloneApplication
 }
@@ -28,7 +30,7 @@ export function PageSettingsResourcesFeature() {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
 
-  const application = useSelector<RootState, GitContainerApplicationEntity | undefined>(
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     (a, b) =>
       a?.memory === b?.memory &&
@@ -60,13 +62,7 @@ export function PageSettingsResourcesFeature() {
       cpu: [convertCpuToVCpu(application?.cpu)],
       instances: [application?.min_running_instances || 1, application?.max_running_instances || 1],
     })
-  }, [
-    methods,
-    application?.memory,
-    application?.cpu,
-    application?.min_running_instances,
-    application?.max_running_instances,
-  ])
+  }, [methods, application?.memory, application?.cpu, application])
 
   const toasterCallback = () => {
     if (application) {

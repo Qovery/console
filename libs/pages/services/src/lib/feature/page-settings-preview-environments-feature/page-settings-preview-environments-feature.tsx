@@ -1,4 +1,4 @@
-import { Application, EnvironmentDeploymentRule } from 'qovery-typescript-axios'
+import { EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,7 +12,7 @@ import {
   selectEnvironmentDeploymentRulesByEnvId,
 } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
@@ -30,7 +30,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const loadingStatusEnvironmentDeploymentRules = useSelector(environmentsLoadingEnvironmentDeploymentRules)
 
-  const applications = useSelector<RootState, GitApplicationEntity[] | undefined>(
+  const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
     (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
     (a, b) =>
       JSON.stringify(a?.map((application) => application.auto_preview)) ===
@@ -58,9 +58,9 @@ export function PageSettingsPreviewEnvironmentsFeature() {
         })
       )
 
-      await applications?.forEach(async (application: Application) => {
+      await applications?.forEach(async (application: ApplicationEntity) => {
         if (application.id === Object.keys(data).find((key) => key === application.id)) {
-          const cloneApplication: ApplicationEntity = Object.assign({}, application as Application)
+          const cloneApplication: ApplicationEntity = Object.assign({}, application as ApplicationEntity)
           cloneApplication.auto_preview = data[application.id]
 
           await dispatch(

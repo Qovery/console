@@ -3,20 +3,20 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { getApplicationsState, getCountNewCommitsToDeploy } from '@qovery/domains/application'
 import { isJob } from '@qovery/shared/enums'
-import { GitApplicationEntity, JobApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { RootState } from '@qovery/store'
 import LastCommit from '../../ui/last-commit/last-commit'
 
 export function LastCommitFeature() {
   const { applicationId = '' } = useParams()
   const commitDeltaCount = useSelector(getCountNewCommitsToDeploy(applicationId))
-  const application = useSelector<RootState, GitApplicationEntity | undefined>(
+  const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId]
   )
 
   const getCommitById = (commits?: Commit[]) => {
     const deployedCommitId = isJob(application)
-      ? (application as JobApplicationEntity).source?.docker?.git_repository?.deployed_commit_id
+      ? application?.source?.docker?.git_repository?.deployed_commit_id
       : application?.git_repository?.deployed_commit_id
 
     const deployedCommit = commits?.find((commit) => commit.git_commit_id === deployedCommitId)
@@ -24,9 +24,7 @@ export function LastCommitFeature() {
     if (deployedCommit) {
       return deployedCommit
     } else {
-      return isJob(application)
-        ? (application as JobApplicationEntity).source?.docker?.git_repository
-        : application?.git_repository
+      return isJob(application) ? application?.source?.docker?.git_repository : application?.git_repository
     }
   }
 

@@ -7,7 +7,7 @@ import {
   JobActionsApi,
   JobMainCallsApi,
 } from 'qovery-typescript-axios'
-import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/toast'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 
@@ -96,17 +96,55 @@ export const postApplicationActionsDeploy = createAsyncThunk<
 
 export const postApplicationActionsDeployByCommitId = createAsyncThunk<
   any,
-  { environmentId: string; applicationId: string; git_commit_id: string }
+  { environmentId: string; applicationId: string; git_commit_id: string; serviceType: ServiceTypeEnum }
 >('applicationActions/deploy', async (data, { dispatch }) => {
   try {
-    const response = await applicationActionApi.deployApplication(data.applicationId, {
-      git_commit_id: data.git_commit_id,
-    })
+    let response
+
+    if (isApplication(data.serviceType)) {
+      response = await applicationActionApi.deployApplication(data.applicationId, {
+        git_commit_id: data.git_commit_id,
+      })
+    } else {
+      response = await jobActionApi.deployJob(data.applicationId, false, {
+        git_commit_id: data.git_commit_id,
+      })
+    }
 
     if (response.status === 202) {
       // refetch status after update
       await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
       toast(ToastEnum.SUCCESS, 'Your application is deploying')
+    }
+
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
+  }
+})
+
+export const postApplicationActionsDeployByTag = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; tag: string; serviceType: ServiceTypeEnum }
+>('applicationActions/deploy', async (data, { dispatch }) => {
+  try {
+    let response
+
+    if (isContainer(data.serviceType)) {
+      response = await containerActionApi.deployContainer(data.applicationId, {
+        image_tag: data.tag,
+      })
+    } else {
+      response = await jobActionApi.deployJob(data.applicationId, false, {
+        image_tag: data.tag,
+      })
+    }
+
+    if (response.status === 202) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      toast(ToastEnum.SUCCESS, `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`)
     }
 
     return response

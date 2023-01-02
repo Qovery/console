@@ -1,13 +1,6 @@
-import {
-  ApplicationAdvancedSettings,
-  Commit,
-  DeploymentHistoryApplication,
-  Instance,
-  JobResponse,
-  Link,
-  Status,
-} from 'qovery-typescript-axios'
+import { Commit, DeploymentHistoryApplication, Instance, JobResponse, Link, Status } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
+import { AdvancedSettings } from './advanced-settings.interface'
 import { ServiceRunningStatus } from './service-running-status.interface'
 
 export interface JobApplicationEntity extends JobResponse {
@@ -31,10 +24,10 @@ export interface JobApplicationEntity extends JobResponse {
   }
   advanced_settings?: {
     loadingStatus: LoadingStatus
-    current_settings?: ApplicationAdvancedSettings
+    current_settings?: AdvancedSettings
   }
   default_advanced_settings?: {
     loadingStatus: LoadingStatus
-    default_settings?: ApplicationAdvancedSettings
+    default_settings?: AdvancedSettings
   }
 }
