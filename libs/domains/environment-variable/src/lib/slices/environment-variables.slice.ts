@@ -162,6 +162,12 @@ export const createOverrideEnvironmentVariablesPayloadCreator = async (payload: 
           environmentVariableId,
           environmentVariableRequest
         )
+      } else if (isJob(payload.serviceType)) {
+        response = await jobEnvironmentVariableApi.createJobEnvironmentVariableOverride(
+          entityId,
+          environmentVariableId,
+          environmentVariableRequest
+        )
       } else {
         response = await applicationEnvironmentVariableApi.createApplicationEnvironmentVariableOverride(
           entityId,
