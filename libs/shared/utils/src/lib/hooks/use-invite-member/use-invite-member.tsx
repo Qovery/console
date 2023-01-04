@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
 import { useAuth } from '@qovery/shared/auth'
-import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/router'
+import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/router'
 import { toastError } from '@qovery/shared/toast'
 import { AppDispatch } from '@qovery/store'
 
@@ -82,15 +82,21 @@ export function useInviteMember() {
             console.log('clean invitation')
             cleanInvitation()
             console.log('get new token')
-            await getAccessTokenSilently({})
-            console.log('get list of organisations')
-            dispatch(fetchOrganization())
-              .unwrap()
-              .then((value) => {
-                console.log(value)
-                console.log('redirect')
-                //window.location.replace(`/organization/${organizationId}`)
-              })
+            try {
+              const token = await getAccessTokenSilently({ ignoreCache: true })
+              console.log('token', token)
+              console.log('get list of organisations')
+              dispatch(fetchOrganization())
+                .unwrap()
+                .then((value) => {
+                  console.log(value)
+                  console.log('redirect')
+                  window.location.assign(`/organization/${organizationId}`)
+                })
+            } catch (e) {
+              console.log(e)
+              navigate(LOGOUT_URL)
+            }
           })
       } catch (e) {
         setDisplayInvitation(false)

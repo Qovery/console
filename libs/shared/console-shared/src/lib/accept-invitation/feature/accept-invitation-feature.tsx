@@ -10,8 +10,9 @@ export function AcceptInvitationFeature() {
     await acceptInvitation()
   }
 
-  const onRefresh = async () => {
-    await getAccessTokenSilently({})
+  const onRefresh = async (cache = false) => {
+    const token = await getAccessTokenSilently({ ignoreCache: cache })
+    console.log(token)
   }
 
   return <AcceptInvitation onSubmit={onSubmit} refresh={onRefresh} />
