@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import InviteDetailsFeature from './invite-details-feature'
 
 describe('InviteDetailsFeature', () => {

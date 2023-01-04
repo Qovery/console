@@ -8,7 +8,9 @@ export function InviteDetails(props: InviteDetailsProps) {
 
   return (
     <p className="text-text-700 font-bold text-xl">
-      {user_name} has invited you to join the organization {organization_name}
+      {user_name} has invited you to join
+      <br />
+      <strong className="text-2xl">{organization_name}</strong>
     </p>
   )
 }
