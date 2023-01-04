@@ -13,8 +13,6 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       const urlWithoutBase = removeBaseUrl(config.url)
       config.url = `${apiUrl}${urlWithoutBase}`
 
-      //if (config.url?.indexOf('inviteMember') !== -1 && config.method === '') return config
-
       let token
       try {
         token = await getAccessTokenSilently()

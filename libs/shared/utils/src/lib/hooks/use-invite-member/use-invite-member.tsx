@@ -79,22 +79,15 @@ export function useInviteMember() {
             data: {},
           })
           .then(async () => {
-            console.log('clean invitation')
             cleanInvitation()
-            console.log('get new token')
             try {
-              const token = await getAccessTokenSilently({ ignoreCache: true })
-              console.log('token', token)
-              console.log('get list of organisations')
+              await getAccessTokenSilently({ ignoreCache: true })
               dispatch(fetchOrganization())
                 .unwrap()
                 .then((value) => {
-                  console.log(value)
-                  console.log('redirect')
                   window.location.assign(`/organization/${organizationId}`)
                 })
             } catch (e) {
-              console.log(e)
               navigate(LOGOUT_URL)
             }
           })
@@ -103,7 +96,7 @@ export function useInviteMember() {
         toastError(e as SerializedError, 'Invitation Member', 'The invitation can not be accepted')
         cleanInvitation()
         setTimeout(() => {
-          navigate(`/`)
+          window.location.assign(`/`)
         })
       }
   }
@@ -123,7 +116,3 @@ export function useInviteMember() {
 
   return { displayInvitation, fetchInvitationDetail, acceptInvitation, inviteDetail }
 }
-
-export default useInviteMember
-
-// https://console.qovery.com/login?inviteToken=c14cbd1f-7ee6-4c57-92c4-c3e48d1f38f0&organization=3d542888-3d2c-474a-b1ad-712556db66da

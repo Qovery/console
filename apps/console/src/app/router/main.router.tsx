@@ -48,7 +48,7 @@ export const ROUTER: RouterProps[] = [
     path: `${ACCEPT_INVITATION_URL}`,
     component: <AcceptInvitationFeature />,
     protected: true,
-    layout: true,
+    layout: false,
   },
   {
     path: ORGANIZATION_URL(),
