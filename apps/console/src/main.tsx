@@ -27,6 +27,7 @@ root.render(
       redirectUri={`${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`}
       audience={environment.oauth_audience}
       useRefreshTokens={true}
+      cacheLocation={'localstorage'}
     >
       <Provider store={store}>
         <BrowserRouter>
