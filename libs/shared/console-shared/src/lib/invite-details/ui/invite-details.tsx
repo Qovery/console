@@ -7,10 +7,9 @@ export function InviteDetails(props: InviteDetailsProps) {
   const { user_name = '', organization_name = '' } = props
 
   return (
-    <div>
-      <p>{user_name} has invited you to join the organization</p>
-      <h3>{organization_name}</h3>
-    </div>
+    <p className="text-text-700 font-bold text-xl">
+      {user_name} has invited you to join the organization {organization_name}
+    </p>
   )
 }
 

@@ -1,3 +1,4 @@
+export * from './lib/accept-invitation/ui/accept-invitation/accept-invitation'
 export * from './lib/invite-details/feature/invite-details-feature'
 export * from './lib/job-configure-settings/ui/job-configure-settings'
 export * from './lib/job-general-settings/ui/job-general-settings'
@@ -16,3 +17,4 @@ export * from './lib/flow-create-variable/ui/flow-create-variable/flow-create-va
 export * from './lib/create-general-git-application/ui/create-general-git-application'
 export * from './lib/git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
 export * from './lib/create-project-modal/feature/create-project-modal-feature'
+export * from './lib/accept-invitation/feature/accept-invitation-feature'

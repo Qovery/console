@@ -10,6 +10,7 @@ export * from './sub-router/clusters.router'
 export * from './sub-router/job.router'
 
 export const INDEX_URL = '/'
+export const ACCEPT_INVITATION_URL = `/accept-invitation`
 export const ORGANIZATION_URL = (organizationId = ':organizationId') => `/organization/${organizationId}`
 export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
   `/organization/${organizationId}/project/${projectId}/overview`
