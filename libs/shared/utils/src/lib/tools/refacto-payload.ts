@@ -95,7 +95,7 @@ export function refactoJobPayload(job: Partial<JobApplicationEntity>): JobReques
     description: job.description || '',
     cpu: job.cpu,
     memory: job.memory,
-    auto_preview: false,
+    auto_preview: job.auto_preview,
     max_duration_seconds: job.max_duration_seconds,
     port: job.port,
     max_nb_restart: job.max_nb_restart,
