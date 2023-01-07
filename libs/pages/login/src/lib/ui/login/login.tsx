@@ -41,41 +41,23 @@ export function Login(props: ILoginProps) {
       </div>
       <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">
         <div className="max-w-md relative z-10">
-          <h2 className="h1 text-text-700 mt-44 mb-6">Deploy On-demand Environments on AWS, Remarkably Fast</h2>
-          <p className="text-text-500 mb-6 text-sm">Built for DevOps, Loved by developers 🚀</p>
+          <h2 className="h1 text-text-700 mt-44 mb-6">Deliver Self-Service Infrastructure, Faster!</h2>
+          <p className="text-text-500 mb-6 text-sm">Built for DevOps, Loved by Developers ✨</p>
           <ul className="list-disc pl-4 text-sm">
-            <li className="font-bold text-text-500 mb-2">
-              <a
-                href="https://hub.qovery.com/guides/getting-started/deploy-your-first-application/"
-                className="link text-brand-500 mr-1"
-              >
-                Deploy your apps
-              </a>
-              on AWS in seconds
-            </li>
+            <li className="font-bold text-text-500 mb-2">Fast Environment Provisioning</li>
             <li className="font-bold text-text-500 mb-2">
               <a
                 href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#preview-environment"
                 className="link text-brand-500 mr-1"
               >
-                Get instant preview
+                Instant Preview Environments
               </a>
-              environments
             </li>
-            <li className="font-bold text-text-500 mb-2">
-              <a
-                href="https://hub.qovery.com/docs/using-qovery/integration/terraform/"
-                className="link text-brand-500 mr-1"
-              >
-                Use Infrastructure as Code
-              </a>
-              with Terraform
-            </li>
+            <li className="font-bold text-text-500 mb-2">Keep Governance and Control</li>
             <li className="font-bold text-text-500">
               <a href="https://hub.qovery.com/docs/using-qovery/integration" className="link text-brand-500 mr-1">
-                Integrate Qovery
+                100+ Integrations
               </a>
-              with your tools
             </li>
           </ul>
         </div>
