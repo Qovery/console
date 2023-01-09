@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
-import { useAuth } from '@qovery/shared/auth'
 import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/router'
 import { toastError } from '@qovery/shared/toast'
 import { AppDispatch } from '@qovery/store'
+import useAuth from '../use-auth/use-auth'
 
 const membersApi = new MembersApi()
 

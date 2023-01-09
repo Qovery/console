@@ -1,4 +1,4 @@
-import { useInviteMember } from '@qovery/shared/utils'
+import { useInviteMember } from '@qovery/shared/auth'
 import AcceptInvitation from '../ui/accept-invitation/accept-invitation'
 
 export function AcceptInvitationFeature() {

@@ -1,8 +1,7 @@
-import { AuthEnum } from '@qovery/shared/auth'
+import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
-import { useInviteMember } from '@qovery/shared/utils'
 
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
@@ -20,7 +19,9 @@ export function Login(props: ILoginProps) {
       <div className="flex-[2_1_0%] px-4 md:px-20">
         <div className="max-w-lg mt-28 mx-auto">
           {!displayInvitation ? (
-            <h1 className="h3 text-text-700 mb-3">Welcome to Qovery</h1>
+            <h1 className="h3 text-text-700 mb-3" data-testid="welcome-title">
+              Welcome to Qovery
+            </h1>
           ) : (
             <div className="mb-2">
               <InviteDetailsFeature />

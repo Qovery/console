@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useInviteMember } from '@qovery/shared/utils'
+import { useInviteMember } from '@qovery/shared/auth'
 import InviteDetails from '../ui/invite-details'
 
 export function InviteDetailsFeature() {
@@ -9,10 +9,12 @@ export function InviteDetailsFeature() {
     fetchInvitationDetail().then()
   }, [fetchInvitationDetail])
 
-  return inviteDetail ? (
-    <InviteDetails user_name={inviteDetail.inviter} organization_name={(inviteDetail as any).organization_name} />
-  ) : (
-    <></>
+  if (!inviteDetail) return null
+
+  return (
+    inviteDetail && (
+      <InviteDetails user_name={inviteDetail.inviter} organization_name={(inviteDetail as any).organization_name} />
+    )
   )
 }
 

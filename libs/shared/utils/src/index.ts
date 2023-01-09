@@ -4,7 +4,6 @@ export * from './lib/http/interceptors/auth-interceptor/auth-interceptor'
 export * from './lib/hooks/use-document-title/use-document-title'
 export * from './lib/hooks/use-detect-click-outside/use-detect-click-outside'
 export * from './lib/hooks/use-running-status-websocket/use-running-status-websocket'
-export * from './lib/hooks/use-invite-member/use-invite-member'
 // tools
 export * from './lib/tools/uppercase-first-letter'
 export * from './lib/tools/date'
