@@ -114,5 +114,5 @@ export function useInviteMember() {
     }
   }, [organizationId, inviteId])
 
-  return { displayInvitation, fetchInvitationDetail, acceptInvitation, inviteDetail }
+  return { displayInvitation, fetchInvitationDetail, acceptInvitation, cleanInvitation, inviteDetail }
 }
