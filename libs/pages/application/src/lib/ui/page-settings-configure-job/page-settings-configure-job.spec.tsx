@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { cronjobFactoryMock } from '@qovery/domains/application'
+import { cronjobFactoryMock } from '@qovery/shared/factories'
 import { JobConfigureData } from '@qovery/shared/interfaces'
 import PageSettingsConfigureJob, { PageSettingsConfigureJobProps } from './page-settings-configure-job'
 

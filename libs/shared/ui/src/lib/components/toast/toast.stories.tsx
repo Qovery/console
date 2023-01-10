@@ -1,5 +1,5 @@
 import { Meta, Story } from '@storybook/react'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { ToastEnum, toast } from '../../utils/toast'
 import { Button } from '../buttons/button/button'
 import { ToastBehavior, ToastProps } from './toast'
 
@@ -21,7 +21,7 @@ const Template: Story<ToastProps> = (args) => {
         onClick={() =>
           toast(
             args.status,
-            args.title,
+            args.title || '',
             args.description,
             args.callback,
             args.actionIcon,

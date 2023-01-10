@@ -10,7 +10,7 @@ import {
   DATABASE_GENERAL_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { Header, Icon, Skeleton, StatusChip, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
 

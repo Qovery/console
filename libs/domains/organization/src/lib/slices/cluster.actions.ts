@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { ClustersApi } from 'qovery-typescript-axios'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchClusterStatus } from './cluster.slice'
 
 const clusterApi = new ClustersApi()

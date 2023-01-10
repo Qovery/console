@@ -15,11 +15,7 @@ export default {
   },
 } as ComponentMeta<typeof Banner>
 
-const children = (
-  <>
-    <p>Hello Banner my old friend</p>
-  </>
-)
+const children = <p>Hello Banner my old friend</p>
 const Template: ComponentStory<typeof Banner> = (args) => <Banner {...args} />
 
 export const Primary = Template.bind({})

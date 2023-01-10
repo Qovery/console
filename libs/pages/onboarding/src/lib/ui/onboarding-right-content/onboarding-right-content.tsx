@@ -1,4 +1,4 @@
-import { ONBOARDING_PROJECT_URL } from '@qovery/shared/router'
+import { ONBOARDING_PROJECT_URL } from '@qovery/shared/routes'
 import BenefitsCard from '../benefits-card/benefits-card'
 
 export interface OnboardingRightContentProps {

@@ -1,5 +1,5 @@
-import { DeploymentHistoryDatabase, DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
 import { Chance } from 'chance'
+import { DeploymentHistoryDatabase, DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
 
 const chance = new Chance()
 

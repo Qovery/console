@@ -38,7 +38,7 @@ describe('PageApplicationCreatePort', () => {
       wrapWithReactHookForm(<FlowCreatePort {...props} />, { defaultValues: { ports: props.ports } })
     )
 
-    await act(() => {})
+    await act(jest.fn())
 
     const button = getAllByTestId('button-submit')[0]
     expect(button).not.toBeDisabled()

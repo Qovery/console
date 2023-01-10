@@ -1,6 +1,6 @@
 import { OrganizationAvailableRole, OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,

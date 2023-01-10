@@ -19,7 +19,7 @@ import {
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,

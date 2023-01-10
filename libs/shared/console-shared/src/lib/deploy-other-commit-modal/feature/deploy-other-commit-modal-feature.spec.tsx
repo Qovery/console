@@ -87,11 +87,12 @@ describe('DeployOtherCommitModalFeature', () => {
     }))
 
     const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
-    await waitFor(() => {})
+
+    await waitFor(jest.fn())
     const commitBoxes = getAllByTestId(baseElement, 'commit-box')
 
     commitBoxes[1].click()
-    await waitFor(() => {})
+    await waitFor(jest.fn())
 
     // click on submit button
     const submitButton = getByTestId(baseElement, 'submit-button')

@@ -1,6 +1,2 @@
-export * from './lib/mocks/factories/database-factory.mock'
-export * from './lib/mocks/factories/database-status.mock'
-export * from './lib/mocks/factories/database-deployments-factory.mock'
-export * from './lib/mocks/factories/database-master-credentials-factory.mock'
 export * from './lib/slices/database.actions'
 export * from './lib/slices/databases.slice'

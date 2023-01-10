@@ -37,18 +37,18 @@ describe('ModalRoot', () => {
     const button = getByRole(baseElement, 'button')
     fireEvent.click(button)
 
-    await waitFor(() => {})
+    await waitFor(jest.fn())
 
     let overlay: HTMLElement | null = getByTestId(baseElement, 'overlay')
     fireEvent.click(overlay)
 
-    await waitFor(() => {})
+    await waitFor(jest.fn())
     getByTestId(baseElement, 'modal-alert')
 
     const yesButton = getByRole(baseElement, 'button', { name: 'Yes' })
     fireEvent.click(yesButton)
 
-    await waitFor(() => {})
+    await waitFor(jest.fn())
     overlay = queryByTestId(baseElement, 'overlay')
     expect(overlay).toBeNull()
   })
@@ -63,12 +63,12 @@ describe('ModalRoot', () => {
     const button = getByRole(baseElement, 'button')
     fireEvent.click(button)
 
-    await waitFor(() => {})
+    await waitFor(jest.fn())
 
     const overlay: HTMLElement | null = getByTestId(baseElement, 'overlay')
     fireEvent.click(overlay)
 
-    await waitFor(() => {})
+    await waitFor(jest.fn())
     const alertModal = queryByTestId(baseElement, 'modal-alert')
     expect(alertModal).toBeNull()
   })

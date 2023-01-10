@@ -45,7 +45,7 @@ import {
   LoadingStatus,
   ServiceRunningStatus,
 } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
   addOneToManyRelation,
   getEntitiesByIds,

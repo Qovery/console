@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Icon } from '@qovery/shared/ui'
+import Icon from '../../icon/icon'
 import { NavigationLeftLinkProps } from '../navigation-left'
 
 export interface NavigationLeftSubLinkProps {

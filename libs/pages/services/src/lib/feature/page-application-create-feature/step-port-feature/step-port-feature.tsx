@@ -9,7 +9,7 @@ import {
   SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'

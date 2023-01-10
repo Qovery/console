@@ -30,7 +30,7 @@ describe('EnableBox', () => {
   it('should not check the box if we click anywhere on the card when already checked', async () => {
     const { baseElement } = render(<EnableBox {...props} checked={true} />)
     const box = getByTestId(baseElement, 'enabled-box')
-    await act(() => {})
+    await act(jest.fn())
 
     await act(() => {
       box.click()

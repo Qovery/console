@@ -1,7 +1,7 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import { Icon } from '@qovery/shared/ui'
 import { renameStatus, upperCaseFirstLetter } from '@qovery/shared/utils'
+import Icon from '../icon/icon'
 
 export interface StatusLabelProps {
   status: StateEnum | undefined

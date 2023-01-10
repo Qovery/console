@@ -1,6 +1,7 @@
 import { IconEnum } from '@qovery/shared/enums'
-import { Skeleton, Truncate } from '@qovery/shared/ui'
 import Icon from '../icon/icon'
+import Skeleton from '../skeleton/skeleton'
+import Truncate from '../truncate/truncate'
 
 export interface HeaderProps {
   title?: string
@@ -20,7 +21,7 @@ export function Header(props: HeaderProps) {
         {icon && <Icon name={icon} width="64" />}
         <div className="flex flex-col gap-3">
           <div className="flex gap-2 items-center max-w-3xl">
-            <Skeleton height={36} width={150} show={title ? false : true}>
+            <Skeleton height={36} width={150} show={!title}>
               <h1 className="font-bold text-text-700 text-3xl max-w-3xl truncate">
                 {title && <Truncate text={title} truncateLimit={50} />}
               </h1>

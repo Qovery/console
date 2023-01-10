@@ -15,7 +15,7 @@ import {
   APPLICATION_SETTINGS_STORAGE_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'

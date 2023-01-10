@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { environmentFactoryMock } from '@qovery/domains/environment'
+import { environmentFactoryMock } from '@qovery/shared/factories'
 import Container, { ContainerProps } from '../container/container'
 
 describe('Container', () => {

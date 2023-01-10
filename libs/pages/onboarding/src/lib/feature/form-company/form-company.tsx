@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { postUserSignUp, selectUserSignUp } from '@qovery/domains/user'
 import { Value } from '@qovery/shared/interfaces'
-import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/router'
+import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { AppDispatch } from '@qovery/store'
 import { StepCompany } from '../../ui/step-company/step-company'
 

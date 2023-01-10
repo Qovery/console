@@ -1,7 +1,7 @@
 import { act, render } from '__tests__/utils/setup-jest'
 import { WeekdayEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
-import { environmentFactoryMock } from '@qovery/domains/environment'
+import { environmentFactoryMock } from '@qovery/shared/factories'
 import { weekdaysValues } from '@qovery/shared/utils'
 import PageSettingsDeploymentFeature, { handleSubmit } from './page-settings-deployment-feature'
 

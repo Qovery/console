@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks'
 import { Wrapper } from '__tests__/utils/providers'
-import { OVERVIEW_URL } from '@qovery/shared/router'
+import { OVERVIEW_URL } from '@qovery/shared/routes'
 import { useRedirectIfLogged } from './use-redirect-if-logged'
 import {
   getCurrentOrganizationIdFromStorage,

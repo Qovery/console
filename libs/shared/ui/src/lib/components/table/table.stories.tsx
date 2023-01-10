@@ -1,5 +1,6 @@
 import { Meta, Story } from '@storybook/react'
 import { useState } from 'react'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { environmentFactoryMock } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import Button from '../buttons/button/button'

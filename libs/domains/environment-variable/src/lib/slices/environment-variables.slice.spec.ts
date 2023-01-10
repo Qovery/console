@@ -7,7 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariablesState } from '@qovery/shared/interfaces'
-import { toast } from '@qovery/shared/toast'
+import { toast } from '@qovery/shared/ui'
 import { mockEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
 import {
   addVariableToStore,
@@ -23,7 +23,7 @@ import {
   fetchEnvironmentVariables,
 } from './environment-variables.slice'
 
-jest.mock('@qovery/shared/toast')
+jest.mock('@qovery/shared/ui')
 
 describe('environmentVariables reducer', () => {
   const mockToast = toast.mockImplementation(jest.fn())

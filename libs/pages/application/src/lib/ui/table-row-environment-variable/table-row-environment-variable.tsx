@@ -7,7 +7,7 @@ import {
   EnvironmentVariableSecretOrPublic,
   SecretEnvironmentVariableEntity,
 } from '@qovery/shared/interfaces'
-import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/router'
+import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,

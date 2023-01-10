@@ -1,5 +1,5 @@
-import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from './one-to-many-redux-helpers'
 import { Dictionary } from '@reduxjs/toolkit'
+import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from './one-to-many-redux-helpers'
 
 describe('add a one-to-many relation to a collection', () => {
   let relations: Record<string, string[]> = {}
@@ -89,12 +89,12 @@ describe('remove a one-to-many relation', () => {
 })
 
 describe('retrieving entities from the store from list of ids', () => {
-  let relations: Record<string, string[]> = {
+  const relations: Record<string, string[]> = {
     parent1: ['child1', 'child2'],
     parent2: ['child1', 'child3'],
   }
-  let entities: Dictionary<{ name: string }> = {
-    ['child1']: { name: 'child1' },
+  const entities: Dictionary<{ name: string }> = {
+    child1: { name: 'child1' },
   }
 
   it('should find the child that is listed in the relations of the first parent', () => {

@@ -7,7 +7,7 @@ import { editApplication, getApplicationsState, postApplicationActionsRestart } 
 import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { ServiceTypeEnum, getServiceType, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, OrganizationEntity } from '@qovery/shared/interfaces'
-import { toastError } from '@qovery/shared/toast'
+import { toastError } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'

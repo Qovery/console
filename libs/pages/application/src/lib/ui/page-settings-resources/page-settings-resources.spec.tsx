@@ -1,7 +1,7 @@
 import ResizeObserver from '__tests__/utils/resize-observer'
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { applicationFactoryMock } from '@qovery/domains/application'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'

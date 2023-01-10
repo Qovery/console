@@ -3,7 +3,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
 import {
-  environmentVariableFactoryMock,
   fetchEnvironmentVariables,
   fetchSecretEnvironmentVariables,
   getEnvironmentVariablesState,
@@ -12,6 +11,7 @@ import {
   selectSecretEnvironmentVariablesByApplicationId,
 } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
+import { environmentVariableFactoryMock } from '@qovery/shared/factories'
 import {
   ApplicationEntity,
   EnvironmentVariableEntity,

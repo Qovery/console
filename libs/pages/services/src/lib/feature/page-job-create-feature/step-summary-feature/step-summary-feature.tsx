@@ -20,7 +20,7 @@ import {
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'

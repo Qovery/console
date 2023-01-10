@@ -1,6 +1,9 @@
-import { Meta, Story } from '@storybook/react'
+import { Meta } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
-import { ButtonIcon, ButtonIconStyle, Header, HeaderProps, Icon, Tag } from '@qovery/shared/ui'
+import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
+import Icon from '../icon/icon'
+import Tag from '../tag/tag'
+import { Header, HeaderProps } from './header'
 
 export default {
   component: Header,

@@ -12,7 +12,7 @@ import {
   ONBOARDING_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { AppDispatch } from '@qovery/store'
 import {
   getCurrentOrganizationIdFromStorage,

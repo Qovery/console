@@ -1,18 +1,14 @@
 import { ClusterLogsError } from 'qovery-typescript-axios'
 import { ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  Button,
-  ButtonSize,
-  ButtonStyle,
-  CopyToClipboard,
-  ErrorLogsProps,
-  Icon,
-  Link,
-  Tabs,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import Button, { ButtonSize, ButtonStyle } from '../../../buttons/button/button'
+import CopyToClipboard from '../../../copy-to-clipboard/copy-to-clipboard'
+import Icon from '../../../icon/icon'
+import Link from '../../../link/link'
+import Tabs from '../../../tabs/tabs'
+import Tooltip from '../../../tooltip/tooltip'
+import Truncate from '../../../truncate/truncate'
+import { ErrorLogsProps } from '../layout-logs'
 
 export const enum TabsLogsSection {
   INFORMATION = 'INFORMATION',

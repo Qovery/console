@@ -8,7 +8,7 @@ import {
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'

@@ -25,7 +25,7 @@ import {
   OVERVIEW_URL,
   SERVICES_URL,
   SETTINGS_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import RedirectOverview from '../components/redirect-overview'
 
 interface RouterProps {

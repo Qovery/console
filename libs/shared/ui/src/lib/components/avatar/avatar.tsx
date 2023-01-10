@@ -1,5 +1,5 @@
-import { Tooltip } from '@qovery/shared/ui'
 import Icon from '../icon/icon'
+import Tooltip from '../tooltip/tooltip'
 
 export enum AvatarStyle {
   NORMAL = 'normal',

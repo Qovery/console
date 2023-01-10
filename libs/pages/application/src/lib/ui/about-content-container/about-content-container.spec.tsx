@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { applicationFactoryMock } from '@qovery/domains/application'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
 import AboutContentContainer, { AboutContentContainerProps } from './about-content-container'
 

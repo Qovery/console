@@ -8,7 +8,7 @@ import {
   JobMainCallsApi,
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 
 const applicationActionApi = new ApplicationActionsApi()

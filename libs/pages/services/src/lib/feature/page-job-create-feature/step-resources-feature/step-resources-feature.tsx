@@ -8,7 +8,7 @@ import {
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepResources from '../../../ui/page-job-create/step-resources/step-resources'

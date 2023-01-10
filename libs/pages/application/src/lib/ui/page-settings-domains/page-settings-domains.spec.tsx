@@ -1,7 +1,7 @@
 import { act, findByText, getByDisplayValue, getByRole, getByTestId, queryByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@qovery/domains/application'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { PageSettingsDomains, PageSettingsDomainsProps } from './page-settings-domains'
 
 let props: PageSettingsDomainsProps

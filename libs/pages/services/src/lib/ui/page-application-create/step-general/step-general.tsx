@@ -8,7 +8,7 @@ import {
 } from '@qovery/shared/console-shared'
 import { IconEnum, ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { ApplicationGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
-import { SERVICES_URL } from '@qovery/shared/router'
+import { SERVICES_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {

@@ -6,8 +6,8 @@ import {
   OrganizationAvailableRole,
 } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import {
   Avatar,
   ButtonIconAction,

@@ -1,9 +1,9 @@
 import { DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
-import { databaseFactoryMock } from '@qovery/domains/database'
+import { databaseFactoryMock } from '@qovery/shared/factories'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
-import { refactoDatabasePayload } from '@qovery/shared/utils'
 import {
   refactoContainerApplicationPayload,
+  refactoDatabasePayload,
   refactoGitApplicationPayload,
   refactoOrganizationCustomRolePayload,
   refactoOrganizationPayload,
@@ -132,7 +132,7 @@ describe('testing payload refactoring', () => {
   })
 
   it('should remove useless database values', () => {
-    let response = databaseFactoryMock(2)[0]
+    const response = databaseFactoryMock(2)[0]
     response.name = 'hello'
     response.description = 'test'
     response.version = '12'

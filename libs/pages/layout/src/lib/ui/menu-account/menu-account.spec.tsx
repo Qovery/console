@@ -1,9 +1,9 @@
 import { act, render } from '@testing-library/react'
 import { SignUp } from 'qovery-typescript-axios'
-import { organizationFactoryMock } from '@qovery/domains/organization'
-import { userSignUpFactoryMock } from '@qovery/domains/user'
+import { organizationFactoryMock } from '@qovery/shared/factories'
+import { userSignUpFactoryMock } from '@qovery/shared/factories'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/router'
+import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
 import MenuAccount, { MenuAccountProps } from './menu-account'
 
 const mockNavigate = jest.fn()

@@ -1,6 +1,6 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { DatabaseCredentials, LoadingStatus } from '@qovery/shared/interfaces'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { Button, ButtonStyle, Icon, Skeleton, ToastBehavior, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 

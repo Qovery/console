@@ -1,5 +1,5 @@
 import { Toast, Toaster, toast as toastAction } from 'react-hot-toast'
-import { ToastEnum } from '@qovery/shared/toast'
+import { ToastEnum } from '../../utils/toast'
 import { Icon } from '../icon/icon'
 
 export interface ToastProps {

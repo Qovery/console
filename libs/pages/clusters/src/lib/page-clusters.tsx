@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/router'
+import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { ROUTER_CLUSTERS } from './router/router'
 import Container from './ui/container/container'
 

@@ -1,5 +1,7 @@
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { CopyToClipboard, Icon, StatusChip } from '@qovery/shared/ui'
+import CopyToClipboard from '../../../../copy-to-clipboard/copy-to-clipboard'
+import Icon from '../../../../icon/icon'
+import StatusChip from '../../../../status-chip/status-chip'
 
 export interface CardClusterProps {
   cluster?: ClusterEntity

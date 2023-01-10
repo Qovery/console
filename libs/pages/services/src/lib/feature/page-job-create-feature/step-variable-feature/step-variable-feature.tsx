@@ -10,7 +10,7 @@ import {
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { computeAvailableScope, useDocumentTitle } from '@qovery/shared/utils'
 import { useJobContainerCreateContext } from '../page-job-create-feature'

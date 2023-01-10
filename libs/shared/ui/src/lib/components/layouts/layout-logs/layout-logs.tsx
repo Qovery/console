@@ -7,26 +7,19 @@ import {
   Log,
 } from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/router'
-import {
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonSize,
-  ButtonStyle,
-  Icon,
-  IconAwesomeEnum,
-  Menu,
-  MenuAlign,
-  MenuData,
-  StatusChip,
-  Tooltip,
-} from '@qovery/shared/ui'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/routes'
 import { scrollParentToChild } from '@qovery/shared/utils'
+import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
+import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
+import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import { Menu, MenuAlign, MenuData } from '../../menu/menu'
+import StatusChip from '../../status-chip/status-chip'
+import Tooltip from '../../tooltip/tooltip'
 import TabsLogs from './tabs-logs/tabs-logs'
 import { UpdateTimeContext, defaultUpdateTimeContext } from './update-time-context/update-time-context'
 
