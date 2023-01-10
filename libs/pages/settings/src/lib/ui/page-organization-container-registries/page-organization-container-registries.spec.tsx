@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { containerRegistriesMock } from '@qovery/domains/organization'
+import { containerRegistriesMock } from '@qovery/shared/factories'
 import PageOrganizationContainerRegistries, {
   PageOrganizationContainerRegistriesProps,
 } from './page-organization-container-registries'

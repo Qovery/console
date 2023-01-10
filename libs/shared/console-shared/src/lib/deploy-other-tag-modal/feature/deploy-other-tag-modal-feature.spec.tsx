@@ -2,6 +2,7 @@ import { act, fireEvent, getByLabelText, getByTestId } from '@testing-library/re
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import DeployOtherTagModalFeature, { DeployOtherTagModalFeatureProps } from './deploy-other-tag-modal-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -19,7 +20,7 @@ jest.mock('react-redux', () => ({
   },
 }))
 
-const mockApplication = storeApplication.applicationFactoryMock(1)[0]
+const mockApplication = applicationFactoryMock(1)[0]
 jest.mock('@qovery/domains/application', () => ({
   ...(jest.requireActual('@qovery/domains/application') as any),
   selectApplicationById: () => mockApplication,

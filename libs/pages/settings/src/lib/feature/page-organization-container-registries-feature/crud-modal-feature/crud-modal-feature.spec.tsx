@@ -3,13 +3,15 @@ import { render } from '__tests__/utils/setup-jest'
 import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'
+import { containerRegistriesByOrganizationIdMock, organizationFactoryMock } from '@qovery/shared/factories'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockOrganization: OrganizationEntity = storeOrganization.organizationFactoryMock(1)[0]
-const mockContainerRegistries = storeOrganization.containerRegistriesByOrganizationIdMock
+const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+// todo check this error
+const mockContainerRegistries = containerRegistriesByOrganizationIdMock
 
 jest.mock('@qovery/domains/organization', () => {
   return {

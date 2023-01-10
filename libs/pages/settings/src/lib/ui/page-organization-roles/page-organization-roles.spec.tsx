@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { availableRolesMock, customRolesMock } from '@qovery/domains/organization'
+import { availableRolesMock, customRolesMock } from '@qovery/shared/factories'
 import PageOrganizationRoles, { PageOrganizationRolesProps, isDefaultRole, rolesSort } from './page-organization-roles'
 
 const mockedUsedNavigate = jest.fn()

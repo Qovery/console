@@ -6,9 +6,9 @@ import {
   ProjectEnvironmentVariableApi,
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { mockEnvironmentVariable } from '@qovery/shared/factories'
 import { EnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { toast } from '@qovery/shared/ui'
-import { mockEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
 import {
   addVariableToStore,
   createAliasEnvironmentVariables,
