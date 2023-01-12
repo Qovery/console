@@ -13,7 +13,7 @@ export function InviteDetailsFeature() {
 
   return (
     inviteDetail && (
-      <InviteDetails user_name={inviteDetail.inviter} organization_name={(inviteDetail as any).organization_name} />
+      <InviteDetails user_name={inviteDetail.inviter} organization_name={inviteDetail.organization_name} />
     )
   )
 }

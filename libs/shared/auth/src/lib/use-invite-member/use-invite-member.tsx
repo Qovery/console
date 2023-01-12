@@ -1,18 +1,16 @@
 import { SerializedError } from '@reduxjs/toolkit'
-import { InviteMember, MembersApi } from 'qovery-typescript-axios'
+import { InviteMember } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
+import { acceptMembershipInvitation, fetchMemberInvitation } from '@qovery/domains/user'
 import { ACCEPT_INVITATION_URL, LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
-import { toastError } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 import useAuth from '../use-auth/use-auth'
 
-const membersApi = new MembersApi()
-
 export function useInviteMember() {
-  const [displayInvitation, setDisplayInvitation] = useState(false)
+  const [displayInvitation, setDisplayInvitation] = useState<boolean | undefined>(undefined)
   const [organizationId, setOrganizationId] = useState<string>()
   const [inviteId, setInviteId] = useState<string>()
   const [inviteDetail, setInviteDetail] = useState<InviteMember | undefined>()
@@ -57,10 +55,8 @@ export function useInviteMember() {
   }, [search, setOrganizationId, setInviteId, setDisplayInvitation])
 
   useEffect(() => {
-    if (displayInvitation) {
-      if (pathname.indexOf(ACCEPT_INVITATION_URL) === -1 && pathname.indexOf(LOGIN_URL) === -1) {
-        navigate(ACCEPT_INVITATION_URL)
-      }
+    if (displayInvitation && pathname.indexOf(ACCEPT_INVITATION_URL) === -1 && pathname.indexOf(LOGIN_URL) === -1) {
+      navigate(ACCEPT_INVITATION_URL)
     }
   }, [pathname, displayInvitation, navigate])
 
@@ -72,13 +68,13 @@ export function useInviteMember() {
   }
 
   const acceptInvitation = async () => {
-    if (organizationId && inviteId)
-      try {
-        membersApi
-          .postAcceptInviteMember(organizationId, inviteId, {
-            data: {},
-          })
-          .then(async () => {
+    const fakeOrganizationId = 'lk'
+    const fakeInviteId = 'lk'
+    if (fakeOrganizationId && fakeInviteId)
+      dispatch(acceptMembershipInvitation({ organizationId: fakeOrganizationId, inviteId: fakeInviteId }))
+        .unwrap()
+        .then(
+          async () => {
             cleanInvitation()
             try {
               await getAccessTokenSilently({ ignoreCache: true })
@@ -88,29 +84,33 @@ export function useInviteMember() {
                   window.location.assign(`/organization/${organizationId}`)
                 })
             } catch (e) {
+              console.log('do we get here?')
               navigate(LOGOUT_URL)
             }
-          })
-      } catch (e) {
-        setDisplayInvitation(false)
-        toastError(e as SerializedError, 'Invitation Member', 'The invitation can not be accepted')
-        cleanInvitation()
-        setTimeout(() => {
-          window.location.assign(`/`)
-        })
-      }
+          },
+          (error: SerializedError) => {
+            setDisplayInvitation(false)
+            cleanInvitation()
+            setTimeout(() => {
+              window.location.assign(`/`)
+            })
+          }
+        )
   }
 
   const fetchInvitationDetail = useCallback(async () => {
     if (organizationId && inviteId) {
-      try {
-        const invitationDetails = await membersApi.getMemberInvitation(organizationId, inviteId)
-        setInviteDetail(invitationDetails.data)
-      } catch (e) {
-        setDisplayInvitation(false)
-        cleanInvitation()
-        toastError(e as SerializedError, 'Invitation Member', 'This member invitation is not correct')
-      }
+      dispatch(fetchMemberInvitation({ organizationId, inviteId }))
+        .unwrap()
+        .then(
+          (invitationDetails) => {
+            if (invitationDetails) setInviteDetail(invitationDetails.data)
+          },
+          (error: SerializedError) => {
+            setDisplayInvitation(false)
+            cleanInvitation()
+          }
+        )
     }
   }, [organizationId, inviteId])
 

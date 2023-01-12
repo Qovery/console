@@ -106,7 +106,7 @@ export const postApplicationActionsDeployByCommitId = createAsyncThunk<
         git_commit_id: data.git_commit_id,
       })
     } else {
-      response = await jobActionApi.deployJob(data.applicationId, false, {
+      response = await jobActionApi.deployJob(data.applicationId, undefined, {
         git_commit_id: data.git_commit_id,
       })
     }
@@ -136,7 +136,7 @@ export const postApplicationActionsDeployByTag = createAsyncThunk<
         image_tag: data.tag,
       })
     } else {
-      response = await jobActionApi.deployJob(data.applicationId, false, {
+      response = await jobActionApi.deployJob(data.applicationId, undefined, {
         image_tag: data.tag,
       })
     }

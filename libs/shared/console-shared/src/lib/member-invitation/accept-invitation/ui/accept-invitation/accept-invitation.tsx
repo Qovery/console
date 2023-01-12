@@ -13,7 +13,7 @@ export function AcceptInvitation(props: AcceptInvitationProps) {
         src="assets/logos/logo-white.svg"
         alt="Qovery logo white"
       />
-      <div className="text-center bg-white rounded-xl p-6 max-w-[568px] mx-auto text-center">
+      <div className="text-center bg-white rounded-xl p-6 max-w-[568px] mx-auto">
         <InviteDetailsFeature />
         <Button className="items-center justify-center mt-2" onClick={() => props.onSubmit()}>
           Accept
