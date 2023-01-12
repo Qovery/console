@@ -10,6 +10,7 @@ import {
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import DeployOtherCommitModalFeature, { DeployOtherCommitModalFeatureProps } from './deploy-other-commit-modal-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -27,7 +28,7 @@ jest.mock('react-redux', () => ({
   },
 }))
 
-const mockApplication = storeApplication.applicationFactoryMock(1)[0]
+const mockApplication = applicationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/application', () => ({
   ...(jest.requireActual('@qovery/domains/application') as any),
@@ -87,11 +88,12 @@ describe('DeployOtherCommitModalFeature', () => {
     }))
 
     const { baseElement } = render(<DeployOtherCommitModalFeature {...props} />)
-    await waitFor(() => {})
+
+    await waitFor(jest.fn())
     const commitBoxes = getAllByTestId(baseElement, 'commit-box')
 
     commitBoxes[1].click()
-    await waitFor(() => {})
+    await waitFor(jest.fn())
 
     // click on submit button
     const submitButton = getByTestId(baseElement, 'submit-button')

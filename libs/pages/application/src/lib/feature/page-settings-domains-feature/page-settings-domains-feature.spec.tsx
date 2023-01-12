@@ -2,7 +2,7 @@ import { act, getAllByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { CustomDomain, CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
-import { applicationFactoryMock } from '@qovery/domains/application'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsDomainsFeature from './page-settings-domains-feature'
 

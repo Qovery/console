@@ -44,6 +44,7 @@ describe('PageApplicationCreatePortFeature', () => {
       </ApplicationContainerCreateContext.Provider>
     )
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     await act(() => {})
 
     const button = getByTestId(baseElement, 'button-submit')

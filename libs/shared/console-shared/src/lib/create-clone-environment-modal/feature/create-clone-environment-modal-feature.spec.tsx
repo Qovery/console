@@ -3,8 +3,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as storeEnvironment from '@qovery/domains/environment'
-import { environmentFactoryMock } from '@qovery/domains/environment'
-import { clusterFactoryMock } from '@qovery/domains/organization'
+import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import CreateCloneEnvironmentModalFeature, {
   CreateCloneEnvironmentModalFeatureProps,
 } from './create-clone-environment-modal-feature'

@@ -9,9 +9,10 @@ import { useIntercom } from 'react-use-intercom'
 import { selectUser } from '@qovery/domains/user'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
-import { useAuth } from '@qovery/shared/auth'
+import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { UserInterface } from '@qovery/shared/interfaces'
-import { LOGIN_URL, LOGOUT_URL, ProtectedRoute } from '@qovery/shared/router'
+import { ProtectedRoute } from '@qovery/shared/router'
+import { LOGIN_URL, LOGOUT_URL } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useAuthInterceptor, useDocumentTitle } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
@@ -21,6 +22,19 @@ import { ROUTER } from './router/main.router'
 export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
+  const { redirectToAcceptPageGuard, onSearchUpdate, checkTokenInStorage } = useInviteMember()
+
+  useEffect(() => {
+    onSearchUpdate()
+  }, [onSearchUpdate])
+
+  useEffect(() => {
+    checkTokenInStorage()
+  }, [checkTokenInStorage])
+
+  useEffect(() => {
+    redirectToAcceptPageGuard()
+  }, [redirectToAcceptPageGuard])
 
   const gtmParams = { id: environment.gtm }
 

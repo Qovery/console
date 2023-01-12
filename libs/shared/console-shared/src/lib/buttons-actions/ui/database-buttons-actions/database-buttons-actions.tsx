@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteDatabaseAction, postDatabaseActionsDeploy, postDatabaseActionsRestart } from '@qovery/domains/database'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { JobGeneralSettings } from '@qovery/shared/console-shared'
 import { JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
-import { SERVICES_URL } from '@qovery/shared/router'
+import { SERVICES_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepGeneralProps {

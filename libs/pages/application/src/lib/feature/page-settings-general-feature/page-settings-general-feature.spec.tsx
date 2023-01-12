@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock, cronjobFactoryMock } from '@qovery/domains/application'
+import { applicationFactoryMock, cronjobFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import PageSettingsGeneralFeature, {
   handleGitApplicationSubmit,

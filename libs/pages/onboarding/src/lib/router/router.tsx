@@ -5,7 +5,7 @@ import {
   ONBOARDING_PROJECT_URL,
   ONBOARDING_THANKS_URL,
   Route,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { OnboardingMore } from '../feature/onboarding-more/onboarding-more'
 import { OnboardingPersonalize } from '../feature/onboarding-personalize/onboarding-personalize'
 import { OnboardingPricing } from '../feature/onboarding-pricing/onboarding-pricing'

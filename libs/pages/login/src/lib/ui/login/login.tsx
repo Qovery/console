@@ -1,4 +1,6 @@
-import { AuthEnum } from '@qovery/shared/auth'
+import { useEffect } from 'react'
+import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
+import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
 
@@ -11,12 +13,25 @@ export interface ILoginProps {
 
 export function Login(props: ILoginProps) {
   const { onClickAuthLogin, githubType, gitlabType, bitbucketType } = props
+  const { displayInvitation, checkTokenInStorage } = useInviteMember()
+
+  useEffect(() => {
+    checkTokenInStorage()
+  }, [checkTokenInStorage])
 
   return (
     <div className="flex h-full max-w-screen-2xl ml-auto mr-auto bg-white">
       <div className="flex-[2_1_0%] px-4 md:px-20">
         <div className="max-w-lg mt-28 mx-auto">
-          <h1 className="h3 text-text-700 mb-3">Welcome to Qovery</h1>
+          {!displayInvitation ? (
+            <h1 className="h3 text-text-700 mb-3" data-testid="welcome-title">
+              Welcome to Qovery
+            </h1>
+          ) : (
+            <div className="mb-2">
+              <InviteDetailsFeature />
+            </div>
+          )}
           <p className="text-sm mb-10 text-text-500">
             By registering and using Qovery, you agree to the processing of your personal data by Qovery as described in
             the

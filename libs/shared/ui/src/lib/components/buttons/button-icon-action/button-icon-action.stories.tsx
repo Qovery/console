@@ -1,5 +1,5 @@
 import { Meta, Story } from '@storybook/react'
-import { Icon } from '@qovery/shared/ui'
+import Icon from '../../icon/icon'
 import { ButtonIconAction, ButtonIconActionProps } from './button-icon-action'
 
 export default {

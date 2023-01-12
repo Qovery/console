@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { MemberRoleUpdateRequest, MembersApi } from 'qovery-typescript-axios'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchMembers } from './organization.slice'
 
 const membersApi = new MembersApi()

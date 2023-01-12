@@ -14,7 +14,7 @@ import {
 import { fetchProjects } from '@qovery/domains/projects'
 import { fetchUserSignUp } from '@qovery/domains/user'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { ORGANIZATION_URL } from '@qovery/shared/router'
+import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { WebsocketContainer } from '@qovery/shared/websockets'
 import { AppDispatch, RootState } from '@qovery/store'
 import LayoutPage from '../../ui/layout-page/layout-page'

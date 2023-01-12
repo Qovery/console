@@ -11,7 +11,7 @@ import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_PORTS_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'

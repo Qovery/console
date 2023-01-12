@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchEnvironmentDeploymentHistory, fetchEnvironmentsStatus } from './environments.slice'
 
 const environmentActionApi = new EnvironmentActionsApi()

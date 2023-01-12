@@ -1,6 +1,6 @@
 import { getAllByTestId, getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/domains/application'
+import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import JobOverview, { JobOverviewProps } from './job-overview'
 
 const props: JobOverviewProps = {

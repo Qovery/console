@@ -3,7 +3,7 @@ import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Value } from '@qovery/shared/interfaces'
-import { SERVICES_URL } from '@qovery/shared/router'
+import { SERVICES_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,

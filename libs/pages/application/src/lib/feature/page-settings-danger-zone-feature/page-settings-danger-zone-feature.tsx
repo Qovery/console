@@ -4,7 +4,7 @@ import { deleteApplicationAction, selectApplicationById } from '@qovery/domains/
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 

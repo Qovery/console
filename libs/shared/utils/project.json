@@ -7,7 +7,8 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/shared/utils/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/shared/utils/**/*.{ts,tsx,js,jsx}"],
+        "exclude": ["libs/shared/utils/**/*.spec.ts", "libs/shared/utils/**/*.stories.ts"]
       }
     },
     "test": {

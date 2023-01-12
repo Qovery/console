@@ -3,12 +3,12 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  environmentFactoryMock,
   environmentsLoadingStatus,
   fetchEnvironmentsStatus,
   selectEnvironmentsEntitiesByProjectId,
 } from '@qovery/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { environmentFactoryMock } from '@qovery/shared/factories'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'

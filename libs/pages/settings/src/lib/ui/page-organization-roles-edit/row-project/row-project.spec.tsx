@@ -1,6 +1,6 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { customRolesMock } from '@qovery/domains/organization'
+import { customRolesMock } from '@qovery/shared/factories'
 import { resetForm } from '../../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import RowProject, { OrganizationCustomRoleProjectPermissionAdmin } from './row-project'
 

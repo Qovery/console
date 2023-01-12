@@ -37,6 +37,7 @@ describe('StepResources', () => {
 
     const button = getByTestId('button-submit')
     // wait one cycle that the button becomes enabled
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     await act(() => {})
 
     await act(() => {

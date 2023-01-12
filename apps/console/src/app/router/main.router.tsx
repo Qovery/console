@@ -10,7 +10,9 @@ import { PageOnboarding } from '@qovery/pages/onboarding'
 import { OverviewPage } from '@qovery/pages/overview/feature'
 import { PageServices } from '@qovery/pages/services'
 import { PageSettings } from '@qovery/pages/settings'
+import { AcceptInvitationFeature } from '@qovery/shared/console-shared'
 import {
+  ACCEPT_INVITATION_URL,
   APPLICATION_LOGS_URL,
   APPLICATION_URL,
   CLUSTERS_URL,
@@ -23,7 +25,7 @@ import {
   OVERVIEW_URL,
   SERVICES_URL,
   SETTINGS_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import RedirectOverview from '../components/redirect-overview'
 
 interface RouterProps {
@@ -39,6 +41,12 @@ export const ROUTER: RouterProps[] = [
   {
     path: `${ONBOARDING_URL}/*`,
     component: <PageOnboarding />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${ACCEPT_INVITATION_URL}`,
+    component: <AcceptInvitationFeature />,
     protected: true,
     layout: false,
   },

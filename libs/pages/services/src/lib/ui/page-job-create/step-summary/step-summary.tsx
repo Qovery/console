@@ -55,45 +55,41 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
 
             {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
-              <>
-                <ul className="text-text-400 text-sm list-none">
+              <ul className="text-text-400 text-sm list-none">
+                <li>
+                  <span className="font-medium">Repository:</span> {props.generalData.repository}
+                </li>
+                <li>
+                  <span className="font-medium">Branch:</span> {props.generalData.branch}
+                </li>
+                <li>
+                  <span className="font-medium">Root path:</span> {props.generalData.root_path}
+                </li>
+                {props.generalData.build_mode === BuildModeEnum.DOCKER && (
                   <li>
-                    <span className="font-medium">Repository:</span> {props.generalData.repository}
+                    <span className="font-medium">Dockerfile path:</span> {props.generalData.dockerfile_path}
                   </li>
-                  <li>
-                    <span className="font-medium">Branch:</span> {props.generalData.branch}
-                  </li>
-                  <li>
-                    <span className="font-medium">Root path:</span> {props.generalData.root_path}
-                  </li>
-                  {props.generalData.build_mode === BuildModeEnum.DOCKER && (
-                    <li>
-                      <span className="font-medium">Dockerfile path:</span> {props.generalData.dockerfile_path}
-                    </li>
-                  )}
-                </ul>
-              </>
+                )}
+              </ul>
             )}
             {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
-              <>
-                <ul className="text-text-400 text-sm list-none">
-                  <li>
-                    <span className="font-medium">Registry:</span> {props.selectedRegistryName}
-                  </li>
-                  <li>
-                    <span className="font-medium">Image name:</span> {props.generalData.image_name}
-                  </li>
-                  <li>
-                    <span className="font-medium">Image tag:</span> {props.generalData.image_tag}
-                  </li>
-                  <li>
-                    <span className="font-medium">Image entrypoint:</span> {props.generalData.image_entry_point}
-                  </li>
-                  <li>
-                    <span className="font-medium">CMD arguments:</span> {props.configureData.cmd_arguments}
-                  </li>
-                </ul>
-              </>
+              <ul className="text-text-400 text-sm list-none">
+                <li>
+                  <span className="font-medium">Registry:</span> {props.selectedRegistryName}
+                </li>
+                <li>
+                  <span className="font-medium">Image name:</span> {props.generalData.image_name}
+                </li>
+                <li>
+                  <span className="font-medium">Image tag:</span> {props.generalData.image_tag}
+                </li>
+                <li>
+                  <span className="font-medium">Image entrypoint:</span> {props.generalData.image_entry_point}
+                </li>
+                <li>
+                  <span className="font-medium">CMD arguments:</span> {props.configureData.cmd_arguments}
+                </li>
+              </ul>
             )}
           </div>
 

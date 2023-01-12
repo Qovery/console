@@ -2,7 +2,7 @@ import { OrganizationCustomRole, OrganizationCustomRoleProjectPermissions } from
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,

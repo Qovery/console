@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@qovery/shared/auth'
-import { LOGIN_URL } from '../router'
+import { LOGIN_URL } from '@qovery/shared/routes'
 
 export interface IProtectedRoute {
   children: React.ReactElement

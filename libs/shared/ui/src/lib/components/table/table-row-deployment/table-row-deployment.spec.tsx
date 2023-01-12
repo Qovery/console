@@ -1,5 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
-import { applicationDeploymentsFactoryMock } from '@qovery/domains/application'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
 import TableRowDeployment, { TableRowDeploymentProps } from './table-row-deployment'
 
 let props: TableRowDeploymentProps

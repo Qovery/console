@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
-import { organizationFactoryMock } from '@qovery/domains/organization'
-import { userSignUpFactoryMock } from '@qovery/domains/user'
+import { organizationFactoryMock } from '@qovery/shared/factories'
+import { userSignUpFactoryMock } from '@qovery/shared/factories'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import MenuAccountFeature from './menu-account-feature'
 

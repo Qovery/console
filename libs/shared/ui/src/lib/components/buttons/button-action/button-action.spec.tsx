@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { Icon } from '@qovery/shared/ui'
+import Icon from '../../icon/icon'
 import ButtonAction, { ButtonActionProps } from './button-action'
 
 let props: ButtonActionProps

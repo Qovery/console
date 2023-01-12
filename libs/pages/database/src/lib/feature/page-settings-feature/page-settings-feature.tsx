@@ -9,7 +9,7 @@ import {
   DATABASE_SETTINGS_RESOURCES_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import { ROUTER_DATABASE_SETTINGS } from '../../router/router'

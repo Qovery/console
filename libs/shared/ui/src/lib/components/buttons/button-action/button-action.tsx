@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
-import { ButtonSize, Icon } from '@qovery/shared/ui'
+import Icon from '../../icon/icon'
 import Menu, { MenuAlign, MenuData } from '../../menu/menu'
+import { ButtonSize } from '../button/button'
 
 export enum ButtonActionStyle {
   BASIC = 'basic',
@@ -60,7 +61,7 @@ export function ButtonAction(props: ButtonActionProps) {
           </Link>
         )}
         {link && external && (
-          <a className="btn-action__content" href={link} target="_blank" onClick={onClick}>
+          <a className="btn-action__content" href={link} target="_blank" onClick={onClick} rel="noreferrer">
             <span>{children}</span>
             {iconRight && <Icon name={iconRight} className="text-sm" />}
           </a>

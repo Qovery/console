@@ -1,11 +1,12 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { Project } from 'qovery-typescript-axios'
 import * as storeProjects from '@qovery/domains/projects'
+import { projectsFactoryMock } from '@qovery/shared/factories'
 import PageProjectGeneralFeature from './page-project-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockProject: Project = storeProjects.projectsFactoryMock(1)[0]
+const mockProject: Project = projectsFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/projects', () => {
   return {

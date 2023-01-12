@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
+import { render, waitFor } from '__tests__/utils/setup-jest'
 import {
   EnvironmentModeEnum,
   OrganizationCustomRole,
@@ -6,6 +6,7 @@ import {
   OrganizationCustomRoleProjectPermission,
 } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
+import { organizationFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationRolesEditFeature, {
   getValue,
   handleSubmit,
@@ -14,7 +15,7 @@ import PageOrganizationRolesEditFeature, {
 
 import SpyInstance = jest.SpyInstance
 
-const mockOrganization = storeOrganization.organizationFactoryMock(1)[0]
+const mockOrganization = organizationFactoryMock(1)[0]
 const mockCustomRole: OrganizationCustomRole[] = mockOrganization.customRoles?.items || []
 
 jest.mock('@qovery/domains/organization', () => {

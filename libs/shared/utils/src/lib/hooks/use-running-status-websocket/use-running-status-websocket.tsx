@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
-import { useAuth } from '@qovery/shared/auth'
+
+//import { useAuth } from '@qovery/shared/auth'
 
 export interface RunningStatusWebsocketProps {
   organizationId: string
@@ -10,7 +11,7 @@ const baseUrl = 'wss://ws.qovery.com/service/status'
 export function useRunningStatusWebsocket() {
   const [websockets, setWebsockets] = useState<string[]>([])
   const [websocketsUrl, setWebsocketsUrl] = useState<string[]>([])
-  const { getAccessTokenSilently } = useAuth()
+  //const { getAccessTokenSilently } = useAuth()
 
   const closeSockets = useCallback((): void => {
     setWebsockets([])
@@ -26,7 +27,7 @@ export function useRunningStatusWebsocket() {
   }
 
   const openWebSocket = async (organizationId: string, clusterId: string): Promise<void> => {
-    const token = await getAccessTokenSilently()
+    const token = null //await getAccessTokenSilently()
 
     setWebsockets((prevValue) => {
       const webSocketId = `${organizationId}-${clusterId}`

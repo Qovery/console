@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react'
+import { IconEnum } from '@qovery/shared/enums'
 import { Value } from '@qovery/shared/interfaces'
-import { IconEnum } from '../../../../../../enums/src'
 import Icon from '../../icon/icon'
 import { InputSelect, InputSelectProps } from './input-select'
 

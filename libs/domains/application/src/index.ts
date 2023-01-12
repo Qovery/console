@@ -1,6 +1,3 @@
 export * from './lib/slices/custom-domain.slice'
-export * from './lib/mocks/factories/application-factory.mock'
-export * from './lib/mocks/factories/job-factory.mock'
-export * from './lib/mocks/factories/application-deployment-factory.mock'
 export * from './lib/slices/applications.slice'
 export * from './lib/slices/application.actions'

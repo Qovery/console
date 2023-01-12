@@ -1,7 +1,7 @@
 import { getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { environmentFactoryMock } from '@qovery/domains/environment'
+import { environmentFactoryMock } from '@qovery/shared/factories'
 import EnvironmentButtonsActions, { EnvironmentButtonsActionsProps } from './environment-buttons-actions'
 
 const mockEnvironment = environmentFactoryMock(1)[0]

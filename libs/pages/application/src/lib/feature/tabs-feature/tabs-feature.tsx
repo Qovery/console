@@ -12,7 +12,7 @@ import {
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import {
   Button,
   ButtonAction,

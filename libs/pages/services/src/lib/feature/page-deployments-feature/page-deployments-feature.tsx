@@ -3,12 +3,12 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  environmentFactoryMock,
   environmentsLoadingEnvironmentDeployments,
   fetchEnvironmentDeploymentHistory,
   selectEnvironmentById,
 } from '@qovery/domains/environment'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { environmentFactoryMock } from '@qovery/shared/factories'
 import { DeploymentService, EnvironmentEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'

@@ -1,10 +1,15 @@
 import { render } from '__tests__/utils/setup-jest'
-import { applicationFactoryMock } from '@qovery/domains/application'
-import { environmentFactoryMock } from '@qovery/domains/environment'
-import { organizationFactoryMock } from '@qovery/domains/organization'
-import { projectsFactoryMock } from '@qovery/domains/projects'
-import { BreadcrumbProps } from '@qovery/shared/ui'
-import { BreadcrumbMemo } from './breadcrumb'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import {
+  applicationFactoryMock,
+  environmentFactoryMock,
+  organizationFactoryMock,
+  projectsFactoryMock,
+} from '@qovery/shared/factories'
+import { BreadcrumbMemo, BreadcrumbProps } from './breadcrumb'
 
 describe('Breadcrumb', () => {
   const props: BreadcrumbProps = {

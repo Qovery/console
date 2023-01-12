@@ -8,7 +8,7 @@ import {
 } from '@reduxjs/toolkit'
 import { Project, ProjectMainCallsApi, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 import { ProjectsState } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 

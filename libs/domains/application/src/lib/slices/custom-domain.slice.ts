@@ -2,7 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } fr
 import { ContainerCustomDomainApi, CustomDomain, CustomDomainApi } from 'qovery-typescript-axios'
 import { ServiceTypeEnum, isContainer } from '@qovery/shared/enums'
 import { CustomDomainsState } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 

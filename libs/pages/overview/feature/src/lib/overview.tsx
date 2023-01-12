@@ -1,5 +1,5 @@
 import { Navigate, useParams } from 'react-router-dom'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/router'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 
 export function OverviewPage() {
   const { organizationId, projectId } = useParams()

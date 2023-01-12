@@ -7,7 +7,7 @@ import {
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'

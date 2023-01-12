@@ -14,7 +14,7 @@ import {
 import { Key } from 'qovery-typescript-axios/api'
 import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariablesState } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, removeOneToManyRelation } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 

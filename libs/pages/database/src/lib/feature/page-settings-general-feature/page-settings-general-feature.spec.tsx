@@ -1,12 +1,13 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum } from 'qovery-typescript-axios'
 import * as storeDatabase from '@qovery/domains/database'
+import { databaseFactoryMock } from '@qovery/shared/factories'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockDatabase: DatabaseEntity = storeDatabase.databaseFactoryMock(1)[0]
+const mockDatabase: DatabaseEntity = databaseFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/database', () => {
   return {

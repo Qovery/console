@@ -3,26 +3,25 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ContainerApplicationEntity, DeploymentService } from '@qovery/shared/interfaces'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
-} from '@qovery/shared/router'
-import {
-  ButtonIconAction,
-  IconAwesomeEnum,
-  Skeleton,
-  StatusChip,
-  TableRow,
-  Tag,
-  TagCommit,
-  Tooltip,
-} from '@qovery/shared/ui'
+} from '@qovery/shared/routes'
 import { renameStatus, timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
+import ButtonIconAction from '../../buttons/button-icon-action/button-icon-action'
 import Icon from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import Skeleton from '../../skeleton/skeleton'
+import StatusChip from '../../status-chip/status-chip'
+import TagCommit from '../../tag-commit/tag-commit'
+import Tag from '../../tag/tag'
+import Tooltip from '../../tooltip/tooltip'
 import { TableFilterProps, TableHeadProps } from '../table'
+import TableRow from '../table-row/table-row'
 
 export interface TableRowDeploymentProps {
   dataHead: TableHeadProps[]

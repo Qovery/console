@@ -1,10 +1,11 @@
 import { act, render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
+import { organizationFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationMembersFeature from './page-organization-members-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockOrganization = storeOrganization.organizationFactoryMock(1)[0]
+const mockOrganization = organizationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/organization', () => {
   return {

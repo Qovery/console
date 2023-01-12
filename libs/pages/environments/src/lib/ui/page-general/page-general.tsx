@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
   BaseLink,
   Button,

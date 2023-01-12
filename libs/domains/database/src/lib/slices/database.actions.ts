@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { DatabaseActionsApi, DatabaseMainCallsApi } from 'qovery-typescript-axios'
-import { ToastEnum, toast } from '@qovery/shared/toast'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchDatabasesStatus } from './databases.slice'
 
 const databaseActionApi = new DatabaseActionsApi()

@@ -6,7 +6,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import {
   Button,
   ButtonIcon,

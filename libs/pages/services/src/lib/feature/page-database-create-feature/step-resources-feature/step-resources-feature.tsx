@@ -6,7 +6,7 @@ import {
   SERVICES_DATABASE_CREATION_POST_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepResources from '../../../ui/page-database-create/step-resources/step-resources'

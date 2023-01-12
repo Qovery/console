@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/react'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { mockEnvironmentVariable } from '@qovery/domains/environment-variable'
+import { mockEnvironmentVariable } from '@qovery/shared/factories'
 import {
   CrudEnvironmentVariableModalFeatureProps,
   DataFormEnvironmentVariableInterface,

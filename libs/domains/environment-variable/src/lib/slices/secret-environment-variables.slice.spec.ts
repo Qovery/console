@@ -1,5 +1,5 @@
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { mockSecretEnvironmentVariable } from '../mocks/factories/environment-variable-factory.mock'
+import { mockSecretEnvironmentVariable } from '@qovery/shared/factories'
 import {
   fetchSecretEnvironmentVariables,
   secretEnvironmentVariables,

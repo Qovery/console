@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import { deploymentLogFactoryMock } from '@qovery/domains/environment'
 import { LogsType } from '@qovery/shared/enums'
+import { deploymentLogFactoryMock } from '@qovery/shared/factories'
 import Row, { RowProps } from './row'
 
 jest.mock('date-fns-tz', () => ({

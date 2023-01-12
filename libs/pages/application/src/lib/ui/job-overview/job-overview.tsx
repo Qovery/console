@@ -7,7 +7,7 @@ import {
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { PropertyCard } from '@qovery/shared/ui'
 
 export interface JobOverviewProps {

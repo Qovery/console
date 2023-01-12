@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_LOGS_URL,
@@ -18,7 +19,7 @@ import {
   OVERVIEW_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'

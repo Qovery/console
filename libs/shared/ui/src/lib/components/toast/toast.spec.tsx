@@ -1,10 +1,9 @@
 import { act } from '@testing-library/react'
 import { render, screen } from '__tests__/utils/setup-jest'
-import { ToastEnum } from '@qovery/shared/toast'
+import { ToastEnum } from '../../utils/toast'
 import ToastBehavior, { ToastContent, ToastProps } from './toast'
 
-let props: ToastProps
-props = {
+const props: ToastProps = {
   status: ToastEnum.SUCCESS,
 }
 

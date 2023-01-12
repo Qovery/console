@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { useForm } from 'react-hook-form'
-import { clusterFactoryMock } from '@qovery/domains/organization'
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageCreateEditDeploymentRule, { PageCreateEditDeploymentRuleProps } from './page-create-edit-deployment-rule'
 
 describe('PageCreateEditDeploymentRule', () => {

@@ -9,14 +9,13 @@ import {
   fetchAvailableRoles,
   fetchInviteMembers,
   fetchMembers,
-  membersMock,
   postInviteMember,
   selectOrganizationById,
   transferOwnershipMemberRole,
 } from '@qovery/domains/organization'
 import { selectUser } from '@qovery/domains/user'
-import { ToastEnum, toast } from '@qovery/shared/toast'
-import { useModal } from '@qovery/shared/ui'
+import { membersMock } from '@qovery/shared/factories'
+import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'

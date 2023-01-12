@@ -1,11 +1,12 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { Organization } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
+import { organizationFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationGeneralFeature, { handleSubmit } from './page-organization-general-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockOrganization: Organization = storeOrganization.organizationFactoryMock(1)[0]
+const mockOrganization: Organization = organizationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/organization', () => {
   return {

@@ -1,7 +1,7 @@
 import { getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { databaseFactoryMock } from '@qovery/domains/database'
+import { databaseFactoryMock } from '@qovery/shared/factories'
 import { DatabaseButtonsActions, DatabaseButtonsActionsProps } from './database-buttons-actions'
 
 const mockDatabase = databaseFactoryMock(1)[0]

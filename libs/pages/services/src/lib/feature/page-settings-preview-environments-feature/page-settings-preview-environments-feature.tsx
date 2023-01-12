@@ -69,6 +69,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
               data: cloneApplication,
               serviceType: getServiceType(application),
               silentToaster: true,
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
               toasterCallback: () => {},
             })
           )

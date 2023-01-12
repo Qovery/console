@@ -1,6 +1,6 @@
 import { Control, Controller } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
-import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/router'
+import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@qovery/shared/ui'
 
 export interface StepMoreProps {

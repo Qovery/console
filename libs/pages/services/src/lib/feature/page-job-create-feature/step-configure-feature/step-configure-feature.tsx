@@ -7,8 +7,8 @@ import {
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
-import { toastError } from '@qovery/shared/toast'
+} from '@qovery/shared/routes'
+import { toastError } from '@qovery/shared/ui'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepConfigure from '../../../ui/page-job-create/step-configure/step-configure'

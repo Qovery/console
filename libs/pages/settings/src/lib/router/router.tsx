@@ -10,7 +10,7 @@ import {
   SETTINGS_PROJECT_URL,
   SETTINGS_ROLES_EDIT_URL,
   SETTINGS_ROLES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
 import { PageOrganizationDangerZoneFeature } from '../feature/page-organization-danger-zone-feature/page-organization-danger-zone-feature'
 import { PageOrganizationGeneralFeature } from '../feature/page-organization-general-feature/page-organization-general-feature'

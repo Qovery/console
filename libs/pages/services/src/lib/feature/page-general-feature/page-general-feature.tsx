@@ -3,13 +3,13 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  applicationFactoryMock,
   fetchApplicationsStatus,
   getApplicationsState,
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
 import { fetchDatabasesStatus, getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { selectEnvironmentById } from '@qovery/domains/environment'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'

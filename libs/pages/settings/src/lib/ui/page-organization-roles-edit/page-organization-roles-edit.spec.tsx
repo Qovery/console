@@ -5,7 +5,7 @@ import {
   OrganizationCustomRoleClusterPermission,
   OrganizationCustomRoleProjectPermission,
 } from 'qovery-typescript-axios'
-import { customRolesMock } from '@qovery/domains/organization'
+import { customRolesMock } from '@qovery/shared/factories'
 import { resetForm } from '../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import PageOrganizationRolesEdit, { PageOrganizationRolesEditProps } from './page-organization-roles-edit'
 

@@ -2,12 +2,12 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  applicationDeploymentsFactoryMock,
   applicationsLoadingStatus,
   fetchApplicationDeployments,
   getApplicationsState,
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
+import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'

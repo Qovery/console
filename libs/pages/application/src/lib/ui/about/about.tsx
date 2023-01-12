@@ -2,7 +2,7 @@ import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/router'
+import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { BaseLink, Button, ButtonStyle, Icon, IconAwesomeEnum, Skeleton } from '@qovery/shared/ui'
 
 export interface AboutProps {

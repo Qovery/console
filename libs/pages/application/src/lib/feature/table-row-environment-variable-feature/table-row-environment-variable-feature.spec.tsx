@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { mockSecretEnvironmentVariable } from '@qovery/domains/environment-variable'
+import { mockSecretEnvironmentVariable } from '@qovery/shared/factories'
 import TableRowEnvironmentVariableFeature, {
   TableRowEnvironmentVariableFeatureProps,
 } from './table-row-environment-variable-feature'

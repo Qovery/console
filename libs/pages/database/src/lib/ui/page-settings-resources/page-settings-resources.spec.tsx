@@ -1,7 +1,7 @@
 import ResizeObserver from '__tests__/utils/resize-observer'
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { databaseFactoryMock } from '@qovery/domains/database'
+import { databaseFactoryMock } from '@qovery/shared/factories'
 import PageSettingsResources, { PageSettingsResourcesProps } from './page-settings-resources'
 
 const database = databaseFactoryMock(1)[0]

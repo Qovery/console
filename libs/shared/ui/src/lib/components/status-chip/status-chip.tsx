@@ -1,7 +1,8 @@
 import { DeploymentHistoryStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { Icon, Tooltip } from '@qovery/shared/ui'
 import { renameStatus, upperCaseFirstLetter } from '@qovery/shared/utils'
+import Icon from '../icon/icon'
+import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
   status: StateEnum | RunningStatus | DeploymentHistoryStatusEnum | undefined

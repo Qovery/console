@@ -1,6 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
-import { applicationFactoryMock } from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import TableRowServices, { TableRowServicesProps } from './table-row-services'
 
 let props: TableRowServicesProps

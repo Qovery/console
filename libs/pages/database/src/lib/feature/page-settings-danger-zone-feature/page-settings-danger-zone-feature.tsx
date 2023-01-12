@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { deleteDatabaseAction, selectDatabaseById } from '@qovery/domains/database'
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/router'
+import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 

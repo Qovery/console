@@ -10,7 +10,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": ["store"],
             "depConstraints": [
               {
                 "sourceTag": "*",

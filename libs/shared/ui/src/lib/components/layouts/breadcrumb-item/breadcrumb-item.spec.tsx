@@ -1,9 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
-import { BreadcrumbItemProps } from '@qovery/shared/ui'
-import BreadcrumbItem from './breadcrumb-item'
+import BreadcrumbItem, { BreadcrumbItemProps } from './breadcrumb-item'
 
 describe('BreadcrumbItem', () => {
-  let props: BreadcrumbItemProps = {
+  const props: BreadcrumbItemProps = {
     data: [],
     paramId: 'ffff-ffff-ffff',
     link: '/overview',

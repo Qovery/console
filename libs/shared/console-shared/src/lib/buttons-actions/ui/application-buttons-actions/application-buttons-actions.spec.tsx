@@ -1,7 +1,7 @@
 import { getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@qovery/domains/application'
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationButtonsActions, ApplicationButtonsActionsProps } from './application-buttons-actions'
 
 const mockApplication = applicationFactoryMock(1)[0]

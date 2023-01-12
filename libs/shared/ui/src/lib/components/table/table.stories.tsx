@@ -1,6 +1,6 @@
 import { Meta, Story } from '@storybook/react'
 import { useState } from 'react'
-import { environmentFactoryMock } from '@qovery/domains/environment'
+import { environmentFactoryMock } from '@qovery/shared/factories'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import Button from '../buttons/button/button'
 import Icon from '../icon/icon'

@@ -2,8 +2,8 @@ import { act } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
-import { organizationFactoryMock } from '@qovery/domains/organization'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { organizationFactoryMock } from '@qovery/shared/factories'
 import StepGeneral, { StepGeneralProps } from './step-general'
 
 const mockOrganization = organizationFactoryMock(1)[0]
@@ -37,6 +37,7 @@ describe('StepGeneral', () => {
 
     const button = getByTestId('button-submit')
     // wait one cycle that the button becomes enabled
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     await act(() => {})
 
     await act(() => {

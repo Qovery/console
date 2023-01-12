@@ -114,6 +114,7 @@ Primary.args = {
   totalSteps: 3,
   currentTitle: 'Create new application',
   exitTo: '/',
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onExit: () => {},
   children,
 }

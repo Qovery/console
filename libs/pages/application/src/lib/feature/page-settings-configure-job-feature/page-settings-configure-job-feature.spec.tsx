@@ -1,7 +1,7 @@
 import { act, fireEvent, getAllByLabelText, getByLabelText, getByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
-import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/domains/application'
+import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import PageSettingsConfigureJobFeature from './page-settings-configure-job-feature'
 
 import SpyInstance = jest.SpyInstance

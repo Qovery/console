@@ -1,7 +1,7 @@
 import { act, render, screen } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum } from 'qovery-typescript-axios'
-import { authProviderFactoryMock } from '@qovery/domains/organization'
+import { authProviderFactoryMock } from '@qovery/shared/factories'
 import { authProvidersValues } from '../../utils/auth-providers-values'
 import GitRepositorySettings, { GitRepositorySettingsProps } from './git-repository-settings'
 

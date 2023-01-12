@@ -23,10 +23,10 @@ export function createFilter(
   defaultData: any[] | undefined,
   defaultValue = 'ALL',
   currentFilter: string,
-  setCurrentFilter: Function,
-  setLocalFilter: Function,
-  setDataFilterNumber: Function,
-  setFilter: Function
+  setCurrentFilter: any,
+  setLocalFilter: any,
+  setDataFilterNumber: any,
+  setFilter: any
 ) {
   const keys: string[] = []
   const menus = []
@@ -67,10 +67,10 @@ export function groupBy(
   property: string,
   defaultValue = 'ALL',
   currentFilter: string,
-  setCurrentFilter: Function,
-  setLocalFilter: Function,
-  setDataFilterNumber: Function,
-  setFilter: Function,
+  setCurrentFilter: any,
+  setLocalFilter: any,
+  setDataFilterNumber: any,
+  setFilter: any,
   dataHeadFilter?: TableHeadCustomFilterProps
 ) {
   const dataByKeys = data.reduce((acc, obj) => {

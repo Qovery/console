@@ -23,7 +23,7 @@ import {
   Status,
 } from 'qovery-typescript-axios'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, toastError } from '@qovery/shared/toast'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 

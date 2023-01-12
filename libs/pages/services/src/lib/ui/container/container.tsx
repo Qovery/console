@@ -16,7 +16,7 @@ import {
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import {
   Button,
   ButtonSize,

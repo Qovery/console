@@ -1,7 +1,7 @@
 import { getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
-import { clusterFactoryMock } from '@qovery/domains/organization'
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { ClusterButtonsActions, ClusterButtonsActionsProps } from './cluster-buttons-actions'
 
 const mockCluster = clusterFactoryMock(1)[0]

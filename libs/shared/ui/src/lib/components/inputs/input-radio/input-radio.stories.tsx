@@ -6,11 +6,7 @@ export default {
   title: 'Inputs/InputRadio',
 } as Meta
 
-const Template: Story<InputRadioProps> = (args) => (
-  <>
-    <InputRadio {...args} />
-  </>
-)
+const Template: Story<InputRadioProps> = (args) => <InputRadio {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

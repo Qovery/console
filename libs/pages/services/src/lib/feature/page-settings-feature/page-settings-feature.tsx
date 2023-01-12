@@ -6,7 +6,7 @@ import {
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
-} from '@qovery/shared/router'
+} from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_ENVIRONMENTS_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'

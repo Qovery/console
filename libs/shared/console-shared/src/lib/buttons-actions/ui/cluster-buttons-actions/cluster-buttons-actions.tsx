@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteClusterAction, postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { INFRA_LOGS_URL } from '@qovery/shared/router'
+import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,

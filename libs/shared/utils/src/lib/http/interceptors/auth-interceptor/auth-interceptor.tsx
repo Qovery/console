@@ -1,8 +1,7 @@
+import { useAuth0 } from '@auth0/auth0-react'
+import { SerializedError } from '@reduxjs/toolkit'
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { useEffect } from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
-
-import { SerializedError } from '@reduxjs/toolkit'
 
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
@@ -14,7 +13,12 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       const urlWithoutBase = removeBaseUrl(config.url)
       config.url = `${apiUrl}${urlWithoutBase}`
 
-      const token = await getAccessTokenSilently()
+      let token
+      try {
+        token = await getAccessTokenSilently()
+      } catch (e) {
+        return config
+      }
 
       if (token) {
         config.headers = {
@@ -37,7 +41,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
           )
         }
 
-        // we reformat the error output to increase the dev experience
+        // we reformat the error output to improve the dev experience
         // without this we should add a catch in every asyncThunk api call
         // see: https://stackoverflow.com/questions/63439021/handling-errors-with-redux-toolkit
         const err: SerializedError = {
