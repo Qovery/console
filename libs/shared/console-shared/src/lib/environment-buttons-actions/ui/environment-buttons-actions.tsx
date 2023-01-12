@@ -37,6 +37,7 @@ import {
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import CreateCloneEnvironmentModalFeature from '../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
+import UpdateAllModalFeature from '../../update-all-modal/feature/update-all-modal-feature'
 
 export interface EnvironmentButtonsActionsProps {
   environment: EnvironmentEntity
@@ -167,23 +168,18 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         topItems.push(stopButton)
       }
 
-      // todo: not implemented yet on v3
-      //   const updateAllButton = {
-      //     name: 'Update all services',
-      //     contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-400" />,
-      //     onClick: (e: ClickEvent) => {
-      //       e.syntheticEvent.preventDefault()
-      //
-      //       openModalConfirmation({
-      //         mode: environment.mode,
-      //         title: 'Confirm update all',
-      //         description: 'To confirm the update of all the services of your environment, please type the name:',
-      //         name: environment.name,
-      //         action: () => console.log('todo: update all'),
-      //       })
-      //     },
-      //   }
-      // bottomItems.push(updateAllButton)
+      const updateAllButton = {
+        name: 'Update all services',
+        contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-400" />,
+        onClick: (e: ClickEvent) => {
+          e.syntheticEvent.preventDefault()
+          //projectId,
+          //environmentId: environment.id,
+
+          openModal({ content: <UpdateAllModalFeature environmentId={environment.id} projectId={projectId} /> })
+        },
+      }
+      bottomItems.push(updateAllButton)
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])

@@ -1,3 +1,5 @@
+export * from './lib/update-all-modal/feature/update-all-modal-feature'
+export * from './lib/update-all-modal/ui/update-all-modal'
 export * from './lib/member-invitation/accept-invitation/ui/accept-invitation/accept-invitation'
 export * from './lib/member-invitation/invite-details/feature/invite-details-feature'
 export * from './lib/job-configure-settings/ui/job-configure-settings'
