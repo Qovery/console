@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
@@ -12,7 +13,11 @@ export interface ILoginProps {
 
 export function Login(props: ILoginProps) {
   const { onClickAuthLogin, githubType, gitlabType, bitbucketType } = props
-  const { displayInvitation } = useInviteMember()
+  const { displayInvitation, checkTokenInStorage } = useInviteMember()
+
+  useEffect(() => {
+    checkTokenInStorage()
+  }, [checkTokenInStorage])
 
   return (
     <div className="flex h-full max-w-screen-2xl ml-auto mr-auto bg-white">

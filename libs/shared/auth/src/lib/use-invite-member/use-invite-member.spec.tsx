@@ -18,14 +18,19 @@ describe('useInviteMember Hook', () => {
     localStorage.clear()
   })
 
-  it('should store the tokens from the query inside localstorage and remove redirection from localStorage', () => {
+  it('should store the tokens from the query inside localstorage and remove redirection from localStorage', async () => {
     localStorage.setItem('redirectLoginUri', '/organization/123')
     ;(useLocation as jest.Mock).mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: 'login',
     })
 
-    renderHook(() => useInviteMember(), { wrapper: Wrapper })
+    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+
+    const { onSearchUpdate } = renderedHook.result.current
+    await act(() => {
+      onSearchUpdate()
+    })
 
     expect(localStorage.getItem('inviteToken')).toBe('123')
     expect(localStorage.getItem('inviteOrganizationId')).toBe('456')
@@ -40,24 +45,58 @@ describe('useInviteMember Hook', () => {
       pathname: '/organization',
     })
 
-    renderHook(() => useInviteMember(), { wrapper: Wrapper })
+    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+
+    const { checkTokenInStorage } = renderedHook.result.current
+    await act(() => {
+      checkTokenInStorage()
+    })
+
+    const { redirectToAcceptPageGuard } = renderedHook.result.current
+    await act(() => {
+      redirectToAcceptPageGuard()
+    })
+
     expect(mockedUseNavigate).toHaveBeenCalled()
   })
 
-  it('should not redirect if we are already on login', () => {
+  it('should not redirect if we are already on login', async () => {
     ;(useLocation as jest.Mock).mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: LOGIN_URL,
     })
 
-    renderHook(() => useInviteMember(), { wrapper: Wrapper })
+    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+
+    const { checkTokenInStorage } = renderedHook.result.current
+    await act(() => {
+      checkTokenInStorage()
+    })
+
+    const { redirectToAcceptPageGuard } = renderedHook.result.current
+    await act(() => {
+      redirectToAcceptPageGuard()
+    })
+
     expect(mockedUseNavigate).not.toHaveBeenCalled()
   })
 
-  it('should not redirect if we are already on accept page', () => {
+  it('should not redirect if we are already on accept page', async () => {
     ;(useLocation as jest.Mock).mockReturnValue({
       search: '?inviteToken=123&organization=456',
       pathname: ACCEPT_INVITATION_URL,
+    })
+
+    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+
+    const { checkTokenInStorage } = renderedHook.result.current
+    await act(() => {
+      checkTokenInStorage()
+    })
+
+    const { redirectToAcceptPageGuard } = renderedHook.result.current
+    await act(() => {
+      redirectToAcceptPageGuard()
     })
 
     renderHook(() => useInviteMember(), { wrapper: Wrapper })
