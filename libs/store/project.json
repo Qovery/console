@@ -1,7 +1,7 @@
 {
   "sourceRoot": "libs/store/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["root-store"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
