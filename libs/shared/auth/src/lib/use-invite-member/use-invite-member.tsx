@@ -1,6 +1,5 @@
-import { SerializedError } from '@reduxjs/toolkit'
 import { InviteMember } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
@@ -19,7 +18,7 @@ export function useInviteMember() {
   const { getAccessTokenSilently } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
 
-  useEffect(() => {
+  const checkTokenInStorage = useCallback(() => {
     const inviteToken = localStorage.getItem('inviteToken')
 
     if (inviteToken) {
@@ -33,7 +32,7 @@ export function useInviteMember() {
     }
   }, [])
 
-  useEffect(() => {
+  const onSearchUpdate = useCallback(() => {
     // check if inviteToken query param is present in URL
     const urlParams = new URLSearchParams(search)
     const inviteToken = urlParams.get('inviteToken')
@@ -54,7 +53,7 @@ export function useInviteMember() {
     }
   }, [search, setOrganizationId, setInviteId, setDisplayInvitation])
 
-  useEffect(() => {
+  const redirectToAcceptPageGuard = useCallback(() => {
     if (displayInvitation && pathname.indexOf(ACCEPT_INVITATION_URL) === -1 && pathname.indexOf(LOGIN_URL) === -1) {
       navigate(ACCEPT_INVITATION_URL)
     }
@@ -68,10 +67,8 @@ export function useInviteMember() {
   }
 
   const acceptInvitation = async () => {
-    const fakeOrganizationId = 'lk'
-    const fakeInviteId = 'lk'
-    if (fakeOrganizationId && fakeInviteId)
-      dispatch(acceptMembershipInvitation({ organizationId: fakeOrganizationId, inviteId: fakeInviteId }))
+    if (organizationId && inviteId)
+      dispatch(acceptMembershipInvitation({ organizationId, inviteId }))
         .unwrap()
         .then(
           async () => {
@@ -84,11 +81,10 @@ export function useInviteMember() {
                   window.location.assign(`/organization/${organizationId}`)
                 })
             } catch (e) {
-              console.log('do we get here?')
               navigate(LOGOUT_URL)
             }
           },
-          (error: SerializedError) => {
+          () => {
             setDisplayInvitation(false)
             cleanInvitation()
             setTimeout(() => {
@@ -106,13 +102,25 @@ export function useInviteMember() {
           (invitationDetails) => {
             if (invitationDetails) setInviteDetail(invitationDetails.data)
           },
-          (error: SerializedError) => {
+          () => {
             setDisplayInvitation(false)
             cleanInvitation()
+            setTimeout(() => {
+              window.location.assign(`/`)
+            })
           }
         )
     }
-  }, [organizationId, inviteId])
+  }, [organizationId, inviteId, dispatch])
 
-  return { displayInvitation, fetchInvitationDetail, acceptInvitation, cleanInvitation, inviteDetail }
+  return {
+    displayInvitation,
+    fetchInvitationDetail,
+    acceptInvitation,
+    cleanInvitation,
+    inviteDetail,
+    redirectToAcceptPageGuard,
+    onSearchUpdate,
+    checkTokenInStorage,
+  }
 }

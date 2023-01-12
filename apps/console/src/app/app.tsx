@@ -22,7 +22,19 @@ import { ROUTER } from './router/main.router'
 export function App() {
   useDocumentTitle('Loading...')
   const { isLoading } = useAuth()
-  useInviteMember()
+  const { redirectToAcceptPageGuard, onSearchUpdate, checkTokenInStorage } = useInviteMember()
+
+  useEffect(() => {
+    onSearchUpdate()
+  }, [onSearchUpdate])
+
+  useEffect(() => {
+    checkTokenInStorage()
+  }, [checkTokenInStorage])
+
+  useEffect(() => {
+    redirectToAcceptPageGuard()
+  }, [redirectToAcceptPageGuard])
 
   const gtmParams = { id: environment.gtm }
 

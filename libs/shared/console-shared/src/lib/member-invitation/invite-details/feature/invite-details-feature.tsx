@@ -3,7 +3,11 @@ import { useInviteMember } from '@qovery/shared/auth'
 import InviteDetails from '../ui/invite-details'
 
 export function InviteDetailsFeature() {
-  const { inviteDetail, fetchInvitationDetail } = useInviteMember()
+  const { inviteDetail, fetchInvitationDetail, checkTokenInStorage } = useInviteMember()
+
+  useEffect(() => {
+    checkTokenInStorage()
+  }, [checkTokenInStorage])
 
   useEffect(() => {
     fetchInvitationDetail().then()

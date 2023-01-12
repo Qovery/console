@@ -5,8 +5,12 @@ import { LOGIN_URL } from '@qovery/shared/routes'
 import AcceptInvitation from '../ui/accept-invitation/accept-invitation'
 
 export function AcceptInvitationFeature() {
-  const { acceptInvitation, displayInvitation } = useInviteMember()
+  const { acceptInvitation, displayInvitation, checkTokenInStorage } = useInviteMember()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    checkTokenInStorage()
+  }, [checkTokenInStorage])
 
   const onSubmit = async () => {
     await acceptInvitation()
