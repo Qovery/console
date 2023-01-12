@@ -30,7 +30,7 @@
     "@radix-ui/react-accordion": "^0.1.6",
     "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-slider": "^1.0.0",
-    "@radix-ui/react-tooltip": "^0.1.7",
+    "@radix-ui/react-tooltip": "^1.0.2",
     "@reduxjs/toolkit": "1.8.5",
     "@storybook/addon-essentials": "6.5.10",
     "@storybook/addon-knobs": "^6.4.0",
