@@ -5,9 +5,13 @@ import { getStatusClusterMessage } from '@qovery/shared/utils'
 import CardCluster, { CardClusterProps, getColorForStatus } from './card-cluster'
 
 describe('CardCluster', () => {
-  const props: CardClusterProps = {
-    cluster: clusterFactoryMock(1)[0],
-  }
+  let props: CardClusterProps
+
+  beforeEach(() => {
+    props = {
+      cluster: clusterFactoryMock(1)[0],
+    }
+  })
 
   it('should render successfully', () => {
     const { baseElement } = render(<CardCluster {...props} />)
@@ -34,6 +38,9 @@ describe('CardCluster', () => {
   })
 
   it('should have a status message', async () => {
+    if (props.cluster.extendedStatus?.status?.status) {
+      props.cluster.extendedStatus.status.status = StateEnum.READY
+    }
     const status = props.cluster.extendedStatus?.status?.status
 
     const { getByTestId } = render(<CardCluster {...props} />)

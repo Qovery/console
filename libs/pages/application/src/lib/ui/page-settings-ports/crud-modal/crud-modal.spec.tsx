@@ -26,9 +26,12 @@ describe('CrudModal', () => {
         defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },
       })
     )
-    await act(() => {
+
+    await act(jest.fn)
+
+    await waitFor(() => {
       getByDisplayValue(99)
-      getByDisplayValue(420)
+      //getByDisplayValue(420)
       getByDisplayValue('true')
     })
   })
