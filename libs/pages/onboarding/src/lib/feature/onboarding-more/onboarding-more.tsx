@@ -12,20 +12,32 @@ import { StepMore } from '../../ui/step-more/step-more'
 
 const dataQuestions: Value[] = [
   {
+    label: 'I want to use Preview Environments',
+    value: 'i-want-to-use-preview-environments',
+  },
+  {
+    label: 'I want to easily clone my environments',
+    value: 'i-want-to-easily-clone-my-environments',
+  },
+  {
+    label: 'I want to simplify my deployment process',
+    value: 'i-want-to-simplify-my-deployment-process',
+  },
+  {
     label: 'I want to easily deploy my apps on AWS',
     value: 'i-want-to-easily-deploy-my-apps-on-aws',
   },
   {
+    label: 'I want to easily deploy my apps on GCP',
+    value: 'i-want-to-easily-deploy-my-apps-on-gcp',
+  },
+  {
+    label: 'I want to easily deploy my apps on Azure',
+    value: 'i-want-to-easily-deploy-my-apps-on-azure',
+  },
+  {
     label: 'I want to find a better alternative to Heroku',
     value: 'i-want-to-find-a-better-alternative-to-heroku',
-  },
-  {
-    label: 'I want to get a faster AWS production-ready infrastructure',
-    value: 'i-want-to-get-a-faster-aws-production-ready-infrastructure',
-  },
-  {
-    label: 'I want to easily manage Preview Environments',
-    value: 'i-want-to-easily-manage-preview-environments',
   },
   {
     label: 'Other',
