@@ -1,10 +1,9 @@
 import { render } from '@testing-library/react'
+import PagesCluster from './page-cluster'
 
-import PageSettings from './page-settings'
-
-describe('PageSettings', () => {
+describe('PagesCluster', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettings />)
+    const { baseElement } = render(<PagesCluster />)
     expect(baseElement).toBeTruthy()
   })
 })

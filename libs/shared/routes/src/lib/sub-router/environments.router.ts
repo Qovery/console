@@ -5,5 +5,4 @@ export const ENVIRONMENTS_DEPLOYMENT_RULES_URL = `/deployment-rules`
 export const ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL = '/deployment-rules/create'
 export const ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL = (deploymentRuleId = ':deploymentRuleId') =>
   `/deployment-rules/edit/${deploymentRuleId}`
-export const ENVIRONMENTS_SETTINGS_URL = `/settings`
 export const ENVIRONMENTS_SETTINGS_GENERAL_URL = `/general`

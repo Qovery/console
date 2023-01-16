@@ -7,17 +7,7 @@ import {
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonSize,
-  Header,
-  Icon,
-  IconAwesomeEnum,
-  Tabs,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, ButtonSize, Header, Icon, IconAwesomeEnum, Tabs, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   children: React.ReactNode
@@ -30,14 +20,6 @@ export function Container(props: ContainerProps) {
   const { organizationId = '', projectId = '' } = useParams()
   const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
-
-  const headerButtons = (
-    <div className="hidden">
-      <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />
-      <ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />
-      <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />
-    </div>
-  )
 
   const isDeploymentRulesTab =
     pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}` ||
@@ -83,7 +65,7 @@ export function Container(props: ContainerProps) {
 
   return (
     <>
-      <Header title={project?.name} icon={IconEnum.ENVIRONMENT} buttons={headerButtons} />
+      <Header title={project?.name} icon={IconEnum.ENVIRONMENT} />
       <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
       <div className="flex-grow flex-col flex">{children}</div>
     </>

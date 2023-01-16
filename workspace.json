@@ -11,6 +11,7 @@
     "domains-organization": "libs/domains/organization",
     "domains-projects": "libs/domains/projects",
     "domains-user": "libs/domains/user",
+    "pages-cluster": "libs/pages/cluster",
     "pages-application": "libs/pages/application",
     "pages-clusters": "libs/pages/clusters",
     "pages-database": "libs/pages/database",

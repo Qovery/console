@@ -6,6 +6,7 @@ import Truncate from '../truncate/truncate'
 export interface HeaderProps {
   title?: string
   icon?: IconEnum | string
+  iconClassName?: string
   buttons?: React.ReactNode
   copyTitle?: boolean
   copyContent?: string
@@ -13,12 +14,12 @@ export interface HeaderProps {
 }
 
 export function Header(props: HeaderProps) {
-  const { title, icon, buttons, actions } = props
+  const { title, icon, buttons, actions, iconClassName = '' } = props
 
   return (
     <div className="flex h-32 border-b border-element-light-lighter-400 items-center justify-between bg-white rounded-t p-5 shrink-0">
       <div className="flex gap-4 ml-2 items-center">
-        {icon && <Icon name={icon} width="64" />}
+        {icon && <Icon name={icon} className={`w-16 ${iconClassName}`} />}
         <div className="flex flex-col gap-3">
           <div className="flex gap-2 items-center max-w-3xl">
             <Skeleton height={36} width={150} show={!title}>
