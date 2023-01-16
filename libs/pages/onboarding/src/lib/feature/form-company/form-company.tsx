@@ -10,8 +10,12 @@ import { StepCompany } from '../../ui/step-company/step-company'
 
 const dataSize: Value[] = [
   {
-    label: '1-10',
-    value: '1-10',
+    label: '1',
+    value: '1',
+  },
+  {
+    label: '2-10',
+    value: '2-10',
   },
   {
     label: '11-50',
@@ -26,12 +30,24 @@ const dataSize: Value[] = [
     value: '201-500',
   },
   {
-    label: '500+',
-    value: '500+',
+    label: '501-999',
+    value: '501-999',
+  },
+  {
+    label: '1000+',
+    value: '1000+',
   },
 ]
 
 const dataRole: Value[] = [
+  {
+    label: 'DevOps',
+    value: 'devops',
+  },
+  {
+    label: 'Platform Engineer',
+    value: 'platform-engineer',
+  },
   {
     label: 'Tech Lead',
     value: 'tech-lead',
@@ -41,16 +57,20 @@ const dataRole: Value[] = [
     value: 'software-developer',
   },
   {
-    label: 'DevOps',
-    value: 'devops',
+    label: 'Engineering Manager',
+    value: 'engineering-manager',
   },
   {
-    label: 'Product/Project Manager',
-    value: 'product-project-manager',
+    label: 'VP Engineering',
+    value: 'vp-engineering',
   },
   {
     label: 'CTO',
     value: 'cto',
+  },
+  {
+    label: 'Product Manager',
+    value: 'product-manager',
   },
   {
     label: 'Founder',

@@ -12,32 +12,36 @@ import { StepMore } from '../../ui/step-more/step-more'
 
 const dataQuestions: Value[] = [
   {
-    label: 'I want to use Preview Environments',
-    value: 'i-want-to-use-preview-environments',
+    label: 'easily spin up testing/dev/QA environments',
+    value: 'i-want-to-easily-spin-up-testing-dev-qa-environments',
   },
   {
-    label: 'I want to easily clone my environments',
-    value: 'i-want-to-easily-clone-my-environments',
+    label: 'SIMPLIFY my deployment pipeline',
+    value: 'i-want-to-simplify-my-deployment-pipeline',
   },
   {
-    label: 'I want to simplify my deployment process',
-    value: 'i-want-to-simplify-my-deployment-process',
+    label: 'AUTOMATE my deployment pipeline',
+    value: 'i-want-to-automate-my-deployment-pipeline',
   },
   {
-    label: 'I want to easily deploy my apps on AWS',
-    value: 'i-want-to-easily-deploy-my-apps-on-aws',
+    label: 'easily deploy my new project',
+    value: 'i-want-to-easily-deploy-my-new-project',
   },
   {
-    label: 'I want to easily deploy my apps on GCP',
-    value: 'i-want-to-easily-deploy-my-apps-on-gcp',
+    label: 'easily migrate my apps from Heroku',
+    value: 'i-want-to-easily-migrate-my-apps-from-heroku',
   },
   {
-    label: 'I want to easily deploy my apps on Azure',
-    value: 'i-want-to-easily-deploy-my-apps-on-azure',
-  },
-  {
-    label: 'I want to find a better alternative to Heroku',
+    label: 'find a better alternative to Heroku',
     value: 'i-want-to-find-a-better-alternative-to-heroku',
+  },
+  {
+    label: 'easily spin up and manage my Kubernetes cluster',
+    value: 'i-want-to-easily-spin-up-and-manage-my-kubernetes-cluster',
+  },
+  {
+    label: 'easily deploy my apps on my Kubernetes cluster',
+    value: 'i-want-to-easily-deploy-my-apps-on-my-kubernetes-cluster',
   },
   {
     label: 'Other',

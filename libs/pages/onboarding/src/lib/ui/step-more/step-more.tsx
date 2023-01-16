@@ -16,7 +16,7 @@ export function StepMore(props: StepMoreProps) {
   return (
     <div className="pb-10">
       <h1 className="h3 text-text-700 mb-3">Tell us more</h1>
-      <p className="text-sm mb-10 text-text-500">We need some information to proceed with your account creation.</p>
+      <p className="text-sm mb-10 text-text-500">We need more information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
         <Controller
           name="qovery_usage"
@@ -25,7 +25,7 @@ export function StepMore(props: StepMoreProps) {
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               className="mb-3"
-              label="Why do you want to use Qovery?"
+              label="Why do you want to use Qovery? I want to..."
               options={dataQuestions}
               onChange={field.onChange}
               value={field.value}
