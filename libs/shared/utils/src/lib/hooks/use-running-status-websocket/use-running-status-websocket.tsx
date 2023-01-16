@@ -1,17 +1,16 @@
+import { GetTokenSilentlyOptions } from '@auth0/auth0-react'
 import { useCallback, useState } from 'react'
-import { useAuth } from '@qovery/shared/auth'
 
 export interface RunningStatusWebsocketProps {
-  organizationId: string
+  getAccessTokenSilently: (options?: GetTokenSilentlyOptions) => Promise<string>
 }
 
 const baseUrl = 'wss://ws.qovery.com/service/status'
 
-export function useRunningStatusWebsocket() {
+export function useRunningStatusWebsocket(props: RunningStatusWebsocketProps) {
+  const { getAccessTokenSilently } = props
   const [websockets, setWebsockets] = useState<string[]>([])
   const [websocketsUrl, setWebsocketsUrl] = useState<string[]>([])
-  const { getAccessTokenSilently } = useAuth()
-
   const closeSockets = useCallback((): void => {
     setWebsockets([])
     setWebsocketsUrl([])

@@ -2,17 +2,19 @@ import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
+import { useAuth } from '@qovery/shared/auth'
 import { useRunningStatusWebsocket } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import { ClusterWebSocket } from '../cluster-web-socket/cluster-web-socket'
 
 export function WebsocketContainer() {
   const { organizationId = '' } = useParams()
+  const { getAccessTokenSilently } = useAuth()
 
-  const { openWebSockets, closeSockets, websocketsUrl } = useRunningStatusWebsocket()
+  const { openWebSockets, closeSockets, websocketsUrl } = useRunningStatusWebsocket({
+    getAccessTokenSilently,
+  })
 
-  // const clusters = useSelector<RootState, Cluster[]>(selectClustersEntitiesByOrganizationIdMemoized(organizationId))
-  // const clusters = useSelector<RootState, Cluster[]>(selectAllCluster)
   const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
 
   useEffect(() => {
