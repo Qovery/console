@@ -60,7 +60,7 @@ export function Container(props: ContainerProps) {
     {
       icon: <Icon name={IconAwesomeEnum.WHEEL} className="w-4 mt-0.5" />,
       name: 'Settings',
-      active: pathname === `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_SETTINGS_URL}`,
+      active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL),
       link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_SETTINGS_URL}`,
     },
   ]

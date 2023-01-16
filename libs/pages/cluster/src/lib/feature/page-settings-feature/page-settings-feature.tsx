@@ -5,6 +5,7 @@ import {
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
+  CLUSTER_SETTINGS_NETWORK_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
   CLUSTER_SETTINGS_URL,
   CLUSTER_URL,
@@ -39,13 +40,13 @@ export function PageSettingsFeature() {
     },
     {
       title: 'Features',
-      icon: IconAwesomeEnum.CHART_BULLET,
+      icon: IconAwesomeEnum.PUZZLE_PIECE,
       url: pathSettings + CLUSTER_SETTINGS_FEATURES_URL,
     },
     {
       title: 'Network',
-      icon: IconAwesomeEnum.CHART_BULLET,
-      url: pathSettings + CLUSTER_SETTINGS_FEATURES_URL,
+      icon: IconAwesomeEnum.PLUG,
+      url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
     },
     {
       title: 'Advanced settings',
