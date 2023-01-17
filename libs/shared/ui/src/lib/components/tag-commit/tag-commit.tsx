@@ -5,6 +5,7 @@ import Tooltip from '../tooltip/tooltip'
 
 export interface TagCommitProps {
   commitId?: string
+  withBackground?: boolean
 }
 
 export function TagCommit(props: TagCommitProps) {
@@ -17,7 +18,7 @@ export function TagCommit(props: TagCommitProps) {
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
     setCopied(true)
-    navigator.clipboard.writeText(commitId)
+    if (navigator.clipboard) navigator.clipboard.writeText(commitId)
     displayCopy = setTimeout(() => {
       setCopied(false)
     }, 1000)
@@ -28,7 +29,12 @@ export function TagCommit(props: TagCommitProps) {
   }, [])
 
   const contentTag = (
-    <Tag className="border border-element-light-lighter-500 text-text-400 font-medium hover:bg-element-light-lighter-400 w-[80px] flex items-center justify-center">
+    <Tag
+      data-testid="tag-commit"
+      className={`border border-element-light-lighter-500 text-text-400 font-medium hover:bg-element-light-lighter-400 w-[80px] flex items-center justify-center ${
+        props.withBackground ? 'bg-white' : ''
+      }`}
+    >
       {!hover ? (
         <div className="w-4 mr-1">
           <Icon name="icon-solid-code-commit" className="mr-1" />
@@ -43,7 +49,10 @@ export function TagCommit(props: TagCommitProps) {
   )
 
   const copyTag = (
-    <Tag className="bg-success-500 text-white font-medium h-7 w-[70px] flex items-center justify-center">
+    <Tag
+      data-testid="tag-commit"
+      className="bg-success-500 text-white font-medium h-7 w-[70px] flex items-center justify-center"
+    >
       <Icon name="icon-solid-check" className="mr-1 w-4" />
       Copied
     </Tag>
@@ -52,6 +61,7 @@ export function TagCommit(props: TagCommitProps) {
   return (
     <Tooltip content="Copy">
       <div
+        data-testid="tag-commit"
         className="block w-fit cursor-pointer"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}

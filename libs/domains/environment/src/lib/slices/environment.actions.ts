@@ -1,5 +1,5 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import { EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
+import { SerializedError, createAsyncThunk } from '@reduxjs/toolkit'
+import { DeployAllRequest, EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchEnvironmentDeploymentHistory, fetchEnvironmentsStatus } from './environments.slice'
 
@@ -47,6 +47,22 @@ export const postEnvironmentActionsDeploy = createAsyncThunk<
   } catch (err: any) {
     // error message
     return toast(ToastEnum.ERROR, 'Deploying error', err.message)
+  }
+})
+
+export const postEnvironmentServicesUpdate = createAsyncThunk<
+  any,
+  { environmentId: string; deployRequest: DeployAllRequest }
+>('environmentActions/deploy', async (data, { dispatch }) => {
+  try {
+    const response = await environmentActionApi.deployAllServices(data.environmentId, data.deployRequest)
+    if (response.status === 200) {
+      toast(ToastEnum.SUCCESS, 'Your environment are being updated')
+    }
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Update error', (err as SerializedError).message)
   }
 })
 
