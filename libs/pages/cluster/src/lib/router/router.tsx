@@ -9,8 +9,8 @@ import {
   CLUSTER_SETTINGS_URL,
   Route,
 } from '@qovery/shared/routes'
-import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
-import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
+import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
+import { PageSettingsV2 } from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_CLUSTER: Route[] = [
   {
