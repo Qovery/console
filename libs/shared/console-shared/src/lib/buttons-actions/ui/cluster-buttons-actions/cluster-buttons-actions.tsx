@@ -27,10 +27,11 @@ import { AppDispatch } from '@qovery/store'
 
 export interface ClusterButtonsActionsProps {
   cluster: ClusterEntity
+  noSettings?: boolean
 }
 
 export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
-  const { cluster } = props
+  const { cluster, noSettings } = props
   const { organizationId = '' } = useParams()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const navigate = useNavigate()
@@ -150,10 +151,12 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       onClick: () => navigate(INFRA_LOGS_URL(organizationId, cluster.id)),
     },
     {
-      triggerTooltip: 'Settings',
-      iconLeft: <Icon name={IconAwesomeEnum.WHEEL} className="px-0.5" />,
-      onClick: () =>
-        window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`),
+      ...(!noSettings && {
+        triggerTooltip: 'Settings',
+        iconLeft: <Icon name={IconAwesomeEnum.WHEEL} className="px-0.5" />,
+        onClick: () =>
+          window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`),
+      }),
     },
     {
       triggerTooltip: 'Other actions',

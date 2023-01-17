@@ -91,5 +91,6 @@ export enum IconAwesomeEnum {
   PAUSE = 'icon-solid-pause',
   FILTER = 'icon-solid-filter',
   CLOUD_WORD = 'icon-solid-cloud-word',
+  PUZZLE_PIECE = 'icon-solid-puzzle-piece',
   // schema: favicons name
 }

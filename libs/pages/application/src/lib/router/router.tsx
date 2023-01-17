@@ -21,7 +21,7 @@ import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-featu
 import PageSettingsConfigureJobFeature from '../feature/page-settings-configure-job-feature/page-settings-configure-job-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import PageSettingsDomainsFeature from '../feature/page-settings-domains-feature/page-settings-domains-feature'
-import PageSettingsFeature from '../feature/page-settings-feature/page-settings-feature'
+import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsPortsFeature from '../feature/page-settings-ports-feature/page-settings-ports-feature'
 import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'

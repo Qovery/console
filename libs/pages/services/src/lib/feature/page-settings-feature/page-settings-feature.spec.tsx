@@ -1,6 +1,6 @@
 // This file isn't tested because a simple rendering test returns an infinite loop by this redirect:
-// <Route path="*" element={<Navigate replace to={pathSettings + DATABASE_SETTINGS_GENERAL_URL} />} />
+// <Route path="*" element={<Navigate replace to={pathSettings + SERVICES_SETTINGS_GENERAL_URL} />} />
 
-describe('Settings', () => {
+describe('PageSettingsFeature', () => {
   it('should render successfully', () => {})
 })
