@@ -42,6 +42,7 @@ import {
 import { AppDispatch } from '@qovery/store'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import DeployOtherTagModalFeature from '../../../deploy-other-tag-modal/feature/deploy-other-tag-modal-feature'
+import ForceRunModalFeature from '../../../force-run-modal/feature/force-run-modal-feature'
 
 export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
@@ -117,21 +118,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
-        openModalConfirmation({
-          mode: environmentMode,
-          title: 'Confirm redeploy',
-          description: 'To confirm the redeploy of your service, please type the name:',
-          name: application.name,
-          action: () => {
-            dispatch(
-              postApplicationActionsRestart({
-                environmentId,
-                applicationId: application.id,
-                serviceType: getServiceType(application),
-              })
-            )
-          },
-        })
+        openModal({ content: <ForceRunModalFeature applicationId={application.id} /> })
       },
     }
 
