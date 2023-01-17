@@ -54,14 +54,14 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
     >
       <div
         data-testid="scroll-shadow-top"
-        className={`sticky top-0 bg-scroll-shadow-up w-full h-4 -mb-4 transition-opacity duration-300 ${
+        className={`sticky top-0 bg-scroll-shadow-up w-full h-4 -mb-4 pointer-events-none transition-opacity duration-300 ${
           getVisibleSides().top ? 'opacity-100' : 'opacity-0'
         }`}
       />
       {children}
       <div
         data-testid="scroll-shadow-bottom"
-        className={`sticky bottom-0 bg-scroll-shadow-bottom w-full h-4 -mt-4 rotate-180 transition-opacity duration-300 ${
+        className={`sticky bottom-0 bg-scroll-shadow-bottom w-full h-4 -mt-4 pointer-events-none rotate-180 transition-opacity duration-300 ${
           getVisibleSides().bottom ? 'opacity-100' : 'opacity-0'
         }`}
       />

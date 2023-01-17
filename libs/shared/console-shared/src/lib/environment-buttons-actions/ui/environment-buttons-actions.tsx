@@ -176,7 +176,12 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           //projectId,
           //environmentId: environment.id,
 
-          openModal({ content: <UpdateAllModalFeature environmentId={environment.id} projectId={projectId} /> })
+          openModal({
+            content: <UpdateAllModalFeature environmentId={environment.id} projectId={projectId} />,
+            options: {
+              width: 676,
+            },
+          })
         },
       }
       bottomItems.push(updateAllButton)
