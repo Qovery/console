@@ -111,6 +111,30 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       },
     }
 
+    const forceRunButton: MenuItemProps = {
+      name: 'Force Run',
+      contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
+      onClick: (e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+
+        openModalConfirmation({
+          mode: environmentMode,
+          title: 'Confirm redeploy',
+          description: 'To confirm the redeploy of your service, please type the name:',
+          name: application.name,
+          action: () => {
+            dispatch(
+              postApplicationActionsRestart({
+                environmentId,
+                applicationId: application.id,
+                serviceType: getServiceType(application),
+              })
+            )
+          },
+        })
+      },
+    }
+
     const stopButton: MenuItemProps = {
       name: 'Stop',
       onClick: () => {
@@ -172,6 +196,9 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       }
       if (isRestartAvailable(state)) {
         topItems.push(redeployButton)
+      }
+      if (isJob(application)) {
+        topItems.push(forceRunButton)
       }
       if (isStopAvailable(state)) {
         topItems.push(stopButton)
