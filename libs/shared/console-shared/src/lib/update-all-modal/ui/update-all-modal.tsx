@@ -5,7 +5,6 @@ import {
   Button,
   ButtonSize,
   ButtonStyle,
-  EmptyState,
   Icon,
   IconAwesomeEnum,
   InputCheckbox,
@@ -25,6 +24,7 @@ export interface UpdateAllModalProps {
   checkService: (serviceId: string) => void
   selectedServiceIds: string[]
   unselectAll: () => void
+  selectAll: () => void
   listLoading?: boolean
   getAvatarForCommit: (application: ApplicationEntity, commitId?: string) => string | undefined
   getNameForCommit: (application: ApplicationEntity, commitId?: string) => string | undefined
@@ -45,14 +45,28 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
             <Truncate truncateLimit={60} text={props.environment?.name || ''} />
           </strong>
         </p>
-        <Button
-          onClick={props.unselectAll}
-          dataTestId="deselect-all"
-          size={ButtonSize.TINY}
-          style={ButtonStyle.STROKED}
-        >
-          Deselect All
-        </Button>
+
+        {props.applications &&
+          props.applications.length > 0 &&
+          (props.selectedServiceIds.length > 0 ? (
+            <Button
+              onClick={props.unselectAll}
+              dataTestId="deselect-all"
+              size={ButtonSize.TINY}
+              style={ButtonStyle.STROKED}
+            >
+              Deselect All
+            </Button>
+          ) : (
+            <Button
+              onClick={props.selectAll}
+              dataTestId="select-all"
+              size={ButtonSize.TINY}
+              style={ButtonStyle.STROKED}
+            >
+              Select All
+            </Button>
+          ))}
       </div>
       {props.listLoading ? (
         <LoaderSpinner className="mx-auto block" />
@@ -120,7 +134,10 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
           </ul>
         </ScrollShadowWrapper>
       ) : (
-        <EmptyState title="Everything is up-to-date!" description="We did not find any outdated services." />
+        <div className="text-center px-3 py-6" data-testid="empty-state">
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
+          <p className="text-text-400 font-medium text-xs mt-1">No outdated services found</p>
+        </div>
       )}
 
       <div className="flex gap-3 justify-end -mb-6 py-6 bg-white sticky bottom-0">

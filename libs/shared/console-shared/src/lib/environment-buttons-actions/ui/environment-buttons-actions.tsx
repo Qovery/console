@@ -173,8 +173,6 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-400" />,
         onClick: (e: ClickEvent) => {
           e.syntheticEvent.preventDefault()
-          //projectId,
-          //environmentId: environment.id,
 
           openModal({
             content: <UpdateAllModalFeature environmentId={environment.id} projectId={projectId} />,
@@ -188,7 +186,16 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
-  }, [environment, environmentId, dispatch, openModalConfirmation, organizationId, projectId, location.pathname])
+  }, [
+    environment,
+    environmentId,
+    dispatch,
+    openModalConfirmation,
+    organizationId,
+    projectId,
+    location.pathname,
+    openModal,
+  ])
 
   const removeEnvironment = async () => {
     openModalConfirmation({

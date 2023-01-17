@@ -59,13 +59,12 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
   useEffect(() => {
     if (appsLoadingStatus === 'loaded') {
       applications?.forEach((application) => {
-        if (isApplication(application) || isGitJob(application)) {
-          if (!application.commits || application.commits.loadingStatus === 'not loaded') {
-            dispatch(
-              fetchApplicationCommits({ applicationId: application.id, serviceType: getServiceType(application) })
-            )
-            setListLoading(true)
-          }
+        if (
+          (isApplication(application) || isGitJob(application)) &&
+          (!application.commits || application.commits.loadingStatus === 'not loaded')
+        ) {
+          dispatch(fetchApplicationCommits({ applicationId: application.id, serviceType: getServiceType(application) }))
+          setListLoading(true)
         }
       })
     }
@@ -134,6 +133,10 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
     setSelectedServiceIds([])
   }
 
+  const selectAll = () => {
+    setSelectedServiceIds(outdatedApps.map((app) => app.id))
+  }
+
   useEffect(() => {
     // set outdated apps
     if (applications) {
@@ -177,6 +180,7 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
       listLoading={listLoading}
       getAvatarForCommit={getAvatarForCommit}
       getNameForCommit={getNameForCommit}
+      selectAll={selectAll}
     />
   )
 }

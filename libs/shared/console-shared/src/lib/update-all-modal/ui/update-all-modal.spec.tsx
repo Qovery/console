@@ -24,6 +24,7 @@ const defaultProps: UpdateAllModalProps = {
     }
   }),
   unselectAll: jest.fn(),
+  selectAll: jest.fn(),
   onSubmit: jest.fn(),
   environment: environmentFactoryMock(1)[0],
   checkService: jest.fn(),
@@ -101,15 +102,23 @@ describe('UpdateAllModal', () => {
     }
   })
 
-  it('should call unselect all on click on the button', async () => {
-    const { baseElement } = render(<UpdateAllModal {...props} />)
+  it('should call select all on click on the button', async () => {
+    let { baseElement } = render(<UpdateAllModal {...props} />)
+
+    const selectAll = getByTestId(baseElement, 'select-all')
+
+    await act(() => {
+      selectAll.click()
+    })
+    expect(props.selectAll).toHaveBeenCalled()
+
+    props.selectedServiceIds = props.applications?.map((app) => app.id) || []
+    baseElement = render(<UpdateAllModal {...props} />).baseElement
 
     const deselectAll = getByTestId(baseElement, 'deselect-all')
-
     await act(() => {
       deselectAll.click()
     })
-
     expect(props.unselectAll).toHaveBeenCalled()
   })
 
@@ -143,7 +152,7 @@ describe('UpdateAllModal', () => {
 
     const { baseElement } = render(<UpdateAllModal {...props} />)
 
-    getByTestId(baseElement, 'placeholder-settings')
+    getByTestId(baseElement, 'empty-state')
   })
 
   it('should reduce opacity of commit blocks', () => {
