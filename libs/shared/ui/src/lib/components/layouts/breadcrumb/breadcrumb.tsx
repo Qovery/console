@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { Database, Environment, Organization, Project } from 'qovery-typescript-axios'
+import { Cluster, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
@@ -10,6 +10,7 @@ import {
   APPLICATION_LOGS_URL,
   APPLICATION_URL,
   CLUSTERS_URL,
+  CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
@@ -60,6 +61,29 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
     locationIsApplicationLogs ||
     locationIsDeploymentLogs
+
+  const clustersMenu = [
+    {
+      title: 'Clusters',
+      search: true,
+      items: clusters
+        ? clusters?.map((cluster: Cluster) => ({
+            name: cluster.name,
+            link: {
+              url: matchLogsRoute
+                ? INFRA_LOGS_URL(organizationId, cluster.id)
+                : CLUSTER_URL(organizationId, cluster.id),
+            },
+            contentLeft: (
+              <Icon
+                name="icon-solid-check"
+                className={`text-sm ${clusterId === cluster.id ? 'text-success-400' : 'text-transparent'}`}
+              />
+            ),
+          }))
+        : [],
+    },
+  ]
 
   const projectMenu = [
     {
@@ -191,9 +215,9 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             isLast={!projectId}
             label="Cluster"
             data={clusters}
-            menuItems={[]}
+            menuItems={clustersMenu}
             paramId={clusterId}
-            link={INFRA_LOGS_URL(organizationId, clusterId)}
+            link={matchLogsRoute ? INFRA_LOGS_URL(organizationId, clusterId) : CLUSTER_URL(organizationId, clusterId)}
           />
         )}
         {projectId && (
