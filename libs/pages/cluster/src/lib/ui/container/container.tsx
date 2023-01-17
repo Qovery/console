@@ -21,7 +21,7 @@ export function Container(props: ContainerProps) {
       <Skeleton width={150} height={32} show={!statusLoading}>
         {cluster ? (
           <>
-            <ClusterButtonsActions cluster={cluster} />
+            <ClusterButtonsActions cluster={cluster} noSettings />
             <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
           </>
         ) : (
