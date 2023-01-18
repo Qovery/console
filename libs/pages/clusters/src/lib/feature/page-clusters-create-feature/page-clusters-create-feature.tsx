@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { ClusterGeneralData } from '@qovery/shared/interfaces'
-import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_CLUSTER_CREATION } from '../../router/router'
@@ -36,7 +36,7 @@ export const steps: { title: string }[] = [
 ]
 
 export function PageClusterCreateFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '' } = useParams()
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -53,9 +53,9 @@ export function PageClusterCreateFeature() {
 
   const navigate = useNavigate()
 
-  useDocumentTitle('Creation - Service')
+  useDocumentTitle('Creation - Cluster')
 
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
+  const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
   return (
     <ClusterContainerCreateContext.Provider
@@ -72,7 +72,7 @@ export function PageClusterCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(SERVICES_URL(organizationId, projectId, environmentId))
+          navigate(CLUSTERS_URL(organizationId))
         }}
         totalSteps={4}
         currentStep={currentStep}
@@ -83,7 +83,7 @@ export function PageClusterCreateFeature() {
           {ROUTER_CLUSTER_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_CREATION_GENERAL_URL} />} />
+          <Route path="*" element={<Navigate replace to={pathCreate + CLUSTERS_CREATION_GENERAL_URL} />} />
         </Routes>
       </FunnelFlow>
     </ClusterContainerCreateContext.Provider>
