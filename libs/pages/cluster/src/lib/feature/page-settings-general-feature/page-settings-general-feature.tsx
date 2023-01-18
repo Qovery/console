@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectClusterById } from '@qovery/domains/organization'
+import { editCluster, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleContainerSubmit = (data: FieldValues, cluster: ClusterEntity) => {
@@ -16,8 +16,8 @@ export const handleContainerSubmit = (data: FieldValues, cluster: ClusterEntity)
 }
 
 export function PageSettingsGeneralFeature() {
-  const { clusterId = '' } = useParams()
-  // const dispatch = useDispatch<AppDispatch>()
+  const { organizationId = '', clusterId = '' } = useParams()
+  const dispatch = useDispatch<AppDispatch>()
 
   const methods = useForm({
     mode: 'onChange',
@@ -29,16 +29,13 @@ export function PageSettingsGeneralFeature() {
     if (data && cluster) {
       const cloneCluster = handleContainerSubmit(data, cluster)
 
-      console.log(cloneCluster)
-
-      // dispatch(
-      //   editApplication({
-      //     applicationId: applicationId,
-      //     data: cloneCluster,
-      //     serviceType: getServiceType(application),
-      //     toasterCallback,
-      //   })
-      // )
+      dispatch(
+        editCluster({
+          organizationId: organizationId,
+          clusterId: clusterId,
+          data: cloneCluster,
+        })
+      )
     }
   })
 

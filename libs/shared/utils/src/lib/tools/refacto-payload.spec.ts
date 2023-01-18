@@ -1,7 +1,8 @@
-import { DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
 import {
+  refactClusterPayload,
   refactoContainerApplicationPayload,
   refactoDatabasePayload,
   refactoGitApplicationPayload,
@@ -211,6 +212,25 @@ describe('testing payload refactoring', () => {
           permissions: [],
         },
       ],
+    })
+  })
+
+  it('should remove useless cluster values', () => {
+    const response: any = {
+      id: '1',
+      created_at: '',
+      updated_at: '',
+      name: 'hello',
+      description: 'hello world',
+      region: 'est',
+      cloud_provider: CloudProviderEnum.AWS,
+    }
+
+    expect(refactClusterPayload(response)).toEqual({
+      name: 'hello',
+      description: 'hello world',
+      region: 'est',
+      cloud_provider: CloudProviderEnum.AWS,
     })
   })
 })
