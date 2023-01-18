@@ -5,6 +5,7 @@ import {
   ContainerActionsApi,
   ContainerMainCallsApi,
   JobActionsApi,
+  JobForceEvent,
   JobMainCallsApi,
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
@@ -218,3 +219,22 @@ export const deleteApplicationAction = createAsyncThunk<
     return toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
   }
 })
+
+export const forceRunJob = createAsyncThunk<any, { applicationId: string; jobForceEvent: JobForceEvent }>(
+  'applicationActions/delete',
+  async (data, { dispatch }) => {
+    try {
+      const response = await jobActionApi.deployJob(data.applicationId, data.jobForceEvent)
+
+      if (response.status === 202) {
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your job is being run')
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Job run error', (err as Error).message)
+    }
+  }
+)
