@@ -1,6 +1,7 @@
 export interface ClusterGeneralData {
   name: string
   description?: string
+  production?: boolean
 }
 
 // export interface ClusterResourcesData {

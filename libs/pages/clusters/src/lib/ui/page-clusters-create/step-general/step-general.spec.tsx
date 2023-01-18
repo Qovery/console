@@ -3,10 +3,8 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { organizationFactoryMock } from '@qovery/shared/factories'
 import StepGeneral, { StepGeneralProps } from './step-general'
 
-const mockOrganization = organizationFactoryMock(1)[0]
 const props: StepGeneralProps = {
   onSubmit: jest.fn(),
 }

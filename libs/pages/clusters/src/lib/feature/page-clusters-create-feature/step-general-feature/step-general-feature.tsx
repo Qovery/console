@@ -31,6 +31,7 @@ export function StepGeneralFeature() {
       }}
     />
   )
+
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])

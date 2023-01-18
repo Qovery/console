@@ -1,25 +1,22 @@
 import { render } from '__tests__/utils/setup-jest'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { ApplicationContainerCreateContext } from '../page-application-create-feature'
+import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepGeneralFeature from './step-general-feature'
 
-describe('PageApplicationCreateGeneralFeature', () => {
+describe('StepGeneralFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      <ApplicationContainerCreateContext.Provider
+      <ClusterContainerCreateContext.Provider
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
+          generalData: { name: 'test', description: 'hello' },
           setGeneralData: jest.fn(),
-          resourcesData: undefined,
-          setResourcesData: jest.fn(),
-          portData: undefined,
-          setPortData: jest.fn(),
+          // resourcesData: undefined,
+          // setResourcesData: jest.fn(),
         }}
       >
         <StepGeneralFeature />
-      </ApplicationContainerCreateContext.Provider>
+      </ClusterContainerCreateContext.Provider>
     )
     expect(baseElement).toBeTruthy()
   })
