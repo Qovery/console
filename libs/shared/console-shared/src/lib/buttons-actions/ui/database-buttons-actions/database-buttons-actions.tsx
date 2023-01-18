@@ -2,7 +2,12 @@ import { ClickEvent } from '@szhsin/react-menu'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteDatabaseAction, postDatabaseActionsDeploy, postDatabaseActionsRestart } from '@qovery/domains/database'
+import {
+  deleteDatabaseAction,
+  postDatabaseActionsDeploy,
+  postDatabaseActionsRestart,
+  postDatabaseActionsStop,
+} from '@qovery/domains/database'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
@@ -99,7 +104,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
           name: database.name,
           action: () => {
             dispatch(
-              postDatabaseActionsRestart({
+              postDatabaseActionsStop({
                 environmentId,
                 databaseId: database.id,
               })
