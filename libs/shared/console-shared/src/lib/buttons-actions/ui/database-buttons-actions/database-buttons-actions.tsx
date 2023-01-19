@@ -99,8 +99,8 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
 
         openModalConfirmation({
           mode: environmentMode,
-          title: 'Confirm redeploy',
-          description: 'To confirm the redeploy of your database, please type the name:',
+          title: 'Confirm action',
+          description: 'To confirm the stopping of your database, please type the name:',
           name: database.name,
           action: () => {
             dispatch(
