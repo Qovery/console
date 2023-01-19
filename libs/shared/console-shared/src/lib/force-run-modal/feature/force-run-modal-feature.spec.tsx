@@ -1,4 +1,4 @@
-import { act, getAllByTestId, getByTestId, queryAllByTestId, waitFor } from '@testing-library/react'
+import { act, getAllByTestId, getByLabelText, getByTestId, queryAllByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { JobForceEvent } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
@@ -9,10 +9,14 @@ import SpyInstance = jest.SpyInstance
 
 const mockLifecycle = lifecycleJobFactoryMock(1)[0]
 
-const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
+  useDispatch: () =>
+    jest.fn().mockImplementation(() =>
+      Promise.resolve({
+        data: {},
+      })
+    ),
 }))
 
 describe('ForceRunModalFeature', () => {
@@ -41,29 +45,25 @@ describe('ForceRunModalFeature', () => {
     selectApplicationByIdSpy.mockReturnValue(lifecycle)
 
     const forceRunJobSpy: SpyInstance = jest.spyOn(storeApplication, 'forceRunJob')
-    const { baseElement, debug } = render(<ForceRunModalFeature applicationId="123" />)
+    const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
 
-    const radioBoxes = getAllByTestId(baseElement, 'input-radio-box')
+    const radioBoxe = getByLabelText(baseElement, 'Start')
     await act(() => {
-      radioBoxes[1].click()
+      radioBoxe.click()
     })
 
-    await act(() => {
-      radioBoxes[0].click()
-    })
-    debug()
     const submit = getByTestId(baseElement, 'submit-button')
 
-    // todo debug that and check why the submit button stays disabled
-    await waitFor(() => {
-      expect(submit).not.toBeDisabled()
+    expect(submit).not.toBeDisabled()
+
+    await act(() => {
       submit.click()
-      expect(forceRunJobSpy).toHaveBeenCalled()
     })
+    expect(forceRunJobSpy).toHaveBeenCalled()
 
     expect(forceRunJobSpy).toHaveBeenCalledWith({
       applicationId: '123',
-      jobForceEvent: JobForceEvent.CRON,
+      jobForceEvent: JobForceEvent.START,
     })
   })
 })

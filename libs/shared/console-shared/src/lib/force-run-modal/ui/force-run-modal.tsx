@@ -11,11 +11,7 @@ export interface ForceRunModalProps {
 }
 
 export function ForceRunModal(props: ForceRunModalProps) {
-  const { control, setValue, watch } = useFormContext()
-
-  watch((data) => {
-    console.log(data)
-  })
+  const { control, setValue } = useFormContext()
 
   const description = (key: keyof JobResponseAllOfSchedule, schedule: JobResponseAllOfSchedule) => {
     return (
