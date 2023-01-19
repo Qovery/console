@@ -42,6 +42,7 @@ import {
 import { AppDispatch } from '@qovery/store'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import DeployOtherTagModalFeature from '../../../deploy-other-tag-modal/feature/deploy-other-tag-modal-feature'
+import ForceRunModalFeature from '../../../force-run-modal/feature/force-run-modal-feature'
 
 export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
@@ -111,6 +112,16 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       },
     }
 
+    const forceRunButton: MenuItemProps = {
+      name: 'Force Run',
+      contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
+      onClick: (e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+
+        openModal({ content: <ForceRunModalFeature applicationId={application.id} /> })
+      },
+    }
+
     const stopButton: MenuItemProps = {
       name: 'Stop',
       onClick: () => {
@@ -172,6 +183,9 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       }
       if (isRestartAvailable(state)) {
         topItems.push(redeployButton)
+      }
+      if (isJob(application)) {
+        topItems.push(forceRunButton)
       }
       if (isStopAvailable(state)) {
         topItems.push(stopButton)
