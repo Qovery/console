@@ -224,6 +224,7 @@ describe('testing payload refactoring', () => {
       description: 'hello world',
       region: 'est',
       cloud_provider: CloudProviderEnum.AWS,
+      production: false,
     }
 
     expect(refactClusterPayload(response)).toEqual({
@@ -231,6 +232,7 @@ describe('testing payload refactoring', () => {
       description: 'hello world',
       region: 'est',
       cloud_provider: CloudProviderEnum.AWS,
+      production: false,
     })
   })
 })

@@ -18,7 +18,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
         <h2 className="h5 mb-8 text-text-700">General settings</h2>
         <form onSubmit={onSubmit}>
           <BlockContent title="General informations">
-            <ClusterGeneralSettings />
+            <ClusterGeneralSettings fromDetail />
           </BlockContent>
           <div className="flex justify-end">
             <Button

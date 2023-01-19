@@ -1,122 +1,91 @@
-import { render } from '__tests__/utils/setup-jest'
-import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock, cronjobFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
-import PageSettingsGeneralFeature, {
-  handleGitApplicationSubmit,
-  handleJobSubmit,
-} from './page-settings-general-feature'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import * as storeOrganization from '@qovery/domains/organization'
+import { clusterFactoryMock } from '@qovery/shared/factories'
+import { ClusterEntity } from '@qovery/shared/interfaces'
+import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-general-feature'
+
+import SpyInstance = jest.SpyInstance
+
+const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
+
+jest.mock('@qovery/domains/organization', () => {
+  return {
+    ...jest.requireActual('@qovery/domains/organization'),
+    editCluster: jest.fn(),
+    getClusterState: () => ({
+      loadingStatus: 'loaded',
+      ids: [mockCluster.id],
+      entities: {
+        [mockCluster.id]: mockCluster,
+      },
+      error: null,
+    }),
+    selectClusterById: () => mockCluster,
+  }
+})
+
+const mockDispatch = jest.fn()
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
+  useParams: () => ({ organizationId: '0', clusterId: mockCluster.id }),
+}))
 
 describe('PageSettingsGeneralFeature', () => {
-  let application: ApplicationEntity
-  beforeEach(() => {
-    application = applicationFactoryMock(1)[0]
-  })
-
   it('should render successfully', () => {
     const { baseElement } = render(<PageSettingsGeneralFeature />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should update the application with Docker', () => {
-    application.buildpack_language = BuildPackLanguageEnum.GO
-    const app = handleGitApplicationSubmit(
+  it('should update the cluster with fields', () => {
+    const currentCluster = handleSubmit(
       {
         name: 'hello',
         description: 'description',
-        build_mode: BuildModeEnum.DOCKER,
-        buildpack_language: BuildPackLanguageEnum.GO,
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
+        production: true,
       },
-      application
+      mockCluster
     )
-    expect(app.name).toBe('hello')
-    expect(app.description).toBe('description')
-    expect(app.buildpack_language).toBe(null)
-    expect(app.dockerfile_path).toBe('/')
+    expect(currentCluster.name).toBe('hello')
+    expect(currentCluster.description).toBe('description')
+    expect(currentCluster.production).toBe(true)
   })
 
-  it('should update the application with Buildpack', () => {
-    application.dockerfile_path = 'Dockerfile'
-    const app = handleGitApplicationSubmit(
-      {
-        name: 'hello',
-        description: 'description',
-        build_mode: BuildModeEnum.BUILDPACKS,
-        buildpack_language: BuildPackLanguageEnum.GO,
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-      application
-    )
-    expect(app.name).toBe('hello')
-    expect(app.description).toBe('description')
-    expect(app.dockerfile_path).toBe(null)
-    expect(app.buildpack_language).toBe(BuildPackLanguageEnum.GO)
-  })
+  it('should dispatch editCluster if form is submitted', async () => {
+    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCluster')
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve({
+          data: {},
+        }),
+    }))
 
-  it('should update the application with git repository', () => {
-    const app = handleGitApplicationSubmit(
-      {
-        name: 'hello',
-        build_mode: BuildModeEnum.BUILDPACKS,
-        buildpack_language: BuildPackLanguageEnum.GO,
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-      application
+    const { getByTestId } = render(<PageSettingsGeneralFeature />)
+
+    await act(() => {
+      const input = getByTestId('input-name')
+      fireEvent.input(input, { target: { value: 'hello' } })
+    })
+
+    expect(getByTestId('submit-button')).not.toBeDisabled()
+
+    await act(() => {
+      getByTestId('submit-button').click()
+    })
+
+    const cloneCluster = handleSubmit(
+      { name: 'hello', description: mockCluster.description, production: mockCluster.production },
+      mockCluster
     )
 
-    expect(app.git_repository?.branch).toBe('main')
-    expect(app.git_repository?.root_path).toBe('/')
-    expect(app.git_repository?.url).toBe('https://github.com/qovery/console.git')
-  })
-
-  it('should update the job with git repository', () => {
-    const job = cronjobFactoryMock(1)[0]
-    const app = handleJobSubmit(
-      {
-        name: 'hello',
-        description: 'description',
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-      job
-    )
-
-    expect(app.source?.docker?.git_repository?.branch).toBe('main')
-    expect(app.source?.docker?.git_repository?.root_path).toBe('/')
-    expect(app.source?.docker?.git_repository?.url).toBe('https://github.com/qovery/console.git')
-  })
-
-  it('should update the job with image', () => {
-    const job = cronjobFactoryMock(1, true)[0]
-    const app = handleJobSubmit(
-      {
-        name: 'hello',
-        description: 'description',
-        image_tag: 'latest',
-        image_name: 'qovery/console',
-        registry: 'docker.io',
-      },
-      job
-    )
-
-    expect(app.source?.image?.tag).toBe('latest')
-    expect(app.source?.image?.image_name).toBe('qovery/console')
-    expect(app.source?.image?.registry_id).toBe('docker.io')
+    expect(editClusterSpy).toHaveBeenCalledWith({
+      organizationId: '0',
+      clusterId: mockCluster.id,
+      data: cloneCluster,
+    })
   })
 })

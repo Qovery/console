@@ -182,6 +182,7 @@ export function refactClusterPayload(cluster: Partial<ClusterEntity>) {
     description: cluster.description,
     region: cluster.region || '',
     cloud_provider: cluster.cloud_provider || CloudProviderEnum.AWS,
+    production: cluster.production,
   }
 
   return clusterRequestPayload

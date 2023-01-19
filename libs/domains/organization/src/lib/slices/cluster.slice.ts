@@ -203,7 +203,7 @@ export const clusterSlice = createSlice({
         state.error = null
         state.loadingStatus = 'loaded'
 
-        toast(ToastEnum.SUCCESS, `Cluster updated`, 'You must redeploy to apply the settings update')
+        toast(ToastEnum.SUCCESS, 'Cluster updated')
       })
       .addCase(editCluster.rejected, (state: ClustersState, action) => {
         state.loadingStatus = 'error'

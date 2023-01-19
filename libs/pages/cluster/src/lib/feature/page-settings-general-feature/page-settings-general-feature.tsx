@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -7,17 +7,20 @@ import { ClusterEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
-export const handleContainerSubmit = (data: FieldValues, cluster: ClusterEntity) => {
+export const handleSubmit = (data: FieldValues, cluster: ClusterEntity) => {
   return {
     ...cluster,
     name: data['name'],
     description: data['description'] || '',
+    production: data['production'],
   }
 }
 
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
+
+  const [loading, setLoading] = useState(false)
 
   const methods = useForm({
     mode: 'onChange',
@@ -27,7 +30,9 @@ export function PageSettingsGeneralFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
-      const cloneCluster = handleContainerSubmit(data, cluster)
+      setLoading(true)
+
+      const cloneCluster = handleSubmit(data, cluster)
 
       dispatch(
         editCluster({
@@ -36,6 +41,9 @@ export function PageSettingsGeneralFeature() {
           data: cloneCluster,
         })
       )
+        .unwrap()
+        .then(() => setLoading(false))
+        .catch(() => setLoading(false))
     }
   })
 
@@ -47,7 +55,7 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} />
+      <PageSettingsGeneral onSubmit={onSubmit} loading={loading} />
     </FormProvider>
   )
 }

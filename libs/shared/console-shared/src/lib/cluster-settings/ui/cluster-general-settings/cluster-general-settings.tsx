@@ -2,7 +2,12 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { ClusterGeneralData } from '@qovery/shared/interfaces'
 import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 
-export function ClusterGeneralSettings() {
+export interface ClusterGeneralSettingsProps {
+  fromDetail?: boolean
+}
+
+export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
+  const { fromDetail } = props
   const { control } = useFormContext<ClusterGeneralData>()
 
   return (
@@ -30,7 +35,7 @@ export function ClusterGeneralSettings() {
         control={control}
         render={({ field }) => (
           <InputTextArea
-            className="mb-3"
+            className={`${!fromDetail ? 'mb-3' : 'mb-5'}`}
             dataTestId="input-description"
             name={field.name}
             onChange={field.onChange}
@@ -43,7 +48,13 @@ export function ClusterGeneralSettings() {
         name="production"
         control={control}
         render={({ field }) => (
-          <div className="rounded border border-element-light-lighter-400 p-4 mb-3">
+          <div
+            className={`${
+              !fromDetail
+                ? 'rounded border border-element-light-lighter-400 p-4 mb-3'
+                : 'relative pt-5 before:content-[""] before:block before:w-[calc(100%+40px)] before:h-[1px] before:bg-element-light-lighter-500 before:absolute before:top-0 before:-left-5'
+            }`}
+          >
             <InputToggle
               dataTestId="input-production-toggle"
               value={field.value}
