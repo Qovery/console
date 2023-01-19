@@ -1,4 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -23,6 +24,7 @@ import {
   copyToClipboard,
   isDeleteAvailable,
   isDeployAvailable,
+  isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
 } from '@qovery/shared/utils'
@@ -81,6 +83,30 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
           description: 'To confirm the redeploy of your database, please type the name:',
           name: database.name,
           action: () => {
+            // TODO: add redeploy action
+            dispatch(
+              postDatabaseActionsRestart({
+                environmentId,
+                databaseId: database.id,
+              })
+            )
+          },
+        })
+      },
+    }
+
+    const restartButton: MenuItemProps = {
+      name: 'Restart database',
+      contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
+      onClick: (e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+
+        openModalConfirmation({
+          mode: environmentMode,
+          title: 'Confirm restart',
+          description: 'To confirm the restart of your database, please type the name:',
+          name: database.name,
+          action: () => {
             dispatch(
               postDatabaseActionsRestart({
                 environmentId,
@@ -123,8 +149,11 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       if (isDeployAvailable(state)) {
         topItems.push(deployButton)
       }
-      if (isRestartAvailable(state)) {
+      if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
+      }
+      if (isRestartAvailable(state) && database.mode !== DatabaseModeEnum.MANAGED) {
+        topItems.push(restartButton)
       }
       if (isStopAvailable(state)) {
         topItems.push(stopButton)

@@ -21,6 +21,8 @@ const containerMainCallsApi = new ContainerMainCallsApi()
 const jobActionApi = new JobActionsApi()
 const jobMainCallsApi = new JobMainCallsApi()
 
+// TODO : make sure that this endpoint is the right new one developped by Melvin
+// TODO : and make sure to create a dedicated postApplicationActionRedeploy
 export const postApplicationActionsRestart = createAsyncThunk<
   any,
   { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }

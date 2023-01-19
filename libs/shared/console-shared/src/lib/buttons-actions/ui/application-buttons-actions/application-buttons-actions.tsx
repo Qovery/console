@@ -35,6 +35,7 @@ import {
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
+  isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
   urlCodeEditor,
@@ -98,6 +99,31 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           mode: environmentMode,
           title: 'Confirm redeploy',
           description: 'To confirm the redeploy of your service, please type the name:',
+          name: application.name,
+          action: () => {
+            dispatch(
+              // TODO use the right action, should be redeploy
+              postApplicationActionsRestart({
+                environmentId,
+                applicationId: application.id,
+                serviceType: getServiceType(application),
+              })
+            )
+          },
+        })
+      },
+    }
+
+    const restartButton: MenuItemProps = {
+      name: 'Restart Service',
+      contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
+      onClick: (e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+
+        openModalConfirmation({
+          mode: environmentMode,
+          title: 'Confirm restart',
+          description: 'To confirm the restart of your service, please type the name:',
           name: application.name,
           action: () => {
             dispatch(
@@ -181,10 +207,13 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       if (isDeployAvailable(state)) {
         topItems.push(deployButton)
       }
-      if (isRestartAvailable(state)) {
+      if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
       }
-      if (isJob(application) && (isDeployAvailable(state) || isRestartAvailable(state))) {
+      if (!isJob(application) && isRestartAvailable(state)) {
+        topItems.push(restartButton)
+      }
+      if (isJob(application)) {
         topItems.push(forceRunButton)
       }
       if (isStopAvailable(state)) {
