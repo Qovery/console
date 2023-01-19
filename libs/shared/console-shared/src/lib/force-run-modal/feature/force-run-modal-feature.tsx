@@ -42,7 +42,7 @@ export function ForceRunModalFeature(props: ForceRunModalFeatureProps) {
       case 'stop':
         event = JobForceEvent.STOP
         break
-      case 'delete:':
+      case 'delete':
         event = JobForceEvent.DELETE
         break
       default:
