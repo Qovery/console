@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { ModalConfirmation } from '../modal-confirmation'
+import { useEffect, useState } from 'react'
 import useModal from '../../../modal/use-modal/use-modal'
+import { ModalConfirmation } from '../modal-confirmation'
 
 export interface UseModalConfirmationProps {
   title: string
@@ -9,6 +9,7 @@ export interface UseModalConfirmationProps {
   action: () => void
   name?: string
   mode?: EnvironmentModeEnum | string | undefined
+  warning?: string
   isDelete?: boolean
 }
 
@@ -28,6 +29,7 @@ export function useModalConfirmation() {
             title={modalConfirmation.title}
             description={modalConfirmation.description}
             name={modalConfirmation.name}
+            warning={modalConfirmation.warning}
             callback={modalConfirmation.action}
           />
         ),

@@ -1,14 +1,17 @@
 import { Controller, useForm } from 'react-hook-form'
 import Button, { ButtonStyle } from '../../buttons/button/button'
 import { Icon } from '../../icon/icon'
+import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import { Tooltip } from '../../tooltip/tooltip'
+import WarningBox from '../../warning-box/warning-box'
 
 export interface ModalConfirmationProps {
   title: string
   description: string
   name: string | undefined
   callback: () => void
+  warning?: string
   setOpen?: (open: boolean) => void
   placeholder?: string
   ctaButton?: string
@@ -21,6 +24,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
     name,
     callback,
     setOpen,
+    warning,
     placeholder = 'Enter the current name',
     ctaButton = 'Confirm',
   } = props
@@ -41,6 +45,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{title}</h2>
+      {warning && <WarningBox className="mb-2" message={warning} icon={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />}
       <p className="text-text-400 text-sm mb-6">
         {description}
         <Tooltip content="Copy">
