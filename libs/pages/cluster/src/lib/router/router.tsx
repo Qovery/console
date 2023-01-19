@@ -11,6 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
+import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import { PageSettingsV2 } from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_CLUSTER: Route[] = [
@@ -23,7 +24,7 @@ export const ROUTER_CLUSTER: Route[] = [
 export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   {
     path: CLUSTER_SETTINGS_GENERAL_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsGeneralFeature />,
   },
   {
     path: CLUSTER_SETTINGS_CREDENTIALS_URL,

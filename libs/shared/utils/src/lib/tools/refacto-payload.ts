@@ -1,6 +1,8 @@
 import {
   ApplicationEditRequest,
   ApplicationGitRepositoryRequest,
+  CloudProviderEnum,
+  ClusterRequest,
   DatabaseEditRequest,
   JobRequest,
   Organization,
@@ -10,6 +12,7 @@ import {
   ServiceStorageStorage,
 } from 'qovery-typescript-axios'
 import {
+  ClusterEntity,
   ContainerApplicationEntity,
   DatabaseEntity,
   GitApplicationEntity,
@@ -171,4 +174,16 @@ export function refactoOrganizationCustomRolePayload(customRole: Partial<Organiz
   }
 
   return customRoleRequestPayload
+}
+
+export function refactoClusterPayload(cluster: Partial<ClusterEntity>) {
+  const clusterRequestPayload: ClusterRequest = {
+    name: cluster.name || '',
+    description: cluster.description,
+    region: cluster.region || '',
+    cloud_provider: cluster.cloud_provider || CloudProviderEnum.AWS,
+    production: cluster.production,
+  }
+
+  return clusterRequestPayload
 }

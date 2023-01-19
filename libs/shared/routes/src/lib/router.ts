@@ -7,6 +7,7 @@ export * from './sub-router/login.router'
 export * from './sub-router/settings.router'
 export * from './sub-router/logs.router'
 export * from './sub-router/clusters.router'
+export * from './sub-router/cluster.router'
 export * from './sub-router/job.router'
 
 export const INDEX_URL = '/'

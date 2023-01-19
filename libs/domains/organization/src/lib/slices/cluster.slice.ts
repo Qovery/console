@@ -6,9 +6,10 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
-import { Cluster, ClusterLogs, ClusterStatus, ClustersApi } from 'qovery-typescript-axios'
+import { Cluster, ClusterLogs, ClusterRequest, ClusterStatus, ClustersApi } from 'qovery-typescript-axios'
 import { ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
-import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
@@ -43,6 +44,20 @@ export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizat
   async (data) => {
     const response = await clusterApi.listClusterLogs(data.organizationId, data.clusterId)
     return response.data.results as ClusterLogs[]
+  }
+)
+
+export const editCluster = createAsyncThunk(
+  'cluster/edit',
+  async (payload: { organizationId: string; clusterId: string; data: Partial<ClusterEntity> }) => {
+    const cloneCluster = Object.assign({}, refactoClusterPayload(payload.data as Partial<ClusterEntity>))
+    const response = await clusterApi.editCluster(
+      payload.organizationId,
+      payload.clusterId,
+      cloneCluster as ClusterRequest
+    )
+
+    return response.data as ClusterEntity
   }
 )
 
@@ -172,6 +187,28 @@ export const clusterSlice = createSlice({
           },
         }
         clusterAdapter.updateOne(state, update)
+      })
+      // edit cluster
+      .addCase(editCluster.pending, (state: ClustersState) => {
+        state.loadingStatus = 'loading'
+      })
+      .addCase(editCluster.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            ...action.payload,
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+        state.error = null
+        state.loadingStatus = 'loaded'
+
+        toast(ToastEnum.SUCCESS, 'Cluster updated')
+      })
+      .addCase(editCluster.rejected, (state: ClustersState, action) => {
+        state.loadingStatus = 'error'
+        toastError(action.error)
+        state.error = action.error.message
       })
   },
 })
