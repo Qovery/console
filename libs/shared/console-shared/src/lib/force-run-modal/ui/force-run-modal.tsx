@@ -8,6 +8,7 @@ export interface ForceRunModalProps {
   closeModal: () => void
   onSubmit: () => void
   isCronJob?: boolean
+  isLoading?: boolean
 }
 
 export function ForceRunModal(props: ForceRunModalProps) {
@@ -38,6 +39,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
       onSubmit={props.onSubmit}
       forService={props.application}
       submitLabel="Force Run"
+      loading={props.isLoading}
     >
       {props.isCronJob ? (
         <div></div>

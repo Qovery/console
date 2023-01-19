@@ -1,5 +1,5 @@
 import { JobForceEvent } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { forceRunJob, selectApplicationById } from '@qovery/domains/application'
@@ -18,6 +18,7 @@ export function ForceRunModalFeature(props: ForceRunModalFeatureProps) {
     selectApplicationById(state, props.applicationId)
   )
   const { closeModal } = useModal()
+  const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
 
   const methods = useForm({
@@ -28,7 +29,7 @@ export function ForceRunModalFeature(props: ForceRunModalFeatureProps) {
   })
 
   useEffect(() => {
-    if (isCronJob(application) && methods) {
+    if (isCronJob(application)) {
       methods.setValue('selected', 'cron')
     }
   }, [application, methods])
@@ -50,6 +51,7 @@ export function ForceRunModalFeature(props: ForceRunModalFeatureProps) {
     }
 
     if (data.selected) {
+      setIsLoading(true)
       dispatch(forceRunJob({ applicationId: props.applicationId, jobForceEvent: event })).then(() => {
         closeModal()
       })
@@ -63,6 +65,7 @@ export function ForceRunModalFeature(props: ForceRunModalFeatureProps) {
         closeModal={closeModal}
         onSubmit={onSubmit}
         isCronJob={isCronJob(application)}
+        isLoading={isLoading}
       />
     </FormProvider>
   )
