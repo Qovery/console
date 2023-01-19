@@ -9,6 +9,7 @@ import {
   CLUSTER_SETTINGS_URL,
   Route,
 } from '@qovery/shared/routes'
+import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
@@ -44,7 +45,7 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   },
   {
     path: CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsAdvancedFeature />,
   },
   {
     path: CLUSTER_SETTINGS_DANGER_ZONE_URL,

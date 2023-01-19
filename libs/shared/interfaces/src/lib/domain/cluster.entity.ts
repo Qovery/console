@@ -1,5 +1,6 @@
 import { Cluster, ClusterLogs, ClusterStatusGet } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../..'
+import { AdvancedSettings } from './advanced-settings.interface'
 
 export interface ClusterEntity extends Cluster {
   logs?: {
@@ -9,5 +10,13 @@ export interface ClusterEntity extends Cluster {
   extendedStatus?: {
     loadingStatus: LoadingStatus
     status?: ClusterStatusGet
+  }
+  advanced_settings?: {
+    loadingStatus: LoadingStatus
+    current_settings?: AdvancedSettings
+  }
+  default_advanced_settings?: {
+    loadingStatus: LoadingStatus
+    default_settings?: AdvancedSettings
   }
 }
