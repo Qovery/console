@@ -11,8 +11,6 @@ export interface ClusterContainerCreateContextInterface {
   setCurrentStep: (step: number) => void
   generalData: ClusterGeneralData | undefined
   setGeneralData: (data: ClusterGeneralData) => void
-  // resourcesData: ApplicationResourcesData | undefined
-  // setResourcesData: (data: ApplicationResourcesData) => void
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
@@ -41,15 +39,6 @@ export function PageClusterCreateFeature() {
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
-  // const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
-  //   memory: 512,
-  //   cpu: [0.5],
-  //   instances: [1, 2],
-  // })
-
-  // const [portData, setPortData] = useState<FlowPortData | undefined>({
-  //   ports: [],
-  // })
 
   const navigate = useNavigate()
 
@@ -64,10 +53,6 @@ export function PageClusterCreateFeature() {
         setCurrentStep,
         generalData,
         setGeneralData,
-        // resourcesData,
-        // setResourcesData,
-        // portData,
-        // setPortData,
       }}
     >
       <FunnelFlow

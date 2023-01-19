@@ -42,11 +42,7 @@ export function StepGeneralFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    const cloneData = {
-      ...data,
-    }
-
-    setGeneralData(cloneData)
+    setGeneralData(data)
     // const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     // navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })
