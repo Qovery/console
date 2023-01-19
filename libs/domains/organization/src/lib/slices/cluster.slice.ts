@@ -9,7 +9,7 @@ import {
 import { Cluster, ClusterLogs, ClusterRequest, ClusterStatus, ClustersApi } from 'qovery-typescript-axios'
 import { ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, refactClusterPayload } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
@@ -50,7 +50,7 @@ export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizat
 export const editCluster = createAsyncThunk(
   'cluster/edit',
   async (payload: { organizationId: string; clusterId: string; data: Partial<ClusterEntity> }) => {
-    const cloneCluster = Object.assign({}, refactClusterPayload(payload.data as Partial<ClusterEntity>))
+    const cloneCluster = Object.assign({}, refactoClusterPayload(payload.data as Partial<ClusterEntity>))
     const response = await clusterApi.editCluster(
       payload.organizationId,
       payload.clusterId,

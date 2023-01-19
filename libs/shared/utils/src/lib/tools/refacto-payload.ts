@@ -176,7 +176,7 @@ export function refactoOrganizationCustomRolePayload(customRole: Partial<Organiz
   return customRoleRequestPayload
 }
 
-export function refactClusterPayload(cluster: Partial<ClusterEntity>) {
+export function refactoClusterPayload(cluster: Partial<ClusterEntity>) {
   const clusterRequestPayload: ClusterRequest = {
     name: cluster.name || '',
     description: cluster.description,

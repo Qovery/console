@@ -2,7 +2,7 @@ import { CloudProviderEnum, DatabaseAccessibilityEnum, StorageTypeEnum } from 'q
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
 import {
-  refactClusterPayload,
+  refactoClusterPayload,
   refactoContainerApplicationPayload,
   refactoDatabasePayload,
   refactoGitApplicationPayload,
@@ -227,7 +227,7 @@ describe('testing payload refactoring', () => {
       production: false,
     }
 
-    expect(refactClusterPayload(response)).toEqual({
+    expect(refactoClusterPayload(response)).toEqual({
       name: 'hello',
       description: 'hello world',
       region: 'est',

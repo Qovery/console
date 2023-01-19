@@ -33,9 +33,6 @@ describe('PageSettingsGeneral', () => {
   })
 
   it('should submit the form', async () => {
-    const spy = jest.fn((e) => e.preventDefault())
-    props.onSubmit = spy
-
     const { getByTestId } = render(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues: defaultValues,
@@ -46,7 +43,7 @@ describe('PageSettingsGeneral', () => {
 
     await waitFor(() => {
       button.click()
-      expect(spy).toHaveBeenCalled()
+      expect(props.onSubmit).toHaveBeenCalled()
     })
   })
 })

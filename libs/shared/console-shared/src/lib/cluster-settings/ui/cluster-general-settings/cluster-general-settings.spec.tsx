@@ -1,5 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { ClusterGeneralData } from '@qovery/shared/interfaces'
 import ClusterGeneralSettings, { ClusterGeneralSettingsProps } from './cluster-general-settings'
 
 describe('ClusterGeneralSettings', () => {
@@ -13,7 +14,7 @@ describe('ClusterGeneralSettings', () => {
 
   it('should submit the form on click', async () => {
     const { getByTestId } = render(
-      wrapWithReactHookForm(<ClusterGeneralSettings {...props} />, {
+      wrapWithReactHookForm<ClusterGeneralData>(<ClusterGeneralSettings {...props} />, {
         defaultValues: {
           name: 'test',
           description: 'test',
