@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteClusterAction, postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { INFRA_LOGS_URL } from '@qovery/shared/routes'
+import { CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -156,8 +156,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       ...(!noSettings && {
         triggerTooltip: 'Settings',
         iconLeft: <Icon name={IconAwesomeEnum.WHEEL} className="px-0.5" />,
-        onClick: () =>
-          window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`),
+        onClick: () => navigate(CLUSTER_URL(organizationId, cluster.id) + CLUSTER_SETTINGS_URL),
       }),
     },
     {

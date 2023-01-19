@@ -1,5 +1,5 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { CLUSTERS_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_URL, CLUSTER_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   ButtonIcon,
   ButtonIconStyle,
@@ -20,7 +20,10 @@ export function Navigation() {
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
-  const matchClusterRoute = pathname.includes(CLUSTERS_URL(organizationId)) || matchLogInfraRoute
+  const matchClusterRoute =
+    pathname.includes(CLUSTERS_URL(organizationId)) ||
+    matchLogInfraRoute ||
+    pathname.includes(CLUSTER_URL(organizationId, clusterId))
 
   const infosMenu = [
     {
