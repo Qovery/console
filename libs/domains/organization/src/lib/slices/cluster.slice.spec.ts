@@ -7,6 +7,10 @@ describe('cluster reducer', () => {
       error: null,
       joinOrganizationClusters: {},
       statusLoadingStatus: 'not loaded',
+      defaultClusterAdvancedSettings: {
+        loadingStatus: 'not loaded',
+        settings: undefined,
+      },
     })
 
     expect(clusterReducer(undefined, { type: '' })).toEqual(expected)
