@@ -89,8 +89,7 @@ export const editClusterAdvancedSettings = createAsyncThunk<
 export const fetchDefaultClusterAdvancedSettings = createAsyncThunk<AdvancedSettings>(
   'cluster/defaultAdvancedSettings',
   async () => {
-    // const response = await clusterApi.getDefaultClusterAdvancedSettings()
-    const response = await clusterApi.getClusterAdvancedSettings('1', '1')
+    const response = await clusterApi.getDefaultClusterAdvancedSettings()
     return response.data
   }
 )

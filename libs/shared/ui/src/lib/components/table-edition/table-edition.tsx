@@ -1,5 +1,5 @@
 export interface TableEditionCell {
-  content?: React.ReactNode
+  content?: React.ReactNode | (() => React.ReactNode)
   className?: string
 }
 
@@ -36,7 +36,7 @@ export function TableEdition(props: TableEditionProps) {
                 cell.className || ''
               } ${row.cells && row.cells.length - 1 !== indexCell ? 'border-r' : ''}`}
             >
-              {cell.content}
+              {typeof cell.content === 'function' ? cell.content() : cell.content}
             </div>
           ))}
         </div>

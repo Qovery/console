@@ -10,7 +10,7 @@ import {
   postClusterActionsUpdate,
   selectClusterById,
 } from '@qovery/domains/organization'
-import { AdvancedSettings, ClusterEntity } from '@qovery/shared/interfaces'
+import { AdvancedSettings, ClusterEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { objectFlattener } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
@@ -20,6 +20,9 @@ export function PageSettingsAdvancedFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const defaultSettingsLoadingStatus = useSelector<RootState, LoadingStatus>(
+    (state) => getClusterState(state).defaultClusterAdvancedSettings.loadingStatus
+  )
   const defaultSettings = useSelector<RootState, AdvancedSettings | undefined>(
     (state) => getClusterState(state).defaultClusterAdvancedSettings.settings
   )
@@ -30,10 +33,10 @@ export function PageSettingsAdvancedFeature() {
 
   // at the init fetch the default settings advanced settings
   useEffect(() => {
-    if (cluster) {
+    if (!cluster?.advanced_settings?.loadingStatus && defaultSettingsLoadingStatus === 'not loaded') {
       dispatch(fetchDefaultClusterAdvancedSettings())
     }
-  }, [cluster, dispatch])
+  }, [cluster, defaultSettingsLoadingStatus])
 
   // when cluster is ready, and advanced setting has never been fetched before
   useEffect(() => {
@@ -44,10 +47,8 @@ export function PageSettingsAdvancedFeature() {
 
   // init the keys when cluster is updated
   useEffect(() => {
-    if (cluster) {
-      if (cluster.advanced_settings?.current_settings && cluster.advanced_settings?.loadingStatus === 'loaded') {
-        setKeys(Object.keys(cluster.advanced_settings.current_settings).sort())
-      }
+    if (cluster?.advanced_settings?.current_settings && cluster.advanced_settings?.loadingStatus === 'loaded') {
+      setKeys(Object.keys(cluster?.advanced_settings.current_settings).sort())
     }
   }, [cluster])
 
@@ -108,7 +109,7 @@ export function PageSettingsAdvancedFeature() {
         loading={cluster?.advanced_settings?.loadingStatus}
         keys={keys}
         discardChanges={() => methods.reset()}
-        onSubmit={() => onSubmit().then()}
+        onSubmit={() => onSubmit()}
       />
     </FormProvider>
   )

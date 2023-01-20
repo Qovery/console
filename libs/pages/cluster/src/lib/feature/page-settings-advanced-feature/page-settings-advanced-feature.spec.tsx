@@ -1,20 +1,21 @@
 import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { JobAdvancedSettings } from 'qovery-typescript-axios'
+import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import React from 'react'
-import * as storeApplication from '@qovery/domains/application'
-import { cronjobFactoryMock } from '@qovery/shared/factories'
-import { JobApplicationEntity } from '@qovery/shared/interfaces'
+import * as storeOrganization from '@qovery/domains/organization'
+import { clusterFactoryMock } from '@qovery/shared/factories'
+import { ClusterEntity } from '@qovery/shared/interfaces'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockApplication: JobApplicationEntity = cronjobFactoryMock(1)[0]
-const mockAdvancedSettings: Partial<JobAdvancedSettings> = {
-  'liveness_probe.http_get.path': '/',
-  'cronjob.success_jobs_history_limit': 1,
-  'job.delete_ttl_seconds_after_finished': null,
+const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
+const mockAdvancedSettings: Partial<ClusterAdvancedSettings> = {
+  'loki.log_retention_in_week': 1,
+  'aws.vpc.enable_s3_flow_logs': false,
+  'load_balancer.size': '-',
+  cloud_provider_container_registry_tags: {},
 }
 
 jest.mock('./init-form-values/init-form-values', () => ({
@@ -23,7 +24,7 @@ jest.mock('./init-form-values/init-form-values', () => ({
 
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
-  useParams: () => ({ applicationId: mockApplication.id }),
+  useParams: () => ({ organizationId: '1', clusterId: mockCluster.id }),
 }))
 
 jest.mock('react-redux', () => ({
@@ -31,37 +32,36 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn(),
 }))
 
-jest.mock('@qovery/domains/application', () => {
+jest.mock('@qovery/domains/organization', () => {
   return {
-    ...jest.requireActual('@qovery/domains/application'),
-    editApplicationAdvancedSettings: jest.fn(),
-    fetchApplicationAdvancedSettings: jest.fn(),
-    fetchDefaultApplicationAdvancedSettings: jest.fn(),
-    getApplicationsState: () => ({
-      defaultApplicationAdvancedSettings: {
+    ...jest.requireActual('@qovery/domains/organization'),
+    editClusterAdvancedSettings: jest.fn(),
+    fetchClusterAdvancedSettings: jest.fn(),
+    fetchDefaultClusterAdvancedSettings: jest.fn(),
+    getClusterState: () => ({
+      defaultClusterAdvancedSettings: {
         loadingStatus: 'loaded',
         settings: mockAdvancedSettings,
       },
       loadingStatus: 'loaded',
-      ids: [mockApplication.id],
+      ids: [mockCluster.id],
       entities: {
-        [mockApplication.id]: mockApplication,
+        [mockCluster.id]: mockCluster,
       },
       error: null,
     }),
-    selectApplicationById: () => mockApplication,
+    selectClusterById: () => mockCluster,
   }
 })
 
 describe('PageSettingsAdvancedFeature', () => {
-  let useDispatchSpy: SpyInstance
   const setState = jest.fn()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const useStateMock: any = (initState: any) => [initState, setState]
   let promise: Promise
 
   beforeEach(() => {
-    mockApplication.advanced_settings = {
+    mockCluster.advanced_settings = {
       loadingStatus: 'not loaded',
       current_settings: mockAdvancedSettings,
     }
@@ -82,27 +82,11 @@ describe('PageSettingsAdvancedFeature', () => {
     })
   })
 
-  it('should dispatch fetchDefaultApplicationAdvancedSettings', async () => {
-    const fetchDefaultApplicationAdvancedSettingsSpy: SpyInstance = jest.spyOn(
-      storeApplication,
-      'fetchDefaultApplicationAdvancedSettings'
-    )
+  it('should dispatch fetchClusterAdvancedSettings if advanced_settings does not exist', async () => {
+    mockCluster.advanced_settings = undefined
+    const fetchClusterAdvancedSettingsSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchClusterAdvancedSettings')
     render(<PageSettingsAdvancedFeature />)
-    expect(fetchDefaultApplicationAdvancedSettingsSpy).toHaveBeenCalled()
-
-    await act(async () => {
-      await promise
-    })
-  })
-
-  it('should dispatch fetchApplicationAdvancedSettings if advanced_settings does not exist', async () => {
-    mockApplication.advanced_settings = undefined
-    const fetchApplicationAdvancedSettingsSpy: SpyInstance = jest.spyOn(
-      storeApplication,
-      'fetchApplicationAdvancedSettings'
-    )
-    render(<PageSettingsAdvancedFeature />)
-    expect(fetchApplicationAdvancedSettingsSpy).toHaveBeenCalled()
+    expect(fetchClusterAdvancedSettingsSpy).toHaveBeenCalled()
 
     await act(async () => {
       await promise
@@ -111,36 +95,29 @@ describe('PageSettingsAdvancedFeature', () => {
 
   // I think the useForm hook also use useState, this is why the first 4th call are to ignored. https://gist.github.com/mauricedb/eb2bae5592e3ddc64fa965cde4afe7bc
   it('should set the keys if application and advanced_settings are defined', async () => {
-    mockApplication.advanced_settings!.loadingStatus = 'loaded'
+    mockCluster.advanced_settings!.loadingStatus = 'loaded'
     jest.spyOn(React, 'useState').mockImplementation(useStateMock)
     render(<PageSettingsAdvancedFeature />)
     expect(setState).toHaveBeenNthCalledWith(
-      10,
-      Object.keys(mockApplication.advanced_settings?.current_settings || {}).sort()
+      9,
+      Object.keys(mockCluster.advanced_settings?.current_settings || {}).sort()
     )
     await act(async () => {
       await promise
     })
   })
 
-  it('should dispatch editApplicationAdvancedSettings if form is submitted', async () => {
-    mockApplication.advanced_settings!.loadingStatus = 'loaded'
-    const editApplicationAdvancedSettingsSpy: SpyInstance = jest.spyOn(
-      storeApplication,
-      'editApplicationAdvancedSettings'
-    )
+  it('should dispatch editClusterAdvancedSettings if form is submitted', async () => {
+    mockCluster.advanced_settings!.loadingStatus = 'loaded'
+    const editClusterAdvancedSettingsSpy: SpyInstance = jest.spyOn(storeOrganization, 'editClusterAdvancedSettings')
 
     const { getByLabelText, getByTestId } = render(<PageSettingsAdvancedFeature />)
 
     await act(() => {
-      const input = getByLabelText('cronjob.success_jobs_history_limit')
-      fireEvent.input(input, { target: { value: '63' } })
-
-      fireEvent.input(getByLabelText('job.delete_ttl_seconds_after_finished'), { target: { value: '999999' } })
-    })
-
-    await act(() => {
-      fireEvent.input(getByLabelText('job.delete_ttl_seconds_after_finished'), { target: { value: null } })
+      fireEvent.input(getByLabelText('loki.log_retention_in_week'), { target: { value: '2' } })
+      fireEvent.input(getByLabelText('aws.vpc.enable_s3_flow_logs'), { target: { value: 'true' } })
+      fireEvent.input(getByLabelText('load_balancer.size'), { target: { value: '/' } })
+      fireEvent.input(getByLabelText('cloud_provider_container_registry_tags'), { target: { value: '{}' } })
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
@@ -149,11 +126,12 @@ describe('PageSettingsAdvancedFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
-    expect(editApplicationAdvancedSettingsSpy.mock.calls[0][0].settings).toStrictEqual({
-      'liveness_probe.http_get.path': '/',
-      'cronjob.success_jobs_history_limit': 63,
-      'job.delete_ttl_seconds_after_finished': null, // getting null here is pretty important to fix an inconsitency with backend between numbers and string
+    expect(editClusterAdvancedSettingsSpy.mock.calls[0][0].clusterId).toBe(mockCluster.id)
+    expect(editClusterAdvancedSettingsSpy.mock.calls[0][0].settings).toStrictEqual({
+      'loki.log_retention_in_week': 2,
+      'aws.vpc.enable_s3_flow_logs': true,
+      'load_balancer.size': '/',
+      cloud_provider_container_registry_tags: '{}',
     })
 
     await act(async () => {
@@ -162,7 +140,7 @@ describe('PageSettingsAdvancedFeature', () => {
   })
 
   it('should init the form', async () => {
-    mockApplication.advanced_settings!.loadingStatus = 'loaded'
+    mockCluster.advanced_settings!.loadingStatus = 'loaded'
     const spy = jest.spyOn(InitFormValues, 'initFormValues')
     render(<PageSettingsAdvancedFeature />)
     expect(spy).toHaveBeenCalled()

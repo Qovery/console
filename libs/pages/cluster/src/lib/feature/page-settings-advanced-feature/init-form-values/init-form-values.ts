@@ -6,8 +6,10 @@ export function initFormValues(keys: string[], cluster: ClusterEntity): { [key: 
 
   keys.forEach((key) => {
     const currentSettings = cluster?.advanced_settings?.current_settings
+
     if (currentSettings) {
-      values[key] = currentSettings[key as keyof ClusterAdvancedSettings]?.toString() || ''
+      const value = currentSettings[key as keyof ClusterAdvancedSettings]
+      values[key] = (typeof value === 'object' ? JSON.stringify(value) : value?.toString()) || ''
     }
   })
 
