@@ -5,6 +5,7 @@ import {
   EnvironmentLogs,
   EnvironmentLogsError,
   Log,
+  StateEnum,
 } from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
@@ -127,6 +128,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
     },
   ]
 
+  console.log(environment)
+
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
       {withLogsNavigation && (
@@ -140,7 +143,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
               to={DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)}
             >
               <StatusChip
-                status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
+                status={(environment?.status && environment?.status.state) || StateEnum.STOPPED}
                 className="mr-2"
               />
               <span className="truncate">Deployment logs</span>
