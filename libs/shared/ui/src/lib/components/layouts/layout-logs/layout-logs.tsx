@@ -128,8 +128,6 @@ export function LayoutLogs(props: LayoutLogsProps) {
     },
   ]
 
-  console.log(environment)
-
   return (
     <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
       {withLogsNavigation && (
