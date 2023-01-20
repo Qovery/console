@@ -334,7 +334,7 @@ export const clusterSlice = createSlice({
         toast(
           ToastEnum.SUCCESS,
           `Cluster updated`,
-          'You must redeploy to apply the settings update',
+          'You must update to apply the settings',
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'

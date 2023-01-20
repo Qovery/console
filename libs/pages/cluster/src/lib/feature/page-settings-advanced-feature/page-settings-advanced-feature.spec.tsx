@@ -117,7 +117,9 @@ describe('PageSettingsAdvancedFeature', () => {
       fireEvent.input(getByLabelText('loki.log_retention_in_week'), { target: { value: '2' } })
       fireEvent.input(getByLabelText('aws.vpc.enable_s3_flow_logs'), { target: { value: 'true' } })
       fireEvent.input(getByLabelText('load_balancer.size'), { target: { value: '/' } })
-      fireEvent.input(getByLabelText('cloud_provider_container_registry_tags'), { target: { value: '{}' } })
+      fireEvent.input(getByLabelText('cloud_provider_container_registry_tags'), {
+        target: { value: '{"test":"test"}' },
+      })
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
@@ -131,7 +133,7 @@ describe('PageSettingsAdvancedFeature', () => {
       'loki.log_retention_in_week': 2,
       'aws.vpc.enable_s3_flow_logs': true,
       'load_balancer.size': '/',
-      cloud_provider_container_registry_tags: '{}',
+      cloud_provider_container_registry_tags: { test: 'test' },
     })
 
     await act(async () => {

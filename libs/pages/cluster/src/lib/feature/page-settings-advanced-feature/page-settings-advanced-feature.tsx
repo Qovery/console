@@ -84,9 +84,16 @@ export function PageSettingsAdvancedFeature() {
     // we can't do ClusterAdvanceSettings[key] === 'string' or 'number'
     // so if field is empty string replace by value found in defaultSettings (because default value is well typed)
     Object.keys(dataFormatted).forEach((key) => {
-      if (dataFormatted[key] === '') {
-        dataFormatted[key] = defaultSettings ? defaultSettings[key as keyof AdvancedSettings] : ''
+      // check if we can convert this string to object
+      try {
+        JSON.parse(dataFormatted[key])
+      } catch (e) {
+        if (dataFormatted[key] === '') {
+          dataFormatted[key] = defaultSettings ? defaultSettings[key as keyof AdvancedSettings] : ''
+        }
+        return
       }
+      dataFormatted[key] = JSON.parse(dataFormatted[key])
     })
 
     if (cluster) {
