@@ -137,6 +137,12 @@ export const lifecycleJobFactoryMock = (howMany: number, withContainer = false):
         on_start: {
           arguments: [],
         },
+        on_stop: {
+          arguments: [],
+        },
+        on_delete: {
+          arguments: [],
+        },
       },
       registry: {
         id: chance.guid(),

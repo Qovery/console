@@ -107,10 +107,11 @@ describe('PageSettingsPortsFeature', () => {
         checkbox.click()
       })
 
-      checkbox = getByLabelText(baseElement, 'Delete')
+      checkbox = getByLabelText(baseElement, 'Stop')
       await act(() => {
         checkbox.click()
       })
+
       let entrypoints: HTMLElement[]
       let cmds: HTMLElement[]
 
