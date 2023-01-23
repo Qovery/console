@@ -6,8 +6,15 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
-import { Cluster, ClusterLogs, ClusterRequest, ClusterStatus, ClustersApi } from 'qovery-typescript-axios'
-import { ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
+import {
+  Cluster,
+  ClusterAdvancedSettings,
+  ClusterLogs,
+  ClusterRequest,
+  ClusterStatus,
+  ClustersApi,
+} from 'qovery-typescript-axios'
+import { AdvancedSettings, ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
@@ -61,11 +68,49 @@ export const editCluster = createAsyncThunk(
   }
 )
 
+export const editClusterAdvancedSettings = createAsyncThunk<
+  ClusterAdvancedSettings,
+  {
+    organizationId: string
+    clusterId: string
+    settings: ClusterAdvancedSettings
+    toasterCallback: () => void
+  }
+>('cluster/advancedSettings/edit', async (data) => {
+  const response = await clusterApi.editClusterAdvancedSettings(
+    data.organizationId,
+    data.clusterId,
+    data.settings as ClusterAdvancedSettings
+  )
+
+  return response.data as ClusterAdvancedSettings
+})
+
+export const fetchDefaultClusterAdvancedSettings = createAsyncThunk<AdvancedSettings>(
+  'cluster/defaultAdvancedSettings',
+  async () => {
+    const response = await clusterApi.getDefaultClusterAdvancedSettings()
+    return response.data
+  }
+)
+
+export const fetchClusterAdvancedSettings = createAsyncThunk<
+  ClusterAdvancedSettings,
+  { organizationId: string; clusterId: string }
+>('cluster/advancedSettings', async (data) => {
+  const response = await clusterApi.getClusterAdvancedSettings(data.organizationId, data.clusterId)
+  return response.data as ClusterAdvancedSettings
+})
+
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
   joinOrganizationClusters: {},
   statusLoadingStatus: 'not loaded',
+  defaultClusterAdvancedSettings: {
+    loadingStatus: 'not loaded',
+    settings: undefined,
+  },
 })
 
 export const clusterSlice = createSlice({
@@ -209,6 +254,110 @@ export const clusterSlice = createSlice({
         state.loadingStatus = 'error'
         toastError(action.error)
         state.error = action.error.message
+      })
+      // default advanced settings
+      .addCase(fetchDefaultClusterAdvancedSettings.pending, (state: ClustersState, action) => {
+        state.defaultClusterAdvancedSettings.settings = action.payload
+      })
+      .addCase(fetchDefaultClusterAdvancedSettings.fulfilled, (state: ClustersState, action) => {
+        state.defaultClusterAdvancedSettings.settings = action.payload
+        state.defaultClusterAdvancedSettings.loadingStatus = 'loaded'
+      })
+      .addCase(fetchDefaultClusterAdvancedSettings.rejected, (state: ClustersState, action) => {
+        state.defaultClusterAdvancedSettings.loadingStatus = 'error'
+      })
+      // fetch cluster advanced settings
+      .addCase(fetchClusterAdvancedSettings.pending, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loading',
+              current_settings: undefined,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchClusterAdvancedSettings.fulfilled, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loaded',
+              current_settings: action.payload,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchClusterAdvancedSettings.rejected, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'error',
+              current_settings: undefined,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      // edit cluster advanced settings
+      .addCase(editClusterAdvancedSettings.pending, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loading',
+              current_settings: state.entities[clusterId]?.advanced_settings?.current_settings,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(editClusterAdvancedSettings.fulfilled, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'loaded',
+              current_settings: action.payload,
+            },
+          },
+        }
+        toast(
+          ToastEnum.SUCCESS,
+          `Cluster updated`,
+          'You must update to apply the settings',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(editClusterAdvancedSettings.rejected, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            advanced_settings: {
+              loadingStatus: 'error',
+              current_settings: state.entities[clusterId]?.advanced_settings?.current_settings,
+            },
+          },
+        }
+
+        toast(
+          ToastEnum.ERROR,
+          `Your advanced settings have not been updated. Something must be wrong with the values provided`
+        )
+        clusterAdapter.updateOne(state, update)
       })
   },
 })

@@ -1,4 +1,4 @@
-import { ApplicationAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
+import { ApplicationAdvancedSettings, ClusterAdvancedSettings, JobAdvancedSettings } from 'qovery-typescript-axios'
 import {
   ApplicationAdvancedSettingsLivenessProbeTypeEnum,
   ApplicationAdvancedSettingsReadinessProbeTypeEnum,
@@ -10,7 +10,8 @@ import {
 // we have to omit both liveness and readiness probe type because they are not the same type in the two interfaces
 // declaring again their type like we do below is one efficient workaround
 export interface AdvancedSettings
-  extends Omit<Partial<ApplicationAdvancedSettings>, 'liveness_probe.type' | 'readiness_probe.type'>,
+  extends ClusterAdvancedSettings,
+    Omit<Partial<ApplicationAdvancedSettings>, 'liveness_probe.type' | 'readiness_probe.type'>,
     Omit<Partial<JobAdvancedSettings>, 'liveness_probe.type' | 'readiness_probe.type'> {
   'liveness_probe.type'?: JobAdvancedSettingsLivenessProbeTypeEnum | ApplicationAdvancedSettingsLivenessProbeTypeEnum
   'readiness_probe.type'?: JobAdvancedSettingsReadinessProbeTypeEnum | ApplicationAdvancedSettingsReadinessProbeTypeEnum
