@@ -1,7 +1,7 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { Icon, Skeleton, StatusChip, Tag } from '@qovery/shared/ui'
+import { Icon, Skeleton, StatusChip, Tag, TagClusterType } from '@qovery/shared/ui'
 import { getStatusClusterMessage } from '@qovery/shared/utils'
 
 export interface CardClusterProps {
@@ -78,6 +78,11 @@ export function CardCluster(props: CardClusterProps) {
             DEFAULT
           </Tag>
         )}
+        <TagClusterType
+          className="text-text-400 border-element-light-lighter-500 mr-2"
+          cloudProvider={cluster?.cloud_provider}
+          kubernetes={cluster?.kubernetes}
+        />
         <Tag dataTestId="tag-region" className="text-text-400 border border-element-light-lighter-500 truncate mr-2">
           {cluster.region}
         </Tag>
