@@ -1,10 +1,12 @@
+import { ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { isApplication, isJob } from '@qovery/shared/enums'
+import { isApplication, isGitJob, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, JobApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import About from '../about/about'
 import AboutContainer from '../about/about-container/about-container'
 import AboutGit from '../about/about-git/about-git'
+import AboutUpdate from '../about/about-update/about-update'
 import InstancesTable from '../instances-table/instances-table'
 import JobOverview from '../job-overview/job-overview'
 
@@ -13,13 +15,12 @@ export interface PageGeneralProps {
   listHelpfulLinks: BaseLink[]
   loadingStatus?: LoadingStatus
   serviceStability?: number
+  currentRegistry?: ContainerRegistryResponse
 }
 
 export function PageGeneral(props: PageGeneralProps) {
   const { application, listHelpfulLinks, loadingStatus, serviceStability = 0 } = props
   const { organizationId = '' } = useParams()
-
-  console.log(application)
 
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
@@ -84,15 +85,27 @@ export function PageGeneral(props: PageGeneralProps) {
             <AboutGit loadingStatus={loadingStatus} application={application} />
           ) : // <LastCommitFeature />
           isJob(application) ? (
-            application.source?.docker ? (
+            isGitJob(application) ? (
               <AboutGit loadingStatus={loadingStatus} application={application} />
             ) : (
               // <LastCommitFeature />
-              <AboutContainer loadingStatus={loadingStatus} organizationId={organizationId} />
+              <AboutContainer
+                loadingStatus={loadingStatus}
+                organizationId={organizationId}
+                currentRegistry={props.currentRegistry}
+                container={application}
+              />
             )
           ) : (
-            <AboutContainer loadingStatus={loadingStatus} organizationId={organizationId} />
+            <AboutContainer
+              loadingStatus={loadingStatus}
+              organizationId={organizationId}
+              container={application}
+              currentRegistry={props.currentRegistry}
+            />
           ))}
+
+        <AboutUpdate application={application} />
       </div>
     </div>
   )

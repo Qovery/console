@@ -15,21 +15,15 @@ export function AboutGit(props: AboutGitProps) {
 
   useEffect(() => {
     if (application) {
-      console.log(isApplication(application), isJob(application))
       if (isApplication(application)) setGitRepository(application.git_repository)
       else if (isJob(application)) {
-        console.log('isJob', application.source?.docker?.git_repository)
         setGitRepository(application.source?.docker?.git_repository as ApplicationGitRepository)
       }
     }
   }, [application])
 
-  useEffect(() => {
-    console.log('hey', gitRepository)
-  }, [gitRepository])
-
   return (
-    <div className="pt-2 pb-8 px-8 flex flex-col items-start border-b border-element-light-lighter-400">
+    <div className="p-8 flex flex-col items-start border-b border-element-light-lighter-400">
       <div className="font-bold mb-3 text-text-600">Source</div>
 
       <p>
