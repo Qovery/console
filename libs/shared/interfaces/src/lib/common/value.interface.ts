@@ -4,4 +4,5 @@ export interface Value {
   label: string
   value: string
   icon?: ReactNode
+  isDisabled?: boolean
 }

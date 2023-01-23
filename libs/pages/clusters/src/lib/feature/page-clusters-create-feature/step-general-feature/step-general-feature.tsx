@@ -1,14 +1,19 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { ApplicationGeneralData } from '@qovery/shared/interfaces'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchCloudProvider, getClusterState } from '@qovery/domains/organization'
+import { ClusterGeneralData } from '@qovery/shared/interfaces'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store'
 import StepGeneral from '../../../ui/page-clusters-create/step-general/step-general'
 import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Cluster')
   const { setGeneralData, generalData, setCurrentStep } = useClusterContainerCreateContext()
+  const dispatch = useDispatch<AppDispatch>()
+  const cloudProvider = useSelector((state: RootState) => getClusterState(state).cloudProvider)
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -36,7 +41,11 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const methods = useForm<ApplicationGeneralData>({
+  useEffect(() => {
+    if (cloudProvider.loadingStatus !== 'loaded') dispatch(fetchCloudProvider())
+  }, [cloudProvider.loadingStatus, dispatch])
+
+  const methods = useForm<ClusterGeneralData>({
     defaultValues: generalData,
     mode: 'onChange',
   })
@@ -50,7 +59,11 @@ export function StepGeneralFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepGeneral onSubmit={onSubmit} />
+        <StepGeneral
+          onSubmit={onSubmit}
+          cloudProviders={cloudProvider.items}
+          cloudProviderLoadingStatus={cloudProvider.loadingStatus}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )

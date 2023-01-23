@@ -23,3 +23,4 @@ export * from './lib/git-repository-settings/feature/edit-git-repository-setting
 export * from './lib/create-project-modal/feature/create-project-modal-feature'
 export * from './lib/member-invitation/accept-invitation/feature/accept-invitation-feature'
 export * from './lib/cluster-settings/ui/cluster-general-settings/cluster-general-settings'
+export * from './lib/cluster-settings/feature/cluster-credentials-settings-feature/cluster-credentials-settings-feature'

@@ -10,6 +10,9 @@ describe('cluster reducer', () => {
       defaultClusterAdvancedSettings: {
         loadingStatus: 'not loaded',
         settings: undefined,
+      cloudProvider: {
+        loadingStatus: 'not loaded',
+        items: [],
       },
     })
 

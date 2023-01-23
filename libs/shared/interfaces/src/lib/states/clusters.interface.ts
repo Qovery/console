@@ -1,3 +1,4 @@
+import { CloudProvider } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
 import { AdvancedSettings } from './../domain/advanced-settings.interface'
 import { ClusterEntity } from './../domain/cluster.entity'
@@ -9,5 +10,9 @@ export interface ClustersState extends DefaultEntityState<ClusterEntity> {
   defaultClusterAdvancedSettings: {
     loadingStatus: LoadingStatus
     settings?: AdvancedSettings
+  }
+  cloudProvider: {
+    loadingStatus: LoadingStatus
+    items: CloudProvider[]
   }
 }
