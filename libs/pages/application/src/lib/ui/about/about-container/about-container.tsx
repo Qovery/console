@@ -39,12 +39,7 @@ export function AboutContainer(props: AboutContainerProps) {
       <div className="flex gap-3 items-center">
         Registry:{' '}
         <Skeleton height={36} width={100} show={!props.currentRegistry}>
-          <Button
-            external={true}
-            link={props.currentRegistry?.url}
-            style={ButtonStyle.STROKED}
-            iconLeft={IconEnum.CONTAINER}
-          >
+          <Button external link={props.currentRegistry?.url} style={ButtonStyle.STROKED} iconLeft={IconEnum.CONTAINER}>
             {props.currentRegistry?.name}
           </Button>
         </Skeleton>

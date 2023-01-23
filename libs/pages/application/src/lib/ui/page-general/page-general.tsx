@@ -82,11 +82,10 @@ export function PageGeneral(props: PageGeneralProps) {
 
         {application &&
           (isApplication(application) ? (
-            <AboutGit loadingStatus={loadingStatus} application={application} />
-          ) : // <LastCommitFeature />
-          isJob(application) ? (
+            <AboutGit application={application} />
+          ) : isJob(application) ? (
             isGitJob(application) ? (
-              <AboutGit loadingStatus={loadingStatus} application={application} />
+              <AboutGit application={application} />
             ) : (
               // <LastCommitFeature />
               <AboutContainer
