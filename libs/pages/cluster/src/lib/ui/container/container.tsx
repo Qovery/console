@@ -2,7 +2,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { ClusterButtonsActions } from '@qovery/shared/console-shared'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Header, Icon, IconAwesomeEnum, Skeleton, Tabs, Tag, TagSize } from '@qovery/shared/ui'
+import { Header, Icon, IconAwesomeEnum, Skeleton, Tabs, Tag, TagClusterType, TagSize } from '@qovery/shared/ui'
 
 export interface ContainerProps {
   children: React.ReactNode
@@ -38,6 +38,14 @@ export function Container(props: ContainerProps) {
           DEFAULT
         </Tag>
       )}
+      <Skeleton width={120} height={32} show={!cluster}>
+        <TagClusterType
+          className="text-text-500 border-element-light-lighter-400"
+          size={TagSize.BIG}
+          cloudProvider={cluster?.cloud_provider}
+          kubernetes={cluster?.kubernetes}
+        />
+      </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
         <Tag size={TagSize.BIG} className="text-text-500 border border-element-light-lighter-400 truncate">
           {cluster?.region}
