@@ -23,6 +23,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["console"],
-  "name": "console-e2e"
+  "implicitDependencies": ["console"]
 }

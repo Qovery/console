@@ -23,6 +23,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["shared-ui"],
-  "name": "design-system-e2e"
+  "implicitDependencies": ["shared-ui"]
 }
