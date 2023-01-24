@@ -15,6 +15,7 @@ export interface CrudEnvironmentVariableModalProps {
   closeModal: () => void
   availableScopes: APIVariableScopeEnum[]
   loading: boolean
+  parentVariableName?: string
 }
 
 export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModalProps) {
@@ -32,40 +33,74 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{props.title}</h2>
       <p className="text-text-400 text-sm mb-6">{props.description}</p>
       <form onSubmit={props.onSubmit}>
-        <Controller
-          name="key"
-          control={control}
-          rules={{
-            required: 'Please enter a variable key.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-6"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Variable"
-              error={error?.message}
-              disabled={props.type === EnvironmentVariableType.OVERRIDE}
+        {props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
+          <InputText className="mb-6" name="parent value" value={props.parentVariableName} label="Variable" disabled />
+        ) : (
+          <Controller
+            name="key"
+            control={control}
+            rules={{
+              required: 'Please enter a variable key.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-6"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Variable"
+                error={error?.message}
+                disabled={props.type === EnvironmentVariableType.OVERRIDE}
+              />
+            )}
+          />
+        )}
+
+        {props.type === EnvironmentVariableType.ALIAS && (
+          <div>
+            Alias
+            <Controller
+              name="key"
+              control={control}
+              rules={{
+                required: 'Please enter a variable key.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-6"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="New variable"
+                  error={error?.message}
+                  disabled={props.type === EnvironmentVariableType.OVERRIDE}
+                />
+              )}
             />
-          )}
-        />
-        <Controller
-          name="value"
-          control={control}
-          rules={validationRuleForValue}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextArea
-              className="mb-6"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Value"
-              error={error?.message}
-              disabled={props.type === EnvironmentVariableType.ALIAS}
-            />
-          )}
-        />
+          </div>
+        )}
+
+        {props.type === EnvironmentVariableType.OVERRIDE && <div>Override</div>}
+
+        {(props.type === EnvironmentVariableType.NORMAL || props.type === EnvironmentVariableType.OVERRIDE) && (
+          <Controller
+            name="value"
+            control={control}
+            rules={validationRuleForValue}
+            render={({ field, fieldState: { error } }) => (
+              <InputTextArea
+                className="mb-6"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Value"
+                error={error?.message}
+                disabled={props.type === EnvironmentVariableType.ALIAS}
+              />
+            )}
+          />
+        )}
+
         <Controller
           name="scope"
           control={control}

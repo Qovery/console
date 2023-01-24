@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/extend-expect'
-import { act, fireEvent, getByRole, queryByText, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, getByRole, render, screen, waitFor } from '@testing-library/react'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
@@ -82,23 +82,6 @@ describe('CrudEnvironmentVariableModal', () => {
         const button = await getByRole(baseElement, 'button', { name: 'Confirm' })
         expect(button).toBeDisabled()
       })
-    })
-
-    it('should not show required error message under value textarea if Alias context', async () => {
-      props.type = EnvironmentVariableType.ALIAS
-      const { baseElement } = render(
-        <WrapperForm>
-          <CrudEnvironmentVariableModal {...props} />
-        </WrapperForm>
-      )
-
-      await act(() => {
-        const textarea = screen.getByLabelText('Value') as HTMLTextAreaElement
-        fireEvent.change(textarea, { target: { value: 'a' } })
-        fireEvent.change(textarea, { target: { value: '' } })
-      })
-
-      expect(queryByText(baseElement, 'Please enter a value.')).toBeNull()
     })
   })
 })
