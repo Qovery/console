@@ -91,5 +91,6 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "name": "console"
 }

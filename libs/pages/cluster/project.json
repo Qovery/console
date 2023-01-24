@@ -19,5 +19,6 @@
         "passWithNoTests": true
       }
     }
-  }
+  },
+  "name": "pages-cluster"
 }
