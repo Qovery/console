@@ -187,7 +187,7 @@ export const environmentsSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchEnvironments.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment[]>) => {
-        environmentsAdapter.setAll(state, action.payload)
+        environmentsAdapter.upsertMany(state, action.payload)
         action.payload.forEach((environment) => {
           state.joinProjectEnvironments = addOneToManyRelation(environment.project?.id, environment.id, {
             ...state.joinProjectEnvironments,

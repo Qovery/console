@@ -63,11 +63,7 @@ export function PageGeneralFeature() {
     }
 
     // if the two collections are loaded, we remove the loading state
-    if (applicationsLoadingStatus === 'loaded' && databasesLoadingStatus === 'loaded') {
-      return false
-    }
-
-    return true
+    return !(applicationsLoadingStatus === 'loaded' && databasesLoadingStatus === 'loaded')
   }
 
   return (

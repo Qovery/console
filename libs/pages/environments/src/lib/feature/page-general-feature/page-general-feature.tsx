@@ -1,5 +1,5 @@
 import { Cluster } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -44,10 +44,20 @@ export function PageGeneralFeature() {
     },
   ]
 
+  const isLoading = useCallback(() => {
+    // if at least one collection has value to display, we remove the loading state
+    if (environments.length) {
+      return false
+    }
+
+    // if the two collections are loaded, we remove the loading state
+    return loadingStatus === 'loading'
+  }, [environments.length, loadingStatus])
+
   return (
     <PageGeneral
-      isLoading={loadingStatus === 'loading'}
-      environments={loadingStatus !== 'loaded' ? loadingEnvironments : environments}
+      isLoading={isLoading()}
+      environments={isLoading() ? loadingEnvironments : environments}
       listHelpfulLinks={listHelpfulLinks}
       clusterAvailable={clusters.length > 0}
     />

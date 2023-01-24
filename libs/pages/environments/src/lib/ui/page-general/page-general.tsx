@@ -24,7 +24,7 @@ export interface PageGeneralProps {
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {
-  const { environments, listHelpfulLinks, clusterAvailable } = props
+  const { environments, listHelpfulLinks, clusterAvailable, isLoading } = props
   const { organizationId = '', projectId = '' } = useParams()
 
   const { openModal, closeModal } = useModal()
@@ -93,12 +93,13 @@ function PageGeneralMemo(props: PageGeneralProps) {
                 dataHead={tableHead}
                 link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
                 columnsWidth={columnWidth}
+                isLoading={isLoading}
               />
             ))}
           </>
         </Table>
       ) : (
-        !props.isLoading && (
+        !isLoading && (
           <EmptyState
             className="bg-white rounded-t-sm mt-2 pt-10"
             title={`${clusterAvailable ? 'Create your first environment 💫' : 'Create your Cluster first 💫'}`}
