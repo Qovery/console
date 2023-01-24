@@ -84,7 +84,6 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
           description: 'To confirm the redeploy of your database, please type the name:',
           name: database.name,
           action: () => {
-            // TODO: add redeploy action
             dispatch(
               postDatabaseActionsRestart({
                 environmentId,
