@@ -20,12 +20,18 @@ export interface TableRowEnvironmentsProps {
   dataHead: TableHeadProps[]
   link: string
   columnsWidth?: string
+  isLoading?: boolean
 }
 
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
-  const { data, dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, link, filter } = props
-
-  const isLoading = !data.status?.id
+  const {
+    data,
+    dataHead,
+    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+    link,
+    filter,
+    isLoading = false,
+  } = props
 
   return (
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link} disabled={isLoading}>
