@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   deleteApplicationAction,
   postApplicationActionsDeploy,
+  postApplicationActionsReboot,
   postApplicationActionsRestart,
   postApplicationActionsStop,
 } from '@qovery/domains/application'
@@ -102,7 +103,6 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           name: application.name,
           action: () => {
             dispatch(
-              // TODO use the right action, should be redeploy
               postApplicationActionsRestart({
                 environmentId,
                 applicationId: application.id,
@@ -120,21 +120,13 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
-        openModalConfirmation({
-          mode: environmentMode,
-          title: 'Confirm restart',
-          description: 'To confirm the restart of your service, please type the name:',
-          name: application.name,
-          action: () => {
-            dispatch(
-              postApplicationActionsRestart({
-                environmentId,
-                applicationId: application.id,
-                serviceType: getServiceType(application),
-              })
-            )
-          },
-        })
+        dispatch(
+          postApplicationActionsReboot({
+            environmentId,
+            applicationId: application.id,
+            serviceType: getServiceType(application),
+          })
+        )
       },
     }
 
@@ -197,6 +189,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     }
 
     const state = application.status?.state
+    const runningState = application.running_status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -210,7 +203,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
       }
-      if (!isJob(application) && isRestartAvailable(state)) {
+      if (!isJob(application) && runningState && isRestartAvailable(runningState)) {
         topItems.push(restartButton)
       }
       if (isJob(application)) {

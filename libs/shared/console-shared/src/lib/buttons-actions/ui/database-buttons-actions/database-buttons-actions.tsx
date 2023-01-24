@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
+  postDatabaseActionsReboot,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@qovery/domains/database'
@@ -96,25 +97,12 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     }
 
     const restartButton: MenuItemProps = {
-      name: 'Restart database',
+      name: 'Restart Database',
       contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
-        openModalConfirmation({
-          mode: environmentMode,
-          title: 'Confirm restart',
-          description: 'To confirm the restart of your database, please type the name:',
-          name: database.name,
-          action: () => {
-            dispatch(
-              postDatabaseActionsRestart({
-                environmentId,
-                databaseId: database.id,
-              })
-            )
-          },
-        })
+        dispatch(postDatabaseActionsReboot({ environmentId, databaseId: database.id }))
       },
     }
 
@@ -142,6 +130,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     }
 
     const state = database.status?.state
+    const runningState = database.running_status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -152,7 +141,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
       }
-      if (isRestartAvailable(state) && database.mode !== DatabaseModeEnum.MANAGED) {
+      if (runningState && isRestartAvailable(runningState) && database.mode !== DatabaseModeEnum.MANAGED) {
         topItems.push(restartButton)
       }
       if (isStopAvailable(state)) {

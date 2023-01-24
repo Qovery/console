@@ -19,7 +19,7 @@ import {
   copyToClipboard,
   isDeleteAvailable,
   isDeployAvailable,
-  isRestartAvailable,
+  isRedeployAvailable,
   isStopAvailable,
   isUpdateAvailable,
 } from '@qovery/shared/utils'
@@ -116,7 +116,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       if (isDeployAvailable(cluster.extendedStatus?.status?.status)) {
         topItems.push(deployButton)
       }
-      if (isRestartAvailable(cluster.extendedStatus?.status?.status)) {
+      if (isRedeployAvailable(cluster.extendedStatus?.status?.status)) {
         topItems.push(updateButton)
       }
       if (isStopAvailable(cluster.extendedStatus?.status?.status)) {

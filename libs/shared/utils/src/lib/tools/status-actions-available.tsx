@@ -1,4 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
+import { RunningStatus } from '@qovery/shared/enums'
 
 export const isDeployAvailable = (status: StateEnum): boolean => {
   return (
@@ -7,25 +8,8 @@ export const isDeployAvailable = (status: StateEnum): boolean => {
   )
 }
 
-// Todo : make sure that isRestartAvailable and isRedeployAvailable use the same conditions
-export const isRestartAvailable = (status: StateEnum): boolean => {
-  return (
-    (status === StateEnum.BUILDING ||
-      status === StateEnum.QUEUED ||
-      status === StateEnum.STOP_QUEUED ||
-      status === StateEnum.DELETE_QUEUED ||
-      status === StateEnum.DEPLOYING ||
-      status === StateEnum.DEPLOYMENT_ERROR ||
-      status === StateEnum.DEPLOYED ||
-      status === StateEnum.STOPPING ||
-      status === StateEnum.STOP_ERROR ||
-      status === StateEnum.DELETING ||
-      status === StateEnum.DELETE_ERROR ||
-      status === StateEnum.RUNNING ||
-      status === StateEnum.DEPLOYMENT_QUEUED ||
-      status === StateEnum.CANCELED) &&
-    !isCancelBuildAvailable(status)
-  )
+export const isRestartAvailable = (runningStatus: RunningStatus): boolean => {
+  return runningStatus === RunningStatus.RUNNING
 }
 
 export const isRedeployAvailable = (status: StateEnum): boolean => {
