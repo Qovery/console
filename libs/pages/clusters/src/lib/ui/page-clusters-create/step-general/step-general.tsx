@@ -16,7 +16,7 @@ export interface StepGeneralProps {
 
 export function StepGeneral(props: StepGeneralProps) {
   const { onSubmit, cloudProviders = [] } = props
-  const { control, formState } = useFormContext<ClusterGeneralData>()
+  const { control, formState, watch } = useFormContext<ClusterGeneralData>()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
@@ -24,7 +24,7 @@ export function StepGeneral(props: StepGeneralProps) {
 
   const buildCloudProviders: Value[] = cloudProviders.map((value) => ({
     label: upperCaseFirstLetter(value.name) || '',
-    value: value.name || '',
+    value: value.short_name || '',
     icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
     // disabled temporally Digital Ocean
     isDisabled: value.short_name === CloudProviderEnum.DO ? true : false,
@@ -69,7 +69,9 @@ export function StepGeneral(props: StepGeneralProps) {
                 className="mb-3"
                 options={buildCloudProviders}
                 onChange={(value) => {
-                  const currentProvider = cloudProviders?.filter((cloud) => cloud.name === value && cloud.regions)[0]
+                  const currentProvider = cloudProviders?.filter(
+                    (cloud) => cloud.short_name === value && cloud.regions
+                  )[0]
                   setCurrentProvider(currentProvider as CloudProvider)
                   field.onChange(value)
                 }}
@@ -80,27 +82,29 @@ export function StepGeneral(props: StepGeneralProps) {
             )}
           />
           {currentProvider && (
-            <Controller
-              name="region"
-              control={control}
-              rules={{
-                required: 'Please select a region.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  dataTestId="input-region"
-                  label="Region"
-                  className="mb-3"
-                  options={buildRegions}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  isSearchable
-                />
-              )}
-            />
+            <>
+              <Controller
+                name="region"
+                control={control}
+                rules={{
+                  required: 'Please select a region.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    dataTestId="input-region"
+                    label="Region"
+                    className="mb-3"
+                    options={buildRegions}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    isSearchable
+                  />
+                )}
+              />
+              <ClusterCredentialsSettingsFeature cloudProvider={watch('cloud_provider')} />
+            </>
           )}
-          <ClusterCredentialsSettingsFeature />
         </div>
 
         <div className="flex justify-between">

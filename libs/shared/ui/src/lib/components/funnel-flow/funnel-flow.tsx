@@ -30,7 +30,7 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
           </div>
         </div>
         {props.onExit && (
-          <div className="border-l border-l-element-light-lighter-400 pl-4 h-full flex items-center">
+          <div className="border-l border-l-element-light-lighter-400 pl-5 h-full flex items-center">
             <Button onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
               Close <Icon name={IconAwesomeEnum.CROSS} className="ml-2" />
             </Button>

@@ -90,24 +90,32 @@ export function InputSelect(props: InputSelectProps) {
     }
   }, [value, isMulti, options])
 
-  const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
-    <components.Option {...props}>
-      {isMulti ? (
-        <span className="input-select__checkbox">
-          {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
-        </span>
-      ) : props.isSelected ? (
-        <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />
-      ) : props.data.icon ? (
+  const Option = (props: OptionProps<Value, true, GroupBase<Value>>) =>
+    !props.data.externalClick ? (
+      <components.Option {...props}>
+        {isMulti ? (
+          <span className="input-select__checkbox">
+            {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
+          </span>
+        ) : props.isSelected ? (
+          <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />
+        ) : props.data.icon ? (
+          <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
+        ) : (
+          <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
+        )}
+        <Tooltip content={props.label}>
+          <label className="ml-2 truncate">{props.label}</label>
+        </Tooltip>
+      </components.Option>
+    ) : (
+      <button type="button" tabIndex={-1} className="input-select__option" onClick={props.data.externalClick}>
         <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
-      ) : (
-        <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
-      )}
-      <Tooltip content={props.label}>
-        <label className="ml-2 truncate">{props.label}</label>
-      </Tooltip>
-    </components.Option>
-  )
+        <Tooltip content={props.label}>
+          <label className="ml-2 truncate">{props.label}</label>
+        </Tooltip>
+      </button>
+    )
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
     <span className="text-sm text-text-600 mr-1">

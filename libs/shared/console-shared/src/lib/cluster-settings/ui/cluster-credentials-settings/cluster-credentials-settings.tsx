@@ -1,36 +1,53 @@
-// import { Controller, useFormContext } from 'react-hook-form'
-// import { ClusterGeneralData } from '@qovery/shared/interfaces'
-// import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { ClusterCredentials } from 'qovery-typescript-axios'
+import { Controller, useFormContext } from 'react-hook-form'
+import { ClusterGeneralData, LoadingStatus } from '@qovery/shared/interfaces'
+import { IconAwesomeEnum, IconFa, InputSelect } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
-  fromDetail?: boolean
+  credentials: {
+    loadingStatus: LoadingStatus
+    items: ClusterCredentials[]
+  }
 }
 
 export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProps) {
-  // const { fromDetail } = props
-  // const { control } = useFormContext<ClusterGeneralData>()
+  const { credentials } = props
+  const { control } = useFormContext<ClusterGeneralData>()
+
+  const buildCredentials = credentials.items.map((item: ClusterCredentials) => ({
+    label: item.name,
+    value: item.id,
+  }))
 
   return (
     <div>
-      hello
-      {/* <Controller
-        name="name"
+      <Controller
+        name="credentials"
         control={control}
         rules={{
-          required: 'Please enter a name.',
+          required: 'Please select a credential.',
         }}
         render={({ field, fieldState: { error } }) => (
-          <InputText
+          <InputSelect
+            dataTestId="input-credentials"
+            label="Credentials"
             className="mb-3"
-            dataTestId="input-name"
-            name={field.name}
+            options={[
+              ...buildCredentials,
+              {
+                label: 'New credentials',
+                value: 'new',
+                icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
+                externalClick: () => console.log('hello'),
+              },
+            ]}
             onChange={field.onChange}
             value={field.value}
-            label="Cluster name"
             error={error?.message}
+            isSearchable
           />
         )}
-      /> */}
+      />
     </div>
   )
 }
