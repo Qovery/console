@@ -5,6 +5,7 @@ export interface ClusterGeneralData {
   description?: string
   production?: boolean
   cloud_provider: CloudProviderEnum
+  region: string
 }
 
 // export interface ClusterResourcesData {

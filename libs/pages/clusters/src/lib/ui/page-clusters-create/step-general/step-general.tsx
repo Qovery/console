@@ -1,11 +1,11 @@
-import { CloudProvider, CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProvider, CloudProviderEnum, ClusterRegion } from 'qovery-typescript-axios'
 import { FormEventHandler, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { ClusterGeneralData, LoadingStatus } from '@qovery/shared/interfaces'
+import { ClusterGeneralData, LoadingStatus, Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, Icon, InputSelect, WarningBox } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, IconFlag, InputSelect, WarningBox } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface StepGeneralProps {
@@ -20,9 +20,9 @@ export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
-  const [currentProvider, setCurrentProvider] = useState<string>()
+  const [currentProvider, setCurrentProvider] = useState<CloudProvider | undefined>()
 
-  const buildCloudProviders = cloudProviders.map((value) => ({
+  const buildCloudProviders: Value[] = cloudProviders.map((value) => ({
     label: upperCaseFirstLetter(value.name) || '',
     value: value.name || '',
     icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
@@ -30,7 +30,12 @@ export function StepGeneral(props: StepGeneralProps) {
     isDisabled: value.short_name === CloudProviderEnum.DO ? true : false,
   }))
 
-  console.log(currentProvider)
+  const buildRegions =
+    currentProvider?.regions?.map((region: ClusterRegion) => ({
+      label: `${region.city} (${region.name})`,
+      value: region.name,
+      icon: <IconFlag code={region.country_code} />,
+    })) || []
 
   return (
     <div>
@@ -64,14 +69,37 @@ export function StepGeneral(props: StepGeneralProps) {
                 className="mb-3"
                 options={buildCloudProviders}
                 onChange={(value) => {
-                  setCurrentProvider(value as string)
+                  const currentProvider = cloudProviders?.filter((cloud) => cloud.name === value && cloud.regions)[0]
+                  setCurrentProvider(currentProvider as CloudProvider)
                   field.onChange(value)
                 }}
                 value={field.value}
                 error={error?.message}
+                isSearchable
               />
             )}
           />
+          {currentProvider && (
+            <Controller
+              name="region"
+              control={control}
+              rules={{
+                required: 'Please select a region.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  dataTestId="input-region"
+                  label="Region"
+                  className="mb-3"
+                  options={buildRegions}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  isSearchable
+                />
+              )}
+            />
+          )}
           <ClusterCredentialsSettingsFeature />
         </div>
 

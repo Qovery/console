@@ -1,12 +1,12 @@
 import { render } from '__tests__/utils/setup-jest'
-import IconFlag, { IconFlagProps } from './icon-fa'
+import IconFlag, { IconFlagProps } from './icon-flag'
 
 describe('IconFlag', () => {
   let props: IconFlagProps
 
   beforeEach(() => {
     props = {
-      name: 'default',
+      code: 'default',
     }
   })
 
