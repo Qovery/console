@@ -1,5 +1,4 @@
 {
-  "name": "shared-ui",
   "sourceRoot": "libs/shared/ui/src",
   "projectType": "library",
   "tags": [],
@@ -24,7 +23,9 @@
       "options": {
         "uiFramework": "@storybook/react",
         "port": 4400,
-        "configDir": "libs/shared/ui/.storybook"
+        "config": {
+          "configFolder": "libs/shared/ui/.storybook"
+        }
       },
       "configurations": {
         "ci": {
@@ -34,11 +35,13 @@
     },
     "build-storybook": {
       "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputDir}"],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "uiFramework": "@storybook/react",
-        "configDir": "libs/shared/ui/.storybook",
-        "outputDir": "dist/storybook/design-system"
+        "outputPath": "dist/storybook/design-system",
+        "config": {
+          "configFolder": "libs/shared/ui/.storybook"
+        }
       },
       "configurations": {
         "ci": {
