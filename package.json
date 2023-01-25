@@ -31,7 +31,7 @@
     "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-slider": "^1.0.0",
     "@radix-ui/react-tooltip": "^0.1.7",
-    "@reduxjs/toolkit": "1.8.5",
+    "@reduxjs/toolkit": "1.9.1",
     "@storybook/addon-essentials": "6.5.10",
     "@storybook/addon-knobs": "^6.4.0",
     "@storybook/builder-webpack5": "6.5.9",
