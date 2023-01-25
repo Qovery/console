@@ -1,5 +1,14 @@
 import '@testing-library/jest-dom/extend-expect'
-import { act, fireEvent, getByRole, render, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  getByLabelText,
+  getByRole,
+  queryByLabelText,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
@@ -41,6 +50,55 @@ describe('CrudEnvironmentVariableModal', () => {
       </WrapperForm>
     )
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should render correct input for normal variable', () => {
+    const { baseElement } = render(
+      <WrapperForm>
+        <CrudEnvironmentVariableModal
+          {...props}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          type={EnvironmentVariableType.NORMAL}
+        />
+      </WrapperForm>
+    )
+    getByLabelText(baseElement, 'Variable')
+    getByLabelText(baseElement, 'Value')
+    getByLabelText(baseElement, 'Scope')
+  })
+
+  it('should render correct input for alias variable', () => {
+    const { baseElement } = render(
+      <WrapperForm>
+        <CrudEnvironmentVariableModal
+          {...props}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          type={EnvironmentVariableType.ALIAS}
+        />
+      </WrapperForm>
+    )
+    getByLabelText(baseElement, 'Variable')
+    getByLabelText(baseElement, 'New variable')
+    getByLabelText(baseElement, 'Scope')
+
+    expect(queryByLabelText(baseElement, 'Value')).toBeNull()
+  })
+
+  it('should render correct input for override variable', () => {
+    const { baseElement } = render(
+      <WrapperForm>
+        <CrudEnvironmentVariableModal
+          {...props}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          type={EnvironmentVariableType.OVERRIDE}
+        />
+      </WrapperForm>
+    )
+    getByLabelText(baseElement, 'Variable')
+    getByLabelText(baseElement, 'Value')
+    getByLabelText(baseElement, 'Scope')
+
+    expect(queryByLabelText(baseElement, 'New value')).toBeNull()
   })
 
   it('should close on cancel', async () => {

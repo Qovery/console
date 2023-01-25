@@ -1,6 +1,7 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ButtonStyle, InputSelect, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { IconEnum } from '@qovery/shared/enums'
+import { Button, ButtonStyle, Icon, InputSelect, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 import {
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
@@ -34,7 +35,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
       <p className="text-text-400 text-sm mb-6">{props.description}</p>
       <form onSubmit={props.onSubmit}>
         {props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
-          <InputText className="mb-6" name="parent value" value={props.parentVariableName} label="Variable" disabled />
+          <InputText className="mb-3" name="parent value" value={props.parentVariableName} label="Variable" disabled />
         ) : (
           <Controller
             name="key"
@@ -44,7 +45,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                className="mb-6"
+                className="mb-3"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -58,7 +59,13 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
 
         {props.type === EnvironmentVariableType.ALIAS && (
           <div>
-            Alias
+            <div className="flex items-center mb-3">
+              <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
+              <span className="bg-accent3-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                ALIAS
+              </span>
+            </div>
+
             <Controller
               name="key"
               control={control}
@@ -67,7 +74,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
-                  className="mb-6"
+                  className="mb-3"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value}
@@ -80,7 +87,14 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           </div>
         )}
 
-        {props.type === EnvironmentVariableType.OVERRIDE && <div>Override</div>}
+        {props.type === EnvironmentVariableType.OVERRIDE && (
+          <div className="flex items-center mb-3">
+            <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
+            <span className="bg-brand-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+              OVERRIDE
+            </span>
+          </div>
+        )}
 
         {(props.type === EnvironmentVariableType.NORMAL || props.type === EnvironmentVariableType.OVERRIDE) && (
           <Controller
@@ -89,7 +103,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             rules={validationRuleForValue}
             render={({ field, fieldState: { error } }) => (
               <InputTextArea
-                className="mb-6"
+                className="mb-3"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -109,7 +123,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           }}
           render={({ field }) => (
             <InputSelect
-              className="mb-6"
+              className="mb-3"
               portal
               options={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
               onChange={field.onChange}
