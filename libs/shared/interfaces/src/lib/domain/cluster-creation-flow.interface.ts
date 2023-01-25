@@ -8,3 +8,10 @@ export interface ClusterGeneralData {
   region: string
   credentials: string
 }
+
+export interface ClusterResourcesData {
+  cluster_type: string
+  instance_type: string
+  nodes: [number, number]
+  disk_size: number
+}

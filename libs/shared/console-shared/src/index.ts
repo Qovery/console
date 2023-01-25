@@ -1,3 +1,4 @@
+export * from './lib/cluster-settings/ui/cluster-resources-settings/cluster-resources-settings'
 export * from './lib/force-run-modal/feature/force-run-modal-feature'
 export * from './lib/force-run-modal/ui/force-run-modal'
 export * from './lib/update-all-modal/feature/update-all-modal-feature'

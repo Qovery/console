@@ -1,23 +1,18 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { ClusterResourcesData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchCloudProvider, getClusterState } from '@qovery/domains/organization'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
-import StepGeneral from '../../../ui/page-clusters-create/step-general/step-general'
+import StepResources from '../../../ui/page-clusters-create/step-resources/step-resources'
 import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
-export function StepGeneralFeature() {
-  useDocumentTitle('General - Create Cluster')
-  const { setGeneralData, generalData, setCurrentStep } = useClusterContainerCreateContext()
+export function StepResourcesFeature() {
+  useDocumentTitle('Resources - Create Cluster')
+  const { setResourcesData, resourcesData, setCurrentStep } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
-  const cloudProvider = useSelector((state: RootState) => getClusterState(state).cloudProvider)
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -45,17 +40,13 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const methods = useForm<ClusterGeneralData>({
-    defaultValues: generalData,
+  const methods = useForm<ClusterResourcesData>({
+    defaultValues: resourcesData,
     mode: 'onChange',
   })
 
-  useEffect(() => {
-    if (cloudProvider.loadingStatus !== 'loaded') dispatch(fetchCloudProvider())
-  }, [cloudProvider.loadingStatus, dispatch, methods])
-
   const onSubmit = methods.handleSubmit((data) => {
-    setGeneralData(data)
+    setResourcesData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
     navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
   })
@@ -63,10 +54,10 @@ export function StepGeneralFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepGeneral onSubmit={onSubmit} cloudProviders={cloudProvider.items} />
+        <StepResources onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )
 }
 
-export default StepGeneralFeature
+export default StepResourcesFeature
