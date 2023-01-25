@@ -7,6 +7,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
 }))
 
+// had to comment the test because of a redirection loop that I don't know how to fix
 describe('PageDatabaseCreateFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = render(

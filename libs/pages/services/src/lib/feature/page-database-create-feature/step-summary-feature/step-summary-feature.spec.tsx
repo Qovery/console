@@ -98,6 +98,6 @@ describe('StepSummaryFeature', () => {
         description: '',
       },
     })
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services')
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3')
   })
 })

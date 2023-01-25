@@ -1,10 +1,10 @@
 import equal from 'fast-deep-equal'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { fetchEnvironmentsStatus, selectEnvironmentById } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { APPLICATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_SERVICES } from './router/router'
@@ -37,6 +37,12 @@ export function PageServices() {
         {ROUTER_SERVICES.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
+        <Route
+          path="*"
+          element={
+            <Navigate replace to={SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL} />
+          }
+        />
       </Routes>
     </Container>
   )
