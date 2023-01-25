@@ -1,7 +1,8 @@
-import { getByText } from '@testing-library/react'
+import { getByText, queryByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock } from '@qovery/shared/factories'
+import { RunningStatus } from '@qovery/shared/enums'
+import { applicationFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import { ApplicationButtonsActions, ApplicationButtonsActionsProps } from './application-buttons-actions'
 
 const mockApplication = applicationFactoryMock(1)[0]
@@ -19,6 +20,11 @@ describe('ApplicationButtonsActionsFeature', () => {
       message: 'message',
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
+    mockApplication.running_status = {
+      state: RunningStatus.RUNNING,
+      id: 'id',
+      pods: [],
+    }
   })
 
   it('should render successfully', () => {
@@ -32,6 +38,8 @@ describe('ApplicationButtonsActionsFeature', () => {
 
     getByText(baseElement, 'Redeploy')
     getByText(baseElement, 'Stop')
+
+    getByText(baseElement, 'Restart Service')
 
     getByText(baseElement, 'Edit code')
     getByText(baseElement, 'Copy identifiers')
@@ -49,5 +57,34 @@ describe('ApplicationButtonsActionsFeature', () => {
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Open settings')
     getByText(baseElement, 'Delete service')
+  })
+
+  it('should not render Restart Service if running status is not running', async () => {
+    if (mockApplication.running_status) {
+      mockApplication.running_status.state = RunningStatus.STOPPED
+    }
+
+    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
+
+    expect(queryByText(baseElement, 'Restart Service')).toBeNull()
+  })
+
+  it('should not render Restart Service if application is a job', async () => {
+    const mockJob = lifecycleJobFactoryMock(1)[0]
+    mockJob.status = {
+      state: StateEnum.STOPPED,
+      id: 'id',
+      message: 'message',
+      service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+    }
+    mockJob.running_status = {
+      state: RunningStatus.RUNNING,
+      id: 'id',
+      pods: [],
+    }
+
+    const { baseElement } = render(<ApplicationButtonsActions {...props} application={mockJob} />)
+
+    expect(queryByText(baseElement, 'Restart Service')).toBeNull()
   })
 })

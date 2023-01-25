@@ -32,7 +32,7 @@ import {
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
-  isRestartAvailable,
+  isRedeployAvailable,
   isStopAvailable,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
@@ -161,7 +161,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       if (isDeployAvailable(state)) {
         topItems.push(deployButton)
       }
-      if (isRestartAvailable(state)) {
+      if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
       }
       if (isStopAvailable(state)) {

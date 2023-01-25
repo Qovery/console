@@ -1,10 +1,12 @@
 import { ClickEvent } from '@szhsin/react-menu'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
+  postDatabaseActionsReboot,
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@qovery/domains/database'
@@ -23,6 +25,7 @@ import {
   copyToClipboard,
   isDeleteAvailable,
   isDeployAvailable,
+  isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
 } from '@qovery/shared/utils'
@@ -92,6 +95,16 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       },
     }
 
+    const restartButton: MenuItemProps = {
+      name: 'Restart Database',
+      contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
+      onClick: (e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+
+        dispatch(postDatabaseActionsReboot({ environmentId, databaseId: database.id }))
+      },
+    }
+
     const stopButton: MenuItemProps = {
       name: 'Stop',
       onClick: (e: ClickEvent) => {
@@ -116,6 +129,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     }
 
     const state = database.status?.state
+    const runningState = database.running_status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -123,8 +137,11 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       if (isDeployAvailable(state)) {
         topItems.push(deployButton)
       }
-      if (isRestartAvailable(state)) {
+      if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
+      }
+      if (runningState && isRestartAvailable(runningState) && database.mode !== DatabaseModeEnum.MANAGED) {
+        topItems.push(restartButton)
       }
       if (isStopAvailable(state)) {
         topItems.push(stopButton)

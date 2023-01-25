@@ -1,6 +1,7 @@
-import { getByText } from '@testing-library/react'
+import { getByText, queryByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import { RunningStatus } from '@qovery/shared/enums'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { DatabaseButtonsActions, DatabaseButtonsActionsProps } from './database-buttons-actions'
 
@@ -18,6 +19,11 @@ describe('DatabaseButtonsActionsFeature', () => {
       message: 'message',
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
+    mockDatabase.running_status = {
+      state: RunningStatus.RUNNING,
+      id: 'id',
+      pods: [],
+    }
   })
 
   it('should render successfully', () => {
@@ -31,6 +37,7 @@ describe('DatabaseButtonsActionsFeature', () => {
 
     getByText(baseElement, 'Redeploy')
     getByText(baseElement, 'Stop')
+    getByText(baseElement, 'Restart Database')
 
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Delete database')
@@ -44,5 +51,23 @@ describe('DatabaseButtonsActionsFeature', () => {
 
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Delete database')
+  })
+
+  it('should not render Restart Database if running status is not running', async () => {
+    if (mockDatabase.running_status) {
+      mockDatabase.running_status.state = RunningStatus.STOPPED
+    }
+
+    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+
+    expect(queryByText(baseElement, 'Restart Database')).toBeNull()
+  })
+
+  it('should not render Restart Database if database is managed', async () => {
+    mockDatabase.mode = DatabaseModeEnum.MANAGED
+
+    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+
+    expect(queryByText(baseElement, 'Restart Database')).toBeNull()
   })
 })

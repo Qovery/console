@@ -26,6 +26,26 @@ export const postDatabaseActionsRestart = createAsyncThunk<any, { environmentId:
   }
 )
 
+export const postDatabaseActionsReboot = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
+  'databaseActions/reboot',
+  async (data, { dispatch }) => {
+    try {
+      const response = await databaseActionApi.rebootDatabase(data.databaseId)
+      if (response.status === 202 || response.status === 200) {
+        // refetch status after update
+        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your database is restarting')
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Restarting error', (err as Error).message)
+    }
+  }
+)
+
 export const postDatabaseActionsDeploy = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
   'databaseActions/deploy',
   async (data, { dispatch }) => {

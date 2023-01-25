@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   deleteApplicationAction,
   postApplicationActionsDeploy,
+  postApplicationActionsReboot,
   postApplicationActionsRestart,
   postApplicationActionsStop,
 } from '@qovery/domains/application'
@@ -35,6 +36,7 @@ import {
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
+  isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
   urlCodeEditor,
@@ -112,6 +114,22 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       },
     }
 
+    const restartButton: MenuItemProps = {
+      name: 'Restart Service',
+      contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
+      onClick: (e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+
+        dispatch(
+          postApplicationActionsReboot({
+            environmentId,
+            applicationId: application.id,
+            serviceType: getServiceType(application),
+          })
+        )
+      },
+    }
+
     const forceRunButton: MenuItemProps = {
       name: 'Force Run',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -171,6 +189,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     }
 
     const state = application.status?.state
+    const runningState = application.running_status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -181,10 +200,13 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       if (isDeployAvailable(state)) {
         topItems.push(deployButton)
       }
-      if (isRestartAvailable(state)) {
+      if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
       }
-      if (isJob(application) && (isDeployAvailable(state) || isRestartAvailable(state))) {
+      if (!isJob(application) && runningState && isRestartAvailable(runningState)) {
+        topItems.push(restartButton)
+      }
+      if (isJob(application)) {
         topItems.push(forceRunButton)
       }
       if (isStopAvailable(state)) {

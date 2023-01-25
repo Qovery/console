@@ -58,6 +58,41 @@ export const postApplicationActionsRestart = createAsyncThunk<
   }
 })
 
+export const postApplicationActionsReboot = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
+>('applicationActions/reboot', async (data, { dispatch }) => {
+  try {
+    let response
+    if (isContainer(data.serviceType)) {
+      response = await containerActionApi.rebootContainer(data.applicationId)
+    } else {
+      response = await applicationActionApi.rebootApplication(data.applicationId)
+    }
+
+    if (response.status === 202) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      // refetch deployments after update
+      if (data.withDeployments)
+        await dispatch(
+          fetchApplicationDeployments({
+            applicationId: data.applicationId,
+            serviceType: data.serviceType,
+            silently: true,
+          })
+        )
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your application is restarting')
+    }
+
+    return response
+  } catch (err) {
+    // error message
+    return toast(ToastEnum.ERROR, 'Restarting error', (err as Error).message)
+  }
+})
+
 export const postApplicationActionsDeploy = createAsyncThunk<
   any,
   { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
