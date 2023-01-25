@@ -9,7 +9,7 @@ import { AwsCredentialsRequest, CloudProviderEnum, ClusterCredentials } from 'qo
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { postCredentials } from '@qovery/domains/organization'
+import { editCredentials, postCredentials } from '@qovery/domains/organization'
 // import { useDispatch, useSelector } from 'react-redux'
 // import { useNavigate } from 'react-router-dom'
 // import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
@@ -49,11 +49,8 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
 
   const dispatch = useDispatch<AppDispatch>()
 
-  // const navigate = useNavigate()
-
   const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)
-    console.log(data)
 
     const aws: AwsCredentialsRequest = {
       name: data['name'],
@@ -63,13 +60,20 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
 
     // is edit
     if (currentCredential) {
-      console.log('edit request')
+      dispatch(
+        editCredentials({ cloudProvider, organizationId, credentialsId: currentCredential.id, credentials: aws })
+      )
+        .unwrap()
+        .then(() => {
+          setLoading(false)
+          onClose()
+        })
+        .catch((e) => console.error(e))
+        .finally(() => setLoading(false))
     } else {
       dispatch(postCredentials({ cloudProvider, organizationId, credentials: aws }))
         .unwrap()
-        .then((result) => {
-          console.log(result)
-          // navigate(SERVICES_URL(props.organizationId, props.projectId, result.id) + SERVICES_GENERAL_URL)
+        .then(() => {
           setLoading(false)
           onClose()
         })
