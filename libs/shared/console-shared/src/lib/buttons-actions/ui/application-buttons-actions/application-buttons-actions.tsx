@@ -203,7 +203,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
       }
-      if (!isJob(application) && runningState && isRestartAvailable(runningState)) {
+      if (!isJob(application) && runningState && isRestartAvailable(runningState, state)) {
         topItems.push(restartButton)
       }
       if (isJob(application)) {

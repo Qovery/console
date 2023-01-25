@@ -140,7 +140,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       if (isRedeployAvailable(state)) {
         topItems.push(redeployButton)
       }
-      if (runningState && isRestartAvailable(runningState) && database.mode !== DatabaseModeEnum.MANAGED) {
+      if (runningState && isRestartAvailable(runningState, state) && database.mode !== DatabaseModeEnum.MANAGED) {
         topItems.push(restartButton)
       }
       if (isStopAvailable(state)) {
