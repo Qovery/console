@@ -221,20 +221,6 @@ export const initialOrganizationState: OrganizationState = organizationAdapter.g
     loadingStatus: 'not loaded',
     items: [],
   },
-  credentials: {
-    aws: {
-      loadingStatus: 'not loaded',
-      items: [],
-    },
-    scw: {
-      loadingStatus: 'not loaded',
-      items: [],
-    },
-    do: {
-      loadingStatus: 'not loaded',
-      items: [],
-    },
-  },
 })
 
 export const organizationSlice = createSlice({

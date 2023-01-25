@@ -4,19 +4,21 @@ import { ClusterGeneralData, LoadingStatus } from '@qovery/shared/interfaces'
 import { IconAwesomeEnum, IconFa, InputSelect } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
-  credentials: {
+  credentials?: {
     loadingStatus: LoadingStatus
-    items: ClusterCredentials[]
+    items?: ClusterCredentials[]
   }
+  openCredentialsModal: (id?: string) => void
 }
 
 export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProps) {
-  const { credentials } = props
+  const { credentials, openCredentialsModal } = props
   const { control } = useFormContext<ClusterGeneralData>()
 
-  const buildCredentials = credentials.items.map((item: ClusterCredentials) => ({
+  const buildCredentials = credentials?.items?.map((item: ClusterCredentials) => ({
     label: item.name,
     value: item.id,
+    onClickEditable: () => openCredentialsModal(item.id),
   }))
 
   return (
@@ -32,7 +34,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
             dataTestId="input-credentials"
             label="Credentials"
             className="mb-3"
-            options={buildCredentials}
+            options={buildCredentials || []}
             onChange={field.onChange}
             value={field.value}
             error={error?.message}
@@ -40,7 +42,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
             menuListButton={{
               label: 'New credentials',
               icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
-              onClick: () => console.log('hello'),
+              onClick: () => openCredentialsModal(),
             }}
           />
         )}

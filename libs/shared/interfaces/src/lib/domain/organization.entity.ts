@@ -1,4 +1,6 @@
 import {
+  CloudProviderEnum,
+  ClusterCredentials,
   ContainerRegistryResponse,
   InviteMember,
   Member,
@@ -28,5 +30,19 @@ export interface OrganizationEntity extends Organization {
   availableRoles?: {
     loadingStatus: LoadingStatus
     items?: OrganizationAvailableRole[]
+  }
+  credentials?: {
+    [CloudProviderEnum.AWS]?: {
+      loadingStatus: LoadingStatus
+      items?: ClusterCredentials[]
+    }
+    [CloudProviderEnum.SCW]?: {
+      loadingStatus: LoadingStatus
+      items?: ClusterCredentials[]
+    }
+    [CloudProviderEnum.DO]?: {
+      loadingStatus: LoadingStatus
+      items?: ClusterCredentials[]
+    }
   }
 }

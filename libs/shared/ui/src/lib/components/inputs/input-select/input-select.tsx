@@ -1,4 +1,4 @@
-import { MouseEventHandler, ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Select, {
   GroupBase,
   MenuListProps,
@@ -203,15 +203,15 @@ export function InputSelect(props: InputSelectProps) {
           {label}
         </label>
         {currentIcon?.onClickEditable && (
-          <button
-            className="flex items-center justify-center text-text-500 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-2"
+          <div
+            className="cursor-pointer flex items-center justify-center text-sm text-text-500 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
             onClick={(event) => {
               event.stopPropagation()
               currentIcon.onClickEditable && currentIcon.onClickEditable()
             }}
           >
             <IconFa name={IconAwesomeEnum.PEN} />
-          </button>
+          </div>
         )}
         <Select
           options={options}

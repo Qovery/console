@@ -1,6 +1,13 @@
-import { ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit'
-import { CloudProviderCredentialsApi, CloudProviderEnum, ClusterCredentials } from 'qovery-typescript-axios'
-import { OrganizationState } from '@qovery/shared/interfaces'
+import { ActionReducerMapBuilder, Update, createAsyncThunk } from '@reduxjs/toolkit'
+import {
+  AwsCredentialsRequest,
+  CloudProviderCredentialsApi,
+  CloudProviderEnum,
+  ClusterCredentials,
+} from 'qovery-typescript-axios'
+import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { organizationAdapter } from './organization.slice'
 
 const cloudProviderCredentialsApi = new CloudProviderCredentialsApi()
 
@@ -19,54 +26,86 @@ export const fetchCredentialsList = createAsyncThunk(
   }
 )
 
+export const postCredentials = createAsyncThunk(
+  'organization/post-credentials',
+  async (payload: { cloudProvider: CloudProviderEnum; organizationId: string; credentials: AwsCredentialsRequest }) => {
+    let response
+    if (payload.cloudProvider === CloudProviderEnum.AWS)
+      response = await cloudProviderCredentialsApi.createAWSCredentials(payload.organizationId, payload.credentials)
+    if (payload.cloudProvider === CloudProviderEnum.SCW)
+      response = await cloudProviderCredentialsApi.createScalewayCredentials(
+        payload.organizationId,
+        payload.credentials
+      )
+    if (payload.cloudProvider === CloudProviderEnum.DO)
+      response = await cloudProviderCredentialsApi.createDOCredentials(payload.organizationId, payload.credentials)
+
+    return response?.data as ClusterCredentials
+  }
+)
+
 export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   builder
     .addCase(fetchCredentialsList.pending, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider
+      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
 
-      if (cloudProvider === CloudProviderEnum.AWS) {
-        state.credentials.aws.loadingStatus = 'loading'
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          credentials: {
+            [cloudProvider]: {
+              loadingStatus: 'loading',
+              items: [],
+            },
+          },
+        },
       }
-
-      if (cloudProvider === CloudProviderEnum.DO) {
-        state.credentials.do.loadingStatus = 'loading'
-      }
-
-      if (cloudProvider === CloudProviderEnum.SCW) {
-        state.credentials.scw.loadingStatus = 'loading'
-      }
+      organizationAdapter.updateOne(state, update)
     })
     .addCase(fetchCredentialsList.fulfilled, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider
+      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
+      const credentials = state.entities[action.meta.arg.organizationId]?.credentials
 
-      if (cloudProvider === CloudProviderEnum.AWS) {
-        state.credentials.aws.loadingStatus = 'loaded'
-        state.credentials.aws.items = action.payload
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          credentials: {
+            [cloudProvider]: {
+              loadingStatus: 'loaded',
+              items:
+                credentials && credentials[cloudProvider]
+                  ? [...(credentials[cloudProvider]?.items || []), ...action.payload]
+                  : [],
+            },
+          },
+        },
       }
-
-      if (cloudProvider === CloudProviderEnum.DO) {
-        state.credentials.do.loadingStatus = 'loaded'
-        state.credentials.do.items = action.payload
-      }
-
-      if (cloudProvider === CloudProviderEnum.SCW) {
-        state.credentials.scw.loadingStatus = 'loaded'
-        state.credentials.scw.items = action.payload
-      }
+      organizationAdapter.updateOne(state, update)
     })
     .addCase(fetchCredentialsList.rejected, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider
+      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
 
-      if (cloudProvider === CloudProviderEnum.AWS) {
-        state.credentials.aws.loadingStatus = 'error'
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          credentials: {
+            [cloudProvider]: {
+              loadingStatus: 'error',
+            },
+          },
+        },
       }
+      organizationAdapter.updateOne(state, update)
+      toastError(action.error)
+    })
+    // post credentials
+    .addCase(postCredentials.fulfilled, (state: OrganizationState, action) => {
+      // const cloudProvider = action.meta.arg.cloudProvider
+      // const credentialsByCloudProvider = state.credentials[cloudProvider as 'aws' | 'do' | 'scw'].items
 
-      if (cloudProvider === CloudProviderEnum.DO) {
-        state.credentials.do.loadingStatus = 'error'
-      }
-
-      if (cloudProvider === CloudProviderEnum.SCW) {
-        state.credentials.scw.loadingStatus = 'error'
-      }
+      toast(ToastEnum.SUCCESS, `Credentials added`)
+    })
+    .addCase(postCredentials.rejected, (state: OrganizationState, action) => {
+      toastError(action.error)
     })
 }
