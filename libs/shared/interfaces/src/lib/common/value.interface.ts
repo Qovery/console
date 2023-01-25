@@ -5,5 +5,5 @@ export interface Value {
   value: string
   icon?: ReactNode
   isDisabled?: boolean
-  externalClick?: () => void
+  onClickEditable?: () => void
 }

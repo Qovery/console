@@ -32,19 +32,16 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
             dataTestId="input-credentials"
             label="Credentials"
             className="mb-3"
-            options={[
-              ...buildCredentials,
-              {
-                label: 'New credentials',
-                value: 'new',
-                icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
-                externalClick: () => console.log('hello'),
-              },
-            ]}
+            options={buildCredentials}
             onChange={field.onChange}
             value={field.value}
             error={error?.message}
             isSearchable
+            menuListButton={{
+              label: 'New credentials',
+              icon: <IconFa name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500" />,
+              onClick: () => console.log('hello'),
+            }}
           />
         )}
       />

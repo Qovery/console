@@ -77,7 +77,6 @@ export function StepGeneral(props: StepGeneralProps) {
                 }}
                 value={field.value}
                 error={error?.message}
-                isSearchable
               />
             )}
           />
