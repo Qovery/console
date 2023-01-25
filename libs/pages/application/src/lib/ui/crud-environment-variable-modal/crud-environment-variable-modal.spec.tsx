@@ -1,5 +1,14 @@
 import '@testing-library/jest-dom/extend-expect'
-import { act, fireEvent, getByRole, queryByText, render, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  getByLabelText,
+  getByRole,
+  queryByLabelText,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
@@ -43,6 +52,55 @@ describe('CrudEnvironmentVariableModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should render correct input for normal variable', () => {
+    const { baseElement } = render(
+      <WrapperForm>
+        <CrudEnvironmentVariableModal
+          {...props}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          type={EnvironmentVariableType.NORMAL}
+        />
+      </WrapperForm>
+    )
+    getByLabelText(baseElement, 'Variable')
+    getByLabelText(baseElement, 'Value')
+    getByLabelText(baseElement, 'Scope')
+  })
+
+  it('should render correct input for alias variable', () => {
+    const { baseElement } = render(
+      <WrapperForm>
+        <CrudEnvironmentVariableModal
+          {...props}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          type={EnvironmentVariableType.ALIAS}
+        />
+      </WrapperForm>
+    )
+    getByLabelText(baseElement, 'Variable')
+    getByLabelText(baseElement, 'New variable')
+    getByLabelText(baseElement, 'Scope')
+
+    expect(queryByLabelText(baseElement, 'Value')).toBeNull()
+  })
+
+  it('should render correct input for override variable', () => {
+    const { baseElement } = render(
+      <WrapperForm>
+        <CrudEnvironmentVariableModal
+          {...props}
+          mode={EnvironmentVariableCrudMode.CREATION}
+          type={EnvironmentVariableType.OVERRIDE}
+        />
+      </WrapperForm>
+    )
+    getByLabelText(baseElement, 'Variable')
+    getByLabelText(baseElement, 'Value')
+    getByLabelText(baseElement, 'Scope')
+
+    expect(queryByLabelText(baseElement, 'New value')).toBeNull()
+  })
+
   it('should close on cancel', async () => {
     const spy = jest.fn()
     props.closeModal = spy
@@ -82,23 +140,6 @@ describe('CrudEnvironmentVariableModal', () => {
         const button = await getByRole(baseElement, 'button', { name: 'Confirm' })
         expect(button).toBeDisabled()
       })
-    })
-
-    it('should not show required error message under value textarea if Alias context', async () => {
-      props.type = EnvironmentVariableType.ALIAS
-      const { baseElement } = render(
-        <WrapperForm>
-          <CrudEnvironmentVariableModal {...props} />
-        </WrapperForm>
-      )
-
-      await act(() => {
-        const textarea = screen.getByLabelText('Value') as HTMLTextAreaElement
-        fireEvent.change(textarea, { target: { value: 'a' } })
-        fireEvent.change(textarea, { target: { value: '' } })
-      })
-
-      expect(queryByText(baseElement, 'Please enter a value.')).toBeNull()
     })
   })
 })

@@ -123,6 +123,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         type={props.type}
         availableScopes={computeAvailableScope(variable?.scope, false, props.serviceType)}
         loading={loading}
+        parentVariableName={variable?.key}
       />
     </FormProvider>
   )
