@@ -140,8 +140,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
           <div>
             <h1 className="h5 text-text-700 mb-2">Advanced Settings</h1>
             <p className="text-sm text-text-500 max-w-content-with-navigation-left">
-              Settings are injected at the build and run time of your application and thus any change on this section
-              will be applied on the next manual/automatic deploy.
+              Any change to this section will be applied after triggering a cluster update.
             </p>
           </div>
         </div>
@@ -178,7 +177,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/cluster-advanced-settings/',
             linkLabel: 'How to configure my cluster',
             external: true,
           },
