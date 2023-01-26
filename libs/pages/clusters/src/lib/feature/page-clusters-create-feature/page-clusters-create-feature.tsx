@@ -41,7 +41,12 @@ export function PageClusterCreateFeature() {
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
-  const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>()
+  const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>({
+    cluster_type: '',
+    disk_size: 0,
+    instance_type: '',
+    nodes: [1, 2],
+  })
 
   const navigate = useNavigate()
 

@@ -11,26 +11,10 @@ const Template: Story<InputRadioBoxProps> = (args) => <InputRadioBox {...args} /
 export const Primary = Template.bind({})
 Primary.args = {
   name: 'Start',
-  field: {
-    name: 'selected',
-    value: '',
-    onChange: () => {},
-    ref: () => {},
-    onBlur: () => {},
-  },
-  value: 'start',
-  description: <p data-testid="description">Description</p>,
-}
-
-export const Selected = Template.bind({})
-Selected.args = {
-  name: 'Start',
-  field: {
-    name: 'selected',
-    value: 'start',
-    onChange: () => {},
-    ref: () => {},
-    onBlur: () => {},
+  label: 'Start',
+  fieldValue: '',
+  onChange: () => {
+    if (Primary.args) Primary.args.fieldValue = 'start'
   },
   value: 'start',
   description: <p data-testid="description">Description</p>,

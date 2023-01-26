@@ -12,7 +12,7 @@ export interface ForceRunModalProps {
 }
 
 export function ForceRunModal(props: ForceRunModalProps) {
-  const { control, setValue } = useFormContext()
+  const { control } = useFormContext()
 
   const description = (key: keyof JobResponseAllOfSchedule, schedule: JobResponseAllOfSchedule) => {
     const scheduleEvent: JobRequestAllOfScheduleOnStart = schedule[key] as JobRequestAllOfScheduleOnStart
@@ -56,28 +56,31 @@ export function ForceRunModal(props: ForceRunModalProps) {
             <>
               {props.application?.schedule && props.application.schedule['on_start'] && (
                 <InputRadioBox
-                  field={field}
-                  name="Start"
+                  fieldValue={field.value}
+                  onChange={field.onChange}
+                  name={field.name}
+                  label="Start"
                   value="start"
-                  onClick={setValue}
                   description={props.application?.schedule && description('on_start', props.application.schedule)}
                 />
               )}
               {props.application?.schedule && props.application.schedule['on_stop'] && (
                 <InputRadioBox
-                  field={field}
-                  name="Stop"
+                  fieldValue={field.value}
+                  onChange={field.onChange}
+                  name={field.name}
+                  label="Stop"
                   value="stop"
-                  onClick={setValue}
                   description={props.application?.schedule && description('on_stop', props.application.schedule)}
                 />
               )}
               {props.application?.schedule && props.application.schedule['on_delete'] && (
                 <InputRadioBox
-                  field={field}
-                  name="Delete"
+                  fieldValue={field.value}
+                  onChange={field.onChange}
+                  name={field.name}
+                  label="Delete"
                   value="delete"
-                  onClick={setValue}
                   description={props.application?.schedule && description('on_delete', props.application.schedule)}
                 />
               )}

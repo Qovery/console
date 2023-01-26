@@ -1,13 +1,15 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterResourcesSettings } from '@qovery/shared/console-shared'
+import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
 import { ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
+  cloudProvider?: CloudProviderEnum
 }
 
 export function StepResources(props: StepResourcesProps) {
@@ -22,7 +24,7 @@ export function StepResources(props: StepResourcesProps) {
       </div>
 
       <form onSubmit={props.onSubmit}>
-        <ClusterResourcesSettings />
+        <ClusterResourcesSettingsFeature cloudProvider={CloudProviderEnum.AWS} fromDetail={false} />
         {/* <div className="border-b border-b-element-light-lighter-400 mb-6"></div> */}
 
         <div className="flex justify-between">

@@ -10,7 +10,7 @@ import { useClusterContainerCreateContext } from '../page-clusters-create-featur
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Cluster')
-  const { setResourcesData, resourcesData, setCurrentStep } = useClusterContainerCreateContext()
+  const { setResourcesData, resourcesData, setCurrentStep, generalData } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
 
@@ -54,7 +54,7 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources onSubmit={onSubmit} />
+        <StepResources onSubmit={onSubmit} cloudProvider={generalData?.cloud_provider} />
       </FormProvider>
     </FunnelFlowBody>
   )

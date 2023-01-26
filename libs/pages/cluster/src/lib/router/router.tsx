@@ -15,6 +15,7 @@ import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-z
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsFeaturesFeature from '../feature/page-settings-features-feature/page-settings-features-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
+import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
 import { PageSettingsV2 } from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_CLUSTER: Route[] = [
@@ -35,7 +36,7 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   },
   {
     path: CLUSTER_SETTINGS_RESOURCES_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsResourcesFeature />,
   },
   {
     path: CLUSTER_SETTINGS_FEATURES_URL,
