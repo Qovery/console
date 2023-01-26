@@ -52,15 +52,14 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
       items: availableRolesMock,
     },
     credentials: {
-      [CloudProviderEnum.AWS]: {
-        loadingStatus: 'not loaded',
-        items: [
-          {
-            id: '1',
-            name: 'credential-1',
-          },
-        ],
-      },
+      loadingStatus: 'not loaded',
+      items: [
+        {
+          id: '1',
+          name: 'credential-1',
+          cloudProvider: CloudProviderEnum.AWS,
+        },
+      ],
     },
   }))
 

@@ -10,6 +10,10 @@ import {
 } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
 
+export interface ClusterCredentialsEntity extends ClusterCredentials {
+  cloudProvider: CloudProviderEnum
+}
+
 export interface OrganizationEntity extends Organization {
   containerRegistries?: {
     loadingStatus: LoadingStatus
@@ -32,17 +36,7 @@ export interface OrganizationEntity extends Organization {
     items?: OrganizationAvailableRole[]
   }
   credentials?: {
-    [CloudProviderEnum.AWS]?: {
-      loadingStatus: LoadingStatus
-      items?: ClusterCredentials[]
-    }
-    [CloudProviderEnum.SCW]?: {
-      loadingStatus: LoadingStatus
-      items?: ClusterCredentials[]
-    }
-    [CloudProviderEnum.DO]?: {
-      loadingStatus: LoadingStatus
-      items?: ClusterCredentials[]
-    }
+    loadingStatus: LoadingStatus
+    items?: ClusterCredentialsEntity[]
   }
 }

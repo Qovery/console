@@ -80,16 +80,12 @@ export const editCredentials = createAsyncThunk(
 export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   builder
     .addCase(fetchCredentialsList.pending, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
-
       const update: Update<OrganizationEntity> = {
         id: action.meta.arg.organizationId,
         changes: {
           credentials: {
-            [cloudProvider]: {
-              loadingStatus: 'loading',
-              items: [],
-            },
+            loadingStatus: 'loading',
+            items: [],
           },
         },
       }
@@ -102,10 +98,8 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
         id: action.meta.arg.organizationId,
         changes: {
           credentials: {
-            [cloudProvider]: {
-              loadingStatus: 'loaded',
-              items: action.payload,
-            },
+            loadingStatus: 'loaded',
+            items: action.payload.map((value) => ({ ...value, ...{ cloudProvider: cloudProvider } })),
           },
         },
       }
@@ -116,17 +110,14 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
     })
     // post credentials
     .addCase(postCredentials.pending, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
-
-      console.log(state.entities[action.meta.arg.organizationId]?.credentials?.AWS?.items)
+      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
 
       const update: Update<OrganizationEntity> = {
         id: action.meta.arg.organizationId,
         changes: {
           credentials: {
-            [cloudProvider]: {
-              loadingStatus: 'loading',
-            },
+            loadingStatus: 'loading',
+            items: credentials,
           },
         },
       }
@@ -134,25 +125,14 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
     })
     .addCase(postCredentials.fulfilled, (state: OrganizationState, action) => {
       const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials
-
-      console.log(state.entities[action.meta.arg.organizationId])
-      // console.log(credentials && credentials[cloudProvider]?.items)
-      // console.log(
-      //   credentials && credentials[cloudProvider] ? [...(credentials[cloudProvider]?.items || []), action.payload] : []
-      // )
+      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
 
       const update: Update<OrganizationEntity> = {
         id: action.meta.arg.organizationId,
         changes: {
           credentials: {
-            [cloudProvider]: {
-              loadingStatus: 'loaded',
-              items:
-                credentials && credentials[cloudProvider]
-                  ? [...(credentials[cloudProvider]?.items || []), action.payload]
-                  : [],
-            },
+            loadingStatus: 'loaded',
+            items: [...credentials, { ...action.payload, ...{ cloudProvider: cloudProvider } }],
           },
         },
       }
@@ -163,23 +143,32 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
       toastError(action.error)
     })
     // edit credentials
-    .addCase(editCredentials.fulfilled, (state: OrganizationState, action) => {
-      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
-      const credentials = state.entities[action.meta.arg.organizationId]?.credentials
+    .addCase(editCredentials.pending, (state: OrganizationState, action) => {
+      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
 
       const update: Update<OrganizationEntity> = {
         id: action.meta.arg.organizationId,
         changes: {
           credentials: {
-            [cloudProvider]: {
-              loadingStatus: 'loaded',
-              items: () => {
-                const items = (credentials && credentials[cloudProvider]?.items) || []
-                const index = items?.findIndex((obj) => obj.name === action.payload.id)
-                items[index] = action.payload
-                return editCredentials
-              },
-            },
+            loadingStatus: 'loading',
+            items: credentials,
+          },
+        },
+      }
+      organizationAdapter.updateOne(state, update)
+    })
+    .addCase(editCredentials.fulfilled, (state: OrganizationState, action) => {
+      const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
+      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+      const index = credentials.findIndex((obj) => obj.name === action.payload.name)
+      credentials[index] = Object.assign(action.payload, { cloudProvider: cloudProvider })
+
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          credentials: {
+            loadingStatus: 'loaded',
+            items: credentials,
           },
         },
       }

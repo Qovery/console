@@ -17,8 +17,6 @@ describe('ClusterCredentialsSettingsFeature', () => {
       wrapWithReactHookForm<ClusterGeneralData>(<ClusterCredentialsSettingsFeature {...props} />, {
         defaultValues: {
           name: 'test',
-          description: 'test',
-          production: false,
         },
       })
     )

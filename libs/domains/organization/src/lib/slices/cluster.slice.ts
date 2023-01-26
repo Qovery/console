@@ -11,6 +11,8 @@ import {
   CloudProviderApi,
   Cluster,
   ClusterAdvancedSettings,
+  ClusterCloudProviderInfo,
+  ClusterCloudProviderInfoRequest,
   ClusterLogs,
   ClusterRequest,
   ClusterStatus,
@@ -108,6 +110,22 @@ export const fetchClusterAdvancedSettings = createAsyncThunk<
 export const fetchCloudProvider = createAsyncThunk<CloudProvider[]>('cluster-cloud-provider/fetch', async () => {
   const response = await cloudProviderApi.listCloudProvider()
   return response.data.results as CloudProvider[]
+})
+
+export const fetchCloudProviderInfo = createAsyncThunk<
+  ClusterCloudProviderInfo,
+  { organizationId: string; clusterId: string }
+>('cluster-cloud-provider-info/fetch', async (data) => {
+  const response = await clusterApi.getOrganizationCloudProviderInfo(data.organizationId, data.clusterId)
+  return response.data as ClusterCloudProviderInfo
+})
+
+export const postCloudProviderInfo = createAsyncThunk<
+  ClusterCloudProviderInfo,
+  { organizationId: string; clusterId: string }
+>('cluster-cloud-provider-info/post', async (data) => {
+  const response = await clusterApi.specifyClusterCloudProviderInfo(data.organizationId, data.clusterId)
+  return response.data as ClusterCloudProviderInfoRequest
 })
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
@@ -381,6 +399,66 @@ export const clusterSlice = createSlice({
       })
       .addCase(fetchCloudProvider.rejected, (state: ClustersState) => {
         state.cloudProvider.loadingStatus = 'error'
+      })
+      // fetch cloud provider info
+      .addCase(fetchCloudProviderInfo.pending, (state: ClustersState, action) => {
+        const clusterId = action.meta.arg.clusterId
+        const update: Update<ClusterEntity> = {
+          id: clusterId,
+          changes: {
+            cloudProviderInfo: {
+              loadingStatus: 'loading',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchCloudProviderInfo.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            cloudProviderInfo: {
+              loadingStatus: 'loading',
+              item: action.payload,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchCloudProviderInfo.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            extendedStatus: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      // post cloud provider info
+      .addCase(postCloudProviderInfo.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            cloudProviderInfo: {
+              loadingStatus: 'loading',
+              item: action.payload,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(postCloudProviderInfo.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            extendedStatus: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
       })
   },
 })

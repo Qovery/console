@@ -333,6 +333,8 @@ export const organizationSlice = createSlice({
       .addCase(postOrganizationContainerRegistry.fulfilled, (state: OrganizationState, action) => {
         const containerRegistries = state.entities[action.meta.arg.organizationId]?.containerRegistries?.items || []
 
+        console.log(state.entities[action.meta.arg.organizationId]?.containerRegistries?.items)
+
         const update: Update<OrganizationEntity> = {
           id: action.meta.arg.organizationId,
           changes: {
