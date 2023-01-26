@@ -1,25 +1,11 @@
-// import {
-//   CloneRequest,
-//   CreateEnvironmentModeEnum,
-//   CreateEnvironmentRequest,
-//   EnvironmentModeEnum,
-// } from 'qovery-typescript-axios'
-// import { useState } from 'react'
-import { AwsCredentialsRequest, CloudProviderEnum, ClusterCredentials } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ClusterCredentials } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editCredentials, postCredentials } from '@qovery/domains/organization'
-// import { useDispatch, useSelector } from 'react-redux'
-// import { useNavigate } from 'react-router-dom'
-// import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
-
-// import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
-// import { useModal } from '@qovery/shared/ui'
-// import { AppDispatch, RootState } from '@qovery/store'
 
 export interface CreateEditCredentialsModalFeatureProps {
   onClose: () => void
@@ -28,15 +14,40 @@ export interface CreateEditCredentialsModalFeatureProps {
   currentCredential?: ClusterCredentials
 }
 
+export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum) => {
+  const currentData = {
+    name: data['name'],
+  }
+
+  if (cloudProvider === CloudProviderEnum.AWS) {
+    return {
+      ...currentData,
+      ...{
+        access_key_id: data['access_key_id'],
+        secret_access_key: data['secret_access_key'],
+      },
+    }
+  }
+
+  if (cloudProvider === CloudProviderEnum.SCW) {
+    return {
+      ...currentData,
+      ...{
+        scaleway_access_key: data['scaleway_access_key'],
+        scaleway_secret_key: data['scaleway_secret_key'],
+        scaleway_project_id: data['scaleway_project_id'],
+      },
+    }
+  }
+
+  return currentData
+}
+
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
   const { cloudProvider, organizationId, onClose, currentCredential } = props
   const [loading, setLoading] = useState(false)
 
   const { enableAlertClickOutside } = useModal()
-
-  // const clusters = useSelector<RootState, ClusterEntity[]>((state) =>
-  //   selectClustersEntitiesByOrganizationId(state, props.organizationId)
-  // )
 
   const methods = useForm({
     mode: 'onChange',
@@ -52,16 +63,16 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
   const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)
 
-    const aws: AwsCredentialsRequest = {
-      name: data['name'],
-      access_key_id: '',
-      secret_access_key: '',
-    }
+    const credentials = handleSubmit(data, cloudProvider)
 
-    // is edit
     if (currentCredential) {
       dispatch(
-        editCredentials({ cloudProvider, organizationId, credentialsId: currentCredential.id, credentials: aws })
+        editCredentials({
+          cloudProvider,
+          organizationId,
+          credentialsId: currentCredential.id,
+          credentials,
+        })
       )
         .unwrap()
         .then(() => {
@@ -71,7 +82,7 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
         .catch((e) => console.error(e))
         .finally(() => setLoading(false))
     } else {
-      dispatch(postCredentials({ cloudProvider, organizationId, credentials: aws }))
+      dispatch(postCredentials({ cloudProvider, organizationId, credentials }))
         .unwrap()
         .then(() => {
           setLoading(false)

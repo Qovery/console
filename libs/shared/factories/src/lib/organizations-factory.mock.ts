@@ -1,5 +1,6 @@
 import { Chance } from 'chance'
 import {
+  CloudProviderEnum,
   ContainerRegistryKindEnum,
   ContainerRegistryResponse,
   EnvironmentModeEnum,
@@ -49,6 +50,17 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
     availableRoles: {
       loadingStatus: 'loaded',
       items: availableRolesMock,
+    },
+    credentials: {
+      [CloudProviderEnum.AWS]: {
+        loadingStatus: 'not loaded',
+        items: [
+          {
+            id: '1',
+            name: 'credential-1',
+          },
+        ],
+      },
     },
   }))
 
