@@ -1,5 +1,5 @@
 import { GitProviderEnum } from 'qovery-typescript-axios'
-import { Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum, WarningBox } from '@qovery/shared/ui'
+import { BannerBox, Button, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface ConfirmationGitModalProps {
   currentAuthProvider?: string
@@ -11,7 +11,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 max-w-sm truncate mb-6">Change repository</h2>
-      <WarningBox
+      <BannerBox
         className="mb-5"
         title="Access to the current repository"
         message="If you do not have access to the current repository, you will not be able to select it again after modification."

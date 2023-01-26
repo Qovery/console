@@ -1,19 +1,19 @@
 import { render } from '@testing-library/react'
-import WarningBox, { WarningBoxEnum, WarningBoxProps } from './warning-box'
+import BannerBox, { BannerBoxEnum, BannerBoxProps } from './banner-box'
 
-describe('WarningBox', () => {
-  const props: WarningBoxProps = {
+describe('BannerBox', () => {
+  const props: BannerBoxProps = {
     title: 'hello',
     message: 'Lorem ipsum',
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<WarningBox {...props} />)
+    const { baseElement } = render(<BannerBox {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render with warning colors', () => {
-    const { getByTestId, queryByRole } = render(<WarningBox {...props} />)
+    const { getByTestId, queryByRole } = render(<BannerBox {...props} />)
 
     const box = getByTestId('warning-box')
     const icon = queryByRole('img')
@@ -24,8 +24,8 @@ describe('WarningBox', () => {
   })
 
   it('should render with error colors', () => {
-    props.type = WarningBoxEnum.ERROR
-    const { getByTestId, queryByRole } = render(<WarningBox {...props} />)
+    props.type = BannerBoxEnum.ERROR
+    const { getByTestId, queryByRole } = render(<BannerBox {...props} />)
 
     const box = getByTestId('warning-box')
     const icon = queryByRole('img')

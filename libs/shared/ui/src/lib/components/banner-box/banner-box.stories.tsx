@@ -1,19 +1,19 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
-import { WarningBox } from './warning-box'
+import { BannerBox } from './banner-box'
 
 export default {
-  component: WarningBox,
-  title: 'WarningBox',
+  component: BannerBox,
+  title: 'BannerBox',
   argTypes: {
     icon: {
       options: IconAwesomeEnum,
       control: { type: 'select' },
     },
   },
-} as ComponentMeta<typeof WarningBox>
+} as ComponentMeta<typeof BannerBox>
 
-const Template: ComponentStory<typeof WarningBox> = (args) => <WarningBox {...args} />
+const Template: ComponentStory<typeof BannerBox> = (args) => <BannerBox {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
