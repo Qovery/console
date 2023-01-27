@@ -3,6 +3,33 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { ClusterGeneralData } from '@qovery/shared/interfaces'
 import ClusterCredentialsSettingsFeature, { ClusterCredentialsSettingsFeatureProps } from './cluster-general-settings'
 
+// const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+
+// jest.mock('@qovery/domains/organization', () => {
+//   return {
+//     ...jest.requireActual('@qovery/domains/organization'),
+//     // getOrganizationsState: () => ({
+//     //   loadingStatus: 'loaded',
+//     //   ids: [mockOrganization.id],
+//     //   entities: {
+//     //     [mockOrganization.id]: mockOrganization,
+//     //   },
+//     //   error: null,
+//     // }),
+//     selectOrganizationById: () => mockOrganization,
+//     // fetchCloudProvider: () => ({
+//     //   loading: 'loaded',
+//     //   items: [],
+//     // }),
+//     fetchCredentialsList: () => [
+//       {
+//         id: '1',
+//         name: 'credential',
+//       },
+//     ],
+//   }
+// })
+
 describe('ClusterCredentialsSettingsFeature', () => {
   const props: ClusterCredentialsSettingsFeatureProps = {
     fromDetail: false,

@@ -10,7 +10,6 @@ import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
 import SpyInstance = jest.SpyInstance
 
 const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
-// todo check this error
 const mockContainerRegistries = containerRegistriesByOrganizationIdMock
 
 jest.mock('@qovery/domains/organization', () => {

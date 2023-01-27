@@ -1,26 +1,39 @@
 import { CloudProvider, CloudProviderEnum, ClusterRegion } from 'qovery-typescript-axios'
-import { FormEventHandler, useState } from 'react'
+import { FormEventHandler, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { ClusterGeneralData, LoadingStatus, Value } from '@qovery/shared/interfaces'
+import { ClusterGeneralData, Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, ButtonSize, ButtonStyle, Icon, IconFlag, InputSelect, WarningBox } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconFlag,
+  InputSelect,
+  LoaderSpinner,
+  WarningBox,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  cloudProviders?: CloudProvider[]
-  cloudProviderLoadingStatus?: LoadingStatus
+  cloudProviders: CloudProvider[]
 }
 
 export function StepGeneral(props: StepGeneralProps) {
   const { onSubmit, cloudProviders = [] } = props
-  const { control, formState, watch } = useFormContext<ClusterGeneralData>()
+  const { control, formState } = useFormContext<ClusterGeneralData>()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
-  const [currentProvider, setCurrentProvider] = useState<CloudProvider | undefined>()
+  const [currentProvider, setCurrentProvider] = useState<CloudProvider>()
+
+  useEffect(() => {
+    const providerByDefault = cloudProviders?.filter((cloud) => cloud.short_name === CloudProviderEnum.AWS)[0]
+    setCurrentProvider(providerByDefault)
+  }, [cloudProviders])
 
   const buildCloudProviders: Value[] = cloudProviders.map((value) => ({
     label: upperCaseFirstLetter(value.name) || '',
@@ -51,38 +64,38 @@ export function StepGeneral(props: StepGeneralProps) {
         </div>
         <div className="mb-10">
           <h4 className="mb-3 text-text-700 text-sm">Provider credentials</h4>
-          <WarningBox
-            className="mb-4"
-            title="Warning"
-            message="The creation of clusters on Digital Ocean is temporarily disabled."
-          />
-          <Controller
-            name="cloud_provider"
-            control={control}
-            rules={{
-              required: 'Please select a cloud provider.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                dataTestId="input-cloud-provider"
-                label="Cloud provider"
-                className="mb-3"
-                options={buildCloudProviders}
-                onChange={(value) => {
-                  const currentProvider = cloudProviders?.filter(
-                    (cloud) => cloud.short_name === value && cloud.regions
-                  )[0]
-                  setCurrentProvider(currentProvider as CloudProvider)
-                  field.onChange(value)
-                }}
-                value={field.value}
-                error={error?.message}
-                portal
-              />
-            )}
-          />
-          {currentProvider && (
+          {currentProvider ? (
             <>
+              <WarningBox
+                className="mb-4"
+                title="Warning"
+                message="The creation of clusters on Digital Ocean is temporarily disabled."
+              />
+              <Controller
+                name="cloud_provider"
+                control={control}
+                rules={{
+                  required: 'Please select a cloud provider.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    dataTestId="input-cloud-provider"
+                    label="Cloud provider"
+                    className="mb-3"
+                    options={buildCloudProviders}
+                    onChange={(value) => {
+                      const currentProvider = cloudProviders?.filter(
+                        (cloud) => cloud.short_name === value && cloud.regions
+                      )[0]
+                      setCurrentProvider(currentProvider as CloudProvider)
+                      field.onChange(value)
+                    }}
+                    value={field.value}
+                    error={error?.message}
+                    portal
+                  />
+                )}
+              />
               <Controller
                 name="region"
                 control={control}
@@ -103,8 +116,12 @@ export function StepGeneral(props: StepGeneralProps) {
                   />
                 )}
               />
-              <ClusterCredentialsSettingsFeature cloudProvider={watch('cloud_provider')} />
+              <ClusterCredentialsSettingsFeature cloudProvider={currentProvider.short_name as CloudProviderEnum} />
             </>
+          ) : (
+            <div className="flex justify-center mt-2">
+              <LoaderSpinner className="w-4" />
+            </div>
           )}
         </div>
 
