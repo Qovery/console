@@ -1,10 +1,10 @@
 import { waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import PageSettingsGeneral, { PageSettingsGeneralProps } from './page-settings-credentials'
+import PageSettingsGeneral, { PageSettingsCredentialsProps } from './page-settings-credentials'
 
 describe('PageSettingsGeneral', () => {
-  const props: PageSettingsGeneralProps = {
+  const props: PageSettingsCredentialsProps = {
     onSubmit: jest.fn((e) => e.preventDefault()),
     loading: false,
   }

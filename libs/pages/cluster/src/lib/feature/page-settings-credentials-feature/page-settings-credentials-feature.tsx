@@ -1,17 +1,29 @@
-import { ClusterCloudProviderInfo } from 'qovery-typescript-axios'
+import { ClusterCloudProviderInfo, ClusterCloudProviderInfoRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { fetchCloudProviderInfo, selectClusterById } from '@qovery/domains/organization'
-import { ClusterEntity } from '@qovery/shared/interfaces'
+import {
+  fetchCloudProviderInfo,
+  getClusterState,
+  postCloudProviderInfo,
+  selectClusterById,
+  selectOrganizationById,
+} from '@qovery/domains/organization'
+import { ClusterCredentialsEntity, ClusterEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsCredentials from '../../ui/page-settings-credentials/page-settings-credentials'
 
-export const handleSubmit = (data: FieldValues, cluster: ClusterEntity) => {
+export const handleSubmit = (data: FieldValues, credentials?: ClusterCredentialsEntity[], cluster?: ClusterEntity) => {
+  const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
+
   return {
-    ...cluster,
-    name: data['name'],
+    cloud_provider: cluster?.cloud_provider,
+    credentials: {
+      id: currentCredentials?.id,
+      name: currentCredentials?.name,
+    },
+    region: cluster?.region,
   }
 }
 
@@ -26,31 +38,31 @@ export function PageSettingsCredentialsFeature() {
   })
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const clusterLoadingStatus = useSelector((state: RootState) => getClusterState(state).loadingStatus)
+
+  const credentials = useSelector<RootState, ClusterCredentialsEntity[] | undefined>(
+    (state) => selectOrganizationById(state, organizationId)?.credentials?.items
+  )
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data && cluster) {
       setLoading(true)
 
-      // const cloneCluster = handleSubmit(data, cluster)
+      const clusterCloudProviderInfo = handleSubmit(data, credentials, cluster) as ClusterCloudProviderInfoRequest
 
-      // dispatch(
-      //   editCredentials({
-      //     organizationId: organizationId,
-      //     credentialsId: clusterId,
-      //     credentials: {},
-      //   })
-      // )
-      //   .unwrap()
-      //   .then(() => setLoading(false))
-      //   .catch(() => setLoading(false))
+      dispatch(postCloudProviderInfo({ organizationId, clusterId, clusterCloudProviderInfo }))
+        .unwrap()
+        .then(() => setLoading(false))
+        .catch(() => setLoading(false))
     }
   })
 
   useEffect(() => {
-    dispatch(fetchCloudProviderInfo({ organizationId, clusterId }))
-      .unwrap()
-      .then((result: ClusterCloudProviderInfo) => methods.setValue('credentials', result.credentials?.id))
-  }, [methods, organizationId, clusterId, dispatch])
+    if (clusterLoadingStatus === 'not loaded')
+      dispatch(fetchCloudProviderInfo({ organizationId, clusterId }))
+        .unwrap()
+        .then((result: ClusterCloudProviderInfo) => methods.setValue('credentials', result.credentials?.id))
+  }, [clusterLoadingStatus, methods, organizationId, clusterId, dispatch])
 
   return (
     <FormProvider {...methods}>
