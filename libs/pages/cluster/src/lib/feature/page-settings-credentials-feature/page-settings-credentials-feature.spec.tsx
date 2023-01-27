@@ -1,17 +1,20 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import { act, render, waitFor } from '__tests__/utils/setup-jest'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'
-import { clusterFactoryMock } from '@qovery/shared/factories'
-import { ClusterEntity } from '@qovery/shared/interfaces'
-import PageSettingsGeneralFeature, { handleSubmit } from './page-settings-credentials-feature'
+import { clusterFactoryMock, credentialsMock, organizationFactoryMock } from '@qovery/shared/factories'
+import { ClusterCredentialsEntity, ClusterEntity, OrganizationEntity } from '@qovery/shared/interfaces'
+import PageSettingsCredentialsFeature, { handleSubmit } from './page-settings-credentials-feature'
 
 import SpyInstance = jest.SpyInstance
 
-const mockCluster: ClusterEntity = clusterFactoryMock(1)[0]
+const mockCluster: ClusterEntity = clusterFactoryMock(1, CloudProviderEnum.AWS)[0]
+const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+const mockCredentials: ClusterCredentialsEntity[] = credentialsMock(2)
 
 jest.mock('@qovery/domains/organization', () => {
   return {
     ...jest.requireActual('@qovery/domains/organization'),
-    editCluster: jest.fn(),
     getClusterState: () => ({
       loadingStatus: 'loaded',
       ids: [mockCluster.id],
@@ -21,6 +24,16 @@ jest.mock('@qovery/domains/organization', () => {
       error: null,
     }),
     selectClusterById: () => mockCluster,
+    getOrganizationsState: () => ({
+      loadingStatus: 'loaded',
+      ids: [mockOrganization.id],
+      entities: {
+        [mockOrganization.id]: mockOrganization,
+      },
+      error: null,
+    }),
+    selectOrganizationById: () => mockOrganization,
+    fetchCredentialsList: () => mockCredentials,
   }
 })
 
@@ -35,28 +48,41 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ organizationId: '0', clusterId: mockCluster.id }),
 }))
 
-describe('PageSettingsGeneralFeature', () => {
+jest.mock('react-hook-form', () => ({
+  ...jest.requireActual('react-hook-form'),
+  useFormContext: () => ({
+    watch: () => jest.fn(),
+    formState: {
+      isValid: true,
+    },
+  }),
+}))
+
+describe('PageSettingsCredentialsFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsGeneralFeature />)
+    const { baseElement } = render(<PageSettingsCredentialsFeature />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should update the cluster with fields', () => {
-    const currentCluster = handleSubmit(
+  it('should update the credential with fields', () => {
+    const cloneClusterProviderInfo = handleSubmit(
       {
-        name: 'hello',
-        description: 'description',
-        production: true,
+        credentials: mockCredentials[0].id,
       },
+      mockCredentials,
       mockCluster
     )
-    expect(currentCluster.name).toBe('hello')
-    expect(currentCluster.description).toBe('description')
-    expect(currentCluster.production).toBe(true)
+
+    expect(cloneClusterProviderInfo.cloud_provider).toBe(mockCluster.cloud_provider)
+    expect(cloneClusterProviderInfo.credentials).toStrictEqual({
+      id: mockCredentials[0].id,
+      name: mockCredentials[0].name,
+    })
+    expect(cloneClusterProviderInfo.region).toBe(mockCluster.region)
   })
 
-  it('should dispatch editCluster if form is submitted', async () => {
-    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'editCluster')
+  it('should dispatch postCloudProviderInfo if form is submitted', async () => {
+    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'postCloudProviderInfo')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
@@ -64,11 +90,14 @@ describe('PageSettingsGeneralFeature', () => {
         }),
     }))
 
-    const { getByTestId } = render(<PageSettingsGeneralFeature />)
+    const { getByTestId, getByLabelText } = render(<PageSettingsCredentialsFeature />)
+    getByTestId('input-credentials')
+    const realSelect = getByLabelText('Credentials')
 
-    await act(() => {
-      const input = getByTestId('input-name')
-      fireEvent.input(input, { target: { value: 'hello' } })
+    const item = (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || ''
+
+    await waitFor(() => {
+      selectEvent.select(realSelect, item)
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
@@ -77,15 +106,18 @@ describe('PageSettingsGeneralFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    const cloneCluster = handleSubmit(
-      { name: 'hello', description: mockCluster.description, production: mockCluster.production },
+    const cloneClusterProviderInfo = handleSubmit(
+      {
+        credentials: item,
+      },
+      mockCredentials,
       mockCluster
     )
 
     expect(editClusterSpy).toHaveBeenCalledWith({
       organizationId: '0',
       clusterId: mockCluster.id,
-      data: cloneCluster,
+      clusterCloudProviderInfo: cloneClusterProviderInfo,
     })
   })
 })

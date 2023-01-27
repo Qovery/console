@@ -13,7 +13,7 @@ import {
   OrganizationCustomRoleProjectPermission,
   PlanEnum,
 } from 'qovery-typescript-axios'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { ClusterCredentialsEntity, OrganizationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 
@@ -52,14 +52,8 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
       items: availableRolesMock,
     },
     credentials: {
-      loadingStatus: 'not loaded',
-      items: [
-        {
-          id: '1',
-          name: 'credential-1',
-          cloudProvider: CloudProviderEnum.AWS,
-        },
-      ],
+      loadingStatus: 'loaded',
+      items: credentialsMock(2),
     },
   }))
 
@@ -73,6 +67,13 @@ export const availableRolesMock = [
     name: 'Owner',
   },
 ]
+
+export const credentialsMock = (howMany: number): ClusterCredentialsEntity[] =>
+  Array.from({ length: howMany }).map((_, index) => ({
+    id: `${index}`,
+    name: chance.name(),
+    cloudProvider: CloudProviderEnum.AWS,
+  }))
 
 export const membersMock = (howMany: number, roleName = 'Admin', customIndex?: string): Member[] =>
   Array.from({ length: howMany }).map((_, index) => ({

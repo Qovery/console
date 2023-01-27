@@ -70,7 +70,7 @@ describe('InputSelect', () => {
   })
 
   it('should select second item and first item in a multiple select', async () => {
-    const { baseElement } = render(<InputSelect isMulti={true} {...props} />)
+    const { baseElement, debug } = render(<InputSelect isMulti={true} {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
     await act(() => {
