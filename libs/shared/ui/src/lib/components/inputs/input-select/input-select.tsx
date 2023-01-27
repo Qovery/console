@@ -103,6 +103,7 @@ export function InputSelect(props: InputSelectProps) {
       {props.children}
       {menuListButton && (
         <button
+          data-testid="input-menu-list-button"
           type="button"
           tabIndex={-1}
           className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-element-light-lighter-300 before:absolute before:-top-2 before:left-0"
@@ -204,6 +205,7 @@ export function InputSelect(props: InputSelectProps) {
         </label>
         {currentIcon?.onClickEditable && (
           <div
+            data-testid="selected-edit-icon"
             className="cursor-pointer flex items-center justify-center text-sm text-text-500 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
             onClick={(event) => {
               event.stopPropagation()
