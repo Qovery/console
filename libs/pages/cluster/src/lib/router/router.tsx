@@ -12,6 +12,7 @@ import {
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
+import PageSettingsFeaturesFeature from '../feature/page-settings-features-feature/page-settings-features-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import { PageSettingsV2 } from '../ui/page-settings-v2/page-settings-v2'
 
@@ -37,7 +38,7 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   },
   {
     path: CLUSTER_SETTINGS_FEATURES_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsFeaturesFeature />,
   },
   {
     path: CLUSTER_SETTINGS_NETWORK_URL,
