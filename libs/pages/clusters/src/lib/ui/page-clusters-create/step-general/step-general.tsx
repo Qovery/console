@@ -6,6 +6,7 @@ import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qove
 import { ClusterGeneralData, Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import {
+  BannerBox,
   Button,
   ButtonSize,
   ButtonStyle,
@@ -13,7 +14,6 @@ import {
   IconFlag,
   InputSelect,
   LoaderSpinner,
-  WarningBox,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
@@ -66,7 +66,7 @@ export function StepGeneral(props: StepGeneralProps) {
           <h4 className="mb-3 text-text-700 text-sm">Provider credentials</h4>
           {currentProvider ? (
             <>
-              <WarningBox
+              <BannerBox
                 className="mb-4"
                 title="Warning"
                 message="The creation of clusters on Digital Ocean is temporarily disabled."
