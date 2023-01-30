@@ -1,8 +1,9 @@
 import { Cluster, Project } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
-import { Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { getProjectsState } from '@qovery/domains/projects'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { RootState } from '@qovery/store'
 import { ROUTER_ENVIRONMENTS } from './router/router'
 import Container from './ui/container/container'
@@ -20,6 +21,10 @@ export function PageEnvironments() {
         {ROUTER_ENVIRONMENTS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
+        <Route
+          path="*"
+          element={<Navigate replace to={ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL} />}
+        />
       </Routes>
     </Container>
   )

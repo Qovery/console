@@ -2,7 +2,7 @@ import equal from 'fast-deep-equal'
 import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   fetchApplicationCommits,
@@ -14,13 +14,14 @@ import {
 import { selectEnvironmentById } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 
 export function PageApplication() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
   const environment = useSelector<RootState, Environment | undefined>((state) =>
     selectEnvironmentById(state, environmentId)
   )
@@ -58,6 +59,15 @@ export function PageApplication() {
         {ROUTER_APPLICATION.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
+        <Route
+          path="*"
+          element={
+            <Navigate
+              replace
+              to={APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL}
+            />
+          }
+        />
       </Routes>
     </Container>
   )
