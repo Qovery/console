@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
   fetchCloudProviderInfo,
-  getClusterState,
   postCloudProviderInfo,
   selectClusterById,
+  selectClustersLoadingStatus,
   selectOrganizationById,
 } from '@qovery/domains/organization'
 import { ClusterCredentialsEntity, ClusterEntity } from '@qovery/shared/interfaces'
@@ -38,7 +38,7 @@ export function PageSettingsCredentialsFeature() {
   })
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
-  const clusterLoadingStatus = useSelector((state: RootState) => getClusterState(state).loadingStatus)
+  const clustersLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
 
   const credentials = useSelector<RootState, ClusterCredentialsEntity[] | undefined>(
     (state) => selectOrganizationById(state, organizationId)?.credentials?.items
@@ -58,11 +58,14 @@ export function PageSettingsCredentialsFeature() {
   })
 
   useEffect(() => {
-    if (clusterLoadingStatus === 'not loaded')
+    if (clustersLoading === 'loaded' && cluster?.cloudProviderInfo?.loadingStatus !== 'loaded') {
       dispatch(fetchCloudProviderInfo({ organizationId, clusterId }))
         .unwrap()
         .then((result: ClusterCloudProviderInfo) => methods.setValue('credentials', result.credentials?.id))
-  }, [clusterLoadingStatus, methods, organizationId, clusterId, dispatch])
+    } else {
+      methods.setValue('credentials', cluster?.cloudProviderInfo?.item?.credentials?.id)
+    }
+  }, [clustersLoading, methods, organizationId, clusterId, dispatch, cluster?.cloudProviderInfo])
 
   return (
     <FormProvider {...methods}>

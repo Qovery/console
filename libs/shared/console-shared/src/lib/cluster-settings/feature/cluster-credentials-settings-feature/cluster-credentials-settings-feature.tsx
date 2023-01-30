@@ -18,7 +18,7 @@ export function ClusterCredentialsSettingsFeature(props: ClusterCredentialsSetti
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const dispatch = useDispatch<AppDispatch>()
-  const credentials = useSelector<RootState, ClusterCredentialsEntity[] | undefined>((state) =>
+  const credentialsByCloudProvider = useSelector<RootState, ClusterCredentialsEntity[] | undefined>((state) =>
     selectOrganizationById(state, organizationId)?.credentials?.items?.filter(
       (item) => item.cloudProvider === cloudProvider
     )
@@ -32,7 +32,7 @@ export function ClusterCredentialsSettingsFeature(props: ClusterCredentialsSetti
       openModal({
         content: (
           <CreateEditCredentialsModalFeature
-            currentCredential={credentials?.find(
+            currentCredential={credentialsByCloudProvider?.find(
               (currentCredentials: ClusterCredentials) => currentCredentials.id === id
             )}
             cloudProvider={cloudProvider}
@@ -44,12 +44,14 @@ export function ClusterCredentialsSettingsFeature(props: ClusterCredentialsSetti
   }
 
   useEffect(() => {
-    cloudProvider && dispatch(fetchCredentialsList({ cloudProvider, organizationId }))
-  }, [dispatch, cloudProvider, organizationId])
+    cloudProvider &&
+      credentialsLoadingStatus !== 'loaded' &&
+      dispatch(fetchCredentialsList({ cloudProvider, organizationId }))
+  }, [dispatch, cloudProvider, organizationId, credentialsLoadingStatus])
 
   return (
     <ClusterCredentialsSettings
-      credentials={credentials}
+      credentials={credentialsByCloudProvider}
       openCredentialsModal={openCredentialsModal}
       loadingStatus={credentialsLoadingStatus}
     />

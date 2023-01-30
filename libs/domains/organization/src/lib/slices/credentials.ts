@@ -80,12 +80,14 @@ export const editCredentials = createAsyncThunk(
 export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   builder
     .addCase(fetchCredentialsList.pending, (state: OrganizationState, action) => {
+      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+
       const update: Update<OrganizationEntity> = {
         id: action.meta.arg.organizationId,
         changes: {
           credentials: {
             loadingStatus: 'loading',
-            items: [],
+            items: credentials,
           },
         },
       }
@@ -160,7 +162,7 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
     .addCase(editCredentials.fulfilled, (state: OrganizationState, action) => {
       const cloudProvider = action.meta.arg.cloudProvider as CloudProviderEnum
       const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
-      const index = credentials.findIndex((obj) => obj.name === action.payload.name)
+      const index = credentials.findIndex((obj) => obj.id === action.payload.id)
       credentials[index] = Object.assign(action.payload, { cloudProvider: cloudProvider })
 
       const update: Update<OrganizationEntity> = {

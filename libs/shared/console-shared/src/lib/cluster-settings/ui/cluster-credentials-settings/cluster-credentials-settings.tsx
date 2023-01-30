@@ -1,6 +1,6 @@
 import { ClusterCredentials } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ClusterCredentialsEntity, ClusterGeneralData, LoadingStatus } from '@qovery/shared/interfaces'
+import { ClusterCredentialsEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { IconAwesomeEnum, IconFa, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
@@ -11,7 +11,7 @@ export interface ClusterCredentialsSettingsProps {
 
 export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProps) {
   const { credentials, openCredentialsModal, loadingStatus } = props
-  const { control } = useFormContext<ClusterGeneralData>()
+  const { control } = useFormContext()
 
   const buildCredentials = credentials?.map((item: ClusterCredentials) => ({
     label: item.name,

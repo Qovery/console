@@ -405,23 +405,12 @@ export const clusterSlice = createSlice({
         state.cloudProvider.loadingStatus = 'error'
       })
       // fetch cloud provider info
-      .addCase(fetchCloudProviderInfo.pending, (state: ClustersState, action) => {
-        const update: Update<ClusterEntity> = {
-          id: action.meta.arg.clusterId,
-          changes: {
-            cloudProviderInfo: {
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        clusterAdapter.updateOne(state, update)
-      })
       .addCase(fetchCloudProviderInfo.fulfilled, (state: ClustersState, action) => {
         const update: Update<ClusterEntity> = {
           id: action.meta.arg.clusterId,
           changes: {
             cloudProviderInfo: {
-              loadingStatus: 'loading',
+              loadingStatus: 'loaded',
               item: action.payload,
             },
           },
@@ -432,7 +421,7 @@ export const clusterSlice = createSlice({
         const update: Update<ClusterEntity> = {
           id: action.meta.arg.clusterId,
           changes: {
-            extendedStatus: {
+            cloudProviderInfo: {
               loadingStatus: 'error',
             },
           },
