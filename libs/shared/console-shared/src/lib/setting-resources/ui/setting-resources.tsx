@@ -2,13 +2,13 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
+  BannerBox,
+  BannerBoxEnum,
   BlockContent,
   Icon,
   IconAwesomeEnum,
   InputText,
   Slider,
-  WarningBox,
-  WarningBoxEnum,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { convertCpuToVCpu } from '@qovery/shared/utils'
@@ -56,12 +56,12 @@ export function SettingResources(props: SettingResourcesProps) {
           </p>
         )}
         {displayWarningCpu && (
-          <WarningBox
+          <BannerBox
             dataTestId="warning-box"
             className="mt-3"
             title="Not enough resources"
             message="Increase the capacity of your cluster nodes or reduce the service consumption."
-            type={WarningBoxEnum.ERROR}
+            type={BannerBoxEnum.ERROR}
           />
         )}
       </BlockContent>
