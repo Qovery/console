@@ -1,59 +1,56 @@
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
-import ClusterCredentialsSettingsFeature, { ClusterCredentialsSettingsFeatureProps } from './cluster-general-settings'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
+import { organizationFactoryMock } from '@qovery/shared/factories'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
+import ClusterCredentialsSettingsFeature, {
+  ClusterCredentialsSettingsFeatureProps,
+} from './cluster-credentials-settings-feature'
 
-// const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 
-// jest.mock('@qovery/domains/organization', () => {
-//   return {
-//     ...jest.requireActual('@qovery/domains/organization'),
-//     // getOrganizationsState: () => ({
-//     //   loadingStatus: 'loaded',
-//     //   ids: [mockOrganization.id],
-//     //   entities: {
-//     //     [mockOrganization.id]: mockOrganization,
-//     //   },
-//     //   error: null,
-//     // }),
-//     selectOrganizationById: () => mockOrganization,
-//     // fetchCloudProvider: () => ({
-//     //   loading: 'loaded',
-//     //   items: [],
-//     // }),
-//     fetchCredentialsList: () => [
-//       {
-//         id: '1',
-//         name: 'credential',
-//       },
-//     ],
-//   }
-// })
+jest.mock('@qovery/domains/organization', () => {
+  return {
+    ...jest.requireActual('@qovery/domains/organization'),
+    selectOrganizationById: () => mockOrganization,
+  }
+})
+
+const mockDispatch = jest.fn()
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}))
 
 describe('ClusterCredentialsSettingsFeature', () => {
   const props: ClusterCredentialsSettingsFeatureProps = {
-    fromDetail: false,
+    cloudProvider: CloudProviderEnum.AWS,
   }
+
   it('should render successfully', () => {
     const { baseElement } = render(wrapWithReactHookForm(<ClusterCredentialsSettingsFeature {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should submit the form on click', async () => {
-    const { getByTestId } = render(
-      wrapWithReactHookForm<ClusterGeneralData>(<ClusterCredentialsSettingsFeature {...props} />, {
+    const { getByTestId, getAllByDisplayValue, getByLabelText } = render(
+      wrapWithReactHookForm(<ClusterCredentialsSettingsFeature {...props} />, {
         defaultValues: {
-          name: 'test',
+          credentials: '0',
         },
       })
     )
 
-    const name = getByTestId('input-name')
-    const description = getByTestId('input-description')
-    const toggle = getByTestId('input-production-toggle')
+    const realSelect = getByLabelText('Credentials')
 
-    expect((name as HTMLInputElement).value).toBe('test')
-    expect((description.querySelector('textarea') as HTMLTextAreaElement).value).toBe('test')
-    expect((toggle.querySelector('input') as HTMLInputElement).value).toBe('false')
+    await act(() => {
+      selectEvent.select(realSelect, [
+        (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || '',
+      ])
+    })
+
+    getByTestId('input-credentials')
+    getAllByDisplayValue('1')
   })
 })

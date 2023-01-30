@@ -29,6 +29,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-name"
             className="mb-3"
             name={field.name}
             onChange={field.onChange}
@@ -48,12 +49,12 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
+                dataTestId="input-access-key"
                 className="mb-3"
-                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Access key ID"
+                label="Access key"
                 error={error?.message}
               />
             )}
@@ -66,6 +67,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
+                dataTestId="input-secret-key"
                 className="mb-5"
                 type="password"
                 name={field.name}
@@ -88,8 +90,8 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
+                dataTestId="input-scw-access-key"
                 className="mb-3"
-                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -106,6 +108,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
+                dataTestId="input-scw-secret-key"
                 className="mb-3"
                 type="password"
                 name={field.name}
@@ -124,6 +127,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
+                dataTestId="input-scw-project-id"
                 className="mb-5"
                 type="password"
                 name={field.name}

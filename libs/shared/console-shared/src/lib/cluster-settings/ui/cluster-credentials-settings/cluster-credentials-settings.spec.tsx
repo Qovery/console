@@ -1,34 +1,49 @@
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
-import ClusterCredentialsSettingsFeature, { ClusterCredentialsSettingsFeatureProps } from './cluster-general-settings'
+import selectEvent from 'react-select-event'
+import { organizationFactoryMock } from '@qovery/shared/factories'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
+import ClusterCredentialsSettings, { ClusterCredentialsSettingsProps } from './cluster-credentials-settings'
 
-describe('ClusterCredentialsSettingsFeature', () => {
-  const props: ClusterCredentialsSettingsFeatureProps = {
-    fromDetail: false,
+const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
+
+describe('ClusterCredentialsSettings', () => {
+  const props: ClusterCredentialsSettingsProps = {
+    credentials: mockOrganization.credentials?.items,
+    openCredentialsModal: jest.fn(),
+    loadingStatus: 'not loaded',
   }
+
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<ClusterCredentialsSettingsFeature {...props} />))
+    const { baseElement } = render(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
+  it('should have loader', () => {
+    const { getByTestId } = render(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
+    getByTestId('spinner')
+  })
+
   it('should submit the form on click', async () => {
-    const { getByTestId } = render(
-      wrapWithReactHookForm<ClusterGeneralData>(<ClusterCredentialsSettingsFeature {...props} />, {
+    props.loadingStatus = 'loaded'
+
+    const { getByLabelText, getByTestId, getAllByDisplayValue } = render(
+      wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />, {
         defaultValues: {
-          name: 'test',
-          description: 'test',
-          production: false,
+          credentials: '0',
         },
       })
     )
 
-    const name = getByTestId('input-name')
-    const description = getByTestId('input-description')
-    const toggle = getByTestId('input-production-toggle')
+    const realSelect = getByLabelText('Credentials')
 
-    expect((name as HTMLInputElement).value).toBe('test')
-    expect((description.querySelector('textarea') as HTMLTextAreaElement).value).toBe('test')
-    expect((toggle.querySelector('input') as HTMLInputElement).value).toBe('false')
+    await act(() => {
+      selectEvent.select(realSelect, [
+        (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || '',
+      ])
+    })
+
+    getByTestId('input-credentials')
+    getAllByDisplayValue('1')
   })
 })

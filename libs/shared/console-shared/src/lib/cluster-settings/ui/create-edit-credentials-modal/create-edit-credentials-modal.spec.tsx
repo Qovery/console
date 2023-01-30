@@ -1,31 +1,10 @@
-import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId } from '@testing-library/react'
+import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import selectEvent from 'react-select-event'
-import * as storeEnvironment from '@qovery/domains/environment'
-import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
-import CreateCloneEnvironmentModalFeature, {
-  CreateCloneEnvironmentModalFeatureProps,
-} from './create-clone-environment-modal-feature'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
+import CreateEditCredentialsModal, { CreateEditCredentialsModalProps } from './create-edit-credentials-modal'
 
-let props: CreateCloneEnvironmentModalFeatureProps
-
-const mockClusters = clusterFactoryMock(3)
-jest.mock('@qovery/domains/organization', () => ({
-  ...jest.requireActual('@qovery/domains/organization'),
-  selectClustersEntitiesByOrganizationId: () => mockClusters,
-}))
-
-jest.mock('@qovery/domains/environment', () => ({
-  ...jest.requireActual('@qovery/domains/environment'),
-  cloneEnvironment: jest.fn(),
-  createEnvironment: jest.fn().mockImplementation(() => Promise.resolve()),
-}))
-
-jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
-  useParams: () => ({ projectId: '1', organizationId: '0' }),
-}))
+let props: CreateEditCredentialsModalProps
 
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
@@ -33,13 +12,14 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }))
 
-describe('CreateCloneEnvironmentModalFeature', () => {
+describe('CreateEditCredentialsModal', () => {
   beforeEach(() => {
     props = {
       onClose: jest.fn(),
-      environmentToClone: undefined,
-      organizationId: '0',
-      projectId: '1',
+      onSubmit: jest.fn(),
+      loading: false,
+      isEdit: false,
+      cloudProvider: CloudProviderEnum.AWS,
     }
   })
 
@@ -49,98 +29,73 @@ describe('CreateCloneEnvironmentModalFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} />)
+    const { baseElement } = render(wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
-  describe('creation mode', function () {
-    it('should submit form on click on button', async () => {
-      // mock the dispatched function
-      const spy = jest.spyOn(storeEnvironment, 'createEnvironment')
-      mockDispatch.mockImplementation(() => ({
-        unwrap: () =>
-          Promise.resolve({
-            data: {},
-          }),
-      }))
+  it('should render the form with fields AWS', async () => {
+    props.cloudProvider = CloudProviderEnum.AWS
 
-      const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} />)
-
-      const input = getByTestId(baseElement, 'input-text')
-
-      await act(async () => {
-        fireEvent.input(input, { target: { value: 'test' } })
-      })
-
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
-          container: document.body,
-        })
-      })
-
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
-      })
-
-      const submitButton = getByTestId(baseElement, 'submit-button')
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
-
-      expect(spy).toHaveBeenCalledWith({
-        projectId: '1',
-        environmentRequest: {
-          cluster: mockClusters[2].id,
-          mode: EnvironmentModeEnum.STAGING,
-          name: 'test',
+    const { getByDisplayValue } = render(
+      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+        defaultValues: {
+          name: 'credentials',
+          access_key_id: 'access-key-id',
+          secret_access_key: 'secret-access-key',
         },
       })
-    })
+    )
+
+    getByDisplayValue('credentials')
+    getByDisplayValue('access-key-id')
+    getByDisplayValue('secret-access-key')
   })
 
-  describe('cloning mode', function () {
-    it('should submit form on click on button', async () => {
-      // mock the dispatched function
-      const spy = jest.spyOn(storeEnvironment, 'cloneEnvironment')
-      mockDispatch.mockImplementation(() => ({
-        unwrap: () =>
-          Promise.resolve({
-            data: {},
-          }),
-      }))
+  it('should render the form with fields SCW', async () => {
+    props.cloudProvider = CloudProviderEnum.SCW
 
-      const mockEnv = environmentFactoryMock(1)[0]
-      const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} environmentToClone={mockEnv} />)
-
-      const inputs = getAllByTestId(baseElement, 'input-text')
-
-      await act(async () => {
-        fireEvent.input(inputs[1], { target: { value: 'test' } })
-      })
-
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
-          container: document.body,
-        })
-      })
-
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
-      })
-
-      const submitButton = getByTestId(baseElement, 'submit-button')
-      await act(async () => {
-        fireEvent.click(submitButton)
-      })
-
-      expect(spy).toHaveBeenCalledWith({
-        environmentId: mockEnv.id,
-        cloneRequest: {
-          cluster_id: mockClusters[2].id,
-          mode: EnvironmentModeEnum.STAGING,
-          name: 'test',
+    const { getByDisplayValue } = render(
+      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+        defaultValues: {
+          name: 'credentials',
+          scaleway_access_key: 'scaleway-access-key',
+          scaleway_secret_key: 'scaleway-secret-key',
+          scaleway_project_id: 'scaleway-project-id',
         },
       })
+    )
+
+    getByDisplayValue('credentials')
+    getByDisplayValue('scaleway-access-key')
+    getByDisplayValue('scaleway-secret-key')
+    getByDisplayValue('scaleway-project-id')
+  })
+
+  it('should submit the form on click AWS', async () => {
+    const { getByTestId } = render(
+      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+        defaultValues: {
+          name: 'credentials',
+        },
+      })
+    )
+
+    const button = getByTestId('submit-button')
+    const inputName = getByTestId('input-name')
+    const inputAccessKey = getByTestId('input-access-key')
+    const inputSecretKey = getByTestId('input-secret-key')
+
+    await act(async () => {
+      fireEvent.input(inputName, { target: { value: 'test' } })
+      fireEvent.input(inputAccessKey, { target: { value: 'access' } })
+      fireEvent.input(inputSecretKey, { target: { value: 'secret' } })
     })
+
+    await act(async () => {
+      button?.click()
+    })
+
+    expect(button).not.toBeDisabled()
+    expect(props.onSubmit).toHaveBeenCalled()
   })
 })
