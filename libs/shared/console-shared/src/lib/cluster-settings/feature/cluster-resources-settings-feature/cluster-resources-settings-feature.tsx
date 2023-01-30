@@ -7,6 +7,7 @@ import ClusterResourcesSettings from '../../ui/cluster-resources-settings/cluste
 export interface ClusterResourcesSettingsFeatureProps {
   fromDetail?: boolean
   cloudProvider?: CloudProviderEnum
+  clusterRegion?: string
 }
 
 export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsFeatureProps) {
@@ -34,7 +35,6 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
     }
     setClusterTypeOptions(clusterTypeOptions)
 
-    console.log(watchClusterType)
     if (!watchClusterType) {
       // set the default value
       setValue('cluster_type', clusterTypeOptions[0].value)
@@ -42,7 +42,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
   }, [props.cloudProvider, setValue, watchClusterType])
 
   useEffect(() => {
-    console.log('api call to fetch the good options')
+    console.log('api call to fetch the good options', props.clusterRegion)
     setInstanceTypeOptions([
       { label: 't2.micro', value: 't2.micro' },
       { label: 't2.small', value: 't2.small' },

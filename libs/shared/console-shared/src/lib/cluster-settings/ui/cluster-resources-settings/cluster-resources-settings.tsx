@@ -93,7 +93,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           }}
           render={({ field }) => (
             <div>
-              <p className="text-text-500 mb-3 font-medium">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
+              {watchNodes && (
+                <p className="text-text-500 mb-3 font-medium">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
+              )}
               <Slider onChange={field.onChange} value={field.value} max={10} min={1} step={1} />
               <p className="text-text-400 text-xs mt-3">Cluster can scale up to “max” nodes depending on its usage</p>
             </div>

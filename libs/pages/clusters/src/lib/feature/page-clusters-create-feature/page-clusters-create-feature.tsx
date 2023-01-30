@@ -1,3 +1,4 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { ClusterGeneralData, ClusterResourcesData } from '@qovery/shared/interfaces'
@@ -40,10 +41,17 @@ export function PageClusterCreateFeature() {
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
-  const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
+  const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>({
+    region: 'us-east-2',
+    name: 'blabla',
+    description: 'blabla',
+    cloud_provider: CloudProviderEnum.AWS,
+    credentials: '',
+    production: false,
+  })
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>({
     cluster_type: '',
-    disk_size: 0,
+    disk_size: 20,
     instance_type: '',
     nodes: [1, 2],
   })

@@ -4,12 +4,13 @@ import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterResourcesSettingsFeature } from '@qovery/shared/console-shared'
 import { ApplicationGeneralData } from '@qovery/shared/interfaces'
-import { CLUSTERS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
+  clusterRegion?: string
 }
 
 export function StepResources(props: StepResourcesProps) {
@@ -24,18 +25,24 @@ export function StepResources(props: StepResourcesProps) {
       </div>
 
       <form onSubmit={props.onSubmit}>
-        <ClusterResourcesSettingsFeature cloudProvider={CloudProviderEnum.AWS} fromDetail={false} />
+        <ClusterResourcesSettingsFeature
+          cloudProvider={CloudProviderEnum.AWS}
+          clusterRegion={props.clusterRegion}
+          fromDetail={false}
+        />
         {/* <div className="border-b border-b-element-light-lighter-400 mb-6"></div> */}
 
         <div className="flex justify-between">
           <Button
-            onClick={() => navigate(CLUSTERS_URL(organizationId))}
+            onClick={() =>
+              navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_GENERAL_URL}`)
+            }
             type="button"
             className="btn--no-min-w"
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
           >
-            Cancel
+            Back
           </Button>
           <Button
             dataTestId="button-submit"

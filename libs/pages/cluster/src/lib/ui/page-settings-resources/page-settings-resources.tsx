@@ -8,6 +8,7 @@ export interface PageSettingsResourcesProps {
   loading?: boolean
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
+  clusterRegion?: string
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
@@ -18,7 +19,11 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-text-700">Resources settings</h2>
         <form onSubmit={onSubmit}>
-          <ClusterResourcesSettingsFeature cloudProvider={props.cloudProvider} fromDetail={true} />
+          <ClusterResourcesSettingsFeature
+            cloudProvider={props.cloudProvider}
+            fromDetail={true}
+            clusterRegion={props.clusterRegion}
+          />
           <div className="flex justify-end">
             <Button
               dataTestId="submit-button"

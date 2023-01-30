@@ -55,7 +55,12 @@ export function PageSettingsResourcesFeature() {
   return (
     <FormProvider {...methods}>
       {cluster && (
-        <PageSettingsResources cloudProvider={cluster?.cloud_provider} onSubmit={onSubmit} loading={loading} />
+        <PageSettingsResources
+          cloudProvider={cluster?.cloud_provider}
+          clusterRegion={cluster?.region}
+          onSubmit={onSubmit}
+          loading={loading}
+        />
       )}
     </FormProvider>
   )

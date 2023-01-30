@@ -54,7 +54,11 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources onSubmit={onSubmit} cloudProvider={generalData?.cloud_provider} />
+        <StepResources
+          onSubmit={onSubmit}
+          cloudProvider={generalData?.cloud_provider}
+          clusterRegion={generalData?.region}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )
