@@ -55,7 +55,7 @@ export function ModalCrud(props: ModalCrudProps) {
       <form onSubmit={onSubmit}>
         {children}
         <div className="flex gap-3 justify-end mt-6">
-          {onDelete ? (
+          {isEdit && onDelete ? (
             <Button
               dataTestId="delete-button"
               className="btn--no-min-w"

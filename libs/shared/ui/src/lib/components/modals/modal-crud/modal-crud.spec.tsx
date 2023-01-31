@@ -32,6 +32,7 @@ describe('ModalCrud', () => {
   })
 
   it('should delete the form', async () => {
+    props.isEdit = true
     props.onDelete = jest.fn()
     props.deleteButtonLabel = 'Delete this element'
 
