@@ -1,5 +1,5 @@
 import { CloudProvider, CloudProviderEnum, ClusterRegion } from 'qovery-typescript-axios'
-import { FormEventHandler, useEffect, useState } from 'react'
+import { FormEventHandler, useCallback, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
@@ -35,20 +35,27 @@ export function StepGeneral(props: StepGeneralProps) {
     setCurrentProvider(providerByDefault)
   }, [cloudProviders])
 
-  const buildCloudProviders: Value[] = cloudProviders.map((value) => ({
-    label: upperCaseFirstLetter(value.name) || '',
-    value: value.short_name || '',
-    icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
-    // disabled temporally Digital Ocean
-    isDisabled: value.short_name === CloudProviderEnum.DO ? true : false,
-  }))
+  const buildCloudProviders: () => Value[] = useCallback(
+    () =>
+      cloudProviders.map((value) => ({
+        label: upperCaseFirstLetter(value.name) || '',
+        value: value.short_name || '',
+        icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
+        // disabled temporally Digital Ocean
+        isDisabled: value.short_name === CloudProviderEnum.DO ? true : false,
+      })),
+    [cloudProviders]
+  )
 
-  const buildRegions =
-    currentProvider?.regions?.map((region: ClusterRegion) => ({
-      label: `${region.city} (${region.name})`,
-      value: region.name,
-      icon: <IconFlag code={region.country_code} />,
-    })) || []
+  const buildRegions: () => Value[] = useCallback(
+    () =>
+      currentProvider?.regions?.map((region: ClusterRegion) => ({
+        label: `${region.city} (${region.name})`,
+        value: region.name,
+        icon: <IconFlag code={region.country_code} />,
+      })) || [],
+    [currentProvider?.regions]
+  )
 
   return (
     <div>
@@ -82,7 +89,7 @@ export function StepGeneral(props: StepGeneralProps) {
                     dataTestId="input-cloud-provider"
                     label="Cloud provider"
                     className="mb-3"
-                    options={buildCloudProviders}
+                    options={buildCloudProviders()}
                     onChange={(value) => {
                       const currentProvider = cloudProviders?.filter(
                         (cloud) => cloud.short_name === value && cloud.regions
@@ -107,7 +114,7 @@ export function StepGeneral(props: StepGeneralProps) {
                     dataTestId="input-region"
                     label="Region"
                     className="mb-3"
-                    options={buildRegions}
+                    options={buildRegions()}
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}

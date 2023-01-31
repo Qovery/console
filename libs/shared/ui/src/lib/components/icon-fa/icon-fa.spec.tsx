@@ -1,8 +1,8 @@
 import { render } from '__tests__/utils/setup-jest'
-import IconFlag, { IconFlagProps } from './icon-fa'
+import IconFa, { IconFaProps } from './icon-fa'
 
-describe('IconFlag', () => {
-  let props: IconFlagProps
+describe('IconFa', () => {
+  let props: IconFaProps
 
   beforeEach(() => {
     props = {
@@ -11,7 +11,7 @@ describe('IconFlag', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<IconFlag {...props} />)
+    const { baseElement } = render(<IconFa {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

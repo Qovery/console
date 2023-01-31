@@ -52,8 +52,7 @@ export function PageSettingsCredentialsFeature() {
 
       dispatch(postCloudProviderInfo({ organizationId, clusterId, clusterCloudProviderInfo }))
         .unwrap()
-        .then(() => setLoading(false))
-        .catch(() => setLoading(false))
+        .finally(() => setLoading(false))
     }
   })
 

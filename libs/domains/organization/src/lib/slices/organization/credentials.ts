@@ -101,7 +101,7 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
         changes: {
           credentials: {
             loadingStatus: 'loaded',
-            items: action.payload.map((value) => ({ ...value, ...{ cloudProvider: cloudProvider } })),
+            items: action.payload.map((value) => ({ ...value, cloudProvider })),
           },
         },
       }
@@ -134,7 +134,7 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
         changes: {
           credentials: {
             loadingStatus: 'loaded',
-            items: [...credentials, { ...action.payload, ...{ cloudProvider: cloudProvider } }],
+            items: [...credentials, { ...action.payload, cloudProvider }],
           },
         },
       }

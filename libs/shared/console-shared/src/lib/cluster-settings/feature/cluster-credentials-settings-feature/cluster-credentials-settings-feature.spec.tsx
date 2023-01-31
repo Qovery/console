@@ -51,6 +51,7 @@ describe('ClusterCredentialsSettingsFeature', () => {
     })
 
     getByTestId('input-credentials')
-    getAllByDisplayValue('1')
+    // using getAllByDisplay because we have two inputs on the input-select when we use the search
+    expect(getAllByDisplayValue('1')).toHaveLength(2)
   })
 })

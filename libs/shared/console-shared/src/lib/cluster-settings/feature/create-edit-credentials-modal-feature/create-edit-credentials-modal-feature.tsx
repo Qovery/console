@@ -22,21 +22,17 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
   if (cloudProvider === CloudProviderEnum.AWS) {
     return {
       ...currentData,
-      ...{
-        access_key_id: data['access_key_id'],
-        secret_access_key: data['secret_access_key'],
-      },
+      access_key_id: data['access_key_id'],
+      secret_access_key: data['secret_access_key'],
     }
   }
 
   if (cloudProvider === CloudProviderEnum.SCW) {
     return {
       ...currentData,
-      ...{
-        scaleway_access_key: data['scaleway_access_key'],
-        scaleway_secret_key: data['scaleway_secret_key'],
-        scaleway_project_id: data['scaleway_project_id'],
-      },
+      scaleway_access_key: data['scaleway_access_key'],
+      scaleway_secret_key: data['scaleway_secret_key'],
+      scaleway_project_id: data['scaleway_project_id'],
     }
   }
 
@@ -44,7 +40,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
 }
 
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
-  const { cloudProvider, organizationId, onClose, currentCredential } = props
+  const { cloudProvider, onClose, currentCredential, organizationId } = props
   const [loading, setLoading] = useState(false)
 
   const { enableAlertClickOutside } = useModal()

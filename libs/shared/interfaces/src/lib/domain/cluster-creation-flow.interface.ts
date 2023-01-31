@@ -8,9 +8,3 @@ export interface ClusterGeneralData {
   region: string
   credentials: string
 }
-
-// export interface ClusterResourcesData {
-//   memory: number
-//   cpu: [number]
-//   instances: [number, number]
-// }

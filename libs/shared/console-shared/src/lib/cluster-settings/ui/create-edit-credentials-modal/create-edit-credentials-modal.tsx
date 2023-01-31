@@ -140,27 +140,24 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
           />
         </>
       )}
-      <div className="bg-element-light-lighter-200 text-ssm rounded font-medium p-4">
-        <p className="text-text-600 mb-2">How to configure credentials</p>
-        {props.cloudProvider === CloudProviderEnum.AWS && (
-          <Link
-            className="font-medium text-accent2-500 text-sm"
-            link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/amazon-web-services/"
-            linkLabel="Amazon Web Services"
-            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-            external
-          />
-        )}
-        {props.cloudProvider === CloudProviderEnum.SCW && (
-          <Link
-            className="font-medium text-accent2-500 text-sm"
-            link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/scaleway/"
-            linkLabel="Scaleway"
-            iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-            external
-          />
-        )}
-      </div>
+      {props.cloudProvider === CloudProviderEnum.AWS && (
+        <Link
+          className="font-medium text-accent2-500 text-sm"
+          link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/amazon-web-services/"
+          linkLabel="How to configure credentials"
+          iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+          external
+        />
+      )}
+      {props.cloudProvider === CloudProviderEnum.SCW && (
+        <Link
+          className="font-medium text-accent2-500 text-sm"
+          link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/scaleway/"
+          linkLabel="How to configure credentials"
+          iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+          external
+        />
+      )}
     </ModalCrud>
   )
 }

@@ -6,12 +6,6 @@ import CreateEditCredentialsModal, { CreateEditCredentialsModalProps } from './c
 
 let props: CreateEditCredentialsModalProps
 
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
-
 describe('CreateEditCredentialsModal', () => {
   beforeEach(() => {
     props = {
