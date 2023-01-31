@@ -57,7 +57,7 @@ export function PageSettingsCredentialsFeature() {
         .unwrap()
         .finally(() => setLoading(false))
     } else {
-      toast(ToastEnum.ERROR, 'Please select a credentials')
+      toast(ToastEnum.ERROR, 'Please select a credential')
     }
   })
 
