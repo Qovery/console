@@ -13,9 +13,9 @@ describe('BannerBox', () => {
   })
 
   it('should render with warning colors', () => {
-    const { getByTestId, queryByRole } = render(<BannerBox {...props} />)
+    const { getByTestId, queryByRole } = render(<BannerBox {...props} type={BannerBoxEnum.WARNING} />)
 
-    const box = getByTestId('warning-box')
+    const box = getByTestId('banner-box')
     const icon = queryByRole('img')
 
     expect(box.classList.contains('border-warning-500')).toBe(true)
@@ -27,7 +27,7 @@ describe('BannerBox', () => {
     props.type = BannerBoxEnum.ERROR
     const { getByTestId, queryByRole } = render(<BannerBox {...props} />)
 
-    const box = getByTestId('warning-box')
+    const box = getByTestId('banner-box')
     const icon = queryByRole('img')
 
     expect(box.classList.contains('border-error-500')).toBe(true)
@@ -39,7 +39,7 @@ describe('BannerBox', () => {
     props.type = BannerBoxEnum.DEFAULT
     const { getByTestId, queryByRole } = render(<BannerBox {...props} />)
 
-    const box = getByTestId('warning-box')
+    const box = getByTestId('banner-box')
     const icon = queryByRole('img')
 
     expect(box.classList.contains('border-accent2-500')).toBe(true)

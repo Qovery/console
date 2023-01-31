@@ -57,7 +57,7 @@ export function SettingResources(props: SettingResourcesProps) {
         )}
         {displayWarningCpu && (
           <BannerBox
-            dataTestId="warning-box"
+            dataTestId="banner-box"
             className="mt-3"
             title="Not enough resources"
             message="Increase the capacity of your cluster nodes or reduce the service consumption."

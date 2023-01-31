@@ -1,7 +1,16 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
-import { BlockContent, Icon, InputRadioBox, InputSelect, InputText, Link, Slider } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  BlockContent,
+  InputRadioBox,
+  InputSelect,
+  InputText,
+  Link,
+  Slider,
+} from '@qovery/shared/ui'
 
 export interface ClusterResourcesSettingsProps {
   fromDetail?: boolean
@@ -49,6 +58,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           render={({ field, fieldState: { error } }) => (
             <div>
               <InputSelect
+                isSearchable
                 onChange={field.onChange}
                 value={field.value}
                 label="Instance type"
@@ -104,17 +114,15 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       </BlockContent>
 
       {!props.fromDetail && (
-        <div className="flex gap-3 p-4 bg-accent2-50 border border-accent2-500 rounded mb-10">
-          <div className="rounded-full overflow-hidden w-12 h-12 bg-white items-center justify-center flex">
-            <Icon name={IconEnum.AWS} className="w-8 h-8" />
-          </div>
-          <div>
-            <h3 className="text-text-600 font-semibold text-sm mb-1">From $70 to $450/month</h3>
-            <p className="text-text-500 text-xs">
-              Approximate cost charged by the cloud provider based on your consumption
-            </p>
-          </div>
-        </div>
+        <BannerBox
+          iconRealColors
+          icon={IconEnum.AWS}
+          iconInCircle
+          type={BannerBoxEnum.DEFAULT}
+          className="mb-10"
+          message="Approximate cost charged by the cloud provider based on your consumption"
+          title="From $70 to $450/month"
+        />
       )}
     </div>
   )

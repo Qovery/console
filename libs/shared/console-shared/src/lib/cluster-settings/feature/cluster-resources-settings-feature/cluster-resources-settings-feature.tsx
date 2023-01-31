@@ -1,8 +1,12 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+import { fetchAvailableInstanceTypes } from '@qovery/domains/organization'
 import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
+import { AppDispatch } from '@qovery/store'
 import ClusterResourcesSettings from '../../ui/cluster-resources-settings/cluster-resources-settings'
+import { listInstanceTypeFormatter } from './utils/list-instance-type-formatter'
 
 export interface ClusterResourcesSettingsFeatureProps {
   fromDetail?: boolean
@@ -14,6 +18,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
   const [clusterTypeOptions, setClusterTypeOptions] = useState<Value[]>([])
   const [instanceTypeOptions, setInstanceTypeOptions] = useState<Value[]>([])
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
+  const dispatch = useDispatch<AppDispatch>()
 
   const watchClusterType = watch('cluster_type')
 
@@ -42,16 +47,22 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
   }, [props.cloudProvider, setValue, watchClusterType])
 
   useEffect(() => {
-    console.log('api call to fetch the good options', props.clusterRegion)
-    setInstanceTypeOptions([
-      { label: 't2.micro', value: 't2.micro' },
-      { label: 't2.small', value: 't2.small' },
-      { label: 't2.medium', value: 't2.medium' },
-      { label: 't2.large', value: 't2.large' },
-      { label: 't2.xlarge', value: 't2.xlarge' },
-      { label: 't2.2xlarge', value: 't2.2xlarge' },
-    ])
-  }, [watchClusterType])
+    dispatch(
+      fetchAvailableInstanceTypes({
+        region: props.clusterRegion || '',
+        clusterType: watchClusterType as KubernetesEnum,
+        provider: props.cloudProvider || CloudProviderEnum.AWS,
+      })
+    )
+      .unwrap()
+      .then((data) => {
+        if (data && data.results) {
+          setInstanceTypeOptions(listInstanceTypeFormatter(data.results))
+        } else {
+          setInstanceTypeOptions([])
+        }
+      })
+  }, [watchClusterType, dispatch, props.clusterRegion, props.cloudProvider])
 
   return (
     <ClusterResourcesSettings

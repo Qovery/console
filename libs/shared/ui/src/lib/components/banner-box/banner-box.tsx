@@ -24,7 +24,7 @@ export function BannerBox(props: BannerBoxProps) {
     title,
     message,
     className = '',
-    type = BannerBoxEnum.WARNING,
+    type = BannerBoxEnum.DEFAULT,
     dataTestId,
     iconRealColors = false,
     iconInCircle = false,
@@ -46,7 +46,7 @@ export function BannerBox(props: BannerBoxProps) {
 
   return (
     <div
-      data-testid={'warning-box' || dataTestId}
+      data-testid={'banner-box' || dataTestId}
       className={`border px-4 py-3 bg rounded flex ${className} ${boxClasses[type]}`}
     >
       <div className={`mr-3 shrink-0 ${iconInCircle ? circleIconWrapperClasses : ''}`}>

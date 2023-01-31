@@ -6,17 +6,21 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
+import { AxiosResponse } from 'axios'
 import {
+  CloudProviderEnum,
   CloudProvider,
   CloudProviderApi,
   Cluster,
   ClusterAdvancedSettings,
+  ClusterInstanceTypeResponseList,
   ClusterCloudProviderInfo,
   ClusterCloudProviderInfoRequest,
   ClusterLogs,
   ClusterRequest,
   ClusterStatus,
   ClustersApi,
+  KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { AdvancedSettings, ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
@@ -130,6 +134,25 @@ export const postCloudProviderInfo = createAsyncThunk<
     data.clusterCloudProviderInfo
   )
   return response.data as ClusterCloudProviderInfoRequest
+})
+
+export const fetchAvailableInstanceTypes = createAsyncThunk<
+  ClusterInstanceTypeResponseList,
+  { region: string; provider: CloudProviderEnum; clusterType: KubernetesEnum }
+>('cluster/fetchAvailableInstanceTypes', async (data) => {
+  let response: AxiosResponse<ClusterInstanceTypeResponseList>
+
+  if (data.provider === CloudProviderEnum.AWS) {
+    if (data.clusterType === KubernetesEnum.K3_S) {
+      response = await cloudProviderApi.listAWSEc2InstanceType(data.region)
+    } else {
+      response = await cloudProviderApi.listAWSEKSInstanceType(data.region)
+    }
+  } else {
+    response = await cloudProviderApi.listScalewayInstanceType()
+  }
+
+  return response.data
 })
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({

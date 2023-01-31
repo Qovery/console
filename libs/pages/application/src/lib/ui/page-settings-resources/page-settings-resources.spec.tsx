@@ -70,7 +70,7 @@ describe('PageSettingsResources', () => {
 
     const img = getAllByRole('img')[0]
 
-    getByTestId('warning-box')
+    getByTestId('banner-box')
     expect(img.classList.contains(IconAwesomeEnum.TRIANGLE_EXCLAMATION)).toBe(true)
   })
 
