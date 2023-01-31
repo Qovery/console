@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { selectClusterById, selectClustersLoadingStatus } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { RootState } from '@qovery/store'
-import PageSettingsFeature from '../../ui/page-settings-features/page-settings-features'
+import PageSettingsFeatures from '../../ui/page-settings-features/page-settings-features'
 
 export function PageSettingsFeaturesFeature() {
   const { clusterId = '' } = useParams()
@@ -12,7 +12,7 @@ export function PageSettingsFeaturesFeature() {
   const clusterStatusLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
 
   return (
-    <PageSettingsFeature
+    <PageSettingsFeatures
       features={cluster?.features}
       cloudProvider={cluster?.cloud_provider}
       loadingStatus={clusterStatusLoading}

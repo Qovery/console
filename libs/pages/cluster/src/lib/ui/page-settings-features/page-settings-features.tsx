@@ -20,6 +20,13 @@ export interface PageSettingsFeaturesProps {
 export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
   const { loadingStatus, features, cloudProvider } = props
 
+  const getValue = (value: boolean | string) => {
+    if (typeof value === 'string') {
+      return true
+    }
+    return value
+  }
+
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
@@ -38,12 +45,21 @@ export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {
               <LoaderSpinner className="w-4" />
             </div>
           )}
-          {features?.map((feature: ClusterFeature) => (
-            <div className="flex justify-between p-5 border-t border-element-light-lighter-500 first:border-0">
+          {features?.map((feature: ClusterFeature, index: number) => (
+            <div
+              data-testid="feature"
+              key={index}
+              className="flex justify-between p-5 border-t border-element-light-lighter-500 first:border-0"
+            >
               <div className="flex pr-8">
                 <Tooltip content="This feature is defined at cluster creation and cannot be modified">
                   <div>
-                    <InputToggle className="relative top-[2px]" disabled small value={true} />
+                    <InputToggle
+                      className="relative top-[2px]"
+                      disabled
+                      small
+                      value={getValue(feature.value || false)}
+                    />
                   </div>
                 </Tooltip>
                 <div>
