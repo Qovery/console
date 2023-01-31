@@ -11,6 +11,10 @@ describe('cluster reducer', () => {
         loadingStatus: 'not loaded',
         settings: undefined,
       },
+      cloudProvider: {
+        loadingStatus: 'not loaded',
+        items: [],
+      },
     })
 
     expect(clusterReducer(undefined, { type: '' })).toEqual(expected)

@@ -29,6 +29,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: theme('colors.element.light.lighter.400');
+  min-height: 100vh;
 
   main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));

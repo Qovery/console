@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Select, {
   GroupBase,
+  MenuListProps,
   MultiValue,
   MultiValueProps,
   NoticeProps,
@@ -10,6 +11,7 @@ import Select, {
   components,
 } from 'react-select'
 import { Value } from '@qovery/shared/interfaces'
+import IconFa from '../../icon-fa/icon-fa'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Tooltip from '../../tooltip/tooltip'
@@ -27,6 +29,11 @@ export interface InputSelectProps {
   portal?: boolean
   isSearchable?: boolean
   isClearable?: boolean
+  menuListButton?: {
+    label: string
+    onClick: () => void
+    icon?: ReactNode
+  }
 }
 
 export function InputSelect(props: InputSelectProps) {
@@ -42,6 +49,7 @@ export function InputSelect(props: InputSelectProps) {
     isMulti = undefined,
     isSearchable = false,
     isClearable = false,
+    menuListButton,
   } = props
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -90,6 +98,26 @@ export function InputSelect(props: InputSelectProps) {
     }
   }, [value, isMulti, options])
 
+  const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => (
+    <components.MenuList {...props}>
+      {props.children}
+      {menuListButton && (
+        <button
+          data-testid="input-menu-list-button"
+          type="button"
+          tabIndex={-1}
+          className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-element-light-lighter-300 before:absolute before:-top-2 before:left-0"
+          onClick={menuListButton.onClick}
+        >
+          <div className="w-4 h-full flex items-center justify-center">{menuListButton.icon}</div>
+          <Tooltip content={menuListButton.label}>
+            <label className="ml-2 truncate">{menuListButton.label}</label>
+          </Tooltip>
+        </button>
+      )}
+    </components.MenuList>
+  )
+
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
     <components.Option {...props}>
       {isMulti ? (
@@ -117,11 +145,7 @@ export function InputSelect(props: InputSelectProps) {
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span
-      className={`text-sm text-text-600 mr-1 ${props.data.icon && !props.isMulti ? selectedWithIconClassName : ''}`}
-    >
-      {props.data.label}
-    </span>
+    <span className="text-sm text-text-600 mr-1">{props.data.label}</span>
   )
 
   const NoOptionsMessage = (props: NoticeProps<Value>) => {
@@ -134,6 +158,9 @@ export function InputSelect(props: InputSelectProps) {
       </components.NoOptionsMessage>
     )
   }
+
+  const currentIcon = options.find((option) => option.value === selectedValue)
+  const hasIcon = !props.isMulti && currentIcon?.icon
 
   const inputActions =
     hasFocus && !disabled
@@ -150,13 +177,10 @@ export function InputSelect(props: InputSelectProps) {
     setHasLabelUp(hasFocus || selectedValue.length !== 0 ? 'input--label-up' : '')
   }, [hasFocus, selectedValue, setHasLabelUp])
 
-  const currentIcon = options.find((option) => option.value === selectedValue)
-  const hasIcon = !props.isMulti && currentIcon?.icon
-
   return (
     <div className={className}>
       <div
-        className={`input input--select ${inputActions} ${
+        className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
           disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
         }`}
         data-testid={dataTestId || 'select'}
@@ -179,6 +203,18 @@ export function InputSelect(props: InputSelectProps) {
         >
           {label}
         </label>
+        {currentIcon?.onClickEditable && (
+          <div
+            data-testid="selected-edit-icon"
+            className="cursor-pointer flex items-center justify-center text-sm text-text-500 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
+            onClick={(event) => {
+              event.stopPropagation()
+              currentIcon.onClickEditable && currentIcon.onClickEditable()
+            }}
+          >
+            <IconFa name={IconAwesomeEnum.PEN} />
+          </div>
+        )}
         <Select
           options={options}
           isMulti={isMulti}
@@ -188,10 +224,11 @@ export function InputSelect(props: InputSelectProps) {
             MultiValue,
             SingleValue,
             NoOptionsMessage,
+            MenuList,
           }}
           name={label}
           inputId={label}
-          menuPlacement={'auto'}
+          menuPlacement="auto"
           closeMenuOnSelect={!isMulti}
           onChange={handleChange}
           classNamePrefix="input-select"

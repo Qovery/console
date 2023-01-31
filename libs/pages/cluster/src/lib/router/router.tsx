@@ -10,6 +10,7 @@ import {
   Route,
 } from '@qovery/shared/routes'
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
+import PageSettingsCredentialsFeature from '../feature/page-settings-credentials-feature/page-settings-credentials-feature'
 import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsFeaturesFeature from '../feature/page-settings-features-feature/page-settings-features-feature'
@@ -30,7 +31,7 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   },
   {
     path: CLUSTER_SETTINGS_CREDENTIALS_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsCredentialsFeature />,
   },
   {
     path: CLUSTER_SETTINGS_RESOURCES_URL,

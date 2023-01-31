@@ -86,4 +86,56 @@ describe('InputSelect', () => {
     const select = screen.getByTestId('select')
     expect(select.classList.contains('!bg-element-light-lighter-200')).toBeTruthy()
   })
+
+  it('should have a edit button when option is selected', async () => {
+    const mockAction = jest.fn()
+
+    props.options = [
+      {
+        label: 'Test 1',
+        value: 'test1',
+        icon: <Icon name={IconEnum.GITHUB} className="w-4" />,
+        onClickEditable: mockAction,
+      },
+      {
+        label: 'Test 2',
+        value: 'test2',
+        icon: <Icon name={IconEnum.GITLAB} className="w-4" />,
+        onClickEditable: mockAction,
+      },
+    ]
+    const { getByTestId } = render(<InputSelect {...props} />)
+    const realSelect = screen.getByLabelText('Select Multiple')
+
+    await act(() => {
+      selectEvent.select(realSelect, ['Test 2', 'Test 1'])
+    })
+
+    await act(() => {
+      const editIcon = getByTestId('selected-edit-icon')
+      editIcon.click()
+    })
+
+    expect(mockAction).toHaveBeenCalledTimes(1)
+  })
+
+  it('should have a button on the menu list with action', async () => {
+    props.menuListButton = {
+      label: 'New element',
+      onClick: jest.fn(),
+    }
+    const { getByTestId } = render(<InputSelect {...props} />)
+    const realSelect = screen.getByLabelText('Select Multiple')
+
+    await act(() => {
+      selectEvent.openMenu(realSelect)
+    })
+
+    await act(() => {
+      const input = getByTestId('input-menu-list-button')
+      input.click()
+    })
+
+    expect(props.menuListButton.onClick).toHaveBeenCalledTimes(1)
+  })
 })

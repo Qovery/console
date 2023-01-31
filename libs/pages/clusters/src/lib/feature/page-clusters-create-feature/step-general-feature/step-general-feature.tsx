@@ -1,14 +1,20 @@
+import { CloudProvider, CloudProviderEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { ApplicationGeneralData } from '@qovery/shared/interfaces'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchCloudProvider, getClusterState } from '@qovery/domains/organization'
+import { ClusterGeneralData } from '@qovery/shared/interfaces'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store'
 import StepGeneral from '../../../ui/page-clusters-create/step-general/step-general'
 import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Cluster')
   const { setGeneralData, generalData, setCurrentStep } = useClusterContainerCreateContext()
+  const dispatch = useDispatch<AppDispatch>()
+  const cloudProvider = useSelector((state: RootState) => getClusterState(state).cloudProvider)
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -36,10 +42,24 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const methods = useForm<ApplicationGeneralData>({
+  const methods = useForm<ClusterGeneralData>({
     defaultValues: generalData,
     mode: 'onChange',
   })
+
+  useEffect(() => {
+    if (cloudProvider.loadingStatus !== 'loaded')
+      // set AWS by default
+      dispatch(fetchCloudProvider())
+        .unwrap()
+        .then((result: CloudProvider[]) => {
+          const providerByDefault = result?.filter((cloud) => cloud.short_name === CloudProviderEnum.AWS)[0]
+          if (providerByDefault) {
+            methods.setValue('cloud_provider', providerByDefault.short_name as CloudProviderEnum)
+            methods.setValue('region', providerByDefault.regions ? providerByDefault.regions[0].name : '')
+          }
+        })
+  }, [cloudProvider.loadingStatus, dispatch, methods])
 
   const onSubmit = methods.handleSubmit((data) => {
     setGeneralData(data)
@@ -50,7 +70,7 @@ export function StepGeneralFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepGeneral onSubmit={onSubmit} />
+        <StepGeneral onSubmit={onSubmit} cloudProviders={cloudProvider.items} />
       </FormProvider>
     </FunnelFlowBody>
   )

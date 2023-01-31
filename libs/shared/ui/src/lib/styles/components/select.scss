@@ -21,6 +21,11 @@
   @apply mt-2 top-1;
 }
 
+.input--has-icon .input-select__control {
+  padding-left: theme('spacing.8');
+  transition-property: transform;
+}
+
 // state
 .input-select--error {
   @apply border-error-500;
@@ -63,7 +68,8 @@
 }
 
 // option
-.input-select__option {
+.input-select__option,
+.input-select__button {
   display: flex !important;
   background: #fff !important;
   padding: 8px !important;
@@ -101,6 +107,10 @@
 
 .input-select__option--is-focused,
 .input-select__option--is-focused.input-select__option--is-selected,
+.input-select__button:hover,
 .input-select__option--is-focused:hover {
-  background: theme('colors.element.light.lighter.300') !important;
+  background: theme('colors.brand.50') !important;
+  label {
+    color: theme('colors.brand.500') !important;
+  }
 }

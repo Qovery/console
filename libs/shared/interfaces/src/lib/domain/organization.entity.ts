@@ -1,4 +1,6 @@
 import {
+  CloudProviderEnum,
+  ClusterCredentials,
   ContainerRegistryResponse,
   InviteMember,
   Member,
@@ -7,6 +9,10 @@ import {
   OrganizationCustomRole,
 } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
+
+export interface ClusterCredentialsEntity extends ClusterCredentials {
+  cloudProvider: CloudProviderEnum
+}
 
 export interface OrganizationEntity extends Organization {
   containerRegistries?: {
@@ -28,5 +34,9 @@ export interface OrganizationEntity extends Organization {
   availableRoles?: {
     loadingStatus: LoadingStatus
     items?: OrganizationAvailableRole[]
+  }
+  credentials?: {
+    loadingStatus: LoadingStatus
+    items?: ClusterCredentialsEntity[]
   }
 }

@@ -26,6 +26,7 @@ import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
+import { credentialsExtraReducers } from './credentials'
 
 export const ORGANIZATION_KEY = 'organizations'
 
@@ -230,6 +231,7 @@ export const organizationSlice = createSlice({
     removeOrganization: organizationAdapter.removeOne,
   },
   extraReducers: (builder) => {
+    credentialsExtraReducers(builder)
     builder
       .addCase(fetchOrganization.pending, (state: OrganizationState) => {
         state.loadingStatus = 'loading'

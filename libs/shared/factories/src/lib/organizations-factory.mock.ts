@@ -1,5 +1,6 @@
 import { Chance } from 'chance'
 import {
+  CloudProviderEnum,
   ContainerRegistryKindEnum,
   ContainerRegistryResponse,
   EnvironmentModeEnum,
@@ -12,7 +13,7 @@ import {
   OrganizationCustomRoleProjectPermission,
   PlanEnum,
 } from 'qovery-typescript-axios'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { ClusterCredentialsEntity, OrganizationEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 
@@ -50,6 +51,10 @@ export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =
       loadingStatus: 'loaded',
       items: availableRolesMock,
     },
+    credentials: {
+      loadingStatus: 'loaded',
+      items: credentialsMock(2),
+    },
   }))
 
 export const availableRolesMock = [
@@ -62,6 +67,13 @@ export const availableRolesMock = [
     name: 'Owner',
   },
 ]
+
+export const credentialsMock = (howMany: number): ClusterCredentialsEntity[] =>
+  Array.from({ length: howMany }).map((_, index) => ({
+    id: `${index}`,
+    name: chance.name(),
+    cloudProvider: CloudProviderEnum.AWS,
+  }))
 
 export const membersMock = (howMany: number, roleName = 'Admin', customIndex?: string): Member[] =>
   Array.from({ length: howMany }).map((_, index) => ({

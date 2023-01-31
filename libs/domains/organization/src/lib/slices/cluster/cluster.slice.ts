@@ -7,8 +7,12 @@ import {
   createSlice,
 } from '@reduxjs/toolkit'
 import {
+  CloudProvider,
+  CloudProviderApi,
   Cluster,
   ClusterAdvancedSettings,
+  ClusterCloudProviderInfo,
+  ClusterCloudProviderInfoRequest,
   ClusterLogs,
   ClusterRequest,
   ClusterStatus,
@@ -22,6 +26,7 @@ import { RootState } from '@qovery/store'
 export const CLUSTER_FEATURE_KEY = 'cluster'
 
 const clusterApi = new ClustersApi()
+const cloudProviderApi = new CloudProviderApi()
 
 export const clusterAdapter = createEntityAdapter<ClusterEntity>()
 
@@ -102,6 +107,31 @@ export const fetchClusterAdvancedSettings = createAsyncThunk<
   return response.data as ClusterAdvancedSettings
 })
 
+export const fetchCloudProvider = createAsyncThunk<CloudProvider[]>('cluster-cloud-provider/fetch', async () => {
+  const response = await cloudProviderApi.listCloudProvider()
+  return response.data.results as CloudProvider[]
+})
+
+export const fetchCloudProviderInfo = createAsyncThunk<
+  ClusterCloudProviderInfo,
+  { organizationId: string; clusterId: string }
+>('cluster-cloud-provider-info/fetch', async (data) => {
+  const response = await clusterApi.getOrganizationCloudProviderInfo(data.organizationId, data.clusterId)
+  return response.data as ClusterCloudProviderInfo
+})
+
+export const postCloudProviderInfo = createAsyncThunk<
+  ClusterCloudProviderInfo,
+  { organizationId: string; clusterId: string; clusterCloudProviderInfo: ClusterCloudProviderInfoRequest }
+>('cluster-cloud-provider-info/post', async (data) => {
+  const response = await clusterApi.specifyClusterCloudProviderInfo(
+    data.organizationId,
+    data.clusterId,
+    data.clusterCloudProviderInfo
+  )
+  return response.data as ClusterCloudProviderInfoRequest
+})
+
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -110,6 +140,10 @@ export const initialClusterState: ClustersState = clusterAdapter.getInitialState
   defaultClusterAdvancedSettings: {
     loadingStatus: 'not loaded',
     settings: undefined,
+  },
+  cloudProvider: {
+    loadingStatus: 'not loaded',
+    items: [],
   },
 })
 
@@ -358,6 +392,67 @@ export const clusterSlice = createSlice({
           `Your advanced settings have not been updated. Something must be wrong with the values provided`
         )
         clusterAdapter.updateOne(state, update)
+      })
+      // cloud provider
+      .addCase(fetchCloudProvider.pending, (state: ClustersState) => {
+        state.cloudProvider.loadingStatus = 'loading'
+      })
+      .addCase(fetchCloudProvider.fulfilled, (state: ClustersState, action: PayloadAction<CloudProvider[]>) => {
+        state.cloudProvider.items = action.payload
+        state.cloudProvider.loadingStatus = 'loaded'
+      })
+      .addCase(fetchCloudProvider.rejected, (state: ClustersState) => {
+        state.cloudProvider.loadingStatus = 'error'
+      })
+      // fetch cloud provider info
+      .addCase(fetchCloudProviderInfo.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            cloudProviderInfo: {
+              loadingStatus: 'loaded',
+              item: action.payload,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchCloudProviderInfo.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            cloudProviderInfo: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      // post cloud provider info
+      .addCase(postCloudProviderInfo.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            cloudProviderInfo: {
+              loadingStatus: 'loading',
+              item: action.payload,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+        toast(ToastEnum.SUCCESS, 'Credentials updated')
+      })
+      .addCase(postCloudProviderInfo.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            extendedStatus: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+        toastError(action.error)
       })
   },
 })
