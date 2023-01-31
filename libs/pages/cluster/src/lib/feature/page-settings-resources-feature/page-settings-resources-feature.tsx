@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editCluster, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, ClusterResourcesData } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
-import { handleSubmit } from '../page-settings-general-feature/page-settings-general-feature'
+
+export const handleSubmit = (data: FieldValues, cluster: ClusterEntity): Partial<ClusterEntity> => {
+  return {
+    ...cluster,
+    max_running_nodes: data['nodes'][1],
+    min_running_nodes: data['nodes'][0],
+    disk_size: data['disk_size'],
+    instance_type: data['instance_type'],
+  }
+}
 
 export function PageSettingsResourcesFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
@@ -33,8 +42,7 @@ export function PageSettingsResourcesFeature() {
         })
       )
         .unwrap()
-        .then(() => setLoading(false))
-        .catch(() => setLoading(false))
+        .finally(() => setLoading(false))
     }
   })
 

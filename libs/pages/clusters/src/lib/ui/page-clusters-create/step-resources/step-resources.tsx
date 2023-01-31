@@ -30,7 +30,6 @@ export function StepResources(props: StepResourcesProps) {
           clusterRegion={props.clusterRegion}
           fromDetail={false}
         />
-        {/* <div className="border-b border-b-element-light-lighter-400 mb-6"></div> */}
 
         <div className="flex justify-between">
           <Button

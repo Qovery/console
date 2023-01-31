@@ -1,4 +1,3 @@
-import ResizeObserver from '__tests__/utils/resize-observer'
 import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { applicationFactoryMock } from '@qovery/shared/factories'
@@ -26,7 +25,6 @@ jest.mock('react-hook-form', () => ({
 }))
 
 describe('PageSettingsResources', () => {
-  window.ResizeObserver = ResizeObserver
   let defaultValues: ApplicationResourcesData
 
   beforeEach(() => {

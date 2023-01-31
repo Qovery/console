@@ -1,5 +1,4 @@
 import { getByLabelText, getByTestId, getByText, queryByTestId } from '@testing-library/react'
-import ResizeObserver from '__tests__/utils/resize-observer'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ClusterResourcesData } from '@qovery/shared/interfaces'
@@ -9,7 +8,6 @@ describe('ClusterResourcesSettings', () => {
   let defaultValues: ClusterResourcesData
   let props: ClusterResourcesSettingsProps
   beforeEach(() => {
-    window.ResizeObserver = ResizeObserver
     defaultValues = {
       instance_type: 't3.medium',
       disk_size: 20,

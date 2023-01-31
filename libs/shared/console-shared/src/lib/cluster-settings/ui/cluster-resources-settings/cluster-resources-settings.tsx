@@ -25,28 +25,36 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   return (
     <div>
       <BlockContent title="Cluster" className="mb-5">
-        <Controller
-          name="cluster_type"
-          control={control}
-          rules={{
-            required: 'Please select a cluster type',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <>
-              {props.clusterTypeOptions?.map((option) => (
-                <InputRadioBox
-                  key={option.value}
-                  fieldValue={field.value}
-                  onChange={field.onChange}
-                  name={field.name}
-                  label={option.label}
-                  value={option.value}
-                  description={option.description}
-                />
-              ))}
-            </>
-          )}
-        />
+        {!props.fromDetail ? (
+          <Controller
+            name="cluster_type"
+            control={control}
+            rules={{
+              required: 'Please select a cluster type',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <>
+                {props.clusterTypeOptions?.map((option) => (
+                  <InputRadioBox
+                    key={option.value}
+                    fieldValue={field.value}
+                    onChange={field.onChange}
+                    name={field.name}
+                    label={option.label}
+                    value={option.value}
+                    description={option.description}
+                  />
+                ))}
+              </>
+            )}
+          />
+        ) : (
+          <div className="border border-element-light-lighter-500 rounded p-4 text-text-500 text-sm">
+            {props.clusterTypeOptions &&
+              props.clusterTypeOptions[0] &&
+              `${props.clusterTypeOptions[0].label} - ${props.clusterTypeOptions[0].description}`}
+          </div>
+        )}
       </BlockContent>
       <BlockContent title="Cluster Nodes" className="mb-8">
         <Controller

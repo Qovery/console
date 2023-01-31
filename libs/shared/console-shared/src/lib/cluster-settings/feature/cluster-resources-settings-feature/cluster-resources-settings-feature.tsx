@@ -38,13 +38,18 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
         { label: 'Managed K8S (KAPSULE)', value: KubernetesEnum.MANAGED, description: 'Multiple node cluster' },
       ]
     }
+
+    // we can't change clusterType after creation, this is why we filter the options
+    if (props.fromDetail) {
+      clusterTypeOptions = clusterTypeOptions.filter((option) => option.value === watchClusterType)
+    }
     setClusterTypeOptions(clusterTypeOptions)
 
-    if (!watchClusterType) {
+    if (!props.fromDetail && !watchClusterType) {
       // set the default value
       setValue('cluster_type', clusterTypeOptions[0].value)
     }
-  }, [props.cloudProvider, setValue, watchClusterType])
+  }, [props.cloudProvider, setValue, watchClusterType, props.fromDetail])
 
   useEffect(() => {
     dispatch(

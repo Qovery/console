@@ -1,4 +1,3 @@
-import ResizeObserver from '__tests__/utils/resize-observer'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { JobResourcesData } from '@qovery/shared/interfaces'
@@ -11,7 +10,6 @@ const props: StepResourcesProps = {
 
 describe('Resources', () => {
   it('should render successfully', () => {
-    window.ResizeObserver = ResizeObserver
     const { baseElement } = render(
       wrapWithReactHookForm<JobResourcesData>(<StepResources {...props} />, {
         defaultValues: {
