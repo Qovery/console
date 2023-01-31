@@ -2,7 +2,7 @@ import { CloudProviderEnum, ClusterCredentials } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { editCredentials, postCredentials } from '@qovery/domains/organization'
+import { deleteCredentials, editCredentials, postCredentials } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
@@ -89,6 +89,19 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
     }
   })
 
+  const onDelete = () => {
+    if (currentCredential?.id)
+      dispatch(
+        deleteCredentials({
+          cloudProvider,
+          organizationId,
+          credentialsId: currentCredential.id,
+        })
+      )
+        .unwrap()
+        .then(() => onClose())
+  }
+
   return (
     <FormProvider {...methods}>
       <CreateEditCredentialsModal
@@ -96,6 +109,7 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
         onSubmit={onSubmit}
         onClose={onClose}
         isEdit={!!currentCredential}
+        onDelete={onDelete}
         loading={loading}
       />
     </FormProvider>

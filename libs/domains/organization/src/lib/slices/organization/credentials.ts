@@ -51,6 +51,22 @@ export const postCredentials = createAsyncThunk(
   }
 )
 
+export const deleteCredentials = createAsyncThunk(
+  'organization/delete-credentials',
+  async (payload: { cloudProvider: CloudProviderEnum; organizationId: string; credentialsId: string }) => {
+    let response
+    if (payload.cloudProvider === CloudProviderEnum.AWS)
+      response = await cloudProviderCredentialsApi.deleteAWSCredentials(payload.credentialsId, payload.organizationId)
+    if (payload.cloudProvider === CloudProviderEnum.SCW)
+      response = await cloudProviderCredentialsApi.deleteScalewayCredentials(
+        payload.credentialsId,
+        payload.organizationId
+      )
+
+    return response
+  }
+)
+
 export const editCredentials = createAsyncThunk(
   'organization/edit-credentials',
   async (payload: {
@@ -179,6 +195,27 @@ export const credentialsExtraReducers = (builder: ActionReducerMapBuilder<Organi
       toast(ToastEnum.SUCCESS, 'Credentials updated')
     })
     .addCase(editCredentials.rejected, (state: OrganizationState, action) => {
+      toastError(action.error)
+    })
+    // delete credentials
+    .addCase(deleteCredentials.fulfilled, (state: OrganizationState, action) => {
+      const credentials = state.entities[action.meta.arg.organizationId]?.credentials?.items || []
+      const currentCredentials = credentials.filter((obj) => obj.id !== action.meta.arg.credentialsId)
+
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          credentials: {
+            loadingStatus: 'loaded',
+            items: currentCredentials,
+          },
+        },
+      }
+
+      organizationAdapter.updateOne(state, update)
+      toast(ToastEnum.SUCCESS, 'Credentials deleted')
+    })
+    .addCase(deleteCredentials.rejected, (state: OrganizationState, action) => {
       toastError(action.error)
     })
 }

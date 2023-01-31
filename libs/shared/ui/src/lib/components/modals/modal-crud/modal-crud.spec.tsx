@@ -31,6 +31,21 @@ describe('ModalCrud', () => {
     })
   })
 
+  it('should delete the form', async () => {
+    props.onDelete = jest.fn()
+    props.deleteButtonLabel = 'Delete this element'
+
+    render(wrapWithReactHookForm(<ModalCrud {...props} />))
+
+    const button = screen.getByTestId('delete-button')
+
+    await waitFor(() => {
+      button.click()
+      expect(button.textContent).toBe(props.deleteButtonLabel)
+      expect(props.onDelete).toHaveBeenCalled()
+    })
+  })
+
   it('should cancel the form', async () => {
     const onClose = jest.fn()
     props.onClose = onClose
