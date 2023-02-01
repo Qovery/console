@@ -68,6 +68,9 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
           setInstanceTypeOptions([])
         }
       })
+      .catch((err) => {
+        console.log(err)
+      })
   }, [watchClusterType, dispatch, props.clusterRegion, props.cloudProvider])
 
   return (
