@@ -10,7 +10,7 @@ describe('CreateEditCredentialsModal', () => {
   beforeEach(() => {
     props = {
       onClose: jest.fn(),
-      onSubmit: jest.fn(),
+      onSubmit: jest.fn((e) => e.preventDefault()),
       loading: false,
       isEdit: false,
       cloudProvider: CloudProviderEnum.AWS,
