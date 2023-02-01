@@ -47,7 +47,7 @@ jobs:
     with:
       number-of-agents: 3
       parallel-commands-on-agents: |
-        npx nx affected --target=test --parallel=3 --ci --code-coverage --coverageReporters=lcov --silent
+        npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --code-coverage --coverageReporters=lcov --silent
         npx nx affected --target=build --parallel=3 --configuration=${{ inputs.configuration }}
 
   agents:

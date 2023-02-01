@@ -8,6 +8,13 @@ import UpdateAllModalFeature, { UpdateAllModalFeatureProps } from './update-all-
 
 import SpyInstance = jest.SpyInstance
 
+jest.mock('@qovery/domains/environment', () => {
+  return {
+    ...jest.requireActual('@qovery/domains/environment'),
+    postEnvironmentServicesUpdate: jest.fn(),
+  }
+})
+
 const mockApplications = applicationFactoryMock(3).map((app) => {
   return {
     ...app,
