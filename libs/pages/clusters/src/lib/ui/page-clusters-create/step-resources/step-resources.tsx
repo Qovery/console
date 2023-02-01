@@ -26,7 +26,7 @@ export function StepResources(props: StepResourcesProps) {
 
       <form onSubmit={props.onSubmit}>
         <ClusterResourcesSettingsFeature
-          cloudProvider={CloudProviderEnum.AWS}
+          cloudProvider={props.cloudProvider}
           clusterRegion={props.clusterRegion}
           fromDetail={false}
         />

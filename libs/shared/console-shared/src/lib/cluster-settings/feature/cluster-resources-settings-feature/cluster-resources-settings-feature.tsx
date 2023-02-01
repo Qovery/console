@@ -62,7 +62,8 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       .unwrap()
       .then((data) => {
         if (data && data.results) {
-          setInstanceTypeOptions(listInstanceTypeFormatter(data.results))
+          const list = listInstanceTypeFormatter(data.results)
+          setInstanceTypeOptions(list)
         } else {
           setInstanceTypeOptions([])
         }

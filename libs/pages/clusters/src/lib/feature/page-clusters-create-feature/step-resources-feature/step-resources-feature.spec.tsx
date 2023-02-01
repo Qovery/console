@@ -8,34 +8,28 @@ import StepResourcesFeature from './step-resources-feature'
 
 const mockInstanceType = [
   {
-    label: 't2.micro (1CPU - 1GB RAM)',
-    value: 't2.micro',
+    name: 't2.micro',
+    cpu: 1,
+    ram_in_gb: 1,
+    type: 't2.micro',
   },
   {
-    label: 't2.small (1CPU - 2GB RAM)',
-    value: 't2.small',
+    name: 't2.small',
+    cpu: 1,
+    ram_in_gb: 2,
+    type: 't2.small',
   },
   {
-    label: 't2.medium (2CPU - 4GB RAM)',
-    value: 't2.medium',
+    name: 't2.medium',
+    cpu: 2,
+    ram_in_gb: 4,
+    type: 't2.medium',
   },
 ]
 
-jest.mock('@qovery/shared/console-shared', () => ({
-  ...jest.requireActual('@qovery/shared/console-shared'),
-  listInstanceTypeFormatter: jest.fn().mockImplementation((a: any) => {
-    return mockInstanceType
-  }),
-}))
-
 jest.mock('@qovery/domains/organization', () => ({
   ...jest.requireActual('@qovery/domains/organization'),
-  fetchAvailableInstanceTypes: jest.fn().mockImplementation(() => ({
-    unwrap: () =>
-      Promise.resolve({
-        data: mockInstanceType,
-      }),
-  })),
+  fetchAvailableInstanceTypes: jest.fn(),
 }))
 
 const mockDispatch = jest.fn()
@@ -77,6 +71,13 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 
 describe('StepResourcesFeature', () => {
   it('should render successfully', () => {
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve({
+          results: [...mockInstanceType],
+        }),
+    }))
+
     const { baseElement } = render(
       <ContextWrapper>
         <StepResourcesFeature />
@@ -89,7 +90,7 @@ describe('StepResourcesFeature', () => {
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
-          data: {},
+          results: [...mockInstanceType],
         }),
     }))
 
@@ -100,7 +101,7 @@ describe('StepResourcesFeature', () => {
     )
 
     const select = getByLabelText(baseElement, 'Instance type')
-    selectEvent.select(select, mockInstanceType[1].value, {
+    selectEvent.select(select, 't2.small (1CPU - 2GB RAM)', {
       container: document.body,
     })
 
