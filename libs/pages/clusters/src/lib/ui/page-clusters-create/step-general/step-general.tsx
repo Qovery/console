@@ -1,5 +1,5 @@
 import { CloudProvider, CloudProviderEnum, ClusterRegion } from 'qovery-typescript-axios'
-import { FormEventHandler, useCallback, useEffect, useState } from 'react'
+import { FormEventHandler, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
@@ -30,12 +30,7 @@ export function StepGeneral(props: StepGeneralProps) {
 
   const [currentProvider, setCurrentProvider] = useState<CloudProvider>()
 
-  useEffect(() => {
-    const providerByDefault = cloudProviders?.filter((cloud) => cloud.short_name === CloudProviderEnum.AWS)[0]
-    setCurrentProvider(providerByDefault)
-  }, [cloudProviders])
-
-  const buildCloudProviders: () => Value[] = useCallback(
+  const buildCloudProviders: Value[] = useMemo(
     () =>
       cloudProviders.map((value) => ({
         label: upperCaseFirstLetter(value.name) || '',
@@ -47,7 +42,7 @@ export function StepGeneral(props: StepGeneralProps) {
     [cloudProviders]
   )
 
-  const buildRegions: () => Value[] = useCallback(
+  const buildRegions: Value[] = useMemo(
     () =>
       currentProvider?.regions?.map((region: ClusterRegion) => ({
         label: `${region.city} (${region.name})`,
@@ -71,7 +66,7 @@ export function StepGeneral(props: StepGeneralProps) {
         </div>
         <div className="mb-10">
           <h4 className="mb-3 text-text-700 text-sm">Provider credentials</h4>
-          {currentProvider ? (
+          {cloudProviders.length > 0 ? (
             <>
               <BannerBox
                 className="mb-4"
@@ -89,7 +84,7 @@ export function StepGeneral(props: StepGeneralProps) {
                     dataTestId="input-cloud-provider"
                     label="Cloud provider"
                     className="mb-3"
-                    options={buildCloudProviders()}
+                    options={buildCloudProviders}
                     onChange={(value) => {
                       const currentProvider = cloudProviders?.filter(
                         (cloud) => cloud.short_name === value && cloud.regions
@@ -103,27 +98,31 @@ export function StepGeneral(props: StepGeneralProps) {
                   />
                 )}
               />
-              <Controller
-                name="region"
-                control={control}
-                rules={{
-                  required: 'Please select a region.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputSelect
-                    dataTestId="input-region"
-                    label="Region"
-                    className="mb-3"
-                    options={buildRegions()}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    isSearchable
-                    portal
+              {currentProvider && (
+                <>
+                  <Controller
+                    name="region"
+                    control={control}
+                    rules={{
+                      required: 'Please select a region.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputSelect
+                        dataTestId="input-region"
+                        label="Region"
+                        className="mb-3"
+                        options={buildRegions}
+                        onChange={field.onChange}
+                        value={field.value}
+                        error={error?.message}
+                        isSearchable
+                        portal
+                      />
+                    )}
                   />
-                )}
-              />
-              <ClusterCredentialsSettingsFeature cloudProvider={currentProvider.short_name as CloudProviderEnum} />
+                  <ClusterCredentialsSettingsFeature cloudProvider={currentProvider.short_name as CloudProviderEnum} />
+                </>
+              )}
             </>
           ) : (
             <div className="flex justify-center mt-2">
