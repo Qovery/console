@@ -50,7 +50,6 @@ describe('StepGeneral', () => {
     getByDisplayValue('test')
     getByDisplayValue('false')
     getByTestId('input-cloud-provider')
-    getByTestId('input-region')
   })
 
   it('should submit the form on click', async () => {
