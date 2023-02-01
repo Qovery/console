@@ -94,7 +94,7 @@ describe('PageSettingsCredentialsFeature', () => {
     getByTestId('input-credentials')
     const realSelect = getByLabelText('Credentials')
 
-    const item = (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || ''
+    const item = (mockOrganization.credentials?.items && mockOrganization.credentials?.items[0].id) || ''
 
     await waitFor(() => {
       selectEvent.select(realSelect, item)
@@ -110,9 +110,11 @@ describe('PageSettingsCredentialsFeature', () => {
       {
         credentials: item,
       },
-      mockCredentials,
+      mockOrganization.credentials?.items,
       mockCluster
     )
+
+    console.log(cloneClusterProviderInfo)
 
     expect(editClusterSpy).toHaveBeenCalledWith({
       organizationId: '0',

@@ -427,6 +427,7 @@ export const clusterSlice = createSlice({
           },
         }
         clusterAdapter.updateOne(state, update)
+        toastError(action.error)
       })
       // post cloud provider info
       .addCase(postCloudProviderInfo.fulfilled, (state: ClustersState, action) => {

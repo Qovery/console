@@ -18,7 +18,7 @@
 }
 
 .toast__content {
-  @apply pl-3 pr-4 py-2 break-words w-64;
+  @apply pl-3 pr-4 py-2 break-words max-w-[256px];
 }
 
 .toast__close {

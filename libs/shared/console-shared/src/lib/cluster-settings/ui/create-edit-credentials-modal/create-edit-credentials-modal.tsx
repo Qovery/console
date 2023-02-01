@@ -8,6 +8,7 @@ export interface CreateEditCredentialsModalProps {
   loading?: boolean
   isEdit?: boolean
   cloudProvider?: CloudProviderEnum
+  onDelete?: () => void
 }
 
 export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProps) {
@@ -18,6 +19,8 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       title={`${props.isEdit ? `Edit` : 'New'} credentials`}
       onSubmit={props.onSubmit}
       onClose={props.onClose}
+      onDelete={props.onDelete}
+      deleteButtonLabel="Delete credentials"
       loading={props.loading}
       isEdit={props.isEdit}
     >

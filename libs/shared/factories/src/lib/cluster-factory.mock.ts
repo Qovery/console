@@ -29,4 +29,15 @@ export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudP
         status: chance.pickone(Object.values(StateEnum)),
       },
     },
+    cloudProviderInfo: {
+      loadingStatus: 'loaded',
+      item: {
+        cloud_provider: customCloudProvider || CloudProviderEnum.AWS,
+        credentials: {
+          id: '0',
+          name: 'credentials',
+        },
+        region: 'eu-west',
+      },
+    },
   }))

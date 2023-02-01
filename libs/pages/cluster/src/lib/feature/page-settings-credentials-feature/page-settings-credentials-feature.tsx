@@ -11,6 +11,7 @@ import {
   selectOrganizationById,
 } from '@qovery/domains/organization'
 import { ClusterCredentialsEntity, ClusterEntity } from '@qovery/shared/interfaces'
+import { ToastEnum, toast } from '@qovery/shared/toast'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsCredentials from '../../ui/page-settings-credentials/page-settings-credentials'
 
@@ -45,7 +46,9 @@ export function PageSettingsCredentialsFeature() {
   )
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data && cluster) {
+    const findCredentials = credentials?.find((credential) => credential.id === data['credentials'])
+
+    if (data && cluster && findCredentials) {
       setLoading(true)
 
       const clusterCloudProviderInfo = handleSubmit(data, credentials, cluster) as ClusterCloudProviderInfoRequest
@@ -53,16 +56,21 @@ export function PageSettingsCredentialsFeature() {
       dispatch(postCloudProviderInfo({ organizationId, clusterId, clusterCloudProviderInfo }))
         .unwrap()
         .finally(() => setLoading(false))
+    } else {
+      toast(ToastEnum.ERROR, 'Please select a credential')
     }
   })
 
   useEffect(() => {
-    if (clustersLoading === 'loaded' && cluster?.cloudProviderInfo?.loadingStatus !== 'loaded') {
-      dispatch(fetchCloudProviderInfo({ organizationId, clusterId }))
-        .unwrap()
-        .then((result: ClusterCloudProviderInfo) => methods.setValue('credentials', result.credentials?.id))
-    } else {
-      methods.setValue('credentials', cluster?.cloudProviderInfo?.item?.credentials?.id)
+    if (cluster?.cloudProviderInfo?.loadingStatus !== 'error') {
+      if (clustersLoading === 'loaded' && cluster?.cloudProviderInfo?.loadingStatus !== 'loaded') {
+        dispatch(fetchCloudProviderInfo({ organizationId, clusterId }))
+          .unwrap()
+          .then((result: ClusterCloudProviderInfo) => methods.setValue('credentials', result.credentials?.id))
+          .catch((error) => console.log(error))
+      } else {
+        methods.setValue('credentials', cluster?.cloudProviderInfo?.item?.credentials?.id)
+      }
     }
   }, [clustersLoading, methods, organizationId, clusterId, dispatch, cluster?.cloudProviderInfo])
 

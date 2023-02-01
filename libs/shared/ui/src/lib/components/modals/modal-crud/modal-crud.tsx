@@ -14,15 +14,29 @@ export interface ModalCrudProps {
   description?: string
   submitLabel?: string
   forService?: ApplicationEntity
+  onDelete?: () => void
+  deleteButtonLabel?: string
 }
 
 export function ModalCrud(props: ModalCrudProps) {
-  const { children, title, isEdit, description, forService } = props
+  const {
+    onSubmit,
+    onClose,
+    loading,
+    children,
+    title,
+    isEdit,
+    description,
+    forService,
+    onDelete,
+    submitLabel,
+    deleteButtonLabel,
+  } = props
   const { formState, trigger } = useFormContext()
 
   useEffect(() => {
-    if (props.isEdit) trigger().then()
-  }, [trigger, props.isEdit])
+    if (isEdit) trigger().then()
+  }, [trigger, isEdit])
 
   return (
     <div className="p-6">
@@ -38,27 +52,39 @@ export function ModalCrud(props: ModalCrudProps) {
           </p>
         </div>
       )}
-      <form onSubmit={props.onSubmit}>
+      <form onSubmit={onSubmit}>
         {children}
         <div className="flex gap-3 justify-end mt-6">
-          <Button
-            dataTestId="cancel-button"
-            className="btn--no-min-w"
-            style={ButtonStyle.STROKED}
-            size={ButtonSize.XLARGE}
-            onClick={() => props.onClose()}
-          >
-            Cancel
-          </Button>
+          {isEdit && onDelete ? (
+            <Button
+              dataTestId="delete-button"
+              className="btn--no-min-w"
+              style={ButtonStyle.ERROR}
+              size={ButtonSize.XLARGE}
+              onClick={() => onDelete()}
+            >
+              {deleteButtonLabel || 'Delete'}
+            </Button>
+          ) : (
+            <Button
+              dataTestId="cancel-button"
+              className="btn--no-min-w"
+              style={ButtonStyle.STROKED}
+              size={ButtonSize.XLARGE}
+              onClick={() => onClose()}
+            >
+              Cancel
+            </Button>
+          )}
           <Button
             dataTestId="submit-button"
             className="btn--no-min-w"
             type="submit"
             size={ButtonSize.XLARGE}
             disabled={!formState.isValid}
-            loading={props.loading}
+            loading={loading}
           >
-            {props.submitLabel || (isEdit ? 'Confirm' : 'Create')}
+            {submitLabel || (isEdit ? 'Confirm' : 'Create')}
           </Button>
         </div>
       </form>
