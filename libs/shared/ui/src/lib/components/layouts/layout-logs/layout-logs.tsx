@@ -142,6 +142,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
             >
               <StatusChip
                 status={(environment?.status && environment?.status.state) || StateEnum.STOPPED}
+                mustRenameStatus
                 className="mr-2"
               />
               <span className="truncate">Deployment logs</span>

@@ -1,15 +1,15 @@
 import { Environment, EnvironmentLogs } from 'qovery-typescript-axios'
-import { useCallback, useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
-import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
-import { selectEnvironmentById } from '@qovery/domains/environment'
+import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { fetchEnvironmentsStatus, selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { LayoutLogs, Table } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 import Row from './ui/row/row'
 
 export function PageDeploymentLogs() {
@@ -80,6 +80,20 @@ export function PageDeploymentLogs() {
       classNameTitle: 'text-text-300',
     },
   ]
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
+    selectApplicationsEntitiesByEnvId(state, environmentId)
+  )
+
+  useEffect(() => {
+    const fetchServicesStatusByInterval = setInterval(() => {
+      dispatch(fetchEnvironmentsStatus({ projectId }))
+      if (applicationsByEnv.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
+    }, 3000)
+    return () => clearInterval(fetchServicesStatusByInterval)
+  }, [dispatch, environmentId, applicationsByEnv.length, projectId])
 
   const columnsWidth = '40px 154px 154px 154px auto'
 
