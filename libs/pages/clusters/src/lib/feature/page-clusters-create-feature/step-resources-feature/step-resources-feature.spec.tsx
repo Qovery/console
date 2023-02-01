@@ -38,12 +38,7 @@ jest.mock('@qovery/domains/organization', () => ({
   })),
 }))
 
-const mockDispatch = jest.fn().mockImplementation(() => ({
-  unwrap: () =>
-    Promise.resolve({
-      data: {},
-    }),
-}))
+const mockDispatch = jest.fn()
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -91,6 +86,13 @@ describe('StepResourcesFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () =>
+        Promise.resolve({
+          data: {},
+        }),
+    }))
+
     const { baseElement } = render(
       <ContextWrapper>
         <StepResourcesFeature />
@@ -98,7 +100,7 @@ describe('StepResourcesFeature', () => {
     )
 
     const select = getByLabelText(baseElement, 'Instance type')
-    selectEvent.select(select, mockInstanceType[1].label, {
+    selectEvent.select(select, mockInstanceType[1].value, {
       container: document.body,
     })
 
@@ -106,10 +108,15 @@ describe('StepResourcesFeature', () => {
     fireEvent.input(diskSize, { target: { value: '22' } })
 
     await waitFor(() => {
-      const button = getByTestId(baseElement, 'submit-button')
+      const button = getByTestId(baseElement, 'button-submit')
       button.click()
       expect(button).not.toBeDisabled()
-      expect(mockSetResourceData).toBeCalled()
+      expect(mockSetResourceData).toBeCalledWith({
+        instance_type: 't2.small',
+        disk_size: '22',
+        cluster_type: 'MANAGED',
+        nodes: [1, 3],
+      })
     })
   })
 })
