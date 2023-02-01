@@ -40,8 +40,6 @@ describe('StepGeneral', () => {
           name: 'my-cluster',
           description: 'test',
           production: false,
-          cloud_provider: CloudProviderEnum.AWS,
-          region: 'Paris',
         },
       })
     )
