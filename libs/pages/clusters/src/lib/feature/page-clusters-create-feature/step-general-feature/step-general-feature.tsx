@@ -1,4 +1,3 @@
-import { CloudProvider, CloudProviderEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,17 +47,7 @@ export function StepGeneralFeature() {
   })
 
   useEffect(() => {
-    if (cloudProvider.loadingStatus !== 'loaded')
-      // set AWS by default
-      dispatch(fetchCloudProvider())
-        .unwrap()
-        .then((result: CloudProvider[]) => {
-          const providerByDefault = result?.filter((cloud) => cloud.short_name === CloudProviderEnum.AWS)[0]
-          if (providerByDefault) {
-            methods.setValue('cloud_provider', providerByDefault.short_name as CloudProviderEnum)
-            methods.setValue('region', providerByDefault.regions ? providerByDefault.regions[0].name : '')
-          }
-        })
+    if (cloudProvider.loadingStatus !== 'loaded') dispatch(fetchCloudProvider())
   }, [cloudProvider.loadingStatus, dispatch, methods])
 
   const onSubmit = methods.handleSubmit((data) => {

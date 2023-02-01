@@ -40,8 +40,6 @@ describe('StepGeneral', () => {
           name: 'my-cluster',
           description: 'test',
           production: false,
-          cloud_provider: CloudProviderEnum.AWS,
-          region: 'Paris',
         },
       })
     )
@@ -50,7 +48,6 @@ describe('StepGeneral', () => {
     getByDisplayValue('test')
     getByDisplayValue('false')
     getByTestId('input-cloud-provider')
-    getByTestId('input-region')
   })
 
   it('should submit the form on click', async () => {

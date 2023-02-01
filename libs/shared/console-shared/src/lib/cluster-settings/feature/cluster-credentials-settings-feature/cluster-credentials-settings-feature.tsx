@@ -1,5 +1,6 @@
+import equal from 'fast-deep-equal'
 import { CloudProviderEnum, ClusterCredentials } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { fetchCredentialsList, selectOrganizationById } from '@qovery/domains/organization'
@@ -18,13 +19,17 @@ export function ClusterCredentialsSettingsFeature(props: ClusterCredentialsSetti
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const dispatch = useDispatch<AppDispatch>()
-  const credentialsByCloudProvider = useSelector<RootState, ClusterCredentialsEntity[] | undefined>((state) =>
-    selectOrganizationById(state, organizationId)?.credentials?.items?.filter(
-      (item) => item.cloudProvider === cloudProvider
-    )
+  const credentials = useSelector<RootState, ClusterCredentialsEntity[] | undefined>(
+    (state) => selectOrganizationById(state, organizationId)?.credentials?.items,
+    equal
   )
   const credentialsLoadingStatus = useSelector<RootState, LoadingStatus>(
     (state) => selectOrganizationById(state, organizationId)?.credentials?.loadingStatus
+  )
+
+  const credentialsByCloudProvider = useMemo(
+    () => credentials?.filter((item) => item.cloudProvider === cloudProvider),
+    [cloudProvider, credentials]
   )
 
   const openCredentialsModal = (id?: string) => {
@@ -44,10 +49,8 @@ export function ClusterCredentialsSettingsFeature(props: ClusterCredentialsSetti
   }
 
   useEffect(() => {
-    cloudProvider &&
-      credentialsLoadingStatus !== 'loaded' &&
-      dispatch(fetchCredentialsList({ cloudProvider, organizationId }))
-  }, [dispatch, cloudProvider, organizationId, credentialsLoadingStatus])
+    if (cloudProvider) dispatch(fetchCredentialsList({ cloudProvider, organizationId }))
+  }, [dispatch, cloudProvider, organizationId])
 
   return (
     <ClusterCredentialsSettings
