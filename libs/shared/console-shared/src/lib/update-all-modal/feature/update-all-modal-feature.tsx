@@ -126,6 +126,9 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
         .then(() => {
           closeModal()
         })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }
 
