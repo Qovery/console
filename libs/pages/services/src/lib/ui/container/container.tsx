@@ -58,19 +58,6 @@ export function Container(props: ContainerProps) {
     selectClusterById(state, environment?.cluster_id || '')
   )
 
-  const headerButtons = (
-    <div>
-      {/* <ButtonIcon
-        icon="icon-solid-scroll"
-        style={ButtonIconStyle.STROKED}
-        link={`https://console.qovery.com/platform/organization/${organizationId}/projects/${projectId}/environments/${environmentId}/applications?fullscreenLogs=true`}
-        external
-      />
-      <ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />
-      <ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} /> */}
-    </div>
-  )
-
   const headerActions = (
     <>
       <Skeleton width={150} height={32} show={!environment}>
@@ -200,7 +187,7 @@ export function Container(props: ContainerProps) {
 
   return (
     <>
-      <Header title={environment?.name} icon={IconEnum.APPLICATION} buttons={headerButtons} actions={headerActions} />
+      <Header title={environment?.name} icon={IconEnum.APPLICATION} actions={headerActions} />
       <Tabs items={tabsItems} contentRight={contentTabs} />
       {children}
     </>
