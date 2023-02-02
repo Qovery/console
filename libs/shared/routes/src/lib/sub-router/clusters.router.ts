@@ -5,3 +5,4 @@ export const CLUSTERS_CREATION_URL = '/create'
 // subrouter for cluster create steps /create/general /create/settings etc...
 export const CLUSTERS_CREATION_GENERAL_URL = '/general'
 export const CLUSTERS_CREATION_RESOURCES_URL = '/resources'
+export const CLUSTERS_CREATION_FEATURES_URL = '/features'
