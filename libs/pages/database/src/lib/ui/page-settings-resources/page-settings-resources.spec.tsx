@@ -30,16 +30,14 @@ describe('PageSettingsResources', () => {
   it('should render the form', async () => {
     const { getByDisplayValue } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [0.25], storage: 512, memory: 1024 },
+        defaultValues: { cpu: 250, storage: 512, memory: 1024 },
       })
     )
 
-    const inputs = screen.getAllByRole('slider') as HTMLSpanElement[]
-
     await act(() => {
+      getByDisplayValue(250)
       getByDisplayValue(512)
       getByDisplayValue(1024)
-      expect(inputs[0].getAttribute('aria-valuenow')).toBe('0.25')
     })
   })
 

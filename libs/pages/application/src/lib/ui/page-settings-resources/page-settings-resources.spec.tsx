@@ -30,7 +30,7 @@ describe('PageSettingsResources', () => {
   beforeEach(() => {
     defaultValues = {
       instances: [1, 18],
-      cpu: [3],
+      cpu: 3,
       memory: 1024,
     }
   })
@@ -51,9 +51,8 @@ describe('PageSettingsResources', () => {
 
     await act(() => {
       getByDisplayValue(1024)
-      expect(inputs[0].getAttribute('aria-valuenow')).toBe('3')
-      expect(inputs[1].getAttribute('aria-valuenow')).toBe('1')
-      expect(inputs[2].getAttribute('aria-valuenow')).toBe('18')
+      expect(inputs[0].getAttribute('aria-valuenow')).toBe('1')
+      expect(inputs[1].getAttribute('aria-valuenow')).toBe('18')
     })
   })
 
@@ -62,7 +61,7 @@ describe('PageSettingsResources', () => {
 
     const { getByTestId, getAllByRole } = render(
       wrapWithReactHookForm(<PageSettingsResources {...props} />, {
-        defaultValues: { cpu: [10], instances: [1, 1], memory: 323 },
+        defaultValues: { cpu: 10, instances: [1, 1], memory: 323 },
       })
     )
 
