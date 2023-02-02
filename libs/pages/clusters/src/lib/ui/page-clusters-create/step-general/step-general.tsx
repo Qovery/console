@@ -7,6 +7,7 @@ import { ClusterGeneralData, Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import {
   BannerBox,
+  BannerBoxEnum,
   Button,
   ButtonSize,
   ButtonStyle,
@@ -69,6 +70,7 @@ export function StepGeneral(props: StepGeneralProps) {
           {cloudProviders.length > 0 ? (
             <>
               <BannerBox
+                type={BannerBoxEnum.WARNING}
                 className="mb-4"
                 title="Warning"
                 message="The creation of clusters on Digital Ocean is temporarily disabled."

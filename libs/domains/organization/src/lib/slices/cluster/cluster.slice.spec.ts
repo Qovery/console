@@ -1,3 +1,4 @@
+import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { clusterAdapter, clusterReducer } from './cluster.slice'
 
 describe('cluster reducer', () => {
@@ -14,6 +15,23 @@ describe('cluster reducer', () => {
       cloudProvider: {
         loadingStatus: 'not loaded',
         items: [],
+      },
+      availableClusterTypes: {
+        loadingStatus: 'not loaded',
+        items: {
+          [CloudProviderEnum.AWS]: {
+            [KubernetesEnum.K3_S]: {},
+            [KubernetesEnum.MANAGED]: {},
+          },
+          [CloudProviderEnum.SCW]: {
+            [KubernetesEnum.K3_S]: {},
+            [KubernetesEnum.MANAGED]: {},
+          },
+          [CloudProviderEnum.DO]: {
+            [KubernetesEnum.K3_S]: {},
+            [KubernetesEnum.MANAGED]: {},
+          },
+        },
       },
     })
 

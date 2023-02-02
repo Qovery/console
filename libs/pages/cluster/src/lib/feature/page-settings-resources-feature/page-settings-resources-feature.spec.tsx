@@ -58,6 +58,7 @@ jest.mock('@qovery/domains/organization', () => {
       error: null,
     }),
     selectClusterById: () => mockCluster,
+    selectInstancesTypes: () => mockInstanceType,
   }
 })
 

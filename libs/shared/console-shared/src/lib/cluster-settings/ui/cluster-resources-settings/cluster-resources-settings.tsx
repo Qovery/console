@@ -32,8 +32,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             rules={{
               required: 'Please select a cluster type',
             }}
-            render={({ field, fieldState: { error } }) => (
-              <>
+            render={({ field }) => (
+              <div>
                 {props.clusterTypeOptions?.map((option) => (
                   <InputRadioBox
                     key={option.value}
@@ -45,7 +45,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     description={option.description}
                   />
                 ))}
-              </>
+              </div>
             )}
           />
         ) : (

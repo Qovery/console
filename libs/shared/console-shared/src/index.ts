@@ -1,4 +1,3 @@
-export * from './lib/cluster-settings/feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
 export * from './lib/cluster-settings/feature/cluster-resources-settings-feature/cluster-resources-settings-feature'
 export * from './lib/cluster-settings/ui/cluster-resources-settings/cluster-resources-settings'
 export * from './lib/force-run-modal/feature/force-run-modal-feature'

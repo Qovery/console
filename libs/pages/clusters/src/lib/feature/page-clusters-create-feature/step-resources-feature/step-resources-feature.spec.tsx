@@ -30,6 +30,7 @@ const mockInstanceType = [
 jest.mock('@qovery/domains/organization', () => ({
   ...jest.requireActual('@qovery/domains/organization'),
   fetchAvailableInstanceTypes: jest.fn(),
+  selectInstancesTypes: () => mockInstanceType,
 }))
 
 const mockDispatch = jest.fn()

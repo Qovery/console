@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import { FormEvent, ReactNode } from 'react'
 import InputRadio from '../input-radio/input-radio'
 
 export interface InputRadioBoxProps {
   name: string
-  onChange: (e: any) => void
+  onChange: (e: FormEvent<HTMLInputElement> | string) => void
   fieldValue: string
   label: string
   value: string
