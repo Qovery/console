@@ -44,7 +44,7 @@ export function PageApplicationCreateFeature() {
   const [generalData, setGeneralData] = useState<ApplicationGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
     memory: 512,
-    cpu: [0.5],
+    cpu: 500,
     instances: [1, 2],
   })
 

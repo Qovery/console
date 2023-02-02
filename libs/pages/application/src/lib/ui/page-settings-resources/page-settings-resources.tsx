@@ -9,10 +9,11 @@ export interface PageSettingsResourcesProps {
   displayWarningCpu: boolean
   application?: ApplicationEntity
   loading?: boolean
+  clusterId?: string
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, application, displayWarningCpu } = props
+  const { onSubmit, loading, application, displayWarningCpu, clusterId } = props
   const { formState } = useFormContext()
 
   if (!application) return null
@@ -22,7 +23,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-text-700">Resources</h2>
         <form onSubmit={onSubmit}>
-          <SettingResources displayWarningCpu={displayWarningCpu} application={application} />
+          <SettingResources displayWarningCpu={displayWarningCpu} application={application} clusterId={clusterId} />
           <div className="flex justify-end">
             <Button
               dataTestId="submit-button"

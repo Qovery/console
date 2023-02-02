@@ -11,6 +11,6 @@ export interface GeneralData {
 
 export interface ResourcesData {
   memory: number
-  cpu: [number]
+  cpu: number
   storage: number
 }
