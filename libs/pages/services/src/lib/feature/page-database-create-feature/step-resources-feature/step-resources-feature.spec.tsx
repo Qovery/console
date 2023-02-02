@@ -1,5 +1,4 @@
 import { act } from '@testing-library/react'
-import ResizeObserver from '__tests__/utils/resize-observer'
 import { getByTestId, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
@@ -66,7 +65,6 @@ describe('PageDatabaseCreateResourcesFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
-    window.ResizeObserver = ResizeObserver
     const { baseElement } = render(
       <ContextWrapper>
         <StepResourcesFeature />

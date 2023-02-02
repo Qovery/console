@@ -1,4 +1,3 @@
-import ResizeObserver from '__tests__/utils/resize-observer'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -6,7 +5,6 @@ import StepResourcesFeature from './step-resources-feature'
 
 describe('PageApplicationCreateResourcesFeature', () => {
   it('should render successfully', () => {
-    window.ResizeObserver = ResizeObserver
     const { baseElement } = render(
       <ApplicationContainerCreateContext.Provider
         value={{

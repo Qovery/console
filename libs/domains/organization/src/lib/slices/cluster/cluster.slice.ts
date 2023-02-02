@@ -6,18 +6,23 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
+import { AxiosResponse } from 'axios'
 import {
   CloudProvider,
   CloudProviderApi,
+  CloudProviderEnum,
   Cluster,
   ClusterAdvancedSettings,
   ClusterCloudProviderInfo,
   ClusterCloudProviderInfoRequest,
+  ClusterInstanceTypeResponseList,
   ClusterLogs,
   ClusterRequest,
   ClusterStatus,
   ClustersApi,
+  KubernetesEnum,
 } from 'qovery-typescript-axios'
+import { ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/api'
 import { AdvancedSettings, ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload } from '@qovery/shared/utils'
@@ -132,6 +137,25 @@ export const postCloudProviderInfo = createAsyncThunk<
   return response.data as ClusterCloudProviderInfoRequest
 })
 
+export const fetchAvailableInstanceTypes = createAsyncThunk<
+  ClusterInstanceTypeResponseList,
+  { region: string; provider: CloudProviderEnum; clusterType: KubernetesEnum }
+>('cluster/fetchAvailableInstanceTypes', async (data) => {
+  let response: AxiosResponse<ClusterInstanceTypeResponseList>
+
+  if (data.provider === CloudProviderEnum.AWS) {
+    if (data.clusterType === KubernetesEnum.K3_S) {
+      response = await cloudProviderApi.listAWSEc2InstanceType(data.region)
+    } else {
+      response = await cloudProviderApi.listAWSEKSInstanceType(data.region)
+    }
+  } else {
+    response = await cloudProviderApi.listScalewayInstanceType()
+  }
+
+  return response.data
+})
+
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -144,6 +168,23 @@ export const initialClusterState: ClustersState = clusterAdapter.getInitialState
   cloudProvider: {
     loadingStatus: 'not loaded',
     items: [],
+  },
+  availableClusterTypes: {
+    loadingStatus: 'not loaded',
+    items: {
+      [CloudProviderEnum.AWS]: {
+        [KubernetesEnum.K3_S]: {},
+        [KubernetesEnum.MANAGED]: {},
+      },
+      [CloudProviderEnum.SCW]: {
+        [KubernetesEnum.K3_S]: {},
+        [KubernetesEnum.MANAGED]: {},
+      },
+      [CloudProviderEnum.DO]: {
+        [KubernetesEnum.K3_S]: {},
+        [KubernetesEnum.MANAGED]: {},
+      },
+    },
   },
 })
 
@@ -208,6 +249,22 @@ export const clusterSlice = createSlice({
           },
         }
         clusterAdapter.updateOne(state, update)
+      })
+      // fetch available instances type
+      .addCase(fetchAvailableInstanceTypes.pending, (state: ClustersState) => {
+        state.availableClusterTypes.loadingStatus = 'loading'
+      })
+      .addCase(fetchAvailableInstanceTypes.fulfilled, (state: ClustersState, action) => {
+        state.availableClusterTypes.loadingStatus = 'loaded'
+        if (action.payload.results) {
+          state.availableClusterTypes.items[action.meta.arg.provider] = {
+            ...state.availableClusterTypes.items[action.meta.arg.provider],
+            [action.meta.arg.clusterType]: {
+              ...state.availableClusterTypes.items[action.meta.arg.provider][action.meta.arg.clusterType],
+              [action.meta.arg.region]: action.payload.results,
+            },
+          }
+        }
       })
       // fetch clusters status
       .addCase(fetchClustersStatus.pending, (state: ClustersState) => {
@@ -483,3 +540,16 @@ export const selectClusterEntities = createSelector(getClusterState, selectEntit
 
 export const selectClusterById = (state: RootState, applicationId: string): ClusterEntity | undefined =>
   getClusterState(state).entities[applicationId]
+
+export const selectInstancesTypes = (
+  state: RootState,
+  cloudProvider: CloudProviderEnum,
+  clusterType: KubernetesEnum,
+  region: string
+): ClusterInstanceTypeResponseListResults[] | undefined => {
+  const clusterState = getClusterState(state)
+  if (clusterState.availableClusterTypes.items[cloudProvider]?.[clusterType]?.[region]) {
+    return clusterState.availableClusterTypes.items[cloudProvider][clusterType][region]
+  }
+  return undefined
+}

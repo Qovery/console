@@ -6,7 +6,7 @@ export interface InputTextProps {
   name: string
   label: string
   value?: string | number | undefined
-  type?: string
+  type?: 'text' | 'number' | 'password' | 'email' | 'date' | 'datetime' | 'time'
   className?: string
   onChange?: (e: FormEvent<HTMLInputElement>) => void
   error?: string

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { ModalProvider } from '@qovery/shared/ui'
 import { RootState, initialRootState, rootReducer } from '@qovery/store'
+import ResizeObserver from './resize-observer'
 
 type Params = {
   Component?: ComponentType<any>
@@ -19,6 +20,7 @@ export type Props = {
 
 export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootState(), route = '/' }) => {
   window.history.pushState({}, 'Test page', route)
+  window.ResizeObserver = ResizeObserver
 
   const store = configureStore({
     reducer: rootReducer,

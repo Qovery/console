@@ -6,4 +6,5 @@ export interface Value {
   icon?: ReactNode
   isDisabled?: boolean
   onClickEditable?: () => void
+  description?: string
 }

@@ -1,5 +1,5 @@
 import { Controller, useForm } from 'react-hook-form'
-import BannerBox from '../../banner-box/banner-box'
+import BannerBox, { BannerBoxEnum } from '../../banner-box/banner-box'
 import Button, { ButtonStyle } from '../../buttons/button/button'
 import { Icon } from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
@@ -45,7 +45,14 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{title}</h2>
-      {warning && <BannerBox className="mb-2" message={warning} icon={IconAwesomeEnum.TRIANGLE_EXCLAMATION} />}
+      {warning && (
+        <BannerBox
+          className="mb-2"
+          type={BannerBoxEnum.WARNING}
+          message={warning}
+          icon={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
+        />
+      )}
       <p className="text-text-400 text-sm mb-6">
         {description}
         <Tooltip content="Copy">

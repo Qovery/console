@@ -183,6 +183,10 @@ export function refactoClusterPayload(cluster: Partial<ClusterEntity>) {
     region: cluster.region || '',
     cloud_provider: cluster.cloud_provider || CloudProviderEnum.AWS,
     production: cluster.production,
+    disk_size: cluster.disk_size,
+    instance_type: cluster.instance_type,
+    max_running_nodes: cluster.max_running_nodes,
+    min_running_nodes: cluster.min_running_nodes,
   }
 
   return clusterRequestPayload

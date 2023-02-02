@@ -35,7 +35,7 @@ export function DeployOtherTagModal(props: DeployOtherTagModalProps) {
               value={field.value}
               error={error?.message}
               label="Tag"
-              type="string"
+              type="text"
             />
           )}
         />
