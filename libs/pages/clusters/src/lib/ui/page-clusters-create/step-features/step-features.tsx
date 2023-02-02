@@ -4,7 +4,16 @@ import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterGeneralData } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
-import { BannerBox, Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  IconAwesomeEnum,
+  InputToggle,
+  Link,
+} from '@qovery/shared/ui'
 
 export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -29,9 +38,32 @@ export function StepFeatures(props: StepFeaturesProps) {
           className="mb-4"
           title="Choose wisely"
           message="These features will not be modifiable after cluster creation."
+          type={BannerBoxEnum.WARNING}
         />
         <div className="mb-10">
-          <div>hello</div>
+          <div className="flex justify-between p-5 rounded border border-element-light-lighter-500 bg-element-light-lighter-200">
+            <div className="flex pr-8">
+              <InputToggle className="relative top-[2px]" small value={true} />
+              <div>
+                <h4 className="text-ssm text-text-600 mb-1 font-medium">Static IP</h4>
+                <p className="text-xs text-text-400">
+                  Your cluster will only be visible from a fixed number of public IPs.
+                </p>
+                <Link
+                  external
+                  className="font-medium"
+                  size="text-xs"
+                  link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
+                  linkLabel="Documentation link"
+                  iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+                  iconRightClassName="text-xxs relative top-[1px]"
+                />
+              </div>
+            </div>
+            <div className="shrink-0">
+              <span className="text-ssm text-text-600 font-medium">$90/month billed by AWS</span>
+            </div>
+          </div>{' '}
         </div>
 
         <div className="flex justify-between">
