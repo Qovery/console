@@ -5,7 +5,7 @@ import {
   OrganizationCustomRoleUpdateRequestPermissions,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, FieldValues, UseFormSetValue, useFormContext } from 'react-hook-form'
 import { InputCheckbox } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { defaultProjectPermission } from '../../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
@@ -50,11 +50,12 @@ const onChangeHeadCheckbox = (
   currentPermission: string,
   globalCheck: string,
   setGlobalCheck: (value: string) => void,
-  setValue: (key: string, value: string) => void
+  setValue: UseFormSetValue<FieldValues>
 ) => {
   // get new value if currentPermission is already checked
   const newValue =
     globalCheck !== currentPermission ? currentPermission : OrganizationCustomRoleProjectPermissionAdmin.NO_ACCESS
+
   setGlobalCheck(newValue)
   // set value for nextPermission if admin is uncheck
   Object.keys(EnvironmentModeEnum).forEach((currentMode) => {
@@ -86,22 +87,14 @@ export function RowProject(props: RowProjectProps) {
               key={permission}
               className="flex-1 flex items-center justify-center h-full px-4 border-r border-element-light-lighter-500 last:border-0"
             >
-              <Controller
+              <InputCheckbox
+                dataTestId={`project.${permission}`}
                 name={`project_permissions.${project.project_id}`}
-                control={control}
-                render={({ field }) => (
-                  <InputCheckbox
-                    dataTestId={`project.${permission}`}
-                    name={field.name}
-                    value={globalCheck}
-                    formValue={permission}
-                    onChange={(e) => {
-                      onChangeHeadCheckbox(project, permission, globalCheck, setGlobalCheck, setValue)
-                      // set change for react-hook-form
-                      field.onChange(e)
-                    }}
-                  />
-                )}
+                value={globalCheck}
+                formValue={permission}
+                onChange={(e) => {
+                  onChangeHeadCheckbox(project, permission, globalCheck, setGlobalCheck, setValue)
+                }}
               />
             </div>
           ))}
