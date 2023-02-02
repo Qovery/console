@@ -38,7 +38,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         setGeneralData: jest.fn(),
         resourcesData: {
           storage: 1,
-          cpu: [100],
+          cpu: 100000,
           memory: 100,
         },
         setResourcesData: mockSetResourcesData,

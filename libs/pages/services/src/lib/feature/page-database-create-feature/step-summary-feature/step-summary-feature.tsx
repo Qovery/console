@@ -10,7 +10,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import StepSummary from '../../../ui/page-database-create/step-summary/step-summary'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
@@ -53,7 +53,7 @@ export function StepSummaryFeature() {
 
       const memory = Number(resourcesData['memory'])
       const storage = Number(resourcesData['storage'])
-      const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
+      const cpu = resourcesData['cpu']
 
       const databaseRequest: DatabaseRequest = {
         name: generalData.name,

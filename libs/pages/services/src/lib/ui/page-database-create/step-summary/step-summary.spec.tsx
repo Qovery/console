@@ -13,7 +13,7 @@ const props: StepSummaryProps = {
   },
   resourcesData: {
     storage: 1,
-    cpu: [100],
+    cpu: 100,
     memory: 100,
   },
   gotoGlobalInformation: jest.fn(),

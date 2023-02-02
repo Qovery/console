@@ -20,7 +20,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
-import { buildGitRepoUrl, convertCpuToVCpu, useDocumentTitle } from '@qovery/shared/utils'
+import { buildGitRepoUrl, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -64,7 +64,7 @@ export function StepSummaryFeature() {
       else setLoadingCreate(true)
 
       const memory = Number(resourcesData['memory'])
-      const cpu = convertCpuToVCpu(resourcesData['cpu'][0], true)
+      const cpu = resourcesData['cpu']
 
       if (isApplication(generalData.serviceType)) {
         const applicationRequest: ApplicationRequest = {

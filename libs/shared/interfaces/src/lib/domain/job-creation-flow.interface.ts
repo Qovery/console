@@ -56,5 +56,5 @@ export interface JobConfigureData {
 
 export interface JobResourcesData {
   memory: number
-  cpu: [number]
+  cpu: number
 }

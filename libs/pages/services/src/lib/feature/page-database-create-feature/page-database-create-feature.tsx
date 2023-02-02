@@ -41,7 +41,7 @@ export function PageDatabaseCreateFeature() {
   const [generalData, setGeneralData] = useState<GeneralData>()
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
-    cpu: [0.5],
+    cpu: 500,
     storage: 10,
   })
 

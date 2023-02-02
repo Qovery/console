@@ -45,9 +45,9 @@ describe('PageSettingsResourcesFeature', () => {
     const cpu = 3400
     const memory = 512
     const storage = 1024
-    const db = handleSubmit({ cpu: [cpu], memory: memory, storage: storage }, mockDatabase)
+    const db = handleSubmit({ cpu: cpu, memory: memory, storage: storage }, mockDatabase)
 
-    expect(db.cpu).toBe(cpu * 1000)
+    expect(db.cpu).toBe(cpu)
     expect(db.memory).toBe(memory)
     expect(db.storage).toBe(storage)
   })

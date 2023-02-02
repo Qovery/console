@@ -20,7 +20,7 @@ export const isRedeployAvailable = (status: StateEnum): boolean => {
       status === StateEnum.DELETE_QUEUED ||
       status === StateEnum.DEPLOYING ||
       status === StateEnum.DEPLOYMENT_ERROR ||
-      status === StateEnum.RESTARTED_ERROR ||
+      status === StateEnum.RESTART_ERROR ||
       status === StateEnum.DEPLOYED ||
       status === StateEnum.RESTARTED ||
       status === StateEnum.STOPPING ||
@@ -47,7 +47,7 @@ export const isStopAvailable = (status: StateEnum): boolean => {
       status === StateEnum.DELETING ||
       status === StateEnum.RUNNING ||
       status === StateEnum.DEPLOYMENT_ERROR ||
-      status === StateEnum.RESTARTED_ERROR ||
+      status === StateEnum.RESTART_ERROR ||
       status === StateEnum.DEPLOYMENT_QUEUED ||
       status === StateEnum.RESTART_QUEUED ||
       status === StateEnum.STOP_ERROR ||
@@ -60,7 +60,7 @@ export const isDeleteAvailable = (status: StateEnum): boolean => {
   return (
     status === StateEnum.READY ||
     status === StateEnum.DEPLOYMENT_ERROR ||
-    status === StateEnum.RESTARTED_ERROR ||
+    status === StateEnum.RESTART_ERROR ||
     status === StateEnum.STOPPING ||
     status === StateEnum.STOP_ERROR ||
     status === StateEnum.STOPPED ||
@@ -73,7 +73,7 @@ export const isDeleteAvailable = (status: StateEnum): boolean => {
 export const isUpdateAvailable = (status: StateEnum): boolean => {
   return (
     status === StateEnum.DEPLOYMENT_ERROR ||
-    status === StateEnum.RESTARTED_ERROR ||
+    status === StateEnum.RESTART_ERROR ||
     status === StateEnum.STOP_ERROR ||
     status === StateEnum.STOPPED ||
     status === StateEnum.DELETE_ERROR ||

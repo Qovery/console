@@ -25,6 +25,6 @@ export interface ApplicationGeneralData {
 
 export interface ApplicationResourcesData {
   memory: number
-  cpu: [number]
+  cpu: number
   instances: [number, number]
 }

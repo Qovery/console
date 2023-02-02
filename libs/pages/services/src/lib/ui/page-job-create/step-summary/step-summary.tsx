@@ -223,7 +223,7 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
             <ul className="text-text-400 text-sm list-none">
               <li>
-                <span className="font-medium">CPU:</span> {props.resourcesData['cpu'][0]}
+                <span className="font-medium">CPU:</span> {props.resourcesData['cpu']}
               </li>
               <li>
                 <span className="font-medium">Memory:</span> {props.resourcesData.memory} MB

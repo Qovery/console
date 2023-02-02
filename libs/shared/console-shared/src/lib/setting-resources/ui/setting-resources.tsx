@@ -1,17 +1,9 @@
 import { Controller, useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import {
-  BannerBox,
-  BannerBoxEnum,
-  BlockContent,
-  Icon,
-  IconAwesomeEnum,
-  InputText,
-  Slider,
-  inputSizeUnitRules,
-} from '@qovery/shared/ui'
-import { convertCpuToVCpu } from '@qovery/shared/utils'
+import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
+import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, Slider, inputSizeUnitRules } from '@qovery/shared/ui'
 
 export interface SettingResourcesProps {
   displayWarningCpu: boolean
@@ -19,11 +11,20 @@ export interface SettingResourcesProps {
   minInstances?: number
   maxInstances?: number
   isDatabase?: boolean
+  clusterId?: string
 }
 
 export function SettingResources(props: SettingResourcesProps) {
-  const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, isDatabase = false } = props
+  const {
+    displayWarningCpu,
+    application,
+    minInstances = 1,
+    maxInstances = 50,
+    isDatabase = false,
+    clusterId = '',
+  } = props
   const { control, watch } = useFormContext()
+  const { organizationId = '' } = useParams()
 
   let maxMemoryBySize = application?.maximum_memory
 
@@ -35,24 +36,32 @@ export function SettingResources(props: SettingResourcesProps) {
 
   return (
     <div>
-      <p className="text-text-500 text-xs mb-3">
-        Adapt the {isDatabase ? 'database' : 'application'}'s consumption accordingly
-      </p>
+      <p className="text-text-500 text-xs mb-3">Manage the application's resources and horizontal auto-scaling.</p>
       <BlockContent title="vCPU">
-        <p className="flex items-center text-text-600 mb-3 font-medium">
-          {displayWarningCpu && (
-            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="mr-1.5 text-error-500 text-sm" />
-          )}
-          {watch('cpu')}
-        </p>
         <Controller
           name="cpu"
           control={control}
-          render={({ field }) => <Slider min={0} max={20} step={0.25} onChange={field.onChange} value={field.value} />}
+          render={({ field }) => (
+            <InputText
+              type="number"
+              name={field.name}
+              label="Size (in milli vCPU)"
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
         {application && (
           <p className="text-text-400 text-xs mt-3">
-            Max consumption by node accordingly to your cluster: {convertCpuToVCpu(application?.maximum_cpu)} vCPU
+            Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
+            {application?.maximum_cpu} mili vCPU.{' '}
+            {clusterId && (
+              <Link
+                className="!text-xs"
+                link={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                linkLabel="Edit node"
+              />
+            )}
           </p>
         )}
         {displayWarningCpu && (
@@ -88,6 +97,19 @@ export function SettingResources(props: SettingResourcesProps) {
             />
           )}
         />
+        {application && (
+          <p className="text-text-400 text-xs mt-3">
+            Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
+            {application.maximum_memory} MB.{' '}
+            {clusterId && (
+              <Link
+                className="!text-xs"
+                link={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                linkLabel="Edit node"
+              />
+            )}
+          </p>
+        )}
       </BlockContent>
 
       {!isJob(application) && watchInstances && (

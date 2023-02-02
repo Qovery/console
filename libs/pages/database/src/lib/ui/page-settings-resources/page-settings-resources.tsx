@@ -1,6 +1,8 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
@@ -8,20 +10,21 @@ import {
   ButtonStyle,
   HelpSection,
   InputText,
-  Slider,
+  Link,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
-import { convertCpuToVCpu } from '@qovery/shared/utils'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   database?: DatabaseEntity
   loading?: boolean
+  clusterId?: string
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, database } = props
-  const { control, formState, watch } = useFormContext()
+  const { onSubmit, loading, database, clusterId } = props
+  const { control, formState } = useFormContext()
+  const { organizationId = '' } = useParams()
 
   const maxMemoryBySize = database?.maximum_memory
 
@@ -32,27 +35,34 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-text-700">Resources</h2>
         <form onSubmit={onSubmit}>
-          <p className="text-text-500 text-xs mb-3">Adapt the database's consumption accordingly</p>
+          <p className="text-text-500 text-xs mb-3">Manage the database's resources and horizontal auto-scaling.</p>
           <BlockContent title="vCPU">
-            <p className="flex items-center text-text-600 mb-3 font-medium">{watch('cpu')}</p>
             <Controller
               name="cpu"
               control={control}
               render={({ field }) => (
-                <Slider
-                  min={0}
-                  max={convertCpuToVCpu(database?.maximum_cpu)}
-                  step={0.25}
-                  onChange={field.onChange}
+                <InputText
+                  type="number"
+                  name={field.name}
+                  label="Size (in milli vCPU)"
                   value={field.value}
+                  onChange={field.onChange}
                 />
               )}
             />
             <p className="text-text-400 text-xs mt-3">
-              Max consumption by node accordingly to your cluster: {convertCpuToVCpu(database?.maximum_cpu)} vCPU
+              Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
+              {database?.maximum_cpu} mili vCPU.{' '}
+              {clusterId && (
+                <Link
+                  className="!text-xs"
+                  link={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                  linkLabel="Edit node"
+                />
+              )}
             </p>
           </BlockContent>
-          <BlockContent title="RAM">
+          <BlockContent title="Memory">
             <Controller
               name="memory"
               control={control}
@@ -75,6 +85,21 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                 />
               )}
             />
+            {database && (
+              <p className="text-text-400 text-xs mt-3">
+                Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
+                {database.maximum_memory} MB.{' '}
+                {clusterId && (
+                  <Link
+                    className="!text-xs"
+                    link={
+                      CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
+                    }
+                    linkLabel="Edit node"
+                  />
+                )}
+              </p>
+            )}
           </BlockContent>
           <BlockContent title="Storage">
             <Controller

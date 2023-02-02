@@ -44,11 +44,11 @@ describe('PageSettingsResourcesFeature', () => {
   it('should submit resources with converters with MB', () => {
     const cpu = 3400
     const memory = 512
-    const app = handleSubmit({ instances: [1, 10], cpu: [cpu], memory: memory }, mockApplication)
+    const app = handleSubmit({ instances: [1, 10], cpu: cpu, memory: memory }, mockApplication)
 
     expect(app.min_running_instances).toBe(1)
     expect(app.max_running_instances).toBe(10)
-    expect(app.cpu).toBe(cpu * 1000)
+    expect(app.cpu).toBe(cpu)
     expect(app.memory).toBe(memory)
   })
 
@@ -74,7 +74,7 @@ describe('PageSettingsResourcesFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    const cloneApplication = handleSubmit({ memory: 9, cpu: [1], instances: [1, 3] }, mockApplication)
+    const cloneApplication = handleSubmit({ memory: 9, cpu: 1000, instances: [1, 3] }, mockApplication)
 
     expect(editApplicationSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
     expect(editApplicationSpy.mock.calls[0][0].data).toStrictEqual(cloneApplication)

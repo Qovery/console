@@ -50,7 +50,7 @@ const mockContext: ApplicationContainerCreateContextInterface = {
   setGeneralData: jest.fn(),
   resourcesData: {
     memory: 512,
-    cpu: [0.5],
+    cpu: 500,
     instances: [1, 12],
   },
   setResourcesData: jest.fn(),
