@@ -1,6 +1,6 @@
-import { Cluster, StateEnum } from 'qovery-typescript-axios'
+import { StateEnum } from 'qovery-typescript-axios'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { ClusterEntity, OrganizationEntity } from '@qovery/shared/interfaces'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Banner, BannerStyle, WarningScreenMobile } from '@qovery/shared/ui'
 import Navigation from '../navigation/navigation'
@@ -10,7 +10,7 @@ export interface LayoutPageProps {
   children?: React.ReactElement
   topBar?: boolean
   organization?: OrganizationEntity
-  cluster?: Cluster
+  cluster?: ClusterEntity
 }
 
 export function LayoutPage(props: LayoutPageProps) {
@@ -32,6 +32,8 @@ export function LayoutPage(props: LayoutPageProps) {
     }
   }
 
+  const clusterIsDeployed = cluster?.extendedStatus?.status?.is_deployed
+
   return (
     <>
       <WarningScreenMobile />
@@ -42,7 +44,7 @@ export function LayoutPage(props: LayoutPageProps) {
           </div>
           <div className="w-full">
             {topBar && <TopBar />}
-            {!matchLogInfraRoute && cluster && displayBanner(cluster.status) && (
+            {!matchLogInfraRoute && cluster && displayBanner(cluster.status) && !clusterIsDeployed && (
               <Banner
                 bannerStyle={BannerStyle.PRIMARY}
                 onClickButton={() => navigate(INFRA_LOGS_URL(organizationId, cluster.id))}
