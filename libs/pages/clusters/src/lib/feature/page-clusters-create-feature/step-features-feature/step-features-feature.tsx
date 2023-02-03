@@ -1,19 +1,20 @@
-import { useEffect } from 'react'
+import { ClusterFeature } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchCloudProvider, getClusterState } from '@qovery/domains/organization'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
+import { useDispatch } from 'react-redux'
+import { fetchClusterFeatures } from '@qovery/domains/organization'
+import { ClusterFeaturesData } from '@qovery/shared/interfaces'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch } from '@qovery/store'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepFeaturesFeature() {
   useDocumentTitle('Features - Create Cluster')
-  const { setGeneralData, generalData, setCurrentStep } = useClusterContainerCreateContext()
+  const { setFeaturesData, generalData, featuresData, setCurrentStep } = useClusterContainerCreateContext()
   const dispatch = useDispatch<AppDispatch>()
-  const cloudProvider = useSelector((state: RootState) => getClusterState(state).cloudProvider)
+  const [features, setFeatures] = useState<ClusterFeature[]>()
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -40,17 +41,25 @@ export function StepFeaturesFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const methods = useForm<ClusterGeneralData>({
-    defaultValues: generalData,
+  const methods = useForm<ClusterFeaturesData>({
+    defaultValues: featuresData,
     mode: 'onChange',
   })
 
   useEffect(() => {
-    if (cloudProvider.loadingStatus !== 'loaded') dispatch(fetchCloudProvider())
-  }, [cloudProvider.loadingStatus, dispatch, methods])
+    if (!features && generalData?.cloud_provider)
+      dispatch(fetchClusterFeatures({ cloudProvider: generalData?.cloud_provider }))
+        .unwrap()
+        .then((data) => setFeatures(data.results))
+        .catch((error) => console.log(error))
+  }, [dispatch, features, generalData?.cloud_provider])
 
   const onSubmit = methods.handleSubmit((data) => {
-    setGeneralData(data)
+    // console.log(data)
+    const cloneData = data.features.filter((filter) => filter?.active)
+    console.log(cloneData)
+
+    setFeaturesData(data)
     // const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     // navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })
@@ -58,7 +67,7 @@ export function StepFeaturesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepFeatures onSubmit={onSubmit} cloudProviders={cloudProvider.items} />
+        <StepFeatures onSubmit={onSubmit} features={features} cloudProvider={generalData?.cloud_provider} />
       </FormProvider>
     </FunnelFlowBody>
   )

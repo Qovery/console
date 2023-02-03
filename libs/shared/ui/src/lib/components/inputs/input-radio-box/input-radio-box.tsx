@@ -21,7 +21,7 @@ export function InputRadioBox(props: InputRadioBoxProps) {
           onChange(value)
         }, 1)
       }}
-      className={`p-4 rounded border mb-2 transition transition-all ${
+      className={`p-4 rounded border mb-2 cursor-pointer transition-all ${
         fieldValue === value
           ? 'bg-brand-50 border-brand-500'
           : 'bg-element-light-lighter-200 border-element-light-lighter-500'

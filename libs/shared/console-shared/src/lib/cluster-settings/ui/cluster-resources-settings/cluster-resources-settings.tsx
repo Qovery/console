@@ -5,6 +5,7 @@ import {
   BannerBox,
   BannerBoxEnum,
   BlockContent,
+  IconAwesomeEnum,
   InputRadioBox,
   InputSelect,
   InputText,
@@ -74,11 +75,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 options={props.instanceTypeOptions || []}
               />
               <Link
-                className="text-accent2-500 text-xs block mb-3 ml-3"
+                className="text-accent2-500 font-medium block mb-3 ml-4"
+                size="text-xs"
                 link="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
                 linkLabel="How does it work?"
+                iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+                iconRightClassName="text-xxs relative top-[1px]"
                 external
-                iconRight="icon-solid-arrow-up-right-from-square"
               />
             </div>
           )}

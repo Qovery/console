@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterResourcesData } from '@qovery/shared/interfaces'
-import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_CREATION_FEATURES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepResources from '../../../ui/page-clusters-create/step-resources/step-resources'
@@ -48,7 +48,7 @@ export function StepResourcesFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-    navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
+    navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
   })
 
   return (

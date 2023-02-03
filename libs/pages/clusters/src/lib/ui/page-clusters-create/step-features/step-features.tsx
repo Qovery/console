@@ -1,9 +1,9 @@
-import { CloudProvider } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ClusterFeature } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterGeneralData } from '@qovery/shared/interfaces'
-import { CLUSTERS_URL } from '@qovery/shared/routes'
+import { ClusterFeaturesData } from '@qovery/shared/interfaces'
+import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import {
   BannerBox,
   BannerBoxEnum,
@@ -11,18 +11,21 @@ import {
   ButtonSize,
   ButtonStyle,
   IconAwesomeEnum,
+  InputSelect,
   InputToggle,
   Link,
+  LoaderSpinner,
 } from '@qovery/shared/ui'
 
 export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
-  cloudProviders: CloudProvider[]
+  cloudProvider?: CloudProviderEnum
+  features?: ClusterFeature[]
 }
 
 export function StepFeatures(props: StepFeaturesProps) {
-  const { onSubmit } = props
-  const { formState } = useFormContext<ClusterGeneralData>()
+  const { onSubmit, features, cloudProvider } = props
+  const { formState, control } = useFormContext<ClusterFeaturesData>()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
@@ -34,47 +37,103 @@ export function StepFeatures(props: StepFeaturesProps) {
       </div>
 
       <form onSubmit={onSubmit}>
-        <BannerBox
-          className="mb-4"
-          title="Choose wisely"
-          message="These features will not be modifiable after cluster creation."
-          type={BannerBoxEnum.WARNING}
-        />
         <div className="mb-10">
-          <div className="flex justify-between p-5 rounded border border-element-light-lighter-500 bg-element-light-lighter-200">
-            <div className="flex pr-8">
-              <InputToggle className="relative top-[2px]" small value={true} />
-              <div>
-                <h4 className="text-ssm text-text-600 mb-1 font-medium">Static IP</h4>
-                <p className="text-xs text-text-400">
-                  Your cluster will only be visible from a fixed number of public IPs.
-                </p>
-                <Link
-                  external
-                  className="font-medium"
-                  size="text-xs"
-                  link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
-                  linkLabel="Documentation link"
-                  iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-                  iconRightClassName="text-xxs relative top-[1px]"
-                />
-              </div>
+          {features && features.length > 0 ? (
+            <div>
+              <BannerBox
+                className="mb-5"
+                title="Choose wisely"
+                message="These features will not be modifiable after cluster creation."
+                type={BannerBoxEnum.WARNING}
+              />
+              {features.map((feature, index) => (
+                <div
+                  key={feature.id}
+                  className="flex justify-between px-4 py-3 rounded border border-element-light-lighter-500 bg-element-light-lighter-200 mb-3 last:mb-0"
+                >
+                  <div className="flex w-full">
+                    <Controller
+                      name={`features.${index}.active`}
+                      control={control}
+                      render={({ field }) => (
+                        <InputToggle
+                          small
+                          className="relative top-[2px]"
+                          onChange={(value: boolean) => {
+                            field.onChange({
+                              id: feature.id,
+                              value: value,
+                            })
+                          }}
+                          value={field.value}
+                        />
+                      )}
+                    />
+                    <div className="basis-full">
+                      <h4 className="flex justify-between text-ssm text-text-600 mb-1 font-medium">
+                        <span>{feature.title}</span>
+                        <span className="text-ssm text-text-600 font-medium">
+                          {feature.cost_per_month !== 0
+                            ? `${feature.cost_per_month}/month billed by ${cloudProvider}`
+                            : 'Free'}
+                        </span>
+                      </h4>
+                      <p className="text-xs text-text-400 max-w-lg">{feature.description}</p>
+                      {typeof feature.value === 'string' && (
+                        <Controller
+                          name={`features.${index}.value`}
+                          control={control}
+                          defaultValue={feature.value}
+                          render={({ field }) => (
+                            <InputSelect
+                              className="mt-2"
+                              portal
+                              options={
+                                (feature.accepted_values as string[])?.map((value) => ({
+                                  label: value,
+                                  value: value,
+                                })) || []
+                              }
+                              onChange={field.onChange}
+                              value={field.value as string}
+                              label="VPC Subnet address"
+                              isSearchable
+                            />
+                          )}
+                        />
+                      )}
+                      <Link
+                        external
+                        className="font-medium"
+                        size="text-xs"
+                        link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
+                        linkLabel="Documentation link"
+                        iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+                        iconRightClassName="text-xxs relative top-[1px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="shrink-0">
-              <span className="text-ssm text-text-600 font-medium">$90/month billed by AWS</span>
+          ) : (
+            <div className="flex justify-center mt-2">
+              <LoaderSpinner className="w-4" />
             </div>
-          </div>{' '}
+          )}
         </div>
 
         <div className="flex justify-between">
           <Button
-            onClick={() => navigate(CLUSTERS_URL(organizationId))}
+            onClick={() =>
+              navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_RESOURCES_URL}`)
+            }
             type="button"
             className="btn--no-min-w"
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
           >
-            Cancel
+            Back
           </Button>
           <Button
             dataTestId="button-submit"

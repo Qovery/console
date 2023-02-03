@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { ClusterGeneralData, ClusterResourcesData } from '@qovery/shared/interfaces'
+import { ClusterFeaturesData, ClusterGeneralData, ClusterResourcesData } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -13,6 +13,8 @@ export interface ClusterContainerCreateContextInterface {
   setGeneralData: (data: ClusterGeneralData) => void
   resourcesData: ClusterResourcesData | undefined
   setResourcesData: (data: ClusterResourcesData) => void
+  featuresData: ClusterFeaturesData | undefined
+  setFeaturesData: (data: ClusterFeaturesData) => void
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
@@ -47,6 +49,7 @@ export function PageClusterCreateFeature() {
     instance_type: '',
     nodes: [1, 2],
   })
+  const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>()
 
   const navigate = useNavigate()
 
@@ -63,6 +66,8 @@ export function PageClusterCreateFeature() {
         setGeneralData,
         resourcesData,
         setResourcesData,
+        featuresData,
+        setFeaturesData,
       }}
     >
       <FunnelFlow

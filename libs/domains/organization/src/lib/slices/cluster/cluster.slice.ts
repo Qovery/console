@@ -15,6 +15,7 @@ import {
   ClusterAdvancedSettings,
   ClusterCloudProviderInfo,
   ClusterCloudProviderInfoRequest,
+  ClusterFeatureResponseList,
   ClusterInstanceTypeResponseList,
   ClusterLogs,
   ClusterRequest,
@@ -86,7 +87,7 @@ export const editClusterAdvancedSettings = createAsyncThunk<
     settings: ClusterAdvancedSettings
     toasterCallback: () => void
   }
->('cluster/advancedSettings/edit', async (data) => {
+>('cluster/advanced-settings/edit', async (data) => {
   const response = await clusterApi.editClusterAdvancedSettings(
     data.organizationId,
     data.clusterId,
@@ -97,7 +98,7 @@ export const editClusterAdvancedSettings = createAsyncThunk<
 })
 
 export const fetchDefaultClusterAdvancedSettings = createAsyncThunk<AdvancedSettings>(
-  'cluster/defaultAdvancedSettings',
+  'cluster/defaul-advanced-settings',
   async () => {
     const response = await clusterApi.getDefaultClusterAdvancedSettings()
     return response.data
@@ -107,7 +108,7 @@ export const fetchDefaultClusterAdvancedSettings = createAsyncThunk<AdvancedSett
 export const fetchClusterAdvancedSettings = createAsyncThunk<
   ClusterAdvancedSettings,
   { organizationId: string; clusterId: string }
->('cluster/advancedSettings', async (data) => {
+>('cluster/advanced-settings', async (data) => {
   const response = await clusterApi.getClusterAdvancedSettings(data.organizationId, data.clusterId)
   return response.data as ClusterAdvancedSettings
 })
@@ -140,7 +141,7 @@ export const postCloudProviderInfo = createAsyncThunk<
 export const fetchAvailableInstanceTypes = createAsyncThunk<
   ClusterInstanceTypeResponseList,
   { region: string; provider: CloudProviderEnum; clusterType: KubernetesEnum }
->('cluster/fetchAvailableInstanceTypes', async (data) => {
+>('cluster/fetch-available-instance-types', async (data) => {
   let response: AxiosResponse<ClusterInstanceTypeResponseList>
 
   if (data.provider === CloudProviderEnum.AWS) {
@@ -155,6 +156,21 @@ export const fetchAvailableInstanceTypes = createAsyncThunk<
 
   return response.data
 })
+
+export const fetchClusterFeatures = createAsyncThunk<ClusterFeatureResponseList, { cloudProvider: CloudProviderEnum }>(
+  'cluster/fetch-cluster-features',
+  async (data) => {
+    let response: AxiosResponse<ClusterFeatureResponseList>
+
+    if (data.cloudProvider === CloudProviderEnum.AWS) {
+      response = await cloudProviderApi.listAWSFeatures()
+    } else {
+      response = await cloudProviderApi.listScalewayFeatures()
+    }
+
+    return response.data
+  }
+)
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
   loadingStatus: 'not loaded',
