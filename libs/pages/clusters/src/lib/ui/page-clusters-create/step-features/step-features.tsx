@@ -25,7 +25,7 @@ export interface StepFeaturesProps {
 
 export function StepFeatures(props: StepFeaturesProps) {
   const { onSubmit, features, cloudProvider } = props
-  const { formState, control } = useFormContext<ClusterFeaturesData>()
+  const { formState, control, getValues, setValue } = useFormContext<ClusterFeaturesData>()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
@@ -49,7 +49,11 @@ export function StepFeatures(props: StepFeaturesProps) {
               {features.map((feature, index) => (
                 <div
                   key={feature.id}
-                  className="flex justify-between px-4 py-3 rounded border border-element-light-lighter-500 bg-element-light-lighter-200 mb-3 last:mb-0"
+                  className="flex justify-between cursor-pointer px-4 py-3 rounded border border-element-light-lighter-500 bg-element-light-lighter-200 mb-3 last:mb-0"
+                  onClick={() => {
+                    const active = getValues().features[index].active || false
+                    setValue(`features.${index}.active`, !active)
+                  }}
                 >
                   <div className="flex w-full">
                     <Controller
@@ -59,12 +63,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                         <InputToggle
                           small
                           className="relative top-[2px]"
-                          onChange={(value: boolean) => {
-                            field.onChange({
-                              id: feature.id,
-                              value: value,
-                            })
-                          }}
+                          onChange={field.onChange}
                           value={field.value}
                         />
                       )}
@@ -80,27 +79,29 @@ export function StepFeatures(props: StepFeaturesProps) {
                       </h4>
                       <p className="text-xs text-text-400 max-w-lg">{feature.description}</p>
                       {typeof feature.value === 'string' && (
-                        <Controller
-                          name={`features.${index}.value`}
-                          control={control}
-                          defaultValue={feature.value}
-                          render={({ field }) => (
-                            <InputSelect
-                              className="mt-2"
-                              portal
-                              options={
-                                (feature.accepted_values as string[])?.map((value) => ({
-                                  label: value,
-                                  value: value,
-                                })) || []
-                              }
-                              onChange={field.onChange}
-                              value={field.value as string}
-                              label="VPC Subnet address"
-                              isSearchable
-                            />
-                          )}
-                        />
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <Controller
+                            name={`features.${index}.value`}
+                            control={control}
+                            defaultValue={feature.value}
+                            render={({ field }) => (
+                              <InputSelect
+                                className="mt-2"
+                                portal
+                                options={
+                                  (feature.accepted_values as string[])?.map((value) => ({
+                                    label: value,
+                                    value: value,
+                                  })) || []
+                                }
+                                onChange={field.onChange}
+                                value={field.value as string}
+                                label="VPC Subnet address"
+                                isSearchable
+                              />
+                            )}
+                          />
+                        </div>
                       )}
                       <Link
                         external
