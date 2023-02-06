@@ -1,3 +1,4 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -48,7 +49,7 @@ export function StepResourcesFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-    navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
+    if (generalData?.cloud_provider === CloudProviderEnum.AWS) navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
   })
 
   return (

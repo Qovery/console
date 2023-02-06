@@ -80,6 +80,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       fromDetail={props.fromDetail}
       clusterTypeOptions={clusterTypeOptions}
       instanceTypeOptions={instanceTypeOptions}
+      cloudProvider={props.cloudProvider}
     />
   )
 }

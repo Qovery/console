@@ -21,15 +21,18 @@ import { upperCaseFirstLetter } from '@qovery/shared/utils'
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProviders: CloudProvider[]
+  currentCloudProvider?: CloudProviderEnum
 }
 
 export function StepGeneral(props: StepGeneralProps) {
-  const { onSubmit, cloudProviders = [] } = props
+  const { onSubmit, cloudProviders = [], currentCloudProvider } = props
   const { control, formState } = useFormContext<ClusterGeneralData>()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
-  const [currentProvider, setCurrentProvider] = useState<CloudProvider>()
+  const [currentProvider, setCurrentProvider] = useState<CloudProvider | undefined>(
+    cloudProviders.filter((cloudProvider: CloudProvider) => cloudProvider.short_name === currentCloudProvider)[0]
+  )
 
   const buildCloudProviders: Value[] = useMemo(
     () =>

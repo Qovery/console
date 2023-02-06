@@ -1,3 +1,4 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
@@ -17,6 +18,7 @@ export interface ClusterResourcesSettingsProps {
   fromDetail?: boolean
   clusterTypeOptions?: Value[]
   instanceTypeOptions?: Value[]
+  cloudProvider?: CloudProviderEnum
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
@@ -124,7 +126,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         />
       </BlockContent>
 
-      {!props.fromDetail && (
+      {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
         <BannerBox
           iconRealColors
           icon={IconEnum.AWS}
