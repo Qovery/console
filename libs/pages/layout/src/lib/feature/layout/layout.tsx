@@ -1,7 +1,7 @@
 import { Cluster } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { redirect, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { fetchEnvironments } from '@qovery/domains/environment'
@@ -30,7 +30,7 @@ export function Layout(props: LayoutProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
   const dispatch = useDispatch<AppDispatch>()
-  const navigate = useNavigate()
+
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
@@ -50,13 +50,13 @@ export function Layout(props: LayoutProps) {
         if (result.length > 0 && !organizationIds.includes(organizationId)) {
           dispatch(fetchOrganizationById({ organizationId }))
             .unwrap()
-            .catch(() => navigate(ORGANIZATION_URL(result[0].id)))
+            .catch(() => redirect(ORGANIZATION_URL(result[0].id))) // using redirect instead of navigate because navigate was needed in useEffect deps and retriggering everytime we change location https://github.com/remix-run/react-router/discussions/8465#discussioncomment-4051081
         }
       })
       .catch((error) => console.error(error))
 
     dispatch(fetchUserSignUp())
-  }, [dispatch, organizationId, navigate])
+  }, [dispatch, organizationId])
 
   useEffect(() => {
     dispatch(fetchOrganization())
