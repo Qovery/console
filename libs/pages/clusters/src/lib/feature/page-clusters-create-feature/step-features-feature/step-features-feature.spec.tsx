@@ -1,11 +1,22 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
+import selectEvent from 'react-select-event'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepFeaturesFeature from './step-features-feature'
 
-const mockSetGeneralData = jest.fn()
+const mockSetFeaturesData = jest.fn()
 const mockNavigate = jest.fn()
+
+const mockFeatures = [
+  {
+    id: 'STATIC_IP',
+    title: 'feature-1',
+    cost_per_month: 23,
+    value: 'my-value',
+    accepted_values: ['test', 'my-value'],
+  },
+]
 
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
@@ -22,9 +33,8 @@ jest.mock('react-redux', () => ({
 jest.mock('@qovery/domains/organization', () => {
   return {
     ...jest.requireActual('@qovery/domains/organization'),
-    fetchCloudProvider: () => ({
-      loading: 'loaded',
-      items: [],
+    fetchClusterFeatures: () => ({
+      results: mockFeatures,
     }),
   }
 })
@@ -35,15 +45,15 @@ const ContextWrapper = (props: { children: ReactNode }) => {
       value={{
         currentStep: 1,
         setCurrentStep: jest.fn(),
+        featuresData: undefined,
         generalData: {
           name: 'test',
-          description: 'hello',
           production: false,
           cloud_provider: CloudProviderEnum.AWS,
           region: 'Paris',
           credentials: '111-111-111',
         },
-        setGeneralData: mockSetGeneralData,
+        setFeaturesData: mockSetFeaturesData,
       }}
     >
       <StepFeaturesFeature />
@@ -55,18 +65,12 @@ describe('StepFeaturesFeature', () => {
   beforeEach(() => {
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
-        Promise.resolve([
-          {
-            short_name: CloudProviderEnum.AWS,
-            regions: [
-              {
-                name: 'Paris',
-              },
-            ],
-          },
-        ]),
+        Promise.resolve({
+          results: mockFeatures,
+        }),
     }))
   })
+
   it('should render successfully', () => {
     const { baseElement } = render(
       <ContextWrapper>
@@ -77,15 +81,21 @@ describe('StepFeaturesFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
-    const { getByTestId } = render(
+    const { getByTestId, getByLabelText } = render(
       <ContextWrapper>
         <StepFeaturesFeature />
       </ContextWrapper>
     )
 
+    await waitFor(() => {
+      const feature = getByTestId('feature')
+      feature.click()
+    })
+
     await act(() => {
-      const input = getByTestId('input-name')
-      fireEvent.input(input, { target: { value: 'test' } })
+      selectEvent.select(getByLabelText('VPC Subnet address'), mockFeatures[0].accepted_values[0], {
+        container: document.body,
+      })
     })
 
     const button = getByTestId('button-submit')
@@ -95,16 +105,13 @@ describe('StepFeaturesFeature', () => {
       button.click()
     })
 
-    expect(mockSetGeneralData).toHaveBeenCalledWith({
-      name: 'test',
-      description: 'hello',
-      production: false,
-      cloud_provider: CloudProviderEnum.AWS,
-      region: 'Paris',
-      credentials: '111-111-111',
+    expect(mockSetFeaturesData).toHaveBeenCalledWith({
+      features: [
+        {
+          id: 'STATIC_IP',
+          value: 'test',
+        },
+      ],
     })
-    // expect(mockNavigate).toHaveBeenCalledWith(
-    //   '/organization/1/clusters/create/resources'
-    // )
   })
 })

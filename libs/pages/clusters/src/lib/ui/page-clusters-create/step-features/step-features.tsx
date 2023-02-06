@@ -49,22 +49,23 @@ export function StepFeatures(props: StepFeaturesProps) {
               {features.map((feature, index) => (
                 <div
                   key={feature.id}
+                  data-testid="feature"
                   className="flex justify-between cursor-pointer px-4 py-3 rounded border border-element-light-lighter-500 bg-element-light-lighter-200 mb-3 last:mb-0"
                   onClick={() => {
-                    const active = getValues().features[index].active || false
-                    setValue(`features.${index}.active`, !active)
+                    const active = getValues().features[index].id || undefined
+                    setValue(`features.${index}.id`, !active ? feature.id : undefined)
                   }}
                 >
                   <div className="flex w-full">
                     <Controller
-                      name={`features.${index}.active`}
+                      name={`features.${index}.id`}
                       control={control}
                       render={({ field }) => (
                         <InputToggle
                           small
                           className="relative top-[2px]"
                           onChange={field.onChange}
-                          value={field.value}
+                          value={field.value ? true : false}
                         />
                       )}
                     />
@@ -87,7 +88,6 @@ export function StepFeatures(props: StepFeaturesProps) {
                             render={({ field }) => (
                               <InputSelect
                                 className="mt-2"
-                                portal
                                 options={
                                   (feature.accepted_values as string[])?.map((value) => ({
                                     label: value,
@@ -98,6 +98,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                                 value={field.value as string}
                                 label="VPC Subnet address"
                                 isSearchable
+                                portal
                               />
                             )}
                           />

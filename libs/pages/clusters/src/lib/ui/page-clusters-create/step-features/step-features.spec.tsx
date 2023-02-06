@@ -4,28 +4,21 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import StepFeatures, { StepFeaturesProps } from './step-features'
 
-const currentCloudProviders = {
-  short_name: CloudProviderEnum.AWS,
-  name: 'Amazon',
-  region: [
-    {
-      name: 'Paris',
-      city: 'paris',
-      country_code: 'fr',
-    },
-  ],
-}
+const mockFeatures = [
+  {
+    id: 'STATIC_IP',
+    title: 'feature-1',
+    cost_per_month: 23,
+    value: 'my-value',
+    accepted_values: ['test', 'my-value'],
+  },
+]
 
 const props: StepFeaturesProps = {
   onSubmit: jest.fn(),
-  cloudProviders: [currentCloudProviders],
+  cloudProvider: CloudProviderEnum.AWS,
+  features: mockFeatures,
 }
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}))
 
 describe('StepFeatures', () => {
   it('should render successfully', () => {
@@ -34,32 +27,35 @@ describe('StepFeatures', () => {
   })
 
   it('should render the form with fields', async () => {
-    const { getByDisplayValue, getByTestId } = render(
+    const { getByDisplayValue, getAllByDisplayValue } = render(
       wrapWithReactHookForm(<StepFeatures {...props} />, {
         defaultValues: {
-          name: 'my-cluster',
-          description: 'test',
-          production: false,
+          features: [
+            {
+              id: 'STATIC_IP',
+              value: 'my-value',
+              accepted_values: 'my-value',
+            },
+          ],
         },
       })
     )
 
-    getByDisplayValue('my-cluster')
-    getByDisplayValue('test')
-    getByDisplayValue('false')
-    getByTestId('input-cloud-provider')
+    getByDisplayValue('true')
+    // all because we have two inputs on the inputs select with search
+    getAllByDisplayValue('my-value')
   })
 
   it('should submit the form on click', async () => {
     const { getByTestId } = render(
       wrapWithReactHookForm(<StepFeatures {...props} />, {
         defaultValues: {
-          name: 'my-cluster',
-          description: 'test',
-          production: false,
-          cloud_provider: CloudProviderEnum.AWS,
-          region: 'paris',
-          credentials: '111-111-111',
+          features: [
+            {
+              id: 'STATIC_IP',
+              value: 'my-value',
+            },
+          ],
         },
       })
     )
@@ -67,8 +63,8 @@ describe('StepFeatures', () => {
     const button = getByTestId('button-submit')
 
     await act(() => {
-      const input = getByTestId('input-name')
-      fireEvent.input(input, { target: { value: 'test' } })
+      const input = getByTestId('feature')
+      input.click()
     })
 
     await act(() => {

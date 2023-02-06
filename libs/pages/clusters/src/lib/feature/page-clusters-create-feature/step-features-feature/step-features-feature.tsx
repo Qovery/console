@@ -55,11 +55,10 @@ export function StepFeaturesFeature() {
   }, [dispatch, features, generalData?.cloud_provider])
 
   const onSubmit = methods.handleSubmit((data) => {
-    // console.log(data)
-    const cloneData = data.features.filter((filter) => filter?.active)
-    console.log(cloneData)
-
-    setFeaturesData(data)
+    const cloneData = data.features.filter((filter) => filter.id)
+    setFeaturesData({
+      features: cloneData,
+    })
     // const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
     // navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
   })

@@ -18,8 +18,7 @@ export interface ClusterResourcesData {
 
 export interface ClusterFeaturesData {
   features: {
-    id: string
-    active: boolean
+    id?: string | boolean
     value: string | boolean
   }[]
 }
