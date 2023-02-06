@@ -86,7 +86,7 @@ export function PageClusterCreateFeature() {
         onExit={() => {
           navigate(CLUSTERS_URL(organizationId))
         }}
-        totalSteps={4}
+        totalSteps={5}
         currentStep={currentStep}
         currentTitle={steps[currentStep - 1].title}
         portal
