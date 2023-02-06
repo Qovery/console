@@ -104,8 +104,20 @@ export const fetchApplications = createAsyncThunk<
 export const fetchApplicationsStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'applications-status/fetch',
   async (data) => {
-    const response = await applicationsApi.getEnvironmentApplicationStatus(data.environmentId)
-    return response.data.results as Status[]
+    const result = await Promise.all([
+      // fetch status Git applications
+      applicationsApi.getEnvironmentApplicationStatus(data.environmentId),
+      // fetch status Container applications
+      containersApi.getEnvironmentContainerStatus(data.environmentId),
+      // fetch status Jobs applications
+      jobsApi.getEnvironmentJobStatus(data.environmentId),
+    ])
+
+    return [
+      ...(result[0].data.results as Status[]),
+      ...(result[1].data.results as Status[]),
+      ...(result[2].data.results as Status[]),
+    ]
   }
 )
 

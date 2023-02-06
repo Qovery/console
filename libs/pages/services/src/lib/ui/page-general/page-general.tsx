@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
-import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
+import { APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
 import { BaseLink, EmptyState, HelpSection, Table, TableFilterProps } from '@qovery/shared/ui'
 import TableRowServicesFeature from '../../feature/table-row-services-feature/table-row-services-feature'
 
@@ -76,7 +76,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
                   dataHead={tableHead}
                   link={
                     isDatabase
-                      ? DATABASE_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
+                      ? DATABASE_URL(organizationId, projectId, environmentId, currentData.id) + DATABASE_GENERAL_URL
                       : APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
                   }
                   environmentMode={environmentMode}

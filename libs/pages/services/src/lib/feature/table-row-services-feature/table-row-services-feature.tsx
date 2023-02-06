@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { getServiceType, isDatabase } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { APPLICATION_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
+import { APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
 import { TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
 import TableRowServices from '../../ui/table-row-services/table-row-services'
 
@@ -21,7 +21,7 @@ export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
   const type = getServiceType(data)
 
   const link = isDatabase(type)
-    ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
+    ? DATABASE_URL(organizationId, projectId, environmentId, data.id) + DATABASE_GENERAL_URL
     : APPLICATION_URL(organizationId, projectId, environmentId, data.id) + SERVICES_GENERAL_URL
 
   return (
