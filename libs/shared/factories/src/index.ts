@@ -1,5 +1,6 @@
 export * from './lib/application-deployment-factory.mock'
 export * from './lib/application-factory.mock'
+export * from './lib/container-factory.mock'
 export * from './lib/auth-provider.mock'
 export * from './lib/cluster-factory.mock'
 export * from './lib/cluster-log-factory.mock'

@@ -6,14 +6,15 @@ import Tooltip from '../tooltip/tooltip'
 export interface TagCommitProps {
   commitId?: string
   withBackground?: boolean
+  commitDeltaCount?: number
 }
 
 export function TagCommit(props: TagCommitProps) {
-  const { commitId = '' } = props
+  const { commitId = '', withBackground, commitDeltaCount } = props
   const [hover, setHover] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  let displayCopy: ReturnType<typeof setTimeout>
+  let displayCopy: ReturnType<typeof setTimeout> | undefined = undefined
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -26,13 +27,15 @@ export function TagCommit(props: TagCommitProps) {
 
   useEffect(() => {
     return () => clearTimeout(displayCopy)
-  }, [])
+  }, [displayCopy])
 
   const contentTag = (
     <Tag
       data-testid="tag-commit"
-      className={`border border-element-light-lighter-500 text-text-400 font-medium hover:bg-element-light-lighter-400 w-[80px] flex items-center justify-center ${
-        props.withBackground ? 'bg-white' : ''
+      className={`border font-medium flex items-center justify-center ${withBackground ? 'bg-white' : ''} ${
+        commitDeltaCount
+          ? 'border-progressing-500 text-progressing-500'
+          : 'border-element-light-lighter-500 text-text-400 hover:bg-element-light-lighter-400 w-[90px]'
       }`}
     >
       {!hover ? (
@@ -45,6 +48,11 @@ export function TagCommit(props: TagCommitProps) {
         </div>
       )}
       {commitId.substring(0, 7)}
+      {commitDeltaCount ? (
+        <span className="bg-progressing-500 text-white px-1 h-4 rounded-[34px] ml-1 inline-block">
+          {commitDeltaCount}
+        </span>
+      ) : null}
     </Tag>
   )
 

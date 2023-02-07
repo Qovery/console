@@ -1,9 +1,12 @@
-import { getServiceType, isApplication, isJob } from '@qovery/shared/enums'
+import { ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { useParams } from 'react-router-dom'
+import { isApplication, isGitJob, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, JobApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
-import LastCommitFeature from '../../feature/last-commit-feature/last-commit-feature'
-import AboutContentContainer from '../about-content-container/about-content-container'
 import About from '../about/about'
+import AboutContainer from '../about/about-container/about-container'
+import AboutGit from '../about/about-git/about-git'
+import AboutUpdate from '../about/about-update/about-update'
 import InstancesTable from '../instances-table/instances-table'
 import JobOverview from '../job-overview/job-overview'
 
@@ -12,10 +15,12 @@ export interface PageGeneralProps {
   listHelpfulLinks: BaseLink[]
   loadingStatus?: LoadingStatus
   serviceStability?: number
+  currentRegistry?: ContainerRegistryResponse
 }
 
 export function PageGeneral(props: PageGeneralProps) {
   const { application, listHelpfulLinks, loadingStatus, serviceStability = 0 } = props
+  const { organizationId = '' } = useParams()
 
   return (
     <div className="mt-2 bg-white rounded flex flex-grow min-h-0">
@@ -73,30 +78,32 @@ export function PageGeneral(props: PageGeneralProps) {
         </div>
       </div>
       <div className="w-right-help-sidebar py-10 border-l border-element-light-lighter-400">
-        <About
-          description={application?.description || ''}
-          link={{
-            link: application?.git_repository?.url || '',
-            linkLabel: application?.git_repository?.provider,
-            external: true,
-          }}
-          buildMode={application?.build_mode}
-          gitProvider={application?.git_repository?.provider}
-          loadingStatus={loadingStatus}
-          type={application && getServiceType(application)}
-        />
+        <About description={application?.description || ''} />
+
         {application &&
           (isApplication(application) ? (
-            <LastCommitFeature />
+            <AboutGit application={application} />
           ) : isJob(application) ? (
-            application.source?.docker ? (
-              <LastCommitFeature />
+            isGitJob(application) ? (
+              <AboutGit application={application} />
             ) : (
-              <AboutContentContainer application={application} />
+              <AboutContainer
+                loadingStatus={loadingStatus}
+                organizationId={organizationId}
+                currentRegistry={props.currentRegistry}
+                container={application}
+              />
             )
           ) : (
-            <AboutContentContainer application={application} />
+            <AboutContainer
+              loadingStatus={loadingStatus}
+              organizationId={organizationId}
+              container={application}
+              currentRegistry={props.currentRegistry}
+            />
           ))}
+
+        <AboutUpdate application={application} />
       </div>
     </div>
   )
