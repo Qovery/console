@@ -25,7 +25,10 @@ export function StepSummary(props: StepSummaryProps) {
       </div>
 
       <div className="mb-10">
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
+        <div
+          data-testid="summary-general"
+          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
+        >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">General informations</div>
@@ -53,7 +56,10 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10">
+        <div
+          data-testid="summary-resources"
+          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10"
+        >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
@@ -73,6 +79,36 @@ export function StepSummary(props: StepSummaryProps) {
                   min {props.resourcesData.nodes[0]} - max {props.resourcesData.nodes[1]}
                 </strong>
               </li>
+            </ul>
+          </div>
+          <ButtonIcon
+            onClick={props.gotoResources}
+            icon={IconAwesomeEnum.WHEEL}
+            style={ButtonIconStyle.FLAT}
+            className="text-text-500 hover:text-text-700"
+          />
+        </div>
+
+        <div
+          data-testid="summary-features"
+          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10"
+        >
+          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <div className="flex-grow mr-2">
+            <div className="text-sm text-text-600 font-bold mb-2">Features</div>
+            <ul className="text-text-400 text-sm list-none">
+              {/* {featuresData.map((feature) => (
+                <li>
+                  {feature.id}
+                  {feature.value ? (
+                    <>
+                      :<strong className="font-medium">{feature.value}</strong>
+                    </>
+                  ) : (
+                    ''
+                  )}
+                </li>
+              ))} */}
             </ul>
           </div>
           <ButtonIcon

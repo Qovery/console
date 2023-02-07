@@ -28,7 +28,12 @@ const props: StepSummaryProps = {
 
 describe('StepSummary', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<StepSummary {...props} />))
+    const { baseElement, getByTestId } = render(wrapWithReactHookForm(<StepSummary {...props} />))
+
+    getByTestId('summary-general')
+    getByTestId('summary-resources')
+    getByTestId('summary-features')
+
     expect(baseElement).toBeTruthy()
   })
 })
