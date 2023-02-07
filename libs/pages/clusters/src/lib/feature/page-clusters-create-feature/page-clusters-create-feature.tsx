@@ -1,6 +1,11 @@
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { ClusterFeaturesData, ClusterGeneralData, ClusterResourcesData } from '@qovery/shared/interfaces'
+import {
+  ClusterFeaturesData,
+  ClusterGeneralData,
+  ClusterRemoteData,
+  ClusterResourcesData,
+} from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -15,6 +20,8 @@ export interface ClusterContainerCreateContextInterface {
   setResourcesData: (data: ClusterResourcesData) => void
   featuresData: ClusterFeaturesData | undefined
   setFeaturesData: (data: ClusterFeaturesData) => void
+  remoteData: ClusterRemoteData | undefined
+  setRemoteData: (data: ClusterRemoteData) => void
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
@@ -43,6 +50,9 @@ export function PageClusterCreateFeature() {
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
+  const [remoteData, setRemoteData] = useState<ClusterRemoteData | undefined>({
+    ssh_key: '',
+  })
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>({
     cluster_type: '',
     disk_size: 20,
@@ -66,6 +76,8 @@ export function PageClusterCreateFeature() {
         setGeneralData,
         resourcesData,
         setResourcesData,
+        remoteData,
+        setRemoteData,
         featuresData,
         setFeaturesData,
       }}

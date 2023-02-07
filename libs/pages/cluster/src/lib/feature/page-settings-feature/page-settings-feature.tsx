@@ -1,4 +1,4 @@
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectClusterById } from '@qovery/domains/organization'
@@ -10,6 +10,7 @@ import {
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
+  CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
   CLUSTER_SETTINGS_URL,
   CLUSTER_URL,
@@ -56,6 +57,14 @@ export function PageSettingsFeature() {
       icon: IconAwesomeEnum.PUZZLE_PIECE,
       url: pathSettings + CLUSTER_SETTINGS_FEATURES_URL,
     })
+
+    if (cluster?.kubernetes === KubernetesEnum.K3_S) {
+      links.push({
+        title: 'Remote access',
+        icon: IconAwesomeEnum.LIGHTBULB,
+        url: pathSettings + CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
+      })
+    }
   }
 
   links.push(

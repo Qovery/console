@@ -187,6 +187,7 @@ export function refactoClusterPayload(cluster: Partial<ClusterEntity>) {
     instance_type: cluster.instance_type,
     max_running_nodes: cluster.max_running_nodes,
     min_running_nodes: cluster.min_running_nodes,
+    ssh_keys: cluster.ssh_keys,
   }
 
   return clusterRequestPayload
