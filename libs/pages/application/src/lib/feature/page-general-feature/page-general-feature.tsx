@@ -48,13 +48,12 @@ export function PageGeneralFeature() {
       dispatch(fetchOrganizationContainerRegistries({ organizationId }))
         .unwrap()
         .then((registries) => {
-          setCurrentRegistry(
-            registries.find(
-              (registry) =>
-                registry.id ===
-                (isContainerJob(application) ? application.source?.image?.registry_id : application.registry?.id)
-            )
+          const reg = registries.find(
+            (registry) =>
+              registry.id ===
+              (isContainerJob(application) ? application.source?.image?.registry_id : application.registry?.id)
           )
+          setCurrentRegistry(reg)
         })
     }
   }, [organizationId, dispatch, organizationLoadingStatus, application, setCurrentRegistry])
