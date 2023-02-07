@@ -1,13 +1,13 @@
-import { CloudProviderEnum, ClusterRequest } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ClusterRequest, KubernetesEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createCluster, postClusterActionsDeploy } from '@qovery/domains/organization'
 import {
+  CLUSTERS_CREATION_GENERAL_URL,
+  CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_URL,
   CLUSTERS_URL,
-  SERVICES_DATABASE_CREATION_GENERAL_URL,
-  SERVICES_DATABASE_CREATION_RESOURCES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -26,11 +26,11 @@ export function StepSummaryFeature() {
   const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
   const gotoGlobalInformations = useCallback(() => {
-    navigate(pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL)
+    navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
   }, [navigate, pathCreate])
 
   const gotoResources = () => {
-    navigate(pathCreate + SERVICES_DATABASE_CREATION_RESOURCES_URL)
+    navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
   }
 
   const onBack = () => {
@@ -42,7 +42,7 @@ export function StepSummaryFeature() {
   }
 
   // useEffect(() => {
-  //   !generalData?.name && navigate(pathCreate + SERVICES_DATABASE_CREATION_GENERAL_URL)
+  //   !generalData?.name && navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
   // }, [pathCreate, generalData, navigate, organizationId])
 
   const dispatch = useDispatch<AppDispatch>()
@@ -62,8 +62,13 @@ export function StepSummaryFeature() {
         max_running_nodes: resourcesData.nodes[1],
         disk_size: resourcesData.disk_size,
         instance_type: resourcesData.instance_type,
-        // cluster_type: resourcesData.cluster_type
-        // credentials: generalData.credentials
+        kubernetes: resourcesData.cluster_type as KubernetesEnum,
+        features: [
+          {
+            id: 'STATIC_IP',
+            value: false,
+          },
+        ],
       }
 
       dispatch(

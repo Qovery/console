@@ -1,20 +1,22 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import StepSummary, { StepSummaryProps } from './step-summary'
 
 const props: StepSummaryProps = {
   generalData: {
     name: 'test',
-    accessibility: DatabaseAccessibilityEnum.PRIVATE,
-    version: '1',
-    type: DatabaseTypeEnum.MYSQL,
-    mode: DatabaseModeEnum.MANAGED,
+    description: 'description',
+    production: true,
+    cloud_provider: CloudProviderEnum.AWS,
+    region: 'region',
+    credentials: '1',
   },
   resourcesData: {
-    storage: 1,
-    cpu: 100,
-    memory: 100,
+    cluster_type: 'MANAGED',
+    instance_type: 't2.micro',
+    nodes: [1, 4],
+    disk_size: 20,
   },
   gotoGlobalInformation: jest.fn(),
   gotoResources: jest.fn(),
@@ -24,7 +26,7 @@ const props: StepSummaryProps = {
   onSubmit: jest.fn(),
 }
 
-describe('PageDatabaseCreatePost', () => {
+describe('StepSummary', () => {
   it('should render successfully', () => {
     const { baseElement } = render(wrapWithReactHookForm(<StepSummary {...props} />))
     expect(baseElement).toBeTruthy()

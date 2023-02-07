@@ -1,9 +1,9 @@
 import { act } from '@testing-library/react'
 import { getByTestId, render } from '__tests__/utils/setup-jest'
-import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
-import * as storeDatabase from '@qovery/domains/database'
-import { DatabaseCreateContext } from '../page-database-create-feature'
+import * as storeCluster from '@qovery/domains/organization'
+import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -17,35 +17,46 @@ jest.mock('react-redux', () => ({
 const mockNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
-  useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
+  useParams: () => ({ organizationId: '1' }),
   useNavigate: () => mockNavigate,
 }))
 
 const mockSetResourcesData = jest.fn()
 const ContextWrapper = (props: { children: ReactNode }) => {
   return (
-    <DatabaseCreateContext.Provider
+    <ClusterContainerCreateContext.Provider
       value={{
         currentStep: 1,
         setCurrentStep: jest.fn(),
         generalData: {
           name: 'test',
-          accessibility: DatabaseAccessibilityEnum.PRIVATE,
-          version: '1',
-          type: DatabaseTypeEnum.MYSQL,
-          mode: DatabaseModeEnum.CONTAINER,
+          description: 'description',
+          production: true,
+          cloud_provider: CloudProviderEnum.AWS,
+          region: 'region',
+          credentials: '1',
         },
         setGeneralData: jest.fn(),
         resourcesData: {
-          storage: 1,
-          cpu: 100000,
-          memory: 100,
+          cluster_type: 'MANAGED',
+          instance_type: 't2.micro',
+          nodes: [1, 4],
+          disk_size: 20,
         },
         setResourcesData: mockSetResourcesData,
+        featuresData: {
+          features: [
+            {
+              id: 'STATIC_IP',
+              value: false,
+            },
+          ],
+        },
+        setFeaturesData: jest.fn(),
       }}
     >
       {props.children}
-    </DatabaseCreateContext.Provider>
+    </ClusterContainerCreateContext.Provider>
   )
 }
 
@@ -60,7 +71,7 @@ describe('StepSummaryFeature', () => {
   })
 
   it('should post the request with expected form values', async () => {
-    const createDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'createDatabase')
+    const createDatabaseSpy: SpyInstance = jest.spyOn(storeCluster, 'createCluster')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
@@ -85,19 +96,26 @@ describe('StepSummaryFeature', () => {
     })
 
     expect(createDatabaseSpy).toHaveBeenCalledWith({
-      environmentId: '3',
-      databaseRequest: {
-        accessibility: DatabaseAccessibilityEnum.PRIVATE,
-        cpu: 100000,
-        memory: 100,
-        mode: DatabaseModeEnum.CONTAINER,
+      organizationId: '1',
+      clusterRequest: {
         name: 'test',
-        storage: 1,
-        type: DatabaseTypeEnum.MYSQL,
-        version: '1',
-        description: '',
+        description: 'description',
+        production: true,
+        cloud_provider: CloudProviderEnum.AWS,
+        region: 'region',
+        min_running_nodes: 1,
+        max_running_nodes: 4,
+        kubernetes: 'MANAGED',
+        instance_type: 't2.micro',
+        disk_size: 20,
+        features: [
+          {
+            id: 'STATIC_IP',
+            value: false,
+          },
+        ],
       },
     })
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3')
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters')
   })
 })
