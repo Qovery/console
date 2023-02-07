@@ -48,11 +48,11 @@ export function TagCommit(props: TagCommitProps) {
         </div>
       )}
       {commitId.substring(0, 7)}
-      {props.commitDeltaCount && (
+      {props.commitDeltaCount ? (
         <span className="bg-progressing-500 text-white px-1 h-4 rounded-[34px] ml-1 inline-block">
           {props.commitDeltaCount}
         </span>
-      )}
+      ) : null}
     </Tag>
   )
 

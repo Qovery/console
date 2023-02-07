@@ -26,9 +26,9 @@ export function AboutGit(props: AboutGitProps) {
     <div className="p-8 flex flex-col items-start border-b border-element-light-lighter-400 text-text-500">
       <div className="font-bold mb-3 text-text-600">Source</div>
 
-      <p className="mb-3 flex items-center gap-3">
+      <div className="mb-3 flex items-center gap-3">
         Commit: <LastCommitFeature />
-      </p>
+      </div>
       <p className="mb-3 flex items-center gap-3">
         Branch:{' '}
         <strong className="font-medium">

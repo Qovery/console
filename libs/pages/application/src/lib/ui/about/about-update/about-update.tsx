@@ -9,9 +9,15 @@ export function AboutUpdate(props: AboutUpdateProps) {
   return (
     <div className="p-8 text-text-400 text-sm">
       {props.application?.created_at && (
-        <div className="mb-2">Created: {dateFullFormat(props.application.created_at)}</div>
+        <div className="mb-2">
+          Created: <span>{dateFullFormat(props.application.created_at)}</span>
+        </div>
       )}
-      {props.application?.updated_at && <div>Last edit: {timeAgo(new Date(props.application.updated_at))}</div>}
+      {props.application?.updated_at && (
+        <div>
+          Last edit: <span>{timeAgo(new Date(props.application.updated_at))}</span>
+        </div>
+      )}
     </div>
   )
 }

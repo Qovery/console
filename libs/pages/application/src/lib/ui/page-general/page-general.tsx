@@ -87,7 +87,6 @@ export function PageGeneral(props: PageGeneralProps) {
             isGitJob(application) ? (
               <AboutGit application={application} />
             ) : (
-              // <LastCommitFeature />
               <AboutContainer
                 loadingStatus={loadingStatus}
                 organizationId={organizationId}
