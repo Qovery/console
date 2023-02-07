@@ -5,17 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { ClusterGeneralData, Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
-import {
-  BannerBox,
-  BannerBoxEnum,
-  Button,
-  ButtonSize,
-  ButtonStyle,
-  Icon,
-  IconFlag,
-  InputSelect,
-  LoaderSpinner,
-} from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, Icon, IconFlag, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface StepGeneralProps {
@@ -40,8 +30,6 @@ export function StepGeneral(props: StepGeneralProps) {
         label: upperCaseFirstLetter(value.name) || '',
         value: value.short_name || '',
         icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
-        // disabled temporally Digital Ocean
-        isDisabled: value.short_name === CloudProviderEnum.DO ? true : false,
       })),
     [cloudProviders]
   )
@@ -72,12 +60,6 @@ export function StepGeneral(props: StepGeneralProps) {
           <h4 className="mb-3 text-text-700 text-sm">Provider credentials</h4>
           {cloudProviders.length > 0 ? (
             <>
-              <BannerBox
-                type={BannerBoxEnum.WARNING}
-                className="mb-4"
-                title="Warning"
-                message="The creation of clusters on Digital Ocean is temporarily disabled."
-              />
               <Controller
                 name="cloud_provider"
                 control={control}

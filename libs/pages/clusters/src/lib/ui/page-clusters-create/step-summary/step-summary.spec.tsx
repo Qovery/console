@@ -18,8 +18,21 @@ const props: StepSummaryProps = {
     nodes: [1, 4],
     disk_size: 20,
   },
-  gotoGlobalInformation: jest.fn(),
-  gotoResources: jest.fn(),
+  featuresData: {
+    features: [
+      {
+        id: 'STATIC_IP',
+        value: true,
+      },
+    ],
+  },
+  remoteData: {
+    ssh_key: 'ssh_key',
+  },
+  goToFeatures: jest.fn(),
+  goToGeneral: jest.fn(),
+  goToResources: jest.fn(),
+  goToRemote: jest.fn(),
   isLoadingCreate: false,
   isLoadingCreateAndDeploy: false,
   onPrevious: jest.fn(),
@@ -33,6 +46,7 @@ describe('StepSummary', () => {
     getByTestId('summary-general')
     getByTestId('summary-resources')
     getByTestId('summary-features')
+    getByTestId('summary-remote')
 
     expect(baseElement).toBeTruthy()
   })

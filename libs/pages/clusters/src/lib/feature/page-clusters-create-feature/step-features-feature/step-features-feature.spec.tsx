@@ -113,5 +113,7 @@ describe('StepFeaturesFeature', () => {
         },
       ],
     })
+
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters/create/summary')
   })
 })

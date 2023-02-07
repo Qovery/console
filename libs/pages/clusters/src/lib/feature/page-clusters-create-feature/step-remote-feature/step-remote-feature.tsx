@@ -1,8 +1,14 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterRemoteData } from '@qovery/shared/interfaces'
-import { CLUSTERS_CREATION_REMOTE_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import {
+  CLUSTERS_CREATION_FEATURES_URL,
+  CLUSTERS_CREATION_SUMMARY_URL,
+  CLUSTERS_CREATION_URL,
+  CLUSTERS_URL,
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepRemote from '../../../ui/page-clusters-create/step-remote/step-remote'
@@ -10,7 +16,7 @@ import { useClusterContainerCreateContext } from '../page-clusters-create-featur
 
 export function StepRemoteFeature() {
   useDocumentTitle('SSH Key - Create Cluster')
-  const { remoteData, setRemoteData, setCurrentStep } = useClusterContainerCreateContext()
+  const { remoteData, setRemoteData, setCurrentStep, generalData } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
 
@@ -48,7 +54,11 @@ export function StepRemoteFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     setRemoteData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-    navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
+    if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
+      navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
+    } else {
+      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+    }
   })
 
   return (

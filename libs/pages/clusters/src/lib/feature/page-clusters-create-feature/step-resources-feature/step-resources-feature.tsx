@@ -6,6 +6,7 @@ import { ClusterResourcesData } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_REMOTE_URL,
+  CLUSTERS_CREATION_SUMMARY_URL,
   CLUSTERS_CREATION_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
@@ -43,7 +44,7 @@ export function StepResourcesFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(1)
+    setCurrentStep(2)
   }, [setCurrentStep])
 
   const methods = useForm<ClusterResourcesData>({
@@ -58,7 +59,7 @@ export function StepResourcesFeature() {
       if (data.cluster_type === KubernetesEnum.K3_S) navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
       else navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
     } else {
-      // todo navigate to summary
+      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
     }
   })
 

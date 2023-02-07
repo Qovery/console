@@ -1,10 +1,12 @@
-import { CloudProviderEnum, ClusterRequest, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ClusterRequest, ClusterRequestFeatures, KubernetesEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createCluster, postClusterActionsDeploy } from '@qovery/domains/organization'
 import {
+  CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
+  CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_URL,
   CLUSTERS_URL,
@@ -13,11 +15,11 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
-import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
+import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Database')
-  const { generalData, resourcesData, setCurrentStep } = useClusterContainerCreateContext()
+  const { generalData, resourcesData, featuresData, remoteData, setCurrentStep } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
   const [loadingCreate, setLoadingCreate] = useState(false)
@@ -25,25 +27,33 @@ export function StepSummaryFeature() {
 
   const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
-  const gotoGlobalInformations = useCallback(() => {
-    navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
+  const goToFeatures = useCallback(() => {
+    navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
   }, [navigate, pathCreate])
 
-  const gotoResources = () => {
+  const goToGeneral = () => {
+    navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
+  }
+
+  const goToResources = () => {
     navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
+  }
+
+  const goToRemote = () => {
+    navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
   }
 
   const onBack = () => {
     if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
-      // gotoGlobalInformations()
+      goToFeatures()
     } else {
-      gotoResources()
+      goToResources()
     }
   }
 
-  // useEffect(() => {
-  //   !generalData?.name && navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
-  // }, [pathCreate, generalData, navigate, organizationId])
+  useEffect(() => {
+    !generalData?.name && navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
+  }, [pathCreate, generalData, navigate, organizationId])
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -63,12 +73,8 @@ export function StepSummaryFeature() {
         disk_size: resourcesData.disk_size,
         instance_type: resourcesData.instance_type,
         kubernetes: resourcesData.cluster_type as KubernetesEnum,
-        features: [
-          {
-            id: 'STATIC_IP',
-            value: false,
-          },
-        ],
+        features: (featuresData?.features as ClusterRequestFeatures[]) || undefined,
+        ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
       }
 
       dispatch(
@@ -98,7 +104,7 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(3)
+    setCurrentStep(steps.length)
   }, [setCurrentStep])
 
   return (
@@ -111,8 +117,12 @@ export function StepSummaryFeature() {
           onPrevious={onBack}
           generalData={generalData}
           resourcesData={resourcesData}
-          gotoResources={gotoResources}
-          gotoGlobalInformation={gotoGlobalInformations}
+          featuresData={featuresData}
+          remoteData={remoteData}
+          goToResources={goToResources}
+          goToGeneral={goToGeneral}
+          goToFeatures={goToFeatures}
+          goToRemote={goToRemote}
         />
       )}
     </FunnelFlowBody>

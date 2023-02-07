@@ -44,6 +44,10 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           disk_size: 20,
         },
         setResourcesData: mockSetResourcesData,
+        remoteData: {
+          ssh_key: 'ssh_key',
+        },
+        setRemoteData: jest.fn(),
         featuresData: {
           features: [
             {
@@ -71,16 +75,11 @@ describe('StepSummaryFeature', () => {
   })
 
   it('should post the request with expected form values', async () => {
-    const createDatabaseSpy: SpyInstance = jest.spyOn(storeCluster, 'createCluster')
+    const createClusterSpy: SpyInstance = jest.spyOn(storeCluster, 'createCluster')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
-          data: {
-            id: '1',
-            environment: {
-              id: '2',
-            },
-          },
+          data: {},
         }),
     }))
     const { baseElement } = render(
@@ -95,7 +94,7 @@ describe('StepSummaryFeature', () => {
       button.click()
     })
 
-    expect(createDatabaseSpy).toHaveBeenCalledWith({
+    expect(createClusterSpy).toHaveBeenCalledWith({
       organizationId: '1',
       clusterRequest: {
         name: 'test',
@@ -108,6 +107,7 @@ describe('StepSummaryFeature', () => {
         kubernetes: 'MANAGED',
         instance_type: 't2.micro',
         disk_size: 20,
+        ssh_keys: ['ssh_key'],
         features: [
           {
             id: 'STATIC_IP',
@@ -116,6 +116,5 @@ describe('StepSummaryFeature', () => {
         ],
       },
     })
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters')
   })
 })

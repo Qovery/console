@@ -1,13 +1,24 @@
-import { ClusterGeneralData, ClusterResourcesData } from '@qovery/shared/interfaces'
+import { ClusterRequestFeatures } from 'qovery-typescript-axios'
+import {
+  ClusterFeaturesData,
+  ClusterGeneralData,
+  ClusterRemoteData,
+  ClusterResourcesData,
+} from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { trimId } from '@qovery/shared/utils'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
   onPrevious: () => void
   generalData: ClusterGeneralData
   resourcesData: ClusterResourcesData
-  gotoGlobalInformation: () => void
-  gotoResources: () => void
+  featuresData?: ClusterFeaturesData
+  remoteData?: ClusterRemoteData
+  goToFeatures: () => void
+  goToResources: () => void
+  goToGeneral: () => void
+  goToRemote: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
 }
@@ -36,10 +47,16 @@ export function StepSummary(props: StepSummaryProps) {
               <li>
                 Cluster name: <strong className="font-medium">{props.generalData.name}</strong>
               </li>
+              {props.generalData.production && (
+                <li>
+                  Production: <strong className="font-medium">true</strong>
+                </li>
+              )}
               <li>
                 Provider:{' '}
-                <strong className="font-medium">
-                  {props.generalData.cloud_provider} <Icon name={props.generalData.cloud_provider} />
+                <strong className="font-medium inline-flex items-center">
+                  {props.generalData.cloud_provider}
+                  <Icon className="ml-1 w-4" name={props.generalData.cloud_provider} />
                 </strong>
               </li>
               <li>
@@ -49,7 +66,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
 
           <ButtonIcon
-            onClick={props.gotoGlobalInformation}
+            onClick={props.goToGeneral}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
             className="text-text-500 hover:text-text-700"
@@ -58,7 +75,7 @@ export function StepSummary(props: StepSummaryProps) {
 
         <div
           data-testid="summary-resources"
-          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10"
+          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
         >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
@@ -74,50 +91,68 @@ export function StepSummary(props: StepSummaryProps) {
                 Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
               </li>
               <li>
-                Nodes:
+                Nodes:{' '}
                 <strong className="font-medium">
-                  min {props.resourcesData.nodes[0]} - max {props.resourcesData.nodes[1]}
+                  {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
                 </strong>
               </li>
             </ul>
           </div>
           <ButtonIcon
-            onClick={props.gotoResources}
+            onClick={props.goToResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
             className="text-text-500 hover:text-text-700"
           />
         </div>
 
-        <div
-          data-testid="summary-features"
-          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10"
-        >
-          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-          <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Features</div>
-            <ul className="text-text-400 text-sm list-none">
-              {/* {featuresData.map((feature) => (
+        {props.remoteData && (
+          <div
+            data-testid="summary-remote"
+            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
+          >
+            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <div className="flex-grow mr-2">
+              <div className="text-sm text-text-600 font-bold mb-2">Remote access</div>
+              <ul className="text-text-400 text-sm list-none">
                 <li>
-                  {feature.id}
-                  {feature.value ? (
-                    <>
-                      :<strong className="font-medium">{feature.value}</strong>
-                    </>
-                  ) : (
-                    ''
-                  )}
+                  SSH key: <strong className="font-medium">{trimId(props.remoteData.ssh_key, 'both')}</strong>
                 </li>
-              ))} */}
-            </ul>
+              </ul>
+            </div>
+            <ButtonIcon
+              onClick={props.goToRemote}
+              icon={IconAwesomeEnum.WHEEL}
+              style={ButtonIconStyle.FLAT}
+              className="text-text-500 hover:text-text-700"
+            />
           </div>
-          <ButtonIcon
-            onClick={props.gotoResources}
-            icon={IconAwesomeEnum.WHEEL}
-            style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
-          />
-        </div>
+        )}
+
+        {props.featuresData && props.featuresData.features.length > 0 && (
+          <div
+            data-testid="summary-features"
+            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
+          >
+            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+            <div className="flex-grow mr-2">
+              <div className="text-sm text-text-600 font-bold mb-2">Features</div>
+              <ul className="text-text-400 text-sm list-none">
+                {props.featuresData.features.map((feature: ClusterRequestFeatures) => (
+                  <li key={feature.id}>
+                    {feature.id}: <strong className="font-medium">{feature.value || 'true'}</strong>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <ButtonIcon
+              onClick={props.goToFeatures}
+              icon={IconAwesomeEnum.WHEEL}
+              style={ButtonIconStyle.FLAT}
+              className="text-text-500 hover:text-text-700"
+            />
+          </div>
+        )}
 
         <div className="flex justify-between mt-10">
           <Button

@@ -2,8 +2,10 @@ import { ClusterFeature } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchClusterFeatures } from '@qovery/domains/organization'
 import { ClusterFeaturesData } from '@qovery/shared/interfaces'
+import { CLUSTERS_CREATION_SUMMARY_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
@@ -12,9 +14,11 @@ import { useClusterContainerCreateContext } from '../page-clusters-create-featur
 
 export function StepFeaturesFeature() {
   useDocumentTitle('Features - Create Cluster')
+  const { organizationId = '' } = useParams()
   const { setFeaturesData, generalData, featuresData, setCurrentStep } = useClusterContainerCreateContext()
   const dispatch = useDispatch<AppDispatch>()
   const [features, setFeatures] = useState<ClusterFeature[]>()
+  const navigate = useNavigate()
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -38,7 +42,7 @@ export function StepFeaturesFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(1)
+    setCurrentStep(4)
   }, [setCurrentStep])
 
   const methods = useForm<ClusterFeaturesData>({
@@ -55,12 +59,14 @@ export function StepFeaturesFeature() {
   }, [dispatch, features, generalData?.cloud_provider])
 
   const onSubmit = methods.handleSubmit((data) => {
-    const cloneData = data.features.filter((filter) => filter.id)
-    setFeaturesData({
-      features: cloneData,
-    })
-    // const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
-    // navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
+    if (data.features) {
+      const cloneData = data.features.filter((filter) => filter.id)
+      setFeaturesData({
+        features: cloneData,
+      })
+    }
+    const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+    navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
   return (
