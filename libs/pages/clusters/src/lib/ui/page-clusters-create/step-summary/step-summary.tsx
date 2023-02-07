@@ -24,6 +24,8 @@ export interface StepSummaryProps {
 }
 
 export function StepSummary(props: StepSummaryProps) {
+  console.log(props.remoteData)
+
   return (
     <div>
       <div className="mb-10">
@@ -106,7 +108,7 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        {props.remoteData && (
+        {props.remoteData && props.remoteData.ssh_key.length > 0 && (
           <div
             data-testid="summary-remote"
             className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
