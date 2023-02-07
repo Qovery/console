@@ -1,3 +1,4 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
@@ -5,6 +6,7 @@ import {
   BannerBox,
   BannerBoxEnum,
   BlockContent,
+  IconAwesomeEnum,
   InputRadioBox,
   InputSelect,
   InputText,
@@ -16,6 +18,7 @@ export interface ClusterResourcesSettingsProps {
   fromDetail?: boolean
   clusterTypeOptions?: Value[]
   instanceTypeOptions?: Value[]
+  cloudProvider?: CloudProviderEnum
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
@@ -74,11 +77,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 options={props.instanceTypeOptions || []}
               />
               <Link
-                className="text-accent2-500 text-xs block mb-3 ml-3"
+                className="text-accent2-500 font-medium block mb-3 ml-4"
+                size="text-xs"
                 link="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
                 linkLabel="How does it work?"
+                iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
+                iconRightClassName="text-xxs relative top-[1px]"
                 external
-                iconRight="icon-solid-arrow-up-right-from-square"
               />
             </div>
           )}
@@ -121,7 +126,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         />
       </BlockContent>
 
-      {!props.fromDetail && (
+      {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
         <BannerBox
           iconRealColors
           icon={IconEnum.AWS}

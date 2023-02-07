@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
-import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchCloudProvider, getClusterState } from '@qovery/domains/organization'
 import { ClusterGeneralData } from '@qovery/shared/interfaces'
+import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -63,7 +63,11 @@ export function StepGeneralFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepGeneral onSubmit={onSubmit} cloudProviders={cloudProvider.items} />
+        <StepGeneral
+          onSubmit={onSubmit}
+          cloudProviders={cloudProvider.items}
+          currentCloudProvider={generalData?.cloud_provider}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )

@@ -15,3 +15,10 @@ export interface ClusterResourcesData {
   nodes: [number, number]
   disk_size: number
 }
+
+export interface ClusterFeaturesData {
+  features: {
+    id?: string | boolean
+    value: string | boolean
+  }[]
+}

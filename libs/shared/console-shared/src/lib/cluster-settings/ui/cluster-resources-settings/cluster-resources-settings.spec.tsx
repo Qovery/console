@@ -1,6 +1,7 @@
 import { getByLabelText, getByTestId, getByText, queryByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ClusterResourcesData } from '@qovery/shared/interfaces'
 import ClusterResourcesSettings, { ClusterResourcesSettingsProps } from './cluster-resources-settings'
 
@@ -41,6 +42,7 @@ describe('ClusterResourcesSettings', () => {
         },
       ],
       fromDetail: false,
+      cloudProvider: CloudProviderEnum.AWS,
     }
   })
 
@@ -87,7 +89,9 @@ describe('ClusterResourcesSettings', () => {
     getByTestId(baseElement, 'banner-box')
   })
 
-  it('should not display banner box in detail mode', () => {
+  it('should not display banner box in detail mode and for Scaleway', () => {
+    props.cloudProvider = CloudProviderEnum.SCW
+
     const { baseElement } = render(
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} fromDetail />, {
         defaultValues,

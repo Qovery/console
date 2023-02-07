@@ -15,6 +15,7 @@ import {
   ClusterAdvancedSettings,
   ClusterCloudProviderInfo,
   ClusterCloudProviderInfoRequest,
+  ClusterFeatureResponseList,
   ClusterInstanceTypeResponseList,
   ClusterLogs,
   ClusterRequest,
@@ -41,7 +42,7 @@ export const fetchClusters = createAsyncThunk<Cluster[], { organizationId: strin
 })
 
 export const fetchClusterStatus = createAsyncThunk<ClusterStatus, { organizationId: string; clusterId: string }>(
-  'cluster-status/fetch',
+  'clusterStatus/fetch',
   async (data) => {
     const response = await clusterApi.getClusterStatus(data.organizationId, data.clusterId)
     return response.data as ClusterStatus
@@ -49,7 +50,7 @@ export const fetchClusterStatus = createAsyncThunk<ClusterStatus, { organization
 )
 
 export const fetchClustersStatus = createAsyncThunk<ClusterStatus[], { organizationId: string }>(
-  'clusters-status/fetch',
+  'clustersStatus/fetch',
   async (data) => {
     const response = await clusterApi.getOrganizationClusterStatus(data.organizationId)
     return response.data.results as ClusterStatus[]
@@ -57,7 +58,7 @@ export const fetchClustersStatus = createAsyncThunk<ClusterStatus[], { organizat
 )
 
 export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizationId: string; clusterId: string }>(
-  'cluster-infra-logs/fetch',
+  'clusterInfraLogs/fetch',
   async (data) => {
     const response = await clusterApi.listClusterLogs(data.organizationId, data.clusterId)
     return response.data.results as ClusterLogs[]
@@ -120,7 +121,7 @@ export const fetchCloudProvider = createAsyncThunk<CloudProvider[]>('cluster-clo
 export const fetchCloudProviderInfo = createAsyncThunk<
   ClusterCloudProviderInfo,
   { organizationId: string; clusterId: string }
->('cluster-cloud-provider-info/fetch', async (data) => {
+>('clusterCloudProviderInfo/fetch', async (data) => {
   const response = await clusterApi.getOrganizationCloudProviderInfo(data.organizationId, data.clusterId)
   return response.data as ClusterCloudProviderInfo
 })
@@ -128,7 +129,7 @@ export const fetchCloudProviderInfo = createAsyncThunk<
 export const postCloudProviderInfo = createAsyncThunk<
   ClusterCloudProviderInfo,
   { organizationId: string; clusterId: string; clusterCloudProviderInfo: ClusterCloudProviderInfoRequest }
->('cluster-cloud-provider-info/post', async (data) => {
+>('clusterCloudProviderInfo/post', async (data) => {
   const response = await clusterApi.specifyClusterCloudProviderInfo(
     data.organizationId,
     data.clusterId,
@@ -155,6 +156,21 @@ export const fetchAvailableInstanceTypes = createAsyncThunk<
 
   return response.data
 })
+
+export const fetchClusterFeatures = createAsyncThunk<ClusterFeatureResponseList, { cloudProvider: CloudProviderEnum }>(
+  'cluster/fetchClusterFeatures',
+  async (data) => {
+    let response: AxiosResponse<ClusterFeatureResponseList>
+
+    if (data.cloudProvider === CloudProviderEnum.AWS) {
+      response = await cloudProviderApi.listAWSFeatures()
+    } else {
+      response = await cloudProviderApi.listScalewayFeatures()
+    }
+
+    return response.data
+  }
+)
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
   loadingStatus: 'not loaded',
