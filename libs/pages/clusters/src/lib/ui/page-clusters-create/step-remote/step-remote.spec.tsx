@@ -1,9 +1,43 @@
-import { render } from '@testing-library/react'
-import StepRemote from './step-remote'
+import { getByDisplayValue, getByTestId, waitFor } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { ClusterRemoteData } from '@qovery/shared/interfaces'
+import StepRemote, { StepRemoteProps } from './step-remote'
+
+const props: StepRemoteProps = {
+  onSubmit: jest.fn((e) => e.preventDefault()),
+}
 
 describe('StepRemote', () => {
+  let defaultValues: ClusterRemoteData
+
+  beforeEach(() => {
+    defaultValues = {
+      ssh_key: 'ssh_key dslkjsdflkjsdflksjdf',
+    }
+  })
+
   it('should render successfully', () => {
-    const { baseElement } = render(<StepRemote />)
+    const { baseElement } = render(
+      wrapWithReactHookForm<ClusterRemoteData>(<StepRemote {...props} />, {
+        defaultValues,
+      })
+    )
     expect(baseElement).toBeTruthy()
+    getByDisplayValue(baseElement, 'ssh_key dslkjsdflkjsdflksjdf')
+  })
+
+  it('should submit the form', async () => {
+    props.onSubmit = jest.fn((e) => e.preventDefault())
+    const { baseElement } = render(
+      wrapWithReactHookForm<ClusterRemoteData>(<StepRemote {...props} />, {
+        defaultValues,
+      })
+    )
+    const button = getByTestId(baseElement, 'button-submit')
+    await waitFor(() => {
+      button.click()
+      expect(props.onSubmit).toHaveBeenCalled()
+    })
   })
 })

@@ -25,7 +25,7 @@ export function ClusterRemoteSettings(props: ClusterRemoteSettingsProps) {
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
             className="mb-3"
-            dataTestId="input-name"
+            dataTestId="input-ssh"
             name={field.name}
             onChange={field.onChange}
             value={field.value}

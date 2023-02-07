@@ -1,4 +1,4 @@
-import { getByDisplayValue } from '@testing-library/react'
+import { getByDisplayValue, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ClusterRemoteData } from '@qovery/shared/interfaces'
@@ -28,6 +28,7 @@ describe('PageSettingsRemote', () => {
   })
 
   it('should submit the form', async () => {
+    props.onSubmit = jest.fn((e) => e.preventDefault())
     const { getByTestId } = render(
       wrapWithReactHookForm<ClusterRemoteData>(<PageSettingsRemote {...props} />, {
         defaultValues,
@@ -36,7 +37,9 @@ describe('PageSettingsRemote', () => {
 
     const button = getByTestId('submit-button')
 
-    button.click()
-    expect(props.onSubmit).toHaveBeenCalled()
+    await waitFor(() => {
+      button.click()
+      expect(props.onSubmit).toHaveBeenCalled()
+    })
   })
 })
