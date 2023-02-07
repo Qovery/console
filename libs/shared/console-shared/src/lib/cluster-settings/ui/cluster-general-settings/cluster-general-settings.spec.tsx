@@ -12,7 +12,7 @@ describe('ClusterGeneralSettings', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should submit the form on click', async () => {
+  it('should init well the inputs with the form default values', async () => {
     const { getByTestId } = render(
       wrapWithReactHookForm<ClusterGeneralData>(<ClusterGeneralSettings {...props} />, {
         defaultValues: {

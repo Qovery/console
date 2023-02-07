@@ -1,22 +1,16 @@
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterResourcesData } from '@qovery/shared/interfaces'
-import {
-  CLUSTERS_CREATION_FEATURES_URL,
-  CLUSTERS_CREATION_REMOTE_URL,
-  CLUSTERS_CREATION_URL,
-  CLUSTERS_URL,
-} from '@qovery/shared/routes'
+import { ClusterRemoteData } from '@qovery/shared/interfaces'
+import { CLUSTERS_CREATION_REMOTE_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import StepResources from '../../../ui/page-clusters-create/step-resources/step-resources'
+import StepRemote from '../../../ui/page-clusters-create/step-remote/step-remote'
 import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
-export function StepResourcesFeature() {
-  useDocumentTitle('Resources - Create Cluster')
-  const { setResourcesData, resourcesData, setCurrentStep, generalData } = useClusterContainerCreateContext()
+export function StepRemoteFeature() {
+  useDocumentTitle('SSH Key - Create Cluster')
+  const { remoteData, setRemoteData, setCurrentStep } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
 
@@ -43,36 +37,27 @@ export function StepResourcesFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(1)
+    setCurrentStep(3)
   }, [setCurrentStep])
 
-  const methods = useForm<ClusterResourcesData>({
-    defaultValues: resourcesData,
+  const methods = useForm<ClusterRemoteData>({
+    defaultValues: remoteData,
     mode: 'onChange',
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    setResourcesData(data)
+    setRemoteData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-    if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
-      if (data.cluster_type === KubernetesEnum.K3_S) navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
-      else navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
-    } else {
-      // todo navigate to summary
-    }
+    navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
   })
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources
-          onSubmit={onSubmit}
-          cloudProvider={generalData?.cloud_provider}
-          clusterRegion={generalData?.region}
-        />
+        <StepRemote onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )
 }
 
-export default StepResourcesFeature
+export default StepRemoteFeature

@@ -16,6 +16,10 @@ export interface ClusterResourcesData {
   disk_size: number
 }
 
+export interface ClusterRemoteData {
+  ssh_key: string
+}
+
 export interface ClusterFeaturesData {
   features: {
     id?: string | boolean
