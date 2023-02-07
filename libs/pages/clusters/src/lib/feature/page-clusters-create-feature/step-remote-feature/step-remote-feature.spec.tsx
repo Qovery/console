@@ -1,7 +1,6 @@
 import { getByLabelText, getByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { ReactNode } from 'react'
-import { act, fireEvent } from '../../../../../../../../__tests__/utils/setup-jest'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepRemoteFeature from './step-remote-feature'
 
@@ -21,7 +20,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         currentStep: 1,
         setCurrentStep: jest.fn(),
         remoteData: {
-          ssh_key: 'ssh_key hehehe',
+          ssh_key: 'ssh key',
         },
         setRemoteData: mockSetRemoteData,
         generalData: {},

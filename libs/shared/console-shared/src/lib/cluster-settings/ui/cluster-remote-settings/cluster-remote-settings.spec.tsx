@@ -9,7 +9,7 @@ describe('ClusterRemoteSettings', () => {
   let props: ClusterRemoteSettingsProps
   beforeEach(() => {
     defaultValues = {
-      ssh_key: 'ssh_key dslkjsdflkjsdflksjdf',
+      ssh_key: 'ssh key',
     }
 
     props = {
@@ -33,6 +33,6 @@ describe('ClusterRemoteSettings', () => {
       })
     )
 
-    getByDisplayValue(baseElement, 'ssh_key dslkjsdflkjsdflksjdf')
+    getByDisplayValue(baseElement, 'ssh key')
   })
 })

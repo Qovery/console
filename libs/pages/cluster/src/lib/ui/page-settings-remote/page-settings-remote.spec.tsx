@@ -14,7 +14,7 @@ describe('PageSettingsRemote', () => {
 
   beforeEach(() => {
     defaultValues = {
-      ssh_key: 'ssh_key dslkjsdflkjsdflksjdf',
+      ssh_key: 'ssh key',
     }
   })
   it('should render successfully', () => {
@@ -24,7 +24,7 @@ describe('PageSettingsRemote', () => {
       })
     )
     expect(baseElement).toBeTruthy()
-    getByDisplayValue(baseElement, 'ssh_key dslkjsdflkjsdflksjdf')
+    getByDisplayValue(baseElement, 'ssh key')
   })
 
   it('should submit the form', async () => {
