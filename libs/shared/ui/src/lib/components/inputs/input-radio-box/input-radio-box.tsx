@@ -16,12 +16,8 @@ export function InputRadioBox(props: InputRadioBoxProps) {
   return (
     <div
       data-testid="input-radio-box"
-      onClick={() => {
-        setTimeout(() => {
-          onChange(value)
-        }, 1)
-      }}
-      className={`p-4 rounded border mb-2 cursor-pointer transition-all ${
+      onClick={() => onChange(value)}
+      className={`p-4 rounded border mb-2 transition-all ${
         fieldValue === value
           ? 'bg-brand-50 border-brand-500'
           : 'bg-element-light-lighter-200 border-element-light-lighter-500'
