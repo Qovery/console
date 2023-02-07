@@ -1,9 +1,7 @@
 import { CloudProviderEnum, ClusterFeature } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterFeaturesData } from '@qovery/shared/interfaces'
-import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import {
   BannerBox,
   BannerBoxEnum,
@@ -21,13 +19,12 @@ export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
   features?: ClusterFeature[]
+  goToBack?: () => void
 }
 
 export function StepFeatures(props: StepFeaturesProps) {
-  const { onSubmit, features, cloudProvider } = props
+  const { onSubmit, features, cloudProvider, goToBack } = props
   const { formState, control, getValues, setValue } = useFormContext<ClusterFeaturesData>()
-  const { organizationId = '' } = useParams()
-  const navigate = useNavigate()
 
   return (
     <div>
@@ -127,9 +124,7 @@ export function StepFeatures(props: StepFeaturesProps) {
 
         <div className="flex justify-between">
           <Button
-            onClick={() =>
-              navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_RESOURCES_URL}`)
-            }
+            onClick={goToBack}
             type="button"
             className="btn--no-min-w"
             size={ButtonSize.XLARGE}

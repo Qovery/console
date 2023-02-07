@@ -13,7 +13,7 @@ import {
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepResources from '../../../ui/page-clusters-create/step-resources/step-resources'
-import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
+import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Cluster')
@@ -44,8 +44,10 @@ export function StepResourcesFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(2)
-  }, [setCurrentStep])
+    setCurrentStep(
+      steps(generalData?.cloud_provider, resourcesData?.cluster_type).findIndex((step) => step.key === 'resources') + 1
+    )
+  }, [setCurrentStep, generalData?.cloud_provider, resourcesData?.cluster_type])
 
   const methods = useForm<ClusterResourcesData>({
     defaultValues: resourcesData,

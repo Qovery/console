@@ -45,7 +45,11 @@ export function StepSummaryFeature() {
 
   const onBack = () => {
     if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
-      goToFeatures()
+      if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
+        goToRemote()
+      } else {
+        goToFeatures()
+      }
     } else {
       goToResources()
     }
@@ -104,8 +108,10 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(steps.length)
-  }, [setCurrentStep])
+    setCurrentStep(
+      steps(generalData?.cloud_provider, resourcesData?.cluster_type).findIndex((step) => step.key === 'summary') + 1
+    )
+  }, [setCurrentStep, generalData?.cloud_provider, resourcesData?.cluster_type])
 
   return (
     <FunnelFlowBody>

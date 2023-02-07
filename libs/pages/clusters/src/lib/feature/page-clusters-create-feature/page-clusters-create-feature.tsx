@@ -1,3 +1,4 @@
+import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -36,13 +37,31 @@ export const useClusterContainerCreateContext = () => {
   return clusterContainerCreateContext
 }
 
-export const steps: { title: string }[] = [
-  { title: 'Create new cluster' },
-  { title: 'Set resources' },
-  { title: 'Set SSH Key' },
-  { title: 'Set features' },
-  { title: 'Ready to install' },
-]
+export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) => {
+  if (cloudProvider === CloudProviderEnum.SCW) {
+    return [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Set resources', key: 'resources' },
+      { title: 'Ready to install', key: 'summary' },
+    ]
+  } else {
+    if (clusterType === KubernetesEnum.K3_S) {
+      return [
+        { title: 'Create new cluster', key: 'general' },
+        { title: 'Set resources', key: 'resources' },
+        { title: 'Set SSH Key', key: 'remote' },
+        { title: 'Ready to install', key: 'summary' },
+      ]
+    } else {
+      return [
+        { title: 'Create new cluster', key: 'general' },
+        { title: 'Set resources', key: 'resources' },
+        { title: 'Set features', key: 'features' },
+        { title: 'Ready to install', key: 'summary' },
+      ]
+    }
+  }
+}
 
 export function PageClusterCreateFeature() {
   const { organizationId = '' } = useParams()
@@ -86,9 +105,9 @@ export function PageClusterCreateFeature() {
         onExit={() => {
           navigate(CLUSTERS_URL(organizationId))
         }}
-        totalSteps={steps.length}
+        totalSteps={steps(generalData?.cloud_provider, resourcesData?.cluster_type).length}
         currentStep={currentStep}
-        currentTitle={steps[currentStep - 1].title}
+        currentTitle={steps(generalData?.cloud_provider, resourcesData?.cluster_type)[currentStep - 1].title}
         portal
       >
         <Routes>
