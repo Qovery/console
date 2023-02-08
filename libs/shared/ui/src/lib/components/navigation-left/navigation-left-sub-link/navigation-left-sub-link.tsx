@@ -29,9 +29,9 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
       <div
         data-testid="link"
         onClick={() => setOpen(!open)}
-        className={`flex justify-between select-none ${linkClassName(pathname, link.url)}`}
+        className={`justify-between select-none ${linkClassName(pathname, link.url)}`}
       >
-        <span className="truncate">{linkContent(link)}</span>
+        <span className="flex truncate">{linkContent(link)}</span>
         <Icon
           name="icon-solid-angle-down"
           className={`transition-transform ease-out duration-200 ${open ? 'rotate-180' : ''}`}
