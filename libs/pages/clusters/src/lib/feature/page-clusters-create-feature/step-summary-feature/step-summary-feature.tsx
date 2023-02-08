@@ -66,6 +66,18 @@ export function StepSummaryFeature() {
       if (withDeploy) setLoadingCreateAndDeploy(true)
       else setLoadingCreate(true)
 
+      const formatFeatures =
+        featuresData &&
+        Object.keys(featuresData)
+          .map(
+            (id: string) =>
+              featuresData[id].value && {
+                id: id,
+                value: featuresData[id].extendedValue || featuresData[id].value,
+              }
+          )
+          .filter(Boolean)
+
       const clusterRequest: ClusterRequest = {
         name: generalData.name,
         description: generalData.description || '',
@@ -77,7 +89,7 @@ export function StepSummaryFeature() {
         disk_size: resourcesData.disk_size,
         instance_type: resourcesData.instance_type,
         kubernetes: resourcesData.cluster_type as KubernetesEnum,
-        features: (featuresData?.features as ClusterRequestFeatures[]) || undefined,
+        features: formatFeatures as ClusterRequestFeatures[],
         ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
       }
 

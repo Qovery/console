@@ -1,4 +1,4 @@
-import { CloudProviderEnum, ClusterRequestFeatures } from 'qovery-typescript-axios'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string
@@ -21,5 +21,9 @@ export interface ClusterRemoteData {
 }
 
 export interface ClusterFeaturesData {
-  features: ClusterRequestFeatures[]
+  [id: string]: {
+    id: string
+    value: boolean
+    extendedValue?: string
+  }
 }

@@ -81,14 +81,27 @@ export function StepFeaturesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data.features) {
-      const cloneData = data.features.filter((filter) => filter.id)
-      setFeaturesData({
-        features: cloneData,
-      })
+    if (data && features) {
+      let cloneData = {}
+
+      for (let i = 0; i < Object.keys(data).length; i++) {
+        const id = Object.keys(data)[i]
+        const currentFeature = data[id]
+
+        cloneData = {
+          ...cloneData,
+          [id]: {
+            value: currentFeature.value || false,
+            extendedValue: currentFeature.extendedValue || false,
+          },
+        }
+      }
+
+      setFeaturesData(cloneData)
+
+      const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
     }
-    const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-    navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
   return (

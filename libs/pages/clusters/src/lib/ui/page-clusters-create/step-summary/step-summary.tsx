@@ -1,4 +1,4 @@
-import { ClusterRequestFeatures } from 'qovery-typescript-axios'
+// import { ClusterRequestFeatures } from 'qovery-typescript-axios'
 import {
   ClusterFeaturesData,
   ClusterGeneralData,
@@ -24,7 +24,19 @@ export interface StepSummaryProps {
 }
 
 export function StepSummary(props: StepSummaryProps) {
-  console.log(props.remoteData)
+  const checkIfFeaturesAvailable = () => {
+    const feature = []
+
+    if (props.featuresData) {
+      for (let i = 0; i < Object.keys(props.featuresData).length; i++) {
+        const id = Object.keys(props.featuresData)[i]
+        const currentFeature = props.featuresData[id]
+        if (currentFeature.value) feature.push(id)
+      }
+    }
+
+    return feature.length > 0
+  }
 
   return (
     <div>
@@ -131,7 +143,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
         )}
 
-        {props.featuresData && props.featuresData.features.length > 0 && (
+        {props.featuresData && checkIfFeaturesAvailable() && (
           <div
             data-testid="summary-features"
             className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
@@ -140,11 +152,20 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="flex-grow mr-2">
               <div className="text-sm text-text-600 font-bold mb-2">Features</div>
               <ul className="text-text-400 text-sm list-none">
-                {props.featuresData.features.map((feature: ClusterRequestFeatures) => (
-                  <li key={feature.id}>
-                    {feature.id}: <strong className="font-medium">{feature.value || 'true'}</strong>
-                  </li>
-                ))}
+                {Object.keys(props.featuresData).map((id: string) => {
+                  const currentFeature = props.featuresData && props.featuresData[id]
+
+                  if (!currentFeature?.value) return <></>
+
+                  return (
+                    <li key={id}>
+                      {id}:{' '}
+                      <strong className="font-medium">
+                        {currentFeature.extendedValue ? currentFeature.extendedValue : currentFeature.value.toString()}
+                      </strong>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
             <ButtonIcon
