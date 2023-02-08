@@ -22,6 +22,7 @@ export interface ButtonActionProps {
   className?: string
   onClick?: () => void
   menus?: MenuData
+  menuMain?: MenuData
   size?: ButtonSize
 }
 
@@ -36,6 +37,7 @@ export function ButtonAction(props: ButtonActionProps) {
     className = '',
     onClick,
     menus = [],
+    menuMain = [],
     size = ButtonSize.REGULAR,
   } = props
 
@@ -84,7 +86,11 @@ export function ButtonAction(props: ButtonActionProps) {
           }
         />
       )}
-      {contentBtn()}
+      {menuMain.length > 0 ? (
+        <Menu menus={menuMain} arrowAlign={MenuAlign.CENTER} trigger={contentBtn()} />
+      ) : (
+        contentBtn()
+      )}
     </div>
   )
 }

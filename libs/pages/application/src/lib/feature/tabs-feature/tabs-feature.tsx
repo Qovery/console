@@ -144,23 +144,51 @@ export function TabsFeature() {
         {globalShowHideValue ? 'Hide all' : 'Show all'}
       </Button>
       <ButtonAction
-        onClick={() => {
-          openModal({
-            content: (
-              <CrudEnvironmentVariableModalFeature
-                closeModal={closeModal}
-                type={EnvironmentVariableType.NORMAL}
-                mode={EnvironmentVariableCrudMode.CREATION}
-                applicationId={applicationId}
-                environmentId={environmentId}
-                projectId={projectId}
-                serviceType={application && getServiceType(application)}
-              />
-            ),
-          })
-        }}
         iconRight={IconAwesomeEnum.CIRCLE_PLUS}
         menus={menuForContentRight}
+        menuMain={[
+          {
+            items: [
+              {
+                name: 'New variable',
+                onClick: (e: ClickEvent) => {
+                  openModal({
+                    content: (
+                      <CrudEnvironmentVariableModalFeature
+                        closeModal={closeModal}
+                        type={EnvironmentVariableType.NORMAL}
+                        mode={EnvironmentVariableCrudMode.CREATION}
+                        applicationId={applicationId}
+                        environmentId={environmentId}
+                        projectId={projectId}
+                        serviceType={application && getServiceType(application)}
+                      />
+                    ),
+                  })
+                },
+              },
+              {
+                name: 'New file variable',
+                onClick: (e: ClickEvent) => {
+                  openModal({
+                    content: (
+                      <CrudEnvironmentVariableModalFeature
+                        closeModal={closeModal}
+                        type={EnvironmentVariableType.NORMAL}
+                        mode={EnvironmentVariableCrudMode.CREATION}
+                        applicationId={applicationId}
+                        environmentId={environmentId}
+                        projectId={projectId}
+                        serviceType={application && getServiceType(application)}
+                        isFile
+                      />
+                    ),
+                  })
+                },
+              },
+            ],
+          },
+        ]}
       >
         New variable
       </ButtonAction>
