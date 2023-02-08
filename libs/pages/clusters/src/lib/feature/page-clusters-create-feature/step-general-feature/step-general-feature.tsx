@@ -58,15 +58,13 @@ export function StepGeneralFeature() {
   }, [cloudProvider.loadingStatus, dispatch, methods])
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (credentials) {
-      // necessary to get the name of credentials
-      const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
-      data['credentials_name'] = currentCredentials.name
+    // necessary to get the name of credentials
+    const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
+    data['credentials_name'] = currentCredentials ? currentCredentials.name : ''
 
-      setGeneralData(data)
-      const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-      navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
-    }
+    setGeneralData(data)
+    const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+    navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
   })
 
   return (
