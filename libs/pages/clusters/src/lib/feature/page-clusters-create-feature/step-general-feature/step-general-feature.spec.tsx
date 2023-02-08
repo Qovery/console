@@ -1,11 +1,14 @@
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
+import { organizationFactoryMock } from '@qovery/shared/factories'
+import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepGeneralFeature from './step-general-feature'
 
 const mockSetGeneralData = jest.fn()
 const mockNavigate = jest.fn()
+const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
@@ -26,6 +29,7 @@ jest.mock('@qovery/domains/organization', () => {
       loading: 'loaded',
       items: [],
     }),
+    selectOrganizationById: () => mockOrganization,
   }
 })
 
@@ -41,7 +45,8 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           production: false,
           cloud_provider: CloudProviderEnum.AWS,
           region: 'Paris',
-          credentials: '111-111-111',
+          credentials: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].id : '',
+          credentials_name: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].name : '',
         },
         setGeneralData: mockSetGeneralData,
       }}
@@ -101,7 +106,8 @@ describe('StepGeneralFeature', () => {
       production: false,
       cloud_provider: CloudProviderEnum.AWS,
       region: 'Paris',
-      credentials: '111-111-111',
+      credentials: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].id : '',
+      credentials_name: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].name : '',
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters/create/resources')
   })
