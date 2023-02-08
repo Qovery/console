@@ -7,6 +7,7 @@ export interface ClusterGeneralData {
   cloud_provider: CloudProviderEnum
   region: string
   credentials: string
+  credentials_name: string
 }
 
 export interface ClusterResourcesData {

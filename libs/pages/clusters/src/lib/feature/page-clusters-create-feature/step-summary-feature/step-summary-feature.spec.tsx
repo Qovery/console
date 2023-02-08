@@ -37,6 +37,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           cloud_provider: CloudProviderEnum.AWS,
           region: 'region',
           credentials: '1',
+          credentials_name: 'name',
         },
         setGeneralData: jest.fn(),
         resourcesData: {
@@ -77,6 +78,8 @@ describe('StepSummaryFeature', () => {
 
   it('should post the request with expected form values', async () => {
     const createClusterSpy: SpyInstance = jest.spyOn(storeCluster, 'createCluster')
+    const postCloudProviderInfoSpy: SpyInstance = jest.spyOn(storeCluster, 'postCloudProviderInfo')
+
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
@@ -115,6 +118,19 @@ describe('StepSummaryFeature', () => {
             value: 'test',
           },
         ],
+      },
+    })
+
+    expect(postCloudProviderInfoSpy).toHaveBeenCalledWith({
+      organizationId: '1',
+      clusterId: undefined,
+      clusterCloudProviderInfo: {
+        cloud_provider: CloudProviderEnum.AWS,
+        credentials: {
+          id: '1',
+          name: 'name',
+        },
+        region: 'region',
       },
     })
   })

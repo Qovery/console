@@ -52,6 +52,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           cloud_provider: CloudProviderEnum.AWS,
           region: 'Paris',
           credentials: '111-111-111',
+          credentials_name: 'name',
         },
         setGeneralData: jest.fn(),
         setFeaturesData: mockSetFeaturesData,

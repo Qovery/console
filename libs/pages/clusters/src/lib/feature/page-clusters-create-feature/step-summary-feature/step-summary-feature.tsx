@@ -2,7 +2,7 @@ import { CloudProviderEnum, ClusterRequest, ClusterRequestFeatures, KubernetesEn
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createCluster, postClusterActionsDeploy } from '@qovery/domains/organization'
+import { createCluster, postCloudProviderInfo, postClusterActionsDeploy } from '@qovery/domains/organization'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
@@ -101,15 +101,38 @@ export function StepSummaryFeature() {
       )
         .unwrap()
         .then((cluster) => {
-          if (withDeploy) {
-            dispatch(
-              postClusterActionsDeploy({
-                organizationId,
-                clusterId: cluster.id,
-              })
-            )
-          }
-          navigate(CLUSTERS_URL(organizationId))
+          // post cloud provider info
+          dispatch(
+            postCloudProviderInfo({
+              organizationId,
+              clusterId: cluster.id,
+              clusterCloudProviderInfo: {
+                cloud_provider: generalData.cloud_provider,
+                credentials: {
+                  id: generalData.credentials,
+                  name: generalData.credentials_name,
+                },
+                region: generalData.region,
+              },
+            })
+          )
+            .unwrap()
+            .then(() => {
+              if (withDeploy) {
+                dispatch(
+                  postClusterActionsDeploy({
+                    organizationId,
+                    clusterId: cluster.id,
+                  })
+                )
+              }
+              navigate(CLUSTERS_URL(organizationId))
+            })
+            .catch((e) => console.error(e))
+            .finally(() => {
+              if (withDeploy) setLoadingCreateAndDeploy(false)
+              else setLoadingCreate(false)
+            })
         })
         .catch((e) => console.error(e))
         .finally(() => {

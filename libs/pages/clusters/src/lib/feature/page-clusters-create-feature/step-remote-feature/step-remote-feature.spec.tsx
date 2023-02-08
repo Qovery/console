@@ -23,9 +23,9 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           ssh_key: 'ssh key',
         },
         setRemoteData: mockSetRemoteData,
-        generalData: {},
+        generalData: undefined,
         setGeneralData: jest.fn(),
-        resourcesData: {},
+        resourcesData: undefined,
         setResourcesData: jest.fn(),
       }}
     >

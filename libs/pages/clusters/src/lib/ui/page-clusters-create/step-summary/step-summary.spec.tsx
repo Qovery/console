@@ -13,6 +13,7 @@ const props: StepSummaryProps = {
     cloud_provider: CloudProviderEnum.AWS,
     region: 'region',
     credentials: '1',
+    credentials_name: 'name',
   },
   resourcesData: {
     cluster_type: 'MANAGED',
