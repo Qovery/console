@@ -54,6 +54,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           production: false,
           region: 'us-east-1',
           cloud_provider: CloudProviderEnum.AWS,
+          credentials: '1',
         },
         setGeneralData: jest.fn(),
         setResourcesData: mockSetResourceData,
@@ -63,6 +64,10 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           cluster_type: 'MANAGED',
           nodes: [1, 3],
         },
+        remoteData: undefined,
+        featuresData: undefined,
+        setRemoteData: jest.fn(),
+        setFeaturesData: jest.fn(),
       }}
     >
       {props.children}

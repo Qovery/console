@@ -56,7 +56,13 @@ export function StepResourcesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    setResourcesData(data)
+    if (data.cluster_type === KubernetesEnum.K3_S) {
+      data['nodes'] = [1, 1]
+      setResourcesData(data)
+    } else {
+      setResourcesData(data)
+    }
+
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
     if (generalData?.cloud_provider === CloudProviderEnum.AWS) {

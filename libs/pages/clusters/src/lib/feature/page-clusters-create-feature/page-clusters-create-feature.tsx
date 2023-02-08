@@ -18,7 +18,7 @@ export interface ClusterContainerCreateContextInterface {
   generalData: ClusterGeneralData | undefined
   setGeneralData: (data: ClusterGeneralData) => void
   resourcesData: ClusterResourcesData | undefined
-  setResourcesData: (data: ClusterResourcesData | undefined) => void
+  setResourcesData: (data: ClusterResourcesData) => void
   featuresData: ClusterFeaturesData | undefined
   setFeaturesData: (data: ClusterFeaturesData | undefined) => void
   remoteData: ClusterRemoteData | undefined
@@ -63,6 +63,13 @@ export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) =
   }
 }
 
+export const defaultResourcesData: ClusterResourcesData = {
+  cluster_type: '',
+  disk_size: 20,
+  instance_type: '',
+  nodes: [3, 10],
+}
+
 export function PageClusterCreateFeature() {
   const { organizationId = '' } = useParams()
 
@@ -72,12 +79,7 @@ export function PageClusterCreateFeature() {
   const [remoteData, setRemoteData] = useState<ClusterRemoteData | undefined>({
     ssh_key: '',
   })
-  const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>({
-    cluster_type: '',
-    disk_size: 20,
-    instance_type: '',
-    nodes: [1, 2],
-  })
+  const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
   const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>()
 
   const navigate = useNavigate()

@@ -7,12 +7,13 @@ import { ClusterGeneralData, ClusterResourcesData, Value } from '@qovery/shared/
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, Icon, IconFlag, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
+import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
 
 export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProviders: CloudProvider[]
   currentCloudProvider?: CloudProviderEnum
-  setResourcesData?: (data: ClusterResourcesData | undefined) => void
+  setResourcesData?: (data: ClusterResourcesData) => void
 }
 
 export function StepGeneral(props: StepGeneralProps) {
@@ -79,7 +80,7 @@ export function StepGeneral(props: StepGeneralProps) {
                       )[0]
                       setCurrentProvider(currentProvider as CloudProvider)
                       field.onChange(value)
-                      setResourcesData && setResourcesData(undefined)
+                      setResourcesData && setResourcesData(defaultResourcesData)
                     }}
                     value={field.value}
                     error={error?.message}

@@ -1,4 +1,4 @@
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
@@ -24,6 +24,7 @@ export interface ClusterResourcesSettingsProps {
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const { control, watch } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
+  const watchClusterType = watch('cluster_type')
 
   return (
     <div>
@@ -107,24 +108,26 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         />
       </BlockContent>
 
-      <BlockContent title="Nodes auto-scaling" className="mb-10">
-        <Controller
-          name="nodes"
-          control={control}
-          rules={{
-            required: 'Please number of nodes',
-          }}
-          render={({ field }) => (
-            <div>
-              {watchNodes && (
-                <p className="text-text-500 mb-3 font-medium">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
-              )}
-              <Slider onChange={field.onChange} value={field.value} max={200} min={1} step={1} />
-              <p className="text-text-400 text-xs mt-3">Cluster can scale up to “max” nodes depending on its usage</p>
-            </div>
-          )}
-        />
-      </BlockContent>
+      {watchClusterType === KubernetesEnum.MANAGED && (
+        <BlockContent title="Nodes auto-scaling" className="mb-10">
+          <Controller
+            name="nodes"
+            control={control}
+            rules={{
+              required: 'Please number of nodes',
+            }}
+            render={({ field }) => (
+              <div>
+                {watchNodes && (
+                  <p className="text-text-500 mb-3 font-medium">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
+                )}
+                <Slider onChange={field.onChange} value={field.value} max={200} min={1} step={1} />
+                <p className="text-text-400 text-xs mt-3">Cluster can scale up to “max” nodes depending on its usage</p>
+              </div>
+            )}
+          />
+        </BlockContent>
+      )}
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
         <BannerBox
@@ -134,7 +137,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           type={BannerBoxEnum.DEFAULT}
           className="mb-10"
           message="Approximate cost charged by the cloud provider based on your consumption"
-          title="From $70 to $450/month"
+          title={`${
+            watchClusterType === KubernetesEnum.MANAGED ? 'Starting at $220 /month' : 'Starting at $20 /month'
+          }`}
         />
       )}
     </div>
