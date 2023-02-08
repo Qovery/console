@@ -124,12 +124,58 @@ export function TabsFeature() {
                 },
               })
             },
-            contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-400" />,
+            contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-500" />,
           },
         ],
       },
     ]
   }
+
+  const menuMain: MenuData = [
+    {
+      items: [
+        {
+          name: 'Variable',
+          contentLeft: <Icon name={IconAwesomeEnum.FEATHER} className="text-sm text-brand-500" />,
+          onClick: (e: ClickEvent) => {
+            openModal({
+              content: (
+                <CrudEnvironmentVariableModalFeature
+                  closeModal={closeModal}
+                  type={EnvironmentVariableType.NORMAL}
+                  mode={EnvironmentVariableCrudMode.CREATION}
+                  applicationId={applicationId}
+                  environmentId={environmentId}
+                  projectId={projectId}
+                  serviceType={application && getServiceType(application)}
+                />
+              ),
+            })
+          },
+        },
+        {
+          name: 'Variable as file',
+          contentLeft: <Icon name={IconAwesomeEnum.FILE_LINES} className="text-sm text-brand-500" />,
+          onClick: (e: ClickEvent) => {
+            openModal({
+              content: (
+                <CrudEnvironmentVariableModalFeature
+                  closeModal={closeModal}
+                  type={EnvironmentVariableType.NORMAL}
+                  mode={EnvironmentVariableCrudMode.CREATION}
+                  applicationId={applicationId}
+                  environmentId={environmentId}
+                  projectId={projectId}
+                  serviceType={application && getServiceType(application)}
+                  isFile
+                />
+              ),
+            })
+          },
+        },
+      ],
+    },
+  ]
 
   const contentRight: ReactNode = matchEnvVariableRoute && (
     <>
@@ -143,53 +189,7 @@ export function TabsFeature() {
       >
         {globalShowHideValue ? 'Hide all' : 'Show all'}
       </Button>
-      <ButtonAction
-        iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-        menus={menuForContentRight}
-        menuMain={[
-          {
-            items: [
-              {
-                name: 'New variable',
-                onClick: (e: ClickEvent) => {
-                  openModal({
-                    content: (
-                      <CrudEnvironmentVariableModalFeature
-                        closeModal={closeModal}
-                        type={EnvironmentVariableType.NORMAL}
-                        mode={EnvironmentVariableCrudMode.CREATION}
-                        applicationId={applicationId}
-                        environmentId={environmentId}
-                        projectId={projectId}
-                        serviceType={application && getServiceType(application)}
-                      />
-                    ),
-                  })
-                },
-              },
-              {
-                name: 'New file variable',
-                onClick: (e: ClickEvent) => {
-                  openModal({
-                    content: (
-                      <CrudEnvironmentVariableModalFeature
-                        closeModal={closeModal}
-                        type={EnvironmentVariableType.NORMAL}
-                        mode={EnvironmentVariableCrudMode.CREATION}
-                        applicationId={applicationId}
-                        environmentId={environmentId}
-                        projectId={projectId}
-                        serviceType={application && getServiceType(application)}
-                        isFile
-                      />
-                    ),
-                  })
-                },
-              },
-            ],
-          },
-        ]}
-      >
+      <ButtonAction iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} menuMain={menuMain}>
         New variable
       </ButtonAction>
     </>

@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, EnvironmentVariable } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -58,6 +58,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             environmentId={environmentId}
             type={type}
             serviceType={props.serviceType}
+            isFile={Boolean((variable as EnvironmentVariable).mount_path)}
           />
         ),
       })
@@ -79,6 +80,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             projectId={projectId}
             environmentId={environmentId}
             serviceType={props.serviceType}
+            isFile={Boolean((variable as EnvironmentVariable).mount_path)}
           />
         ),
       })
@@ -100,6 +102,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             projectId={projectId}
             environmentId={environmentId}
             serviceType={props.serviceType}
+            isFile={Boolean((variable as EnvironmentVariable).mount_path)}
           />
         ),
       })

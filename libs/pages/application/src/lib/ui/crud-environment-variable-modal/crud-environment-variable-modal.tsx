@@ -60,7 +60,9 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
         )}
 
         {props.isFile &&
-          (props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
+          (props.type === EnvironmentVariableType.ALIAS ||
+          props.type === EnvironmentVariableType.OVERRIDE ||
+          props.mode === EnvironmentVariableCrudMode.EDITION ? (
             <InputText className="mb-3" name="parent value" value={getValues().mountPath} label="Path" disabled />
           ) : (
             <Controller
@@ -165,7 +167,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
               control={control}
               render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
             />
-            <p className="text-text-500 text-sm font-medium">Secret variable</p>
+            <p className="text-text-500 text-sm font-medium">Secret {props.isFile ? 'file' : 'variable'}</p>
           </div>
         )}
 

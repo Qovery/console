@@ -103,6 +103,7 @@ export function handleSubmitForEnvSecretCreation(
                 environmentVariableRequest: {
                   key: data.key,
                   value: data.value,
+                  mount_path: data.mountPath,
                 },
                 scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,
@@ -197,6 +198,7 @@ export function handleSubmitForEnvSecretCreation(
                 environmentVariableRequest: {
                   key: data.key,
                   value: data.value,
+                  mount_path: data.mountPath,
                 },
                 scope: data.scope as APIVariableScopeEnum,
                 serviceType: serviceType,

@@ -29,6 +29,7 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
   key: chance.word().toString(),
   value: chance.word().toString(),
   scope: APIVariableScopeEnum.PROJECT,
+  mount_path: null,
 })
 
 export const mockSecretEnvironmentVariable = (

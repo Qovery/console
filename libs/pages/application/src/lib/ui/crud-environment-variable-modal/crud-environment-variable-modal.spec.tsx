@@ -4,6 +4,7 @@ import {
   fireEvent,
   getByLabelText,
   getByRole,
+  getByText,
   queryByLabelText,
   render,
   screen,
@@ -26,6 +27,7 @@ const props: CrudEnvironmentVariableModalProps = {
   availableScopes: [APIVariableScopeEnum.ENVIRONMENT, APIVariableScopeEnum.PROJECT],
   setOpen: jest.fn(),
   type: EnvironmentVariableType.NORMAL,
+  isFile: false,
 }
 
 const WrapperForm = ({ children }) => {
@@ -50,6 +52,17 @@ describe('CrudEnvironmentVariableModal', () => {
       </WrapperForm>
     )
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should display variable near the checkbox', async () => {
+    props.mode = EnvironmentVariableCrudMode.CREATION
+    props.type = EnvironmentVariableType.NORMAL
+    const { baseElement } = render(
+      <WrapperForm>
+        <CrudEnvironmentVariableModal {...props} />
+      </WrapperForm>
+    )
+    getByText(baseElement, 'Secret variable')
   })
 
   it('should render correct input for normal variable', () => {
@@ -116,6 +129,72 @@ describe('CrudEnvironmentVariableModal', () => {
     })
 
     expect(spy).toBeCalled()
+  })
+
+  describe('for file variable type', () => {
+    beforeEach(() => {
+      props.isFile = true
+    })
+
+    it('should display mount value field enabled for creation', async () => {
+      props.mode = EnvironmentVariableCrudMode.CREATION
+
+      const { baseElement } = render(
+        <WrapperForm>
+          <CrudEnvironmentVariableModal {...props} />
+        </WrapperForm>
+      )
+
+      const input = getByLabelText(baseElement, 'Path')
+      expect(input).toBeEnabled()
+    })
+
+    it('should display mount value field disabled for edition and normal', async () => {
+      props.mode = EnvironmentVariableCrudMode.EDITION
+      props.type = EnvironmentVariableType.NORMAL
+      const { baseElement } = render(
+        <WrapperForm>
+          <CrudEnvironmentVariableModal {...props} />
+        </WrapperForm>
+      )
+      const input = getByLabelText(baseElement, 'Path')
+      expect(input).toBeDisabled()
+    })
+
+    it('should display mount value field disabled for edition and alias', async () => {
+      props.mode = EnvironmentVariableCrudMode.EDITION
+      props.type = EnvironmentVariableType.ALIAS
+      const { baseElement } = render(
+        <WrapperForm>
+          <CrudEnvironmentVariableModal {...props} />
+        </WrapperForm>
+      )
+      const input = getByLabelText(baseElement, 'Path')
+      expect(input).toBeDisabled()
+    })
+
+    it('should display mount value field disabled for edition and override', async () => {
+      props.mode = EnvironmentVariableCrudMode.EDITION
+      props.type = EnvironmentVariableType.OVERRIDE
+      const { baseElement } = render(
+        <WrapperForm>
+          <CrudEnvironmentVariableModal {...props} />
+        </WrapperForm>
+      )
+      const input = getByLabelText(baseElement, 'Path')
+      expect(input).toBeDisabled()
+    })
+
+    it('should display secret file label instead of secret variable', async () => {
+      props.mode = EnvironmentVariableCrudMode.CREATION
+      props.type = EnvironmentVariableType.NORMAL
+      const { baseElement } = render(
+        <WrapperForm>
+          <CrudEnvironmentVariableModal {...props} />
+        </WrapperForm>
+      )
+      getByText(baseElement, 'Secret file')
+    })
   })
 
   describe('with bad form data', () => {
