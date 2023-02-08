@@ -1,20 +1,32 @@
-import { ClusterFeature } from 'qovery-typescript-axios'
+import { ClusterFeature, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
 import { fetchClusterFeatures } from '@qovery/domains/organization'
 import { ClusterFeaturesData } from '@qovery/shared/interfaces'
+import {
+  CLUSTERS_CREATION_GENERAL_URL,
+  CLUSTERS_CREATION_REMOTE_URL,
+  CLUSTERS_CREATION_RESOURCES_URL,
+  CLUSTERS_CREATION_SUMMARY_URL,
+  CLUSTERS_CREATION_URL,
+  CLUSTERS_URL,
+} from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
-import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
+import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepFeaturesFeature() {
   useDocumentTitle('Features - Create Cluster')
-  const { setFeaturesData, generalData, featuresData, setCurrentStep } = useClusterContainerCreateContext()
+  const { organizationId = '' } = useParams()
+  const { setFeaturesData, generalData, featuresData, resourcesData, setCurrentStep } =
+    useClusterContainerCreateContext()
   const dispatch = useDispatch<AppDispatch>()
   const [features, setFeatures] = useState<ClusterFeature[]>()
+  const navigate = useNavigate()
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
@@ -37,14 +49,23 @@ export function StepFeaturesFeature() {
     />
   )
 
-  useEffect(() => {
-    setCurrentStep(1)
-  }, [setCurrentStep])
+  const goToBack = () => {
+    if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
+      navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_REMOTE_URL}`)
+    } else {
+      navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_RESOURCES_URL}`)
+    }
+  }
 
-  const methods = useForm<ClusterFeaturesData>({
-    defaultValues: featuresData,
-    mode: 'onChange',
-  })
+  useEffect(() => {
+    setCurrentStep(
+      steps(generalData?.cloud_provider, resourcesData?.cluster_type).findIndex((step) => step.key === 'features') + 1
+    )
+  }, [setCurrentStep, generalData?.cloud_provider, resourcesData?.cluster_type])
+
+  useEffect(() => {
+    !resourcesData?.cluster_type && navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
+  }, [resourcesData?.cluster_type, navigate, organizationId])
 
   useEffect(() => {
     if (!features && generalData?.cloud_provider)
@@ -54,19 +75,44 @@ export function StepFeaturesFeature() {
         .catch((error) => console.log(error))
   }, [dispatch, features, generalData?.cloud_provider])
 
+  const methods = useForm<ClusterFeaturesData>({
+    defaultValues: featuresData,
+    mode: 'onChange',
+  })
+
   const onSubmit = methods.handleSubmit((data) => {
-    const cloneData = data.features.filter((filter) => filter.id)
-    setFeaturesData({
-      features: cloneData,
-    })
-    // const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
-    // navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
+    if (data && features) {
+      let cloneData = {}
+
+      for (let i = 0; i < Object.keys(data).length; i++) {
+        const id = Object.keys(data)[i]
+        const currentFeature = data[id]
+
+        cloneData = {
+          ...cloneData,
+          [id]: {
+            value: currentFeature.value || false,
+            extendedValue: currentFeature.extendedValue || false,
+          },
+        }
+      }
+
+      setFeaturesData(cloneData)
+
+      const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+    }
   })
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepFeatures onSubmit={onSubmit} features={features} cloudProvider={generalData?.cloud_provider} />
+        <StepFeatures
+          onSubmit={onSubmit}
+          features={features}
+          cloudProvider={generalData?.cloud_provider}
+          goToBack={goToBack}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )

@@ -167,8 +167,15 @@ export const fetchClusterFeatures = createAsyncThunk<ClusterFeatureResponseList,
     } else {
       response = await cloudProviderApi.listScalewayFeatures()
     }
-
     return response.data
+  }
+)
+
+export const createCluster = createAsyncThunk<Cluster, { organizationId: string; clusterRequest: ClusterRequest }>(
+  'cluster/create',
+  async (data) => {
+    const response = await clusterApi.createCluster(data.organizationId, data.clusterRequest)
+    return response.data as Cluster
   }
 )
 
@@ -526,6 +533,22 @@ export const clusterSlice = createSlice({
           },
         }
         clusterAdapter.updateOne(state, update)
+        toastError(action.error)
+      })
+      // create
+      .addCase(createCluster.fulfilled, (state: ClustersState, action) => {
+        const cluster = action.payload
+        clusterAdapter.addOne(state, cluster)
+        state.error = null
+
+        state.joinOrganizationClusters = addOneToManyRelation(action.meta.arg.organizationId, cluster.id, {
+          ...state.joinOrganizationClusters,
+        })
+        toast(ToastEnum.SUCCESS, `Your cluster ${action.payload.name} has been created`)
+      })
+      .addCase(createCluster.rejected, (state: ClustersState, action) => {
+        state.loadingStatus = 'error'
+        state.error = action.error.message
         toastError(action.error)
       })
   },

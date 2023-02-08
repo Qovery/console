@@ -1,9 +1,6 @@
 import { CloudProviderEnum, ClusterFeature } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
-import { ClusterFeaturesData } from '@qovery/shared/interfaces'
-import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import {
   BannerBox,
   BannerBoxEnum,
@@ -21,13 +18,12 @@ export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
   features?: ClusterFeature[]
+  goToBack?: () => void
 }
 
 export function StepFeatures(props: StepFeaturesProps) {
-  const { onSubmit, features, cloudProvider } = props
-  const { formState, control, getValues, setValue } = useFormContext<ClusterFeaturesData>()
-  const { organizationId = '' } = useParams()
-  const navigate = useNavigate()
+  const { onSubmit, features, cloudProvider, goToBack } = props
+  const { formState, control, getValues, setValue } = useFormContext()
 
   return (
     <div>
@@ -46,28 +42,23 @@ export function StepFeatures(props: StepFeaturesProps) {
                 message="These features will not be modifiable after cluster creation."
                 type={BannerBoxEnum.WARNING}
               />
-              {features.map((feature, index) => (
+              {features.map((feature) => (
                 <div
                   key={feature.id}
                   data-testid="feature"
-                  className="flex justify-between cursor-pointer px-4 py-3 rounded border border-element-light-lighter-500 bg-element-light-lighter-200 mb-3 last:mb-0"
+                  className="flex justify-between px-4 py-3 rounded border border-element-light-lighter-500 bg-element-light-lighter-200 mb-3 last:mb-0"
                   onClick={() => {
-                    const active = getValues().features[index].id || undefined
-                    setValue(`features.${index}.id`, !active ? feature.id : undefined)
+                    if (feature.id) {
+                      const active = getValues()[feature.id].value
+                      setValue(`${feature.id}.value`, !active)
+                    }
                   }}
                 >
                   <div className="flex w-full">
                     <Controller
-                      name={`features.${index}.id`}
+                      name={`${feature.id}.value`}
                       control={control}
-                      render={({ field }) => (
-                        <InputToggle
-                          small
-                          className="relative top-[2px]"
-                          onChange={field.onChange}
-                          value={field.value ? true : false}
-                        />
-                      )}
+                      render={({ field }) => <InputToggle small className="relative top-[2px]" value={field.value} />}
                     />
                     <div className="basis-full">
                       <h4 className="flex justify-between text-ssm text-text-600 mb-1 font-medium">
@@ -82,7 +73,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                       {typeof feature.value === 'string' && (
                         <div onClick={(e) => e.stopPropagation()}>
                           <Controller
-                            name={`features.${index}.value`}
+                            name={`${feature.id}.extendedValue`}
                             control={control}
                             defaultValue={feature.value}
                             render={({ field }) => (
@@ -95,7 +86,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                                   })) || []
                                 }
                                 onChange={field.onChange}
-                                value={field.value as string}
+                                value={field.value}
                                 label="VPC Subnet address"
                                 isSearchable
                                 portal
@@ -127,9 +118,7 @@ export function StepFeatures(props: StepFeaturesProps) {
 
         <div className="flex justify-between">
           <Button
-            onClick={() =>
-              navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_RESOURCES_URL}`)
-            }
+            onClick={goToBack}
             type="button"
             className="btn--no-min-w"
             size={ButtonSize.XLARGE}

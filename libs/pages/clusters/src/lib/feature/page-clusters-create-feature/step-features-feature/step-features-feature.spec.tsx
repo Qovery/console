@@ -52,8 +52,14 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           cloud_provider: CloudProviderEnum.AWS,
           region: 'Paris',
           credentials: '111-111-111',
+          credentials_name: 'name',
         },
+        setGeneralData: jest.fn(),
         setFeaturesData: mockSetFeaturesData,
+        resourcesData: undefined,
+        setResourcesData: jest.fn(),
+        remoteData: undefined,
+        setRemoteData: jest.fn(),
       }}
     >
       <StepFeaturesFeature />
@@ -105,13 +111,15 @@ describe('StepFeaturesFeature', () => {
       button.click()
     })
 
+    const STATIC_IP = 'STATIC_IP'
+
     expect(mockSetFeaturesData).toHaveBeenCalledWith({
-      features: [
-        {
-          id: 'STATIC_IP',
-          value: 'test',
-        },
-      ],
+      [STATIC_IP]: {
+        value: true,
+        extendedValue: 'test',
+      },
     })
+
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters/create/summary')
   })
 })

@@ -7,6 +7,7 @@ export interface ClusterGeneralData {
   cloud_provider: CloudProviderEnum
   region: string
   credentials: string
+  credentials_name: string
 }
 
 export interface ClusterResourcesData {
@@ -21,8 +22,9 @@ export interface ClusterRemoteData {
 }
 
 export interface ClusterFeaturesData {
-  features: {
-    id?: string | boolean
-    value: string | boolean
-  }[]
+  [id: string]: {
+    id: string
+    value: boolean
+    extendedValue?: string
+  }
 }

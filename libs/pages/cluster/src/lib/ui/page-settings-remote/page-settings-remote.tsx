@@ -15,7 +15,7 @@ export function PageSettingsRemote(props: PageSettingsRemoteProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-2 mb-8 text-text-700">Remote access</h2>
+        <h2 className="h5 mb-2 text-text-700">Remote access</h2>
         <form onSubmit={onSubmit}>
           <ClusterRemoteSettings fromDetail />
           <div className="flex justify-end">

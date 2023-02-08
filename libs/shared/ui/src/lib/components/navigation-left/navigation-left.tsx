@@ -26,7 +26,7 @@ export interface NavigationLeftLinkProps {
 }
 
 export const linkClassName = (pathname: string, url?: string) =>
-  `py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
+  `flex items-center py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
     url === pathname
       ? 'is-active text-brand-500 bg-brand-50 hover:text-brand-600 hover:bg-brand-100'
       : 'text-text-400 hover:text-text-500 hover:bg-element-light-lighter-300'
@@ -39,7 +39,11 @@ export function NavigationLeft(props: NavigationLeftProps) {
 
   const linkContent = (link: NavigationLeftLinkProps) => (
     <>
-      {link.icon && <Icon name={link.icon} className="mr-3" />}
+      {link.icon && (
+        <div className="flex items-center mr-4">
+          <Icon name={link.icon} className="inline-block w-3" />
+        </div>
+      )}
       {link.title}
     </>
   )
@@ -63,14 +67,14 @@ export function NavigationLeft(props: NavigationLeftProps) {
         ) : !link.onClick && link.subLinks ? (
           <NavigationLeftSubLink key={index} link={link} linkClassName={linkClassName} linkContent={linkContent} />
         ) : (
-          <span
+          <div
             data-testid="link"
             key={index}
             onClick={link.onClick}
             className={linkClassName(link.url || '', pathname)}
           >
             {linkContent(link)}
-          </span>
+          </div>
         )
       )}
     </div>

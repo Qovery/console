@@ -103,8 +103,6 @@ describe('StepGeneralFeature', () => {
       region: 'Paris',
       credentials: '111-111-111',
     })
-    // expect(mockNavigate).toHaveBeenCalledWith(
-    //   '/organization/1/clusters/create/resources'
-    // )
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters/create/resources')
   })
 })

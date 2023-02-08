@@ -2,15 +2,15 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterRemoteData } from '@qovery/shared/interfaces'
-import { CLUSTERS_CREATION_REMOTE_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_CREATION_SUMMARY_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import StepRemote from '../../../ui/page-clusters-create/step-remote/step-remote'
-import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
+import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
 export function StepRemoteFeature() {
   useDocumentTitle('SSH Key - Create Cluster')
-  const { remoteData, setRemoteData, setCurrentStep } = useClusterContainerCreateContext()
+  const { remoteData, setRemoteData, setCurrentStep, generalData, resourcesData } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
 
@@ -37,8 +37,10 @@ export function StepRemoteFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(3)
-  }, [setCurrentStep])
+    setCurrentStep(
+      steps(generalData?.cloud_provider, resourcesData?.cluster_type).findIndex((step) => step.key === 'remote') + 1
+    )
+  }, [setCurrentStep, generalData?.cloud_provider, resourcesData?.cluster_type])
 
   const methods = useForm<ClusterRemoteData>({
     defaultValues: remoteData,
@@ -48,7 +50,7 @@ export function StepRemoteFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     setRemoteData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-    navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
+    navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
   return (

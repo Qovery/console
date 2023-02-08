@@ -1,3 +1,4 @@
+import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -19,7 +20,7 @@ export interface ClusterContainerCreateContextInterface {
   resourcesData: ClusterResourcesData | undefined
   setResourcesData: (data: ClusterResourcesData) => void
   featuresData: ClusterFeaturesData | undefined
-  setFeaturesData: (data: ClusterFeaturesData) => void
+  setFeaturesData: (data: ClusterFeaturesData | undefined) => void
   remoteData: ClusterRemoteData | undefined
   setRemoteData: (data: ClusterRemoteData) => void
 }
@@ -36,13 +37,38 @@ export const useClusterContainerCreateContext = () => {
   return clusterContainerCreateContext
 }
 
-export const steps: { title: string }[] = [
-  { title: 'Create new cluster' },
-  { title: 'Set resources' },
-  { title: 'Set SSH Key' },
-  { title: 'Set features' },
-  { title: 'Ready to install' },
-]
+export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) => {
+  if (cloudProvider === CloudProviderEnum.SCW) {
+    return [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Set resources', key: 'resources' },
+      { title: 'Ready to install', key: 'summary' },
+    ]
+  } else {
+    if (clusterType === KubernetesEnum.K3_S) {
+      return [
+        { title: 'Create new cluster', key: 'general' },
+        { title: 'Set resources', key: 'resources' },
+        { title: 'Set SSH Key', key: 'remote' },
+        { title: 'Ready to install', key: 'summary' },
+      ]
+    } else {
+      return [
+        { title: 'Create new cluster', key: 'general' },
+        { title: 'Set resources', key: 'resources' },
+        { title: 'Set features', key: 'features' },
+        { title: 'Ready to install', key: 'summary' },
+      ]
+    }
+  }
+}
+
+export const defaultResourcesData: ClusterResourcesData = {
+  cluster_type: '',
+  disk_size: 20,
+  instance_type: '',
+  nodes: [3, 10],
+}
 
 export function PageClusterCreateFeature() {
   const { organizationId = '' } = useParams()
@@ -53,12 +79,7 @@ export function PageClusterCreateFeature() {
   const [remoteData, setRemoteData] = useState<ClusterRemoteData | undefined>({
     ssh_key: '',
   })
-  const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>({
-    cluster_type: '',
-    disk_size: 20,
-    instance_type: '',
-    nodes: [1, 2],
-  })
+  const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
   const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>()
 
   const navigate = useNavigate()
@@ -86,9 +107,9 @@ export function PageClusterCreateFeature() {
         onExit={() => {
           navigate(CLUSTERS_URL(organizationId))
         }}
-        totalSteps={4}
+        totalSteps={steps(generalData?.cloud_provider, resourcesData?.cluster_type).length}
         currentStep={currentStep}
-        currentTitle={steps[currentStep - 1].title}
+        currentTitle={steps(generalData?.cloud_provider, resourcesData?.cluster_type)[currentStep - 1].title}
         portal
       >
         <Routes>

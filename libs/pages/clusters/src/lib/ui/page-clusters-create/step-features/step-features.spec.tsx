@@ -1,12 +1,14 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import StepFeatures, { StepFeaturesProps } from './step-features'
 
+const STATIC_IP = 'STATIC_IP'
+
 const mockFeatures = [
   {
-    id: 'STATIC_IP',
+    id: STATIC_IP,
     title: 'feature-1',
     cost_per_month: 23,
     value: 'my-value',
@@ -30,13 +32,10 @@ describe('StepFeatures', () => {
     const { getByDisplayValue, getAllByDisplayValue } = render(
       wrapWithReactHookForm(<StepFeatures {...props} />, {
         defaultValues: {
-          features: [
-            {
-              id: 'STATIC_IP',
-              value: 'my-value',
-              accepted_values: 'my-value',
-            },
-          ],
+          [STATIC_IP]: {
+            value: true,
+            extendedValue: 'my-value',
+          },
         },
       })
     )
@@ -50,12 +49,10 @@ describe('StepFeatures', () => {
     const { getByTestId } = render(
       wrapWithReactHookForm(<StepFeatures {...props} />, {
         defaultValues: {
-          features: [
-            {
-              id: 'STATIC_IP',
-              value: 'my-value',
-            },
-          ],
+          [STATIC_IP]: {
+            value: true,
+            extendedValue: 'my-value',
+          },
         },
       })
     )
