@@ -3,6 +3,8 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import StepSummary, { StepSummaryProps } from './step-summary'
 
+const STATIC_IP = 'STATIC_IP'
+
 const props: StepSummaryProps = {
   generalData: {
     name: 'test',
@@ -19,12 +21,10 @@ const props: StepSummaryProps = {
     disk_size: 20,
   },
   featuresData: {
-    features: [
-      {
-        id: 'STATIC_IP',
-        value: true,
-      },
-    ],
+    [STATIC_IP]: {
+      id: 'STATIC_IP',
+      value: true,
+    },
   },
   remoteData: {
     ssh_key: 'ssh_key',
