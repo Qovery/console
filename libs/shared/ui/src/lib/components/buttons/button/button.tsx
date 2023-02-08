@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link as LinkRouter } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
 import LoaderSpinner from '../../loader-spinner/loader-spinner'
@@ -94,9 +94,9 @@ export function Button(props: ButtonProps) {
     )
   } else {
     return (
-      <Link to={link} className={defineClass} onClick={onClick}>
+      <LinkRouter to={link} className={defineClass} onClick={onClick}>
         {content()}
-      </Link>
+      </LinkRouter>
     )
   }
 }
