@@ -42,10 +42,10 @@ export function StepSummary(props: StepSummaryProps) {
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">Ready to install your database</h3>
+          <h3 className="text-text-700 text-lg">Ready to install your cluster</h3>
         </div>
         <p className="text-xs text-text-500 mb-2">
-          The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
+          Here is what we will deploy, this action can take up to 30 minutes.
         </p>
       </div>
 
@@ -69,7 +69,6 @@ export function StepSummary(props: StepSummaryProps) {
               <li>
                 Provider:{' '}
                 <strong className="font-medium inline-flex items-center">
-                  {props.generalData.cloud_provider}
                   <Icon className="ml-1 w-4" name={props.generalData.cloud_provider} />
                 </strong>
               </li>

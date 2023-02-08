@@ -17,7 +17,8 @@ import { steps, useClusterContainerCreateContext } from '../page-clusters-create
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Cluster')
-  const { setResourcesData, resourcesData, setCurrentStep, generalData } = useClusterContainerCreateContext()
+  const { setResourcesData, resourcesData, setRemoteData, setFeaturesData, setCurrentStep, generalData } =
+    useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
 
@@ -58,10 +59,24 @@ export function StepResourcesFeature() {
     setResourcesData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
     if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
-      if (data.cluster_type === KubernetesEnum.K3_S) navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
-      else navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
+      if (data.cluster_type === KubernetesEnum.K3_S) {
+        navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
+        setRemoteData({
+          ssh_key: '',
+        })
+        setFeaturesData(undefined)
+      } else {
+        navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
+        setRemoteData({
+          ssh_key: '',
+        })
+      }
     } else {
       navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+      setRemoteData({
+        ssh_key: '',
+      })
+      setFeaturesData(undefined)
     }
   })
 
