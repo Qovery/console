@@ -1,18 +1,8 @@
 import { CloudProviderEnum, ClusterFeature } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import {
-  BannerBox,
-  BannerBoxEnum,
-  Button,
-  ButtonSize,
-  ButtonStyle,
-  IconAwesomeEnum,
-  InputSelect,
-  InputToggle,
-  Link,
-  LoaderSpinner,
-} from '@qovery/shared/ui'
+import { useFormContext } from 'react-hook-form'
+import { CardClusterFeature } from '@qovery/shared/console-shared'
+import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -23,7 +13,7 @@ export interface StepFeaturesProps {
 
 export function StepFeatures(props: StepFeaturesProps) {
   const { onSubmit, features, cloudProvider, goToBack } = props
-  const { formState, control, getValues, setValue } = useFormContext()
+  const { formState, getValues, setValue, control } = useFormContext()
 
   return (
     <div>
@@ -43,70 +33,14 @@ export function StepFeatures(props: StepFeaturesProps) {
                 type={BannerBoxEnum.WARNING}
               />
               {features.map((feature) => (
-                <div
+                <CardClusterFeature
                   key={feature.id}
-                  data-testid="feature"
-                  className="flex justify-between px-4 py-3 rounded border border-element-light-lighter-500 bg-element-light-lighter-200 mb-3 last:mb-0"
-                  onClick={() => {
-                    if (feature.id) {
-                      const active = getValues()[feature.id].value
-                      setValue(`${feature.id}.value`, !active)
-                    }
-                  }}
-                >
-                  <div className="flex w-full">
-                    <Controller
-                      name={`${feature.id}.value`}
-                      control={control}
-                      render={({ field }) => <InputToggle small className="relative top-[2px]" value={field.value} />}
-                    />
-                    <div className="basis-full">
-                      <h4 className="flex justify-between text-ssm text-text-600 mb-1 font-medium">
-                        <span>{feature.title}</span>
-                        <span className="text-ssm text-text-600 font-medium">
-                          {feature.cost_per_month !== 0
-                            ? `${feature.cost_per_month}/month billed by ${cloudProvider}`
-                            : 'Free'}
-                        </span>
-                      </h4>
-                      <p className="text-xs text-text-400 max-w-lg">{feature.description}</p>
-                      {typeof feature.value === 'string' && (
-                        <div onClick={(e) => e.stopPropagation()}>
-                          <Controller
-                            name={`${feature.id}.extendedValue`}
-                            control={control}
-                            defaultValue={feature.value}
-                            render={({ field }) => (
-                              <InputSelect
-                                className="mt-2"
-                                options={
-                                  (feature.accepted_values as string[])?.map((value) => ({
-                                    label: value,
-                                    value: value,
-                                  })) || []
-                                }
-                                onChange={field.onChange}
-                                value={field.value}
-                                label="VPC Subnet address"
-                                isSearchable
-                                portal
-                              />
-                            )}
-                          />
-                        </div>
-                      )}
-                      <Link
-                        external
-                        className="font-medium"
-                        size="text-xs"
-                        link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
-                        linkLabel="Documentation link"
-                        iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-                        iconRightClassName="text-xxs relative top-[1px]"
-                      />
-                    </div>
-                  </div>
-                </div>
+                  feature={feature}
+                  cloudProvider={cloudProvider}
+                  control={control}
+                  getValues={getValues}
+                  setValue={setValue}
+                />
               ))}
             </div>
           ) : (

@@ -1,8 +1,19 @@
-import { CloudProviderEnum, ClusterRequest, ClusterRequestFeatures, KubernetesEnum } from 'qovery-typescript-axios'
+import {
+  CloudProviderEnum,
+  ClusterInstanceTypeResponseListResults,
+  ClusterRequest,
+  ClusterRequestFeatures,
+  KubernetesEnum,
+} from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { createCluster, postCloudProviderInfo, postClusterActionsDeploy } from '@qovery/domains/organization'
+import {
+  createCluster,
+  postCloudProviderInfo,
+  postClusterActionsDeploy,
+  selectInstancesTypes,
+} from '@qovery/domains/organization'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
@@ -13,7 +24,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 import StepSummary from '../../../ui/page-clusters-create/step-summary/step-summary'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
@@ -26,6 +37,17 @@ export function StepSummaryFeature() {
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
 
   const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+
+  const detailInstanceType = useSelector<RootState, ClusterInstanceTypeResponseListResults[] | undefined>((state) =>
+    selectInstancesTypes(
+      state,
+      generalData?.cloud_provider || CloudProviderEnum.AWS,
+      resourcesData?.cluster_type as KubernetesEnum,
+      generalData?.region || ''
+    )
+  )?.find(
+    (instanceTypes: ClusterInstanceTypeResponseListResults) => instanceTypes.type === resourcesData?.instance_type
+  )
 
   const goToFeatures = useCallback(() => {
     navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
@@ -160,6 +182,7 @@ export function StepSummaryFeature() {
           resourcesData={resourcesData}
           featuresData={featuresData}
           remoteData={remoteData}
+          detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
