@@ -45,8 +45,8 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           production: false,
           cloud_provider: CloudProviderEnum.AWS,
           region: 'Paris',
-          credentials: '111-111-111',
-          credentials_name: 'name',
+          credentials: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].id : '',
+          credentials_name: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].name : '',
         },
         setGeneralData: mockSetGeneralData,
       }}
@@ -106,8 +106,8 @@ describe('StepGeneralFeature', () => {
       production: false,
       cloud_provider: CloudProviderEnum.AWS,
       region: 'Paris',
-      credentials: '111-111-111',
-      credentials_name: 'name',
+      credentials: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].id : '',
+      credentials_name: mockOrganization.credentials?.items ? mockOrganization.credentials?.items[0].name : '',
     })
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters/create/resources')
   })
