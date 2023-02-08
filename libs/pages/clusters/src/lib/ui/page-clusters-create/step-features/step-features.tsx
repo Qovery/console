@@ -58,14 +58,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                     <Controller
                       name={`${feature.id}.value`}
                       control={control}
-                      render={({ field }) => (
-                        <InputToggle
-                          small
-                          className="relative top-[2px]"
-                          onChange={field.onChange}
-                          value={field.value}
-                        />
-                      )}
+                      render={({ field }) => <InputToggle small className="relative top-[2px]" value={field.value} />}
                     />
                     <div className="basis-full">
                       <h4 className="flex justify-between text-ssm text-text-600 mb-1 font-medium">

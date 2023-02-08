@@ -154,7 +154,7 @@ export function StepSummary(props: StepSummaryProps) {
                 {Object.keys(props.featuresData).map((id: string) => {
                   const currentFeature = props.featuresData && props.featuresData[id]
 
-                  if (!currentFeature?.value) return <></>
+                  if (!currentFeature?.value) return null
 
                   return (
                     <li key={id}>
