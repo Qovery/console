@@ -21,6 +21,8 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }))
 
+const STATIC_IP = 'STATIC_IP'
+
 const mockSetResourcesData = jest.fn()
 const ContextWrapper = (props: { children: ReactNode }) => {
   return (
@@ -49,12 +51,11 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         },
         setRemoteData: jest.fn(),
         featuresData: {
-          features: [
-            {
-              id: 'STATIC_IP',
-              value: false,
-            },
-          ],
+          [STATIC_IP]: {
+            id: STATIC_IP,
+            value: true,
+            extendedValue: 'test',
+          },
         },
         setFeaturesData: jest.fn(),
       }}
@@ -110,8 +111,8 @@ describe('StepSummaryFeature', () => {
         ssh_keys: ['ssh_key'],
         features: [
           {
-            id: 'STATIC_IP',
-            value: false,
+            id: STATIC_IP,
+            value: 'test',
           },
         ],
       },
