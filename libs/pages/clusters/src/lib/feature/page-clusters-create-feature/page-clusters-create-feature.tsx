@@ -18,7 +18,7 @@ export interface ClusterContainerCreateContextInterface {
   generalData: ClusterGeneralData | undefined
   setGeneralData: (data: ClusterGeneralData) => void
   resourcesData: ClusterResourcesData | undefined
-  setResourcesData: (data: ClusterResourcesData) => void
+  setResourcesData: (data: ClusterResourcesData | undefined) => void
   featuresData: ClusterFeaturesData | undefined
   setFeaturesData: (data: ClusterFeaturesData | undefined) => void
   remoteData: ClusterRemoteData | undefined

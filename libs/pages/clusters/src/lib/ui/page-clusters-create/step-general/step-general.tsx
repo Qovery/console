@@ -3,7 +3,7 @@ import { FormEventHandler, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
-import { ClusterGeneralData, Value } from '@qovery/shared/interfaces'
+import { ClusterGeneralData, ClusterResourcesData, Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, ButtonSize, ButtonStyle, Icon, IconFlag, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -12,10 +12,11 @@ export interface StepGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProviders: CloudProvider[]
   currentCloudProvider?: CloudProviderEnum
+  setResourcesData?: (data: ClusterResourcesData | undefined) => void
 }
 
 export function StepGeneral(props: StepGeneralProps) {
-  const { onSubmit, cloudProviders = [], currentCloudProvider } = props
+  const { onSubmit, cloudProviders = [], currentCloudProvider, setResourcesData } = props
   const { control, formState } = useFormContext<ClusterGeneralData>()
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
@@ -78,6 +79,7 @@ export function StepGeneral(props: StepGeneralProps) {
                       )[0]
                       setCurrentProvider(currentProvider as CloudProvider)
                       field.onChange(value)
+                      setResourcesData && setResourcesData(undefined)
                     }}
                     value={field.value}
                     error={error?.message}

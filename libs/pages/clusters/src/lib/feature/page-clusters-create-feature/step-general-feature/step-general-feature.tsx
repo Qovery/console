@@ -13,7 +13,7 @@ import { useClusterContainerCreateContext } from '../page-clusters-create-featur
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Cluster')
-  const { setGeneralData, generalData, setCurrentStep } = useClusterContainerCreateContext()
+  const { setGeneralData, generalData, setCurrentStep, setResourcesData } = useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
@@ -67,6 +67,7 @@ export function StepGeneralFeature() {
           onSubmit={onSubmit}
           cloudProviders={cloudProvider.items}
           currentCloudProvider={generalData?.cloud_provider}
+          setResourcesData={setResourcesData}
         />
       </FormProvider>
     </FunnelFlowBody>
