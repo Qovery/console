@@ -82,6 +82,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                           <Controller
                             name={`${feature.id}.extendedValue`}
                             control={control}
+                            defaultValue={feature.value}
                             render={({ field }) => (
                               <InputSelect
                                 className="mt-2"

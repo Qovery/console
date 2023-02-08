@@ -58,6 +58,7 @@ export function StepResourcesFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
     const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+
     if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
       if (data.cluster_type === KubernetesEnum.K3_S) {
         navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
