@@ -123,12 +123,12 @@ export const fetchCloudProvider = createAsyncThunk<CloudProvider[]>('cluster-clo
   return response.data.results as CloudProvider[]
 })
 
-export const fetchCloudProviderInfo = createAsyncThunk<
+export const fetchClusterRoutingTable = createAsyncThunk<
   ClusterCloudProviderInfo,
   { organizationId: string; clusterId: string }
->('clusterCloudProviderInfo/fetch', async (data) => {
-  const response = await clusterApi.getOrganizationCloudProviderInfo(data.organizationId, data.clusterId)
-  return response.data as ClusterCloudProviderInfo
+>('clusterRoutingTable/fetch', async (data) => {
+  const response = await clusterApi.getRoutingTable(data.organizationId, data.clusterId)
+  return response.data as any
 })
 
 export const postCloudProviderInfo = createAsyncThunk<
@@ -147,6 +147,14 @@ export const postCloudProviderInfo = createAsyncThunk<
     data.clusterCloudProviderInfo
   )
   return response.data as ClusterCloudProviderInfoRequest
+})
+
+export const fetchCloudProviderInfo = createAsyncThunk<
+  ClusterCloudProviderInfo,
+  { organizationId: string; clusterId: string }
+>('clusterCloudProviderInfo/fetch', async (data) => {
+  const response = await clusterApi.getOrganizationCloudProviderInfo(data.organizationId, data.clusterId)
+  return response.data as ClusterCloudProviderInfo
 })
 
 export const fetchAvailableInstanceTypes = createAsyncThunk<

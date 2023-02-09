@@ -65,15 +65,16 @@ export function PageSettingsFeature() {
         url: pathSettings + CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
       })
     }
+
+    links.push({
+      title: 'Network',
+      icon: IconAwesomeEnum.PLUG,
+      url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
+    })
   }
 
   links.push(
     ...[
-      {
-        title: 'Network',
-        icon: IconAwesomeEnum.PLUG,
-        url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
-      },
       {
         title: 'Advanced settings',
         icon: IconAwesomeEnum.GEARS,
