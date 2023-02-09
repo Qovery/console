@@ -169,7 +169,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       }
 
       const updateAllButton = {
-        name: 'Update all services',
+        name: 'Deploy latest version for..',
         contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-400" />,
         onClick: (e: ClickEvent) => {
           e.syntheticEvent.preventDefault()
