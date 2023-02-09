@@ -1,10 +1,14 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
+import Link, { LinkProps } from './link'
 
-import Link from './link'
+const props: LinkProps = {
+  linkLabel: 'link-label',
+  link: '/test',
+}
 
 describe('Link', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Link />)
+    const { baseElement } = render(<Link {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })
