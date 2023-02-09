@@ -67,7 +67,12 @@ export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizat
 
 export const editCluster = createAsyncThunk(
   'cluster/edit',
-  async (payload: { organizationId: string; clusterId: string; data: Partial<ClusterEntity> }) => {
+  async (payload: {
+    organizationId: string
+    clusterId: string
+    data: Partial<ClusterEntity>
+    toasterCallback: () => void
+  }) => {
     const cloneCluster = Object.assign({}, refactoClusterPayload(payload.data as Partial<ClusterEntity>))
     const response = await clusterApi.editCluster(
       payload.organizationId,
@@ -362,7 +367,14 @@ export const clusterSlice = createSlice({
         state.error = null
         state.loadingStatus = 'loaded'
 
-        toast(ToastEnum.SUCCESS, 'Cluster updated')
+        toast(
+          ToastEnum.SUCCESS,
+          `Cluster updated`,
+          'You must update to apply the settings',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Update'
+        )
       })
       .addCase(editCluster.rejected, (state: ClustersState, action) => {
         state.loadingStatus = 'error'
@@ -451,7 +463,7 @@ export const clusterSlice = createSlice({
           'You must update to apply the settings',
           action.meta.arg.toasterCallback,
           undefined,
-          'Redeploy'
+          'Update'
         )
         clusterAdapter.updateOne(state, update)
       })
