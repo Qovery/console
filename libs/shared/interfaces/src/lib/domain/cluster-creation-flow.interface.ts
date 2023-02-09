@@ -24,6 +24,7 @@ export interface ClusterRemoteData {
 export interface ClusterFeaturesData {
   [id: string]: {
     id: string
+    title: string
     value: boolean
     extendedValue?: string
   }

@@ -115,6 +115,7 @@ describe('StepFeaturesFeature', () => {
 
     expect(mockSetFeaturesData).toHaveBeenCalledWith({
       [STATIC_IP]: {
+        title: 'feature-1',
         value: true,
         extendedValue: 'test',
       },

@@ -1,4 +1,4 @@
-// import { ClusterRequestFeatures } from 'qovery-typescript-axios'
+import { ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios'
 import {
   ClusterFeaturesData,
   ClusterGeneralData,
@@ -21,6 +21,7 @@ export interface StepSummaryProps {
   goToRemote: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
+  detailInstanceType?: ClusterInstanceTypeResponseListResults
 }
 
 export function StepSummary(props: StepSummaryProps) {
@@ -98,7 +99,11 @@ export function StepSummary(props: StepSummaryProps) {
                 Cluster type: <strong className="font-medium">{props.resourcesData.cluster_type}</strong>
               </li>
               <li>
-                Instance type: <strong className="font-medium">{props.resourcesData.instance_type}</strong>
+                Instance type:{' '}
+                <strong className="font-medium">
+                  {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
+                  {props.detailInstanceType?.ram_in_gb}GB RAM)
+                </strong>
               </li>
               <li>
                 Disk size: <strong className="font-medium">{props.resourcesData.disk_size} GB</strong>
@@ -158,7 +163,7 @@ export function StepSummary(props: StepSummaryProps) {
 
                   return (
                     <li key={id}>
-                      {id}:{' '}
+                      {currentFeature.title}:{' '}
                       <strong className="font-medium">
                         {currentFeature.extendedValue ? currentFeature.extendedValue : currentFeature.value.toString()}
                       </strong>
