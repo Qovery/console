@@ -151,7 +151,7 @@ export const fetchAvailableInstanceTypes = createAsyncThunk<
       response = await cloudProviderApi.listAWSEKSInstanceType(data.region)
     }
   } else {
-    response = await cloudProviderApi.listScalewayInstanceType()
+    response = await cloudProviderApi.listScalewayKapsuleInstanceType(data.region)
   }
 
   return response.data
