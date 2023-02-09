@@ -133,12 +133,9 @@ describe('PageSettingsResourcesFeature', () => {
     await waitFor(() => {
       button.click()
 
-      expect(editClusterSpy).toBeCalledWith({
-        organizationId: '0',
-        clusterId: mockCluster.id,
-        data: cloneCluster,
-        toasterCallback: jest.fn(),
-      })
+      expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
+      expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
+      expect(editClusterSpy.mock.calls[0][0].data).toStrictEqual(cloneCluster)
     })
   })
 })

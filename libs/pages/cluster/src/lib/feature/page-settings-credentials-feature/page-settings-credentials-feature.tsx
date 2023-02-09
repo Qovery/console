@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import {
   fetchCloudProviderInfo,
   postCloudProviderInfo,
+  postClusterActionsDeploy,
   selectClusterById,
   selectClustersLoadingStatus,
   selectOrganizationById,
@@ -53,7 +54,13 @@ export function PageSettingsCredentialsFeature() {
 
       const clusterCloudProviderInfo = handleSubmit(data, credentials, cluster) as ClusterCloudProviderInfoRequest
 
-      dispatch(postCloudProviderInfo({ organizationId, clusterId, clusterCloudProviderInfo }))
+      const toasterCallback = () => {
+        if (cluster) {
+          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
+        }
+      }
+
+      dispatch(postCloudProviderInfo({ organizationId, clusterId, clusterCloudProviderInfo, toasterCallback }))
         .unwrap()
         .finally(() => setLoading(false))
     } else {

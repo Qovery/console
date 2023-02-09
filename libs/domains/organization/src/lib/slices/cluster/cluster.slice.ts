@@ -137,6 +137,7 @@ export const postCloudProviderInfo = createAsyncThunk<
     organizationId: string
     clusterId: string
     clusterCloudProviderInfo: ClusterCloudProviderInfoRequest
+    toasterCallback?: () => void
     silently?: boolean
   }
 >('clusterCloudProviderInfo/post', async (data) => {
@@ -538,7 +539,16 @@ export const clusterSlice = createSlice({
           },
         }
         clusterAdapter.updateOne(state, update)
-        if (!action.meta.arg.silently) toast(ToastEnum.SUCCESS, 'Credentials updated')
+        if (!action.meta.arg.silently) {
+          toast(
+            ToastEnum.SUCCESS,
+            `Credentials updated`,
+            'You must update your cluster to apply the settings',
+            action.meta.arg.toasterCallback,
+            undefined,
+            'Update cluster'
+          )
+        }
       })
       .addCase(postCloudProviderInfo.rejected, (state: ClustersState, action) => {
         const update: Update<ClusterEntity> = {
