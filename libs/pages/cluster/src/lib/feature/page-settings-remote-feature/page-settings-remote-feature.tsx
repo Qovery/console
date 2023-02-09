@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCluster, postClusterActionsUpdate, selectClusterById } from '@qovery/domains/organization'
+import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, ClusterRemoteData } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsRemote from '../../ui/page-settings-remote/page-settings-remote'
@@ -34,7 +34,7 @@ export function PageSettingsRemoteFeature() {
 
       const toasterCallback = () => {
         if (cluster) {
-          dispatch(postClusterActionsUpdate({ organizationId, clusterId }))
+          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
         }
       }
 

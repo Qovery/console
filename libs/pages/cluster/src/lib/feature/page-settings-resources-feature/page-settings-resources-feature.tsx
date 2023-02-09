@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCluster, postClusterActionsUpdate, selectClusterById } from '@qovery/domains/organization'
+import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, ClusterResourcesData } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
@@ -36,7 +36,7 @@ export function PageSettingsResourcesFeature() {
 
       const toasterCallback = () => {
         if (cluster) {
-          dispatch(postClusterActionsUpdate({ organizationId, clusterId }))
+          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
         }
       }
 

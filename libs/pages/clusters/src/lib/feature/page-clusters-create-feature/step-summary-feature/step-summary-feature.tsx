@@ -136,6 +136,7 @@ export function StepSummaryFeature() {
                 },
                 region: generalData.region,
               },
+              silently: true,
             })
           )
             .unwrap()

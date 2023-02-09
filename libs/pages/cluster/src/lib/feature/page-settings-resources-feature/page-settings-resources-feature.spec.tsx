@@ -137,6 +137,7 @@ describe('PageSettingsResourcesFeature', () => {
         organizationId: '0',
         clusterId: mockCluster.id,
         data: cloneCluster,
+        toasterCallback: jest.fn(),
       })
     })
   })

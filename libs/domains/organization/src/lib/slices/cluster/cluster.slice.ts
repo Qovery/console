@@ -133,7 +133,12 @@ export const fetchCloudProviderInfo = createAsyncThunk<
 
 export const postCloudProviderInfo = createAsyncThunk<
   ClusterCloudProviderInfo,
-  { organizationId: string; clusterId: string; clusterCloudProviderInfo: ClusterCloudProviderInfoRequest }
+  {
+    organizationId: string
+    clusterId: string
+    clusterCloudProviderInfo: ClusterCloudProviderInfoRequest
+    silently?: boolean
+  }
 >('clusterCloudProviderInfo/post', async (data) => {
   const response = await clusterApi.specifyClusterCloudProviderInfo(
     data.organizationId,
@@ -533,7 +538,7 @@ export const clusterSlice = createSlice({
           },
         }
         clusterAdapter.updateOne(state, update)
-        toast(ToastEnum.SUCCESS, 'Credentials updated')
+        if (!action.meta.arg.silently) toast(ToastEnum.SUCCESS, 'Credentials updated')
       })
       .addCase(postCloudProviderInfo.rejected, (state: ClustersState, action) => {
         const update: Update<ClusterEntity> = {
