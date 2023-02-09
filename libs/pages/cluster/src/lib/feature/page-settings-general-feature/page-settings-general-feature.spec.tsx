@@ -82,10 +82,8 @@ describe('PageSettingsGeneralFeature', () => {
       mockCluster
     )
 
-    expect(editClusterSpy).toHaveBeenCalledWith({
-      organizationId: '0',
-      clusterId: mockCluster.id,
-      data: cloneCluster,
-    })
+    expect(editClusterSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
+    expect(editClusterSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
+    expect(editClusterSpy.mock.calls[0][0].data).toStrictEqual(cloneCluster)
   })
 })

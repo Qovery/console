@@ -5,6 +5,7 @@ import PageClusters from './page-clusters'
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router'),
   useParams: () => ({ organizationId: '1' }),
+  Link: () => <div />,
 }))
 
 describe('PageClusters', () => {

@@ -7,7 +7,7 @@ import {
   fetchClusterAdvancedSettings,
   fetchDefaultClusterAdvancedSettings,
   getClusterState,
-  postClusterActionsUpdate,
+  postClusterActionsDeploy,
   selectClusterById,
 } from '@qovery/domains/organization'
 import { AdvancedSettings, ClusterEntity, LoadingStatus } from '@qovery/shared/interfaces'
@@ -61,7 +61,7 @@ export function PageSettingsAdvancedFeature() {
 
   const toasterCallback = () => {
     if (cluster) {
-      dispatch(postClusterActionsUpdate({ organizationId, clusterId }))
+      dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
     }
   }
 

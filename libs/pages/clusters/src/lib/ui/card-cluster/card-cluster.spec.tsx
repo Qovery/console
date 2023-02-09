@@ -28,7 +28,7 @@ describe('CardCluster', () => {
     expect(getByTestId('tag-default')).toBeInTheDocument()
     expect(getByTestId('tag-region').textContent).toBe(props.cluster.region)
     expect(getByTestId('tag-version').textContent).toBe(props.cluster.version)
-    expect(getByTestId('tag-instance').textContent).toBe(props.cluster.instance_type)
+    expect(getByTestId('tag-instance').textContent).toBe(props.cluster.instance_type?.toLowerCase().replace('_', '.'))
   })
 
   it('should have a name', () => {

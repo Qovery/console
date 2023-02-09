@@ -132,6 +132,7 @@ describe('StepSummaryFeature', () => {
         },
         region: 'region',
       },
+      silently: true,
     })
   })
 })

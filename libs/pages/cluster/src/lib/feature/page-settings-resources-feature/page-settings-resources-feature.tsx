@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editCluster, selectClusterById } from '@qovery/domains/organization'
+import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, ClusterResourcesData } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
@@ -34,11 +34,18 @@ export function PageSettingsResourcesFeature() {
 
       const cloneCluster = handleSubmit(data, cluster)
 
+      const toasterCallback = () => {
+        if (cluster) {
+          dispatch(postClusterActionsDeploy({ organizationId, clusterId }))
+        }
+      }
+
       dispatch(
         editCluster({
           organizationId: organizationId,
           clusterId: clusterId,
           data: cloneCluster,
+          toasterCallback,
         })
       )
         .unwrap()

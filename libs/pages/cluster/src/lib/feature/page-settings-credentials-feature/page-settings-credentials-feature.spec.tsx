@@ -82,7 +82,7 @@ describe('PageSettingsCredentialsFeature', () => {
   })
 
   it('should dispatch postCloudProviderInfo if form is submitted', async () => {
-    const editClusterSpy: SpyInstance = jest.spyOn(storeOrganization, 'postCloudProviderInfo')
+    const postCloudProviderInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'postCloudProviderInfo')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
@@ -114,12 +114,8 @@ describe('PageSettingsCredentialsFeature', () => {
       mockCluster
     )
 
-    console.log(cloneClusterProviderInfo)
-
-    expect(editClusterSpy).toHaveBeenCalledWith({
-      organizationId: '0',
-      clusterId: mockCluster.id,
-      clusterCloudProviderInfo: cloneClusterProviderInfo,
-    })
+    expect(postCloudProviderInfoSpy.mock.calls[0][0].organizationId).toStrictEqual('0')
+    expect(postCloudProviderInfoSpy.mock.calls[0][0].clusterId).toStrictEqual(mockCluster.id)
+    expect(postCloudProviderInfoSpy.mock.calls[0][0].clusterCloudProviderInfo).toStrictEqual(cloneClusterProviderInfo)
   })
 })

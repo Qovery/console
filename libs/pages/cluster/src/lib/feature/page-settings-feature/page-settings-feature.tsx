@@ -9,6 +9,7 @@ import {
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
+  CLUSTER_SETTINGS_NETWORK_URL,
   CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
   CLUSTER_SETTINGS_URL,
@@ -68,6 +69,11 @@ export function PageSettingsFeature() {
 
   links.push(
     ...[
+      {
+        title: 'Network',
+        icon: IconAwesomeEnum.PLUG,
+        url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
+      },
       {
         title: 'Advanced settings',
         icon: IconAwesomeEnum.GEARS,

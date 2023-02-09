@@ -90,7 +90,7 @@ export function CardCluster(props: CardClusterProps) {
           {cluster.version}
         </Tag>
         <Tag dataTestId="tag-instance" className="text-text-400 border border-element-light-lighter-500 truncate">
-          {cluster.instance_type}
+          {cluster.instance_type?.replace('_', '.').toLowerCase()}
         </Tag>
       </div>
     </div>

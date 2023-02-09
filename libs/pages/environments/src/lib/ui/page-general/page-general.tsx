@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  CLUSTERS_CREATION_GENERAL_URL,
+  CLUSTERS_CREATION_URL,
+  CLUSTERS_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
 import {
   BaseLink,
   Button,
@@ -114,21 +120,22 @@ function PageGeneralMemo(props: PageGeneralProps) {
               className="mt-5"
               size={ButtonSize.LARGE}
               iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+              link={
+                !clusterAvailable
+                  ? CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL
+                  : undefined
+              }
               onClick={() => {
-                clusterAvailable
-                  ? openModal({
-                      content: (
-                        <CreateCloneEnvironmentModalFeature
-                          onClose={closeModal}
-                          projectId={projectId}
-                          organizationId={organizationId}
-                        />
-                      ),
-                    })
-                  : window.open(
-                      `https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`,
-                      '_blank'
-                    )
+                clusterAvailable &&
+                  openModal({
+                    content: (
+                      <CreateCloneEnvironmentModalFeature
+                        onClose={closeModal}
+                        projectId={projectId}
+                        organizationId={organizationId}
+                      />
+                    ),
+                  })
               }}
             >
               {clusterAvailable ? 'New environment' : 'Create a Cluster'}

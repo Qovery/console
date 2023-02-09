@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { ClusterEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, EmptyState, HelpSection, IconAwesomeEnum, LoaderSpinner } from '@qovery/shared/ui'
 import CardCluster from '../card-cluster/card-cluster'
 
@@ -12,6 +13,8 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
   const { loading, clusters } = props
   const { organizationId = '' } = useParams()
 
+  const goToCreateCluster = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL
+
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8">
@@ -20,12 +23,7 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
             <h1 className="h5 text-text-700 mb-2">Manage your clusters</h1>
             <p className="text-text-500 text-xs">Manage your infrastructure across different Cloud providers.</p>
           </div>
-          <Button
-            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-            onClick={() =>
-              window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`)
-            }
-          >
+          <Button iconRight={IconAwesomeEnum.CIRCLE_PLUS} link={goToCreateCluster}>
             Add Cluster
           </Button>
         </div>
@@ -48,12 +46,7 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
               title="No cluster set"
               description="A cluster is necessary to run your applications with Qovery"
             >
-              <Button
-                className="mt-5"
-                onClick={() =>
-                  window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/clusters`)
-                }
-              >
+              <Button className="mt-5" link={goToCreateCluster}>
                 Add Cluster
               </Button>
             </EmptyState>

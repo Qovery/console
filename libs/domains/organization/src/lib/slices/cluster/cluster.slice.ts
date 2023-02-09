@@ -67,7 +67,12 @@ export const fetchClusterInfraLogs = createAsyncThunk<ClusterLogs[], { organizat
 
 export const editCluster = createAsyncThunk(
   'cluster/edit',
-  async (payload: { organizationId: string; clusterId: string; data: Partial<ClusterEntity> }) => {
+  async (payload: {
+    organizationId: string
+    clusterId: string
+    data: Partial<ClusterEntity>
+    toasterCallback: () => void
+  }) => {
     const cloneCluster = Object.assign({}, refactoClusterPayload(payload.data as Partial<ClusterEntity>))
     const response = await clusterApi.editCluster(
       payload.organizationId,
@@ -128,7 +133,13 @@ export const fetchCloudProviderInfo = createAsyncThunk<
 
 export const postCloudProviderInfo = createAsyncThunk<
   ClusterCloudProviderInfo,
-  { organizationId: string; clusterId: string; clusterCloudProviderInfo: ClusterCloudProviderInfoRequest }
+  {
+    organizationId: string
+    clusterId: string
+    clusterCloudProviderInfo: ClusterCloudProviderInfoRequest
+    toasterCallback?: () => void
+    silently?: boolean
+  }
 >('clusterCloudProviderInfo/post', async (data) => {
   const response = await clusterApi.specifyClusterCloudProviderInfo(
     data.organizationId,
@@ -362,7 +373,14 @@ export const clusterSlice = createSlice({
         state.error = null
         state.loadingStatus = 'loaded'
 
-        toast(ToastEnum.SUCCESS, 'Cluster updated')
+        toast(
+          ToastEnum.SUCCESS,
+          `Cluster updated`,
+          'You must update to apply the settings',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Update'
+        )
       })
       .addCase(editCluster.rejected, (state: ClustersState, action) => {
         state.loadingStatus = 'error'
@@ -451,7 +469,7 @@ export const clusterSlice = createSlice({
           'You must update to apply the settings',
           action.meta.arg.toasterCallback,
           undefined,
-          'Redeploy'
+          'Update'
         )
         clusterAdapter.updateOne(state, update)
       })
@@ -521,7 +539,16 @@ export const clusterSlice = createSlice({
           },
         }
         clusterAdapter.updateOne(state, update)
-        toast(ToastEnum.SUCCESS, 'Credentials updated')
+        if (!action.meta.arg.silently) {
+          toast(
+            ToastEnum.SUCCESS,
+            `Credentials updated`,
+            'You must update your cluster to apply the settings',
+            action.meta.arg.toasterCallback,
+            undefined,
+            'Update cluster'
+          )
+        }
       })
       .addCase(postCloudProviderInfo.rejected, (state: ClustersState, action) => {
         const update: Update<ClusterEntity> = {
