@@ -53,6 +53,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const { enableAlertClickOutside } = useModal()
 
   useEffect(() => {
+    console.log(props.variable)
     if (closing && !errorEnvironmentVariable) props.closeModal()
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])

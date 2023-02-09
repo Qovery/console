@@ -444,7 +444,7 @@ export const environmentVariablesSlice = createSlice({
           service_name: action.payload.service_name || '',
         }
         environmentVariablesAdapter.updateOne(state, {
-          id: extendedEnv.id,
+          id: extendedEnv.id || '',
           changes: extendedEnv,
         })
         state.error = null

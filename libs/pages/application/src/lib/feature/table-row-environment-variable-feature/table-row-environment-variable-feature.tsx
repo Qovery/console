@@ -1,4 +1,4 @@
-import { APIVariableScopeEnum, EnvironmentVariable } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -18,6 +18,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { environmentVariableFile } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
@@ -58,7 +59,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             environmentId={environmentId}
             type={type}
             serviceType={props.serviceType}
-            isFile={Boolean((variable as EnvironmentVariable).mount_path)}
+            isFile={environmentVariableFile(variable)}
           />
         ),
       })
@@ -80,7 +81,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             projectId={projectId}
             environmentId={environmentId}
             serviceType={props.serviceType}
-            isFile={Boolean((variable as EnvironmentVariable).mount_path)}
+            isFile={environmentVariableFile(variable)}
           />
         ),
       })
@@ -102,7 +103,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             projectId={projectId}
             environmentId={environmentId}
             serviceType={props.serviceType}
-            isFile={Boolean((variable as EnvironmentVariable).mount_path)}
+            isFile={environmentVariableFile(variable)}
           />
         ),
       })

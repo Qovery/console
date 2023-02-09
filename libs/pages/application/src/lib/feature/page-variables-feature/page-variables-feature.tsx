@@ -30,7 +30,9 @@ export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
   const dispatch = useDispatch<AppDispatch>()
   const { applicationId = '' } = useParams()
-  const [placeholder] = useState(environmentVariableFactoryMock(5))
+  const [placeholder] = useState<EnvironmentVariableSecretOrPublic[]>(
+    environmentVariableFactoryMock(5) as EnvironmentVariableSecretOrPublic[]
+  )
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
@@ -52,7 +54,11 @@ export function PageVariablesFeature() {
   )
 
   const sortVariableMemo = useMemo(
-    () => sortVariable(environmentVariables, secretEnvironmentVariables),
+    () =>
+      sortVariable(
+        environmentVariables as EnvironmentVariableSecretOrPublic[],
+        secretEnvironmentVariables as EnvironmentVariableSecretOrPublic[]
+      ),
     [environmentVariables, secretEnvironmentVariables]
   )
 

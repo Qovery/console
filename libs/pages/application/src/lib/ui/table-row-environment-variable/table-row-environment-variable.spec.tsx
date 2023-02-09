@@ -21,6 +21,7 @@ describe('TableRowEnvironmentVariable', () => {
       props.variable = {
         ...props.variable,
         mount_path: '/path/to/file',
+        type: 'FILE',
       }
     })
 

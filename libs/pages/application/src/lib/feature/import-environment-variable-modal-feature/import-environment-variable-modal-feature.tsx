@@ -56,7 +56,10 @@ export function ImportEnvironmentVariableModalFeature(props: ImportEnvironmentVa
   const [existingEnvVars, setExistingEnvVars] = useState<EnvironmentVariableSecretOrPublic[]>([])
 
   useEffect(() => {
-    setExistingEnvVars([...environmentVariables, ...secretEnvironmentVariables])
+    setExistingEnvVars([
+      ...(environmentVariables as EnvironmentVariableSecretOrPublic[]),
+      ...(secretEnvironmentVariables as EnvironmentVariableSecretOrPublic[]),
+    ])
   }, [environmentVariables, secretEnvironmentVariables])
 
   const handleData = useCallback(

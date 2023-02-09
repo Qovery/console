@@ -22,7 +22,12 @@ import {
   TableRow,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
+import {
+  dateYearMonthDayHourMinuteSecond,
+  environmentVariableFile,
+  getEnvironmentVariableFileMountPath,
+  timeAgo,
+} from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
@@ -119,7 +124,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full max-w-3xl">
             <Skeleton show={isLoading} width={30} height={16} className="w-full">
               <div className="text-xs text-text-600 w-full">
-                {(variable as EnvironmentVariableEntity).mount_path ? (
+                {environmentVariableFile(variable) ? (
                   <div
                     className="flex items-center gap-3"
                     onClick={() => {
@@ -132,12 +137,12 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LOCK} />
                     )}
                     <span className="text-accent2-500 hover:underline cursor-pointer">
-                      {(variable as EnvironmentVariableEntity).mount_path}
+                      {getEnvironmentVariableFileMountPath(variable)}
                     </span>
                   </div>
                 ) : variable.variable_type === 'public' ? (
                   <PasswordShowHide
-                    value={(variable as EnvironmentVariableEntity).value}
+                    value={variable.value || ''}
                     defaultVisible={defaultShowHidePassword}
                     canCopy={true}
                   />
