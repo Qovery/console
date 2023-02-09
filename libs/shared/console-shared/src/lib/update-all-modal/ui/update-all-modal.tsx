@@ -35,7 +35,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className={`h4 text-text-600 max-w-sm truncate mb-1`}>Deploy latest version</h2>
+      <h2 className={`h4 text-text-600 max-w-sm truncate mb-1`}>Deploy latest version for..</h2>
       <p className="mb-4 text-text-400 text-sm">Select service to update to the latest version</p>
 
       <div className="text-text-500 text-sm mb-4 flex justify-between items-center">
