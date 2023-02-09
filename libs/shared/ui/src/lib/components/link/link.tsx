@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 
@@ -28,18 +29,30 @@ export function Link(props: LinkProps) {
     iconLeftClassName = 'text-xs leading-5',
     iconRightClassName = 'ml-0.5 text-xs leading-5 ',
   } = props
-  return (
-    <a
-      className={`${className} ${size} text-accent2-500 inline-flex flex-center gap-1 hover:underline`}
-      href={link}
-      target={external ? '_blank' : '_self'}
-      rel="noreferrer"
-    >
+
+  const currentClassName = `${className} ${size} text-accent2-500 inline-flex flex-center gap-1 hover:underline`
+
+  const content = () => (
+    <>
       {iconLeft && <Icon name={iconLeft} className={iconLeftClassName} />}
       {linkLabel}
       {iconRight && <Icon name={iconRight} className={iconRightClassName} />}
-    </a>
+    </>
   )
+
+  if (external) {
+    return (
+      <a className={currentClassName} href={link} target="_blank" rel="noreferrer">
+        {content()}
+      </a>
+    )
+  } else {
+    return (
+      <NavLink className={currentClassName} to={link}>
+        {content()}
+      </NavLink>
+    )
+  }
 }
 
 export default Link
