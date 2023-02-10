@@ -87,7 +87,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 checked={field.value}
                 title="Start"
                 name="on_start"
-                description="Execute this job when the environment starts"
+                description="Execute this job when the environment starts (Deploy and Redeploy)"
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
