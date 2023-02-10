@@ -1,19 +1,9 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { ClusterRoutingTableResults, ServicePort } from 'qovery-typescript-axios'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import {
-  BlockContent,
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  EmptyState,
-  HelpSection,
-  IconAwesomeEnum,
-  InputText,
-  LoaderSpinner,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, HelpSection, IconAwesomeEnum, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface PageSettingsNetworkProps {
-  ports?: ServicePort[]
+  routes?: ClusterRoutingTableResults[]
   onAddNetwork: () => void
   onEdit: (customPort: ServicePort) => void
   onDelete: (customPort: ServicePort) => void
@@ -38,22 +28,23 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
           </Button>
         </div>
 
-        {(props.loading === 'not loaded' || props.loading === 'loading') && props.ports?.length === 0 ? (
+        {(props.loading === 'not loaded' || props.loading === 'loading') && props.routes?.length === 0 ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
-        ) : props.ports && props.ports.length > 0 ? (
+        ) : props.routes && props.routes.length > 0 ? (
           <BlockContent title="Configured network">
-            {props.ports &&
-              props.ports.map((customPort, i) => (
+            {props.routes &&
+              props.routes.map((customPort, i) => (
                 <div
-                  key={`port-${customPort.id}`}
+                  key={`port-${customPort.target}`}
                   className={`flex justify-between w-full items-center gap-3 ${
-                    props.ports && props.ports.length !== i + 1 ? 'mb-5' : ''
+                    props.routes && props.routes.length !== i + 1 ? 'mb-5' : ''
                   }`}
                   data-testid="form-row"
                 >
-                  <InputText
+                  <div>hello</div>
+                  {/* <InputText
                     name={`port-${customPort.internal_port}-${customPort.id}`}
                     className="shrink-0 grow flex-1"
                     value={customPort.internal_port}
@@ -80,7 +71,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.FLAT}
-                  />
+                  /> */}
                 </div>
               ))}
           </BlockContent>

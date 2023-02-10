@@ -31,6 +31,6 @@ export interface ClusterEntity extends Cluster {
   }
   routingTable?: {
     loadingStatus: LoadingStatus
-    items: ClusterRoutingTableResults[]
+    items?: ClusterRoutingTableResults[]
   }
 }

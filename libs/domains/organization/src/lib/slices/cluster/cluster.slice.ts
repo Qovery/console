@@ -19,6 +19,7 @@ import {
   ClusterInstanceTypeResponseList,
   ClusterLogs,
   ClusterRequest,
+  ClusterRoutingTableResults,
   ClusterStatus,
   ClustersApi,
   KubernetesEnum,
@@ -123,14 +124,6 @@ export const fetchCloudProvider = createAsyncThunk<CloudProvider[]>('cluster-clo
   return response.data.results as CloudProvider[]
 })
 
-export const fetchClusterRoutingTable = createAsyncThunk<
-  ClusterCloudProviderInfo,
-  { organizationId: string; clusterId: string }
->('clusterRoutingTable/fetch', async (data) => {
-  const response = await clusterApi.getRoutingTable(data.organizationId, data.clusterId)
-  return response.data as any
-})
-
 export const postCloudProviderInfo = createAsyncThunk<
   ClusterCloudProviderInfo,
   {
@@ -197,6 +190,14 @@ export const createCluster = createAsyncThunk<Cluster, { organizationId: string;
     return response.data as Cluster
   }
 )
+
+export const fetchClusterRoutingTable = createAsyncThunk<
+  ClusterRoutingTableResults[],
+  { organizationId: string; clusterId: string }
+>('clusterRoutingTable/fetch', async (data) => {
+  const response = await clusterApi.getRoutingTable(data.organizationId, data.clusterId)
+  return response.data.results as ClusterRoutingTableResults[]
+})
 
 export const initialClusterState: ClustersState = clusterAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -570,7 +571,7 @@ export const clusterSlice = createSlice({
         clusterAdapter.updateOne(state, update)
         toastError(action.error)
       })
-      // create
+      // create cluster
       .addCase(createCluster.fulfilled, (state: ClustersState, action) => {
         const cluster = action.payload
         clusterAdapter.addOne(state, cluster)
@@ -584,6 +585,31 @@ export const clusterSlice = createSlice({
       .addCase(createCluster.rejected, (state: ClustersState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+        toastError(action.error)
+      })
+      // fetch cloud provider info
+      .addCase(fetchClusterRoutingTable.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            routingTable: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+      })
+      .addCase(fetchClusterRoutingTable.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            routingTable: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
         toastError(action.error)
       })
   },

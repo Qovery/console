@@ -60,7 +60,7 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
           <h4 className="flex justify-between text-ssm text-text-600 mb-1 font-medium">
             <span>{feature.title}</span>
             <span className="text-ssm text-text-600 font-medium">
-              {feature.cost_per_month !== 0 ? `${feature.cost_per_month}/month billed by ${cloudProvider}` : 'Free'}
+              {feature.cost_per_month !== 0 ? `$${feature.cost_per_month}/month billed by ${cloudProvider}` : 'Free'}
             </span>
           </h4>
           <p className="text-xs text-text-400 max-w-lg">{feature.description}</p>
