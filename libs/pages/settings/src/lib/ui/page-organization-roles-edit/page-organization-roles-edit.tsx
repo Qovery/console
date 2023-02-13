@@ -63,7 +63,7 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
               </div>
               <form onSubmit={onSubmit}>
                 <div className="max-w-content-with-navigation-left">
-                  <BlockContent title="General informations">
+                  <BlockContent title="General information">
                     <Controller
                       name="name"
                       control={control}

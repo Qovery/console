@@ -35,7 +35,7 @@ export function StepGeneral(props: StepGeneralProps) {
   return (
     <div>
       <div className="mb-10">
-        <h3 className="text-text-700 text-lg mb-2">General informations</h3>
+        <h3 className="text-text-700 text-lg mb-2">General information</h3>
         <p className="text-text-500 text-sm mb-2">
           General settings allow you to set up your application name, git repository or container settings.
         </p>
