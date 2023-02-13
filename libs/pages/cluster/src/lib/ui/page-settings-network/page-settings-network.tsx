@@ -43,13 +43,15 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
             <LoaderSpinner className="w-4" />
           </div>
         ) : props.routes && props.routes.length > 0 ? (
-          <BlockContent title="Configured network">
+          <BlockContent classNameContent="" title="Configured network">
             {props.routes &&
               props.routes.map((currentRoute, i) => (
                 <div
                   key={i}
-                  className={`flex justify-between w-full items-center gap-3 ${
-                    props.routes && props.routes.length !== i + 1 ? 'mb-5' : ''
+                  className={`flex justify-between w-full items-center gap-3 p-5 ${
+                    props.routes && props.routes.length !== i + 1
+                      ? 'mb-5 border-b border-element-light-lighter-500'
+                      : 'pt-0'
                   }`}
                   data-testid="form-row"
                 >
