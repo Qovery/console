@@ -29,6 +29,7 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-destination"
             className="mb-3"
             name={field.name}
             onChange={field.onChange}
@@ -47,6 +48,7 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="input-target"
             className="mb-3"
             name={field.name}
             onChange={field.onChange}

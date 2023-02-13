@@ -48,7 +48,7 @@ export function PageSettingsNetworkFeature() {
     <PageSettingsNetwork
       routes={cluster?.routingTable?.items}
       loading={clusterRoutingTableLoadingStatus}
-      onAddNetwork={() => {
+      onAddRoute={() => {
         openModal({
           content: (
             <CrudModalFeature

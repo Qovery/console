@@ -17,28 +17,23 @@ export interface CrudModalFeatureProps {
 
 export const handleSubmit = (
   data: FieldValues,
-  routes: ClusterRoutingTableResults[],
+  routes: ClusterRoutingTableResults[] = [],
   currentRoute?: ClusterRoutingTableResults
 ) => {
-  if (routes.length > 0) {
-    return routes.map((route) =>
-      route.destination
-        ? {
-            destination: data['destination'] || currentRoute?.destination,
-            target: data['target'] || currentRoute?.target,
-            description: data['description'],
-          }
-        : route
-    )
-  } else {
-    return [
-      {
-        destination: data['destination'],
-        target: data['target'],
-        description: data['description'],
-      },
-    ]
+  let currentRoutes = [...routes]
+
+  if (currentRoute) {
+    currentRoutes = currentRoutes.filter((route) => route.destination !== data['destination'])
   }
+
+  return [
+    ...currentRoutes,
+    {
+      destination: data['destination'],
+      target: data['target'],
+      description: data['description'],
+    },
+  ]
 }
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
@@ -66,7 +61,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
 
   const onSubmit = methods.handleSubmit((data) => {
     setLoading(true)
-    const cloneRoutingTable = handleSubmit(data, props.routes || [], props.route)
+    const cloneRoutingTable = handleSubmit(data, props.routes, props.route)
 
     dispatch(
       editClusterRoutingTable({

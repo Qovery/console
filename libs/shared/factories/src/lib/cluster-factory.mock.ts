@@ -43,4 +43,14 @@ export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudP
         region: 'eu-west',
       },
     },
+    routingTable: {
+      loadingStatus: 'loaded',
+      items: [
+        {
+          destination: '10.0.0.0/16',
+          target: 'pcx-0abf',
+          description: 'my description',
+        },
+      ],
+    },
   }))

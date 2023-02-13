@@ -1,54 +1,44 @@
-import {
-  act,
-  findAllByTestId,
-  findByDisplayValue,
-  findByText,
-  fireEvent,
-  render,
-  waitFor,
-} from '@testing-library/react'
-import PageSettingsPorts, { PageSettingsPortsProps } from './page-settings-ports'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
+import PageSettingsNetwork, { PageSettingsNetworkProps } from './page-settings-network'
 
-let props: PageSettingsPortsProps
+let props: PageSettingsNetworkProps
 
-describe('PageSettingsPorts', () => {
+describe('PageSettingsNetwork', () => {
   beforeEach(() => {
     props = {
-      onAddPort: jest.fn(),
+      onAddRoute: jest.fn(),
       onDelete: jest.fn(),
       onEdit: jest.fn(),
-      ports: [
+      routes: [
         {
-          id: '1',
-          internal_port: 80,
-          external_port: 433,
-          publicly_accessible: true,
+          destination: '10.0.0.0/10',
+          target: 'target',
+          description: 'desc',
         },
       ],
       loading: 'loaded',
     }
   })
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsPorts {...props} />)
+    const { baseElement } = render(<PageSettingsNetwork {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should have two rows of fields', async () => {
-    props.ports = [
+    props.routes = [
       {
-        id: '1',
-        internal_port: 80,
-        external_port: 433,
-        publicly_accessible: true,
+        destination: '10.0.0.0/10',
+        target: 'target',
+        description: 'desc',
       },
       {
-        id: '2',
-        internal_port: 81,
-        external_port: 431,
-        publicly_accessible: false,
+        destination: '10.0.0.0/20',
+        target: 'target2',
+        description: 'desc2',
       },
     ]
-    const { findAllByTestId } = render(<PageSettingsPorts {...props} />)
+
+    const { findAllByTestId } = render(<PageSettingsNetwork {...props} />)
 
     await waitFor(async () => {
       const formRows = await findAllByTestId('form-row')
@@ -56,38 +46,37 @@ describe('PageSettingsPorts', () => {
     })
   })
 
-  it('a row should have 3 inputs 1 delete button and 1 edit', async () => {
-    const { findAllByTestId } = render(<PageSettingsPorts {...props} />)
+  it('should have a row should have two information, 1 delete button and 1 edit', async () => {
+    const { findAllByTestId } = render(<PageSettingsNetwork {...props} />)
 
     await waitFor(async () => {
       const formRows = await findAllByTestId('form-row')
-      expect(formRows[0].querySelectorAll('input')).toHaveLength(3)
+      expect(formRows[0].querySelectorAll('[data-testid="form-row-target"]')).toHaveLength(1)
+      expect(formRows[0].querySelectorAll('[data-testid="form-row-destination"]')).toHaveLength(1)
       expect(formRows[0].querySelectorAll('[data-testid="delete-button"]')).toHaveLength(1)
       expect(formRows[0].querySelectorAll('[data-testid="edit-button"]')).toHaveLength(1)
     })
   })
 
-  it('row should initialize with good values', async () => {
-    const { baseElement } = render(<PageSettingsPorts {...props} />)
+  it('should have a row that initialize with good values', async () => {
+    const { findByText } = render(<PageSettingsNetwork {...props} />)
 
-    await waitFor(async () => {
-      const formRows = await findAllByTestId(baseElement, 'form-row')
-      await findByDisplayValue(formRows[0], '80')
-      await findByDisplayValue(formRows[0], '433')
-      await findByDisplayValue(formRows[0], 'true')
+    await waitFor(() => {
+      findByText(`Target: ${props.routes && props.routes[0].target}`)
+      findByText(`Destination: ${props.routes && props.routes[0].destination}`)
     })
   })
 
   it('should have an help section', async () => {
-    const { findByTestId } = render(<PageSettingsPorts {...props} />)
+    const { findByTestId } = render(<PageSettingsNetwork {...props} />)
 
     await findByTestId('help-section')
   })
 
   it('should have an add button and a click handler', async () => {
     const spy = jest.fn()
-    props.onAddPort = spy
-    const { findByTestId } = render(<PageSettingsPorts {...props} />)
+    props.onAddRoute = spy
+    const { findByTestId } = render(<PageSettingsNetwork {...props} />)
 
     const button = await findByTestId('add-button')
 
@@ -101,7 +90,7 @@ describe('PageSettingsPorts', () => {
   it('should have an edit button and a click handler', async () => {
     const spy = jest.fn()
     props.onEdit = spy
-    const { findByTestId } = render(<PageSettingsPorts {...props} />)
+    const { findByTestId } = render(<PageSettingsNetwork {...props} />)
 
     const button = await findByTestId('edit-button')
 
@@ -115,7 +104,7 @@ describe('PageSettingsPorts', () => {
   it('should call remove handler on click on remove', async () => {
     const spy = jest.fn()
     props.onDelete = spy
-    const { findByTestId } = render(<PageSettingsPorts {...props} />)
+    const { findByTestId } = render(<PageSettingsNetwork {...props} />)
 
     const deleteButton = await findByTestId('delete-button')
 
@@ -126,10 +115,12 @@ describe('PageSettingsPorts', () => {
     expect(spy).toHaveBeenCalled()
   })
 
-  it('should have a placeholder if no port yet', async () => {
-    props.ports = []
-    const { baseElement } = render(<PageSettingsPorts {...props} />)
+  it('should have a placeholder if no route yet', async () => {
+    props.routes = []
+    const { findByText } = render(<PageSettingsNetwork {...props} />)
 
-    await findByText(baseElement, 'No port are set')
+    await act(() => {
+      findByText('No route are set')
+    })
   })
 })

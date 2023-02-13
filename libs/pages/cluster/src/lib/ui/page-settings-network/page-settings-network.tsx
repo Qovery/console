@@ -14,7 +14,7 @@ import {
 
 export interface PageSettingsNetworkProps {
   routes?: ClusterRoutingTableResults[]
-  onAddNetwork: () => void
+  onAddRoute: () => void
   onEdit: (currentRoute: ClusterRoutingTableResults) => void
   onDelete: (currentRoute: ClusterRoutingTableResults) => void
   loading?: LoadingStatus
@@ -33,7 +33,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
             </p>
           </div>
 
-          <Button dataTestId="add-button" onClick={() => props.onAddNetwork()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button dataTestId="add-button" onClick={() => props.onAddRoute()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add Network
           </Button>
         </div>
@@ -54,10 +54,10 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                   data-testid="form-row"
                 >
                   <div className="flex flex-col	">
-                    <p className="text-xs text-text-400 mb-1">
+                    <p data-testid="form-row-target" className="text-xs text-text-400 mb-1">
                       Target: <span className="text-text-600 font-medium">{currentRoute.target}</span>
                     </p>
-                    <p className="text-xs text-text-400">
+                    <p data-testid="form-row-destination" className="text-xs text-text-400">
                       Destination: <span className="text-text-600 font-medium">{currentRoute.destination}</span>
                     </p>
                   </div>

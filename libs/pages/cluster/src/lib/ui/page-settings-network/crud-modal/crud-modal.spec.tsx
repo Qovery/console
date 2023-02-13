@@ -7,10 +7,10 @@ const props: CrudModalProps = {
   loading: false,
   onSubmit: jest.fn(),
   onClose: jest.fn(),
-  port: {
-    internal_port: 80,
-    external_port: 433,
-    publicly_accessible: false,
+  route: {
+    destination: '10.0.0.0/20',
+    target: 'target',
+    description: 'desc',
   },
 }
 
@@ -23,16 +23,14 @@ describe('CrudModal', () => {
   it('should render the form', async () => {
     const { getByDisplayValue } = render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
-        defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },
+        defaultValues: { destination: '10.0.0.0/20', target: 'target', description: 'desc' },
       })
     )
 
-    await act(jest.fn)
-
-    await waitFor(() => {
-      getByDisplayValue(99)
-      //getByDisplayValue(420)
-      getByDisplayValue('true')
+    await act(() => {
+      getByDisplayValue('10.0.0.0/20')
+      getByDisplayValue('target')
+      getByDisplayValue('desc')
     })
   })
 
@@ -41,7 +39,7 @@ describe('CrudModal', () => {
     props.onSubmit = spy
     const { findByTestId } = render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
-        defaultValues: { internal_port: 99, external_port: 420, publicly_accessible: true },
+        defaultValues: { destination: '10.0.0.0/20', target: 'target', description: 'desc' },
       })
     )
 

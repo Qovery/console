@@ -1,25 +1,19 @@
 import { render } from '__tests__/utils/setup-jest'
-import { applicationFactoryMock } from '@qovery/shared/factories'
-import PageSettingsPortsFeature, { deletePort } from './page-settings-network-feature'
+import { clusterFactoryMock } from '@qovery/shared/factories'
+import PageSettingsNetworkFeature, { deleteRoutes } from './page-settings-network-feature'
 
-const application = applicationFactoryMock(1)[0]
-describe('PageSettingsPortsFeature', () => {
+const clusterRoutingTable = clusterFactoryMock(1)[0].routingTable?.items
+
+describe('PageSettingsNetworkFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsPortsFeature />)
+    const { baseElement } = render(<PageSettingsNetworkFeature />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have a delete port function', () => {
-    application.ports = [
-      {
-        id: '1',
-        external_port: 30,
-        internal_port: 30,
-        publicly_accessible: true,
-      },
-    ]
-
-    const cloneApplication = deletePort(application, '1')
-    expect(cloneApplication.ports).toStrictEqual([])
+  it('should have a delete route function', () => {
+    if (clusterRoutingTable) {
+      const cloneRoutes = deleteRoutes(clusterRoutingTable, clusterRoutingTable[0].destination)
+      expect(cloneRoutes).toStrictEqual([])
+    }
   })
 })
