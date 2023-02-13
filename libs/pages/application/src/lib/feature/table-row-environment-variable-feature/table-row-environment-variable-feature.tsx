@@ -185,7 +185,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                     break
                 }
 
-                if (variable.variable_type === 'public') {
+                if (variable.variable_kind === 'public') {
                   if (props.serviceType) {
                     dispatch(
                       deleteEnvironmentVariable({

@@ -147,7 +147,7 @@ export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
 export function refactoOrganizationPayload(organization: Partial<Organization>) {
   const organizationRequestPayload: OrganizationEditRequest = {
     name: organization.name || '',
-    description: organization.description,
+    description: organization.description || '',
     logo_url: organization.logo_url || null,
     website_url: organization.website_url,
     admin_emails: organization.admin_emails,

@@ -6,7 +6,7 @@ import { getEnvironmentVariablesState } from '@qovery/domains/environment-variab
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { computeAvailableScope } from '@qovery/shared/utils'
+import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'
@@ -63,8 +63,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       key: variable?.key,
       scope: variable?.scope === APIVariableScopeEnum.BUILT_IN ? undefined : variable?.scope,
       value: (variable as EnvironmentVariableEntity)?.value,
-      isSecret: variable?.variable_type === 'secret',
-      mountPath: (variable as EnvironmentVariableEntity)?.mount_path || '',
+      isSecret: variable?.variable_kind === 'secret',
+      mountPath: getEnvironmentVariableFileMountPath(variable),
     },
     mode: 'onChange',
   })

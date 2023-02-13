@@ -7,8 +7,8 @@ describe('isEnvironmentVariableFile', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.FILE,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.FILE,
+      variable_kind: 'secret',
       service_name: 'service_name',
       mount_path: 'mount_path',
     }
@@ -19,8 +19,8 @@ describe('isEnvironmentVariableFile', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.VALUE,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.VALUE,
+      variable_kind: 'secret',
       service_name: 'service_name',
       mount_path: 'mount_path',
     }
@@ -31,16 +31,16 @@ describe('isEnvironmentVariableFile', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.ALIAS,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.ALIAS,
+      variable_kind: 'secret',
       service_name: 'service_name',
-      mount_path: 'mount_path',
       aliased_variable: {
         id: 'id',
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.FILE,
+        variable_type: APIVariableTypeEnum.FILE,
+        mount_path: 'mount_path',
       },
     }
     expect(environmentVariableFile(variable)).toBeTruthy()
@@ -50,8 +50,8 @@ describe('isEnvironmentVariableFile', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.ALIAS,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.ALIAS,
+      variable_kind: 'secret',
       service_name: 'service_name',
       mount_path: 'mount_path',
       aliased_variable: {
@@ -59,7 +59,8 @@ describe('isEnvironmentVariableFile', () => {
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.VALUE,
+        variable_type: APIVariableTypeEnum.VALUE,
+        mount_path: '',
       },
     }
     expect(environmentVariableFile(variable)).toBeFalsy()
@@ -69,16 +70,16 @@ describe('isEnvironmentVariableFile', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.OVERRIDE,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.OVERRIDE,
+      variable_kind: 'secret',
       service_name: 'service_name',
-      mount_path: 'mount_path',
       overridden_variable: {
         id: 'id',
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.VALUE,
+        variable_type: APIVariableTypeEnum.VALUE,
+        mount_path: 'mount_path',
       },
     }
     expect(environmentVariableFile(variable)).toBeFalsy()
@@ -88,8 +89,8 @@ describe('isEnvironmentVariableFile', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.OVERRIDE,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.OVERRIDE,
+      variable_kind: 'secret',
       service_name: 'service_name',
       mount_path: 'mount_path',
       overridden_variable: {
@@ -97,7 +98,8 @@ describe('isEnvironmentVariableFile', () => {
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.FILE,
+        variable_type: APIVariableTypeEnum.FILE,
+        mount_path: 'mount_path',
       },
     }
     expect(environmentVariableFile(variable)).toBeTruthy()
@@ -109,8 +111,8 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.FILE,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.FILE,
+      variable_kind: 'secret',
       service_name: 'public',
       mount_path: 'mount_path',
     }
@@ -121,8 +123,8 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.VALUE,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.VALUE,
+      variable_kind: 'secret',
     }
     expect(getEnvironmentVariableFileMountPath(variable)).toBeUndefined()
   })
@@ -131,15 +133,15 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.ALIAS,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.ALIAS,
+      variable_kind: 'secret',
       service_name: 'service_name',
       aliased_variable: {
         id: 'id',
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.FILE,
+        variable_type: APIVariableTypeEnum.FILE,
         mount_path: 'mount_path',
       },
     }
@@ -150,15 +152,16 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.ALIAS,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.ALIAS,
+      variable_kind: 'secret',
       service_name: 'service_name',
       aliased_variable: {
         id: 'id',
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.VALUE,
+        variable_type: APIVariableTypeEnum.VALUE,
+        mount_path: '',
       },
     }
     expect(getEnvironmentVariableFileMountPath(variable)).toBeUndefined()
@@ -169,14 +172,14 @@ describe('getEnvironmentVariableFileMountPath', () => {
       id: 'id',
       value: 'value',
       type: APIVariableTypeEnum.OVERRIDE,
-      variable_type: 'secret',
+      variable_kind: 'secret',
       service_name: 'service_name',
       overridden_variable: {
         id: 'id',
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.VALUE,
+        variable_type: APIVariableTypeEnum.VALUE,
       },
     }
     expect(getEnvironmentVariableFileMountPath(variable)).toBeUndefined()
@@ -186,15 +189,15 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: EnvironmentVariableSecretOrPublic = {
       id: 'id',
       value: 'value',
-      type: APIVariableTypeEnum.OVERRIDE,
-      variable_type: 'secret',
+      variable_type: APIVariableTypeEnum.OVERRIDE,
+      variable_kind: 'secret',
       service_name: 'service_name',
       overridden_variable: {
         id: 'id',
         value: 'value',
         key: 'key',
         scope: APIVariableScopeEnum.APPLICATION,
-        type: APIVariableTypeEnum.FILE,
+        variable_type: APIVariableTypeEnum.FILE,
         mount_path: 'mount_path',
       },
     }

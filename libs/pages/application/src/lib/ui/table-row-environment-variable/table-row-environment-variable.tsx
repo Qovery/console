@@ -131,7 +131,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       if (editFile) editFile({} as ClickEvent)
                     }}
                   >
-                    {variable.variable_type === 'public' ? (
+                    {variable.variable_kind === 'public' ? (
                       <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
                     ) : (
                       <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LOCK} />
@@ -140,7 +140,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       {getEnvironmentVariableFileMountPath(variable)}
                     </span>
                   </div>
-                ) : variable.variable_type === 'public' ? (
+                ) : variable.variable_kind === 'public' ? (
                   <PasswordShowHide
                     value={variable.value || ''}
                     defaultVisible={defaultShowHidePassword}

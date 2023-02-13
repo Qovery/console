@@ -373,7 +373,7 @@ export const environmentVariablesSlice = createSlice({
         const extendedEnvs: EnvironmentVariableEntity[] = action.payload.map((env) => {
           return {
             ...env,
-            variable_type: 'public',
+            variable_kind: 'public',
           }
         })
         environmentVariablesAdapter.setAll(state, extendedEnvs)
@@ -440,7 +440,7 @@ export const environmentVariablesSlice = createSlice({
       .addCase(editEnvironmentVariables.fulfilled, (state: EnvironmentVariablesState, action) => {
         const extendedEnv: EnvironmentVariableEntity = {
           ...action.payload,
-          variable_type: 'public',
+          variable_kind: 'public',
           service_name: action.payload.service_name || '',
         }
         environmentVariablesAdapter.updateOne(state, {
@@ -501,7 +501,7 @@ export const addVariableToStore = (state: EnvironmentVariablesState, action: any
 
   const extendedEnv: EnvironmentVariableEntity = {
     ...action.payload,
-    variable_type: 'public',
+    variable_kind: 'public',
     service_name: action.payload.service_name || '',
     is_new: true,
   }

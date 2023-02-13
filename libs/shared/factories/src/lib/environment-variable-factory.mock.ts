@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { EnvironmentVariableEntity, SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
@@ -14,6 +14,8 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
         key: chance.word().toString(),
         scope: APIVariableScopeEnum.PROJECT,
         value: chance.word().toString(),
+        mount_path: '',
+        variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
   overridden_variable: isOverride
@@ -22,13 +24,20 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
         key: chance.word().toString(),
         scope: APIVariableScopeEnum.PROJECT,
         value: chance.word().toString(),
+        mount_path: '',
+        variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
-  variable_type: 'public',
+  variable_kind: 'public',
   service_name: chance.name().toString(),
   key: chance.word().toString(),
   value: chance.word().toString(),
   scope: APIVariableScopeEnum.PROJECT,
+  variable_type: isOverride
+    ? APIVariableTypeEnum.OVERRIDE
+    : isAlias
+    ? APIVariableTypeEnum.ALIAS
+    : APIVariableTypeEnum.VALUE,
   mount_path: null,
 })
 
@@ -44,6 +53,8 @@ export const mockSecretEnvironmentVariable = (
         id: chance.integer().toString(),
         key: chance.word().toString(),
         scope: APIVariableScopeEnum.PROJECT,
+        mount_path: '',
+        variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
   overridden_secret: isOverride
@@ -51,11 +62,18 @@ export const mockSecretEnvironmentVariable = (
         id: chance.integer().toString(),
         key: chance.word().toString(),
         scope: APIVariableScopeEnum.PROJECT,
+        mount_path: '',
+        variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
-  variable_type: 'secret',
+  variable_kind: 'secret',
   key: chance.word().toString(),
   scope: APIVariableScopeEnum.PROJECT,
+  variable_type: isOverride
+    ? APIVariableTypeEnum.OVERRIDE
+    : isAlias
+    ? APIVariableTypeEnum.ALIAS
+    : APIVariableTypeEnum.VALUE,
 })
 
 export const environmentVariableFactoryMock = (

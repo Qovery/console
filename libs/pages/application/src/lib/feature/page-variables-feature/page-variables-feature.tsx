@@ -121,7 +121,7 @@ export function PageVariablesFeature() {
       filter: [
         {
           title: 'Sort by privacy',
-          key: 'variable_type',
+          key: 'variable_kind',
         },
       ],
     },

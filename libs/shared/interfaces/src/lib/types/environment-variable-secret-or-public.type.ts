@@ -9,5 +9,6 @@ export interface EnvironmentVariableSecretOrPublic
   scope: APIVariableScopeEnum
   created_at: string
   value?: string
-  service_name: 'secret' | 'public'
+  service_name: string
+  variable_kind: 'public' | 'secret'
 }

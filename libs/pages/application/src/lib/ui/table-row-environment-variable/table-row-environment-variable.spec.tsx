@@ -1,5 +1,6 @@
 import { getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
+import { APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { mockEnvironmentVariable } from '@qovery/shared/factories'
 import TableRowEnvironmentVariable, { TableRowEnvironmentVariableProps } from './table-row-environment-variable'
 
@@ -21,7 +22,7 @@ describe('TableRowEnvironmentVariable', () => {
       props.variable = {
         ...props.variable,
         mount_path: '/path/to/file',
-        type: 'FILE',
+        variable_type: APIVariableTypeEnum.FILE,
       }
     })
 

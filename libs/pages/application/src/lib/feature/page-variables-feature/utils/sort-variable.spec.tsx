@@ -13,7 +13,7 @@ const publicVars: any = [
     service_id: '45a4fdd4-1537-4f33-9d49-5109af2971b1',
     service_name: 'test bis',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '9208ffd6-d0fc-4359-b1aa-17ab184f3bad',
@@ -27,7 +27,7 @@ const publicVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '9f3d192c-dc99-42ce-89c8-b287749465e0',
@@ -46,7 +46,7 @@ const publicVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '48903a30-f661-4f78-85ad-9a4435428ea6',
@@ -65,7 +65,7 @@ const publicVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: 'bda35a61-eb2a-479f-8484-36092f4e08dc',
@@ -79,7 +79,7 @@ const publicVars: any = [
     service_id: '45a4fdd4-1537-4f33-9d49-5109af2971b1',
     service_name: 'test bis',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '1a83837d-b73d-442f-ab1d-f30c12beccf3',
@@ -93,7 +93,7 @@ const publicVars: any = [
     service_id: '3469ed41-f87f-470e-a46e-1042e2f059a9',
     service_name: 'test',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: 'ac54565e-5065-429d-83a5-169a3a5b11e2',
@@ -107,7 +107,7 @@ const publicVars: any = [
     service_id: '3469ed41-f87f-470e-a46e-1042e2f059a9',
     service_name: 'test',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '78ada4b9-4f39-4e5f-b74e-c8376ac9f46e',
@@ -121,7 +121,7 @@ const publicVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '856c2566-36b1-4a02-bd28-30787c4e01be',
@@ -135,7 +135,7 @@ const publicVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
 ]
 const secretVars: any = [
@@ -150,7 +150,7 @@ const secretVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'secret',
+    variable_kind: 'secret',
   },
   {
     id: 'd106c481-0750-4839-92de-27ee0fc949f4',
@@ -163,7 +163,7 @@ const secretVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'secret',
+    variable_kind: 'secret',
   },
   {
     id: '2db3aaed-f2dc-4b01-9a26-bb634b2b5b1c',
@@ -176,7 +176,7 @@ const secretVars: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'secret',
+    variable_kind: 'secret',
   },
 ]
 const sortedData: any = [
@@ -192,7 +192,7 @@ const sortedData: any = [
     service_id: '3469ed41-f87f-470e-a46e-1042e2f059a9',
     service_name: 'test',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '1a83837d-b73d-442f-ab1d-f30c12beccf3',
@@ -206,7 +206,7 @@ const sortedData: any = [
     service_id: '3469ed41-f87f-470e-a46e-1042e2f059a9',
     service_name: 'test',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: 'bda35a61-eb2a-479f-8484-36092f4e08dc',
@@ -220,7 +220,7 @@ const sortedData: any = [
     service_id: '45a4fdd4-1537-4f33-9d49-5109af2971b1',
     service_name: 'test bis',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: 'd5c5d912-7947-41c5-a2de-8a21795c830b',
@@ -234,7 +234,7 @@ const sortedData: any = [
     service_id: '45a4fdd4-1537-4f33-9d49-5109af2971b1',
     service_name: 'test bis',
     service_type: 'APPLICATION',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '856c2566-36b1-4a02-bd28-30787c4e01be',
@@ -248,7 +248,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '78ada4b9-4f39-4e5f-b74e-c8376ac9f46e',
@@ -262,7 +262,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '9208ffd6-d0fc-4359-b1aa-17ab184f3bad',
@@ -276,7 +276,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '9f3d192c-dc99-42ce-89c8-b287749465e0',
@@ -295,7 +295,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '48903a30-f661-4f78-85ad-9a4435428ea6',
@@ -314,7 +314,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '3e52a6ff-5037-45bf-8318-1591d7ae9dc3',
@@ -327,7 +327,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'secret',
+    variable_kind: 'secret',
   },
   {
     id: 'd106c481-0750-4839-92de-27ee0fc949f4',
@@ -340,7 +340,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'secret',
+    variable_kind: 'secret',
   },
   {
     id: '2db3aaed-f2dc-4b01-9a26-bb634b2b5b1c',
@@ -353,7 +353,7 @@ const sortedData: any = [
     service_id: null,
     service_name: null,
     service_type: 'null',
-    variable_type: 'secret',
+    variable_kind: 'secret',
   },
 ]
 
