@@ -59,12 +59,12 @@ describe('PageSettingsNetwork', () => {
   })
 
   it('should have a row that initialize with good values', async () => {
-    const { findByText } = render(<PageSettingsNetwork {...props} />)
+    const { getByTestId } = render(<PageSettingsNetwork {...props} />)
 
-    await waitFor(() => {
-      findByText(`Target: ${props.routes && props.routes[0].target}`)
-      findByText(`Destination: ${props.routes && props.routes[0].destination}`)
-    })
+    expect(getByTestId('form-row-target').textContent).toBe(`Target: ${props.routes && props.routes[0].target}`)
+    expect(getByTestId('form-row-destination').textContent).toBe(
+      `Destination: ${props.routes && props.routes[0].destination}`
+    )
   })
 
   it('should have an help section', async () => {
@@ -117,10 +117,7 @@ describe('PageSettingsNetwork', () => {
 
   it('should have a placeholder if no route yet', async () => {
     props.routes = []
-    const { findByText } = render(<PageSettingsNetwork {...props} />)
-
-    await act(() => {
-      findByText('No route are set')
-    })
+    const { getByTestId } = render(<PageSettingsNetwork {...props} />)
+    expect(getByTestId('placeholder-settings'))
   })
 })
