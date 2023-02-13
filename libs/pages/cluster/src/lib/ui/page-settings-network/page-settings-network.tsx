@@ -38,7 +38,8 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
           </Button>
         </div>
 
-        {(props.loading === 'not loaded' || props.loading === 'loading') && props.routes?.length === 0 ? (
+        {((props.loading === 'not loaded' || props.loading === 'loading') && props.routes?.length === 0) ||
+        !props.routes ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-4" />
           </div>

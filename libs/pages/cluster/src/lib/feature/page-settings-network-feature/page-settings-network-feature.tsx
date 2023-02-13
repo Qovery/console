@@ -7,6 +7,7 @@ import {
   fetchClusterRoutingTable,
   postClusterActionsDeploy,
   selectClusterById,
+  selectClustersLoadingStatus,
 } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
@@ -24,14 +25,17 @@ export function PageSettingsNetworkFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) => selectClusterById(state, clusterId))
+  const clustersLoading = useSelector((state: RootState) => selectClustersLoadingStatus(state))
+
   const clusterRoutingTableLoadingStatus = cluster?.routingTable?.loadingStatus
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
   useEffect(() => {
-    if (clusterRoutingTableLoadingStatus !== 'loaded') dispatch(fetchClusterRoutingTable({ organizationId, clusterId }))
-  }, [dispatch, clusterRoutingTableLoadingStatus, organizationId, clusterId])
+    if (clustersLoading === 'loaded' && clusterRoutingTableLoadingStatus !== 'loaded')
+      dispatch(fetchClusterRoutingTable({ organizationId, clusterId }))
+  }, [dispatch, clustersLoading, clusterRoutingTableLoadingStatus, organizationId, clusterId])
 
   const toasterCallback = () => {
     if (cluster?.routingTable) {
