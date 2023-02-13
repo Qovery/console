@@ -26,9 +26,8 @@ export function PageSettingsFeature() {
 
   useDocumentTitle('Cluster - Settings')
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>(
-    (state: RootState) => selectClusterById(state, clusterId),
-    (prev, next) => prev?.cloud_provider !== next?.cloud_provider
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
+    selectClusterById(state, clusterId)
   )
 
   const pathSettings = CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL

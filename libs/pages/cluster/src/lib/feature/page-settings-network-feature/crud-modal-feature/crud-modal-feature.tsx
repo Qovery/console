@@ -1,44 +1,44 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { ClusterRoutingTableResults } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { editApplication, postApplicationActionsRestart } from '@qovery/domains/application'
-import { getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { editClusterRoutingTable, postClusterActionsDeploy } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 import CrudModal from '../../../ui/page-settings-network/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
-  port?: ServicePort
-  application?: ApplicationEntity
+  route?: ClusterRoutingTableResults
+  routes?: ClusterRoutingTableResults[]
+  organizationId: string
+  clusterId: string
   onClose: () => void
 }
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePort) => {
-  const cloneApplication = Object.assign({}, application)
-
-  const ports: ServicePort[] | [] = cloneApplication.ports || []
-
-  const port = {
-    internal_port: parseInt(data['internal_port'], 10),
-    external_port: parseInt(data['external_port'], 10),
-    publicly_accessible: data['publicly_accessible'],
-  }
-
-  if (currentPort) {
-    cloneApplication.ports = application.ports?.map((p: ServicePort) => {
-      if (p.id === currentPort.id) {
-        return port
-      } else {
-        return p
-      }
-    }) as ServicePort[]
+export const handleSubmit = (
+  data: FieldValues,
+  routes: ClusterRoutingTableResults[],
+  currentRoute?: ClusterRoutingTableResults
+) => {
+  if (routes.length > 0) {
+    return routes.map((route) =>
+      route.destination
+        ? {
+            destination: data['destination'] || currentRoute?.destination,
+            target: data['target'] || currentRoute?.target,
+            description: data['description'],
+          }
+        : route
+    )
   } else {
-    cloneApplication.ports = [...ports, port] as ServicePort[]
+    return [
+      {
+        destination: data['destination'],
+        target: data['target'],
+        description: data['description'],
+      },
+    ]
   }
-
-  return cloneApplication
 }
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
@@ -47,37 +47,32 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
 
   const methods = useForm({
     defaultValues: {
-      internal_port: props.port ? props.port.internal_port : null,
-      external_port: props.port ? props.port.external_port : null,
-      publicly_accessible: props.port ? props.port.publicly_accessible : false,
+      destination: props.route ? props.route.destination : undefined,
+      target: props.route ? props.route.target : undefined,
+      description: props.route ? props.route.description : undefined,
     },
     mode: 'onChange',
   })
   const dispatch = useDispatch<AppDispatch>()
 
   const toasterCallback = () => {
-    if (props.application) {
-      dispatch(
-        postApplicationActionsRestart({
-          applicationId: props.application?.id || '',
-          environmentId: props.application?.environment?.id || '',
-          serviceType: getServiceType(props.application),
-        })
-      )
-    }
+    dispatch(
+      postClusterActionsDeploy({
+        organizationId: props.organizationId,
+        clusterId: props.clusterId,
+      })
+    )
   }
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (!props.application) return
-
     setLoading(true)
-    const cloneApplication = handleSubmit(data, props.application, props.port)
+    const cloneRoutingTable = handleSubmit(data, props.routes || [], props.route)
 
     dispatch(
-      editApplication({
-        applicationId: props.application.id,
-        data: cloneApplication,
-        serviceType: getServiceType(props.application),
+      editClusterRoutingTable({
+        clusterId: props.clusterId,
+        organizationId: props.clusterId,
+        routes: cloneRoutingTable,
         toasterCallback,
       })
     )
@@ -99,11 +94,11 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   return (
     <FormProvider {...methods}>
       <CrudModal
-        port={props.port}
+        route={props.route}
         onSubmit={onSubmit}
         onClose={props.onClose}
         loading={loading}
-        isEdit={!!props.port}
+        isEdit={!!props.route}
       />
     </FormProvider>
   )

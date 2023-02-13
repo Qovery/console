@@ -1,10 +1,9 @@
-import { ServicePort } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { ClusterRoutingTableResults } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Icon, IconAwesomeEnum, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
+import { InputText, InputTextArea, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
-  port?: ServicePort
+  route?: ClusterRoutingTableResults
   onSubmit: () => void
   onClose: () => void
   loading?: boolean
@@ -12,89 +11,63 @@ export interface CrudModalProps {
 }
 
 export function CrudModal(props: CrudModalProps) {
-  const { control, watch, setValue } = useFormContext()
-
-  const watchPublicly = watch('publicly_accessible')
-  const watchExternalPort = watch('external_port')
-
-  const pattern = {
-    value: /^[0-9]+$/,
-    message: 'Please enter a number.',
-  }
-
-  useEffect(() => {
-    setValue(`external_port`, watchPublicly ? 443 : undefined)
-  }, [watchPublicly, setValue])
+  const { control } = useFormContext()
 
   return (
     <ModalCrud
-      title={props.isEdit ? 'Edit port' : 'Set port'}
+      title={props.isEdit ? 'Edit route' : 'Set route'}
       onSubmit={props.onSubmit}
       onClose={props.onClose}
       loading={props.loading}
       isEdit={props.isEdit}
     >
       <Controller
-        name="internal_port"
+        name="destination"
         control={control}
         rules={{
-          required: 'Please enter an internal port.',
-          pattern: pattern,
+          required: 'Please enter an destination.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
             className="mb-3"
-            type="number"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="Application port"
+            label="Destination"
             error={error?.message}
+            disabled={props.isEdit}
           />
         )}
       />
       <Controller
-        key={`port-${watchPublicly}`}
-        name="external_port"
+        name="target"
         control={control}
         rules={{
-          required: watchPublicly ? 'Please enter a public port.' : undefined,
-          pattern: pattern,
+          required: 'Please enter an target.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
-            className="mb-5"
-            type="number"
+            className="mb-3"
             name={field.name}
             onChange={field.onChange}
-            value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
-            label="External port"
+            value={field.value}
+            label="Target"
             error={error?.message}
-            disabled
-            rightElement={
-              <Tooltip content="Only HTTP protocol is supported">
-                <div>
-                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
-                </div>
-              </Tooltip>
-            }
           />
         )}
       />
       <Controller
-        name="publicly_accessible"
+        name="description"
         control={control}
-        render={({ field }) => (
-          <div
-            onClick={() => {
-              field.onChange(!field.value)
-              field.value && setValue('external_port', null)
-            }}
-            className="flex items-center mr-4 mb-2"
-          >
-            <InputToggle onChange={field.onChange} value={field.value} title={field.value} small />
-            <span className="text-text-600 text-ssm font-medium cursor-pointer">Publicly exposed</span>
-          </div>
+        render={({ field, fieldState: { error } }) => (
+          <InputTextArea
+            className="mb-3"
+            name={field.name}
+            onChange={field.onChange}
+            value={field.value}
+            label="Description (optionnal)"
+            error={error?.message}
+          />
         )}
       />
     </ModalCrud>

@@ -19,6 +19,7 @@ import {
   ClusterInstanceTypeResponseList,
   ClusterLogs,
   ClusterRequest,
+  ClusterRoutingTableRequest,
   ClusterRoutingTableResults,
   ClusterStatus,
   ClustersApi,
@@ -194,8 +195,24 @@ export const createCluster = createAsyncThunk<Cluster, { organizationId: string;
 export const fetchClusterRoutingTable = createAsyncThunk<
   ClusterRoutingTableResults[],
   { organizationId: string; clusterId: string }
->('clusterRoutingTable/fetch', async (data) => {
+>('cluster/routingTable/fetch', async (data) => {
   const response = await clusterApi.getRoutingTable(data.organizationId, data.clusterId)
+  return response.data.results as ClusterRoutingTableResults[]
+})
+
+export const editClusterRoutingTable = createAsyncThunk<
+  ClusterRoutingTableResults[],
+  {
+    organizationId: string
+    clusterId: string
+    routes: ClusterRoutingTableResults[]
+    toasterCallback: () => void
+  }
+>('cluster/routingTable/edit', async (data) => {
+  const response = await clusterApi.editRoutingTable(data.organizationId, data.clusterId, {
+    routes: data.routes,
+  } as ClusterRoutingTableRequest)
+
   return response.data.results as ClusterRoutingTableResults[]
 })
 
@@ -601,6 +618,40 @@ export const clusterSlice = createSlice({
         clusterAdapter.updateOne(state, update)
       })
       .addCase(fetchClusterRoutingTable.rejected, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            routingTable: {
+              loadingStatus: 'error',
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+        toastError(action.error)
+      })
+      // edit cluster routing table
+      .addCase(editClusterRoutingTable.fulfilled, (state: ClustersState, action) => {
+        const update: Update<ClusterEntity> = {
+          id: action.meta.arg.clusterId,
+          changes: {
+            routingTable: {
+              loadingStatus: 'loaded',
+              items: action.payload,
+            },
+          },
+        }
+        clusterAdapter.updateOne(state, update)
+
+        toast(
+          ToastEnum.SUCCESS,
+          `Cluster updated`,
+          'You must update to apply the settings',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Update'
+        )
+      })
+      .addCase(editClusterRoutingTable.rejected, (state: ClustersState, action) => {
         const update: Update<ClusterEntity> = {
           id: action.meta.arg.clusterId,
           changes: {

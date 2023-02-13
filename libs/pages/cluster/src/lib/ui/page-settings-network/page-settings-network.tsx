@@ -1,12 +1,22 @@
-import { ClusterRoutingTableResults, ServicePort } from 'qovery-typescript-axios'
+import { ClusterRoutingTableResults } from 'qovery-typescript-axios'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import { BlockContent, Button, EmptyState, HelpSection, IconAwesomeEnum, LoaderSpinner } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  EmptyState,
+  HelpSection,
+  IconAwesomeEnum,
+  LoaderSpinner,
+  Tooltip,
+} from '@qovery/shared/ui'
 
 export interface PageSettingsNetworkProps {
   routes?: ClusterRoutingTableResults[]
   onAddNetwork: () => void
-  onEdit: (customPort: ServicePort) => void
-  onDelete: (customPort: ServicePort) => void
+  onEdit: (currentRoute: ClusterRoutingTableResults) => void
+  onDelete: (currentRoute: ClusterRoutingTableResults) => void
   loading?: LoadingStatus
 }
 
@@ -30,48 +40,54 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
 
         {(props.loading === 'not loaded' || props.loading === 'loading') && props.routes?.length === 0 ? (
           <div className="flex justify-center">
-            <LoaderSpinner className="w-6" />
+            <LoaderSpinner className="w-4" />
           </div>
         ) : props.routes && props.routes.length > 0 ? (
           <BlockContent title="Configured network">
             {props.routes &&
-              props.routes.map((customPort, i) => (
+              props.routes.map((currentRoute, i) => (
                 <div
-                  key={`port-${customPort.target}`}
+                  key={i}
                   className={`flex justify-between w-full items-center gap-3 ${
                     props.routes && props.routes.length !== i + 1 ? 'mb-5' : ''
                   }`}
                   data-testid="form-row"
                 >
-                  <div>hello</div>
-                  {/* <InputText
-                    name={`port-${customPort.internal_port}-${customPort.id}`}
-                    className="shrink-0 grow flex-1"
-                    value={customPort.internal_port}
-                    label="Application port"
-                    disabled
-                  />
-                  <InputText
-                    name={`port-${customPort.external_port}-${customPort.id}`}
-                    className="shrink-0 grow flex-1"
-                    value={customPort.external_port || '-'}
-                    label="External port"
-                    disabled
-                  />
-                  <ButtonIcon
-                    className="text-text-500 hover:text-text-700"
-                    style={ButtonIconStyle.FLAT}
-                    onClick={() => props.onEdit(customPort)}
-                    dataTestId="edit-button"
-                    icon={IconAwesomeEnum.WHEEL}
-                  />
-                  <ButtonIcon
-                    className="text-text-500"
-                    onClick={() => props.onDelete(customPort)}
-                    dataTestId="delete-button"
-                    icon={IconAwesomeEnum.TRASH}
-                    style={ButtonIconStyle.FLAT}
-                  /> */}
+                  <div className="flex flex-col	">
+                    <p className="text-xs text-text-400 mb-1">
+                      Target: <span className="text-text-600 font-medium">{currentRoute.target}</span>
+                    </p>
+                    <p className="text-xs text-text-400">
+                      Destination: <span className="text-text-600 font-medium">{currentRoute.destination}</span>
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    {currentRoute.description && (
+                      <Tooltip side="top" content={currentRoute.description}>
+                        <div className="flex items-center">
+                          <ButtonIcon
+                            className="text-text-500 hover:text-text-700"
+                            style={ButtonIconStyle.FLAT}
+                            icon={IconAwesomeEnum.CIRCLE_INFO}
+                          />
+                        </div>
+                      </Tooltip>
+                    )}
+                    <ButtonIcon
+                      className="text-text-500 hover:text-text-700"
+                      style={ButtonIconStyle.FLAT}
+                      onClick={() => props.onEdit(currentRoute)}
+                      dataTestId="edit-button"
+                      icon={IconAwesomeEnum.WHEEL}
+                    />
+                    <ButtonIcon
+                      className="text-text-500"
+                      onClick={() => props.onDelete(currentRoute)}
+                      dataTestId="delete-button"
+                      icon={IconAwesomeEnum.TRASH}
+                      style={ButtonIconStyle.FLAT}
+                    />
+                  </div>
                 </div>
               ))}
           </BlockContent>
