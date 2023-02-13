@@ -32,7 +32,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           </div>
         </div>
         <form onSubmit={onSubmit}>
-          <BlockContent title="General informations">
+          <BlockContent title="General information">
             <Controller
               name="name"
               control={control}

@@ -45,7 +45,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-text-700">General settings</h2>
         <form onSubmit={onSubmit}>
-          <BlockContent title="General informations">
+          <BlockContent title="General information">
             <Controller
               name="name"
               control={control}

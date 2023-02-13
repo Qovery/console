@@ -39,7 +39,7 @@ export function StepSummary(props: StepSummaryProps) {
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-5">General informations</div>
+            <div className="text-sm text-text-600 font-bold mb-5">General information</div>
 
             <div className="text-text-600 text-ssm mb-2 font-medium">General</div>
 

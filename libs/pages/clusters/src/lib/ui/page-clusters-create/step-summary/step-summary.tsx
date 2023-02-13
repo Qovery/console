@@ -57,7 +57,7 @@ export function StepSummary(props: StepSummaryProps) {
         >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">General informations</div>
+            <div className="text-sm text-text-600 font-bold mb-2">General information</div>
             <ul className="text-text-400 text-sm list-none">
               <li>
                 Cluster name: <strong className="font-medium">{props.generalData.name}</strong>
