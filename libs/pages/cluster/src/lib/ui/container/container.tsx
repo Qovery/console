@@ -58,7 +58,7 @@ export function Container(props: ContainerProps) {
       </Skeleton>
       <Skeleton width={120} height={32} show={!cluster}>
         <Tag size={TagSize.BIG} className="text-text-500 border border-element-light-lighter-400 truncate">
-          {cluster?.instance_type}
+          {cluster?.instance_type?.toLowerCase().replace('_', '.')}
         </Tag>
       </Skeleton>
     </>

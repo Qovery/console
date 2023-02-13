@@ -16,9 +16,9 @@ import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-z
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsFeaturesFeature from '../feature/page-settings-features-feature/page-settings-features-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
+import PageSettingsNetworkFeature from '../feature/page-settings-network-feature/page-settings-network-feature'
 import PageSettingsRemoteFeature from '../feature/page-settings-remote-feature/page-settings-remote-feature'
 import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
-import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_CLUSTER: Route[] = [
   {
@@ -50,7 +50,7 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   },
   {
     path: CLUSTER_SETTINGS_NETWORK_URL,
-    component: <PageSettingsV2 />,
+    component: <PageSettingsNetworkFeature />,
   },
   {
     path: CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,

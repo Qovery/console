@@ -1,4 +1,10 @@
-import { Cluster, ClusterCloudProviderInfo, ClusterLogs, ClusterStatusGet } from 'qovery-typescript-axios'
+import {
+  Cluster,
+  ClusterCloudProviderInfo,
+  ClusterLogs,
+  ClusterRoutingTableResults,
+  ClusterStatusGet,
+} from 'qovery-typescript-axios'
 import { LoadingStatus } from '../..'
 import { AdvancedSettings } from './advanced-settings.interface'
 
@@ -22,5 +28,9 @@ export interface ClusterEntity extends Cluster {
   cloudProviderInfo?: {
     loadingStatus: LoadingStatus
     item?: ClusterCloudProviderInfo
+  }
+  routingTable?: {
+    loadingStatus: LoadingStatus
+    items?: ClusterRoutingTableResults[]
   }
 }

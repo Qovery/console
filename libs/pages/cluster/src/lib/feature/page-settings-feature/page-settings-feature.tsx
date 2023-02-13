@@ -26,9 +26,8 @@ export function PageSettingsFeature() {
 
   useDocumentTitle('Cluster - Settings')
 
-  const cluster = useSelector<RootState, ClusterEntity | undefined>(
-    (state: RootState) => selectClusterById(state, clusterId),
-    (prev, next) => prev?.cloud_provider !== next?.cloud_provider
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
+    selectClusterById(state, clusterId)
   )
 
   const pathSettings = CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL
@@ -65,15 +64,16 @@ export function PageSettingsFeature() {
         url: pathSettings + CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
       })
     }
+
+    links.push({
+      title: 'Network',
+      icon: IconAwesomeEnum.PLUG,
+      url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
+    })
   }
 
   links.push(
     ...[
-      {
-        title: 'Network',
-        icon: IconAwesomeEnum.PLUG,
-        url: pathSettings + CLUSTER_SETTINGS_NETWORK_URL,
-      },
       {
         title: 'Advanced settings',
         icon: IconAwesomeEnum.GEARS,
