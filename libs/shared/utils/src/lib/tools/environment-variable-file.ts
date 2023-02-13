@@ -22,7 +22,10 @@ export const environmentVariableFile = (variable: EnvironmentVariableSecretOrPub
   return variable.variable_type === APIVariableTypeEnum.FILE
 }
 
-export const getEnvironmentVariableFileMountPath = (variable: EnvironmentVariableSecretOrPublic | any): string => {
+export const getEnvironmentVariableFileMountPath = (
+  variable: EnvironmentVariableSecretOrPublic | undefined
+): string => {
+  if (!variable) return ''
   if (variable.variable_type === APIVariableTypeEnum.ALIAS) {
     if (variable.aliased_variable?.variable_type === APIVariableTypeEnum.FILE) {
       return variable.aliased_variable.mount_path
@@ -41,5 +44,5 @@ export const getEnvironmentVariableFileMountPath = (variable: EnvironmentVariabl
       return variable.overridden_secret.mount_path
     }
   }
-  return variable.mount_path
+  return String(variable.mount_path)
 }
