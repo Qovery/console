@@ -49,9 +49,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                 <div
                   key={i}
                   className={`flex justify-between w-full items-center gap-3 p-5 ${
-                    props.routes && props.routes.length !== i + 1
-                      ? 'mb-5 border-b border-element-light-lighter-500'
-                      : 'pt-0'
+                    props.routes && props.routes.length !== i + 1 ? 'border-b border-element-light-lighter-500' : ''
                   }`}
                   data-testid="form-row"
                 >
