@@ -11,13 +11,13 @@ import {
 } from '@qovery/shared/ui'
 import { timezoneValues, weekdaysValues } from '@qovery/shared/utils'
 
-export interface PageSettingsDeploymentProps {
+export interface PageSettingsDeploymentRulesProps {
   onSubmit: () => void
   watchAutoStop: boolean
   loading: boolean
 }
 
-export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
+export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesProps) {
   const { onSubmit, watchAutoStop, loading } = props
   const { control, formState } = useFormContext()
 
@@ -26,7 +26,7 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h2 className="h5 text-text-700 mb-2">Deployment general</h2>
+            <h2 className="h5 text-text-700 mb-2">Deployment rules</h2>
           </div>
         </div>
         <form onSubmit={onSubmit}>
@@ -183,4 +183,4 @@ export function PageSettingsDeployment(props: PageSettingsDeploymentProps) {
   )
 }
 
-export default PageSettingsDeployment
+export default PageSettingsDeploymentRules

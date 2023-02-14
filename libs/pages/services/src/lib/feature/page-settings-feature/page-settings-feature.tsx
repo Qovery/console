@@ -1,12 +1,13 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   SERVICES_SETTINGS_DANGER_ZONE_URL,
-  SERVICES_SETTINGS_DEPLOYMENT_URL,
   SERVICES_SETTINGS_GENERAL_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
+  SERVICES_SETTINGS_RULES_URL,
   SERVICES_SETTINGS_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
+import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { ROUTER_ENVIRONMENTS_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
@@ -21,22 +22,27 @@ export function PageSettingsFeature() {
   const links = [
     {
       title: 'General',
-      icon: 'icon-solid-wheel',
+      icon: IconAwesomeEnum.WHEEL,
       url: pathSettings + SERVICES_SETTINGS_GENERAL_URL,
     },
     {
       title: 'Deployment',
-      icon: 'icon-solid-cart-flatbed',
-      url: pathSettings + SERVICES_SETTINGS_DEPLOYMENT_URL,
+      icon: IconAwesomeEnum.CART_FLATBED,
+      subLinks: [
+        {
+          title: 'Rules',
+          url: pathSettings + SERVICES_SETTINGS_RULES_URL,
+        },
+      ],
     },
     {
       title: 'Preview Environments',
-      icon: 'icon-solid-eye',
+      icon: IconAwesomeEnum.EYE,
       url: pathSettings + SERVICES_SETTINGS_PREVIEW_ENV_URL,
     },
     {
       title: 'Danger zone',
-      icon: 'icon-solid-skull',
+      icon: IconAwesomeEnum.SKULL,
       url: pathSettings + SERVICES_SETTINGS_DANGER_ZONE_URL,
     },
   ]

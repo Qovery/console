@@ -3,7 +3,7 @@ import { WeekdayEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { weekdaysValues } from '@qovery/shared/utils'
-import PageSettingsDeploymentFeature, { handleSubmit } from './page-settings-deployment-feature'
+import PageSettingsDeploymentRulesFeature, { handleSubmit } from './page-settings-deployment-rules-feature'
 
 import SpyInstance = jest.SpyInstance
 
@@ -19,7 +19,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({ environmentId: '1' }),
 }))
 
-describe('PageSettingsDeploymentFeature', () => {
+describe('PageSettingsDeploymentRulesFeature', () => {
   let useDispatchSpy: SpyInstance
   let useSelectorSpy: SpyInstance
 
@@ -45,7 +45,7 @@ describe('PageSettingsDeploymentFeature', () => {
 
   it('should render successfully & dispatch the deployment fetch', async () => {
     const promise = Promise.resolve()
-    const { baseElement } = render(<PageSettingsDeploymentFeature />)
+    const { baseElement } = render(<PageSettingsDeploymentRulesFeature />)
     expect(baseElement).toBeTruthy()
     expect(useDispatchSpy).toHaveBeenCalled()
 
