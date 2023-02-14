@@ -1,4 +1,6 @@
 {
+  "name": "console",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/console/src",
   "projectType": "application",
   "targets": {
@@ -25,8 +27,9 @@
         ],
         "styles": ["apps/console/src/styles.scss"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack",
-        "postcssConfig": "apps/console/postcss.config.js"
+        "webpackConfig": "apps/console/webpack.config.js",
+        "postcssConfig": "apps/console/postcss.config.js",
+        "isolatedConfig": true
       },
       "configurations": {
         "production": {

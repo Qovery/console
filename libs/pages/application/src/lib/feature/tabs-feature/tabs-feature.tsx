@@ -162,7 +162,7 @@ export function TabsFeature() {
         iconRight={IconAwesomeEnum.CIRCLE_PLUS}
         menus={menuForContentRight}
       >
-        New variable
+        New variables
       </ButtonAction>
     </>
   )

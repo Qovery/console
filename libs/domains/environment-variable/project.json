@@ -1,4 +1,5 @@
 {
+  "name": "domains-environment-variable",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/environment-variable/src",
   "projectType": "library",

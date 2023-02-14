@@ -1,4 +1,5 @@
 {
+  "name": "pages-logs-application",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/pages/logs/application/src",
   "projectType": "library",

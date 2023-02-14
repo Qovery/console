@@ -1,4 +1,5 @@
 {
+  "name": "pages-logs-infra",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/pages/logs/infra/src",
   "projectType": "library",
