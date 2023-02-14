@@ -316,7 +316,7 @@ export const secretEnvironmentVariablesSlice = createSlice({
       .addCase(fetchSecretEnvironmentVariables.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         const extendedEnvs: SecretEnvironmentVariableEntity[] = action.payload.map((env) => ({
           ...env,
-          variable_type: 'secret',
+          variable_kind: 'secret',
         }))
 
         secretEnvironmentVariablesAdapter.setAll(state, extendedEnvs)
@@ -387,7 +387,7 @@ export const secretEnvironmentVariablesSlice = createSlice({
       .addCase(editSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         const extendedEnv: SecretEnvironmentVariableEntity = {
           ...action.payload,
-          variable_type: 'secret',
+          variable_kind: 'secret',
         }
         secretEnvironmentVariablesAdapter.updateOne(state, {
           id: extendedEnv.id,
@@ -428,7 +428,7 @@ const addSecretToStore = (state: SecretEnvironmentVariablesState, action: any) =
 
   const extendedEnv: SecretEnvironmentVariableEntity = {
     ...action.payload,
-    variable_type: 'secret',
+    variable_kind: 'secret',
     service_name: action.payload.service_name || '',
     is_new: true,
   }

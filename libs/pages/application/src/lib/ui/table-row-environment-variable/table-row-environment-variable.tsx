@@ -1,6 +1,7 @@
+import { ClickEvent } from '@szhsin/react-menu'
 import { LinkedServiceTypeEnum } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
-import { NavLink } from 'react-router-dom'
+import { useMemo } from 'react'
+import { NavLink, useParams } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   EnvironmentVariableEntity,
@@ -12,6 +13,7 @@ import {
   ButtonIconAction,
   ButtonIconActionElementProps,
   Icon,
+  IconAwesomeEnum,
   PasswordShowHide,
   ScrollIntoView,
   Skeleton,
@@ -20,7 +22,12 @@ import {
   TableRow,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
+import {
+  dateYearMonthDayHourMinuteSecond,
+  environmentVariableFile,
+  getEnvironmentVariableFileMountPath,
+  timeAgo,
+} from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
@@ -43,6 +50,13 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
     defaultShowHidePassword = false,
   } = props
   const { projectId = '', environmentId = '', organizationId = '' } = useParams()
+
+  const editFile = useMemo(() => {
+    if (props.rowActions && props.rowActions.length > 0 && props.rowActions[0].menus) {
+      return props.rowActions[0].menus[0].items[0].onClick
+    }
+    return
+  }, [props.rowActions])
 
   return (
     <>
@@ -70,6 +84,13 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                         OVERRIDE
                       </span>
                     </>
+                  ) : (
+                    ''
+                  )}
+                  {(variable as EnvironmentVariableEntity).mount_path ? (
+                    <span className="bg-accent1-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                      FILE
+                    </span>
                   ) : (
                     ''
                   )}
@@ -103,9 +124,27 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full max-w-3xl">
             <Skeleton show={isLoading} width={30} height={16} className="w-full">
               <div className="text-xs text-text-600 w-full">
-                {variable.variable_type === 'public' ? (
+                {environmentVariableFile(variable) ? (
+                  <div
+                    className="flex items-center gap-3"
+                    onClick={() => {
+                      if (editFile) editFile({} as ClickEvent)
+                    }}
+                  >
+                    {variable.variable_kind === 'public' ? (
+                      <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
+                    ) : (
+                      /* todo put FILE_LOCK back when we managed to update font awesome to the pro version */
+                      // <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LOCK} />
+                      <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
+                    )}
+                    <span className="text-accent2-500 hover:underline cursor-pointer">
+                      {getEnvironmentVariableFileMountPath(variable)}
+                    </span>
+                  </div>
+                ) : variable.variable_kind === 'public' ? (
                   <PasswordShowHide
-                    value={(variable as EnvironmentVariableEntity).value}
+                    value={variable.value || ''}
                     defaultVisible={defaultShowHidePassword}
                     canCopy={true}
                   />

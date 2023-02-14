@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, ButtonStyle, Icon, InputSelect, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 import {
+  DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
   EnvironmentVariableType,
 } from '../../feature/crud-environment-variable-modal-feature/crud-environment-variable-modal-feature'
@@ -17,10 +18,11 @@ export interface CrudEnvironmentVariableModalProps {
   availableScopes: APIVariableScopeEnum[]
   loading: boolean
   parentVariableName?: string
+  isFile?: boolean
 }
 
 export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModalProps) {
-  const { control, formState } = useFormContext()
+  const { control, formState, getValues } = useFormContext<DataFormEnvironmentVariableInterface>()
 
   const validationRuleForValue: { required?: string } =
     props.type === EnvironmentVariableType.ALIAS
@@ -35,7 +37,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
       <p className="text-text-400 text-sm mb-6">{props.description}</p>
       <form onSubmit={props.onSubmit}>
         {props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
-          <InputText className="mb-3" name="parent value" value={props.parentVariableName} label="Variable" disabled />
+          <InputText className="mb-3" name="Variable" value={props.parentVariableName} label="Variable" disabled />
         ) : (
           <Controller
             name="key"
@@ -56,6 +58,31 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             )}
           />
         )}
+
+        {props.isFile &&
+          (props.type === EnvironmentVariableType.ALIAS ||
+          props.type === EnvironmentVariableType.OVERRIDE ||
+          props.mode === EnvironmentVariableCrudMode.EDITION ? (
+            <InputText className="mb-3" name="Path" value={getValues().mountPath} label="Path" disabled />
+          ) : (
+            <Controller
+              name="mountPath"
+              control={control}
+              rules={{
+                required: 'Please enter a mount path.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-3"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Path"
+                  error={error?.message}
+                />
+              )}
+            />
+          ))}
 
         {props.type === EnvironmentVariableType.ALIAS && (
           <div>
@@ -123,7 +150,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           }}
           render={({ field }) => (
             <InputSelect
-              className="mb-3"
+              className="mb-4"
               portal
               options={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
               onChange={field.onChange}
@@ -138,9 +165,15 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             <Controller
               name="isSecret"
               control={control}
-              render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
+              render={({ field }) => (
+                <InputToggle
+                  small
+                  value={field.value}
+                  onChange={field.onChange}
+                  title={`Secret ${props.isFile ? 'file' : 'variable'}`}
+                />
+              )}
             />
-            <p className="text-text-500 text-sm font-medium">Secret variable</p>
           </div>
         )}
 

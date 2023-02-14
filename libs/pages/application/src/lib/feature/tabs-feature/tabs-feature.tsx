@@ -124,12 +124,58 @@ export function TabsFeature() {
                 },
               })
             },
-            contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-400" />,
+            contentLeft: <Icon name="icon-solid-cloud-arrow-up" className="text-sm text-brand-500" />,
           },
         ],
       },
     ]
   }
+
+  const dropdown: MenuData = [
+    {
+      items: [
+        {
+          name: 'Variable',
+          contentLeft: <Icon name={IconAwesomeEnum.FEATHER} className="text-sm text-brand-500" />,
+          onClick: (e: ClickEvent) => {
+            openModal({
+              content: (
+                <CrudEnvironmentVariableModalFeature
+                  closeModal={closeModal}
+                  type={EnvironmentVariableType.NORMAL}
+                  mode={EnvironmentVariableCrudMode.CREATION}
+                  applicationId={applicationId}
+                  environmentId={environmentId}
+                  projectId={projectId}
+                  serviceType={application && getServiceType(application)}
+                />
+              ),
+            })
+          },
+        },
+        {
+          name: 'Variable as file',
+          contentLeft: <Icon name={IconAwesomeEnum.FILE_LINES} className="text-sm text-brand-500" />,
+          onClick: (e: ClickEvent) => {
+            openModal({
+              content: (
+                <CrudEnvironmentVariableModalFeature
+                  closeModal={closeModal}
+                  type={EnvironmentVariableType.NORMAL}
+                  mode={EnvironmentVariableCrudMode.CREATION}
+                  applicationId={applicationId}
+                  environmentId={environmentId}
+                  projectId={projectId}
+                  serviceType={application && getServiceType(application)}
+                  isFile
+                />
+              ),
+            })
+          },
+        },
+      ],
+    },
+  ]
 
   const contentRight: ReactNode = matchEnvVariableRoute && (
     <>
@@ -143,25 +189,7 @@ export function TabsFeature() {
       >
         {globalShowHideValue ? 'Hide all' : 'Show all'}
       </Button>
-      <ButtonAction
-        onClick={() => {
-          openModal({
-            content: (
-              <CrudEnvironmentVariableModalFeature
-                closeModal={closeModal}
-                type={EnvironmentVariableType.NORMAL}
-                mode={EnvironmentVariableCrudMode.CREATION}
-                applicationId={applicationId}
-                environmentId={environmentId}
-                projectId={projectId}
-                serviceType={application && getServiceType(application)}
-              />
-            ),
-          })
-        }}
-        iconRight={IconAwesomeEnum.CIRCLE_PLUS}
-        menus={menuForContentRight}
-      >
+      <ButtonAction iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} dropdown={dropdown}>
         New variable
       </ButtonAction>
     </>

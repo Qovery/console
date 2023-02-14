@@ -6,7 +6,7 @@ import { getEnvironmentVariablesState } from '@qovery/domains/environment-variab
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { computeAvailableScope } from '@qovery/shared/utils'
+import { computeAvailableScope, getEnvironmentVariableFileMountPath } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import CrudEnvironmentVariableModal from '../../ui/crud-environment-variable-modal/crud-environment-variable-modal'
 import { handleSubmitForEnvSecretCreation } from './handle-submit/handle-submit'
@@ -20,6 +20,7 @@ export interface CrudEnvironmentVariableModalFeatureProps {
   environmentId: string
   projectId: string
   serviceType?: ServiceTypeEnum
+  isFile?: boolean
 }
 
 export enum EnvironmentVariableCrudMode {
@@ -38,10 +39,11 @@ export interface DataFormEnvironmentVariableInterface {
   value: string
   scope: string
   isSecret: boolean
+  mountPath?: string
 }
 
 export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariableModalFeatureProps) {
-  const { variable, mode, type } = props
+  const { variable, mode, type, isFile = false } = props
   const dispatch = useDispatch<AppDispatch>()
   const errorEnvironmentVariable = useSelector<RootState, string | null | undefined>(
     (state) => getEnvironmentVariablesState(state).error
@@ -60,7 +62,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       key: variable?.key,
       scope: variable?.scope === APIVariableScopeEnum.BUILT_IN ? undefined : variable?.scope,
       value: (variable as EnvironmentVariableEntity)?.value,
-      isSecret: variable?.variable_type === 'secret',
+      isSecret: variable?.variable_kind === 'secret',
+      mountPath: getEnvironmentVariableFileMountPath(variable),
     },
     mode: 'onChange',
   })
@@ -76,29 +79,22 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   }, [methods.formState, enableAlertClickOutside])
 
   const computeTitle = (): string => {
+    let title = ''
     if (mode === EnvironmentVariableCrudMode.CREATION && type === EnvironmentVariableType.NORMAL) {
-      return 'New variable'
+      title = 'New'
     } else if (mode === EnvironmentVariableCrudMode.EDITION) {
-      return (
+      title =
         'Edit ' +
-        (type === EnvironmentVariableType.ALIAS
-          ? 'alias'
-          : type === EnvironmentVariableType.OVERRIDE
-          ? 'override'
-          : 'variable')
-      )
+        (type === EnvironmentVariableType.ALIAS ? 'alias' : type === EnvironmentVariableType.OVERRIDE ? 'override' : '')
     } else if (mode === EnvironmentVariableCrudMode.CREATION) {
-      return (
+      title =
         'Create ' +
-        (type === EnvironmentVariableType.ALIAS
-          ? 'alias'
-          : type === EnvironmentVariableType.OVERRIDE
-          ? 'override'
-          : 'variable')
-      )
+        (type === EnvironmentVariableType.ALIAS ? 'alias' : type === EnvironmentVariableType.OVERRIDE ? 'override' : '')
     }
 
-    return ''
+    title += ' variable' + (isFile ? ' file' : '')
+
+    return title
   }
 
   const computeDescription = (): string => {
@@ -108,6 +104,9 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       case EnvironmentVariableType.OVERRIDE:
         return 'Overrides allow you to define a different env var value on a specific scope.'
       default:
+        if (isFile) {
+          return 'The content of the Value field will be mounted as a file in the specified “Path”. Accessing the environment variable at runtime will return the “Path” of the file.'
+        }
         return 'Variable are used at build/run time. Secrets are special variables, their value can only be accessed by the application.'
     }
   }
@@ -124,6 +123,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         availableScopes={computeAvailableScope(variable?.scope, false, props.serviceType)}
         loading={loading}
         parentVariableName={variable?.key}
+        isFile={isFile}
       />
     </FormProvider>
   )

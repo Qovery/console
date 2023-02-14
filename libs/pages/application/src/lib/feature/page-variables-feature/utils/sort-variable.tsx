@@ -1,23 +1,16 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import {
-  EnvironmentVariableEntity,
-  EnvironmentVariableSecretOrPublic,
-  SecretEnvironmentVariableEntity,
-} from '@qovery/shared/interfaces'
+import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 
 export function sortVariable(
-  variables: EnvironmentVariableEntity[],
-  secret: SecretEnvironmentVariableEntity[]
+  variables: EnvironmentVariableSecretOrPublic[],
+  secret: EnvironmentVariableSecretOrPublic[]
 ): EnvironmentVariableSecretOrPublic[] {
   const merged: EnvironmentVariableSecretOrPublic[] = [...variables, ...secret]
 
   const sortedAscii = merged
     .filter(
       (sorted) =>
-        !(sorted as EnvironmentVariableEntity).aliased_variable &&
-        !(sorted as EnvironmentVariableEntity).overridden_variable &&
-        !(sorted as SecretEnvironmentVariableEntity).aliased_secret &&
-        !(sorted as SecretEnvironmentVariableEntity).overridden_secret
+        !sorted.aliased_variable && !sorted.overridden_variable && !sorted.aliased_secret && !sorted.overridden_secret
     )
     .sort((a, b) => {
       let serviceNameSorting = 0
@@ -31,9 +24,7 @@ export function sortVariable(
       }
 
       if ((a as EnvironmentVariableEntity).service_name && (b as EnvironmentVariableEntity).service_name) {
-        serviceNameSorting = (a as EnvironmentVariableEntity).service_name.localeCompare(
-          (b as EnvironmentVariableEntity).service_name
-        )
+        serviceNameSorting = a.service_name.localeCompare(b.service_name)
       } else {
         if (!(a as EnvironmentVariableEntity).service_name && (b as EnvironmentVariableEntity).service_name) {
           serviceNameSorting = 1
@@ -60,10 +51,7 @@ export function sortVariable(
 
   const withAliasOrOverride = merged.filter(
     (sorted) =>
-      (sorted as EnvironmentVariableEntity).aliased_variable ||
-      (sorted as SecretEnvironmentVariableEntity).overridden_secret ||
-      (sorted as SecretEnvironmentVariableEntity).aliased_secret ||
-      (sorted as EnvironmentVariableEntity).overridden_variable
+      sorted.aliased_variable || sorted.overridden_secret || sorted.aliased_secret || sorted.overridden_variable
   )
 
   const final: EnvironmentVariableSecretOrPublic[] = []
@@ -72,10 +60,10 @@ export function sortVariable(
     final.push(el)
     withAliasOrOverride.some((elAliasOrOverride) => {
       if (
-        (elAliasOrOverride as EnvironmentVariableEntity).aliased_variable?.key === el.key ||
-        (elAliasOrOverride as EnvironmentVariableEntity).overridden_variable?.key === el.key ||
-        (elAliasOrOverride as SecretEnvironmentVariableEntity).aliased_secret?.key === el.key ||
-        (elAliasOrOverride as SecretEnvironmentVariableEntity).overridden_secret?.key === el.key
+        elAliasOrOverride.aliased_variable?.key === el.key ||
+        elAliasOrOverride.overridden_variable?.key === el.key ||
+        elAliasOrOverride.aliased_secret?.key === el.key ||
+        elAliasOrOverride.overridden_secret?.key === el.key
       ) {
         final.push(elAliasOrOverride)
       }

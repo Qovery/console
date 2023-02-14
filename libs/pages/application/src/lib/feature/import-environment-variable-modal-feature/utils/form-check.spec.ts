@@ -14,7 +14,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '684bf2e9-ceda-481b-8b4f-1620711f50ca',
@@ -28,7 +28,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '48903a30-f661-4f78-85ad-9a4435428ea6',
@@ -47,7 +47,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '7bf87f4c-d040-4061-a854-1da9a2683cfa',
@@ -61,7 +61,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '7c91be9d-d583-4341-813b-9dd6014571e6',
@@ -75,7 +75,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: '2c5a25a6-a009-4d1d-826c-0a3763e55a16',
@@ -89,7 +89,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: 'b1378a36-331a-4ed0-95dc-fd8c28dc16f6',
@@ -103,7 +103,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
   {
     id: 'a89dab02-5dae-4c7f-a9ff-b278944c8f0b',
@@ -122,7 +122,7 @@ const mockedExistingEnvVar: any = [
     service_id: null,
     service_name: null,
     service_type: null,
-    variable_type: 'public',
+    variable_kind: 'public',
   },
 ]
 

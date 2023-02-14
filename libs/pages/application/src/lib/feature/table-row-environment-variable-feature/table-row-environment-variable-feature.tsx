@@ -18,6 +18,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
+import { environmentVariableFile } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import { ApplicationContext } from '../../ui/container/container'
 import TableRowEnvironmentVariable from '../../ui/table-row-environment-variable/table-row-environment-variable'
@@ -58,6 +59,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             environmentId={environmentId}
             type={type}
             serviceType={props.serviceType}
+            isFile={environmentVariableFile(variable)}
           />
         ),
       })
@@ -79,6 +81,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             projectId={projectId}
             environmentId={environmentId}
             serviceType={props.serviceType}
+            isFile={environmentVariableFile(variable)}
           />
         ),
       })
@@ -100,6 +103,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
             projectId={projectId}
             environmentId={environmentId}
             serviceType={props.serviceType}
+            isFile={environmentVariableFile(variable)}
           />
         ),
       })
@@ -181,7 +185,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
                     break
                 }
 
-                if (variable.variable_type === 'public') {
+                if (variable.variable_kind === 'public') {
                   if (props.serviceType) {
                     dispatch(
                       deleteEnvironmentVariable({

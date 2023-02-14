@@ -92,5 +92,8 @@ export enum IconAwesomeEnum {
   FILTER = 'icon-solid-filter',
   CLOUD_WORD = 'icon-solid-cloud-word',
   PUZZLE_PIECE = 'icon-solid-puzzle-piece',
+  FILE_LOCK = 'icon-solid-file-lock',
+  FILE_LINES = 'icon-solid-file-lines',
+  FEATHER = 'icon-solid-feather-pointed',
   // schema: favicons name
 }
