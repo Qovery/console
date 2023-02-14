@@ -131,7 +131,7 @@ export function TabsFeature() {
     ]
   }
 
-  const menuMain: MenuData = [
+  const dropdown: MenuData = [
     {
       items: [
         {
@@ -189,7 +189,7 @@ export function TabsFeature() {
       >
         {globalShowHideValue ? 'Hide all' : 'Show all'}
       </Button>
-      <ButtonAction iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} menuMain={menuMain}>
+      <ButtonAction iconRight={IconAwesomeEnum.CIRCLE_PLUS} menus={menuForContentRight} dropdown={dropdown}>
         New variable
       </ButtonAction>
     </>

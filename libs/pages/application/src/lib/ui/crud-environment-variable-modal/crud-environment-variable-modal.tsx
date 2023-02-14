@@ -37,7 +37,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
       <p className="text-text-400 text-sm mb-6">{props.description}</p>
       <form onSubmit={props.onSubmit}>
         {props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
-          <InputText className="mb-3" name="parent value" value={props.parentVariableName} label="Variable" disabled />
+          <InputText className="mb-3" name="Variable" value={props.parentVariableName} label="Variable" disabled />
         ) : (
           <Controller
             name="key"
@@ -63,7 +63,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           (props.type === EnvironmentVariableType.ALIAS ||
           props.type === EnvironmentVariableType.OVERRIDE ||
           props.mode === EnvironmentVariableCrudMode.EDITION ? (
-            <InputText className="mb-3" name="parent value" value={getValues().mountPath} label="Path" disabled />
+            <InputText className="mb-3" name="Path" value={getValues().mountPath} label="Path" disabled />
           ) : (
             <Controller
               name="mountPath"
@@ -150,7 +150,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           }}
           render={({ field }) => (
             <InputSelect
-              className="mb-3"
+              className="mb-4"
               portal
               options={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
               onChange={field.onChange}
@@ -165,9 +165,15 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             <Controller
               name="isSecret"
               control={control}
-              render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} />}
+              render={({ field }) => (
+                <InputToggle
+                  small
+                  value={field.value}
+                  onChange={field.onChange}
+                  title={`Secret ${props.isFile ? 'file' : 'variable'}`}
+                />
+              )}
             />
-            <p className="text-text-500 text-sm font-medium">Secret {props.isFile ? 'file' : 'variable'}</p>
           </div>
         )}
 
