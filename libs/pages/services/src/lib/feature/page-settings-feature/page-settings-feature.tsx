@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import {
   SERVICES_SETTINGS_DANGER_ZONE_URL,
   SERVICES_SETTINGS_GENERAL_URL,
+  SERVICES_SETTINGS_PIPELINE_URL,
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_RULES_URL,
   SERVICES_SETTINGS_URL,
@@ -32,6 +33,10 @@ export function PageSettingsFeature() {
         {
           title: 'Rules',
           url: pathSettings + SERVICES_SETTINGS_RULES_URL,
+        },
+        {
+          title: 'Pipeline',
+          url: pathSettings + SERVICES_SETTINGS_PIPELINE_URL,
         },
       ],
     },
