@@ -134,7 +134,9 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     {variable.variable_kind === 'public' ? (
                       <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
                     ) : (
-                      <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LOCK} />
+                      /* todo put FILE_LOCK back when we managed to update font awesome to the pro version */
+                      // <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LOCK} />
+                      <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
                     )}
                     <span className="text-accent2-500 hover:underline cursor-pointer">
                       {getEnvironmentVariableFileMountPath(variable)}

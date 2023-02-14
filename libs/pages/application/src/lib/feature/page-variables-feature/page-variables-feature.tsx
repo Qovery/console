@@ -26,13 +26,12 @@ import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'
 import { sortVariable } from './utils/sort-variable'
 
+const placeholder = environmentVariableFactoryMock(5) as EnvironmentVariableSecretOrPublic[]
+
 export function PageVariablesFeature() {
   useDocumentTitle('Environment Variables – Qovery')
   const dispatch = useDispatch<AppDispatch>()
   const { applicationId = '' } = useParams()
-  const [placeholder] = useState<EnvironmentVariableSecretOrPublic[]>(
-    environmentVariableFactoryMock(5) as EnvironmentVariableSecretOrPublic[]
-  )
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)
@@ -97,14 +96,7 @@ export function PageVariablesFeature() {
     } else {
       setData(sortVariableMemo)
     }
-  }, [
-    environmentVariables,
-    secretEnvironmentVariables,
-    sortVariableMemo,
-    placeholder,
-    isLoading,
-    environmentVariablesLoadingStatus,
-  ])
+  }, [environmentVariables, secretEnvironmentVariables, sortVariableMemo, isLoading, environmentVariablesLoadingStatus])
 
   const tableHead: TableHeadProps[] = [
     {
