@@ -26,7 +26,7 @@ export const environmentVariableFile = (variable: EnvironmentVariableSecretOrPub
 // parent variable is stored either in aliased_variable or aliased_secret or overridden_variable or overridden_secret
 export const getEnvironmentVariableFileMountPath = (
   variable: EnvironmentVariableSecretOrPublic | undefined
-): string => {
+): string | undefined => {
   if (!variable) return ''
 
   // if the variable is an alias we have to check if the parent is a file and fetch its mounth path
@@ -51,5 +51,5 @@ export const getEnvironmentVariableFileMountPath = (
     }
   }
 
-  return variable.mount_path || ''
+  return variable.mount_path || undefined
 }
