@@ -6,6 +6,7 @@ import {
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
+  SETTINGS_GIT_REPOSITORY_ACCESS_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_DANGER_ZONE_URL,
   SETTINGS_PROJECT_GENERAL_URL,
@@ -53,6 +54,11 @@ export function PageSettings() {
       title: 'Container registries',
       icon: IconAwesomeEnum.BOX,
       url: pathSettings + SETTINGS_CONTAINER_REGISTRIES_URL,
+    },
+    {
+      title: 'Git Repositories Access',
+      icon: IconAwesomeEnum.KEY,
+      url: pathSettings + SETTINGS_GIT_REPOSITORY_ACCESS_URL,
     },
     {
       title: 'Danger zone',
