@@ -68,11 +68,15 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit(
-    (data) =>
-      props.serviceType &&
-      handleSubmitForEnvSecretCreation(data, setLoading, props, dispatch, setClosing, props.serviceType)
-  )
+  const onSubmit = methods.handleSubmit((data) => {
+    if (props.serviceType) {
+      const cloneData = { ...data }
+      if (!isFile) {
+        delete cloneData.mountPath
+      }
+      handleSubmitForEnvSecretCreation(cloneData, setLoading, props, dispatch, setClosing, props.serviceType)
+    }
+  })
 
   useEffect(() => {
     enableAlertClickOutside(methods.formState.isDirty)
