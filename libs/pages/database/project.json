@@ -1,4 +1,5 @@
 {
+  "name": "pages-database",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/pages/database/src",
   "projectType": "library",

@@ -1,4 +1,6 @@
 {
+  "name": "design-system-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/design-system-e2e/src",
   "projectType": "application",
   "targets": {

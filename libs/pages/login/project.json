@@ -1,4 +1,5 @@
 {
+  "name": "pages-login",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/pages/login/src",
   "projectType": "library",

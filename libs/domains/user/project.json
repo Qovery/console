@@ -1,4 +1,6 @@
 {
+  "name": "domains-user",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/user/src",
   "projectType": "library",
   "tags": [],

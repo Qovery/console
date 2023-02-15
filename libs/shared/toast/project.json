@@ -1,4 +1,6 @@
 {
+  "name": "shared-toast",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/toast/src",
   "projectType": "library",
   "tags": [],

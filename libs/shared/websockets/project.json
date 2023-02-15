@@ -1,4 +1,6 @@
 {
+  "name": "shared-websockets",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/websockets/src",
   "projectType": "library",
   "tags": [],

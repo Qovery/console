@@ -1,4 +1,6 @@
 {
+  "name": "pages-overview-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/pages/overview/feature/src",
   "projectType": "library",
   "tags": [],
