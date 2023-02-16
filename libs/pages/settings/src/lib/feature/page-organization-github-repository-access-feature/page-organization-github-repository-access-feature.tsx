@@ -6,6 +6,7 @@ import {
   disconnectGithubApp,
   fetchAuthProvider,
   fetchRepository,
+  getAuthProviderState,
   getRepositoryState,
   repositorySlice,
   selectAllAuthProvider,
@@ -27,7 +28,7 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
 
   const dispatch = useDispatch<AppDispatch>()
   const authProviderLoadingStatus = useSelector<RootState, LoadingStatus>(
-    (state) => state.organization.authProvider.loadingStatus
+    (state) => getAuthProviderState(state).loadingStatus
   )
   const authProviders = useSelector<RootState, GitAuthProvider[]>((state) => selectAllAuthProvider(state))
   const [githubAuthProvider, setGithubAuthProvider] = useState<GitAuthProvider>()
@@ -43,12 +44,10 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
   useEffect(() => {
     getAccessTokenSilently({
       ignoreCache: true,
-    }).then()
-  }, [getAccessTokenSilently])
-
-  useEffect(() => {
-    dispatch(fetchAuthProvider({ organizationId }))
-  }, [organizationId, dispatch])
+    }).then(() => {
+      dispatch(fetchAuthProvider({ organizationId }))
+    })
+  }, [getAccessTokenSilently, dispatch, organizationId])
 
   useEffect(() => {
     authProviders.forEach((authProvider) => {
@@ -85,12 +84,12 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
     )
       .unwrap()
       .then(() => {
-        dispatch(repositorySlice.actions.removeAll())
         getAccessTokenSilently({
           ignoreCache: true,
         }).then(() => {
           dispatch(fetchAuthProvider({ organizationId }))
         })
+        dispatch(repositorySlice.actions.removeAll())
       })
       .catch((error) => {
         if (error.name === 'Bad Request' && error.code === '400' && error.message.includes('This git provider is')) {

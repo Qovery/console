@@ -52,7 +52,12 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                 )}
               </div>
               {!props.githubAuthProvider?.use_bot ? (
-                <Button link={props.githubConnectURL} external size={ButtonSize.SMALL} className="ml-2">
+                <Button
+                  dataTestId="install-button"
+                  onClick={props.onConfigure}
+                  size={ButtonSize.SMALL}
+                  className="ml-2"
+                >
                   Install
                 </Button>
               ) : (
@@ -60,12 +65,13 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                   <Button
                     style={ButtonStyle.STROKED}
                     size={ButtonSize.SMALL}
+                    dataTestId="disconnect-button"
                     iconRight={IconAwesomeEnum.CROSS}
                     onClick={() => props.onDisconnect && props.onDisconnect(false)}
                   >
                     Disconnect
                   </Button>
-                  <Button size={ButtonSize.SMALL} onClick={props.onConfigure}>
+                  <Button dataTestId="permission-button" size={ButtonSize.SMALL} onClick={props.onConfigure}>
                     Manage Permissions
                   </Button>
                 </div>
@@ -100,8 +106,8 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#container-registry-management',
-            linkLabel: 'How to configure my container registry',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#managing-git-permissions-using-the-qovery-github-app',
+            linkLabel: 'Managing Git Permissions Using the Qovery Github App',
             external: true,
           },
         ]}
