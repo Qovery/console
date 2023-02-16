@@ -18,6 +18,9 @@ export interface PageOrganizationGithubRepositoryAccessProps {
   githubAuthProvider?: GitAuthProvider
   authProviderLoading?: boolean
   repositories?: RepositoryEntity[]
+  repositoriesLoading?: boolean
+  onConfigure?: () => void
+  onDisconnect?: (force: boolean) => void
 }
 
 export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGithubRepositoryAccessProps) {
@@ -34,45 +37,63 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           </div>
         </div>
         <BlockContent title="Qovery Github App installation status">
-          <div className="flex items-center justify-between">
-            <div className="flex gap-5">
-              <Icon name={IconEnum.GITHUB} className="text-text-600" />
-              {props.githubAuthProvider?.use_bot ? (
-                <span className="text-text-600 text-sm font-medium">Github App Installed</span>
+          {props.authProviderLoading ? (
+            <div className="flex justify-center">
+              <LoaderSpinner className="w-5" />
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <div className="flex gap-5">
+                <Icon name={IconEnum.GITHUB} className="text-text-600" />
+                {props.githubAuthProvider?.use_bot ? (
+                  <span className="text-text-600 text-sm font-medium">Github App Installed</span>
+                ) : (
+                  <span className="text-text-600 text-sm font-medium">Not installed</span>
+                )}
+              </div>
+              {!props.githubAuthProvider?.use_bot ? (
+                <Button link={props.githubConnectURL} external size={ButtonSize.SMALL} className="ml-2">
+                  Install
+                </Button>
               ) : (
-                <span className="text-text-600 text-sm font-medium">Not installed</span>
+                <div className="flex gap-2">
+                  <Button
+                    style={ButtonStyle.STROKED}
+                    size={ButtonSize.SMALL}
+                    iconRight={IconAwesomeEnum.CROSS}
+                    onClick={() => props.onDisconnect && props.onDisconnect(false)}
+                  >
+                    Disconnect
+                  </Button>
+                  <Button size={ButtonSize.SMALL} onClick={props.onConfigure}>
+                    Manage Permissions
+                  </Button>
+                </div>
               )}
             </div>
-            {props.authProviderLoading ? (
-              <LoaderSpinner className="w-6" />
-            ) : !props.githubAuthProvider?.use_bot ? (
-              <Button link={props.githubConnectURL} external size={ButtonSize.SMALL} className="ml-2">
-                Install
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button style={ButtonStyle.STROKED} size={ButtonSize.SMALL} iconRight={IconAwesomeEnum.CROSS}>
-                  Disconnect
-                </Button>
-                <Button size={ButtonSize.SMALL}>Manage Permissions</Button>
-              </div>
-            )}
-          </div>
+          )}
         </BlockContent>
 
-        {props.repositories && props.repositories?.length > 0 && (
-          <BlockContent title="Authorized Repositories">
-            <ul className="flex flex-col gap-2">
-              {props.repositories.map((repository: RepositoryEntity) => (
-                <li key={repository.id} className="flex items-center justify-between">
-                  <div className="flex gap-3">
-                    <Icon name={IconEnum.GITHUB} className="text-text-600 w-4" />
-                    <Link link={repository.url} linkLabel={repository.name} external></Link>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </BlockContent>
+        {props.repositoriesLoading ? (
+          <div className="flex justify-center">
+            <LoaderSpinner className="w-5" />
+          </div>
+        ) : (
+          props.repositories &&
+          props.repositories?.length > 0 && (
+            <BlockContent title="Authorized Repositories">
+              <ul className="flex flex-col gap-2">
+                {props.repositories.map((repository: RepositoryEntity) => (
+                  <li key={repository.id} className="flex items-center justify-between">
+                    <div className="flex gap-3">
+                      <Icon name={IconEnum.GITHUB} className="text-text-600 w-4" />
+                      <Link link={repository.url} linkLabel={repository.name} external></Link>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </BlockContent>
+          )
         )}
       </div>
       <HelpSection

@@ -1,12 +1,13 @@
 import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { GitAuthProvider, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
+import { GitAuthProvider, GithubAppApi, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
 import { AuthProviderState, LoadingStatus } from '@qovery/shared/interfaces'
-import { toastError } from '@qovery/shared/ui'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
 
 export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
 
 const authProviderApi = new OrganizationAccountGitRepositoriesApi()
+const githubAppApi = new GithubAppApi()
 
 export const authProviderAdapter = createEntityAdapter<GitAuthProvider>()
 
@@ -14,6 +15,14 @@ export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (p
   const response = await authProviderApi.getOrganizationGitProviderAccount(payload.organizationId)
   return response.data as GitAuthProvider[]
 })
+
+export const disconnectGithubApp = createAsyncThunk(
+  'authProvider/disconnectGithubApp',
+  async (payload: { organizationId: string; force?: boolean }) => {
+    const response = await githubAppApi.organizationGithubAppDisconnect(payload.organizationId, payload.force)
+    return response.data
+  }
+)
 
 export const initialAuthProviderState: AuthProviderState = authProviderAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -40,6 +49,9 @@ export const authProviderSlice = createSlice({
         state.loadingStatus = 'error'
         state.error = action.error.message
         toastError(action.error)
+      })
+      .addCase(disconnectGithubApp.fulfilled, (state: AuthProviderState) => {
+        toast(ToastEnum.SUCCESS, `Github App disconnected successfully`)
       })
   },
 })

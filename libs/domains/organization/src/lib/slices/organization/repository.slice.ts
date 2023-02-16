@@ -64,6 +64,7 @@ export const repositorySlice = createSlice({
   reducers: {
     add: repositoryAdapter.addOne,
     remove: repositoryAdapter.removeOne,
+    removeAll: repositoryAdapter.removeAll,
   },
   extraReducers: (builder) => {
     builder
