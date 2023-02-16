@@ -1,6 +1,7 @@
 import {
   DatabaseConfiguration,
   DeploymentHistoryEnvironment,
+  DeploymentStageResponse,
   Environment,
   EnvironmentDeploymentRule,
   Status,
@@ -16,5 +17,9 @@ export interface EnvironmentEntity extends Environment {
   databaseConfigurations?: {
     loadingStatus: LoadingStatus
     data?: DatabaseConfiguration[]
+  }
+  deploymentStage?: {
+    loadingStatus: LoadingStatus
+    items?: DeploymentStageResponse[]
   }
 }
