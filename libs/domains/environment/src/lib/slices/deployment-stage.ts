@@ -14,6 +14,17 @@ export const fetchDeploymentStageList = createAsyncThunk(
   }
 )
 
+export const attachServiceToDeploymentStage = createAsyncThunk(
+  'environment/attachServiceToDeploymentStage',
+  async (payload: { deploymentStageId: string; serviceId: string }) => {
+    const response = await deploymentStageMainCallApi.attachServiceToDeploymentStage(
+      payload.deploymentStageId,
+      payload.serviceId
+    )
+    return response.data
+  }
+)
+
 export const deploymentStageExtraReducers = (builder: ActionReducerMapBuilder<EnvironmentsState>) => {
   builder
     // fetch deployment stage list
