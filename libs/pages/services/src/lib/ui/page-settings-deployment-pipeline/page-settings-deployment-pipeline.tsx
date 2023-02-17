@@ -7,26 +7,29 @@ export interface PageSettingsDeploymentPipelineProps {
   deploymentStage?: DeploymentStageResponse[]
 }
 
-// Define the shape of an item in the list
-// interface Item {
-//   id: string
-//   content: string
-// }
+const reorder = (
+  stages: DeploymentStageResponse[],
+  destinationIndex: number,
+  startIndex: number,
+  endIndex: number
+): DeploymentStageResponse[] => {
+  const cloneStages = [...stages]
+  const currentStage = cloneStages[destinationIndex]
+  const currentStageServices = [...(currentStage.services as DeploymentStageServiceResponse[])]
 
-// fake data generator
-// const getItems = (count: number, offset = 0): DeploymentStageResponse[] =>
-//   Array.from({ length: count }, (v, k) => k).map((k) => ({
-//     id: `item-${k + offset}-${new Date().getTime()}`,
-//     content: `item ${k + offset}`,
-//   }))
+  const [removed] = currentStageServices.splice(startIndex, 1)
+  currentStageServices.splice(endIndex, 0, removed)
 
-// const reorder = (list: DeploymentStageResponse[], startIndex: number, endIndex: number): DeploymentStageResponse[] => {
-//   const result = Array.from(list)
-//   const [removed] = result.splice(startIndex, 1)
-//   result.splice(endIndex, 0, removed)
+  // Add reorder on the clone stages array
+  const result = cloneStages.map((stage, index) => {
+    if (index === destinationIndex) {
+      return { ...stage, services: currentStageServices }
+    }
+    return stage
+  })
 
-//   return result
-// }
+  return result
+}
 
 /**
  * Moves an item from one list to another list.
@@ -35,7 +38,7 @@ const move = (
   stages: DeploymentStageResponse[],
   droppableSource: DraggableLocation,
   droppableDestination: DraggableLocation
-) => {
+): DeploymentStageResponse[] | undefined => {
   let result
   const cloneStages = [...stages]
 
@@ -43,34 +46,21 @@ const move = (
   const destinationDroppableId = parseInt(droppableDestination.droppableId, 10)
 
   // Find the source stage
-  const sourceStage = cloneStages.find((obj, index) => index === sourceDroppableId)
+  const sourceStage = cloneStages.find((stage, index) => index === sourceDroppableId)
 
   if (sourceStage) {
-    // Get the service of the first source stage with the droppable source index
-    const serviceMoved = sourceStage.services?.find((stage, index) => index === droppableSource.index)
-
     // Find the destination stage
-    const destinationStage = cloneStages.find((stage, index) => index === droppableDestination.index)
+    const destinationStage = cloneStages.find((stage, index) => index === destinationDroppableId)
 
-    if (destinationStage?.services && sourceStage?.services && serviceMoved) {
+    if (destinationStage?.services && sourceStage?.services) {
       // Remove the service from the source services
-      // console.log(sourceStage.services)
-      const cloneSourceServices = sourceStage.services.splice(0, 0)
-
-      // const a = [...['a', 'b', 'c']].splice(1, 1)
-      // console.log(a)
-
-      // console.log('droppableSource : ', droppableSource.index)
-      // console.log('cloneSourceServices : ', cloneSourceServices)
+      const cloneSourceServices = [...sourceStage.services]
+      // Get the service of the first source stage with the droppable source index
+      const [serviceMoved] = cloneSourceServices.splice(droppableSource.index, 1)
 
       // Add the service on the destination services on the droppable destination index
-      const cloneDestinationServices = [...destinationStage.services].splice(
-        droppableDestination.index,
-        0,
-        serviceMoved
-      )
-
-      // console.log('cloneDestinationServices : ', [...destinationStage.services])
+      const cloneDestinationServices = [...destinationStage.services]
+      cloneDestinationServices.splice(droppableDestination.index, 0, serviceMoved)
 
       // Add new services for source and destination on the stages
       result = cloneStages.map((stage, index) => {
@@ -112,17 +102,11 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     // console.log(destinationStage)
 
     if (sourceIndex === destinationIndex) {
-      //   const items = reorder(state[sInd], source.index, destination.index)
-      //   const newState = [...state]
-      //   newState[sInd] = items
-      //   setStages(newState)
+      const newStages = reorder(stages, destinationIndex, source.index, destination.index)
+      setStages(newStages)
     } else {
-      move(stages, source, destination)
-      // const newStages: any = [...stages]
-      // newStages[sourceIndex] = result[sourceIndex]
-      // newStages[destinationIndex] = result[destinationIndex]
-
-      // setStages(newStages.filter((group: any) => group.length))
+      const newStages = move(stages, source, destination) as DeploymentStageResponse[]
+      setStages(newStages)
     }
   }
 
@@ -134,7 +118,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     }`
 
   const classNameItem = (isDragging: boolean) =>
-    `flex items-center bg-element-light-lighter-100 rounded px-2 py-3 ${isDragging} ? 'border-success-100' : 'border-element-light-lighter-400'`
+    `flex items-center bg-element-light-lighter-100 rounded px-2 py-3 border ${
+      isDragging ? 'border-2 border-success-500' : 'border-element-light-lighter-400'
+    }`
 
   return (
     <div className="w-full">
@@ -146,7 +132,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
         <div className="flex">
           <DragDropContext onDragEnd={onDragEnd}>
             {stages?.map((stage, index) => (
-              <div className="w-60 rounded mr-3">
+              <div key={index} className="w-60 rounded mr-3">
                 <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                   <span className="block mr-2 text-xxs">{stage.deployment_order}</span>
                   <span className="block text-text-500 text-xxs font-bold">{stage.name}</span>
