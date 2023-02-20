@@ -91,7 +91,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                 {stages?.map((stage, index) => (
                   <div key={index} className="w-60 shrink-0 rounded mr-3 last:mr-0">
                     <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
-                      <span className="block mr-2 text-xxs">{stage.deployment_order}</span>
+                      <span className="flex bg-brand-500 text-text-100 justify-center items-center mr-2 text-xxs w-5 h-5 rounded-full">
+                        {stage.deployment_order}
+                      </span>
                       <span className="block text-text-500 text-xxs font-bold">{stage.name}</span>
                     </div>
                     <Droppable key={index} droppableId={`${index}`}>
