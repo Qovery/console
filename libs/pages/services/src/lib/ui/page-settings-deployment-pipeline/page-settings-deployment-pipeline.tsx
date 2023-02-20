@@ -79,7 +79,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
               <LoaderSpinner className="w-4 mt-5" />
             </div>
           ) : (
-            <div className="flex px-5">
+            <div className="flex px-5 pb-5">
               <DragDropContext onDragEnd={onDragEnd}>
                 {stages?.map((stage, index) => (
                   <div key={index} className="w-60 shrink-0 rounded mr-3 last:mr-0">
@@ -121,7 +121,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
         </div>
         {stages && (
           <StickyActionFormToaster
-            className="mb-4"
+            className="mb-5"
             visible={discardChanges}
             onSubmit={onSubmit}
             onReset={onReset}
