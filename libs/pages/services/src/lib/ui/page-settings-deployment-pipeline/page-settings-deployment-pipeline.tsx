@@ -2,6 +2,7 @@ import { DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-
 import { Dispatch, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
 import { HelpSection, StickyActionFormToaster } from '@qovery/shared/ui'
+import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 
 export interface PageSettingsDeploymentPipelineProps {
@@ -10,14 +11,16 @@ export interface PageSettingsDeploymentPipelineProps {
   discardChanges: boolean
   loading: boolean
   setStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
+  setStagesRequest: Dispatch<SetStateAction<StageRequest[] | undefined>>
   stages?: DeploymentStageResponse[]
+  stagesRequest?: StageRequest[]
 }
 
 export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipelineProps) {
-  const { stages, setStages, onSubmit, onReset, discardChanges, loading } = props
+  const { stages, setStages, setStagesRequest, onSubmit, onReset, discardChanges, loading } = props
 
   function onDragEnd(result: DropResult) {
-    const { source, destination } = result
+    const { source, destination, draggableId } = result
 
     if (!destination || !stages) {
       return
@@ -33,6 +36,21 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
       // move to another group
       const newStages = move(stages, source, destination) as DeploymentStageResponse[]
       setStages(newStages)
+
+      // add stage for final request
+      const newStageRequest: StageRequest = {
+        deploymentStageId: stages[destinationIndex].id,
+        serviceId: draggableId,
+      }
+
+      setStagesRequest((prev) => {
+        if (prev) {
+          // remove current value if already exist
+          return [...prev.filter((current) => current.serviceId !== newStageRequest.serviceId), newStageRequest]
+        } else {
+          return [newStageRequest]
+        }
+      })
     }
   }
 

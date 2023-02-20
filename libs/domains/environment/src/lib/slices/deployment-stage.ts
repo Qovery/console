@@ -14,8 +14,8 @@ export const fetchDeploymentStageList = createAsyncThunk(
   }
 )
 
-export const attachServiceToDeploymentStage = createAsyncThunk(
-  'environment/attachServiceToDeploymentStage',
+export const addServiceToDeploymentStage = createAsyncThunk(
+  'environment/addServiceToDeploymentStage',
   async (payload: { deploymentStageId: string; serviceId: string }) => {
     const response = await deploymentStageMainCallApi.attachServiceToDeploymentStage(
       payload.deploymentStageId,
