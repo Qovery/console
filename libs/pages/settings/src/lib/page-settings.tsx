@@ -45,7 +45,7 @@ export function PageSettings() {
       ],
     },
     {
-      title: 'Biling & plans',
+      title: 'Billing & plans',
       icon: IconAwesomeEnum.CREDIT_CARD,
       url: pathSettings + SETTINGS_BILLING_URL,
     },
