@@ -32,11 +32,11 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
             <h1 className="h5 text-text-700 mb-2">Github Repository Access</h1>
             <p className="text-text-500 text-xs">
               By default Qovery has access to all your repositories. If you are using Github, you can restrict the
-              Qovery accesses by installing the Qovery Github App on your GitHub organization
+              Qovery accesses by installing the Qovery Github application on your GitHub organization
             </p>
           </div>
         </div>
-        <BlockContent title="Qovery Github App installation status">
+        <BlockContent title="Qovery Github application installation status">
           {props.authProviderLoading ? (
             <div className="flex justify-center">
               <LoaderSpinner className="w-5" />
@@ -107,7 +107,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
         links={[
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#managing-git-permissions-using-the-qovery-github-app',
-            linkLabel: 'Managing Git Permissions Using the Qovery Github App',
+            linkLabel: 'Managing Git Permissions Using the Qovery Github application',
             external: true,
           },
         ]}

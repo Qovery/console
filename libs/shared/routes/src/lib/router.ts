@@ -12,6 +12,7 @@ export * from './sub-router/job.router'
 
 export const INDEX_URL = '/'
 export const ACCEPT_INVITATION_URL = `/accept-invitation`
+export const GITHUB_APPLICATION_CALLBACK_URL = `/github-application-callback`
 export const ORGANIZATION_URL = (organizationId = ':organizationId') => `/organization/${organizationId}`
 export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
   `/organization/${organizationId}/project/${projectId}/overview`

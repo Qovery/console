@@ -11,7 +11,7 @@ import { PageOnboarding } from '@qovery/pages/onboarding'
 import { OverviewPage } from '@qovery/pages/overview/feature'
 import { PageServices } from '@qovery/pages/services'
 import { PageSettings } from '@qovery/pages/settings'
-import { AcceptInvitationFeature } from '@qovery/shared/console-shared'
+import { AcceptInvitationFeature, GithubApplicationCallbackFeature } from '@qovery/shared/console-shared'
 import {
   ACCEPT_INVITATION_URL,
   APPLICATION_LOGS_URL,
@@ -21,6 +21,7 @@ import {
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_URL,
+  GITHUB_APPLICATION_CALLBACK_URL,
   INFRA_LOGS_URL,
   ONBOARDING_URL,
   ORGANIZATION_URL,
@@ -43,6 +44,12 @@ export const ROUTER: RouterProps[] = [
   {
     path: `${ONBOARDING_URL}/*`,
     component: <PageOnboarding />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${GITHUB_APPLICATION_CALLBACK_URL}`,
+    component: <GithubApplicationCallbackFeature />,
     protected: true,
     layout: false,
   },

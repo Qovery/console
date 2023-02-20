@@ -56,7 +56,7 @@ export function PageSettings() {
       url: pathSettings + SETTINGS_CONTAINER_REGISTRIES_URL,
     },
     {
-      title: 'Git Repositories Access',
+      title: 'Git repositories access',
       icon: IconAwesomeEnum.KEY,
       url: pathSettings + SETTINGS_GIT_REPOSITORY_ACCESS_URL,
     },
@@ -86,12 +86,6 @@ export function PageSettings() {
       title: 'General',
       icon: IconAwesomeEnum.WHEEL,
       onClick: () => window.open('https://console.qovery.com/platform/organization/user/settings/general'),
-    },
-    {
-      title: 'Git permission',
-      icon: IconAwesomeEnum.CODE_BRANCH,
-      onClick: () =>
-        window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/git-permission`),
     },
   ]
 

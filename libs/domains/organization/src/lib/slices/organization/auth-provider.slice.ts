@@ -1,5 +1,10 @@
 import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
-import { GitAuthProvider, GithubAppApi, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
+import {
+  GitAuthProvider,
+  GithubAppApi,
+  OrganizationAccountGitRepositoriesApi,
+  OrganizationGithubAppConnectRequest,
+} from 'qovery-typescript-axios'
 import { AuthProviderState, LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
@@ -16,6 +21,13 @@ export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (p
   return response.data as GitAuthProvider[]
 })
 
+export const connectGithubApp = createAsyncThunk(
+  'authProvider/connectGithubApp',
+  async (payload: { organizationId: string; appConnectRequest: OrganizationGithubAppConnectRequest }) => {
+    const response = await githubAppApi.organizationGithubAppConnect(payload.organizationId, payload.appConnectRequest)
+    return response.data
+  }
+)
 export const disconnectGithubApp = createAsyncThunk(
   'authProvider/disconnectGithubApp',
   async (payload: { organizationId: string; force?: boolean }) => {
