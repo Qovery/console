@@ -65,22 +65,24 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     }`
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col justify-between w-full h-[calc(100%-128px)] p-5 bg-element-light-lighter-200">
-        <div>
+    <div className="w-[calc(100vw-373px)]">
+      <div className="flex flex-col w-full h-[calc(100%-128px)] bg-element-light-lighter-200">
+        <div className="px-5 pt-5">
           <p className="text-xs text-text-500 mb-5">
             Stages allow to define deployment order within the deployment pipeline of your environment. You can drag &
             drop the service between two stages to change the order.
           </p>
+        </div>
+        <div className="h-full overflow-x-scroll">
           {!stages ? (
             <div className="flex justify-center max-w-4xl">
               <LoaderSpinner className="w-4 mt-5" />
             </div>
           ) : (
-            <div className="flex">
+            <div className="flex px-5">
               <DragDropContext onDragEnd={onDragEnd}>
                 {stages?.map((stage, index) => (
-                  <div key={index} className="w-60 rounded mr-3">
+                  <div key={index} className="w-60 shrink-0 rounded mr-3 last:mr-0">
                     <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                       <span className="block mr-2 text-xxs">{stage.deployment_order}</span>
                       <span className="block text-text-500 text-xxs font-bold">{stage.name}</span>
@@ -118,7 +120,13 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           )}
         </div>
         {stages && (
-          <StickyActionFormToaster visible={discardChanges} onSubmit={onSubmit} onReset={onReset} loading={loading} />
+          <StickyActionFormToaster
+            className="mb-4"
+            visible={discardChanges}
+            onSubmit={onSubmit}
+            onReset={onReset}
+            loading={loading}
+          />
         )}
       </div>
       <HelpSection
