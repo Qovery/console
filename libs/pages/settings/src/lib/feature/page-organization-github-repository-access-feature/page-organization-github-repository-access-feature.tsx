@@ -41,6 +41,8 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
   const { getAccessTokenSilently } = useAuth()
   const { openModal, closeModal } = useModal()
 
+  const [forceLoading, setForceLoading] = useState(false)
+
   useEffect(() => {
     getAccessTokenSilently({
       ignoreCache: true,
@@ -76,6 +78,7 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
   // and we force the disconnection with force parameter set to true. To put simply: if the user does not use any app
   // he can disconnect without modal, if he uses some apps, he has to confirm the disconnection
   const onDisconnect = (force?: boolean) => {
+    setForceLoading(true)
     dispatch(
       disconnectGithubApp({
         organizationId,
@@ -86,12 +89,19 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
       .then(() => {
         getAccessTokenSilently({
           ignoreCache: true,
-        }).then(() => {
-          dispatch(fetchAuthProvider({ organizationId }))
         })
+          .then(() => {
+            dispatch(fetchAuthProvider({ organizationId }))
+            setForceLoading(false)
+          })
+          .catch(() => {
+            setForceLoading(false)
+          })
         dispatch(repositorySlice.actions.removeAll())
       })
       .catch((error) => {
+        setForceLoading(false)
+
         if (error.name === 'Bad Request' && error.code === '400' && error.message.includes('This git provider is')) {
           onDisconnectWithModal()
         }
@@ -107,6 +117,7 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
       repositoriesLoading={repositoriesLoadingStatus === 'loading'}
       onConfigure={onConfigure}
       onDisconnect={onDisconnect}
+      forceLoading={forceLoading}
     />
   )
 }

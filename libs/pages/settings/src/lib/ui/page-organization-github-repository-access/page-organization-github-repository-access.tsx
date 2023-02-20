@@ -21,6 +21,7 @@ export interface PageOrganizationGithubRepositoryAccessProps {
   repositoriesLoading?: boolean
   onConfigure?: () => void
   onDisconnect?: (force: boolean) => void
+  forceLoading?: boolean
 }
 
 export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGithubRepositoryAccessProps) {
@@ -37,7 +38,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
           </div>
         </div>
         <BlockContent title="Qovery Github application installation status">
-          {props.authProviderLoading ? (
+          {props.authProviderLoading || props.forceLoading ? (
             <div className="flex justify-center">
               <LoaderSpinner className="w-5" />
             </div>
