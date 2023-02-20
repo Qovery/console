@@ -90,7 +90,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                         {...provided.droppableProps}
                       >
                         {stage.services?.map((item: DeploymentStageServiceResponse, index: number) => (
-                          <Draggable key={item.id} draggableId={item.id} index={index}>
+                          <Draggable key={item.service_id} draggableId={item.service_id || ''} index={index}>
                             {(provided, snapshot) => (
                               <div
                                 ref={provided.innerRef}
@@ -99,7 +99,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                                 style={{ ...provided.draggableProps.style }}
                                 className={classNameItem(snapshot.isDragging)}
                               >
-                                <span className="block text-text-500 text-ssm font-medium">{item.id}</span>
+                                <span className="block text-text-500 text-ssm font-medium">{item.service_id}</span>
                               </div>
                             )}
                           </Draggable>
