@@ -48,6 +48,7 @@ export function PageSettingsDeploymentPipelineFeature() {
 
   const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
   const [stagesRequest, setStagesRequest] = useState<StageRequest[] | undefined>()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setStages(deploymentStage?.items)
@@ -55,6 +56,8 @@ export function PageSettingsDeploymentPipelineFeature() {
 
   const onSubmit = async () => {
     if (deploymentStage?.items && stagesRequest) {
+      setLoading(true)
+
       const result = await Promise.all(
         stagesRequest.map((stage) =>
           dispatch(
@@ -62,7 +65,10 @@ export function PageSettingsDeploymentPipelineFeature() {
           )
         )
       )
-      console.log(result)
+
+      if (result) {
+        setLoading(false)
+      }
     }
   }
 
@@ -80,7 +86,7 @@ export function PageSettingsDeploymentPipelineFeature() {
         setStagesRequest(undefined)
       }}
       discardChanges={discardChanges}
-      loading={false}
+      loading={loading}
     />
   )
 }
