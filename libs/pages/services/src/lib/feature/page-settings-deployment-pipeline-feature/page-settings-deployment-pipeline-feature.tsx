@@ -11,6 +11,7 @@ import {
   selectEnvironmentById,
 } from '@qovery/domains/environment'
 import { ApplicationEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 
@@ -68,6 +69,7 @@ export function PageSettingsDeploymentPipelineFeature() {
 
       if (result) {
         setLoading(false)
+        toast(ToastEnum.SUCCESS, 'Your deployment stage is updated')
       }
     }
   }
