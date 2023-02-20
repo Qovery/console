@@ -1,7 +1,7 @@
 import { DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
-import { HelpSection, StickyActionFormToaster } from '@qovery/shared/ui'
+import { HelpSection, LoaderSpinner, StickyActionFormToaster } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 
@@ -54,8 +54,6 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     }
   }
 
-  if (!stages) return <div>hello</div>
-
   const classNameGroup = (isDraggingOver: boolean) =>
     `grid gap-1 p-1 border border-element-light-lighter-500 border-t-0 rounded-b ${
       isDraggingOver ? 'bg-success-100' : 'bg-element-light-lighter-400'
@@ -74,46 +72,54 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             Stages allow to define deployment order within the deployment pipeline of your environment. You can drag &
             drop the service between two stages to change the order.
           </p>
-          <div className="flex">
-            <DragDropContext onDragEnd={onDragEnd}>
-              {stages?.map((stage, index) => (
-                <div key={index} className="w-60 rounded mr-3">
-                  <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
-                    <span className="block mr-2 text-xxs">{stage.deployment_order}</span>
-                    <span className="block text-text-500 text-xxs font-bold">{stage.name}</span>
+          {!stages ? (
+            <div className="flex justify-center max-w-4xl">
+              <LoaderSpinner className="w-4 mt-5" />
+            </div>
+          ) : (
+            <div className="flex">
+              <DragDropContext onDragEnd={onDragEnd}>
+                {stages?.map((stage, index) => (
+                  <div key={index} className="w-60 rounded mr-3">
+                    <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
+                      <span className="block mr-2 text-xxs">{stage.deployment_order}</span>
+                      <span className="block text-text-500 text-xxs font-bold">{stage.name}</span>
+                    </div>
+                    <Droppable key={index} droppableId={`${index}`}>
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          className={classNameGroup(snapshot.isDraggingOver)}
+                          {...provided.droppableProps}
+                        >
+                          {stage.services?.map((item: DeploymentStageServiceResponse, index: number) => (
+                            <Draggable key={item.service_id} draggableId={item.service_id || ''} index={index}>
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={{ ...provided.draggableProps.style }}
+                                  className={classNameItem(snapshot.isDragging)}
+                                >
+                                  <span className="block text-text-500 text-ssm font-medium">{item.service_id}</span>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
                   </div>
-                  <Droppable key={index} droppableId={`${index}`}>
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        className={classNameGroup(snapshot.isDraggingOver)}
-                        {...provided.droppableProps}
-                      >
-                        {stage.services?.map((item: DeploymentStageServiceResponse, index: number) => (
-                          <Draggable key={item.service_id} draggableId={item.service_id || ''} index={index}>
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={{ ...provided.draggableProps.style }}
-                                className={classNameItem(snapshot.isDragging)}
-                              >
-                                <span className="block text-text-500 text-ssm font-medium">{item.service_id}</span>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </div>
-              ))}
-            </DragDropContext>
-          </div>
+                ))}
+              </DragDropContext>
+            </div>
+          )}
         </div>
-        <StickyActionFormToaster visible={discardChanges} onSubmit={onSubmit} onReset={onReset} loading={loading} />
+        {stages && (
+          <StickyActionFormToaster visible={discardChanges} onSubmit={onSubmit} onReset={onReset} loading={loading} />
+        )}
       </div>
       <HelpSection
         description="Need help? You may find these links useful"
