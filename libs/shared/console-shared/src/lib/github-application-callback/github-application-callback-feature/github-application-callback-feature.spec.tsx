@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { useLocation } from 'react-router-dom'
+import { SETTINGS_GIT_REPOSITORY_ACCESS_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import GithubApplicationCallbackFeature from './github-application-callback-feature'
 
 const mockConnectGithubApp = jest.fn()
@@ -44,10 +45,24 @@ describe('GithubApplicationCallbackFeature', () => {
   })
 
   it('should navigate to root if a query param is missing', async () => {
-    const { baseElement } = render(<GithubApplicationCallbackFeature />)
+    ;(useLocation as jest.Mock).mockReturnValue({
+      search: '?state=7575b658-9a86-488c-b308-a79fb8050d21',
+      pathname: 'login',
+    })
+    render(<GithubApplicationCallbackFeature />)
 
     await waitFor(() => {
       expect(mockedUseNavigate).toHaveBeenCalledWith('/')
+    })
+  })
+
+  it('should navigate to github application settings page if everything goes well', async () => {
+    render(<GithubApplicationCallbackFeature />)
+
+    await waitFor(() => {
+      expect(mockedUseNavigate).toHaveBeenCalledWith(
+        SETTINGS_URL('7575b658-9a86-488c-b308-a79fb8050d21') + SETTINGS_GIT_REPOSITORY_ACCESS_URL
+      )
     })
   })
 })
