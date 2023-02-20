@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
   addServiceToDeploymentStage,
   environmentsLoadingStatus,
   fetchDeploymentStageList,
   selectEnvironmentById,
 } from '@qovery/domains/environment'
-import { ApplicationEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
@@ -24,11 +25,8 @@ export function PageSettingsDeploymentPipelineFeature() {
   const { environmentId = '' } = useParams()
   const dispatch: AppDispatch = useDispatch()
 
-  // const applications =
-  useSelector<RootState, ApplicationEntity[] | undefined>(
-    (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
-    equal
-  )
+  const applications = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
+  const databases = useSelector((state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId))
 
   const loadingStatus = useSelector(environmentsLoadingStatus)
 
@@ -89,6 +87,7 @@ export function PageSettingsDeploymentPipelineFeature() {
       }}
       discardChanges={discardChanges}
       loading={loading}
+      services={[...applications, ...databases]}
     />
   )
 }

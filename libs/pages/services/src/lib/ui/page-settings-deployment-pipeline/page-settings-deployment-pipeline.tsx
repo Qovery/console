@@ -1,6 +1,7 @@
 import { DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
+import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { HelpSection, LoaderSpinner, StickyActionFormToaster } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
@@ -14,12 +15,13 @@ export interface PageSettingsDeploymentPipelineProps {
   setStagesRequest: Dispatch<SetStateAction<StageRequest[] | undefined>>
   stages?: DeploymentStageResponse[]
   stagesRequest?: StageRequest[]
+  services?: (DatabaseEntity | ApplicationEntity)[]
 }
 
 export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipelineProps) {
-  const { stages, setStages, setStagesRequest, onSubmit, onReset, discardChanges, loading } = props
+  const { stages, setStages, setStagesRequest, onSubmit, onReset, discardChanges, loading, services } = props
 
-  function onDragEnd(result: DropResult) {
+  const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result
 
     if (!destination || !stages) {
@@ -52,6 +54,11 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
         }
       })
     }
+  }
+
+  const getParametersByServiceId = (serviceId?: string): DatabaseEntity | ApplicationEntity | undefined => {
+    if (serviceId) return services?.filter((service) => service.id === serviceId)[0]
+    return undefined
   }
 
   const classNameGroup = (isDraggingOver: boolean) =>
@@ -104,7 +111,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                                   style={{ ...provided.draggableProps.style }}
                                   className={classNameItem(snapshot.isDragging)}
                                 >
-                                  <span className="block text-text-500 text-ssm font-medium">{item.service_id}</span>
+                                  <span className="block text-text-500 text-ssm font-medium">
+                                    {getParametersByServiceId(item.service_id)?.name}
+                                  </span>
                                 </div>
                               )}
                             </Draggable>
