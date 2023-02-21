@@ -24,7 +24,7 @@ import {
 } from 'qovery-typescript-axios'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId, sortByKey } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
@@ -364,9 +364,17 @@ export const selectAllEnvironments = createSelector(getEnvironmentsState, select
 
 export const selectEnvironmentsEntities = createSelector(getEnvironmentsState, selectEntities)
 
-export const selectEnvironmentsEntitiesByProjectId = (state: RootState, projectId: string): EnvironmentEntity[] => {
+export const selectEnvironmentsEntitiesByProjectId = (
+  state: RootState,
+  projectId: string,
+  sortBy: keyof EnvironmentEntity = 'name'
+): EnvironmentEntity[] => {
   const environmentState = getEnvironmentsState(state)
-  return getEntitiesByIds<Environment>(environmentState.entities, environmentState?.joinProjectEnvironments[projectId])
+  const entities = getEntitiesByIds<Environment>(
+    environmentState.entities,
+    environmentState?.joinProjectEnvironments[projectId]
+  )
+  return sortBy ? sortByKey<EnvironmentEntity>(entities, sortBy) : entities
 }
 
 export const selectEnvironmentsEntitiesByClusterId = (clusterId: string) =>

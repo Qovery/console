@@ -28,7 +28,7 @@ import {
 import { ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/api'
 import { AdvancedSettings, ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload, sortByKey } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
@@ -678,8 +678,9 @@ export const selectAllCluster = createSelector(getClusterState, selectAll)
 
 export const selectClustersEntitiesByOrganizationId = createSelector(
   [getClusterState, (state, organizationId: string) => organizationId],
-  (items, organizationId) => {
-    return getEntitiesByIds<Cluster>(items.entities, items?.joinOrganizationClusters[organizationId])
+  (items, organizationId, sortBy: keyof Cluster = 'name') => {
+    const clusters = getEntitiesByIds<Cluster>(items.entities, items?.joinOrganizationClusters[organizationId])
+    return sortBy ? sortByKey<Cluster>(clusters, sortBy) : clusters
   }
 )
 

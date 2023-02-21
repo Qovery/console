@@ -9,7 +9,7 @@ import {
 import { Project, ProjectMainCallsApi, ProjectRequest, ProjectsApi } from 'qovery-typescript-axios'
 import { ProjectsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, sortByKey } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
@@ -149,9 +149,17 @@ export const selectAllProjects = createSelector(getProjectsState, selectAll)
 
 export const selectProjectsEntities = createSelector(getProjectsState, selectEntities)
 
-export const selectProjectsEntitiesByOrgId = (state: RootState, organizationId: string): Project[] => {
+export const selectProjectsEntitiesByOrgId = (
+  state: RootState,
+  organizationId: string,
+  orderBy: keyof Project = 'name'
+): Project[] => {
   const projectState = getProjectsState(state)
-  return getEntitiesByIds<Project>(projectState.entities, projectState?.joinOrganizationProject[organizationId])
+  const entities = getEntitiesByIds<Project>(
+    projectState.entities,
+    projectState?.joinOrganizationProject[organizationId]
+  )
+  return orderBy ? sortByKey<Project>(entities, orderBy) : entities
 }
 
 export const selectProjectById = (state: RootState, organizationId: string, projectId: string): Project => {

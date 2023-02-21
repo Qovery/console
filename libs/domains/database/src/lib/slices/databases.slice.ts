@@ -20,7 +20,13 @@ import {
 } from 'qovery-typescript-axios'
 import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, refactoDatabasePayload, shortToLongId } from '@qovery/shared/utils'
+import {
+  addOneToManyRelation,
+  getEntitiesByIds,
+  refactoDatabasePayload,
+  shortToLongId,
+  sortByKey,
+} from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const DATABASES_FEATURE_KEY = 'databases'
@@ -368,9 +374,14 @@ export const getDatabasesState = (rootState: RootState): DatabasesState => rootS
 
 export const selectAllDatabases = createSelector(getDatabasesState, selectAll)
 
-export const selectDatabasesEntitiesByEnvId = (state: RootState, environmentId: string): DatabaseEntity[] => {
+export const selectDatabasesEntitiesByEnvId = (
+  state: RootState,
+  environmentId: string,
+  sortBy: keyof DatabaseEntity = 'name'
+): DatabaseEntity[] => {
   const databaseState = getDatabasesState(state)
-  return getEntitiesByIds<Database>(databaseState.entities, databaseState?.joinEnvDatabase[environmentId])
+  const entities = getEntitiesByIds<Database>(databaseState.entities, databaseState?.joinEnvDatabase[environmentId])
+  return sortBy ? sortByKey<DatabaseEntity>(entities, sortBy) : entities
 }
 
 export const selectDatabaseById = (state: RootState, databaseId: string): DatabaseEntity | undefined =>
