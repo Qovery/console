@@ -13,6 +13,7 @@ describe('TableHeadSort', () => {
       data: environmentFactoryMock(2),
       currentKey: '',
       setData: jest.fn(),
+      setIsSorted: jest.fn(),
     }
   })
   it('should render successfully', () => {
