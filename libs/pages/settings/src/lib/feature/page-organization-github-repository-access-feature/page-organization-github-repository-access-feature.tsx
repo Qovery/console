@@ -97,6 +97,7 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
           .catch(() => {
             setForceLoading(false)
           })
+        // removing all entities is not an async action, there are no api call, and we don't need to wait for the result
         dispatch(repositorySlice.actions.removeAll())
       })
       .catch((error) => {
