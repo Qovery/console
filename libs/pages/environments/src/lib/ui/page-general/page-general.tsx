@@ -36,9 +36,11 @@ function PageGeneralMemo(props: PageGeneralProps) {
   const { openModal, closeModal } = useModal()
   const [data, setData] = useState(environments)
   const [filter, setFilter] = useState<TableFilterProps>({})
+  const [loading, setLoading] = useState(isLoading)
 
   useEffect(() => {
     setData(environments)
+    setLoading(isLoading)
   }, [environments])
 
   const tableHead = [
@@ -99,7 +101,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
                 dataHead={tableHead}
                 link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
                 columnsWidth={columnWidth}
-                isLoading={isLoading}
+                isLoading={loading}
               />
             ))}
           </>
