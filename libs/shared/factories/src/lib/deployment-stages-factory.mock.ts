@@ -16,7 +16,7 @@ export const deploymentStagesFactoryMock = (howMany: number): DeploymentStageRes
     deployment_order: 0,
     services: [
       {
-        id: index.toString(),
+        id: chance.guid(),
         created_at: new Date().toString(),
         updated_at: new Date().toString(),
         service_id: '0',
