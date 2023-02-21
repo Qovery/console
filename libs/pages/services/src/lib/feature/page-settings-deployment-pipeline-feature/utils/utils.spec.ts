@@ -1,24 +1,140 @@
-import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
-import { reorder } from './utils'
+import { DeploymentStageResponse } from 'qovery-typescript-axios'
+import { move, reorder } from './utils'
 
-const stages = deploymentStagesFactoryMock(2)
+describe('PageSettingsDeploymentPipeline/utils', () => {
+  it('should reorder the services within a stage', () => {
+    const stages: DeploymentStageResponse[] = [
+      {
+        id: '1',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [
+          { id: '1', created_at: '', service_id: '1' },
+          { id: '2', created_at: '', service_id: '2' },
+          { id: '3', created_at: '', service_id: '3' },
+        ],
+      },
+      {
+        id: '2',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [{ id: '4', created_at: '', service_id: '4' }],
+      },
+    ]
 
-describe('Utils', () => {
-  it('should have a fonction to reorder deployment group', () => {
-    const deployment = reorder(stages, 0, 0, 0)
-    console.log(stages)
-    console.log(deployment)
-    // expect(deployment).toBe([
-    //   {
-    //     id: '0',
-    //     created_at: stages[0].created_at,
-    //     updated_at: stages[0].updated_at,
-    //     environment: { id: '1' },
-    //     name: stages[0].name,
-    //     description: stages[0].description,
-    //     deployment_order: stages[0].deployment_order,
-    //     services: stages[0].services,
-    //   },
-    // ])
+    const expectedStages: DeploymentStageResponse[] = [
+      {
+        id: '1',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [
+          { id: '2', created_at: '', service_id: '2' },
+          { id: '1', created_at: '', service_id: '1' },
+          { id: '3', created_at: '', service_id: '3' },
+        ],
+      },
+      {
+        id: '2',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [{ id: '4', created_at: '', service_id: '4' }],
+      },
+    ]
+    const destinationIndex = 0
+    const startIndex = 1
+    const endIndex = 0
+
+    const result = reorder(stages, destinationIndex, startIndex, endIndex)
+
+    expect(result).toEqual(expectedStages)
+  })
+
+  it('should move a service between stages', () => {
+    const stages: DeploymentStageResponse[] = [
+      {
+        id: '1',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [
+          { id: '1', created_at: '', service_id: '1' },
+          { id: '2', created_at: '', service_id: '2' },
+        ],
+      },
+      {
+        id: '2',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [{ id: '3', created_at: '', service_id: '3' }],
+      },
+    ]
+    const droppableSource = { droppableId: '0', index: 1 }
+    const droppableDestination = { droppableId: '1', index: 0 }
+    const expectedStages = [
+      {
+        id: '1',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [{ id: '1', created_at: '', service_id: '1' }],
+      },
+      {
+        id: '2',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [
+          { id: '2', created_at: '', service_id: '2' },
+          { id: '3', created_at: '', service_id: '3' },
+        ],
+      },
+    ]
+
+    const result = move(stages, droppableSource, droppableDestination)
+
+    expect(result).toEqual(expectedStages)
+  })
+
+  it('should return undefined if the source or destination stage does not exist', () => {
+    const stages: DeploymentStageResponse[] = [
+      {
+        id: '1',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [
+          { id: '1', created_at: '', service_id: '1' },
+          { id: '2', created_at: '', service_id: '2' },
+        ],
+      },
+      {
+        id: '2',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [{ id: '3', created_at: '', service_id: '3' }],
+      },
+    ]
+    const droppableSource = { droppableId: '0', index: 1 }
+    const droppableDestination = { droppableId: '3', index: 0 }
+
+    const result = move(stages, droppableSource, droppableDestination)
+
+    expect(result).toBeUndefined()
   })
 })
