@@ -24,7 +24,7 @@ import { TableFilterProps, TableHeadProps } from '../table'
 import TableRow from '../table-row/table-row'
 
 export interface TableRowDeploymentProps {
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps<DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase>[]
   data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
   filter?: TableFilterProps
   columnsWidth?: string

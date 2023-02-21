@@ -31,7 +31,7 @@ import {
 
 export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps<EnvironmentVariableEntity>[]
   rowActions: ButtonIconActionElementProps[]
   filter: TableFilterProps
   columnsWidth?: string

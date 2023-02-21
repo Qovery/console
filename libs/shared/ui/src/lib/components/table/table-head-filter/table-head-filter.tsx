@@ -7,20 +7,20 @@ import Menu from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
 import { TableFilterProps, TableHeadCustomFilterProps, TableHeadProps } from '../table'
 
-export interface TableHeadFilterProps {
+export interface TableHeadFilterProps<T> {
   title: string
-  dataHead: TableHeadProps
+  dataHead: TableHeadProps<T>
   currentFilter: string
   setCurrentFilter: Dispatch<SetStateAction<string>>
-  defaultData: any[]
+  defaultData: T[]
   setFilter: Dispatch<SetStateAction<TableFilterProps>>
 }
 
 // create multiple filter
 // need to output the function for testing
-export function createFilter(
-  dataHead: TableHeadProps,
-  defaultData: any[] | undefined,
+export function createFilter<T>(
+  dataHead: TableHeadProps<T>,
+  defaultData: T[] | undefined,
   defaultValue = 'ALL',
   currentFilter: string,
   setCurrentFilter: any,
@@ -62,8 +62,8 @@ export function createFilter(
 }
 
 // group by same value
-export function groupBy(
-  data: Array<any>,
+export function groupBy<T>(
+  data: Array<T>,
   property: string,
   defaultValue = 'ALL',
   currentFilter: string,
@@ -71,9 +71,9 @@ export function groupBy(
   setLocalFilter: any,
   setDataFilterNumber: any,
   setFilter: any,
-  dataHeadFilter?: TableHeadCustomFilterProps
+  dataHeadFilter?: TableHeadCustomFilterProps<T>
 ) {
-  const dataByKeys = data.reduce((acc, obj) => {
+  const dataByKeys: Record<string, T[]> = data.reduce((acc, obj) => {
     // create global key for all objects
     if (!acc[defaultValue]) {
       acc[defaultValue] = []
@@ -82,7 +82,11 @@ export function groupBy(
     // detect children of children "obj.obj"
     if (property.includes('.')) {
       const splitProperty = property.split('.')
-      const key = obj[splitProperty[0]] && obj[splitProperty[0]][splitProperty[1]]
+      // check if the key [splitProperty[1]] exists on obj[splitProperty[0] as keyof T]
+      const key =
+        obj[splitProperty[0] as keyof T] &&
+        splitProperty[1] in obj[splitProperty[0] as keyof T] &&
+        (obj[splitProperty[0] as keyof T] as any)[splitProperty[1]]
 
       if (!acc[key]) {
         acc[key] = []
@@ -91,7 +95,7 @@ export function groupBy(
       acc[defaultValue].push(obj)
       acc[key].push(obj)
     } else {
-      const key = obj[property]
+      const key: string = obj[property as keyof T] as string
 
       if (!acc[key]) {
         acc[key] = []
@@ -101,7 +105,7 @@ export function groupBy(
     }
 
     return acc
-  }, {})
+  }, {} as Record<string, T[]>)
 
   if (dataHeadFilter?.itemContentCustom) {
     delete dataByKeys[defaultValue]
@@ -151,7 +155,7 @@ export function groupBy(
   return result as MenuItemProps[]
 }
 
-export function TableHeadFilter(props: TableHeadFilterProps) {
+export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
   const { title, dataHead, defaultData, setFilter, currentFilter, setCurrentFilter } = props
 
   const ALL = 'ALL'

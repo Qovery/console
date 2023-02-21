@@ -29,7 +29,7 @@ import CrudEnvironmentVariableModalFeature, {
 
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps<EnvironmentVariableEntity>[]
   filter: TableFilterProps
   isLoading: boolean
   columnsWidth?: string

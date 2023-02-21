@@ -63,6 +63,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
           setDataSort={setData}
           className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
           columnsWidth="30% 20% 25% 20%"
+          defaultSortingKey={'name'}
         >
           <>
             {data.map((currentData) => {

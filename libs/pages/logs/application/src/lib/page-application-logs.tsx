@@ -11,7 +11,15 @@ import {
 import { fetchEnvironmentsStatus, selectEnvironmentById } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { Icon, IconAwesomeEnum, LayoutLogs, StatusChip, Table, TableFilterProps } from '@qovery/shared/ui'
+import {
+  Icon,
+  IconAwesomeEnum,
+  LayoutLogs,
+  StatusChip,
+  Table,
+  TableFilterProps,
+  TableHeadProps,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import Row from './ui/row/row'
@@ -74,7 +82,7 @@ export function PageApplicationLogs() {
     }
   }, [applicationId])
 
-  const tableHead = [
+  const tableHead: TableHeadProps<Log>[] = [
     {
       title: 'Pod name',
       className: 'px-4 py-2 h-full text-text-300 w-[198px]',

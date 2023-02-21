@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
@@ -7,36 +7,37 @@ export interface TableFilterProps {
   value?: string
 }
 
-export interface TableProps {
+export interface TableProps<T> {
   children: React.ReactElement
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps<T>[]
   className?: string
   classNameHead?: string
   columnsWidth?: string
-  data?: any[]
+  data?: T[]
   setFilter?: Dispatch<SetStateAction<TableFilterProps>>
-  setDataSort?: Dispatch<SetStateAction<any[]>>
+  setDataSort?: Dispatch<SetStateAction<T[]>>
+  defaultSortingKey?: keyof T
 }
 
-export interface TableHeadProps {
+export interface TableHeadProps<T> {
   title: string
   className?: string
   classNameTitle?: string
   menuWidth?: number
-  filter?: TableHeadCustomFilterProps[]
+  filter?: TableHeadCustomFilterProps<T>[]
   sort?: {
     key: string
   }
 }
 
-export interface TableHeadCustomFilterProps {
+export interface TableHeadCustomFilterProps<T> {
   key: string
   search?: boolean
   title?: string
-  itemContentCustom?: (data: any, currentFilter: string) => React.ReactNode
+  itemContentCustom?: (data: T, currentFilter: string) => React.ReactNode
 }
 
-export function Table(props: TableProps) {
+export function Table<T>(props: TableProps<T>) {
   const {
     dataHead,
     className = 'bg-white rounded-sm',
@@ -46,10 +47,23 @@ export function Table(props: TableProps) {
     data,
     setFilter,
     setDataSort,
+    defaultSortingKey,
   } = props
 
   const ALL = 'ALL'
   const [currentFilter, setCurrentFilter] = useState(ALL)
+  const [isSorted, setIsSorted] = useState(false)
+
+  useEffect(() => {
+    if (!isSorted && defaultSortingKey) {
+      if (data && setDataSort) {
+        const sortedData = data.sort((a, b) =>
+          (a[defaultSortingKey] as string).toLowerCase() > (b[defaultSortingKey] as string).toLowerCase() ? 1 : -1
+        )
+        setDataSort(sortedData)
+      }
+    }
+  }, [data, defaultSortingKey, isSorted, setDataSort])
 
   return (
     <div className={className}>
@@ -75,8 +89,14 @@ export function Table(props: TableProps) {
                 setCurrentFilter={setCurrentFilter}
               />
             )}
-            {sort && data && setDataSort && (
-              <TableHeadSort title={title} currentKey={sort.key} data={data} setData={setDataSort} />
+            {sort && data && (
+              <TableHeadSort
+                title={title}
+                currentKey={sort.key}
+                data={data}
+                setData={setDataSort}
+                setIsSorted={setIsSorted}
+              />
             )}
           </div>
         ))}

@@ -5,7 +5,7 @@ import { HelpSection, Table, TableFilterProps, TableHeadProps } from '@qovery/sh
 import TableRowEnvironmentVariableFeature from '../../feature/table-row-environment-variable-feature/table-row-environment-variable-feature'
 
 export interface PageVariablesProps {
-  tableHead: TableHeadProps[]
+  tableHead: TableHeadProps<EnvironmentVariableEntity>[]
   variables: EnvironmentVariableSecretOrPublic[]
   setData: Dispatch<SetStateAction<EnvironmentVariableSecretOrPublic[]>>
   isLoading: boolean

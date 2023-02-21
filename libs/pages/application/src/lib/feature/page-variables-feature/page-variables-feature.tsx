@@ -98,7 +98,7 @@ export function PageVariablesFeature() {
     }
   }, [environmentVariables, secretEnvironmentVariables, sortVariableMemo, isLoading, environmentVariablesLoadingStatus])
 
-  const tableHead: TableHeadProps[] = [
+  const tableHead: TableHeadProps<EnvironmentVariableEntity>[] = [
     {
       title: `${data.length} variable${data.length > 1 ? 's' : ''}`,
       className: 'px-4 py-2',
