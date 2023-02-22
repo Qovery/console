@@ -45,6 +45,7 @@ export function MenuAccount(props: MenuAccountProps) {
         onClick: () => navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL),
       },
       items: organizations.map((organization: OrganizationEntity) => ({
+        name: organization.name,
         itemContentCustom: blockOrganization(organization),
         containerClassName: '!h-14',
         onClick: () => navigate(ORGANIZATION_URL(organization.id)),
