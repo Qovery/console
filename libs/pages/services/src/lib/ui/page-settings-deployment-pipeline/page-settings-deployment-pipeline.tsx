@@ -78,7 +78,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
         </div>
         <div className="h-full overflow-x-scroll">
           {!stages ? (
-            <div className="flex justify-center max-w-4xl">
+            <div data-testid="stages-loader" className="flex justify-center max-w-4xl">
               <LoaderSpinner className="w-4 mt-5" />
             </div>
           ) : (
@@ -88,6 +88,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                   <Fragment key={index}>
                     {index !== 0 && (
                       <svg
+                        data-testid={`arrow-${index}`}
                         className="shrink-0"
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"

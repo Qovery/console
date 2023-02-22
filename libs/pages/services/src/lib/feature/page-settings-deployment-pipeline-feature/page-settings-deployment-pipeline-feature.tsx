@@ -26,30 +26,30 @@ export function PageSettingsDeploymentPipelineFeature() {
   const { environmentId = '' } = useParams()
   const dispatch: AppDispatch = useDispatch()
 
-  const applications = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
-  const databases = useSelector((state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId))
+  const applications = useSelector(
+    (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
+    (a, b) => a.length === b.length
+  )
+  const databases = useSelector(
+    (state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId),
+    (a, b) => a.length === b.length
+  )
 
   const loadingStatus = useSelector(environmentsLoadingStatus)
 
   const deploymentStage = useSelector<RootState, EnvironmentEntity | undefined>(
     (state) => selectEnvironmentById(state, environmentId),
-    (a, b) => {
-      if (a?.deploymentStage?.items) {
-        return equal(a?.deploymentStage?.items, b?.deploymentStage?.items)
-      } else {
-        return false
-      }
-    }
+    (a, b) => equal(a?.deploymentStage?.items, b?.deploymentStage?.items)
   )?.deploymentStage
 
   useEffect(() => {
     if (loadingStatus === 'loaded') dispatch(fetchDeploymentStageList({ environmentId }))
   }, [dispatch, environmentId, loadingStatus])
 
-  const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
+  const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>(deploymentStage?.items)
 
   useEffect(() => {
-    setStages(deploymentStage?.items)
+    if (deploymentStage?.items) setStages(deploymentStage?.items)
   }, [setStages, deploymentStage?.items])
 
   const onSubmit = async (newStage: StageRequest, prevStage: StageRequest) => {
@@ -67,9 +67,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               ToastEnum.SUCCESS,
               'Your deployment stage is updated',
               'Do you need to go back?',
-              () => {
-                dispatchServiceToDeployment(prevStage, true)
-              },
+              () => dispatchServiceToDeployment(prevStage, true),
               '',
               'Undo update'
             )
