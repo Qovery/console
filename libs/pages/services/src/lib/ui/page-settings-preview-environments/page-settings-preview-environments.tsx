@@ -7,10 +7,11 @@ export interface PageSettingsPreviewEnvironmentsProps {
   onSubmit: () => void
   loading: boolean
   applications?: ApplicationEntity[]
+  toggleAll: (value: boolean) => void
 }
 
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
-  const { onSubmit, applications, loading } = props
+  const { onSubmit, applications, loading, toggleAll } = props
   const { control, formState } = useFormContext()
 
   return (
@@ -30,7 +31,11 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                 <InputToggle
                   dataTestId="toggle-all"
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(value) => {
+                    console.log(value)
+                    toggleAll(value)
+                    field.onChange(value)
+                  }}
                   title="Activate preview environment for all applications"
                   description="Automatically create a preview environment when a merge/pull request is submitted on one of your applications."
                   forceAlignTop

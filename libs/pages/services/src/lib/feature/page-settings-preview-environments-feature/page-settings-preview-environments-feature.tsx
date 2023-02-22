@@ -41,8 +41,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
     mode: 'onChange',
   })
 
-  const watchEnvPreview = methods.watch('auto_preview')
-
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
       setLoading(true)
@@ -80,12 +78,12 @@ export function PageSettingsPreviewEnvironmentsFeature() {
     }
   })
 
-  useEffect(() => {
+  const toggleAll = (value: boolean) => {
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules === 'loaded') {
-      applications?.forEach((application) => methods.setValue(application.id, watchEnvPreview))
+      applications?.forEach((application) => methods.setValue(application.id, value))
     }
-  }, [loadingStatusEnvironmentDeploymentRules, watchEnvPreview, methods, applications])
+  }
 
   useEffect(() => {
     if (loadingStatusEnvironment === 'loaded') dispatch(fetchEnvironmentDeploymentRules(environmentId))
@@ -100,7 +98,12 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsPreviewEnvironments onSubmit={onSubmit} applications={applications} loading={loading} />
+      <PageSettingsPreviewEnvironments
+        onSubmit={onSubmit}
+        applications={applications}
+        loading={loading}
+        toggleAll={toggleAll}
+      />
     </FormProvider>
   )
 }
