@@ -1,6 +1,7 @@
 import equal from 'fast-deep-equal'
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
+import { toast as toastAction } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
@@ -46,47 +47,50 @@ export function PageSettingsDeploymentPipelineFeature() {
   }, [dispatch, environmentId, loadingStatus])
 
   const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
-  const [stagesRequest, setStagesRequest] = useState<StageRequest[] | undefined>()
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     setStages(deploymentStage?.items)
   }, [setStages, deploymentStage?.items])
 
-  const onSubmit = async () => {
-    if (deploymentStage?.items && stagesRequest) {
-      setLoading(true)
+  const onSubmit = async (newStage: StageRequest, prevStage: StageRequest) => {
+    // dispatch function with two actions, undo and update stage
+    function dispatchServiceToDeployment(stage: StageRequest, previous?: boolean) {
+      dispatch(addServiceToDeploymentStage({ deploymentStageId: stage.deploymentStageId, serviceId: stage.serviceId }))
+        .unwrap()
+        .then(() => {
+          if (previous) {
+            // toast after apply undo
+            toast(ToastEnum.SUCCESS, 'Your deployment stage is updated')
+          } else {
+            // default toast when we don't apply undo
+            toast(
+              ToastEnum.SUCCESS,
+              'Your deployment stage is updated',
+              'Do you need to go back?',
+              () => {
+                dispatchServiceToDeployment(prevStage, true)
+              },
+              '',
+              'Undo update'
+            )
+          }
+        })
+        .catch((e) => console.error(e))
+    }
 
-      const result = await Promise.all(
-        stagesRequest.map((stage) =>
-          dispatch(
-            addServiceToDeploymentStage({ deploymentStageId: stage.deploymentStageId, serviceId: stage.serviceId })
-          )
-        )
-      )
-
-      if (result) {
-        setLoading(false)
-        toast(ToastEnum.SUCCESS, 'Your deployment stage is updated')
-      }
+    if (deploymentStage?.items) {
+      // remove current toast to avoid flood of multiple toasts
+      toastAction.remove()
+      // dispatch action
+      dispatchServiceToDeployment(newStage)
     }
   }
-
-  const discardChanges = !equal(deploymentStage?.items, stages)
 
   return (
     <PageSettingsDeploymentPipeline
       stages={stages}
       setStages={setStages}
-      stagesRequest={stagesRequest}
-      setStagesRequest={setStagesRequest}
       onSubmit={onSubmit}
-      onReset={() => {
-        setStages(deploymentStage?.items)
-        setStagesRequest(undefined)
-      }}
-      discardChanges={discardChanges}
-      loading={loading}
       services={[...applications, ...databases]}
     />
   )

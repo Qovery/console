@@ -2,25 +2,20 @@ import { DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-
 import { Dispatch, Fragment, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { HelpSection, LoaderSpinner, StickyActionFormToaster } from '@qovery/shared/ui'
+import { HelpSection, LoaderSpinner } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import BadgeDeploymentOrder from './badge-deployment-order/badge-deployment-order'
 
 export interface PageSettingsDeploymentPipelineProps {
-  onSubmit: () => void
-  onReset: () => void
-  discardChanges: boolean
-  loading: boolean
+  onSubmit: (newStage: StageRequest, prevStage: StageRequest) => void
   setStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
-  setStagesRequest: Dispatch<SetStateAction<StageRequest[] | undefined>>
   stages?: DeploymentStageResponse[]
-  stagesRequest?: StageRequest[]
   services?: (DatabaseEntity | ApplicationEntity)[]
 }
 
 export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipelineProps) {
-  const { stages, setStages, setStagesRequest, onSubmit, onReset, discardChanges, loading, services } = props
+  const { stages, setStages, onSubmit, services } = props
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result
@@ -40,20 +35,20 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
       const newStages = move(stages, source, destination) as DeploymentStageResponse[]
       setStages(newStages)
 
-      // add stage for final request
+      // new stage for final request
       const newStageRequest: StageRequest = {
         deploymentStageId: stages[destinationIndex].id,
         serviceId: draggableId,
       }
 
-      setStagesRequest((prev) => {
-        if (prev) {
-          // remove current value if already exist
-          return [...prev.filter((current) => current.serviceId !== newStageRequest.serviceId), newStageRequest]
-        } else {
-          return [newStageRequest]
-        }
-      })
+      // previous stage for final request if undo
+      const prevStageRequest: StageRequest = {
+        deploymentStageId: stages[sourceIndex].id,
+        serviceId: draggableId,
+      }
+
+      // submit change
+      onSubmit(newStageRequest, prevStageRequest)
     }
   }
 
@@ -144,15 +139,6 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             </div>
           )}
         </div>
-        {stages && (
-          <StickyActionFormToaster
-            className="mb-5"
-            visible={discardChanges}
-            onSubmit={onSubmit}
-            onReset={onReset}
-            loading={loading}
-          />
-        )}
       </div>
       <HelpSection
         description="Need help? You may find these links useful"
