@@ -20,16 +20,16 @@
     "@nrwl/cypress": "15.7.0",
     "@nrwl/devkit": "15.7.0",
     "@nrwl/eslint-plugin-nx": "15.7.0",
+    "@nrwl/jest": "15.7.0",
+    "@nrwl/js": "15.7.0",
     "@nrwl/linter": "15.7.0",
     "@nrwl/nx-cloud": "15.0.3",
     "@nrwl/react": "15.7.0",
     "@nrwl/storybook": "15.7.0",
     "@nrwl/tao": "15.7.0",
     "@nrwl/web": "15.7.0",
-    "@nrwl/workspace": "15.7.0",
-    "@nrwl/jest": "15.7.0",
-    "@nrwl/js": "15.7.0",
     "@nrwl/webpack": "15.7.0",
+    "@nrwl/workspace": "15.7.0",
     "@radix-ui/react-accordion": "^0.1.6",
     "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-slider": "^1.0.0",
@@ -72,7 +72,8 @@
     "react-use-websocket": "^4.2.0",
     "regenerator-runtime": "0.13.7",
     "tailwindcss": "3.2.4",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "@svgr/webpack": "^6.5.1"
   },
   "resolutions": {
     "axios": "0.27.2"
@@ -88,7 +89,6 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@semantic-release/github": "^8.0.6",
     "@storybook/addon-knobs": "^6.4.0",
-    "@svgr/webpack": "^6.2.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "13.4.0",
     "@testing-library/react-hooks": "^8.0.0",
