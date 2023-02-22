@@ -25,6 +25,7 @@ import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-ic
 import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import { MenuData } from '../../menu/menu'
 import { MenuItemProps } from '../../menu/menu-item/menu-item'
 import StatusChip from '../../status-chip/status-chip'
 import Tooltip from '../../tooltip/tooltip'
@@ -62,9 +63,10 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     locationIsApplicationLogs ||
     locationIsDeploymentLogs
 
-  const clustersMenu = [
+  const clustersMenu: MenuData = [
     {
       title: 'Clusters',
+      sortAlphabetically: true,
       search: true,
       items: clusters
         ? clusters?.map((cluster: Cluster) => ({
@@ -85,10 +87,11 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     },
   ]
 
-  const projectMenu = [
+  const projectMenu: MenuData = [
     {
       title: 'Projects',
       search: true,
+      sortAlphabetically: true,
       button: {
         label: (
           <span>
@@ -114,10 +117,11 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     },
   ]
 
-  const environmentMenu = [
+  const environmentMenu: MenuData = [
     {
       title: 'Environments',
       search: true,
+      sortAlphabetically: true,
       items: environments
         ? environments?.map((environment: EnvironmentEntity) => ({
             name: environment.name,
@@ -141,10 +145,11 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   const mergedServices =
     applications && databases && ([...applications, ...databases] as ApplicationEntity[] | DatabaseEntity[])
 
-  const applicationMenu = [
+  const applicationMenu: MenuData = [
     {
       title: 'Services',
       search: true,
+      sortAlphabetically: true,
       items: applications
         ? (mergedServices?.map((service: ApplicationEntity | DatabaseEntity) => ({
             name: service.name,

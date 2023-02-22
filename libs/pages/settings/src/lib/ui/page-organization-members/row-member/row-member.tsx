@@ -110,15 +110,12 @@ export function RowMember(props: RowMemberProps) {
 
   const menus: MenuData = [
     {
-      dontSortAlphabetically: true,
       items: itemsBasicRoles,
     },
     {
-      dontSortAlphabetically: true,
       items: itemsCustomRoles,
     },
     {
-      dontSortAlphabetically: true,
       items: [
         {
           name: 'Create new role',
@@ -171,7 +168,6 @@ export function RowMember(props: RowMemberProps) {
       iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
       menus: [
         {
-          dontSortAlphabetically: true,
           items: [
             {
               name: 'Resend invite',
@@ -191,7 +187,6 @@ export function RowMember(props: RowMemberProps) {
           ],
         },
         {
-          dontSortAlphabetically: true,
           items: [
             {
               name: 'Revoke invite',

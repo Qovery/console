@@ -72,7 +72,7 @@ describe('Table', () => {
     ]
 
     const spy = jest.fn()
-    render(<Table {...props} defaultSortingKey={'name'} setDataSort={spy} data={[{ name: 'b' }, { name: 'a' }]} />)
+    render(<Table {...props} defaultSortingKey="name" setDataSort={spy} data={[{ name: 'b' }, { name: 'a' }]} />)
 
     await waitFor(() => {
       expect(spy).toHaveBeenCalled()

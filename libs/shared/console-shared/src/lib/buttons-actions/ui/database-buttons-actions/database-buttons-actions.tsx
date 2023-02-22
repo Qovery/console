@@ -148,10 +148,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       }
     }
 
-    setButtonStatusActions([
-      { items: topItems, dontSortAlphabetically: true },
-      { items: bottomItems, dontSortAlphabetically: true },
-    ])
+    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
   }, [database, environmentMode, environmentId, dispatch, openModalConfirmation])
 
   const canDelete = database.status && isDeleteAvailable(database.status.state)
@@ -171,7 +168,6 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
       menus: [
         {
-          dontSortAlphabetically: true,
           items: [
             {
               name: 'Copy identifiers',
@@ -183,7 +179,6 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
         ...(canDelete
           ? [
               {
-                dontSortAlphabetically: true,
                 items: [
                   {
                     name: 'Delete database',

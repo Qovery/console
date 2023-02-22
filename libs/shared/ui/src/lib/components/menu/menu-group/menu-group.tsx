@@ -9,7 +9,7 @@ export interface MenuGroupProps {
     items: MenuItemProps[]
     label?: string
     title?: string
-    dontSortAlphabetically?: boolean
+    sortAlphabetically?: boolean
     button?: {
       label?: string | ReactNode
       onClick?: () => void
@@ -41,7 +41,7 @@ export function MenuGroup(props: MenuGroupProps) {
       return item.name?.toUpperCase().includes(currentSearch.toUpperCase())
     })
 
-    setFilteredItems(menu.dontSortAlphabetically ? filtered : sortByKey(filtered, 'name'))
+    setFilteredItems(menu.sortAlphabetically ? sortByKey(filtered, 'name') : filtered)
   }, [currentSearch, currentItems])
 
   const filterData = (value: string) => {
