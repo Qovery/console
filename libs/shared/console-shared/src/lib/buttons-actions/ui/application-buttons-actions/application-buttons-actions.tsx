@@ -246,7 +246,10 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       }
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    setButtonStatusActions([
+      { items: topItems, dontSortAlphabetically: true },
+      { items: bottomItems, dontSortAlphabetically: true },
+    ])
   }, [
     application,
     environmentMode,
@@ -280,6 +283,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
       menus: [
         {
+          dontSortAlphabetically: true,
           items: [
             {
               name: 'Logs',
@@ -323,6 +327,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         ...(canDelete
           ? [
               {
+                dontSortAlphabetically: true,
                 items: [
                   {
                     name: 'Delete service',

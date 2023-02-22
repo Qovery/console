@@ -124,7 +124,10 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       }
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    setButtonStatusActions([
+      { items: topItems, dontSortAlphabetically: true },
+      { items: bottomItems, dontSortAlphabetically: true },
+    ])
   }, [cluster, dispatch, openModalConfirmation, organizationId])
 
   const canDelete = cluster.extendedStatus?.status?.status && isDeleteAvailable(cluster.extendedStatus?.status?.status)
@@ -164,6 +167,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
       menus: [
         {
+          dontSortAlphabetically: true,
           items: [
             {
               name: 'Copy identifier',
@@ -175,6 +179,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
         ...(canDelete
           ? [
               {
+                dontSortAlphabetically: true,
                 items: [
                   {
                     name: 'Delete cluster',
