@@ -62,8 +62,7 @@ export const repositorySlice = createSlice({
   name: REPOSITORY_FEATURE_KEY,
   initialState: initialRepositoryState,
   reducers: {
-    add: repositoryAdapter.addOne,
-    remove: repositoryAdapter.removeOne,
+    removeAll: repositoryAdapter.removeAll, // we need this action which is not an async action
   },
   extraReducers: (builder) => {
     builder

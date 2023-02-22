@@ -4,6 +4,7 @@ import {
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
+  SETTINGS_GIT_REPOSITORY_ACCESS_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_DANGER_ZONE_URL,
   SETTINGS_PROJECT_GENERAL_URL,
@@ -14,6 +15,7 @@ import {
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
 import { PageOrganizationDangerZoneFeature } from '../feature/page-organization-danger-zone-feature/page-organization-danger-zone-feature'
 import { PageOrganizationGeneralFeature } from '../feature/page-organization-general-feature/page-organization-general-feature'
+import PageOrganizationGithubRepositoryAccessFeature from '../feature/page-organization-github-repository-access-feature/page-organization-github-repository-access-feature'
 import { PageOrganizationMembersFeature } from '../feature/page-organization-members-feature/page-organization-members-feature'
 import { PageOrganizationRolesEditFeature } from '../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import { PageOrganizationRolesFeature } from '../feature/page-organization-roles-feature/page-organization-roles-feature'
@@ -45,6 +47,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_CONTAINER_REGISTRIES_URL,
     component: <PageOrganizationContainerRegistriesFeature />,
+  },
+  {
+    path: SETTINGS_GIT_REPOSITORY_ACCESS_URL,
+    component: <PageOrganizationGithubRepositoryAccessFeature />,
   },
   {
     path: SETTINGS_DANGER_ZONE_URL,

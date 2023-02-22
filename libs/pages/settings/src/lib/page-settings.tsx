@@ -6,6 +6,7 @@ import {
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
+  SETTINGS_GIT_REPOSITORY_ACCESS_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_DANGER_ZONE_URL,
   SETTINGS_PROJECT_GENERAL_URL,
@@ -55,6 +56,11 @@ export function PageSettings() {
       url: pathSettings + SETTINGS_CONTAINER_REGISTRIES_URL,
     },
     {
+      title: 'Git repositories access',
+      icon: IconAwesomeEnum.KEY,
+      url: pathSettings + SETTINGS_GIT_REPOSITORY_ACCESS_URL,
+    },
+    {
       title: 'Danger zone',
       icon: IconAwesomeEnum.SKULL,
       url: pathSettings + SETTINGS_DANGER_ZONE_URL,
@@ -80,12 +86,6 @@ export function PageSettings() {
       title: 'General',
       icon: IconAwesomeEnum.WHEEL,
       onClick: () => window.open('https://console.qovery.com/platform/organization/user/settings/general'),
-    },
-    {
-      title: 'Git permission',
-      icon: IconAwesomeEnum.CODE_BRANCH,
-      onClick: () =>
-        window.open(`https://console.qovery.com/platform/organization/${organizationId}/settings/git-permission`),
     },
   ]
 

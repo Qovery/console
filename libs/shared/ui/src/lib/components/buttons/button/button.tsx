@@ -88,7 +88,7 @@ export function Button(props: ButtonProps) {
     )
   } else if (link && external) {
     return (
-      <a className={defineClass} href={link} target="_blank" rel="noreferrer">
+      <a className={defineClass} href={link} target="_blank" rel="noreferrer" data-testid={props.dataTestId || ''}>
         {content()}
       </a>
     )

@@ -27,6 +27,7 @@ root.render(
       audience={environment.oauth_audience}
       useRefreshTokens={true}
       cacheLocation={'localstorage'}
+      skipRedirectCallback={window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL}
     >
       <Provider store={store}>
         <BrowserRouter>
