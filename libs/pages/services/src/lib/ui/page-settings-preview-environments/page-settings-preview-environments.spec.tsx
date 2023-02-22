@@ -9,6 +9,7 @@ import PageSettingsPreviewEnvironments, {
 const props: PageSettingsPreviewEnvironmentsProps = {
   onSubmit: jest.fn(),
   applications: applicationFactoryMock(3),
+  toggleAll: jest.fn(),
 }
 
 describe('PageSettingsPreviewEnvironments', () => {

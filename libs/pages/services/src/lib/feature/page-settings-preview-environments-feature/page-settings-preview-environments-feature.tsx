@@ -81,7 +81,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
   const toggleAll = (value: boolean) => {
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules === 'loaded') {
-      applications?.forEach((application) => methods.setValue(application.id, value))
+      applications?.forEach((application) => methods.setValue(application.id, value, { shouldDirty: true }))
     }
   }
 
@@ -90,7 +90,9 @@ export function PageSettingsPreviewEnvironmentsFeature() {
   }, [dispatch, loadingStatusEnvironment, environmentId])
 
   useEffect(() => {
-    if (loadingStatusEnvironmentDeploymentRules === 'loaded') {
+    // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
+    // previously the first endpoint updating the environment was making us come back to this useEffect
+    if (loadingStatusEnvironmentDeploymentRules === 'loaded' && !loading) {
       methods.setValue('auto_preview', environmentDeploymentRules?.auto_preview)
       applications?.forEach((application) => methods.setValue(application.id, application.auto_preview))
     }

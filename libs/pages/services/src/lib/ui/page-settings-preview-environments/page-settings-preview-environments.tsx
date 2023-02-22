@@ -32,7 +32,6 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                   dataTestId="toggle-all"
                   value={field.value}
                   onChange={(value) => {
-                    console.log(value)
                     toggleAll(value)
                     field.onChange(value)
                   }}
