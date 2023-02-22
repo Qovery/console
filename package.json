@@ -30,7 +30,6 @@
     "@nrwl/tao": "15.7.0",
     "@nrwl/web": "15.7.0",
     "@nrwl/workspace": "15.7.0",
-    "@nrwl/jest": "15.7.0",
     "@radix-ui/react-accordion": "^0.1.6",
     "@radix-ui/react-dialog": "^1.0.2",
     "@radix-ui/react-slider": "^1.0.0",
