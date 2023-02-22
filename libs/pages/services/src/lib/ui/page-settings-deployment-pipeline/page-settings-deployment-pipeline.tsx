@@ -1,5 +1,5 @@
 import { DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-typescript-axios'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, Fragment, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { HelpSection, LoaderSpinner, StickyActionFormToaster } from '@qovery/shared/ui'
@@ -90,7 +90,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             <div className="flex px-5 pb-5">
               <DragDropContext onDragEnd={onDragEnd}>
                 {stages?.map((stage, index) => (
-                  <>
+                  <Fragment key={index}>
                     {index !== 0 && (
                       <svg
                         className="shrink-0"
@@ -103,7 +103,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                         <path fill="#C6D3E7" d="M16 21.5l-7.5-4.33v8.66L16 21.5zm-16 .75h9.25v-1.5H0v1.5z"></path>
                       </svg>
                     )}
-                    <div key={index} className="w-60 shrink-0 rounded">
+                    <div className="w-60 shrink-0 rounded">
                       <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
                         <span className="block text-text-500 text-xxs font-bold">{stage.name}</span>
@@ -138,7 +138,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       </Droppable>
                     </div>
                     {index === stages.length - 1 && <div className="block w-4 shrink-0"></div>}
-                  </>
+                  </Fragment>
                 ))}
               </DragDropContext>
             </div>
