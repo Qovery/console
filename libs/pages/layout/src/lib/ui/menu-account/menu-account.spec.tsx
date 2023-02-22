@@ -1,9 +1,9 @@
 import { act, render } from '@testing-library/react'
 import { SignUp } from 'qovery-typescript-axios'
-import { organizationFactoryMock } from '@qovery/shared/factories'
-import { userSignUpFactoryMock } from '@qovery/shared/factories'
+import { organizationFactoryMock, userSignUpFactoryMock } from '@qovery/shared/factories'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { LOGOUT_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
+import { sortByKey } from '@qovery/shared/utils'
 import MenuAccount, { MenuAccountProps } from './menu-account'
 
 const mockNavigate = jest.fn()
@@ -45,8 +45,10 @@ describe('MenuAccount', () => {
       items[1]?.click()
     })
 
-    expect(items[1]?.textContent).toBe(mockOrganizations[1].name)
-    expect(mockNavigate).toHaveBeenCalledWith(ORGANIZATION_URL('1'))
+    const sortedOrganizations = sortByKey(mockOrganizations)
+
+    expect(items[1]?.textContent).toBe(sortedOrganizations[1].name)
+    expect(mockNavigate).toHaveBeenCalledWith(ORGANIZATION_URL(sortedOrganizations[1].id))
   })
 
   it('should have navigate to logout', async () => {
