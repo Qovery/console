@@ -41,6 +41,7 @@ Primary.args = {
         },
         {
           title: 'Restrictions',
+          badge: 'beta',
         },
       ],
     },
