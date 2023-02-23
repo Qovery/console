@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { DeploymentStageResponse } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DeploymentStageResponse, EnvironmentAllOfCloudProvider } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,6 +25,10 @@ export interface StageRequest {
 export function PageSettingsDeploymentPipelineFeature() {
   const { environmentId = '' } = useParams()
   const dispatch: AppDispatch = useDispatch()
+
+  const cloudProvider = useSelector<RootState, EnvironmentAllOfCloudProvider | undefined>(
+    (state) => selectEnvironmentById(state, environmentId)?.cloud_provider
+  )
 
   const applications = useSelector(
     (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
@@ -90,6 +94,7 @@ export function PageSettingsDeploymentPipelineFeature() {
       setStages={setStages}
       onSubmit={onSubmit}
       services={[...applications, ...databases]}
+      cloudProvider={cloudProvider?.provider as CloudProviderEnum}
     />
   )
 }

@@ -83,6 +83,6 @@ export * from './lib/components/inputs/input-select/input-select'
 export * from './lib/components/table/table-row-deployment/table-row-deployment'
 export * from './lib/components/enable-box/enable-box'
 export * from './lib/components/property-card/property-card'
-
 export * from './lib/utils/toast'
 export * from './lib/utils/utils/toast-error'
+export * from './lib/components/badge-service/badge-service'
