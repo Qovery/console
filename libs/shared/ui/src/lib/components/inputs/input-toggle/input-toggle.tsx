@@ -33,6 +33,9 @@ export function InputToggle(props: InputToggleProps) {
 
   const changeToggle = () => {
     if (disabled) return
+    // we need to put that in a timeout otherwise the animation classes are added too quickly and the animation is triggered
+
+    setAnimateEnabled(true)
     onChange && onChange(!toggleActive)
     setToggleActive(!toggleActive)
   }

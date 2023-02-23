@@ -91,7 +91,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   useEffect(() => {
     // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
-    // previously the first endpoint updating the environment was making us come back to this useEffect
     if (loadingStatusEnvironmentDeploymentRules === 'loaded' && !loading) {
       methods.setValue('auto_preview', environmentDeploymentRules?.auto_preview)
       applications?.forEach((application) => methods.setValue(application.id, application.auto_preview))
