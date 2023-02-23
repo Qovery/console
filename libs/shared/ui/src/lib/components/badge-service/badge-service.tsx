@@ -21,7 +21,7 @@ export const iconByService = (
       return (
         <Icon
           name={buildMode === BuildModeEnum.DOCKER ? IconEnum.DOCKER : IconEnum.BUILDPACKS}
-          className={`w-full h-full ${buildMode === BuildModeEnum.DOCKER ? 'relative left-[1px]' : ''}`}
+          className={`w-full h-full${buildMode === BuildModeEnum.DOCKER ? ' relative left-[1px]' : ''}`}
         />
       )
     case ServiceTypeEnum.CONTAINER:
