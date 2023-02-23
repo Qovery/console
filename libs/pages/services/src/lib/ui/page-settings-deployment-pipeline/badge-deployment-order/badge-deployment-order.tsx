@@ -19,7 +19,7 @@ export function BadgeDeploymentOrder(props: BadgeDeploymentOrderProps) {
           strokeWidth="0.5"
         />
       </svg>
-      <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-text-100 text-xxs">
+      <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-text-100 text-2xs">
         {deploymentOrder}
       </span>
     </div>

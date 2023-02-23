@@ -107,7 +107,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                     className="!text-xs ml-4 gap-0.5"
                     link="https://hub.qovery.com/docs/using-qovery/configuration/database/#modes"
                     linkLabel="Learn more"
-                    iconRight="icon-solid-arrow-up-right-from-square text-xxs"
+                    iconRight="icon-solid-arrow-up-right-from-square text-2xs"
                     external
                   />
                 </div>
@@ -146,7 +146,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                     className="!text-xs ml-4 gap-0.5"
                     link="https://hub.qovery.com/docs/using-qovery/configuration/database/#accessibility"
                     linkLabel="Learn more"
-                    iconRight="icon-solid-arrow-up-right-from-square text-xxs"
+                    iconRight="icon-solid-arrow-up-right-from-square text-2xs"
                     external
                   />
                 </>

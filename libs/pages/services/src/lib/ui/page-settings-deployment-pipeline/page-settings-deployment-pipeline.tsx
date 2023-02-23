@@ -102,7 +102,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                     <div className="w-60 shrink-0 rounded">
                       <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
-                        <span className="block text-text-500 text-xxs font-bold">{stage.name}</span>
+                        <span className="block text-text-500 text-2xs font-bold">{stage.name}</span>
                       </div>
                       <Droppable key={index} droppableId={`${index}`}>
                         {(provided, snapshot) => (

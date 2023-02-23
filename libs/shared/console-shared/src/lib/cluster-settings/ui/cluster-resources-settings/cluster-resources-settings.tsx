@@ -83,7 +83,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 link="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
                 linkLabel="How does it work?"
                 iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-                iconRightClassName="text-xxs relative top-[1px]"
+                iconRightClassName="text-2xs relative top-[1px]"
                 external
               />
             </div>
