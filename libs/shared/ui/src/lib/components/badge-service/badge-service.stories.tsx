@@ -6,6 +6,12 @@ import { BadgeService, BadgeServiceProps } from './badge-service'
 export default {
   component: BadgeService,
   title: 'BadgeService',
+  parameters: {
+    backgrounds: {
+      default: 'white',
+      values: [{ name: 'white', value: '#fff' }],
+    },
+  },
 } as Meta
 
 const Template: Story<BadgeServiceProps> = (args) => <BadgeService {...args} />
@@ -14,5 +20,6 @@ export const Primary = Template.bind({})
 Primary.args = {
   serviceType: ServiceTypeEnum.DATABASE,
   cloudProvider: CloudProviderEnum.AWS,
-  size: '64',
+  size: '32',
+  padding: '2',
 }
