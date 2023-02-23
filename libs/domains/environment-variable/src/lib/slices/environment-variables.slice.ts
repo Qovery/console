@@ -350,6 +350,14 @@ export const deleteEnvironmentVariable = createAsyncThunk(
   }
 )
 
+const getToasterDescription = (scope: APIVariableScopeEnum) => {
+  return scope === APIVariableScopeEnum.APPLICATION ||
+    scope === APIVariableScopeEnum.JOB ||
+    scope === APIVariableScopeEnum.CONTAINER
+    ? 'You need to redeploy your service for your changes to be applied'
+    : 'You need to redeploy your environment for your changes to be applied'
+}
+
 export const initialEnvironmentVariablesState: EnvironmentVariablesState = environmentVariablesAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -392,17 +400,10 @@ export const environmentVariablesSlice = createSlice({
         addVariableToStore(state, action)
         state.error = null
 
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'Your variable has been created. You need to redeploy your service for your changes to be applied'
-            : 'Your variable has been created. You need to redeploy your environment for your changes to be applied'
-
         toast(
           ToastEnum.SUCCESS,
           'Creation success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'
@@ -416,17 +417,10 @@ export const environmentVariablesSlice = createSlice({
         addVariableToStore(state, action)
         state.error = null
 
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'Your variable has been created. You need to redeploy your service for your changes to be applied'
-            : 'Your variable has been created. You need to redeploy your environment for your changes to be applied'
-
         toast(
           ToastEnum.SUCCESS,
           'Creation success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'
@@ -440,17 +434,10 @@ export const environmentVariablesSlice = createSlice({
         addVariableToStore(state, action)
         state.error = null
 
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'Your variable has been created. You need to redeploy your service for your changes to be applied'
-            : 'Your variable has been created. You need to redeploy your environment for your changes to be applied'
-
         toast(
           ToastEnum.SUCCESS,
           'Creation success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'
@@ -473,17 +460,10 @@ export const environmentVariablesSlice = createSlice({
         })
         state.error = null
 
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'You need to redeploy your service for your changes to be applied'
-            : 'You need to redeploy your environment for your changes to be applied'
-
         toast(
           ToastEnum.SUCCESS,
           'Edition success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'

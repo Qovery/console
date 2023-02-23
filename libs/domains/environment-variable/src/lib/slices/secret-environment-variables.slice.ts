@@ -294,6 +294,14 @@ export const deleteSecret = createAsyncThunk(
   }
 )
 
+const getToasterDescription = (scope: APIVariableScopeEnum) => {
+  return scope === APIVariableScopeEnum.APPLICATION ||
+    scope === APIVariableScopeEnum.JOB ||
+    scope === APIVariableScopeEnum.CONTAINER
+    ? 'You need to redeploy your service for your changes to be applied'
+    : 'You need to redeploy your environment for your changes to be applied'
+}
+
 export const initialSecretEnvironmentVariablesState: SecretEnvironmentVariablesState =
   secretEnvironmentVariablesAdapter.getInitialState({
     loadingStatus: 'not loaded',
@@ -339,17 +347,10 @@ export const secretEnvironmentVariablesSlice = createSlice({
         addSecretToStore(state, action)
         state.error = null
 
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'You need to redeploy your service for your changes to be applied'
-            : 'You need to redeploy your environment for your changes to be applied'
-
         toast(
           ToastEnum.SUCCESS,
           'Creation success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'
@@ -362,17 +363,11 @@ export const secretEnvironmentVariablesSlice = createSlice({
       .addCase(createAliasSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         addSecretToStore(state, action)
         state.error = null
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'You need to redeploy your service for your changes to be applied'
-            : 'You need to redeploy your environment for your changes to be applied'
 
         toast(
           ToastEnum.SUCCESS,
           'Creation success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'
@@ -385,17 +380,11 @@ export const secretEnvironmentVariablesSlice = createSlice({
       .addCase(createOverrideSecret.fulfilled, (state: SecretEnvironmentVariablesState, action) => {
         addSecretToStore(state, action)
         state.error = null
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'You need to redeploy your service for your changes to be applied'
-            : 'You need to redeploy your environment for your changes to be applied'
 
         toast(
           ToastEnum.SUCCESS,
           'Creation success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'
@@ -417,17 +406,10 @@ export const secretEnvironmentVariablesSlice = createSlice({
         })
         state.error = null
 
-        const toasterDescription =
-          action.meta.arg.scope === APIVariableScopeEnum.APPLICATION ||
-          action.meta.arg.scope === APIVariableScopeEnum.JOB ||
-          action.meta.arg.scope === APIVariableScopeEnum.CONTAINER
-            ? 'You need to redeploy your service for your changes to be applied'
-            : 'You need to redeploy your environment for your changes to be applied'
-
         toast(
           ToastEnum.SUCCESS,
           'Edition success',
-          toasterDescription,
+          getToasterDescription(action.meta.arg.scope),
           action.meta.arg.toasterCallback,
           undefined,
           'Redeploy'
