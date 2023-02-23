@@ -54,7 +54,12 @@ export function DraggableItem(props: DraggableItemProps) {
       style={{ ...provided?.draggableProps.style }}
       className={snapshot && classNameItem(snapshot.isDragging)}
     >
-      <BadgeService className="mr-2" serviceType={serviceType} cloudProvider={cloudProvider} />
+      <BadgeService
+        className="mr-2"
+        serviceType={serviceType}
+        cloudProvider={cloudProvider}
+        buildMode={(service as ApplicationEntity).build_mode}
+      />
       {content(service?.name, (service as DatabaseEntity)?.type, (service as DatabaseEntity).mode)}
     </div>
   )

@@ -1,4 +1,6 @@
 import { Meta, Story } from '@storybook/react'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { BadgeService, BadgeServiceProps } from './badge-service'
 
 export default {
@@ -10,5 +12,7 @@ const Template: Story<BadgeServiceProps> = (args) => <BadgeService {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {
-  type: 'Rémi',
+  serviceType: ServiceTypeEnum.DATABASE,
+  cloudProvider: CloudProviderEnum.AWS,
+  size: '64',
 }

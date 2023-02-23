@@ -1,20 +1,31 @@
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, CloudProviderEnum } from 'qovery-typescript-axios'
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 
 export interface BadgeServiceProps {
   serviceType: ServiceTypeEnum
   cloudProvider: CloudProviderEnum
+  buildMode?: BuildModeEnum
   size?: string
+  padding?: string
   className?: string
 }
 
-export const iconByService = (serviceType: ServiceTypeEnum, cloudProvider: CloudProviderEnum) => {
+export const iconByService = (
+  serviceType: ServiceTypeEnum,
+  cloudProvider: CloudProviderEnum,
+  buildMode?: BuildModeEnum
+) => {
   switch (serviceType) {
     case ServiceTypeEnum.APPLICATION:
-      return <Icon name={IconEnum.DOCKER} className="w-full h-full relative left-[1px]" />
+      return (
+        <Icon
+          name={buildMode === BuildModeEnum.DOCKER ? IconEnum.DOCKER : IconEnum.BUILDPACKS}
+          className={`w-full h-full ${buildMode === BuildModeEnum.DOCKER ? 'relative left-[1px]' : ''}`}
+        />
+      )
     case ServiceTypeEnum.CONTAINER:
-      return <Icon name={IconEnum.CONTAINER} className="w-full h-full relative left-[1px]" />
+      return <Icon name={IconEnum.CONTAINER} className="w-full h-full" />
     case ServiceTypeEnum.CRON_JOB:
       return <Icon name={IconEnum.CRON_JOB} className="w-full h-full" />
     case ServiceTypeEnum.LIFECYCLE_JOB:
@@ -30,7 +41,7 @@ export const iconByService = (serviceType: ServiceTypeEnum, cloudProvider: Cloud
 }
 
 export function BadgeService(props: BadgeServiceProps) {
-  const { serviceType, cloudProvider, size = '28', className = '' } = props
+  const { serviceType, cloudProvider, buildMode, size = '28', padding = '1', className = '' } = props
 
   return (
     <div
@@ -38,9 +49,10 @@ export function BadgeService(props: BadgeServiceProps) {
       style={{
         width: `${size}px`,
         height: `${size}px`,
+        padding: `${padding}px`,
       }}
     >
-      <span className="w-full h-full p-1">{iconByService(serviceType, cloudProvider)}</span>
+      <span className="w-full h-full p-1">{iconByService(serviceType, cloudProvider, buildMode)}</span>
     </div>
   )
 }
