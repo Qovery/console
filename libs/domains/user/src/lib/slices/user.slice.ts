@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { MembersApi } from 'qovery-typescript-axios'
-import { ProjectsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
 import { UserInterface } from '../interfaces'
@@ -44,17 +43,13 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(acceptMembershipInvitation.fulfilled, (state: ProjectsState) => {
+      .addCase(acceptMembershipInvitation.fulfilled, (state: UserInterface) => {
         toast(ToastEnum.SUCCESS, 'Invitation Accepted')
       })
-      .addCase(acceptMembershipInvitation.rejected, (state: ProjectsState, action) => {
-        return toast(
-          ToastEnum.ERROR,
-          'Invitation Member',
-          'The invitation can not be accepted. ' + action.error.message
-        )
+      .addCase(acceptMembershipInvitation.rejected, (state: UserInterface, action) => {
+        toast(ToastEnum.ERROR, 'Invitation Member', 'The invitation can not be accepted. ' + action.error.message)
       })
-      .addCase(fetchMemberInvitation.rejected, (state: ProjectsState, action) => {
+      .addCase(fetchMemberInvitation.rejected, (state: UserInterface, action) => {
         toastError(action.error, 'Invitation Member', 'This member invitation is not correct')
       })
   },
