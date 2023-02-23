@@ -30,19 +30,19 @@ import {
 } from '@qovery/shared/ui'
 import { timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
-export interface TableRowServicesProps {
+export interface TableRowServicesProps<T> {
   data: ApplicationEntity | DatabaseEntity
   filter: TableFilterProps
   type: ServiceTypeEnum
   environmentMode: string
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps<T>[]
   link: string
   columnsWidth?: string
   removeService?: (applicationId: string, type: ServiceTypeEnum, name?: string) => void
   isLoading?: boolean
 }
 
-export function TableRowServices(props: TableRowServicesProps) {
+export function TableRowServices<T>(props: TableRowServicesProps<T>) {
   const {
     type,
     data,

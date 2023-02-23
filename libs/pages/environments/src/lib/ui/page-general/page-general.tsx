@@ -36,10 +36,14 @@ function PageGeneralMemo(props: PageGeneralProps) {
   const { openModal, closeModal } = useModal()
   const [data, setData] = useState(environments)
   const [filter, setFilter] = useState<TableFilterProps>({})
+  const [loading, setLoading] = useState(isLoading)
 
   useEffect(() => {
     setData(environments)
-  }, [environments])
+    setLoading(isLoading)
+  }, [environments, isLoading])
+
+  useEffect(() => {}, [data])
 
   const tableHead = [
     {
@@ -89,6 +93,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
           setDataSort={setData}
           className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
           columnsWidth={columnWidth}
+          defaultSortingKey="name"
         >
           <>
             {data.map((currentData) => (
@@ -99,7 +104,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
                 dataHead={tableHead}
                 link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
                 columnsWidth={columnWidth}
-                isLoading={isLoading}
+                isLoading={loading}
               />
             ))}
           </>

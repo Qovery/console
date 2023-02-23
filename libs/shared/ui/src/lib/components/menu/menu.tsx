@@ -21,6 +21,7 @@ export type MenuData = {
   items: MenuItemProps[]
   label?: string
   title?: string
+  sortAlphabetically?: boolean
   button?: {
     label: string | ReactNode
     onClick: () => void

@@ -7,7 +7,6 @@ import {
 } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { ToastEnum, toast } from '@qovery/shared/ui'
 import {
   Avatar,
   ButtonIconAction,
@@ -20,6 +19,8 @@ import {
   Skeleton,
   TableFilterProps,
   TableRowFilter,
+  ToastEnum,
+  toast,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { copyToClipboard, dateYearMonthDayHourMinuteSecond, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'

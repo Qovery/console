@@ -1,22 +1,26 @@
 import { Dispatch, SetStateAction, useState } from 'react'
 import Icon from '../../icon/icon'
 
-export interface TableHeadSortProps {
+export interface TableHeadSortProps<T> {
   title: string
-  data: any[]
+  data: T[]
   currentKey: string
-  setData: Dispatch<SetStateAction<any>>
+  setData: Dispatch<SetStateAction<T[]>> | undefined
+  setIsSorted: Dispatch<SetStateAction<boolean>>
 }
 
-export const sortTable = (data: any[], key: string) => [...data].sort((a, b) => +new Date(b[key]) - +new Date(a[key]))
+export function sortTable<T>(data: T[], key: string) {
+  return [...data].sort((a, b) => +new Date(b[key as keyof T] as string) - +new Date(a[key as keyof T] as string))
+}
 
-export function TableHeadSort(props: TableHeadSortProps) {
-  const { title, data, setData, currentKey } = props
+export function TableHeadSort<T>(props: TableHeadSortProps<T>) {
+  const { title, data, setData, currentKey, setIsSorted } = props
   const [isSort, setIsSort] = useState(false)
 
   const toggleSort = () => {
-    if (currentKey) {
+    if (currentKey && setData) {
       setIsSort(!isSort)
+      setIsSorted(true)
       const dataSort = sortTable(data, currentKey)
       if (isSort) {
         setData(dataSort)

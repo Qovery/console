@@ -1,5 +1,6 @@
 import { MenuDivider } from '@szhsin/react-menu'
 import { ReactNode, useEffect, useState } from 'react'
+import { sortByKey } from '@qovery/shared/utils'
 import InputSearch from '../../inputs/input-search/input-search'
 import { MenuItem, MenuItemProps } from '../menu-item/menu-item'
 
@@ -8,6 +9,7 @@ export interface MenuGroupProps {
     items: MenuItemProps[]
     label?: string
     title?: string
+    sortAlphabetically?: boolean
     button?: {
       label?: string | ReactNode
       onClick?: () => void
@@ -19,21 +21,31 @@ export interface MenuGroupProps {
   paddingMenuX?: number
   style?: object
   isFilter?: boolean
+  dontOrderAlphabetically?: boolean
 }
 
 export function MenuGroup(props: MenuGroupProps) {
   const { menu = { items: [] }, isLast = true, paddingMenuX = 12, paddingMenuY = 12, style = {}, isFilter } = props
 
   const [currentItems, setCurrentItems] = useState(menu.items)
+  const [filteredItems, setFilteredItems] = useState(menu.items)
+  const [currentSearch, setCurrentSearch] = useState('')
 
   useEffect(() => {
     setCurrentItems(menu.items)
   }, [menu.items])
 
+  useEffect(() => {
+    const filtered = currentItems.filter((item) => {
+      if (!item.name) return true
+      return item.name?.toUpperCase().includes(currentSearch.toUpperCase())
+    })
+
+    setFilteredItems(menu.sortAlphabetically ? sortByKey(filtered, 'name') : filtered)
+  }, [currentSearch, currentItems])
+
   const filterData = (value: string) => {
-    value = value.toUpperCase()
-    const items = menu.items.filter((item) => item.name?.toUpperCase().includes(value))
-    setCurrentItems(items)
+    setCurrentSearch(value)
   }
 
   const paddingStyle = {
@@ -73,19 +85,21 @@ export function MenuGroup(props: MenuGroupProps) {
           <InputSearch
             autofocus
             placeholder="Search"
-            onChange={(value: string) => filterData(value)}
-            isEmpty={currentItems.length === 0}
+            isEmpty={filteredItems.length === 0}
+            onChange={(value: string) => {
+              filterData(value)
+            }}
           />
         </div>
       )}
-      {isFilter && menu?.title && currentItems.length !== 0 && (
+      {isFilter && menu?.title && filteredItems.length !== 0 && (
         <p className="text-sm text-text-400 ml-2" style={headPaddingStyle}>
           {menu?.title}
         </p>
       )}
-      {currentItems.length > 0 && (
+      {filteredItems.length > 0 && (
         <div style={paddingStyle} className="overflow-y-auto max-h-80">
-          {currentItems.map((item, index) => {
+          {filteredItems.map((item, index) => {
             // if object empty not return item
             if (Object.keys(item).length === 0) {
               return null
@@ -95,7 +109,7 @@ export function MenuGroup(props: MenuGroupProps) {
           })}
         </div>
       )}
-      {!isFilter && !isLast && currentItems.length > 0 && (
+      {!isFilter && !isLast && filteredItems.length > 0 && (
         <MenuDivider className="bg-element-light-lighter-400 dark:bg-element-dark-400 m-0 mx-3" />
       )}
     </div>

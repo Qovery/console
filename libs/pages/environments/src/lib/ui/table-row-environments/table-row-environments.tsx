@@ -17,7 +17,7 @@ import { timeAgo } from '@qovery/shared/utils'
 export interface TableRowEnvironmentsProps {
   data: EnvironmentEntity
   filter: TableFilterProps
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps<EnvironmentEntity>[]
   link: string
   columnsWidth?: string
   isLoading?: boolean

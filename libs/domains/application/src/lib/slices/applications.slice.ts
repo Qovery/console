@@ -53,6 +53,7 @@ import {
   refactoGitApplicationPayload,
   refactoJobPayload,
   shortToLongId,
+  sortByKey,
 } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
@@ -736,9 +737,14 @@ export const selectAllApplications = createSelector(getApplicationsState, select
 
 export const selectApplicationsEntities = createSelector(getApplicationsState, selectEntities)
 
-export const selectApplicationsEntitiesByEnvId = (state: RootState, environmentId: string): ApplicationEntity[] => {
+export const selectApplicationsEntitiesByEnvId = (
+  state: RootState,
+  environmentId: string,
+  sortBy: keyof ApplicationEntity = 'name'
+): ApplicationEntity[] => {
   const appState = getApplicationsState(state)
-  return getEntitiesByIds<ApplicationEntity>(appState.entities, appState?.joinEnvApplication[environmentId])
+  const entities = getEntitiesByIds<ApplicationEntity>(appState.entities, appState?.joinEnvApplication[environmentId])
+  return sortBy ? sortByKey<ApplicationEntity>(entities, sortBy) : entities
 }
 
 export const selectApplicationById = (state: RootState, applicationId: string): ApplicationEntity | undefined =>

@@ -5,16 +5,16 @@ import { APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL, SERVICES_GENERAL_U
 import { TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
 import TableRowServices from '../../ui/table-row-services/table-row-services'
 
-export interface TableRowServicesFeatureProps {
+export interface TableRowServicesFeatureProps<T> {
   data: ApplicationEntity | DatabaseEntity
   filter: TableFilterProps
   environmentMode: string
-  dataHead: TableHeadProps[]
+  dataHead: TableHeadProps<T>[]
   link: string
   isLoading?: boolean
 }
 
-export function TableRowServicesFeature(props: TableRowServicesFeatureProps) {
+export function TableRowServicesFeature<T>(props: TableRowServicesFeatureProps<T>) {
   const { data, filter, environmentMode, dataHead } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 

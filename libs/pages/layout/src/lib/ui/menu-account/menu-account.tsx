@@ -40,11 +40,13 @@ export function MenuAccount(props: MenuAccountProps) {
   const menus: MenuData = [
     {
       title: 'Organizations',
+      sortAlphabetically: true,
       button: {
         label: <Icon name={IconAwesomeEnum.CIRCLE_PLUS} className="text-brand-500 link !text-base mr-3" />,
         onClick: () => navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL),
       },
       items: organizations.map((organization: OrganizationEntity) => ({
+        name: organization.name,
         itemContentCustom: blockOrganization(organization),
         containerClassName: '!h-14',
         onClick: () => navigate(ORGANIZATION_URL(organization.id)),

@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { environmentFactoryMock } from '@qovery/shared/factories'
@@ -13,6 +13,7 @@ describe('TableHeadSort', () => {
       data: environmentFactoryMock(2),
       currentKey: '',
       setData: jest.fn(),
+      setIsSorted: jest.fn(),
     }
   })
   it('should render successfully', () => {
@@ -41,6 +42,18 @@ describe('TableHeadSort', () => {
     const icon = sort.querySelector('.icon-solid-arrow-down')
 
     expect(icon).toHaveClass('rotate-180')
+  })
+
+  it('should call setIsSorted', async () => {
+    props.currentKey = 'updated_at'
+    const spy = jest.fn()
+    render(<TableHeadSort {...props} setIsSorted={spy} />)
+
+    const sort = screen.queryByTestId('table-head-sort') as HTMLDivElement
+    await act(() => {
+      fireEvent.click(sort)
+    })
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should have a sort function', () => {
