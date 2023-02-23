@@ -11,7 +11,7 @@ import {
 } from '@qovery/domains/environment'
 import { dateToHours } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
-import PageSettingsDeployment from '../../ui/page-settings-deployment/page-settings-deployment'
+import PageSettingsDeployment from '../../ui/page-settings-deployment-rules/page-settings-deployment-rules'
 
 export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: EnvironmentDeploymentRule) => {
   const cloneEnvironmentDeploymentRules = Object.assign({}, environmentDeploymentRules)
@@ -26,7 +26,7 @@ export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: Env
   return cloneEnvironmentDeploymentRules
 }
 
-export function PageSettingsDeploymentFeature() {
+export function PageSettingsDeploymentRulesFeature() {
   const { environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
@@ -85,4 +85,4 @@ export function PageSettingsDeploymentFeature() {
   )
 }
 
-export default PageSettingsDeploymentFeature
+export default PageSettingsDeploymentRulesFeature

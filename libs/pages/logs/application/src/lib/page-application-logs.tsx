@@ -103,7 +103,7 @@ export function PageApplicationLogs() {
               >
                 <StatusChip status={currentPod?.state} className="mr-2.5" />
                 <p className="text-xs font-medium text-text-200 mr-5">{data.pod_name}</p>
-                <span className="block text-xxs text-text-400 mr-2">
+                <span className="block text-2xs text-text-400 mr-2">
                   <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
                   {data.version?.substring(0, 6)}
                 </span>

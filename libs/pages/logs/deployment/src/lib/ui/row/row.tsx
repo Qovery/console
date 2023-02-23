@@ -61,7 +61,7 @@ export function Row(props: RowProps) {
       </div>
       <div
         data-testid="cell-status"
-        className={`py-1 pl-2.5 pr-2 text-xxs font-bold shrink-0 truncate uppercase w-[154px] ${
+        className={`py-1 pl-2.5 pr-2 text-2xs font-bold shrink-0 truncate uppercase w-[154px] ${
           success ? 'text-success-400' : error ? 'text-error-500' : 'text-accent2-400'
         }`}
       >

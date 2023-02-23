@@ -102,7 +102,7 @@ export function CrudModal(props: CrudModalProps) {
                   size="text-xs"
                   link="https://www.docker.com/increase-rate-limits"
                   linkLabel="See here"
-                  iconRightClassName="text-xxs relative top-[1px]"
+                  iconRightClassName="text-2xs relative top-[1px]"
                   iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
                   external
                 />

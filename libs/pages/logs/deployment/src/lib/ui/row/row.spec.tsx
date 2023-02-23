@@ -72,7 +72,7 @@ describe('Row', () => {
 
     expect(cellDate.textContent).toBe('Deployment_In_Progress')
     expect(cellDate).toHaveClass(
-      'py-1 pl-2.5 pr-2 text-xxs font-bold shrink-0 truncate uppercase w-[154px] text-accent2-400'
+      'py-1 pl-2.5 pr-2 text-2xs font-bold shrink-0 truncate uppercase w-[154px] text-accent2-400'
     )
   })
 
@@ -92,7 +92,7 @@ describe('Row', () => {
     const cellDate = screen.getByTestId('cell-status')
 
     expect(cellDate).toHaveClass(
-      'py-1 pl-2.5 pr-2 text-xxs font-bold shrink-0 truncate uppercase w-[154px] text-error-500'
+      'py-1 pl-2.5 pr-2 text-2xs font-bold shrink-0 truncate uppercase w-[154px] text-error-500'
     )
   })
 
@@ -112,7 +112,7 @@ describe('Row', () => {
     const cellDate = screen.getByTestId('cell-status')
 
     expect(cellDate).toHaveClass(
-      'py-1 pl-2.5 pr-2 text-xxs font-bold shrink-0 truncate uppercase w-[154px] text-success-400'
+      'py-1 pl-2.5 pr-2 text-2xs font-bold shrink-0 truncate uppercase w-[154px] text-success-400'
     )
   })
 

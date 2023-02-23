@@ -26,6 +26,7 @@ import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface }
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId, sortByKey } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
+import { deploymentStageExtraReducers } from './deployment-stage'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
@@ -181,6 +182,7 @@ export const environmentsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    deploymentStageExtraReducers(builder)
     builder
       // get environments
       .addCase(fetchEnvironments.pending, (state: EnvironmentsState) => {

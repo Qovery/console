@@ -72,7 +72,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                   (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-accent3-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                      <span className="bg-accent3-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
                         ALIAS
                       </span>
                     </>
@@ -80,7 +80,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     (variable as SecretEnvironmentVariableEntity).overridden_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-brand-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                      <span className="bg-brand-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
                         OVERRIDE
                       </span>
                     </>
@@ -88,7 +88,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     ''
                   )}
                   {(variable as EnvironmentVariableEntity).mount_path ? (
-                    <span className="bg-accent1-500 font-bold rounded-sm text-xxs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                    <span className="bg-accent1-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
                       FILE
                     </span>
                   ) : (

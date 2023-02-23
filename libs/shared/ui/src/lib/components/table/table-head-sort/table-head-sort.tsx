@@ -41,7 +41,7 @@ export function TableHeadSort<T>(props: TableHeadSortProps<T>) {
       {title}
       <Icon
         name="icon-solid-arrow-down"
-        className={`ml-1 text-xxs inline-block transition-transform ease-out duration-100 ${
+        className={`ml-1 text-2xs inline-block transition-transform ease-out duration-100 ${
           isSort ? 'rotate-180' : ''
         }`}
       />

@@ -2,10 +2,10 @@ import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { WeekdayEnum } from 'qovery-typescript-axios'
 import { timezoneValues } from '@qovery/shared/utils'
-import PageSettingsDeployment, { PageSettingsDeploymentProps } from './page-settings-deployment'
+import PageSettingsDeploymentRules, { PageSettingsDeploymentRulesProps } from './page-settings-deployment-rules'
 
-describe('PageSettingsDeployment', () => {
-  const props: PageSettingsDeploymentProps = {
+describe('PageSettingsDeploymentRules', () => {
+  const props: PageSettingsDeploymentRulesProps = {
     watchAutoStop: false,
     onSubmit: jest.fn(),
     loading: false,
@@ -22,7 +22,7 @@ describe('PageSettingsDeployment', () => {
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsDeployment {...props} />))
+    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsDeploymentRules {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
@@ -30,7 +30,7 @@ describe('PageSettingsDeployment', () => {
     props.watchAutoStop = false
 
     const { queryByTestId } = render(
-      wrapWithReactHookForm(<PageSettingsDeployment {...props} />, {
+      wrapWithReactHookForm(<PageSettingsDeploymentRules {...props} />, {
         defaultValues: defaultValues,
       })
     )
@@ -48,7 +48,7 @@ describe('PageSettingsDeployment', () => {
     props.watchAutoStop = true
 
     const { queryByTestId } = render(
-      wrapWithReactHookForm(<PageSettingsDeployment {...props} />, {
+      wrapWithReactHookForm(<PageSettingsDeploymentRules {...props} />, {
         defaultValues: defaultValues,
       })
     )

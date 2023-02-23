@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import NavigationLeftSubLink, { NavigationLeftSubLinkProps } from './navigation-left-sub-link'
 
 jest.mock('react-router-dom', () => ({
@@ -77,5 +77,23 @@ describe('NavigationLeftSubLink', () => {
     fireEvent.click(link)
 
     expect(onClick.mock.calls.length).toEqual(1)
+  })
+
+  it('should have a badge for sub link', () => {
+    props.link = {
+      title: 'my-title',
+      url: '/general',
+      subLinks: [
+        {
+          title: 'title',
+          url: '/general-second',
+          badge: 'beta',
+        },
+      ],
+    }
+
+    render(<NavigationLeftSubLink {...props} />)
+
+    expect(screen.getByTestId('sub-link-badge').textContent).toBe('beta')
   })
 })

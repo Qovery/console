@@ -6,7 +6,7 @@ import { NavigationLeftLinkProps } from '../navigation-left'
 export interface NavigationLeftSubLinkProps {
   linkContent: (link: NavigationLeftLinkProps) => React.ReactNode
   link: NavigationLeftLinkProps
-  linkClassName: (pathname: string, url?: string) => string
+  linkClassName: (pathname: string, url?: string, badge?: string) => string
 }
 
 export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
@@ -23,6 +23,17 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
       }
     })
   }, [])
+
+  const badge = (text: string) => {
+    return (
+      <span
+        data-testid="sub-link-badge"
+        className="bg-brand-500 text-text-100 rounded-xs text-3xs rounded-sm px-1 uppercase"
+      >
+        {text}
+      </span>
+    )
+  }
 
   return (
     <>
@@ -47,19 +58,21 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
               <div
                 data-testid="sub-link"
                 key={index}
-                className={`${linkClassName(pathname, subLink.url)} pl-[37px]`}
+                className={`${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
                 onClick={() => subLink.onClick && subLink.onClick()}
               >
                 {subLink.title}
+                {subLink.badge && badge(subLink.badge)}
               </div>
             ) : (
               <Link
                 data-testid="sub-link"
                 key={index}
                 to={subLink.url || ''}
-                className={`flex ${linkClassName(pathname, subLink.url)} pl-[37px]`}
+                className={`flex ${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
               >
                 {subLink.title}
+                {subLink.badge && badge(subLink.badge)}
               </Link>
             )
           )}

@@ -112,7 +112,7 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
             link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
             linkLabel="Documentation link"
             iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-            iconRightClassName="text-xxs relative top-[1px]"
+            iconRightClassName="text-2xs relative top-[1px]"
           />
         </div>
       </div>
