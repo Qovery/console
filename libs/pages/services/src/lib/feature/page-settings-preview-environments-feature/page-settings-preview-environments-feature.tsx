@@ -41,8 +41,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
     mode: 'onChange',
   })
 
-  const watchEnvPreview = methods.watch('auto_preview')
-
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
       setLoading(true)
@@ -80,19 +78,20 @@ export function PageSettingsPreviewEnvironmentsFeature() {
     }
   })
 
-  useEffect(() => {
+  const toggleAll = (value: boolean) => {
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules === 'loaded') {
-      applications?.forEach((application) => methods.setValue(application.id, watchEnvPreview))
+      applications?.forEach((application) => methods.setValue(application.id, value, { shouldDirty: true }))
     }
-  }, [loadingStatusEnvironmentDeploymentRules, watchEnvPreview, methods, applications])
+  }
 
   useEffect(() => {
     if (loadingStatusEnvironment === 'loaded') dispatch(fetchEnvironmentDeploymentRules(environmentId))
   }, [dispatch, loadingStatusEnvironment, environmentId])
 
   useEffect(() => {
-    if (loadingStatusEnvironmentDeploymentRules === 'loaded') {
+    // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
+    if (loadingStatusEnvironmentDeploymentRules === 'loaded' && !loading) {
       methods.setValue('auto_preview', environmentDeploymentRules?.auto_preview)
       applications?.forEach((application) => methods.setValue(application.id, application.auto_preview))
     }
@@ -100,7 +99,12 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsPreviewEnvironments onSubmit={onSubmit} applications={applications} loading={loading} />
+      <PageSettingsPreviewEnvironments
+        onSubmit={onSubmit}
+        applications={applications}
+        loading={loading}
+        toggleAll={toggleAll}
+      />
     </FormProvider>
   )
 }
