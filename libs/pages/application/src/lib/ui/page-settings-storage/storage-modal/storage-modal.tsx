@@ -43,7 +43,7 @@ export function StorageModal(props: StorageModalProps) {
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              className="mb-6"
+              className="mb-3"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
@@ -66,7 +66,7 @@ export function StorageModal(props: StorageModalProps) {
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              className="mb-6"
+              className="mb-3"
               name={field.name}
               onChange={field.onChange}
               value={field.value}

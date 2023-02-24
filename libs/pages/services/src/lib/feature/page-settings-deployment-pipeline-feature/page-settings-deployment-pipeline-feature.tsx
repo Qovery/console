@@ -13,9 +13,10 @@ import {
   selectEnvironmentById,
 } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
+import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 
 export interface StageRequest {
   deploymentStageId: string
@@ -45,6 +46,8 @@ export function PageSettingsDeploymentPipelineFeature() {
     (state) => selectEnvironmentById(state, environmentId),
     (a, b) => equal(a?.deploymentStage?.items, b?.deploymentStage?.items)
   )?.deploymentStage
+
+  const { openModal, closeModal } = useModal()
 
   useEffect(() => {
     if (loadingStatus === 'loaded') dispatch(fetchDeploymentStageList({ environmentId }))
@@ -95,6 +98,11 @@ export function PageSettingsDeploymentPipelineFeature() {
       onSubmit={onSubmit}
       services={[...applications, ...databases]}
       cloudProvider={cloudProvider?.provider as CloudProviderEnum}
+      onAddStage={() => {
+        openModal({
+          content: <StageModalFeature onClose={closeModal} environmentId={environmentId} />,
+        })
+      }}
     />
   )
 }
