@@ -39,7 +39,15 @@ export const createEnvironmentDeploymentStage = createAsyncThunk(
 export const editEnvironmentDeploymentStage = createAsyncThunk(
   'environment/editEnvironmentDeploymentStage',
   async (payload: { environmentId: string; stageId: string; data: DeploymentStageRequest }) => {
-    const response = await deploymentStageMainCallApi.editDeploymentStage(payload.environmentId, payload.data)
+    const response = await deploymentStageMainCallApi.editDeploymentStage(payload.stageId, payload.data)
+    return response.data
+  }
+)
+
+export const deleteEnvironmentDeploymentStage = createAsyncThunk(
+  'environment/deleteEnvironmentDeploymentStage',
+  async (payload: { environmentId: string; stageId: string }) => {
+    const response = await deploymentStageMainCallApi.deleteDeploymentStage(payload.stageId)
     return response.data
   }
 )
@@ -111,19 +119,48 @@ export const deploymentStageExtraReducers = (builder: ActionReducerMapBuilder<En
     // edit deployment stage
     .addCase(editEnvironmentDeploymentStage.fulfilled, (state: EnvironmentsState, action) => {
       const environmentId = action.meta.arg.environmentId
+      const stageId = action.meta.arg.stageId
+
+      const stages = state.entities[environmentId]?.deploymentStage?.items || []
+      const index = stages.findIndex((obj) => obj.id === stageId)
+      stages[index] = action.payload
+
       const update: Update<EnvironmentEntity> = {
         id: environmentId,
         changes: {
           deploymentStage: {
             loadingStatus: 'loaded',
-            items: [...(state.entities[environmentId]?.deploymentStage?.items || []), action.payload],
+            items: stages,
           },
         },
       }
       environmentsAdapter.updateOne(state, update)
-      toast(ToastEnum.SUCCESS, 'Your stage has been successfully created')
+      toast(ToastEnum.SUCCESS, 'Your stage has been successfully updated')
     })
     .addCase(editEnvironmentDeploymentStage.rejected, (state: EnvironmentsState, action) => {
+      toastError(action.error)
+    })
+    // delete deployment stage
+    .addCase(deleteEnvironmentDeploymentStage.fulfilled, (state: EnvironmentsState, action) => {
+      const environmentId = action.meta.arg.environmentId
+      const stageId = action.meta.arg.stageId
+
+      const stages = state.entities[environmentId]?.deploymentStage?.items || []
+      const newStages = stages.filter((obj) => obj.id !== stageId)
+
+      const update: Update<EnvironmentEntity> = {
+        id: environmentId,
+        changes: {
+          deploymentStage: {
+            loadingStatus: 'loaded',
+            items: newStages,
+          },
+        },
+      }
+      environmentsAdapter.updateOne(state, update)
+      toast(ToastEnum.SUCCESS, 'Your stage has been successfully deleted')
+    })
+    .addCase(deleteEnvironmentDeploymentStage.rejected, (state: EnvironmentsState, action) => {
       toastError(action.error)
     })
 }

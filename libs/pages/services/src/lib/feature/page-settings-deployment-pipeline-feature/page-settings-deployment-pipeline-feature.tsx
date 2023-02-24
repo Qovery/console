@@ -8,6 +8,7 @@ import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
   addServiceToDeploymentStage,
+  deleteEnvironmentDeploymentStage,
   environmentsLoadingStatus,
   fetchDeploymentStageList,
   selectEnvironmentById,
@@ -115,9 +116,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               isDelete: true,
               description: 'Are you sure you want to delete this stage?',
               name: stage.name,
-              action: () => {
-                // dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
-              },
+              action: () => dispatch(deleteEnvironmentDeploymentStage({ environmentId, stageId: stage.id })),
             }),
           contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-brand-500" />,
         },
