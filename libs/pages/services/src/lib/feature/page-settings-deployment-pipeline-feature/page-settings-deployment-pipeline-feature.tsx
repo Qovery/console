@@ -13,7 +13,7 @@ import {
   selectEnvironmentById,
 } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
@@ -48,6 +48,7 @@ export function PageSettingsDeploymentPipelineFeature() {
   )?.deploymentStage
 
   const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
 
   useEffect(() => {
     if (loadingStatus === 'loaded') dispatch(fetchDeploymentStageList({ environmentId }))
@@ -91,6 +92,39 @@ export function PageSettingsDeploymentPipelineFeature() {
     }
   }
 
+  const menuStage = (stage: DeploymentStageResponse) => [
+    {
+      items: [
+        {
+          name: 'Edit stage',
+          onClick: () =>
+            openModal({
+              content: <StageModalFeature onClose={closeModal} environmentId={environmentId} stage={stage} />,
+            }),
+          contentLeft: <Icon name={IconAwesomeEnum.PEN} className="text-sm text-brand-500" />,
+        },
+      ],
+    },
+    {
+      items: [
+        {
+          name: 'Delete stage',
+          onClick: () =>
+            openModalConfirmation({
+              title: 'Delete this stage',
+              isDelete: true,
+              description: 'Are you sure you want to delete this stage?',
+              name: stage.name,
+              action: () => {
+                // dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
+              },
+            }),
+          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-brand-500" />,
+        },
+      ],
+    },
+  ]
+
   return (
     <PageSettingsDeploymentPipeline
       stages={stages}
@@ -103,6 +137,7 @@ export function PageSettingsDeploymentPipelineFeature() {
           content: <StageModalFeature onClose={closeModal} environmentId={environmentId} />,
         })
       }}
+      menuStage={menuStage}
     />
   )
 }

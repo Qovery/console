@@ -46,9 +46,6 @@ export function StageModal(props: StageModalProps) {
         <Controller
           name="description"
           control={control}
-          rules={{
-            required: 'Please enter a description.',
-          }}
           render={({ field, fieldState: { error } }) => (
             <InputTextArea
               className="mb-6"
@@ -56,7 +53,7 @@ export function StageModal(props: StageModalProps) {
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
-              label="Description"
+              label="Description (optional)"
             />
           )}
         />
