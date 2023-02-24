@@ -123,6 +123,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           </span>
                         </div>
                         <Menu
+                          width={256}
                           trigger={
                             <ButtonIcon
                               className="text-text-500 !px-1 !w-7"
