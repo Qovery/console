@@ -125,7 +125,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                         <Menu
                           trigger={
                             <ButtonIcon
-                              className="text-text-500"
+                              className="text-text-500 !px-1 !w-7"
                               style={ButtonIconStyle.FLAT}
                               onClick={() => console.log('hello')}
                               icon={IconAwesomeEnum.ELLIPSIS}
