@@ -46,6 +46,7 @@ const defaultProps: PageSettingsDeploymentPipelineProps = {
   stages,
   services,
   cloudProvider: CloudProviderEnum.AWS,
+  menuStage: () => [],
 }
 
 describe('PageSettingsDeploymentPipeline', () => {
