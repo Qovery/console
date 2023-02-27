@@ -18,6 +18,7 @@ import { Icon, IconAwesomeEnum, ToastEnum, toast, useModal, useModalConfirmation
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
+import StageOrderModalFeature from './stage-order-modal-feature/stage-order-modal-feature'
 
 export interface StageRequest {
   deploymentStageId: string
@@ -93,7 +94,7 @@ export function PageSettingsDeploymentPipelineFeature() {
     }
   }
 
-  const menuStage = (stage: DeploymentStageResponse) => [
+  const menuStage = (stage: DeploymentStageResponse, stages?: DeploymentStageResponse[]) => [
     {
       items: [
         {
@@ -103,6 +104,14 @@ export function PageSettingsDeploymentPipelineFeature() {
               content: <StageModalFeature onClose={closeModal} environmentId={environmentId} stage={stage} />,
             }),
           contentLeft: <Icon name={IconAwesomeEnum.PEN} className="text-sm text-brand-500" />,
+        },
+        {
+          name: 'Edit order',
+          onClick: () =>
+            openModal({
+              content: <StageOrderModalFeature onClose={closeModal} stages={stages} />,
+            }),
+          contentLeft: <Icon name={IconAwesomeEnum.ARROW_DOWN_19} className="text-sm text-brand-500" />,
         },
       ],
     },

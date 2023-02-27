@@ -24,7 +24,7 @@ import DraggableItem from './draggable-item/draggable-item'
 export interface PageSettingsDeploymentPipelineProps {
   onSubmit: (newStage: StageRequest, prevStage: StageRequest) => void
   setStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
-  menuStage: (stage: DeploymentStageResponse) => MenuData
+  menuStage: (stage: DeploymentStageResponse, stages?: DeploymentStageResponse[]) => MenuData
   onAddStage: () => void
   stages?: DeploymentStageResponse[]
   services?: (DatabaseEntity | ApplicationEntity)[]
@@ -138,7 +138,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               size={ButtonSize.TINY}
                             />
                           }
-                          menus={menuStage(stage)}
+                          menus={menuStage(stage, stages)}
                           arrowAlign={MenuAlign.END}
                         />
                       </div>
