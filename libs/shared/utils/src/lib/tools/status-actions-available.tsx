@@ -87,7 +87,9 @@ export const isCancelBuildAvailable = (status: StateEnum): boolean => {
     status === StateEnum.BUILDING ||
     status === StateEnum.DEPLOYING ||
     status === StateEnum.DEPLOYMENT_QUEUED ||
-    status === StateEnum.RESTART_QUEUED
+    status === StateEnum.RESTART_QUEUED ||
+    status === StateEnum.DELETE_QUEUED ||
+    status === StateEnum.DELETING
   )
 }
 
