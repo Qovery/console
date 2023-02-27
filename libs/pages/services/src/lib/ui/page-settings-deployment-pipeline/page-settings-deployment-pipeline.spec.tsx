@@ -138,4 +138,35 @@ describe('PageSettingsDeploymentPipeline', () => {
     expect(menuEditStage).toBeCalled()
     expect(menuDeleteStage).toBeCalled()
   })
+
+  it('should have placeholder for stage', () => {
+    defaultProps.stages = [
+      {
+        id: '1',
+        name: 'Stage 1',
+        deployment_order: 0,
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [
+          { id: '1', created_at: '', service_id: '1' },
+          { id: '2', created_at: '', service_id: '2' },
+        ],
+      },
+      {
+        id: '2',
+        name: 'Stage 2',
+        deployment_order: 1,
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [],
+      },
+    ]
+
+    const { getByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    getByTestId('placeholder-stage')
+  })
 })

@@ -8,6 +8,7 @@ import {
   ButtonIconStyle,
   ButtonSize,
   HelpSection,
+  Icon,
   IconAwesomeEnum,
   LoaderSpinner,
   Menu,
@@ -167,6 +168,14 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               </Draggable>
                             ))}
                             {provided.placeholder}
+                            {stage.services?.length === 0 && !snapshot.isDraggingOver && (
+                              <div data-testid="placeholder-stage" className="text-center px-3 py-6">
+                                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
+                                <p className="text-text-400 font-medium text-xs mt-1">
+                                  No service for this stage. <br /> Please drag and drop a service.
+                                </p>
+                              </div>
+                            )}
                           </div>
                         )}
                       </Droppable>
