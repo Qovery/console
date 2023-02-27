@@ -1,21 +1,23 @@
-import { DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DeploymentStageResponse, DeploymentStageServiceResponse } from 'qovery-typescript-axios'
 import { Dispatch, Fragment, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { HelpSection, LoaderSpinner } from '@qovery/shared/ui'
+import { HelpSection, LoaderSpinner, Truncate } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import BadgeDeploymentOrder from './badge-deployment-order/badge-deployment-order'
+import DraggableItem from './draggable-item/draggable-item'
 
 export interface PageSettingsDeploymentPipelineProps {
   onSubmit: (newStage: StageRequest, prevStage: StageRequest) => void
   setStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
   stages?: DeploymentStageResponse[]
   services?: (DatabaseEntity | ApplicationEntity)[]
+  cloudProvider?: CloudProviderEnum
 }
 
 export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipelineProps) {
-  const { stages, setStages, onSubmit, services } = props
+  const { stages, setStages, onSubmit, services, cloudProvider } = props
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result
@@ -52,19 +54,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     }
   }
 
-  const getParametersByServiceId = (serviceId?: string): DatabaseEntity | ApplicationEntity | undefined => {
-    if (serviceId) return services?.filter((service) => service.id === serviceId)[0]
-    return undefined
-  }
-
   const classNameGroup = (isDraggingOver: boolean) =>
     `grid gap-1 p-1 border border-element-light-lighter-500 border-t-0 rounded-b ${
       isDraggingOver ? 'bg-success-100' : 'bg-element-light-lighter-400'
-    }`
-
-  const classNameItem = (isDragging: boolean) =>
-    `flex items-center drop-shadow-item-deployment-group bg-element-light-lighter-100 rounded px-2 py-3 border ${
-      isDragging ? 'border-2 border-success-500' : 'border-element-light-lighter-400'
     }`
 
   return (
@@ -102,7 +94,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                     <div className="w-60 shrink-0 rounded">
                       <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
-                        <span className="block text-text-500 text-2xs font-bold">{stage.name}</span>
+                        <span className="block text-text-500 text-2xs font-bold">
+                          <Truncate truncateLimit={28} text={stage.name || ''} />
+                        </span>
                       </div>
                       <Droppable key={index} droppableId={`${index}`}>
                         {(provided, snapshot) => (
@@ -113,19 +107,20 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           >
                             {stage.services?.map((item: DeploymentStageServiceResponse, index: number) => (
                               <Draggable key={item.service_id} draggableId={item.service_id || ''} index={index}>
-                                {(provided, snapshot) => (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    style={{ ...provided.draggableProps.style }}
-                                    className={classNameItem(snapshot.isDragging)}
-                                  >
-                                    <span className="block text-text-500 text-ssm font-medium">
-                                      {getParametersByServiceId(item.service_id)?.name}
-                                    </span>
-                                  </div>
-                                )}
+                                {(provided, snapshot) => {
+                                  if (services && cloudProvider) {
+                                    return (
+                                      <DraggableItem
+                                        serviceId={item.service_id || ''}
+                                        provided={provided}
+                                        snapshot={snapshot}
+                                        services={services}
+                                        cloudProvider={cloudProvider}
+                                      />
+                                    )
+                                  }
+                                  return <div />
+                                }}
                               </Draggable>
                             ))}
                             {provided.placeholder}

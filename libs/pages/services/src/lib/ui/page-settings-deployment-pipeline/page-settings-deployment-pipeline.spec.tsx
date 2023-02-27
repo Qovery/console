@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { DeploymentStageResponse } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DeploymentStageResponse } from 'qovery-typescript-axios'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import PageSettingsDeploymentPipeline, {
   PageSettingsDeploymentPipelineProps,
@@ -45,6 +45,7 @@ const defaultProps: PageSettingsDeploymentPipelineProps = {
   setStages,
   stages,
   services,
+  cloudProvider: CloudProviderEnum.AWS,
 }
 
 describe('PageSettingsDeploymentPipeline', () => {
