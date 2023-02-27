@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum, DeploymentStageResponse } from 'qovery-typescript-axios'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import PageSettingsDeploymentPipeline, {
@@ -7,6 +7,29 @@ import PageSettingsDeploymentPipeline, {
 
 const onSubmit = jest.fn()
 const setStages = jest.fn()
+const onAddStage = jest.fn()
+
+const menuEditStage = jest.fn()
+const menuDeleteStage = jest.fn()
+
+const menuStage = (stage: DeploymentStageResponse) => [
+  {
+    items: [
+      {
+        name: 'Edit stage',
+        onClick: menuEditStage,
+      },
+    ],
+  },
+  {
+    items: [
+      {
+        name: 'Delete stage',
+        onClick: menuDeleteStage,
+      },
+    ],
+  },
+]
 
 const stages: DeploymentStageResponse[] = [
   {
@@ -45,7 +68,9 @@ const defaultProps: PageSettingsDeploymentPipelineProps = {
   setStages,
   stages,
   services,
+  onAddStage,
   cloudProvider: CloudProviderEnum.AWS,
+  menuStage: (stage: DeploymentStageResponse) => menuStage(stage),
 }
 
 describe('PageSettingsDeploymentPipeline', () => {
@@ -69,12 +94,79 @@ describe('PageSettingsDeploymentPipeline', () => {
   })
 
   it('should have loading component', () => {
-    const { getByTestId } = render(<PageSettingsDeploymentPipeline onSubmit={onSubmit} setStages={setStages} />)
+    const { getByTestId } = render(
+      <PageSettingsDeploymentPipeline
+        onSubmit={onSubmit}
+        setStages={setStages}
+        onAddStage={onAddStage}
+        menuStage={(stage: DeploymentStageResponse) => menuStage(stage)}
+      />
+    )
     getByTestId('stages-loader')
   })
 
   it('should have UI arrow between group', () => {
     const { getByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
     getByTestId('arrow-1')
+  })
+
+  it('should have button to add stage', async () => {
+    const { getByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+
+    await act(() => {
+      getByTestId('btn-add-stage').click()
+    })
+
+    expect(onAddStage).toBeCalled()
+  })
+
+  it('should have button to delete and edit stage', async () => {
+    const { getAllByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+
+    const items = getAllByTestId('menuItem')
+
+    // edit stage
+    await act(() => {
+      items[0].click()
+    })
+
+    // delete stage
+    await act(() => {
+      items[1].click()
+    })
+
+    expect(menuEditStage).toBeCalled()
+    expect(menuDeleteStage).toBeCalled()
+  })
+
+  it('should have placeholder for stage', () => {
+    defaultProps.stages = [
+      {
+        id: '1',
+        name: 'Stage 1',
+        deployment_order: 0,
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [
+          { id: '1', created_at: '', service_id: '1' },
+          { id: '2', created_at: '', service_id: '2' },
+        ],
+      },
+      {
+        id: '2',
+        name: 'Stage 2',
+        deployment_order: 1,
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [],
+      },
+    ]
+
+    const { getByTestId } = render(<PageSettingsDeploymentPipeline {...defaultProps} />)
+    getByTestId('placeholder-stage')
   })
 })

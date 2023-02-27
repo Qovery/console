@@ -2,7 +2,20 @@ import { CloudProviderEnum, DeploymentStageResponse, DeploymentStageServiceRespo
 import { Dispatch, Fragment, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { HelpSection, LoaderSpinner, Truncate } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
+  HelpSection,
+  Icon,
+  IconAwesomeEnum,
+  LoaderSpinner,
+  Menu,
+  MenuAlign,
+  MenuData,
+  Truncate,
+} from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import BadgeDeploymentOrder from './badge-deployment-order/badge-deployment-order'
@@ -11,13 +24,15 @@ import DraggableItem from './draggable-item/draggable-item'
 export interface PageSettingsDeploymentPipelineProps {
   onSubmit: (newStage: StageRequest, prevStage: StageRequest) => void
   setStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
+  menuStage: (stage: DeploymentStageResponse) => MenuData
+  onAddStage: () => void
   stages?: DeploymentStageResponse[]
   services?: (DatabaseEntity | ApplicationEntity)[]
   cloudProvider?: CloudProviderEnum
 }
 
 export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipelineProps) {
-  const { stages, setStages, onSubmit, services, cloudProvider } = props
+  const { stages, setStages, onSubmit, services, cloudProvider, onAddStage, menuStage } = props
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result
@@ -62,11 +77,25 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
   return (
     <div className="w-[calc(100vw-368px)]">
       <div className="flex flex-col w-full h-[calc(100%-128px)] bg-element-light-lighter-200 rounded-tr-sm">
-        <div className="px-5 pt-5">
-          <p className="text-xs text-text-500 mb-5">
+        <div className="flex justify-between items-center px-5 my-5">
+          <p className="text-xs text-text-500">
             Stages allow to define deployment order within the deployment pipeline of your environment. You can drag &
             drop the service between two stages to change the order.
+            <span className="block text-2xs mt-1">
+              <span role="img" aria-label="light">
+                💡
+              </span>{' '}
+              Tips: You can drag & drop
+            </span>
           </p>
+          <Button
+            dataTestId="btn-add-stage"
+            className="shrink-0 ml-5"
+            onClick={() => onAddStage()}
+            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+          >
+            Add stage
+          </Button>
         </div>
         <div className="h-full overflow-x-scroll">
           {!stages ? (
@@ -92,11 +121,26 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       </svg>
                     )}
                     <div className="w-60 shrink-0 rounded">
-                      <div className="h-10 flex items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
-                        <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
-                        <span className="block text-text-500 text-2xs font-bold">
-                          <Truncate truncateLimit={28} text={stage.name || ''} />
-                        </span>
+                      <div className="h-11 flex justify-between items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
+                        <div className="flex items-center">
+                          <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
+                          <span className="block truncate text-text-500 text-2xs font-bold">
+                            <Truncate truncateLimit={28} text={stage.name || ''} />
+                          </span>
+                        </div>
+                        <Menu
+                          width={256}
+                          trigger={
+                            <ButtonIcon
+                              className="text-text-500 !px-1 !w-7"
+                              style={ButtonIconStyle.FLAT}
+                              icon={IconAwesomeEnum.ELLIPSIS}
+                              size={ButtonSize.TINY}
+                            />
+                          }
+                          menus={menuStage(stage)}
+                          arrowAlign={MenuAlign.END}
+                        />
                       </div>
                       <Droppable key={index} droppableId={`${index}`}>
                         {(provided, snapshot) => (
@@ -124,11 +168,19 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               </Draggable>
                             ))}
                             {provided.placeholder}
+                            {stage.services?.length === 0 && !snapshot.isDraggingOver && (
+                              <div data-testid="placeholder-stage" className="text-center px-3 py-6">
+                                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
+                                <p className="text-text-400 font-medium text-xs mt-1">
+                                  No service for this stage. <br /> Please drag and drop a service.
+                                </p>
+                              </div>
+                            )}
                           </div>
                         )}
                       </Droppable>
                     </div>
-                    {index === stages.length - 1 && <div className="block w-4 shrink-0"></div>}
+                    {index === stages.length - 1 && <div className="block w-5 shrink-0"></div>}
                   </Fragment>
                 ))}
               </DragDropContext>
@@ -140,7 +192,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/deployment/deployment-management/',
+            link: 'https://hub.qovery.com/docs/using-qovery/deployment/deployment-pipeline/',
             linkLabel: 'How to configure my deployment group',
             external: true,
           },

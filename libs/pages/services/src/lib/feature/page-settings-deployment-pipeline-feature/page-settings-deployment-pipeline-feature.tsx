@@ -8,14 +8,16 @@ import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
   addServiceToDeploymentStage,
+  deleteEnvironmentDeploymentStage,
   environmentsLoadingStatus,
   fetchDeploymentStageList,
   selectEnvironmentById,
 } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
+import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 
 export interface StageRequest {
   deploymentStageId: string
@@ -45,6 +47,9 @@ export function PageSettingsDeploymentPipelineFeature() {
     (state) => selectEnvironmentById(state, environmentId),
     (a, b) => equal(a?.deploymentStage?.items, b?.deploymentStage?.items)
   )?.deploymentStage
+
+  const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
 
   useEffect(() => {
     if (loadingStatus === 'loaded') dispatch(fetchDeploymentStageList({ environmentId }))
@@ -88,6 +93,38 @@ export function PageSettingsDeploymentPipelineFeature() {
     }
   }
 
+  const menuStage = (stage: DeploymentStageResponse) => [
+    {
+      items: [
+        {
+          name: 'Edit stage',
+          onClick: () =>
+            openModal({
+              content: <StageModalFeature onClose={closeModal} environmentId={environmentId} stage={stage} />,
+            }),
+          contentLeft: <Icon name={IconAwesomeEnum.PEN} className="text-sm text-brand-500" />,
+        },
+      ],
+    },
+    {
+      items: [
+        {
+          name: 'Delete stage',
+          onClick: () =>
+            openModalConfirmation({
+              title: 'Delete this stage',
+              isDelete: true,
+              description: 'Are you sure you want to delete this stage?',
+              name: stage.name,
+              action: () => dispatch(deleteEnvironmentDeploymentStage({ environmentId, stageId: stage.id })),
+            }),
+          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
+          containerClassName: 'text-error-600',
+        },
+      ],
+    },
+  ]
+
   return (
     <PageSettingsDeploymentPipeline
       stages={stages}
@@ -95,6 +132,12 @@ export function PageSettingsDeploymentPipelineFeature() {
       onSubmit={onSubmit}
       services={[...applications, ...databases]}
       cloudProvider={cloudProvider?.provider as CloudProviderEnum}
+      onAddStage={() => {
+        openModal({
+          content: <StageModalFeature onClose={closeModal} environmentId={environmentId} />,
+        })
+      }}
+      menuStage={menuStage}
     />
   )
 }

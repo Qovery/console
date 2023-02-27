@@ -45,7 +45,7 @@ export function AboutGit(props: AboutGitProps) {
           external
           style={ButtonStyle.STROKED}
         >
-          <Truncate truncateLimit={20} text={gitRepository?.name || ''} />
+          <Truncate truncateLimit={18} text={gitRepository?.name || ''} />
         </Button>
       </p>
     </div>

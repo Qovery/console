@@ -95,5 +95,6 @@ export enum IconAwesomeEnum {
   FILE_LOCK = 'icon-solid-file-lock',
   FILE_LINES = 'icon-solid-file-lines',
   FEATHER = 'icon-solid-feather-pointed',
+  ELLIPSIS = 'icon-solid-ellipsis',
   // schema: favicons name
 }
