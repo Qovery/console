@@ -1,4 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { postApplicationActionsRestart } from '@qovery/domains/application'
 import { postEnvironmentActionsRestart } from '@qovery/domains/environment'
 import {
   createAliasEnvironmentVariables,
@@ -46,7 +47,17 @@ export function handleSubmitForEnvSecretCreation(
     }
 
     const toasterCallback = () => {
-      dispatch(postEnvironmentActionsRestart({ projectId: props.projectId, environmentId: props.environmentId }))
+      if (
+        data.scope === APIVariableScopeEnum.JOB ||
+        data.scope === APIVariableScopeEnum.CONTAINER ||
+        data.scope === APIVariableScopeEnum.APPLICATION
+      ) {
+        dispatch(
+          postApplicationActionsRestart({ applicationId: props.applicationId, environmentId: props.environmentId })
+        )
+      } else {
+        dispatch(postEnvironmentActionsRestart({ projectId: props.projectId, environmentId: props.environmentId }))
+      }
     }
 
     if (!data.isSecret) {
