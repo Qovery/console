@@ -35,6 +35,7 @@ export function StageModal(props: StageModalProps) {
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"
+              dataTestId="input-name"
               name={field.name}
               onChange={field.onChange}
               value={field.value}

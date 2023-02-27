@@ -87,7 +87,12 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
               Tips: You can drag & drop
             </span>
           </p>
-          <Button className="shrink-0 ml-5" onClick={() => onAddStage()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button
+            dataTestId="btn-add-stage"
+            className="shrink-0 ml-5"
+            onClick={() => onAddStage()}
+            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+          >
             Add stage
           </Button>
         </div>
@@ -118,7 +123,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       <div className="h-11 flex justify-between items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <div className="flex items-center">
                           <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
-                          <span className="block text-text-500 text-2xs font-bold">
+                          <span className="block truncate text-text-500 text-2xs font-bold">
                             <Truncate truncateLimit={28} text={stage.name || ''} />
                           </span>
                         </div>
@@ -128,7 +133,6 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                             <ButtonIcon
                               className="text-text-500 !px-1 !w-7"
                               style={ButtonIconStyle.FLAT}
-                              onClick={() => console.log('hello')}
                               icon={IconAwesomeEnum.ELLIPSIS}
                               size={ButtonSize.TINY}
                             />
