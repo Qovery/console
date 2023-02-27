@@ -12,6 +12,12 @@ export default {
       values: [{ name: 'white', value: '#fff' }],
     },
   },
+  argTypes: {
+    serviceType: {
+      options: ServiceTypeEnum,
+      control: { type: 'select' },
+    },
+  },
 } as Meta
 
 const Template: Story<BadgeServiceProps> = (args) => <BadgeService {...args} />
