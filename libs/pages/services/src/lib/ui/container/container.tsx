@@ -58,6 +58,10 @@ export function Container(props: ContainerProps) {
     selectClusterById(state, environment?.cluster_id || '')
   )
 
+  const matchSettingsRoute = location.pathname.includes(
+    SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_SETTINGS_URL
+  )
+
   const headerActions = (
     <>
       <Skeleton width={150} height={32} show={!environment}>
@@ -165,7 +169,7 @@ export function Container(props: ContainerProps) {
     },
   ]
 
-  const contentTabs = (
+  const contentTabs = !matchSettingsRoute && (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
       <Skeleton width={154} height={40} show={!environment?.status}>
         {environment?.status ? (
