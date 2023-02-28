@@ -79,7 +79,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               'Do you need to go back?',
               () => dispatchServiceToDeployment(prevStage, true),
               '',
-              'Undo update'
+              'Undo'
             )
           }
         })

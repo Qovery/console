@@ -3,7 +3,7 @@ import { render } from '__tests__/utils/setup-jest'
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
 import * as storeEnvironment from '@qovery/domains/environment'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
-import { StageModalFeature, StageModalFeatureProps } from './stage-modal-feature'
+import { StageModalFeature, StageModalFeatureProps } from './stage-order-modal-feature'
 
 import SpyInstance = jest.SpyInstance
 
