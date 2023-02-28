@@ -21,8 +21,10 @@ import {
 import {
   authProviderReducer,
   clusterReducer,
+  creditCardsReducer,
   initialAuthProviderState,
   initialClusterState,
+  initialCreditCardsState,
   initialOrganizationState,
   initialRepositoryState,
   organization,
@@ -42,6 +44,7 @@ export const organizationReducer = combineReducers({
   organizations: organization,
   authProvider: authProviderReducer,
   repository: repositoryReducer,
+  creditCards: creditCardsReducer,
 })
 
 export const projectReducer = combineReducers({
@@ -92,6 +95,7 @@ export const initialRootState = (): RootState => ({
     organizations: initialOrganizationState,
     authProvider: initialAuthProviderState,
     repository: initialRepositoryState,
+    creditCards: initialCreditCardsState,
   },
   cluster: initialClusterState,
   project: {

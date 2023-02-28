@@ -1,3 +1,4 @@
+export * from './lib/credit-card-form/ui/credit-card-form'
 export * from './lib/github-application-callback/github-application-callback-feature/github-application-callback-feature'
 export * from './lib/cluster-settings/ui/cluster-remote-settings/cluster-remote-settings'
 export * from './lib/cluster-settings/feature/cluster-resources-settings-feature/cluster-resources-settings-feature'
@@ -30,3 +31,4 @@ export * from './lib/cluster-settings/ui/cluster-general-settings/cluster-genera
 export * from './lib/cluster-settings/feature/cluster-credentials-settings-feature/cluster-credentials-settings-feature'
 export * from './lib/cluster-settings/feature/create-edit-credentials-modal-feature/create-edit-credentials-modal-feature'
 export * from './lib/cluster-settings/ui/card-cluster-feature/card-cluster-feature'
+export * from './lib/add-credit-card-modal/feature/add-credit-card-modal-feature'
