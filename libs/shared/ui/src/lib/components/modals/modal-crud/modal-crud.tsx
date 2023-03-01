@@ -8,7 +8,7 @@ export interface ModalCrudProps {
   children: ReactNode
   title: string
   onClose: () => void
-  onSubmit: FormEventHandler<HTMLFormElement>
+  onSubmit?: FormEventHandler<HTMLFormElement>
   isEdit?: boolean
   loading?: boolean
   description?: string
@@ -52,20 +52,10 @@ export function ModalCrud(props: ModalCrudProps) {
           </p>
         </div>
       )}
-      <form onSubmit={onSubmit}>
-        {children}
-        <div className="flex gap-3 justify-end mt-6">
-          {isEdit && onDelete ? (
-            <Button
-              dataTestId="delete-button"
-              className="btn--no-min-w"
-              style={ButtonStyle.ERROR}
-              size={ButtonSize.XLARGE}
-              onClick={() => onDelete()}
-            >
-              {deleteButtonLabel || 'Delete'}
-            </Button>
-          ) : (
+      {!onSubmit ? (
+        <div>
+          {children}
+          <div className="flex gap-3 justify-end mt-6">
             <Button
               dataTestId="cancel-button"
               className="btn--no-min-w"
@@ -75,19 +65,46 @@ export function ModalCrud(props: ModalCrudProps) {
             >
               Cancel
             </Button>
-          )}
-          <Button
-            dataTestId="submit-button"
-            className="btn--no-min-w"
-            type="submit"
-            size={ButtonSize.XLARGE}
-            disabled={!formState.isValid}
-            loading={loading}
-          >
-            {submitLabel || (isEdit ? 'Confirm' : 'Create')}
-          </Button>
+          </div>
         </div>
-      </form>
+      ) : (
+        <form onSubmit={onSubmit}>
+          {children}
+          <div className="flex gap-3 justify-end mt-6">
+            {isEdit && onDelete ? (
+              <Button
+                dataTestId="delete-button"
+                className="btn--no-min-w"
+                style={ButtonStyle.ERROR}
+                size={ButtonSize.XLARGE}
+                onClick={() => onDelete()}
+              >
+                {deleteButtonLabel || 'Delete'}
+              </Button>
+            ) : (
+              <Button
+                dataTestId="cancel-button"
+                className="btn--no-min-w"
+                style={ButtonStyle.STROKED}
+                size={ButtonSize.XLARGE}
+                onClick={() => onClose()}
+              >
+                Cancel
+              </Button>
+            )}
+            <Button
+              dataTestId="submit-button"
+              className="btn--no-min-w"
+              type="submit"
+              size={ButtonSize.XLARGE}
+              disabled={!formState.isValid}
+              loading={loading}
+            >
+              {submitLabel || (isEdit ? 'Confirm' : 'Create')}
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   )
 }

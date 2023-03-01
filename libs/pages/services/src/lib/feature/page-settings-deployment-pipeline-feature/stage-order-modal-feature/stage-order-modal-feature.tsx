@@ -51,8 +51,6 @@ export function StageOrderModalFeature(props: StageOrderModalFeatureProps) {
     // }
   })
 
-  console.log(props.stages)
-
   return (
     <FormProvider {...methods}>
       <StageOrderModal stages={props.stages} onClose={props.onClose} onSubmit={onSubmit} loading={loading} />

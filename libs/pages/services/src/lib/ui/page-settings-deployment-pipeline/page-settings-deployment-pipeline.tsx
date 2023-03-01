@@ -17,7 +17,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
-import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
+import { move, reorderService } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import BadgeDeploymentOrder from './badge-deployment-order/badge-deployment-order'
 import DraggableItem from './draggable-item/draggable-item'
 
@@ -44,8 +44,8 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     const destinationIndex = +destination.droppableId
 
     if (sourceIndex === destinationIndex) {
-      // reorder inside the group
-      const newStages = reorder(stages, destinationIndex, source.index, destination.index)
+      // reorder service inside the group
+      const newStages = reorderService(stages, destinationIndex, source.index, destination.index)
       setStages(newStages)
     } else {
       // move to another group
