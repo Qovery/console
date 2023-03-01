@@ -1,50 +1,64 @@
-import { waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import StageModal, { StageModalProps } from './stage-order-modal'
+import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
+import StageOrderModal, { StageOrderModalProps } from './stage-order-modal'
 
-const props: StageModalProps = {
+const stages = deploymentStagesFactoryMock(3)
+
+const props: StageOrderModalProps = {
+  currentStages: stages,
+  setCurrentStages: jest.fn(),
+  onSubmit: jest.fn(),
   onClose: jest.fn(),
-  loading: false,
-  onSubmit: jest.fn((e) => e.preventDefault()),
-  isEdit: false,
 }
 
-describe('StageModal', () => {
+function simulateDragAndDrop(draggable: HTMLElement, droppable: HTMLElement): void {
+  // Créez un objet DataTransfer pour stocker les données à glisser
+  const dataTransfer = new DataTransfer()
+
+  // Déclenchez manuellement les événements de glisser-déposer
+  draggable.dispatchEvent(new Event('dragstart', { bubbles: true }))
+  droppable.dispatchEvent(new Event('dragenter', { bubbles: true }))
+  droppable.dispatchEvent(new Event('dragover', { bubbles: true }))
+  droppable.dispatchEvent(new DragEvent('drop', { bubbles: true, dataTransfer }))
+  draggable.dispatchEvent(new Event('dragend', { bubbles: true }))
+}
+
+describe('StageOrderModal', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<StageModal {...props} />))
+    const { baseElement } = render(<StageOrderModal {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the form', async () => {
-    const { findByLabelText } = render(
-      wrapWithReactHookForm(<StageModal {...props} />, {
-        defaultValues: { name: 'name', description: 'description' },
-      })
-    )
+  test('should renders the stages in the correct order', () => {
+    const { getByText } = render(<StageOrderModal {...props} />)
 
-    const inputName = await findByLabelText('Name')
-    const inputDescription = await findByLabelText('Description (optional)')
-
-    expect(inputName).toHaveValue('name')
-    expect(inputDescription).toHaveValue('description')
+    const stage1 = getByText(stages[0].name || '')
+    const stage2 = getByText(stages[1].name || '')
+    const stage3 = getByText(stages[2].name || '')
+    expect(stage1).toBeInTheDocument()
+    expect(stage2).toBeInTheDocument()
+    expect(stage3).toBeInTheDocument()
   })
 
-  it('should submit the form', async () => {
-    const spy = jest.fn((e) => e.preventDefault())
-    props.onSubmit = spy
-    const { findByTestId } = render(
-      wrapWithReactHookForm(<StageModal {...props} />, {
-        defaultValues: { name: 'name', description: 'description' },
-      })
-    )
+  test('should calls onClose when cancel button is clicked', () => {
+    const { getByTestId } = render(<StageOrderModal {...props} />)
 
-    const button = await findByTestId('submit-button')
-
-    await waitFor(() => {
-      button.click()
-      expect(button).not.toBeDisabled()
-      expect(spy).toHaveBeenCalled()
-    })
+    const cancelButton = getByTestId('cancel-button')
+    cancelButton.click()
+    expect(props.onClose).toHaveBeenCalled()
   })
+
+  // test('reorders stages when dragged and dropped', () => {
+  //   const { getByText } = render(<StageOrderModal {...props} />)
+
+  //   const stage1 = getByText(stages[0].name || '')
+  //   const stage2 = getByText(stages[1].name || '')
+  //   const stage3 = getByText(stages[2].name || '')
+
+  //   simulateDragAndDrop(stage1, stage3)
+
+  //   expect(stage1.nextSibling?.textContent).toEqual(stage2.textContent)
+  //   expect(stage2.nextSibling?.textContent).toEqual(stage3.textContent)
+  //   expect(stage3.previousSibling?.textContent).toEqual(stage2.textContent)
+  // })
 })
