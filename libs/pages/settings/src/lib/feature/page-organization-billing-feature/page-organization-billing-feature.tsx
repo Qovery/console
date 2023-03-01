@@ -19,7 +19,9 @@ export function PageOrganizationBillingFeature() {
     selectCreditCardsByOrganizationId(state, organizationId)
   )
 
-  const methods = useForm<CreditCardFormValues>()
+  const methods = useForm<CreditCardFormValues>({
+    mode: 'onChange',
+  })
 
   useEffect(() => {
     if (organizationId) dispatch(fetchCreditCards({ organizationId }))

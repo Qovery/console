@@ -76,13 +76,13 @@ export function InputText(props: InputTextProps) {
               name={name}
               id={label}
               className="input__value"
-              value={currentValue}
               type={currentType}
+              disabled={disabled}
+              value={currentValue}
               onChange={(e) => {
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)
               }}
-              disabled={disabled}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
             />

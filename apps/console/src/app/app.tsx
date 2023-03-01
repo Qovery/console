@@ -1,4 +1,6 @@
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
 import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
@@ -18,6 +20,8 @@ import { useAuthInterceptor, useDocumentTitle } from '@qovery/shared/utils'
 import { environment } from '../environments/environment'
 import ScrollToTop from './components/scroll-to-top'
 import { ROUTER } from './router/main.router'
+
+const stripePromise = loadStripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh')
 
 export function App() {
   useDocumentTitle('Loading...')
@@ -88,44 +92,46 @@ export function App() {
 
   return (
     <GTMProvider state={gtmParams}>
-      <ScrollToTop />
-      <Routes>
-        <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
-        <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
-        {ROUTER.map(
-          (route) =>
-            !route.layout && (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
-              />
-            )
-        )}
-        {ROUTER.map(
-          (route) =>
-            route.layout && (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  !route.protected ? (
-                    <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
-                      <Layout topBar={route.topBar}>{route.component}</Layout>
-                    </DarkModeEnabler>
-                  ) : (
-                    <ProtectedRoute>
+      <Elements stripe={stripePromise}>
+        <ScrollToTop />
+        <Routes>
+          <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
+          <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
+          {ROUTER.map(
+            (route) =>
+              !route.layout && (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
+                />
+              )
+          )}
+          {ROUTER.map(
+            (route) =>
+              route.layout && (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={
+                    !route.protected ? (
                       <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
                         <Layout topBar={route.topBar}>{route.component}</Layout>
                       </DarkModeEnabler>
-                    </ProtectedRoute>
-                  )
-                }
-              />
-            )
-        )}
-        <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
-      </Routes>
+                    ) : (
+                      <ProtectedRoute>
+                        <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
+                          <Layout topBar={route.topBar}>{route.component}</Layout>
+                        </DarkModeEnabler>
+                      </ProtectedRoute>
+                    )
+                  }
+                />
+              )
+          )}
+          <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
+        </Routes>
+      </Elements>
     </GTMProvider>
   )
 }

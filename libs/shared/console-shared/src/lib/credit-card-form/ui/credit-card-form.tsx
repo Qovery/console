@@ -1,6 +1,6 @@
 import { CreditCard } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputText } from '@qovery/shared/ui'
+import { InputCreditCard } from '@qovery/shared/ui'
 
 export interface CreditCardFormProps {
   creditCard?: CreditCard
@@ -15,11 +15,7 @@ export interface CreditCardFormValues {
 }
 
 export function CreditCardForm(props: CreditCardFormProps) {
-  const { control, watch } = useFormContext<CreditCardFormValues>()
-
-  watch((data) => {
-    console.log(data)
-  })
+  const { control } = useFormContext<CreditCardFormValues>()
 
   return (
     <div>
@@ -30,13 +26,14 @@ export function CreditCardForm(props: CreditCardFormProps) {
           required: 'Please enter the card number',
         }}
         render={({ field, fieldState: { error } }) => (
-          <InputText
+          <InputCreditCard
             className="mb-3"
             name={field.name}
-            onChange={field.onChange}
-            value={field.value}
             label="Card number"
             error={error?.message}
+            type="number"
+            onChange={field.onChange}
+            value={field.value}
           />
         )}
       />
@@ -48,13 +45,14 @@ export function CreditCardForm(props: CreditCardFormProps) {
           required: 'Please enter the card expiry date',
         }}
         render={({ field, fieldState: { error } }) => (
-          <InputText
+          <InputCreditCard
             className="mb-3"
+            type="expiry"
             name={field.name}
             onChange={field.onChange}
-            value={field.value}
             label="Expiration date"
             error={error?.message}
+            value={field.value}
           />
         )}
       />
@@ -66,13 +64,14 @@ export function CreditCardForm(props: CreditCardFormProps) {
           required: 'Please enter the card CVC',
         }}
         render={({ field, fieldState: { error } }) => (
-          <InputText
+          <InputCreditCard
             className="mb-3"
+            type="cvc"
             name={field.name}
             onChange={field.onChange}
-            value={field.value}
             label="CVC"
             error={error?.message}
+            value={field.value}
           />
         )}
       />

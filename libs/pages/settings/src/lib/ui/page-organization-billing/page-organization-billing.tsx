@@ -7,6 +7,7 @@ import {
   HelpSection,
   Icon,
   IconAwesomeEnum,
+  InputCreditCard,
   InputText,
 } from '@qovery/shared/ui'
 
@@ -37,7 +38,8 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
               </p>
               {props.creditCards.map((creditCard) => (
                 <div key={creditCard.id} className="flex items-center justify-between mb-3 gap-3">
-                  <InputText
+                  <InputCreditCard
+                    type="number"
                     name="Card number"
                     label="Card number"
                     value={`**** ${creditCard.last_digit}`}
