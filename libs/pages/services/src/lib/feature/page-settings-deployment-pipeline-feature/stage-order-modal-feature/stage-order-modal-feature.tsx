@@ -1,6 +1,8 @@
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
+import { moveDeploymentStageRequested } from '@qovery/domains/environment'
+import { AppDispatch } from '@qovery/store'
 import StageOrderModal from '../../../ui/page-settings-deployment-pipeline/stage-order-modal/stage-order-modal'
 
 export interface StageOrderModalFeatureProps {
@@ -9,52 +11,24 @@ export interface StageOrderModalFeatureProps {
 }
 
 export function StageOrderModalFeature(props: StageOrderModalFeatureProps) {
-  const methods = useForm({
-    mode: 'onChange',
-  })
+  const dispatch = useDispatch<AppDispatch>()
 
-  const [loading, setLoading] = useState(false)
-  // const dispatch = useDispatch<AppDispatch>()
+  const [currentStages, setCurrentStages] = useState<DeploymentStageResponse[] | undefined>(props.stages)
 
-  const onSubmit = methods.handleSubmit((data) => {
-    if (!data) {
-      return
-    }
-
-    setLoading(true)
-
-    // if (props.stage) {
-    //   // edit stage
-    //   dispatch(
-    //     editEnvironmentDeploymentStage({
-    //       stageId: props.stage.id,
-    //       environmentId: props.environmentId,
-    //       data: currentData,
-    //     })
-    //   )
-    //     .unwrap()
-    //     .then(() => props.onClose())
-    //     .catch((e) => console.error(e))
-    //     .finally(() => setLoading(false))
-    // } else {
-    //   // create stage
-    //   dispatch(
-    //     createEnvironmentDeploymentStage({
-    //       environmentId: props.environmentId,
-    //       data: currentData,
-    //     })
-    //   )
-    //     .unwrap()
-    //     .then(() => props.onClose())
-    //     .catch((e) => console.error(e))
-    //     .finally(() => setLoading(false))
-    // }
-  })
+  const onSubmit = (stageId: string, beforeOrAfterStageId: string, before: boolean) => {
+    dispatch(moveDeploymentStageRequested({ stageId, beforeOrAfterStageId, before }))
+      .unwrap()
+      .then((result) => setCurrentStages(result))
+      .catch((e) => console.error(e))
+  }
 
   return (
-    <FormProvider {...methods}>
-      <StageOrderModal stages={props.stages} onClose={props.onClose} onSubmit={onSubmit} loading={loading} />
-    </FormProvider>
+    <StageOrderModal
+      currentStages={currentStages}
+      setCurrentStages={setCurrentStages}
+      onClose={props.onClose}
+      onSubmit={onSubmit}
+    />
   )
 }
 

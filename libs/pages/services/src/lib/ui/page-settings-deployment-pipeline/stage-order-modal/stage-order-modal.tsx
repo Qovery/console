@@ -1,20 +1,18 @@
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
-import { FormEventHandler, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
-import { ModalCrud } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, ScrollShadowWrapper } from '@qovery/shared/ui'
 import { reorderStage } from '../../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import BadgeDeploymentOrder from '../badge-deployment-order/badge-deployment-order'
 
 export interface StageOrderModalProps {
   onClose: () => void
-  onSubmit: FormEventHandler<HTMLFormElement>
-  stages?: DeploymentStageResponse[]
-  loading?: boolean
+  onSubmit: (stageId: string, beforeStageId: string, before: boolean) => void
+  setCurrentStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
+  currentStages?: DeploymentStageResponse[]
 }
 
 export function StageOrderModal(props: StageOrderModalProps) {
-  const [currentStages, setCurrentStages] = useState(props.stages)
-
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result
 
@@ -22,48 +20,50 @@ export function StageOrderModal(props: StageOrderModalProps) {
       return
     }
 
-    if (currentStages) {
-      const newStages = reorderStage(currentStages, source.index, destination.index)
-      setCurrentStages(newStages)
+    if (props.currentStages) {
+      const newStages = reorderStage(props.currentStages, source.index, destination.index)
+      props.setCurrentStages(newStages)
+
+      const defaultCondition = source.index < destination.index
+
+      props.onSubmit(newStages[source.index].id, newStages[destination.index].id, defaultCondition)
     }
   }
 
   const classNameItem = (isDragging: boolean) =>
-    `flex items-center w-full bg-element-light-lighter-200 text-text-500 text-ssm font-medium rounded px-2 py-3 border ${
-      isDragging ? 'border-2 border-success-500' : 'border-element-light-lighter-500'
+    `flex items-center w-full text-text-500 text-ssm font-medium rounded p-4 border ${
+      isDragging
+        ? 'border-2 border-success-500 bg-element-light-lighter-100'
+        : 'border-element-light-lighter-500 bg-element-light-lighter-200'
     }`
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <ModalCrud
-        title="Edit execution order"
-        description="You can drag and drop stages to modify their order."
-        onClose={props.onClose}
-        loading={props.loading}
-        isEdit
-      >
-        <div style={{ overflow: 'auto', maxHeight: '600px' }}>
+      <div className="p-6">
+        <h2 className="h4 text-text-600 max-w-sm truncate mb-1">Edit execution order</h2>
+        <p className="mb-6 text-text-400 text-sm">You can drag and drop stages to modify their order.</p>
+        <ScrollShadowWrapper className="max-h-[500px]">
           <Droppable droppableId="0">
-            {(provided, snapshot) => (
+            {(provided) => (
               <div className="select-none" {...provided.droppableProps} ref={provided.innerRef}>
-                {currentStages?.map((stage, index) => (
+                {props.currentStages?.map((stage, index) => (
                   <Draggable key={stage.id} draggableId={stage.id} index={index}>
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="!top-[auto] !left-[auto] flex items-center mb-1 last:mb-0"
+                        className="!top-[auto] !left-[auto] flex items-center mb-1"
                       >
                         <div
-                          className={`text-center w-5 h-5 text-sm text-text-500 mr-4 ${
+                          className={`text-center w-5 h-5 text-sm text-text-500 mr-3 ${
                             snapshot.isDragging ? 'opacity-0' : ''
                           }`}
                         >
                           {index}
                         </div>
                         <div className={snapshot && classNameItem(snapshot.isDragging)}>
-                          <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
+                          <BadgeDeploymentOrder id={stage.id} order={stage.deployment_order} />
                           <span className="block ml-1">{stage.name}</span>
                         </div>
                       </div>
@@ -74,8 +74,19 @@ export function StageOrderModal(props: StageOrderModalProps) {
               </div>
             )}
           </Droppable>
+        </ScrollShadowWrapper>
+        <div className="flex gap-3 justify-end mt-6">
+          <Button
+            dataTestId="cancel-button"
+            className="btn--no-min-w"
+            style={ButtonStyle.STROKED}
+            size={ButtonSize.XLARGE}
+            onClick={() => props.onClose()}
+          >
+            Cancel
+          </Button>
         </div>
-      </ModalCrud>
+      </div>
     </DragDropContext>
   )
 }

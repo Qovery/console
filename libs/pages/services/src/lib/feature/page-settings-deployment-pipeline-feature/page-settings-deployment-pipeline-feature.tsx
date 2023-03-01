@@ -62,7 +62,7 @@ export function PageSettingsDeploymentPipelineFeature() {
     if (deploymentStage?.items) setStages(deploymentStage?.items)
   }, [setStages, deploymentStage?.items])
 
-  const onSubmit = async (newStage: StageRequest, prevStage: StageRequest) => {
+  const onSubmit = (newStage: StageRequest, prevStage: StageRequest) => {
     // dispatch function with two actions, undo and update stage
     function dispatchServiceToDeployment(stage: StageRequest, previous?: boolean) {
       dispatch(addServiceToDeploymentStage({ deploymentStageId: stage.deploymentStageId, serviceId: stage.serviceId }))
