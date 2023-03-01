@@ -1,9 +1,9 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, getByDisplayValue, getByTestId, screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import InputText, { InputTextProps } from './input-text'
+import InputCreditCard, { InputCreditCardProps } from './input-credit-card'
 
 describe('InputText', () => {
-  let props: InputTextProps
+  let props: InputCreditCardProps
 
   beforeEach(() => {
     props = {
@@ -13,48 +13,46 @@ describe('InputText', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<InputText name={props.name} label={props.label} />)
+    const { baseElement } = render(<InputCreditCard name={props.name} label={props.label} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should apply the accurate classes as input actions', () => {
-    props.error = 'some error'
-
-    const { rerender } = render(<InputText {...props} />)
-
-    let inputContainer = screen.getByLabelText('input-container')
-
-    expect(inputContainer.className).toContain('input--error')
-
-    props.error = ''
-
-    rerender(<InputText {...props} />)
-
-    inputContainer = screen.getByLabelText('input-container')
-    const input = screen.getByRole('textbox')
-
-    fireEvent.change(input, { target: { value: 'some new text value' } })
-
-    expect(inputContainer.className).not.toContain('input--error')
-  })
-
-  it('should set the text value when the input event is emitted', async () => {
-    render(<InputText {...props} />)
+  it('should format the text for a number and show the matching credit card image', async () => {
+    const { baseElement } = render(<InputCreditCard {...props} type="number" />)
 
     const input = screen.getByRole('textbox')
 
-    fireEvent.input(input, { target: { value: 'some new text value' } })
+    const image = getByTestId(baseElement, 'credit-card-image')
+    expect(image).toHaveAttribute('aria-label', 'Placeholder card')
 
-    expect((input as HTMLInputElement).value).toBe('some new text value')
+    await act(() => {
+      fireEvent.change(input, { target: { value: '4444444444444444' } })
+    })
+
+    expect(image).toHaveAttribute('aria-label', 'Visa')
+
+    getByDisplayValue(baseElement, '4444 4444 4444 4444')
   })
 
-  it('should display a floating component on the right', async () => {
-    props.rightElement = <div>GB</div>
-    render(<InputText {...props} />)
+  it('should set the value for expiry', async () => {
+    const { baseElement } = render(<InputCreditCard {...props} type="expiry" />)
 
-    screen.getByText('GB')
+    const input = screen.getByRole('textbox')
 
-    const wrapper = screen.getByTestId('right-floating-component')
-    expect(wrapper).toHaveClass('absolute top-1/2 -translate-y-1/2 right-4')
+    fireEvent.input(input, { target: { value: '0320' } })
+
+    getByDisplayValue(baseElement, '03 / 20')
+  })
+
+  it('should set the value for ccv', async () => {
+    const { baseElement } = render(<InputCreditCard {...props} type="cvc" />)
+
+    const input = screen.getByRole('textbox')
+
+    await act(() => {
+      fireEvent.input(input, { target: { value: '032' } })
+    })
+
+    getByDisplayValue(baseElement, '032')
   })
 })

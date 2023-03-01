@@ -118,6 +118,7 @@ export function InputCreditCard(props: InputCreditCardProps) {
         >
           {props.type === 'number' && (
             <svg
+              data-testid="credit-card-image"
               className="absolute -translate-x-full -ml-3 -translate-y-1/2 top-1/2 z-10"
               {...getCardImageProps({ images })}
             ></svg>

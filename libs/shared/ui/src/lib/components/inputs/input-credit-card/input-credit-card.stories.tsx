@@ -1,30 +1,36 @@
 import { Meta, Story } from '@storybook/react'
-import CopyToClipboard from '../../copy-to-clipboard/copy-to-clipboard'
-import { InputText, InputTextProps } from './input-text'
+import InputCreditCard, { InputCreditCardProps } from './input-credit-card'
 
 export default {
-  component: InputText,
-  title: 'Inputs/InputText',
+  component: InputCreditCard,
+  title: 'Inputs/InputCreditCard',
 } as Meta
 
-const Template: Story<InputTextProps> = (args) => <InputText {...args} />
+const Template: Story<InputCreditCardProps> = (args) => <InputCreditCard {...args} />
 
-const defaultProps: InputTextProps = {
-  label: 'First name',
+const defaultProps: InputCreditCardProps = {
   name: 'firstName',
-  rightElement: null,
   disabled: false,
+  label: 'First name',
 }
 
-export const Primary = Template.bind({})
-Primary.args = {
+export const Number = Template.bind({})
+Number.args = {
   ...defaultProps,
+  type: 'number',
+  label: 'First name',
 }
 
-const TemplateWithRightElement: Story<InputTextProps> = (args) => <InputText {...args} />
-
-export const WithRightElement = Template.bind({})
-WithRightElement.args = {
+export const Expiry = Template.bind({})
+Expiry.args = {
   ...defaultProps,
-  rightElement: <CopyToClipboard content="Copy to clipboard" />,
+  type: 'expiry',
+  label: 'Expiry',
+}
+
+export const CVC = Template.bind({})
+CVC.args = {
+  ...defaultProps,
+  type: 'cvc',
+  label: 'CVC',
 }
