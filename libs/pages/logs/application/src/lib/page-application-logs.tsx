@@ -51,6 +51,15 @@ export function PageApplicationLogs() {
   const { getAccessTokenSilently } = useAuth()
 
   const applicationLogsUrl: () => Promise<string> = useCallback(async () => {
+    const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}`
+    const token = await getAccessTokenSilently()
+
+    return new Promise((resolve) => {
+      environment?.cluster_id && resolve(url + `&bearer_token=${token}`)
+    })
+  }, [organizationId, environment?.cluster_id, projectId, environmentId, applicationId, getAccessTokenSilently])
+
+  const nginxLogsUrl: () => Promise<string> = useCallback(async () => {
     const url = `wss://ws.qovery.com/service/infra/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}&infra_component_type=NGINX`
     const token = await getAccessTokenSilently()
 
@@ -60,6 +69,19 @@ export function PageApplicationLogs() {
   }, [organizationId, environment?.cluster_id, projectId, environmentId, applicationId, getAccessTokenSilently])
 
   useWebSocket(applicationLogsUrl, {
+    onMessage: (message) => {
+      setLoading('loaded')
+
+      if (pauseStatusLogs) {
+        setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
+      } else {
+        setLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
+        setPauseLogs([])
+      }
+    },
+  })
+
+  useWebSocket(nginxLogsUrl, {
     onMessage: (message) => {
       setLoading('loaded')
 
