@@ -96,5 +96,6 @@ export enum IconAwesomeEnum {
   FILE_LINES = 'icon-solid-file-lines',
   FEATHER = 'icon-solid-feather-pointed',
   ELLIPSIS = 'icon-solid-ellipsis',
+  ARROW_DOWN_19 = 'icon-solid-arrow-down-1-9',
   // schema: favicons name
 }

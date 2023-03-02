@@ -1,5 +1,5 @@
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
-import { move, reorder } from './utils'
+import { move, reorderService, reorderStage } from './utils'
 
 describe('PageSettingsDeploymentPipeline/utils', () => {
   it('should reorder the services within a stage', () => {
@@ -52,7 +52,53 @@ describe('PageSettingsDeploymentPipeline/utils', () => {
     const startIndex = 1
     const endIndex = 0
 
-    const result = reorder(stages, destinationIndex, startIndex, endIndex)
+    const result = reorderService(stages, destinationIndex, startIndex, endIndex)
+
+    expect(result).toEqual(expectedStages)
+  })
+
+  it('should reorder the stages', () => {
+    const stages: DeploymentStageResponse[] = [
+      {
+        id: '1',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [],
+      },
+      {
+        id: '2',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [],
+      },
+    ]
+
+    const expectedStages: DeploymentStageResponse[] = [
+      {
+        id: '2',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [],
+      },
+      {
+        id: '1',
+        created_at: '',
+        environment: {
+          id: '1',
+        },
+        services: [],
+      },
+    ]
+    const startIndex = 1
+    const endIndex = 0
+
+    const result = reorderStage(stages, startIndex, endIndex)
 
     expect(result).toEqual(expectedStages)
   })

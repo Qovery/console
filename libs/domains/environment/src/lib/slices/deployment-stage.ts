@@ -25,6 +25,25 @@ export const addServiceToDeploymentStage = createAsyncThunk(
   }
 )
 
+export const moveDeploymentStageRequested = createAsyncThunk(
+  'environment/moveDeploymentStageRequested',
+  async (payload: { stageId: string; beforeOrAfterStageId: string; after: boolean }) => {
+    let response
+    if (payload.after) {
+      response = await deploymentStageMainCallApi.moveAfterDeploymentStage(
+        payload.stageId,
+        payload.beforeOrAfterStageId
+      )
+    } else {
+      response = await deploymentStageMainCallApi.moveBeforeDeploymentStage(
+        payload.stageId,
+        payload.beforeOrAfterStageId
+      )
+    }
+    return response.data.results
+  }
+)
+
 export const createEnvironmentDeploymentStage = createAsyncThunk(
   'environment/createEnvironmentDeploymentStage',
   async (payload: { environmentId: string; data: DeploymentStageRequest }) => {
@@ -161,6 +180,24 @@ export const deploymentStageExtraReducers = (builder: ActionReducerMapBuilder<En
       toast(ToastEnum.SUCCESS, 'Your stage has been successfully deleted')
     })
     .addCase(deleteEnvironmentDeploymentStage.rejected, (state: EnvironmentsState, action) => {
+      toastError(action.error)
+    })
+    // move deployment stage before requested statge
+    .addCase(moveDeploymentStageRequested.fulfilled, (state: EnvironmentsState, action) => {
+      const environmentId = action.payload ? action.payload[0].environment.id : ''
+      const update: Update<EnvironmentEntity> = {
+        id: environmentId,
+        changes: {
+          deploymentStage: {
+            loadingStatus: 'loaded',
+            items: action.payload,
+          },
+        },
+      }
+      environmentsAdapter.updateOne(state, update)
+      toast(ToastEnum.SUCCESS, 'Your stage order has been successfully updated')
+    })
+    .addCase(moveDeploymentStageRequested.rejected, (state: EnvironmentsState, action) => {
       toastError(action.error)
     })
 }

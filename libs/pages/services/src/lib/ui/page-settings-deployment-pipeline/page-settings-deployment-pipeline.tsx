@@ -14,17 +14,18 @@ import {
   Menu,
   MenuAlign,
   MenuData,
+  Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
-import { move, reorder } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
+import { move, reorderService } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import BadgeDeploymentOrder from './badge-deployment-order/badge-deployment-order'
 import DraggableItem from './draggable-item/draggable-item'
 
 export interface PageSettingsDeploymentPipelineProps {
   onSubmit: (newStage: StageRequest, prevStage: StageRequest) => void
   setStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
-  menuStage: (stage: DeploymentStageResponse) => MenuData
+  menuStage: (stage: DeploymentStageResponse, stages?: DeploymentStageResponse[]) => MenuData
   onAddStage: () => void
   stages?: DeploymentStageResponse[]
   services?: (DatabaseEntity | ApplicationEntity)[]
@@ -44,8 +45,8 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     const destinationIndex = +destination.droppableId
 
     if (sourceIndex === destinationIndex) {
-      // reorder inside the group
-      const newStages = reorder(stages, destinationIndex, source.index, destination.index)
+      // reorder service inside the group
+      const newStages = reorderService(stages, destinationIndex, source.index, destination.index)
       setStages(newStages)
     } else {
       // move to another group
@@ -123,10 +124,20 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                     <div className="w-60 shrink-0 rounded">
                       <div className="h-11 flex justify-between items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <div className="flex items-center">
-                          <BadgeDeploymentOrder deploymentOrder={stage.deployment_order} />
+                          <BadgeDeploymentOrder id={stage.id} order={stage.deployment_order} />
                           <span className="block truncate text-text-500 text-2xs font-bold">
                             <Truncate truncateLimit={28} text={stage.name || ''} />
                           </span>
+                          {stage.description && (
+                            <Tooltip content={stage.description}>
+                              <div>
+                                <Icon
+                                  name={IconAwesomeEnum.CIRCLE_INFO}
+                                  className="text-text-400 text-xs ml-1 relative -top-[2px]"
+                                />
+                              </div>
+                            </Tooltip>
+                          )}
                         </div>
                         <Menu
                           width={256}
@@ -138,7 +149,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               size={ButtonSize.TINY}
                             />
                           }
-                          menus={menuStage(stage)}
+                          menus={menuStage(stage, stages)}
                           arrowAlign={MenuAlign.END}
                         />
                       </div>
