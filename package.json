@@ -63,7 +63,7 @@
     "react-country-flag": "^3.0.2",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.2",
-    "react-hook-form": "^7.34.2",
+    "react-hook-form": "^7.43.2",
     "react-hot-toast": "^2.4.0",
     "react-redux": "8.0.5",
     "react-router-dom": "6.4.3",
