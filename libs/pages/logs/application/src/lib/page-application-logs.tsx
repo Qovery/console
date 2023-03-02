@@ -51,7 +51,7 @@ export function PageApplicationLogs() {
   const { getAccessTokenSilently } = useAuth()
 
   const applicationLogsUrl: () => Promise<string> = useCallback(async () => {
-    const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}`
+    const url = `wss://ws.qovery.com/service/infra/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}&infra_component_type=NGINX`
     const token = await getAccessTokenSilently()
 
     return new Promise((resolve) => {

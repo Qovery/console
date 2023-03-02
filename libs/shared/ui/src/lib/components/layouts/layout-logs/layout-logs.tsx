@@ -18,6 +18,7 @@ import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-ic
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import InputCheckbox from '../../inputs/input-checkbox/input-checkbox'
 import { Menu, MenuAlign, MenuData } from '../../menu/menu'
 import StatusChip from '../../status-chip/status-chip'
 import Tooltip from '../../tooltip/tooltip'
@@ -203,6 +204,14 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
               </p>
             )}
+            <div className="mr-auto text-text-300 text-xs font-medium">
+              <InputCheckbox
+                name="checkbox-debug"
+                value={'false'}
+                onChange={() => console.log('hello')}
+                label="Debug"
+              />
+            </div>
             <div className="flex">
               {location.pathname.includes(
                 APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)
