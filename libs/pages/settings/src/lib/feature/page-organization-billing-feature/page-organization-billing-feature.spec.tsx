@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import PageOrganizationBillingFeature from './page-organization-billing-feature'
 
 describe('PageOrganizationBillingFeature', () => {

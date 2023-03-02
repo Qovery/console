@@ -3,7 +3,12 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { deleteCreditCard, fetchCreditCards, selectCreditCardsByOrganizationId } from '@qovery/domains/organization'
+import {
+  deleteCreditCard,
+  fetchCreditCards,
+  getCreditCardsState,
+  selectCreditCardsByOrganizationId,
+} from '@qovery/domains/organization'
 import { AddCreditCardModalFeature, CreditCardFormValues } from '@qovery/shared/console-shared'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -14,6 +19,9 @@ export function PageOrganizationBillingFeature() {
   const dispatch = useDispatch<AppDispatch>()
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
+  const creditCardLoadingStatus = useSelector<RootState, string | undefined>(
+    (state) => getCreditCardsState(state).loadingStatus
+  )
 
   const creditCards = useSelector<RootState, CreditCard[]>((state) =>
     selectCreditCardsByOrganizationId(state, organizationId)
@@ -51,6 +59,7 @@ export function PageOrganizationBillingFeature() {
         creditCards={creditCards}
         openNewCreditCardModal={openNewCreditCardModal}
         onDeleteCard={onDeleteCreditCard}
+        creditCardLoading={creditCardLoadingStatus !== 'loaded'}
       />
     </FormProvider>
   )

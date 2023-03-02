@@ -9,12 +9,14 @@ import {
   IconAwesomeEnum,
   InputCreditCard,
   InputText,
+  LoaderSpinner,
 } from '@qovery/shared/ui'
 
 export interface PageOrganizationBillingProps {
   creditCards: CreditCard[]
   openNewCreditCardModal: () => void
   onDeleteCard: (creditCard: CreditCard) => void
+  creditCardLoading?: boolean
 }
 
 export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
@@ -25,19 +27,31 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           <div>
             <h1 className="h5 text-text-700 mb-2">Payment method</h1>
           </div>
-          <Button onClick={props.openNewCreditCardModal} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button
+            dataTestId="add-new-card-button"
+            onClick={props.openNewCreditCardModal}
+            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+          >
             Add new card
           </Button>
         </div>
 
         <BlockContent title="Credit cards">
-          {props.creditCards.length > 0 ? (
+          {props.creditCardLoading && props.creditCards.length === 0 ? (
+            <div className="flex justify-center">
+              <LoaderSpinner />
+            </div>
+          ) : props.creditCards.length > 0 ? (
             <div className="flex flex-col">
               <p className="text-2xs text-text-500 mb-5">
                 You will be charged in USD / EUR - contact us for more details.
               </p>
               {props.creditCards.map((creditCard) => (
-                <div key={creditCard.id} className="flex items-center justify-between mb-3 gap-3">
+                <div
+                  data-testid="credit-card-row"
+                  key={creditCard.id}
+                  className="flex items-center justify-between mb-3 gap-3"
+                >
                   <InputCreditCard
                     type="number"
                     name="Card number"
@@ -54,6 +68,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                     disabled
                   />
                   <ButtonIcon
+                    dataTestId="delete-credit-card"
                     onClick={() => props.onDeleteCard(creditCard)}
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.STROKED}
@@ -65,7 +80,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           ) : (
             <div data-testid="placeholder-credit-card" className="text-center px-3 py-6">
               <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-              <p className="text-text-400 font-medium text-xs mt-1">
+              <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-credit-card">
                 No credit cards found. <br /> Please add one.
               </p>
             </div>
