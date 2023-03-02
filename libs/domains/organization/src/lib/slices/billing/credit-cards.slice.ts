@@ -109,7 +109,7 @@ export const creditCardsSlice = createSlice({
 
 export const creditCardsReducer = creditCardsSlice.reducer
 
-export const environmentsActions = creditCardsSlice.actions
+export const creditCardsActions = creditCardsSlice.actions
 
 const { selectAll, selectEntities } = creditCardsAdapter.getSelectors()
 
@@ -132,6 +132,3 @@ export const selectCreditCardsByOrganizationId = (state: RootState, organization
 }
 
 export const selectCreditCardById = (state: RootState, id: string) => getCreditCardsState(state).entities[id]
-
-export const environmentsLoadingStatus = (state: RootState): string | undefined =>
-  getCreditCardsState(state).loadingStatus

@@ -1,16 +1,13 @@
-import { environments, environmentsAdapter } from './environments.slice'
+import { creditCardsAdapter, creditCardsReducer } from './credit-cards.slice'
 
-describe('environments reducer', () => {
+describe('Credit Card Reducer', () => {
   it('should handle initial state', () => {
-    const expected = environmentsAdapter.getInitialState({
+    const expected = creditCardsAdapter.getInitialState({
       loadingStatus: 'not loaded',
-      loadingEnvironmentStatus: 'not loaded',
-      loadingEnvironmentDeployments: 'not loaded',
-      loadingEnvironmentDeploymentRules: 'not loaded',
       error: null,
-      joinProjectEnvironments: {},
+      joinCreditCardsOrganization: {},
     })
 
-    expect(environments(undefined, { type: '' })).toEqual(expected)
+    expect(creditCardsReducer(undefined, { type: '' })).toEqual(expected)
   })
 })
