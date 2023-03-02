@@ -53,6 +53,14 @@ describe('DatabaseButtonsActionsFeature', () => {
     getByText(baseElement, 'Delete database')
   })
 
+  it('should render actions for DELETING status', async () => {
+    mockDatabase.status.state = StateEnum.DELETING
+    const { baseElement } = render(<DatabaseButtonsActions {...props} />)
+
+    getByText(baseElement, 'Copy identifiers')
+    getByText(baseElement, 'Cancel delete')
+  })
+
   it('should not render Restart Database if running status is not running', async () => {
     if (mockDatabase.running_status) {
       mockDatabase.running_status.state = RunningStatus.STOPPED
