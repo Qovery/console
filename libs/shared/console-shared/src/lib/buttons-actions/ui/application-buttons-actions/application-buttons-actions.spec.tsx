@@ -45,6 +45,7 @@ describe('ApplicationButtonsActionsFeature', () => {
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Open settings')
     getByText(baseElement, 'Delete service')
+    getByText(baseElement, 'Deploy other version')
   })
 
   it('should render actions for STOPPED status', async () => {
@@ -57,6 +58,19 @@ describe('ApplicationButtonsActionsFeature', () => {
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Open settings')
     getByText(baseElement, 'Delete service')
+    getByText(baseElement, 'Deploy other version')
+  })
+
+  it('should render actions for DELETING status', async () => {
+    mockApplication.status.state = StateEnum.DELETING
+    const { baseElement } = render(<ApplicationButtonsActions {...props} />)
+
+    getByText(baseElement, 'Edit code')
+    getByText(baseElement, 'Logs')
+    getByText(baseElement, 'Deploy other version')
+    getByText(baseElement, 'Copy identifiers')
+    getByText(baseElement, 'Cancel delete')
+    getByText(baseElement, 'Open settings')
   })
 
   it('should not render Restart Service if running status is not running', async () => {

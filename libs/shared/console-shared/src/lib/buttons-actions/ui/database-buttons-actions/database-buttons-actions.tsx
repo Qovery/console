@@ -1,8 +1,8 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
@@ -10,8 +10,9 @@ import {
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@qovery/domains/database'
+import { postEnvironmentActionsCancelDeployment } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
-import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_DEPLOYMENTS_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -23,6 +24,7 @@ import {
 } from '@qovery/shared/ui'
 import {
   copyToClipboard,
+  isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
   isRedeployAvailable,
@@ -43,8 +45,8 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const navigate = useNavigate()
 
   const { openModalConfirmation } = useModalConfirmation()
-
   const dispatch = useDispatch<AppDispatch>()
+  const location = useLocation()
 
   const removeDatabase = (id: string, name?: string) => {
     openModalConfirmation({
@@ -71,6 +73,11 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
           })
         ),
     }
+
+    const state = database.status?.state
+    const runningState = database.running_status?.state
+    const topItems: MenuItemProps[] = []
+    const bottomItems: MenuItemProps[] = []
 
     const redeployButton: MenuItemProps = {
       name: 'Redeploy',
@@ -128,12 +135,36 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       contentLeft: <Icon name={IconAwesomeEnum.CIRCLE_STOP} className="text-sm text-brand-400" />,
     }
 
-    const state = database.status?.state
-    const runningState = database.running_status?.state
-    const topItems: MenuItemProps[] = []
-    const bottomItems: MenuItemProps[] = []
+    const cancelDeploymentButton = {
+      name: state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment',
+      onClick: (e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+
+        openModalConfirmation({
+          mode: database.mode,
+          title: 'Confirm cancel',
+          description:
+            'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the database:',
+          name: database.name,
+          action: () =>
+            dispatch(
+              postEnvironmentActionsCancelDeployment({
+                projectId,
+                environmentId,
+                withDeployments:
+                  location.pathname ===
+                  SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
+              })
+            ),
+        })
+      },
+      contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
+    }
 
     if (state) {
+      if (isCancelBuildAvailable(state)) {
+        topItems.push(cancelDeploymentButton)
+      }
       if (isDeployAvailable(state)) {
         topItems.push(deployButton)
       }
@@ -149,7 +180,16 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
-  }, [database, environmentMode, environmentId, dispatch, openModalConfirmation])
+  }, [
+    database,
+    environmentMode,
+    organizationId,
+    projectId,
+    environmentId,
+    dispatch,
+    openModalConfirmation,
+    location.pathname,
+  ])
 
   const canDelete = database.status && isDeleteAvailable(database.status.state)
 

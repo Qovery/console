@@ -1,4 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
+import { StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -74,6 +75,10 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         ),
     }
 
+    const state = environment.status?.state
+    const topItems: MenuItemProps[] = []
+    const bottomItems: MenuItemProps[] = []
+
     const redeployButton: MenuItemProps = {
       name: 'Redeploy',
       contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
@@ -125,7 +130,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     }
 
     const cancelDeploymentButton = {
-      name: 'Cancel Deployment',
+      name: state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment',
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
 
@@ -149,10 +154,6 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
     }
-
-    const state = environment.status?.state
-    const topItems: MenuItemProps[] = []
-    const bottomItems: MenuItemProps[] = []
 
     if (state) {
       if (isCancelBuildAvailable(state)) {

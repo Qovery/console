@@ -51,4 +51,14 @@ describe('EnvironmentButtonsActions', () => {
     getByText(baseElement, 'Clone')
     getByText(baseElement, 'Delete environment')
   })
+
+  it('should render actions for DELETING status', async () => {
+    mockEnvironment.status.state = StateEnum.DELETING
+    const { baseElement } = render(<EnvironmentButtonsActions {...props} />)
+
+    getByText(baseElement, 'Logs')
+    getByText(baseElement, 'Copy identifiers')
+    getByText(baseElement, 'Clone')
+    getByText(baseElement, 'Cancel delete')
+  })
 })
