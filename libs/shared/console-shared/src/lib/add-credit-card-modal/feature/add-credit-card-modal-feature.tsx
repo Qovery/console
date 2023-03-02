@@ -20,19 +20,13 @@ export function AddCreditCardModalFeature(props: AddCreditCardModalFeatureProps)
   const onSubmit = methods.handleSubmit((data) => {
     if (data.card_number && data.expiry && data.cvc && props.organizationId) {
       setLoading(true)
-      let expiryYear = Number(data.expiry.split('/')[1])
-      // if expiryYear does not have 4 digits, we add 2000 to it
-      if (expiryYear < 1000) {
-        expiryYear += 2000
-      }
-
       dispatch(
         addCreditCard({
           organizationId: props.organizationId,
           creditCardRequest: {
             cvv: data.cvc,
             number: data.card_number,
-            expiry_year: expiryYear,
+            expiry_year: Number(data.expiry.split('/')[1]),
             expiry_month: Number(data.expiry.split('/')[0]),
           },
         })

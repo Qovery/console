@@ -7,11 +7,9 @@ export interface CreditCardFormProps {
 }
 
 export interface CreditCardFormValues {
-  full_name: string
   expiry?: string
   card_number: string
   cvc: string
-  country: string
 }
 
 export function CreditCardForm(props: CreditCardFormProps) {

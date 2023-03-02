@@ -23,6 +23,11 @@ export const addCreditCard = createAsyncThunk<
   CreditCard,
   { organizationId: string; creditCardRequest: CreditCardRequest }
 >('creditCards/add', async (data, thunkApi) => {
+  // if expiryYear does not have 4 digits, we add 2000 to it
+  if (data.creditCardRequest.expiry_year < 1000) {
+    data.creditCardRequest.expiry_year += 2000
+  }
+
   const response = await billingApi.addCreditCard(data.organizationId, data.creditCardRequest)
 
   return response.data as CreditCard
