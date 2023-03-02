@@ -1,4 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
+import { StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -90,6 +91,11 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
         ),
     }
 
+    const state = application.status?.state
+    const runningState = application.running_status?.state
+    const topItems: MenuItemProps[] = []
+    const bottomItems: MenuItemProps[] = []
+
     const redeployButton: MenuItemProps = {
       name: 'Redeploy',
       contentLeft: <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="text-sm text-brand-400" />,
@@ -163,12 +169,12 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     }
 
     const cancelBuildButton: MenuItemProps = {
-      name: 'Cancel deployment',
+      name: state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment',
       onClick: (e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
         openModalConfirmation({
           mode: environmentMode,
-          title: 'Confirm cancel deployment',
+          title: 'Confirm cancel',
           description:
             'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
           name: application.name,
@@ -187,11 +193,6 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
     }
-
-    const state = application.status?.state
-    const runningState = application.running_status?.state
-    const topItems: MenuItemProps[] = []
-    const bottomItems: MenuItemProps[] = []
 
     if (state) {
       if (isCancelBuildAvailable(state)) {
