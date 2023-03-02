@@ -11,18 +11,6 @@ const props: StageOrderModalProps = {
   onClose: jest.fn(),
 }
 
-function simulateDragAndDrop(draggable: HTMLElement, droppable: HTMLElement): void {
-  // Créez un objet DataTransfer pour stocker les données à glisser
-  const dataTransfer = new DataTransfer()
-
-  // Déclenchez manuellement les événements de glisser-déposer
-  draggable.dispatchEvent(new Event('dragstart', { bubbles: true }))
-  droppable.dispatchEvent(new Event('dragenter', { bubbles: true }))
-  droppable.dispatchEvent(new Event('dragover', { bubbles: true }))
-  droppable.dispatchEvent(new DragEvent('drop', { bubbles: true, dataTransfer }))
-  draggable.dispatchEvent(new Event('dragend', { bubbles: true }))
-}
-
 describe('StageOrderModal', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<StageOrderModal {...props} />)
@@ -47,18 +35,4 @@ describe('StageOrderModal', () => {
     cancelButton.click()
     expect(props.onClose).toHaveBeenCalled()
   })
-
-  // test('reorders stages when dragged and dropped', () => {
-  //   const { getByText } = render(<StageOrderModal {...props} />)
-
-  //   const stage1 = getByText(stages[0].name || '')
-  //   const stage2 = getByText(stages[1].name || '')
-  //   const stage3 = getByText(stages[2].name || '')
-
-  //   simulateDragAndDrop(stage1, stage3)
-
-  //   expect(stage1.nextSibling?.textContent).toEqual(stage2.textContent)
-  //   expect(stage2.nextSibling?.textContent).toEqual(stage3.textContent)
-  //   expect(stage3.previousSibling?.textContent).toEqual(stage2.textContent)
-  // })
 })

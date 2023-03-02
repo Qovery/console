@@ -7,7 +7,7 @@ import BadgeDeploymentOrder from '../badge-deployment-order/badge-deployment-ord
 
 export interface StageOrderModalProps {
   onClose: () => void
-  onSubmit: (stageId: string, beforeStageId: string, before: boolean) => void
+  onSubmit: (stageId: string, beforeOrAfterStageId: string, after: boolean) => void
   setCurrentStages: Dispatch<SetStateAction<DeploymentStageResponse[] | undefined>>
   currentStages?: DeploymentStageResponse[]
 }
@@ -20,13 +20,16 @@ export function StageOrderModal(props: StageOrderModalProps) {
       return
     }
 
-    if (props.currentStages) {
+    if (props.currentStages && source.index !== destination.index) {
+      // reorder locally without waiting the api response
       const newStages = reorderStage(props.currentStages, source.index, destination.index)
       props.setCurrentStages(newStages)
-
-      const defaultCondition = source.index < destination.index
-
-      props.onSubmit(newStages[source.index].id, newStages[destination.index].id, defaultCondition)
+      // submit the reorder for the api
+      props.onSubmit(
+        props.currentStages[source.index].id,
+        props.currentStages[destination.index].id,
+        source.index < destination.index
+      )
     }
   }
 

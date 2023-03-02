@@ -3,18 +3,19 @@ export interface BadgeDeploymentOrderProps {
   order?: number
 }
 
-export const defaultColors = ['#5B50D6', '#B160F0', '#FF7C00', '#009EDD', '#44C979']
-
 export const colors = [
+  '#5B50D6',
+  '#B160F0',
+  '#FF7C00',
+  '#009EDD',
+  '#44C979',
   '#474787',
   '#1e90ff',
   '#ffa502',
   '#ff4757',
-  '#747d8c',
   '#5352ed',
   '#70a1ff',
   '#3742fa',
-  '#ff6b81',
   '#eccc68',
 ]
 
@@ -24,13 +25,8 @@ export function getColorFromUID(uid: string, order: number) {
     return acc & acc
   }, 0)
 
-  if (order < 4) {
-    const index = Math.abs(hash) % defaultColors.length
-    return defaultColors[index]
-  } else {
-    const index = Math.abs(hash) % colors.length
-    return colors[index]
-  }
+  const index = Math.abs(hash) % colors.length
+  return colors[index]
 }
 
 export function BadgeDeploymentOrder(props: BadgeDeploymentOrderProps) {

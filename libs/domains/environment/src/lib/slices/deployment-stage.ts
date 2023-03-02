@@ -27,9 +27,9 @@ export const addServiceToDeploymentStage = createAsyncThunk(
 
 export const moveDeploymentStageRequested = createAsyncThunk(
   'environment/moveDeploymentStageRequested',
-  async (payload: { stageId: string; beforeOrAfterStageId: string; before: boolean }) => {
+  async (payload: { stageId: string; beforeOrAfterStageId: string; after: boolean }) => {
     let response
-    if (!payload.before) {
+    if (payload.after) {
       response = await deploymentStageMainCallApi.moveAfterDeploymentStage(
         payload.stageId,
         payload.beforeOrAfterStageId

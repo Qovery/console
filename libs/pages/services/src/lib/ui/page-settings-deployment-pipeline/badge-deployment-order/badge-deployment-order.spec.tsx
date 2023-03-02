@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import BadgeDeploymentOrder, { colors, defaultColors, getColorFromUID } from './badge-deployment-order'
+import BadgeDeploymentOrder, { getColorFromUID } from './badge-deployment-order'
 
 describe('BadgeDeploymentOrder', () => {
   it('should render successfully', () => {
@@ -14,21 +14,16 @@ describe('BadgeDeploymentOrder', () => {
     const badge = getByTestId('badge')
     const badgeSvg = getByTestId('badge-svg')
     expect(badge).toBeInTheDocument()
-    expect(badgeSvg).toHaveAttribute('fill', defaultColors[0])
+    expect(badgeSvg).toBeInTheDocument()
   })
 
-  it('should renders the badge with a color from the `defaultColors` array when order is less than 4', () => {
+  it('should renders the badge with a color from the `defaultColors`', () => {
     const { getByTestId } = render(<BadgeDeploymentOrder id="testuid" order={3} />)
     const badge = getByTestId('badge')
     expect(badge).toBeInTheDocument()
     const badgeSvg = getByTestId('badge-svg')
     const expectedColor = getColorFromUID('testuid', 3)
     expect(badgeSvg).toHaveAttribute('fill', expectedColor)
-  })
-
-  it('should returns a color from the array for order >= 5', () => {
-    const result = getColorFromUID('testuid', 5)
-    expect(colors).toContain(result)
   })
 
   it('should returns the same color for the same uid and colorArray', () => {

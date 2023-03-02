@@ -14,6 +14,7 @@ import {
   Menu,
   MenuAlign,
   MenuData,
+  Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
@@ -127,6 +128,16 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           <span className="block truncate text-text-500 text-2xs font-bold">
                             <Truncate truncateLimit={28} text={stage.name || ''} />
                           </span>
+                          {stage.description && (
+                            <Tooltip content={stage.description}>
+                              <div>
+                                <Icon
+                                  name={IconAwesomeEnum.CIRCLE_INFO}
+                                  className="text-text-400 text-xs ml-1 relative -top-[2px]"
+                                />
+                              </div>
+                            </Tooltip>
+                          )}
                         </div>
                         <Menu
                           width={256}

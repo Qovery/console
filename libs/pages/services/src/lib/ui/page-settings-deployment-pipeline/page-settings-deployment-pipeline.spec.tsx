@@ -10,6 +10,7 @@ const setStages = jest.fn()
 const onAddStage = jest.fn()
 
 const menuEditStage = jest.fn()
+const menuOrderStage = jest.fn()
 const menuDeleteStage = jest.fn()
 
 const menuStage = (stage: DeploymentStageResponse) => [
@@ -18,6 +19,10 @@ const menuStage = (stage: DeploymentStageResponse) => [
       {
         name: 'Edit stage',
         onClick: menuEditStage,
+      },
+      {
+        name: 'Order stage',
+        onClick: menuOrderStage,
       },
     ],
   },
@@ -130,12 +135,18 @@ describe('PageSettingsDeploymentPipeline', () => {
       items[0].click()
     })
 
-    // delete stage
+    // order stage
     await act(() => {
       items[1].click()
     })
 
+    // delete stage
+    await act(() => {
+      items[2].click()
+    })
+
     expect(menuEditStage).toBeCalled()
+    expect(menuOrderStage).toBeCalled()
     expect(menuDeleteStage).toBeCalled()
   })
 

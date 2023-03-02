@@ -15,8 +15,8 @@ export function StageOrderModalFeature(props: StageOrderModalFeatureProps) {
 
   const [currentStages, setCurrentStages] = useState<DeploymentStageResponse[] | undefined>(props.stages)
 
-  const onSubmit = (stageId: string, beforeOrAfterStageId: string, before: boolean) => {
-    dispatch(moveDeploymentStageRequested({ stageId, beforeOrAfterStageId, before }))
+  const onSubmit = (stageId: string, beforeOrAfterStageId: string, after: boolean) => {
+    dispatch(moveDeploymentStageRequested({ stageId, beforeOrAfterStageId, after }))
       .unwrap()
       .then((result) => setCurrentStages(result))
       .catch((e) => console.error(e))
