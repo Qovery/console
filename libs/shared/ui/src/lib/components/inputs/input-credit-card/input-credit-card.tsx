@@ -1,26 +1,28 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { usePaymentInputs } from 'react-payment-inputs'
 import { CardImages } from 'react-payment-inputs/images'
-import amex from './images/amex'
-import dinersclub from './images/dinersclub'
-import discover from './images/discover'
-import hipercard from './images/hipercard'
-import jcb from './images/jcb'
-import mastercard from './images/mastercard'
-import placeholder from './images/placeholder'
-import unionpay from './images/unionpay'
-import visa from './images/visa'
+import {
+  amexCrediCard,
+  dinersclubCreditCard,
+  discoverCreditCard,
+  hipercardCreditCard,
+  jcbCreditCard,
+  mastercardCreditCard,
+  placeholderCreditCard,
+  unionpayCreditCard,
+  visaCreditCard,
+} from './images/credit-card-images'
 
 const images: CardImages = {
-  visa,
-  jcb: jcb,
-  amex: amex,
-  discover: discover,
-  dinersclub: dinersclub,
-  hipercard: hipercard,
-  mastercard: mastercard,
-  unionpay: unionpay,
-  placeholder: placeholder,
+  visa: visaCreditCard,
+  jcb: jcbCreditCard,
+  amex: amexCrediCard,
+  discover: discoverCreditCard,
+  dinersclub: dinersclubCreditCard,
+  hipercard: hipercardCreditCard,
+  mastercard: mastercardCreditCard,
+  unionpay: unionpayCreditCard,
+  placeholder: placeholderCreditCard,
 }
 
 export interface InputCreditCardProps {

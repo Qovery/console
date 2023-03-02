@@ -57,7 +57,7 @@ export const creditCardsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // get environments
+      // get credit cards
       .addCase(fetchCreditCards.pending, (state: CreditCardsState) => {
         state.loadingStatus = 'loading'
       })
@@ -84,10 +84,9 @@ export const creditCardsSlice = createSlice({
         toast(ToastEnum.SUCCESS, 'Credit card successfully added')
       })
       .addCase(addCreditCard.rejected, (state: CreditCardsState, action) => {
-        state.loadingStatus = 'error'
         state.error = action.error.message
 
-        toastError(action.error, 'Error while adding credit card')
+        toast(ToastEnum.ERROR, 'Error while adding credit card')
       })
       .addCase(deleteCreditCard.fulfilled, (state: CreditCardsState, action) => {
         creditCardsAdapter.removeOne(state, action.meta.arg.creditCardId)

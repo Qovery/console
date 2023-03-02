@@ -11,10 +11,12 @@ import {
 } from '@qovery/domains/organization'
 import { AddCreditCardModalFeature, CreditCardFormValues } from '@qovery/shared/console-shared'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationBilling from '../../ui/page-organization-billing/page-organization-billing'
 
 export function PageOrganizationBillingFeature() {
+  useDocumentTitle('Billing details - Organization settings')
   const { organizationId } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const { openModal } = useModal()

@@ -43,7 +43,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
             </div>
           ) : props.creditCards.length > 0 ? (
             <div className="flex flex-col">
-              <p className="text-2xs text-text-500 mb-5">
+              <p className="text-xs text-text-500 mb-5">
                 You will be charged in USD / EUR - contact us for more details.
               </p>
               {props.creditCards.map((creditCard) => (
@@ -72,7 +72,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                     onClick={() => props.onDeleteCard(creditCard)}
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.STROKED}
-                    className="!w-[52px] !h-[52px]"
+                    className="!w-[52px] !h-[52px] bg-transparent"
                   />
                 </div>
               ))}

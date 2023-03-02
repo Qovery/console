@@ -37,11 +37,7 @@ describe('AddCreditCardModalFeature', () => {
 
     await act(() => {
       fireEvent.change(cardNumberInput, { target: { value: '4444444444444444' } })
-    })
-    await act(() => {
       fireEvent.input(cardExpiryInput, { target: { value: '0320' } })
-    })
-    await act(() => {
       fireEvent.input(cardCVCInput, { target: { value: '032' } })
     })
 
@@ -51,6 +47,14 @@ describe('AddCreditCardModalFeature', () => {
       button.click()
     })
 
-    expect(addCreditCardSpy).toHaveBeenCalled()
+    expect(addCreditCardSpy).toHaveBeenCalledWith({
+      organizationId: '1',
+      creditCardRequest: {
+        cvv: '032',
+        number: '4444 4444 4444 4444',
+        expiry_year: 20,
+        expiry_month: 3,
+      },
+    })
   })
 })
