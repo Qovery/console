@@ -5,8 +5,10 @@ export const SETTINGS_CONTAINER_REGISTRIES_URL = '/container-registries'
 export const SETTINGS_GIT_REPOSITORY_ACCESS_URL = '/git-repository-access'
 export const SETTINGS_MEMBERS_URL = '/members'
 export const SETTINGS_ROLES_URL = '/roles'
+
 export const SETTINGS_ROLES_EDIT_URL = (roleId = ':roleId') => `/roles/edit/${roleId}`
 export const SETTINGS_BILLING_URL = '/billing'
+export const SETTINGS_BILLING_BETA_URL = '/billing-beta'
 export const SETTINGS_DANGER_ZONE_URL = '/danger-zone'
 // project settings
 export const SETTINGS_PROJECT_URL = (projectId = ':projectId') => `/${projectId}/project`

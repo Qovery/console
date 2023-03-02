@@ -49,6 +49,16 @@ export function PageSettings() {
       title: 'Billing & plans',
       icon: IconAwesomeEnum.CREDIT_CARD,
       url: pathSettings + SETTINGS_BILLING_URL,
+      // subLinks: [
+      //   // {
+      //   //   title: 'Summary',
+      //   //   url: pathSettings + SETTINGS_MEMBERS_URL,
+      //   // },
+      //   {
+      //     title: 'Billing details',
+      //     url: pathSettings + SETTINGS_BILLING_URL,
+      //   },
+      // ],
     },
     {
       title: 'Container registries',

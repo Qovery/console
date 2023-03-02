@@ -1,5 +1,6 @@
 import {
   Route,
+  SETTINGS_BILLING_BETA_URL,
   SETTINGS_BILLING_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_DANGER_ZONE_URL,
@@ -12,6 +13,7 @@ import {
   SETTINGS_ROLES_EDIT_URL,
   SETTINGS_ROLES_URL,
 } from '@qovery/shared/routes'
+import PageOrganizationBillingFeature from '../feature/page-organization-billing-feature/page-organization-billing-feature'
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
 import { PageOrganizationDangerZoneFeature } from '../feature/page-organization-danger-zone-feature/page-organization-danger-zone-feature'
 import { PageOrganizationGeneralFeature } from '../feature/page-organization-general-feature/page-organization-general-feature'
@@ -39,6 +41,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_ROLES_EDIT_URL(),
     component: <PageOrganizationRolesEditFeature />,
+  },
+  {
+    path: SETTINGS_BILLING_BETA_URL,
+    component: <PageOrganizationBillingFeature />,
   },
   {
     path: SETTINGS_BILLING_URL,
