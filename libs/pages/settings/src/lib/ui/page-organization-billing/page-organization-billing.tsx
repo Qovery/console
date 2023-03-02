@@ -11,6 +11,7 @@ import {
   InputText,
   LoaderSpinner,
 } from '@qovery/shared/ui'
+import BillingDetailsFeature from '../../feature/page-organization-billing-feature/billing-details-feature/billing-details-feature'
 
 export interface PageOrganizationBillingProps {
   creditCards: CreditCard[]
@@ -86,6 +87,8 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
             </div>
           )}
         </BlockContent>
+
+        <BillingDetailsFeature />
       </div>
 
       <HelpSection

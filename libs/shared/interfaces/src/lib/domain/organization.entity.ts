@@ -1,4 +1,5 @@
 import {
+  BillingInfo,
   CloudProviderEnum,
   ClusterCredentials,
   ContainerRegistryResponse,
@@ -38,5 +39,9 @@ export interface OrganizationEntity extends Organization {
   credentials?: {
     loadingStatus: LoadingStatus
     items?: ClusterCredentialsEntity[]
+  }
+  billingInfos?: {
+    loadingStatus: LoadingStatus
+    value?: BillingInfo
   }
 }
