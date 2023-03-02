@@ -29,7 +29,8 @@ export function SettingResources(props: SettingResourcesProps) {
   let maxMemoryBySize = application?.maximum_memory
 
   if (!application) {
-    maxMemoryBySize = 8192
+    // until api allows us to fetch the max possible value
+    maxMemoryBySize = 128000
   }
 
   const watchInstances = watch('instances')
