@@ -1,4 +1,3 @@
-import equal from 'fast-deep-equal'
 import { CloudProviderEnum, DeploymentStageResponse, EnvironmentAllOfCloudProvider } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
@@ -7,13 +6,11 @@ import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
-  addServiceToDeploymentStage,
   deleteEnvironmentDeploymentStage,
-  environmentsLoadingStatus,
-  fetchDeploymentStageList,
   selectEnvironmentById,
+  useAddServiceToDeploymentStage,
+  useFetchDeploymentStageList,
 } from '@qovery/domains/environment'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum, ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
@@ -42,55 +39,45 @@ export function PageSettingsDeploymentPipelineFeature() {
     (a, b) => a.length === b.length
   )
 
-  const loadingStatus = useSelector(environmentsLoadingStatus)
-
-  const deploymentStage = useSelector<RootState, EnvironmentEntity | undefined>(
-    (state) => selectEnvironmentById(state, environmentId),
-    (a, b) => equal(a?.deploymentStage?.items, b?.deploymentStage?.items)
-  )?.deploymentStage
-
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  useEffect(() => {
-    if (loadingStatus === 'loaded') dispatch(fetchDeploymentStageList({ environmentId }))
-  }, [dispatch, environmentId, loadingStatus])
+  const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
 
-  const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>(deploymentStage?.items)
+  const { data: deploymentStageList } = useFetchDeploymentStageList(environmentId)
+  const addServiceToDeploymentStage = useAddServiceToDeploymentStage(environmentId)
 
   useEffect(() => {
-    if (deploymentStage?.items) setStages(deploymentStage?.items)
-  }, [setStages, deploymentStage?.items])
+    if (deploymentStageList) {
+      setStages(deploymentStageList)
+    }
+  }, [deploymentStageList])
 
   const onSubmit = (newStage: StageRequest, prevStage: StageRequest) => {
-    // dispatch function with two actions, undo and update stage
-    function dispatchServiceToDeployment(stage: StageRequest, previous?: boolean) {
-      dispatch(addServiceToDeploymentStage({ deploymentStageId: stage.deploymentStageId, serviceId: stage.serviceId }))
-        .unwrap()
-        .then(() => {
-          if (previous) {
-            // toast after apply undo
-            toast(ToastEnum.SUCCESS, 'Your deployment stage is updated')
-          } else {
-            // default toast when we don't apply undo
-            toast(
-              ToastEnum.SUCCESS,
-              'Your deployment stage is updated',
-              'Do you need to go back?',
-              () => dispatchServiceToDeployment(prevStage, true),
-              '',
-              'Undo'
-            )
-          }
-        })
-        .catch((e) => console.error(e))
-    }
-
-    if (deploymentStage?.items) {
+    if (deploymentStageList) {
       // remove current toast to avoid flood of multiple toasts
       toastAction.remove()
       // dispatch action
-      dispatchServiceToDeployment(newStage)
+      addServiceToDeploymentStage
+        .mutateAsync({
+          deploymentStageId: newStage.deploymentStageId,
+          serviceId: newStage.serviceId,
+        })
+        .then(() => {
+          // default toast when we don't apply undo
+          toast(
+            ToastEnum.SUCCESS,
+            'Your deployment stage is updated',
+            'Do you need to go back?',
+            () =>
+              addServiceToDeploymentStage.mutate({
+                deploymentStageId: prevStage.deploymentStageId,
+                serviceId: prevStage.serviceId,
+              }),
+            '',
+            'Undo'
+          )
+        })
     }
   }
 

@@ -1,29 +1,151 @@
 import { ActionReducerMapBuilder, Update, createAsyncThunk } from '@reduxjs/toolkit'
 import { DeploymentStageMainCallsApi, DeploymentStageRequest } from 'qovery-typescript-axios'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { EnvironmentEntity, EnvironmentsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { environmentsAdapter } from './environments.slice'
 
 const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
 
-export const fetchDeploymentStageList = createAsyncThunk(
-  'environment/fetchDeploymentStageList',
-  async (payload: { environmentId: string }) => {
-    const response = await deploymentStageMainCallApi.listEnvironmentDeploymentStage(payload.environmentId)
-    return response.data.results
-  }
-)
+export const useFetchDeploymentStageList = (environmentId: string) => {
+  const queryClient = useQueryClient()
 
-export const addServiceToDeploymentStage = createAsyncThunk(
-  'environment/addServiceToDeploymentStage',
-  async (payload: { deploymentStageId: string; serviceId: string }) => {
-    const response = await deploymentStageMainCallApi.attachServiceToDeploymentStage(
-      payload.deploymentStageId,
-      payload.serviceId
-    )
-    return response.data.results
-  }
-)
+  return useQuery(
+    ['environment', environmentId, 'deploymentStageList'],
+    async () => {
+      const response = await deploymentStageMainCallApi.listEnvironmentDeploymentStage(environmentId)
+      return response.data.results
+    },
+    {
+      initialData: queryClient.getQueryData(['environment', environmentId, 'deploymentStageList']),
+      onError: (err: any) => {
+        console.log(err)
+        toastError(err)
+      },
+    }
+  )
+}
+
+export const useAddServiceToDeploymentStage = (environmentId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async ({ deploymentStageId, serviceId }: { deploymentStageId: string; serviceId: string }) => {
+      const response = await deploymentStageMainCallApi.attachServiceToDeploymentStage(deploymentStageId, serviceId)
+      return response.data.results
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(['environment', environmentId, 'deploymentStageList']),
+      onError: (err: any) => {
+        console.log(err)
+        toastError(err)
+      },
+    }
+  )
+}
+
+// export const useMoveDeploymentStageRequested = () => {
+//   const queryClient = useQueryClient()
+
+//   return useMutation(
+//     async ({ stageId, beforeOrAfterStageId, after }: any) => {
+//       let response
+//       if (after) {
+//         response = await deploymentStageMainCallApi.moveAfterDeploymentStage(stageId, beforeOrAfterStageId)
+//       } else {
+//         response = await deploymentStageMainCallApi.moveBeforeDeploymentStage(stageId, beforeOrAfterStageId)
+//       }
+//       return response.data.results
+//     },
+//     {
+//       onSuccess: (data, { environmentId }) => {
+//         queryClient.invalidateQueries(['environment', environmentId, 'deploymentStageList'])
+//       },
+//       onError: (err: any) => {
+//         toastError(err)
+//       },
+//     }
+//   )
+// }
+
+// export const useCreateEnvironmentDeploymentStage = () => {
+//   const queryClient = useQueryClient()
+
+//   return useMutation(
+//     async ({ environmentId, data }: any) => {
+//       const response = await deploymentStageMainCallApi.createEnvironmentDeploymentStage(environmentId, data)
+//       return response.data
+//     },
+//     {
+//       onSuccess: (data, { environmentId }) => {
+//         queryClient.invalidateQueries(['environment', environmentId, 'deploymentStageList'])
+//         toast(ToastEnum.SUCCESS, 'Your stage has been successfully created')
+//       },
+//       onError: (err: any) => {
+//         toastError(err)
+//       },
+//     }
+//   )
+// }
+
+// export const useEditEnvironmentDeploymentStage = () => {
+//   const queryClient = useQueryClient()
+
+//   return useMutation(
+//     async ({ environmentId, stageId, data }: any) => {
+//       const response = await deploymentStageMainCallApi.editDeploymentStage(stageId, data)
+//       return response.data
+//     },
+//     {
+//       onSuccess: (data, { environmentId }) => {
+//         queryClient.invalidateQueries(['environment', environmentId, 'deploymentStageList'])
+//       },
+//       onError: (err: any) => {
+//         toastError(err)
+//       },
+//     }
+//   )
+// }
+
+// export const useDeleteEnvironmentDeploymentStage = () => {
+//   const queryClient = useQueryClient()
+
+//   return useMutation(
+//     async ({ environmentId, stageId }: any) => {
+//       const response = await deploymentStageMainCallApi.deleteDeploymentStage(stageId)
+//       return response.data
+//     },
+//     {
+//       onSuccess: (data, { environmentId }) => {
+//         queryClient.invalidateQueries(['environment', environmentId, 'deploymentStageList'])
+//       },
+//       onError: (err: any) => {
+//         toastError(err)
+//       },
+//     }
+//   )
+// }
+
+// ////////////////////////////////////////////////
+
+// export const fetchDeploymentStageList = createAsyncThunk(
+//   'environment/fetchDeploymentStageList',
+//   async (payload: { environmentId: string }) => {
+//     const response = await deploymentStageMainCallApi.listEnvironmentDeploymentStage(payload.environmentId)
+//     return response.data.results
+//   }
+// )
+
+// export const addServiceToDeploymentStage = createAsyncThunk(
+//   'environment/addServiceToDeploymentStage',
+//   async (payload: { deploymentStageId: string; serviceId: string }) => {
+//     const response = await deploymentStageMainCallApi.attachServiceToDeploymentStage(
+//       payload.deploymentStageId,
+//       payload.serviceId
+//     )
+//     return response.data.results
+//   }
+// )
 
 export const moveDeploymentStageRequested = createAsyncThunk(
   'environment/moveDeploymentStageRequested',

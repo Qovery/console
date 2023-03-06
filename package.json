@@ -69,6 +69,7 @@
     "react-hook-form": "^7.43.2",
     "react-hot-toast": "^2.4.0",
     "react-payment-inputs": "^1.1.9",
+    "react-query": "^3.39.3",
     "react-redux": "8.0.5",
     "react-router-dom": "6.4.3",
     "react-select": "^5.3.2",
