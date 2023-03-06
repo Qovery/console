@@ -1,4 +1,5 @@
-import { getAllByTestId, getByTestId, render } from '@testing-library/react'
+import { getAllByTestId, getByTestId } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import { creditCardsFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationBilling, { PageOrganizationBillingProps } from './page-organization-billing'
 
@@ -22,9 +23,10 @@ describe('PageOrganizationBilling', () => {
     expect(getAllByTestId(baseElement, 'credit-card-row')).toHaveLength(3)
   })
 
-  it('should display spinner if loading and no card in the store', () => {
+  it('should display 2 spinners if loading and no card in the store', () => {
     const { baseElement } = render(<PageOrganizationBilling {...props} creditCardLoading={true} creditCards={[]} />)
-    getByTestId(baseElement, 'spinner')
+    // 1 for the for the credit card and one for the billing form
+    expect(getAllByTestId(baseElement, 'spinner')).toHaveLength(2)
   })
 
   it('should call deleteCard methods', () => {
