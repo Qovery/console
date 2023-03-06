@@ -1,9 +1,7 @@
 import { DeploymentStageRequest, DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
-import { createEnvironmentDeploymentStage, editEnvironmentDeploymentStage } from '@qovery/domains/environment'
-import { AppDispatch } from '@qovery/store'
+import { useCreateEnvironmentDeploymentStage, useEditEnvironmentDeploymentStage } from '@qovery/domains/environment'
 import StageModal from '../../../ui/page-settings-deployment-pipeline/stage-modal/stage-modal'
 
 export interface StageModalFeatureProps {
@@ -22,7 +20,14 @@ export function StageModalFeature(props: StageModalFeatureProps) {
   })
 
   const [loading, setLoading] = useState(false)
-  const dispatch = useDispatch<AppDispatch>()
+
+  const createEnvironmentDeploymentStage = useCreateEnvironmentDeploymentStage(props.environmentId, props.onClose, () =>
+    setLoading(false)
+  )
+
+  const editEnvironmentDeploymentStage = useEditEnvironmentDeploymentStage(props.environmentId, props.onClose, () =>
+    setLoading(false)
+  )
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!data) {
@@ -37,29 +42,10 @@ export function StageModalFeature(props: StageModalFeatureProps) {
 
     if (props.stage) {
       // edit stage
-      dispatch(
-        editEnvironmentDeploymentStage({
-          stageId: props.stage.id,
-          environmentId: props.environmentId,
-          data: currentData,
-        })
-      )
-        .unwrap()
-        .then(() => props.onClose())
-        .catch((e) => console.error(e))
-        .finally(() => setLoading(false))
+      editEnvironmentDeploymentStage.mutate({ stageId: props.stage.id, data: currentData })
     } else {
       // create stage
-      dispatch(
-        createEnvironmentDeploymentStage({
-          environmentId: props.environmentId,
-          data: currentData,
-        })
-      )
-        .unwrap()
-        .then(() => props.onClose())
-        .catch((e) => console.error(e))
-        .finally(() => setLoading(false))
+      createEnvironmentDeploymentStage.mutate({ data: currentData })
     }
   })
 

@@ -1,18 +1,18 @@
 import { CloudProviderEnum, DeploymentStageResponse, EnvironmentAllOfCloudProvider } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
-  deleteEnvironmentDeploymentStage,
   selectEnvironmentById,
   useAddServiceToDeploymentStage,
+  useDeleteEnvironmentDeploymentStage,
   useFetchDeploymentStageList,
 } from '@qovery/domains/environment'
-import { Icon, IconAwesomeEnum, ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 import StageOrderModalFeature from './stage-order-modal-feature/stage-order-modal-feature'
@@ -24,7 +24,6 @@ export interface StageRequest {
 
 export function PageSettingsDeploymentPipelineFeature() {
   const { environmentId = '' } = useParams()
-  const dispatch: AppDispatch = useDispatch()
 
   const cloudProvider = useSelector<RootState, EnvironmentAllOfCloudProvider | undefined>(
     (state) => selectEnvironmentById(state, environmentId)?.cloud_provider
@@ -46,6 +45,7 @@ export function PageSettingsDeploymentPipelineFeature() {
 
   const { data: deploymentStageList } = useFetchDeploymentStageList(environmentId)
   const addServiceToDeploymentStage = useAddServiceToDeploymentStage(environmentId)
+  const deleteEnvironmentDeploymentStage = useDeleteEnvironmentDeploymentStage(environmentId)
 
   useEffect(() => {
     if (deploymentStageList) {
@@ -57,27 +57,12 @@ export function PageSettingsDeploymentPipelineFeature() {
     if (deploymentStageList) {
       // remove current toast to avoid flood of multiple toasts
       toastAction.remove()
-      // dispatch action
-      addServiceToDeploymentStage
-        .mutateAsync({
-          deploymentStageId: newStage.deploymentStageId,
-          serviceId: newStage.serviceId,
-        })
-        .then(() => {
-          // default toast when we don't apply undo
-          toast(
-            ToastEnum.SUCCESS,
-            'Your deployment stage is updated',
-            'Do you need to go back?',
-            () =>
-              addServiceToDeploymentStage.mutate({
-                deploymentStageId: prevStage.deploymentStageId,
-                serviceId: prevStage.serviceId,
-              }),
-            '',
-            'Undo'
-          )
-        })
+      // mutate action
+      addServiceToDeploymentStage.mutate({
+        deploymentStageId: newStage.deploymentStageId,
+        serviceId: newStage.serviceId,
+        prevStage,
+      })
     }
   }
 
@@ -112,7 +97,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               isDelete: true,
               description: 'Are you sure you want to delete this stage?',
               name: stage.name,
-              action: () => dispatch(deleteEnvironmentDeploymentStage({ environmentId, stageId: stage.id })),
+              action: () => deleteEnvironmentDeploymentStage.mutate({ stageId: stage.id }),
             }),
           contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
           containerClassName: 'text-error-600',

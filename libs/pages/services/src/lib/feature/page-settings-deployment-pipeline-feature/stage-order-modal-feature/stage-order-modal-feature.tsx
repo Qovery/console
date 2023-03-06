@@ -1,8 +1,6 @@
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { moveDeploymentStageRequested } from '@qovery/domains/environment'
-import { AppDispatch } from '@qovery/store'
+import { useMoveDeploymentStageRequested } from '@qovery/domains/environment'
 import StageOrderModal from '../../../ui/page-settings-deployment-pipeline/stage-order-modal/stage-order-modal'
 
 export interface StageOrderModalFeatureProps {
@@ -11,15 +9,14 @@ export interface StageOrderModalFeatureProps {
 }
 
 export function StageOrderModalFeature(props: StageOrderModalFeatureProps) {
-  const dispatch = useDispatch<AppDispatch>()
-
   const [currentStages, setCurrentStages] = useState<DeploymentStageResponse[] | undefined>(props.stages)
 
+  const moveDeploymentStageRequested = useMoveDeploymentStageRequested((result: DeploymentStageResponse[]) =>
+    setCurrentStages(result)
+  )
+
   const onSubmit = (stageId: string, beforeOrAfterStageId: string, after: boolean) => {
-    dispatch(moveDeploymentStageRequested({ stageId, beforeOrAfterStageId, after }))
-      .unwrap()
-      .then((result) => setCurrentStages(result))
-      .catch((e) => console.error(e))
+    moveDeploymentStageRequested.mutate({ stageId, beforeOrAfterStageId, after })
   }
 
   return (
