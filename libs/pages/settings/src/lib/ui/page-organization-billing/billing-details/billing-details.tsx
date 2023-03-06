@@ -136,7 +136,7 @@ export function BillingDetails(props: BillingDetailsProps) {
                 )}
               />
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-3 mb-3">
               <Controller
                 control={control}
                 name={'country_code'}
@@ -164,26 +164,23 @@ export function BillingDetails(props: BillingDetailsProps) {
                 )}
               />
             </div>
+            <div className="flex justify-end">
+              <Button
+                dataTestId="submit-button"
+                className="btn--no-min-w"
+                size={ButtonSize.LARGE}
+                style={ButtonStyle.BASIC}
+                type="submit"
+                disabled={!formState.isValid}
+                loading={props.editInProcess}
+                onClick={props.onSubmit as () => void}
+              >
+                Save
+              </Button>
+            </div>
           </>
         )}
       </BlockContent>
-
-      {!props.loadingBillingInfos && (
-        <div className="flex justify-end">
-          <Button
-            dataTestId="submit-button"
-            className="btn--no-min-w"
-            size={ButtonSize.LARGE}
-            style={ButtonStyle.BASIC}
-            type="submit"
-            disabled={!formState.isValid}
-            loading={props.editInProcess}
-            onClick={props.onSubmit as () => void}
-          >
-            Save
-          </Button>
-        </div>
-      )}
     </>
   )
 }

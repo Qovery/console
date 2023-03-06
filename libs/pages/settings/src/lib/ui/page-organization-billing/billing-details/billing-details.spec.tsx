@@ -1,7 +1,7 @@
 import { getByDisplayValue, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BillingInfo } from 'qovery-typescript-axios'
-import { wrapWithReactHookForm } from '../../../../../../../../__tests__/utils/wrap-with-react-hook-form'
 import BillingDetails, { BillingDetailsProps } from './billing-details'
 
 const props: BillingDetailsProps = {
