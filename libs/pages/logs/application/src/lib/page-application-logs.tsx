@@ -87,9 +87,19 @@ export function PageApplicationLogs() {
       const data = { ...JSON.parse(message?.data), pod_name: 'nginx' }
 
       if (pauseStatusLogs) {
-        setPauseLogs((prev: Log[]) => [...prev, data])
+        setPauseLogs((prev: Log[]) => {
+          const sortedLogs = [...prev, data].sort(
+            (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
+          )
+          return sortedLogs
+        })
       } else {
-        setLogs((prev: Log[]) => [...prev, ...pauseLogs, data])
+        setLogs((prev: Log[]) => {
+          const sortedLogs = [...prev, ...pauseLogs, data].sort(
+            (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
+          )
+          return sortedLogs
+        })
         setPauseLogs([])
       }
     },
