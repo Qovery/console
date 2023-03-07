@@ -1,6 +1,7 @@
 import { Auth0Provider } from '@auth0/auth0-react'
 import { configureStore } from '@reduxjs/toolkit'
 import React, { ComponentType, ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { ModalProvider } from '@qovery/shared/ui'
@@ -18,6 +19,8 @@ export type Props = {
   children?: ReactNode
 } & Omit<Params, 'Component'>
 
+const queryClient = new QueryClient()
+
 export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootState(), route = '/' }) => {
   window.history.pushState({}, 'Test page', route)
   window.ResizeObserver = ResizeObserver
@@ -29,11 +32,13 @@ export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootSta
 
   return (
     <Auth0Provider clientId="__test_client_id__" domain="__test_domain__">
-      <Provider store={store}>
-        <ModalProvider>
-          <MemoryRouter>{children}</MemoryRouter>
-        </ModalProvider>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <Provider store={store}>
+          <ModalProvider>
+            <MemoryRouter>{children}</MemoryRouter>
+          </ModalProvider>
+        </Provider>
+      </QueryClientProvider>
     </Auth0Provider>
   )
 }

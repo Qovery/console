@@ -16,7 +16,7 @@ export const useFetchDeploymentStageList = (environmentId: string) => {
     },
     {
       initialData: queryClient.getQueryData(['environment', environmentId, 'deploymentStageList']),
-      onError: (err) => toastError(err as SerializedError),
+      onError: (err) => toastError(err),
     }
   )
 }
@@ -58,7 +58,7 @@ export const useAddServiceToDeploymentStage = (environmentId: string) => {
           toast(ToastEnum.SUCCESS, 'Your deployment stage is updated')
         }
       },
-      onError: (err) => toastError(err as SerializedError),
+      onError: (err) => toastError(err as Error),
     }
   )
 
@@ -97,7 +97,7 @@ export const useMoveDeploymentStageRequested = (onSuccessCallback: (result: Depl
           onSuccessCallback(data)
         }
       },
-      onError: (err: SerializedError) => toastError(err),
+      onError: (err) => toastError(err as Error),
     }
   )
 }
