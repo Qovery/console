@@ -65,11 +65,15 @@ export function Row(props: RowProps) {
           className="py-1 px-4 text-element-light-lighter-700 whitespace-nowrap relative after:absolute after:-right-[1px] after:top-1 after:bg-element-light-darker-100 after:w-[1px] after:h-4"
           style={{ color: getColorByPod(data.pod_name) }}
         >
-          <Tooltip content={data.pod_name || ''}>
-            <span>
-              {data.pod_name?.substring(0, 10)}...{data.pod_name?.slice(-10)}
-            </span>
-          </Tooltip>
+          {data.pod_name !== 'nginx' ? (
+            <Tooltip content={data.pod_name || ''}>
+              <span>
+                {data.pod_name?.substring(0, 10)}...{data.pod_name?.slice(-10)}
+              </span>
+            </Tooltip>
+          ) : (
+            <span className="block w-[167px]">{data.pod_name}</span>
+          )}
         </div>
         <div data-testid="cell-version" className="flex whitespace-nowrap py-1 pl-4 text-text-100 min-w-[100px]">
           {data.version && (

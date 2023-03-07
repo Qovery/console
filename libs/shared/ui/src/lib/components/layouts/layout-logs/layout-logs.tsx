@@ -18,6 +18,7 @@ import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-ic
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
+import InputCheckbox from '../../inputs/input-checkbox/input-checkbox'
 import { Menu, MenuAlign, MenuData } from '../../menu/menu'
 import StatusChip from '../../status-chip/status-chip'
 import Tooltip from '../../tooltip/tooltip'
@@ -40,6 +41,8 @@ export interface LayoutLogsProps {
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
+  debugMode?: boolean
+  setDebugMode?: (debugMode: boolean) => void
 }
 
 export interface ErrorLogsProps {
@@ -61,6 +64,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
     pauseLogs,
     setPauseLogs,
     lineNumbers,
+    debugMode,
+    setDebugMode,
   } = props
 
   const location = useLocation()
@@ -202,6 +207,18 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 An error occured line {errors[errors.length - 1]?.index}
                 <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
               </p>
+            )}
+            {setDebugMode && (
+              <div className="mr-auto text-text-300 text-xs font-medium">
+                <InputCheckbox
+                  dataTestId="checkbox-debug"
+                  name="checkbox-debug"
+                  value={(debugMode || false).toString()}
+                  onChange={() => setDebugMode(!debugMode)}
+                  label="Debug"
+                  className="-ml-1"
+                />
+              </div>
             )}
             <div className="flex">
               {location.pathname.includes(

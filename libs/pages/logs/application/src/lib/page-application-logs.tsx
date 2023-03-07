@@ -47,11 +47,21 @@ export function PageApplicationLogs() {
   const [pauseStatusLogs, setPauseStatusLogs] = useState(false)
 
   const [loading, setLoading] = useState<LoadingStatus>('not loaded')
+  const [debugMode, setDebugMode] = useState<boolean>(false)
 
   const { getAccessTokenSilently } = useAuth()
 
   const applicationLogsUrl: () => Promise<string> = useCallback(async () => {
     const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}`
+    const token = await getAccessTokenSilently()
+
+    return new Promise((resolve) => {
+      environment?.cluster_id && resolve(url + `&bearer_token=${token}`)
+    })
+  }, [organizationId, environment?.cluster_id, projectId, environmentId, applicationId, getAccessTokenSilently])
+
+  const nginxLogsUrl: () => Promise<string> = useCallback(async () => {
+    const url = `wss://ws.qovery.com/service/infra/logs?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}&service=${applicationId}&infra_component_type=NGINX`
     const token = await getAccessTokenSilently()
 
     return new Promise((resolve) => {
@@ -67,6 +77,29 @@ export function PageApplicationLogs() {
         setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
       } else {
         setLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
+        setPauseLogs([])
+      }
+    },
+  })
+
+  useWebSocket(nginxLogsUrl, {
+    onMessage: (message) => {
+      const data = { ...JSON.parse(message?.data), pod_name: 'nginx' }
+
+      if (pauseStatusLogs) {
+        setPauseLogs((prev: Log[]) => {
+          const sortedLogs = [...prev, data].sort(
+            (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
+          )
+          return sortedLogs
+        })
+      } else {
+        setLogs((prev: Log[]) => {
+          const sortedLogs = [...prev, ...pauseLogs, data].sort(
+            (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
+          )
+          return sortedLogs
+        })
         setPauseLogs([])
       }
     },
@@ -97,20 +130,26 @@ export function PageApplicationLogs() {
             const currentPod = application?.running_status?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (
               <div
-                className={`group flex justify-between items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
+                className={`group flex items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
                   isActive ? 'bg-element-light-darker-600' : ''
                 }`}
               >
-                <StatusChip status={currentPod?.state} className="mr-2.5" />
+                <div className="w-4 mr-2.5">
+                  <StatusChip status={currentPod?.state} />
+                </div>
                 <p className="text-xs font-medium text-text-200 mr-5">{data.pod_name}</p>
                 <span className="block text-2xs text-text-400 mr-2">
-                  <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
-                  {data.version?.substring(0, 6)}
+                  {data.version && (
+                    <>
+                      <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
+                      {data.version?.substring(0, 6)}
+                    </>
+                  )}
                 </span>
                 {
                   <Icon
                     name={IconAwesomeEnum.FILTER}
-                    className={`text-ssm group-hover:text-text-100 ${
+                    className={`text-ssm group-hover:text-text-100 ml-auto ${
                       isActive ? 'text-warning-500' : 'text-transparent'
                     }`}
                   />
@@ -153,8 +192,14 @@ export function PageApplicationLogs() {
   }, [dispatch, environmentId, applicationsByEnv.length, projectId])
 
   const memoRow = useMemo(
-    () => logs?.map((log: Log, index: number) => <Row key={index} data={log} filter={filter} />),
-    [filter, logs]
+    () =>
+      logs?.map((log: Log, index: number) => {
+        if (log.pod_name === 'nginx' && !debugMode) {
+          return null
+        }
+        return <Row key={index} data={log} filter={filter} />
+      }),
+    [filter, logs, debugMode]
   )
 
   return (
@@ -170,12 +215,14 @@ export function PageApplicationLogs() {
       setPauseLogs={setPauseStatusLogs}
       withLogsNavigation
       lineNumbers={false}
+      debugMode={debugMode}
+      setDebugMode={setDebugMode}
     >
       <Table
         className="bg-transparent"
         classNameHead="!flex bg-element-light-darker-300 !border-transparent"
         dataHead={tableHead}
-        data={logs}
+        data={logs.filter((log: Log) => (log.pod_name === 'nginx' && !debugMode ? null : log))}
         setFilter={setFilter}
       >
         <div className="pb-10">{memoRow}</div>
