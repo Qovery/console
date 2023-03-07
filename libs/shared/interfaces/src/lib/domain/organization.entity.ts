@@ -3,6 +3,7 @@ import {
   CloudProviderEnum,
   ClusterCredentials,
   ContainerRegistryResponse,
+  CurrentCost,
   InviteMember,
   Member,
   Organization,
@@ -43,5 +44,9 @@ export interface OrganizationEntity extends Organization {
   billingInfos?: {
     loadingStatus: LoadingStatus
     value?: BillingInfo
+  }
+  currentCost?: {
+    loadingStatus: LoadingStatus
+    value?: CurrentCost
   }
 }
