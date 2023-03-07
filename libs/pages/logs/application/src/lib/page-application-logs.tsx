@@ -212,7 +212,7 @@ export function PageApplicationLogs() {
         className="bg-transparent"
         classNameHead="!flex bg-element-light-darker-300 !border-transparent"
         dataHead={tableHead}
-        data={logs}
+        data={logs.filter((log: Log) => (log.pod_name === 'nginx' && !debugMode ? null : log))}
         setFilter={setFilter}
       >
         <div className="pb-10">{memoRow}</div>
