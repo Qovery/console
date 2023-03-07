@@ -1,6 +1,7 @@
+import { PlanEnum } from 'qovery-typescript-axios'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { Button, ButtonStyle, HelpSection, Link, Skeleton } from '@qovery/shared/ui'
-import { costToHuman } from '@qovery/shared/utils'
+import { costToHuman, dateToFormat } from '@qovery/shared/utils'
 
 export interface PageOrganizationBillingSummaryProps {
   organization?: OrganizationEntity
@@ -29,7 +30,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <div className="text-text-400 text-xs mb-1 font-medium">Current plan</div>
             <div className="text-text-600 font-bold text-sm mb-1">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
-                <>{props.organization?.currentCost?.value?.plan?.toString()?.toLowerCase() || 'N/A'} plan</>
+                <div className="h-5">
+                  {props.organization?.currentCost?.value?.plan?.toString()?.toLowerCase() || 'N/A'} plan
+                </div>
               </Skeleton>
             </div>
             <Link
@@ -40,9 +43,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
           <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
             <div className="text-text-400 text-xs mb-1 font-medium">Current monthly bill</div>
-            <div className="mb-1">
+            <div className="mb-2">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
-                <div>
+                <div className="h-5">
                   <strong className="text-text-600 font-bold text-sm">
                     {costToHuman(
                       props.organization?.currentCost?.value?.cost?.total || 0,
@@ -53,12 +56,30 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </div>
               </Skeleton>
             </div>
-            <Link
-              className="!text-xs font-medium"
-              link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
-              linkLabel="See details"
-            />
+            <p className="text-text-400 text-xs font-medium">
+              Next invoice{' '}
+              <strong className="text-text-600">
+                {props.organization?.currentCost?.value?.paid_usage?.renewal_at &&
+                  dateToFormat(props.organization.currentCost.value.paid_usage.renewal_at, 'dd MMM Y')}
+              </strong>
+            </p>
           </div>
+
+          {props.organization?.currentCost?.value?.plan !== PlanEnum.FREE && (
+            <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
+              <div className="text-text-400 text-xs mb-1 font-medium">Payment method</div>
+              <div className="mb-2">
+                <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
+                  <span className="text-600 font-bold text-sm">**** 3434</span>
+                </Skeleton>
+              </div>
+              <Link
+                className="!text-xs font-medium"
+                link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
+                linkLabel="Edit payment"
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex w-full border gap-2 mb-3 border-element-light-lighter-400 rounded">
@@ -74,8 +95,8 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="flex-1 p-5 h-[114px]">
             <div className="text-text-400 text-xs mb-1 font-medium">Cluster</div>
             <div className="mb-1">
-              <Skeleton height={20} width={100} show={props.numberOfRunningClusters === undefined}>
-                <div>
+              <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
+                <div className="h-5">
                   <strong className="text-text-600 font-bold text-sm">{props.numberOfRunningClusters}</strong>{' '}
                   <span className="text-text-400 text-xs">/ {props.numberOfClusters}</span>
                 </div>
@@ -89,10 +110,16 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           </div>
           <div className="flex-1 p-5  h-[114px]">
             <div className="text-text-400 text-xs mb-1 font-medium">Deployments</div>
-            <div className="mb-1">
-              <strong className="text-text-600 font-bold text-sm">80</strong>{' '}
-              <span className="text-text-400 text-xs">/ 100</span>
-            </div>
+            <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
+              <div className="h-5">
+                <strong className="text-text-600 font-bold text-sm">
+                  {props.organization?.currentCost?.value?.paid_usage?.consumed_deployments}
+                </strong>{' '}
+                <span className="text-text-400 text-xs">
+                  / {props.organization?.currentCost?.value?.paid_usage?.max_deployments_per_month}
+                </span>
+              </div>
+            </Skeleton>
           </div>
         </div>
       </div>

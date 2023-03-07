@@ -3,11 +3,11 @@ import {
   CloudProviderEnum,
   ClusterCredentials,
   ContainerRegistryResponse,
-  CurrentCost,
   InviteMember,
   Member,
   Organization,
   OrganizationAvailableRole,
+  OrganizationCurrentCost,
   OrganizationCustomRole,
 } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
@@ -47,6 +47,6 @@ export interface OrganizationEntity extends Organization {
   }
   currentCost?: {
     loadingStatus: LoadingStatus
-    value?: CurrentCost
+    value?: OrganizationCurrentCost
   }
 }
