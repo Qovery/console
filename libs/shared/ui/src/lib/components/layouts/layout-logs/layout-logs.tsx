@@ -211,6 +211,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
             {setDebugMode && (
               <div className="mr-auto text-text-300 text-xs font-medium">
                 <InputCheckbox
+                  dataTestId="checkbox-debug"
                   name="checkbox-debug"
                   value={(debugMode || false).toString()}
                   onChange={() => setDebugMode(!debugMode)}

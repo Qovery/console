@@ -139,4 +139,32 @@ describe('LayoutLogs', () => {
     const navEnvironment = screen.getByTestId('nav-environment')
     expect(navEnvironment)
   })
+
+  it('should have debug checkbox when debug is true', () => {
+    props.data = {
+      loadingStatus: 'loaded',
+      items: [
+        {
+          id: '1',
+          created_at: '1667834316521',
+          message: 'message',
+          pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
+          version: '53deb16f853aef759b8be84fbeec96e9727',
+        },
+        {
+          id: '2',
+          created_at: '1667834316521',
+          message: 'message',
+          pod_name: ' NGINX',
+        },
+      ],
+    }
+    props.debugMode = true
+    props.setDebugMode = jest.fn()
+
+    render(<LayoutLogs {...props} />)
+
+    const checboxDebug = screen.getByTestId('checkbox-debug')
+    expect(checboxDebug)
+  })
 })
