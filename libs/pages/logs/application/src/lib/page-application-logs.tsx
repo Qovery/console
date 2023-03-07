@@ -47,6 +47,7 @@ export function PageApplicationLogs() {
   const [pauseStatusLogs, setPauseStatusLogs] = useState(false)
 
   const [loading, setLoading] = useState<LoadingStatus>('not loaded')
+  const [debugMode, setDebugMode] = useState<boolean>(false)
 
   const { getAccessTokenSilently } = useAuth()
 
@@ -83,12 +84,12 @@ export function PageApplicationLogs() {
 
   useWebSocket(nginxLogsUrl, {
     onMessage: (message) => {
-      setLoading('loaded')
+      const data = { ...JSON.parse(message?.data), pod_name: 'nginx' }
 
       if (pauseStatusLogs) {
-        setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
+        setPauseLogs((prev: Log[]) => [...prev, data])
       } else {
-        setLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
+        setLogs((prev: Log[]) => [...prev, ...pauseLogs, data])
         setPauseLogs([])
       }
     },
@@ -119,20 +120,26 @@ export function PageApplicationLogs() {
             const currentPod = application?.running_status?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (
               <div
-                className={`group flex justify-between items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
+                className={`group flex items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
                   isActive ? 'bg-element-light-darker-600' : ''
                 }`}
               >
-                <StatusChip status={currentPod?.state} className="mr-2.5" />
+                <div className="w-4 mr-2.5">
+                  <StatusChip status={currentPod?.state} />
+                </div>
                 <p className="text-xs font-medium text-text-200 mr-5">{data.pod_name}</p>
                 <span className="block text-2xs text-text-400 mr-2">
-                  <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
-                  {data.version?.substring(0, 6)}
+                  {data.version && (
+                    <>
+                      <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
+                      {data.version?.substring(0, 6)}
+                    </>
+                  )}
                 </span>
                 {
                   <Icon
                     name={IconAwesomeEnum.FILTER}
-                    className={`text-ssm group-hover:text-text-100 ${
+                    className={`text-ssm group-hover:text-text-100 ml-auto ${
                       isActive ? 'text-warning-500' : 'text-transparent'
                     }`}
                   />
@@ -175,8 +182,14 @@ export function PageApplicationLogs() {
   }, [dispatch, environmentId, applicationsByEnv.length, projectId])
 
   const memoRow = useMemo(
-    () => logs?.map((log: Log, index: number) => <Row key={index} data={log} filter={filter} />),
-    [filter, logs]
+    () =>
+      logs?.map((log: Log, index: number) => {
+        if (log.pod_name === 'nginx' && !debugMode) {
+          return null
+        }
+        return <Row key={index} data={log} filter={filter} />
+      }),
+    [filter, logs, debugMode]
   )
 
   return (
@@ -192,6 +205,8 @@ export function PageApplicationLogs() {
       setPauseLogs={setPauseStatusLogs}
       withLogsNavigation
       lineNumbers={false}
+      debugMode={debugMode}
+      setDebugMode={setDebugMode}
     >
       <Table
         className="bg-transparent"

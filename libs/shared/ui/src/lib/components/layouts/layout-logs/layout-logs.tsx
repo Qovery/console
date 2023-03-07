@@ -41,6 +41,8 @@ export interface LayoutLogsProps {
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
+  debugMode?: boolean
+  setDebugMode?: (debugMode: boolean) => void
 }
 
 export interface ErrorLogsProps {
@@ -62,6 +64,8 @@ export function LayoutLogs(props: LayoutLogsProps) {
     pauseLogs,
     setPauseLogs,
     lineNumbers,
+    debugMode,
+    setDebugMode,
   } = props
 
   const location = useLocation()
@@ -204,14 +208,17 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
               </p>
             )}
-            <div className="mr-auto text-text-300 text-xs font-medium">
-              <InputCheckbox
-                name="checkbox-debug"
-                value={'false'}
-                onChange={() => console.log('hello')}
-                label="Debug"
-              />
-            </div>
+            {setDebugMode && (
+              <div className="mr-auto text-text-300 text-xs font-medium">
+                <InputCheckbox
+                  name="checkbox-debug"
+                  value={(debugMode || false).toString()}
+                  onChange={() => setDebugMode(!debugMode)}
+                  label="Debug"
+                  className="-ml-1"
+                />
+              </div>
+            )}
             <div className="flex">
               {location.pathname.includes(
                 APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)

@@ -146,8 +146,8 @@ input[type='number'] {
 // fixing bug with tailwind checked:before:content-['\\f00c'] not works
 .input-checkbox {
   &:checked:before {
-    content: '\f00c';
-    background: theme('colors.brand.500');
-    border-color: theme('colors.brand.500');
+    content: '\f00c' !important;
+    background: theme('colors.brand.500') !important;
+    border-color: theme('colors.brand.500') !important;
   }
 }
