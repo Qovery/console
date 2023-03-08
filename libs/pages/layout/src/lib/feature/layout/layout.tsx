@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { redirect, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
-import { fetchEnvironments } from '@qovery/domains/environment'
 import {
   fetchClusters,
   fetchOrganization,
@@ -70,9 +69,9 @@ export function Layout(props: LayoutProps) {
     }
   }, [environmentId, dispatch])
 
-  useEffect(() => {
-    projectId && dispatch(fetchEnvironments({ projectId }))
-  }, [projectId, dispatch])
+  // useEffect(() => {
+  //   projectId && dispatch(fetchEnvironments({ projectId }))
+  // }, [projectId, dispatch])
 
   useEffect(() => {
     if (organizationId) {

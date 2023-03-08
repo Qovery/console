@@ -22,6 +22,7 @@ import {
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
+import { useQuery, useQueryClient } from 'react-query'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId, sortByKey } from '@qovery/shared/utils'
@@ -38,6 +39,29 @@ const environmentContainersApi = new ContainersApi()
 const databasesApi = new DatabasesApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
+
+export const useFetchEnvironments = (projectId: string, withoutStatus?: boolean) => {
+  const queryClient = useQueryClient()
+
+  return useQuery<Environment[], Error>(
+    ['environment'],
+    async () => {
+      const response = await environmentsApi.listEnvironment(projectId)
+
+      if (!withoutStatus) {
+        // thunkApi.dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+      }
+
+      return response.data.results as Environment[]
+    },
+    {
+      initialData: queryClient.getQueryData(['environment']),
+      onError: (err) => toastError(err),
+    }
+  )
+}
+
+/// --------
 
 export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string; withoutStatus?: boolean }>(
   'environments/fetch',
