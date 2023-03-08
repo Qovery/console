@@ -1,4 +1,3 @@
-import { SerializedError } from '@reduxjs/toolkit'
 import { DeploymentStageMainCallsApi, DeploymentStageRequest, DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
@@ -147,7 +146,7 @@ export const useCreateEnvironmentDeploymentStage = (
           ['environment', environmentId, 'deploymentStageList'],
           (old) => old?.filter((todo) => todo.id !== context?.optimisticDeploymentStage.id)
         )
-        toastError(err as SerializedError)
+        toastError(err as Error)
       },
       onSettled: () => onSettledCallback(),
     }
@@ -181,7 +180,7 @@ export const useEditEnvironmentDeploymentStage = (
           ['environment', environmentId, 'deploymentStageList'],
           (old) => old?.filter((todo) => todo.id !== variables.stageId)
         )
-        toastError(err as SerializedError)
+        toastError(err as Error)
       },
       onSettled: () => onSettledCallback(),
     }
@@ -206,7 +205,7 @@ export const useDeleteEnvironmentDeploymentStage = (environmentId: string) => {
         queryClient.invalidateQueries(['environment', environmentId, 'deploymentStageList'])
         toast(ToastEnum.SUCCESS, 'Your stage has been successfully deleted')
       },
-      onError: (err) => toastError(err as SerializedError),
+      onError: (err) => toastError(err as Error),
     }
   )
 }
