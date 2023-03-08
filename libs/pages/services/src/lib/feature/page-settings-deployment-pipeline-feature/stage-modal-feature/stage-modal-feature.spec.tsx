@@ -1,11 +1,9 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
-import * as storeEnvironment from '@qovery/domains/environment'
+import { useCreateEnvironmentDeploymentStage, useEditEnvironmentDeploymentStage } from '@qovery/domains/environment'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
 import { StageModalFeature, StageModalFeatureProps } from './stage-modal-feature'
-
-import SpyInstance = jest.SpyInstance
 
 jest.mock('@qovery/domains/environment', () => ({
   ...jest.requireActual('@qovery/domains/environment'),
@@ -13,11 +11,8 @@ jest.mock('@qovery/domains/environment', () => ({
   useEditEnvironmentDeploymentStage: jest.fn(),
 }))
 
-// const mockDispatch = jest.fn()
-// jest.mock('react-redux', () => ({
-//   ...jest.requireActual('react-redux'),
-//   useDispatch: () => mockDispatch,
-// }))
+const useCreateEnvironmentDeploymentStageMockSpy = useCreateEnvironmentDeploymentStage as jest.Mock
+const useEditEnvironmentDeploymentStageMockSpy = useEditEnvironmentDeploymentStage as jest.Mock
 
 describe('StageModalFeature', () => {
   const onClose = jest.fn()
@@ -41,14 +36,14 @@ describe('StageModalFeature', () => {
   })
 
   it('should submits the form with createEnvironmentDeploymentStage when no stage is provided', async () => {
-    const createEnvironmentDeploymentStageSpy: SpyInstance = jest.spyOn(
-      storeEnvironment,
-      'useCreateEnvironmentDeploymentStage'
-    )
-
     const { getByTestId, getByLabelText } = render(
       <StageModalFeature onClose={onClose} environmentId={environmentId} />
     )
+
+    useCreateEnvironmentDeploymentStageMockSpy.mockReturnValue({
+      mutate: jest.fn(),
+    })
+
     const inputName = getByTestId('input-name')
     const inputDescription = getByLabelText(/description/i)
     const submitButton = getByTestId('submit-button')
@@ -64,90 +59,51 @@ describe('StageModalFeature', () => {
       submitButton.click()
     })
 
-    // Get the mutation function from the hook
-    console.log(createEnvironmentDeploymentStageSpy.mock.results)
-
-    const mutate = createEnvironmentDeploymentStageSpy.mock.results[0].value
-
-    expect(mutate).toHaveBeenCalledWith({
+    expect(useCreateEnvironmentDeploymentStageMockSpy).toHaveBeenCalled()
+    expect(useCreateEnvironmentDeploymentStageMockSpy).toHaveBeenCalledWith(
       environmentId,
-      data: {
-        name: 'New Stage',
-        description: 'New Stage Description',
-      },
+      onClose,
+      expect.any(Function)
+    )
+    expect(
+      useCreateEnvironmentDeploymentStage(environmentId, onClose, expect.any(Function)).mutate
+    ).toHaveBeenCalledWith({
+      data: { name: 'New Stage', description: 'New Stage Description' },
     })
-
-    // Call the mutation function with the correct arguments
-    // await mutate({
-    //   environmentId,
-    //   data: {
-    //     name: 'New Stage',
-    //     description: 'New Stage Description',
-    //   },
-    // })
-
-    // Ensure that the function has been called with the correct arguments
-    // expect(createEnvironmentDeploymentStageSpy).toHaveBeenCalledWith({
-    //   environmentId,
-    //   onSuccessCallback: expect.any(Function),
-    //   onSettledCallback: expect.any(Function),
-    // })
-
-    // Ensure that the onSuccessCallback and onClose functions have been called
-    expect(onClose).toHaveBeenCalled()
-
-    // await act(() => {
-    //   submitButton.click()
-    // })
-
-    // expect(createEnvironmentDeploymentStageSpy).toHaveBeenCalledWith(environmentId, jest.fn(), jest.fn())
-
-    // expect(createEnvironmentDeploymentStageSpy).toHaveBeenCalledWith({
-    //   environmentId,
-    //   data: {
-    //     name: 'New Stage',
-    //     description: 'New Stage Description',
-    //   },
-    // })
-    // expect(onClose).toHaveBeenCalled()
   })
 
-  //   it('should submits the form with editEnvironmentDeploymentStage when a stage is provided', async () => {
-  //     const editEnvironmentDeploymentStageSpy: SpyInstance = jest.spyOn(
-  //       storeEnvironment,
-  //       'useEditEnvironmentDeploymentStage'
-  //     )
-  //     // mockDispatch.mockImplementation(() => ({
-  //     //   unwrap: () =>
-  //     //     Promise.resolve({
-  //     //       data: {},
-  //     //     }),
-  //     // }))
+  it('should submits the form with editEnvironmentDeploymentStage when a stage is provided', async () => {
+    const { getByLabelText, getByTestId } = render(<StageModalFeature {...props} />)
 
-  //     const { getByLabelText, getByTestId } = render(<StageModalFeature {...props} />)
-  //     const inputName = getByTestId('input-name')
-  //     const inputDescription = getByLabelText(/description/i)
-  //     const submitButton = getByTestId('submit-button')
+    useEditEnvironmentDeploymentStageMockSpy.mockReturnValue({
+      mutate: jest.fn(),
+    })
 
-  //     await act(async () => {
-  //       fireEvent.change(inputName, { target: { value: 'Updated Stage' } })
-  //       fireEvent.change(inputDescription, { target: { value: 'Updated Stage Description' } })
-  //     })
+    const inputName = getByTestId('input-name')
+    const inputDescription = getByLabelText(/description/i)
+    const submitButton = getByTestId('submit-button')
 
-  //     expect(submitButton).not.toBeDisabled()
+    await act(async () => {
+      fireEvent.change(inputName, { target: { value: 'Updated Stage' } })
+      fireEvent.change(inputDescription, { target: { value: 'Updated Stage Description' } })
+    })
 
-  //     await act(() => {
-  //       submitButton.click()
-  //     })
+    expect(submitButton).not.toBeDisabled()
 
-  //     expect(editEnvironmentDeploymentStageSpy).toHaveBeenCalledWith({
-  //       stageId: stage.id,
-  //       environmentId,
-  //       data: {
-  //         name: 'Updated Stage',
-  //         description: 'Updated Stage Description',
-  //       },
-  //     })
-  //     expect(onClose).toHaveBeenCalled()
-  //   })
+    await act(() => {
+      submitButton.click()
+      expect(useEditEnvironmentDeploymentStageMockSpy).toHaveBeenCalled()
+    })
+
+    expect(useEditEnvironmentDeploymentStageMockSpy).toHaveBeenCalledWith(environmentId, onClose, expect.any(Function))
+    expect(
+      useEditEnvironmentDeploymentStageMockSpy(environmentId, onClose, expect.any(Function)).mutate
+    ).toHaveBeenCalledWith({
+      stageId: stage.id,
+      data: {
+        name: 'Updated Stage',
+        description: 'Updated Stage Description',
+      },
+    })
+  })
 })
