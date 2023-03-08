@@ -110,12 +110,12 @@ export function App() {
                 path={route.path}
                 element={
                   !route.protected ? (
-                    <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
+                    <DarkModeEnabler isDarkMode={route.darkMode}>
                       <Layout topBar={route.topBar}>{route.component}</Layout>
                     </DarkModeEnabler>
                   ) : (
                     <ProtectedRoute>
-                      <DarkModeEnabler key={'dark-mode-' + route.path} isDarkMode={route.darkMode}>
+                      <DarkModeEnabler isDarkMode={route.darkMode}>
                         <Layout topBar={route.topBar}>{route.component}</Layout>
                       </DarkModeEnabler>
                     </ProtectedRoute>
