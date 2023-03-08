@@ -1,10 +1,12 @@
-import { PlanEnum } from 'qovery-typescript-axios'
+import { CreditCard, PlanEnum } from 'qovery-typescript-axios'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { Button, ButtonStyle, HelpSection, Link, Skeleton } from '@qovery/shared/ui'
+import { CLUSTERS_URL, SETTINGS_BILLING_BETA_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { Button, ButtonStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { costToHuman, dateToFormat } from '@qovery/shared/utils'
 
 export interface PageOrganizationBillingSummaryProps {
   organization?: OrganizationEntity
+  creditCard: CreditCard
   numberOfRunningClusters?: number
   numberOfClusters?: number
 }
@@ -30,9 +32,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <div className="text-text-400 text-xs mb-1 font-medium">Current plan</div>
             <div className="text-text-600 font-bold text-sm mb-1">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
-                <div className="h-5">
-                  {props.organization?.currentCost?.value?.plan?.toString()?.toLowerCase() || 'N/A'} plan
-                </div>
+                <div className="h-5">{props.organization?.currentCost?.value?.plan?.toString() || 'N/A'} PLAN</div>
               </Skeleton>
             </div>
             <Link
@@ -67,15 +67,18 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
 
           {props.organization?.currentCost?.value?.plan !== PlanEnum.FREE && (
             <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
-              <div className="text-text-400 text-xs mb-1 font-medium">Payment method</div>
+              <div className="text-text-400 text-xs mb-3 font-medium">Payment method</div>
               <div className="mb-2">
-                <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
-                  <span className="text-600 font-bold text-sm">**** 3434</span>
+                <Skeleton height={20} width={100} show={!props.creditCard}>
+                  <div className="flex gap-3">
+                    <svg className="w-6" children={imagesCreditCart.placeholder} />
+                    <span className="text-600 font-bold text-xs flex-1">**** {props.creditCard?.last_digit}</span>
+                  </div>
                 </Skeleton>
               </div>
               <Link
                 className="!text-xs font-medium"
-                link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
+                link={SETTINGS_URL(props.organization?.id || '') + SETTINGS_BILLING_BETA_URL}
                 linkLabel="Edit payment"
               />
             </div>
@@ -104,7 +107,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             </div>
             <Link
               className="!text-xs font-medium"
-              link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
+              link={CLUSTERS_URL(props.organization?.id || '')}
               linkLabel="Manage clusters"
             />
           </div>

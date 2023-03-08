@@ -13,7 +13,7 @@ import {
   visaCreditCard,
 } from './images/credit-card-images'
 
-const images: CardImages = {
+export const imagesCreditCart: CardImages = {
   visa: visaCreditCard,
   jcb: jcbCreditCard,
   amex: amexCrediCard,
@@ -122,7 +122,7 @@ export function InputCreditCard(props: InputCreditCardProps) {
             <svg
               data-testid="credit-card-image"
               className="absolute -translate-x-full -ml-3 -translate-y-1/2 top-1/2 z-10"
-              {...getCardImageProps({ images })}
+              {...getCardImageProps({ images: imagesCreditCart })}
             ></svg>
           )}
           <div className={`${disabled ? 'pointer-events-none' : ''}`}>
