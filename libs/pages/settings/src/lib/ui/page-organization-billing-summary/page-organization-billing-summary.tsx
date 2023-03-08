@@ -1,14 +1,16 @@
-import { CreditCard, PlanEnum } from 'qovery-typescript-axios'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
+import { PlanEnum } from 'qovery-typescript-axios'
+import { CardImages } from 'react-payment-inputs/images'
+import { CreditCard, OrganizationEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_BETA_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, ButtonStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
-import { costToHuman, dateToFormat } from '@qovery/shared/utils'
+import { costToHuman, dateToFormat, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageOrganizationBillingSummaryProps {
   organization?: OrganizationEntity
-  creditCard: CreditCard
+  creditCard?: CreditCard
   numberOfRunningClusters?: number
   numberOfClusters?: number
+  creditCardLoading?: boolean
 }
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
@@ -32,7 +34,9 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <div className="text-text-400 text-xs mb-1 font-medium">Current plan</div>
             <div className="text-text-600 font-bold text-sm mb-1">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
-                <div className="h-5">{props.organization?.currentCost?.value?.plan?.toString() || 'N/A'} PLAN</div>
+                <div className="h-5">
+                  {upperCaseFirstLetter(props.organization?.currentCost?.value?.plan?.toString()) || 'N/A'} plan
+                </div>
               </Skeleton>
             </div>
             <Link
@@ -56,23 +60,31 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 </div>
               </Skeleton>
             </div>
-            <p className="text-text-400 text-xs font-medium">
-              Next invoice{' '}
-              <strong className="text-text-600">
-                {props.organization?.currentCost?.value?.paid_usage?.renewal_at &&
-                  dateToFormat(props.organization.currentCost.value.paid_usage.renewal_at, 'dd MMM Y')}
-              </strong>
-            </p>
+            {props.organization?.currentCost?.value?.plan !== PlanEnum.FREE && (
+              <p className="text-text-400 text-xs font-medium">
+                Next invoice{' '}
+                <strong className="text-text-600">
+                  {props.organization?.currentCost?.value?.paid_usage?.renewal_at &&
+                    dateToFormat(props.organization.currentCost.value.paid_usage.renewal_at, 'dd MMM Y')}
+                </strong>
+              </p>
+            )}
           </div>
 
-          {props.organization?.currentCost?.value?.plan !== PlanEnum.FREE && (
+          {props.organization?.currentCost?.value && props.organization.currentCost.value.plan !== PlanEnum.FREE && (
             <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
               <div className="text-text-400 text-xs mb-3 font-medium">Payment method</div>
               <div className="mb-2">
-                <Skeleton height={20} width={100} show={!props.creditCard}>
+                <Skeleton height={20} width={100} show={props.creditCardLoading}>
                   <div className="flex gap-3">
-                    <svg className="w-6" children={imagesCreditCart.placeholder} />
-                    <span className="text-600 font-bold text-xs flex-1">**** {props.creditCard?.last_digit}</span>
+                    {props.creditCard ? (
+                      <>
+                        <svg className="w-6" children={imagesCreditCart[props.creditCard.brand as keyof CardImages]} />
+                        <span className="text-600 font-bold text-xs flex-1">**** {props.creditCard?.last_digit}</span>
+                      </>
+                    ) : (
+                      <span className="text-xs">No credit card provided</span>
+                    )}
                   </div>
                 </Skeleton>
               </div>
@@ -98,10 +110,16 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="flex-1 p-5 h-[114px]">
             <div className="text-text-400 text-xs mb-1 font-medium">Cluster</div>
             <div className="mb-1">
-              <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
+              <Skeleton height={20} width={100} show={!props.numberOfClusters === undefined}>
                 <div className="h-5">
-                  <strong className="text-text-600 font-bold text-sm">{props.numberOfRunningClusters}</strong>{' '}
-                  <span className="text-text-400 text-xs">/ {props.numberOfClusters}</span>
+                  {props.numberOfClusters !== undefined && props.numberOfClusters > 0 ? (
+                    <>
+                      <strong className="text-text-600 font-bold text-sm">{props.numberOfRunningClusters}</strong>{' '}
+                      <span className="text-text-400 text-xs">/ {props.numberOfClusters}</span>
+                    </>
+                  ) : (
+                    <strong className="text-text-600 font-medium text-sm">No cluster found</strong>
+                  )}
                 </div>
               </Skeleton>
             </div>

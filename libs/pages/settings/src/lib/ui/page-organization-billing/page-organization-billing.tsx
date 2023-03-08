@@ -1,4 +1,4 @@
-import { CreditCard } from 'qovery-typescript-axios'
+import { CreditCard } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -57,6 +57,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
                     type="number"
                     name="Card number"
                     label="Card number"
+                    brand={creditCard.brand?.toLowerCase()}
                     value={`**** ${creditCard.last_digit}`}
                     disabled
                     className="grow"

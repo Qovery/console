@@ -1,4 +1,3 @@
-import { CreditCard } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,6 +9,7 @@ import {
   selectCreditCardsByOrganizationId,
 } from '@qovery/domains/organization'
 import { AddCreditCardModalFeature, CreditCardFormValues } from '@qovery/shared/console-shared'
+import { CreditCard } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'

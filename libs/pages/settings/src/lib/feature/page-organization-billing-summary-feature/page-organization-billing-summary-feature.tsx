@@ -6,14 +6,18 @@ import {
   fetchClusters,
   fetchCreditCards,
   fetchCurrentCost,
+  getCreditCardsState,
   selectClustersEntitiesByOrganizationId,
   selectCreditCardsByOrganizationId,
   selectOrganizationById,
 } from '@qovery/domains/organization'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
 
 export function PageOrganizationBillingSummaryFeature() {
+  useDocumentTitle('Billing summary - Organization settings')
+
   const { organizationId } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId || ''))
@@ -22,6 +26,9 @@ export function PageOrganizationBillingSummaryFeature() {
   )
   const creditCards = useSelector((state: RootState) => selectCreditCardsByOrganizationId(state, organizationId || ''))
   const creditCard = creditCards?.[0]
+  const creditCardLoadingStatus = useSelector<RootState, string | undefined>(
+    (state) => getCreditCardsState(state).loadingStatus
+  )
 
   const numberOfRunningClusters =
     clusters?.reduce((acc, cluster) => {
@@ -29,7 +36,7 @@ export function PageOrganizationBillingSummaryFeature() {
         return acc + 1
       }
       return acc
-    }, 0) || undefined
+    }, 0) || 0
   const numberOfClusters = clusters?.length || undefined
 
   useEffect(() => {
@@ -46,6 +53,7 @@ export function PageOrganizationBillingSummaryFeature() {
       numberOfClusters={numberOfClusters}
       numberOfRunningClusters={numberOfRunningClusters}
       creditCard={creditCard}
+      creditCardLoading={creditCardLoadingStatus === 'loading'}
     />
   )
 }
