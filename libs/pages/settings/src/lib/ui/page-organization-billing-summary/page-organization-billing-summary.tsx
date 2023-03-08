@@ -2,7 +2,7 @@ import { PlanEnum } from 'qovery-typescript-axios'
 import { CardImages } from 'react-payment-inputs/images'
 import { CreditCard, OrganizationEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_BETA_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { Button, ButtonStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
+import { HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { costToHuman, dateToFormat, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageOrganizationBillingSummaryProps {
@@ -21,12 +21,12 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div>
             <h1 className="h5 text-text-700 mb-2">Plan details</h1>
           </div>
-          <div className="flex gap-3">
-            <Button style={ButtonStyle.STROKED} dataTestId="add-new-card-button">
-              Promo code
-            </Button>
-            <Button dataTestId="add-new-card-button">Upgrade plan</Button>
-          </div>
+          {/*<div className="flex gap-3">*/}
+          {/*  <Button style={ButtonStyle.STROKED} dataTestId="add-new-card-button">*/}
+          {/*    Promo code*/}
+          {/*  </Button>*/}
+          {/*  <Button dataTestId="add-new-card-button">Upgrade plan</Button>*/}
+          {/*</div>*/}
         </div>
 
         <div className="flex w-full gap-2 mb-3">
