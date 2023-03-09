@@ -58,7 +58,7 @@ export function TabsLogs(props: TabsLogsProps) {
   return (
     <div
       data-testid="tabs-logs"
-      className="w-[360px] h-[100vh-64px] shrink-0 border-l border-t border-element-light-darker-100 bg-element-light-darker-400"
+      className="w-[360px] h-full shrink-0 border-l border-t border-element-light-darker-100 bg-element-light-darker-400"
     >
       <div className="py-2 px-5">
         <Tabs className="bg-transparent" classNameBtn="grow justify-center" items={items} fullWidth />

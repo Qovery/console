@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { fetchClusterInfraLogs, selectClusterById } from '@qovery/domains/organization'
+import { displayClusterBanner } from '@qovery/pages/layout'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/ui'
 import { dateDifferenceMinutes, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -60,8 +61,16 @@ export function PageInfraLogs() {
       error.step === ClusterLogsStepEnum.CREATE_ERROR
   )
 
+  const clusterIsDeployed = cluster?.extendedStatus?.status?.is_deployed
+  const clusterBanner = cluster && displayClusterBanner(cluster.status) && !clusterIsDeployed
+
   return (
-    <LayoutLogs data={cluster?.logs} tabInformation={<CardClusterFeature />} errors={realErrors}>
+    <LayoutLogs
+      data={cluster?.logs}
+      tabInformation={<CardClusterFeature />}
+      errors={realErrors}
+      clusterBanner={clusterBanner}
+    >
       {cluster?.logs?.items &&
         cluster?.logs?.items.map((currentData: ClusterLogs, index: number) => (
           <Row key={index} index={index} data={currentData} firstDate={firstDate} />

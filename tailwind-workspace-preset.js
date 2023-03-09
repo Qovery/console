@@ -16,6 +16,7 @@ module.exports = {
       minHeight: {
         'height-with-navigation-left': 'calc(100vh - 270px)',
         'page-container': 'calc(100vh - theme(spacing.navbar-height))',
+        'page-container-wbanner': 'calc(100vh - theme(spacing.navbar-height) - 40px)',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],

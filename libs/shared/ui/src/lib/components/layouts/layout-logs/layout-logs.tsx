@@ -43,6 +43,7 @@ export interface LayoutLogsProps {
   lineNumbers?: boolean
   debugMode?: boolean
   setDebugMode?: (debugMode: boolean) => void
+  clusterBanner?: boolean
 }
 
 export interface ErrorLogsProps {
@@ -66,6 +67,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     lineNumbers,
     debugMode,
     setDebugMode,
+    clusterBanner,
   } = props
 
   const location = useLocation()
@@ -134,7 +136,11 @@ export function LayoutLogs(props: LayoutLogsProps) {
   ]
 
   return (
-    <div className="overflow-hidden flex relative h-[calc(100vh-4rem)]">
+    <div
+      className={`overflow-hidden flex relative h-[calc(100vh-4rem)] ${
+        clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'
+      }`}
+    >
       {withLogsNavigation && (
         <div className="absolute overflow-y-auto z-20 left-0 w-full flex items-center h-10 bg-element-light-darker-500 border-b border-element-light-darker-100">
           {environment && (
