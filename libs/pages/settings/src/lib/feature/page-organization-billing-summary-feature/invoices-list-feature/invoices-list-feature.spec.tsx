@@ -1,3 +1,4 @@
+import { act, getAllByTestId, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
@@ -72,6 +73,12 @@ jest.mock('react-redux', () => ({
 }))
 
 describe('InvoicesListFeature', () => {
+  beforeEach(() => {
+    mockDispatch.mockImplementation(() => ({
+      unwrap: () => Promise.resolve({ url: 'url' }),
+    }))
+  })
+
   it('should render successfully', () => {
     const { baseElement } = render(<InvoicesListFeature />)
     expect(baseElement).toBeTruthy()
@@ -79,10 +86,36 @@ describe('InvoicesListFeature', () => {
 
   it('should dispatch fetchInvoices', () => {
     const fetchBillingInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchInvoices')
-    const { baseElement } = render(<InvoicesListFeature />)
+    render(<InvoicesListFeature />)
     expect(fetchBillingInfoSpy).toHaveBeenCalledWith({
       organizationId: '1',
     })
+  })
+
+  it('should dispatch downloadAll', async () => {
+    const spy: SpyInstance = jest.spyOn(storeOrganization, 'downloadAllInvoices')
+
+    const { baseElement } = render(<InvoicesListFeature />)
+    const button = getByTestId(baseElement, 'download-all-btn')
+
+    await act(() => {
+      button.click()
+    })
+
+    expect(spy).toHaveBeenCalledWith({ organizationId: '1' })
+  })
+
+  it('should dispatch downloadOne', async () => {
+    const spy: SpyInstance = jest.spyOn(storeOrganization, 'fetchInvoiceUrl')
+    window.open = jest.fn((url: string, target: string) => ({}))
+    const { baseElement } = render(<InvoicesListFeature />)
+    const button = getAllByTestId(baseElement, 'download-invoice-btn')[0]
+
+    await act(() => {
+      button.click()
+    })
+
+    expect(spy).toHaveBeenCalledWith({ organizationId: '1', invoiceId: '1' })
   })
 })
 
