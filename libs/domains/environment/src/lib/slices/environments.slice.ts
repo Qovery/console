@@ -22,10 +22,10 @@ import {
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
-import { useQuery, useQueryClient } from 'react-query'
+import { QueryClient, useQuery, useQueryClient } from 'react-query'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, refactoPayload, shortToLongId, sortByKey } from '@qovery/shared/utils'
+import { addOneToManyRelation, getEntitiesByIds, refactoPayload, sortByKey } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
@@ -40,25 +40,74 @@ const databasesApi = new DatabasesApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
-export const useFetchEnvironments = (projectId: string, withoutStatus?: boolean) => {
+export const useFetchEnvironments = (projectId: string) => {
   const queryClient = useQueryClient()
 
   return useQuery<Environment[], Error>(
-    ['environment'],
+    ['project', projectId, 'environments'],
     async () => {
       const response = await environmentsApi.listEnvironment(projectId)
-
-      if (!withoutStatus) {
-        // thunkApi.dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-      }
-
       return response.data.results as Environment[]
     },
     {
-      initialData: queryClient.getQueryData(['environment']),
+      initialData: queryClient.getQueryData(['project', projectId, 'environments']),
+      onSuccess: () => {
+        // refetch environments-status requests
+        queryClient.invalidateQueries(['environments-status'])
+      },
       onError: (err) => toastError(err),
     }
   )
+}
+
+export const getEnvironmentById = (environmentId: string, environments?: Environment[]) => {
+  return environments?.find((environment) => environment.id === environmentId)
+}
+
+export const useFetchEnvironmentsStatus = (projectId: string) => {
+  const queryClient = useQueryClient()
+
+  return useQuery<Status[], Error>(
+    ['environments-status'],
+    async () => {
+      const response = await environmentsApi.getProjectEnvironmentsStatus(projectId)
+      return response.data.results as Status[]
+    },
+    {
+      initialData: queryClient.getQueryData(['environments-status']),
+      onError: (err) => toastError(err),
+    }
+  )
+}
+
+export const getEnvironmentStatusById = (environmentId: string, status?: Status[]) => {
+  return status?.find((environment) => environment.id === environmentId)
+}
+
+export const updateEnvironmentsRunningStatus = async (
+  queryClient: QueryClient,
+  environments: WebsocketRunningStatusInterface[]
+) => {
+  for (let i = 0; i < environments.length; i++) {
+    const environment = environments[i]
+    const queryKey = ['environments-running-status', environment.id]
+    queryClient.invalidateQueries({ queryKey })
+    queryClient.setQueryData(queryKey, environment)
+  }
+}
+
+export const useEnvironmentRunningStatus = (environmentId: string) => {
+  const queryClient = useQueryClient()
+
+  const queryKey = ['environments-running-status', environmentId]
+  const environmentsRunningStatusById: WebsocketRunningStatusInterface | undefined = queryClient.getQueryData(queryKey)
+  return environmentsRunningStatusById
+}
+
+export const getEnvironmentRunningStatusById = (queryClient: QueryClient, environmentId: string) => {
+  const queryKey = ['environments-running-status', environmentId]
+  const environmentsRunningStatusById: WebsocketRunningStatusInterface | undefined = queryClient.getQueryData(queryKey)
+  return environmentsRunningStatusById
 }
 
 /// --------
@@ -169,40 +218,40 @@ export const environmentsSlice = createSlice({
   reducers: {
     add: environmentsAdapter.addOne,
     remove: environmentsAdapter.removeOne,
-    updateEnvironmentsRunningStatus: (
-      state,
-      action: PayloadAction<{ websocketRunningStatus: WebsocketRunningStatusInterface[]; clusterId: string }>
-    ) => {
-      // we have to force this reset change because of the way the socket works.
-      // You can have information about an application (eg. if it's stopping)
-      // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
-      const resetChanges: Update<EnvironmentEntity>[] = state.ids.map((id) => {
-        // as we can have this dispatch from different websocket, we don't want to reset
-        // and override all the entry but only the one associated to the cluster the websocket is
-        // coming from
-        const runningStatusChanges =
-          state.entities[id]?.cluster_id === action.payload.clusterId ? undefined : state.entities[id]?.running_status
-        return {
-          id,
-          changes: {
-            running_status: runningStatusChanges,
-          },
-        }
-      })
-      environmentsAdapter.updateMany(state, resetChanges)
+    // updateEnvironmentsRunningStatus: (
+    //   state,
+    //   action: PayloadAction<{ websocketRunningStatus: WebsocketRunningStatusInterface[]; clusterId: string }>
+    // ) => {
+    //   // we have to force this reset change because of the way the socket works.
+    //   // You can have information about an application (eg. if it's stopping)
+    //   // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
+    //   const resetChanges: Update<EnvironmentEntity>[] = state.ids.map((id) => {
+    //     // as we can have this dispatch from different websocket, we don't want to reset
+    //     // and override all the entry but only the one associated to the cluster the websocket is
+    //     // coming from
+    //     const runningStatusChanges =
+    //       state.entities[id]?.cluster_id === action.payload.clusterId ? undefined : state.entities[id]?.running_status
+    //     return {
+    //       id,
+    //       changes: {
+    //         running_status: runningStatusChanges,
+    //       },
+    //     }
+    //   })
+    //   environmentsAdapter.updateMany(state, resetChanges)
 
-      const changes: Update<EnvironmentEntity>[] = action.payload.websocketRunningStatus.map((runningStatus) => {
-        const realId = shortToLongId(runningStatus.id, state.ids as string[])
-        return {
-          id: realId,
-          changes: {
-            running_status: runningStatus,
-          },
-        }
-      })
+    //   const changes: Update<EnvironmentEntity>[] = action.payload.websocketRunningStatus.map((runningStatus) => {
+    //     const realId = shortToLongId(runningStatus.id, state.ids as string[])
+    //     return {
+    //       id: realId,
+    //       changes: {
+    //         running_status: runningStatus,
+    //       },
+    //     }
+    //   })
 
-      environmentsAdapter.updateMany(state, changes)
-    },
+    //   environmentsAdapter.updateMany(state, changes)
+    // },
   },
   extraReducers: (builder) => {
     builder

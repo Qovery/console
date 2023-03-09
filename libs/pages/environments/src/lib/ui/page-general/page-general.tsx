@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { Environment, Status } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
+import { useQueryClient } from 'react-query'
 import { useParams } from 'react-router-dom'
+import { getEnvironmentRunningStatusById, getEnvironmentStatusById } from '@qovery/domains/environment'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_URL,
@@ -23,16 +25,18 @@ import {
 import TableRowEnvironments from '../table-row-environments/table-row-environments'
 
 export interface PageGeneralProps {
-  environments: EnvironmentEntity[]
+  environments: Environment[]
+  environmentsStatus?: Status[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
   clusterAvailable?: boolean
 }
 
-function PageGeneralMemo(props: PageGeneralProps) {
-  const { environments, listHelpfulLinks, clusterAvailable, isLoading } = props
+export function PageGeneral(props: PageGeneralProps) {
+  const { environments, environmentsStatus, listHelpfulLinks, clusterAvailable, isLoading } = props
   const { organizationId = '', projectId = '' } = useParams()
 
+  const queryClient = useQueryClient()
   const { openModal, closeModal } = useModal()
   const [data, setData] = useState(environments)
   const [filter, setFilter] = useState<TableFilterProps>({})
@@ -42,8 +46,6 @@ function PageGeneralMemo(props: PageGeneralProps) {
     setData(environments)
     setLoading(isLoading)
   }, [environments, isLoading])
-
-  useEffect(() => {}, [data])
 
   const tableHead = [
     {
@@ -100,6 +102,8 @@ function PageGeneralMemo(props: PageGeneralProps) {
               <TableRowEnvironments
                 key={currentData.id}
                 data={currentData}
+                status={getEnvironmentStatusById(currentData.id, environmentsStatus)}
+                runningStatus={getEnvironmentRunningStatusById(queryClient, currentData.id)}
                 filter={filter}
                 dataHead={tableHead}
                 link={`${SERVICES_URL(organizationId, projectId, currentData.id)}${SERVICES_GENERAL_URL}`}
@@ -156,24 +160,4 @@ function PageGeneralMemo(props: PageGeneralProps) {
   )
 }
 
-export const PageGeneral = React.memo(PageGeneralMemo, (prevProps, nextProps) => {
-  // Stringify is necessary to avoid Redux selector behavior
-  if (nextProps.environments.length > 0) {
-    const isEqual =
-      JSON.stringify(
-        prevProps.environments.map((environment) => ({
-          status: environment.status?.state,
-          running_status: environment.running_status?.state,
-        }))
-      ) ===
-      JSON.stringify(
-        nextProps.environments.map((environment) => ({
-          status: environment.status?.state,
-          running_status: environment.running_status?.state,
-        }))
-      )
-    return isEqual
-  }
-
-  return false
-})
+export default PageGeneral

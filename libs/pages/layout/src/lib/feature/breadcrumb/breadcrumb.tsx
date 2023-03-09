@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
-import { useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironments, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
@@ -19,6 +19,7 @@ export function BreadcrumbFeature() {
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
 
   const { data: environments } = useFetchEnvironments(projectId)
+  useFetchEnvironmentsStatus(projectId)
 
   const { openModal, closeModal } = useModal()
 

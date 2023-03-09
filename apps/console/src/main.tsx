@@ -20,7 +20,13 @@ posthog.init(environment.posthog, {
 const container = document.getElementById('root') || document.createElement('div')
 const root = createRoot(container)
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+    },
+  },
+})
 
 root.render(
   <IntercomProvider appId={environment.intercom} autoBoot>

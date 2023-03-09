@@ -69,10 +69,6 @@ export function Layout(props: LayoutProps) {
     }
   }, [environmentId, dispatch])
 
-  // useEffect(() => {
-  //   projectId && dispatch(fetchEnvironments({ projectId }))
-  // }, [projectId, dispatch])
-
   useEffect(() => {
     if (organizationId) {
       dispatch(fetchProjects({ organizationId }))

@@ -1,4 +1,3 @@
-import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -8,7 +7,7 @@ import {
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
 import { fetchDatabasesStatus, getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
-import { selectEnvironmentById } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
@@ -16,7 +15,7 @@ import { AppDispatch, RootState } from '@qovery/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {
-  const { environmentId = '' } = useParams()
+  const { projectId = '', environmentId = '' } = useParams()
 
   const loadingServices = applicationFactoryMock(3)
   const dispatch = useDispatch<AppDispatch>()
@@ -29,9 +28,8 @@ export function PageGeneralFeature() {
     selectDatabasesEntitiesByEnvId(state, environmentId)
   )
 
-  const environment = useSelector<RootState, Environment | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const applicationsLoadingStatus = useSelector<RootState, LoadingStatus>(
     (state) => getApplicationsState(state).loadingStatus

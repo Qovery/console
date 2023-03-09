@@ -1,5 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { StateEnum } from 'qovery-typescript-axios'
+import { StateEnum, Status } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -42,11 +42,12 @@ import UpdateAllModalFeature from '../../update-all-modal/feature/update-all-mod
 
 export interface EnvironmentButtonsActionsProps {
   environment: EnvironmentEntity
+  status?: Status
   hasServices?: boolean
 }
 
 export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps) {
-  const { environment, hasServices = false } = props
+  const { environment, status, hasServices = false } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -75,7 +76,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
         ),
     }
 
-    const state = environment.status?.state
+    const state = status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -196,6 +197,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     projectId,
     location.pathname,
     openModal,
+    status?.state,
   ])
 
   const removeEnvironment = async () => {
@@ -217,7 +219,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     })
   }
 
-  const canDelete = environment?.status && isDeleteAvailable(environment.status.state)
+  const canDelete = status?.state && isDeleteAvailable(status.state)
 
   const buttonActionsDefault = [
     ...(hasServices

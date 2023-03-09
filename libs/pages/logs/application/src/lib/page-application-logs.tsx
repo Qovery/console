@@ -8,7 +8,7 @@ import {
   selectApplicationById,
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
-import { fetchEnvironmentsStatus, selectEnvironmentById } from '@qovery/domains/environment'
+import { selectEnvironmentById, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import {
@@ -180,17 +180,19 @@ export function PageApplicationLogs() {
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const environmentsStatus = useFetchEnvironmentsStatus(projectId)
+
   const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
   useEffect(() => {
     const fetchServicesStatusByInterval = setInterval(() => {
-      dispatch(fetchEnvironmentsStatus({ projectId }))
+      environmentsStatus.refetch()
       if (applicationsByEnv.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
     }, 3000)
     return () => clearInterval(fetchServicesStatusByInterval)
-  }, [dispatch, environmentId, applicationsByEnv.length, projectId])
+  }, [dispatch, environmentsStatus, environmentId, applicationsByEnv.length])
 
   const memoRow = useMemo(
     () =>

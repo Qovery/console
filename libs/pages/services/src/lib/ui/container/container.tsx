@@ -1,4 +1,4 @@
-import { StateEnum } from 'qovery-typescript-axios'
+import { StateEnum, Status } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
@@ -6,7 +6,13 @@ import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import {
+  ApplicationEntity,
+  ClusterEntity,
+  DatabaseEntity,
+  EnvironmentEntity,
+  WebsocketRunningStatusInterface,
+} from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -37,11 +43,13 @@ import { RootState } from '@qovery/store'
 
 export interface ContainerProps {
   environment?: EnvironmentEntity
+  environmentStatus?: Status
+  environmentRunningStatus?: WebsocketRunningStatusInterface
   children?: React.ReactNode
 }
 
 export function Container(props: ContainerProps) {
-  const { environment, children } = props
+  const { environment, environmentStatus, environmentRunningStatus, children } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -97,22 +105,15 @@ export function Container(props: ContainerProps) {
 
   const tabsItems = [
     {
-      icon: (
-        <StatusChip
-          status={(environment?.running_status && environment?.running_status.state) || RunningStatus.STOPPED}
-        />
-      ),
+      icon: <StatusChip status={environmentRunningStatus?.state || RunningStatus.STOPPED} />,
       name: 'Services',
       active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
     },
     {
       icon: (
-        <Skeleton show={environment?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip
-            mustRenameStatus
-            status={(environment?.status && environment?.status.state) || StateEnum.STOPPED}
-          />
+        <Skeleton show={environmentStatus?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
+          <StatusChip mustRenameStatus status={(environmentStatus && environmentStatus.state) || StateEnum.STOPPED} />
         </Skeleton>
       ),
       name: 'Deployments',
@@ -171,8 +172,8 @@ export function Container(props: ContainerProps) {
 
   const contentTabs = !matchSettingsRoute && (
     <div className="flex justify-center items-center px-5 border-l h-14 border-element-light-lighter-400">
-      <Skeleton width={154} height={40} show={!environment?.status}>
-        {environment?.status ? (
+      <Skeleton width={154} height={40} show={!environmentStatus}>
+        {environmentStatus ? (
           <Menu
             trigger={
               <Button size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>

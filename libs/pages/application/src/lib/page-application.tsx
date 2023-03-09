@@ -1,5 +1,4 @@
 import equal from 'fast-deep-equal'
-import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
@@ -11,7 +10,7 @@ import {
   fetchApplicationStatus,
   selectApplicationById,
 } from '@qovery/domains/application'
-import { selectEnvironmentById } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -22,10 +21,9 @@ import Container from './ui/container/container'
 
 export function PageApplication() {
   const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
-  const environment = useSelector<RootState, Environment | undefined>(
-    (state) => selectEnvironmentById(state, environmentId),
-    equal
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
     equal
