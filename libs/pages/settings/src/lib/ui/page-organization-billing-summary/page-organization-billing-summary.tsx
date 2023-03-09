@@ -4,6 +4,7 @@ import { CreditCard, OrganizationEntity } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL, SETTINGS_BILLING_BETA_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { costToHuman, dateToFormat, upperCaseFirstLetter } from '@qovery/shared/utils'
+import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
 
 export interface PageOrganizationBillingSummaryProps {
   organization?: OrganizationEntity
@@ -65,7 +66,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                 Next invoice{' '}
                 <strong className="text-text-600">
                   {props.organization?.currentCost?.value?.paid_usage?.renewal_at &&
-                    dateToFormat(props.organization.currentCost.value.paid_usage.renewal_at, 'dd MMM Y')}
+                    dateToFormat(props.organization.currentCost.value.paid_usage.renewal_at, 'MMM dd, Y')}
                 </strong>
               </p>
             )}
@@ -97,7 +98,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           )}
         </div>
 
-        <div className="flex w-full border gap-2 mb-3 border-element-light-lighter-400 rounded">
+        <div className="flex w-full border gap-2 mb-8 border-element-light-lighter-400 rounded">
           <div className="flex-1 p-5 h-[114px]">
             <div className="text-text-400 text-xs mb-1 font-medium">Seats</div>
             <div className="text-text-600 font-bold text-sm mb-1">N/A</div>
@@ -143,6 +144,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             </Skeleton>
           </div>
         </div>
+        <InvoicesListFeature />
       </div>
 
       <HelpSection

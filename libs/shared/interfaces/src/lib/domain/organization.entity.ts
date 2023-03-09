@@ -4,6 +4,7 @@ import {
   ClusterCredentials,
   ContainerRegistryResponse,
   InviteMember,
+  Invoice,
   Member,
   Organization,
   OrganizationAvailableRole,
@@ -48,5 +49,9 @@ export interface OrganizationEntity extends Organization {
   currentCost?: {
     loadingStatus: LoadingStatus
     value?: OrganizationCurrentCost
+  }
+  invoices?: {
+    loadingStatus: LoadingStatus
+    items?: Invoice[]
   }
 }

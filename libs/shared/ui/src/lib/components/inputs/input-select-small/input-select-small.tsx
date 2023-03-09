@@ -11,10 +11,21 @@ export interface InputSelectSmallProps {
   dataTestId?: string
   onChange?: (item: string | undefined) => void
   defaultValue?: string
+  inputClassName?: string
 }
 
 export function InputSelectSmall(props: InputSelectSmallProps) {
-  const { name, label, items, defaultValue, className = '', onChange, getValue, dataTestId } = props
+  const {
+    name,
+    label,
+    items,
+    defaultValue,
+    className = '',
+    onChange,
+    getValue,
+    dataTestId,
+    inputClassName = '',
+  } = props
 
   const [value, setValue] = useState(defaultValue)
 
@@ -41,7 +52,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         data-testid={dataTestId || 'input-select-small'}
         name={name}
         value={value}
-        className="input input__select--small"
+        className={`input input__select--small ${inputClassName}`}
         onChange={(e) => onClickItem(e.target.value)}
       >
         {items.map((item: Value, index: number) => (
