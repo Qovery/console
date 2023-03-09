@@ -7,6 +7,7 @@ import {
   Member,
   Organization,
   OrganizationAvailableRole,
+  OrganizationCurrentCost,
   OrganizationCustomRole,
 } from 'qovery-typescript-axios'
 import { LoadingStatus } from '../types/loading-status.type'
@@ -43,5 +44,9 @@ export interface OrganizationEntity extends Organization {
   billingInfos?: {
     loadingStatus: LoadingStatus
     value?: BillingInfo
+  }
+  currentCost?: {
+    loadingStatus: LoadingStatus
+    value?: OrganizationCurrentCost
   }
 }

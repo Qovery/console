@@ -22,6 +22,14 @@ export const editBillingInfo = createAsyncThunk(
   }
 )
 
+export const fetchCurrentCost = createAsyncThunk(
+  'organization/fetch-current-cost',
+  async (payload: { organizationId: string }) => {
+    const result = await billingApi.getOrganizationCurrentCost(payload.organizationId)
+    return result.data
+  }
+)
+
 export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   //builder
   builder
@@ -52,6 +60,35 @@ export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<Organi
       organizationAdapter.updateOne(state, update)
     })
     .addCase(fetchBillingInfo.rejected, (state: OrganizationState, action) => {
+      toastError(action.error)
+    })
+    .addCase(fetchCurrentCost.pending, (state: OrganizationState, action) => {
+      const value = state.entities[action.meta.arg.organizationId]?.currentCost?.value
+
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          currentCost: {
+            loadingStatus: 'loading',
+            value,
+          },
+        },
+      }
+      organizationAdapter.updateOne(state, update)
+    })
+    .addCase(fetchCurrentCost.fulfilled, (state: OrganizationState, action) => {
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          currentCost: {
+            loadingStatus: 'loaded',
+            value: action.payload,
+          },
+        },
+      }
+      organizationAdapter.updateOne(state, update)
+    })
+    .addCase(fetchCurrentCost.rejected, (state: OrganizationState, action) => {
       toastError(action.error)
     })
     .addCase(editBillingInfo.fulfilled, (state: OrganizationState, action) => {
