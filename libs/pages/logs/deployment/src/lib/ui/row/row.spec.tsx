@@ -221,7 +221,7 @@ describe('Row', () => {
     expect(cellMsg?.textContent).toBe(props.data.error?.user_log_message)
   })
 
-  it('should have cell message without ASCI but with links', () => {
+  it('should have cell message with ANSI colors and links', () => {
     props.data = {
       type: LogsType.INFO,
       timestamp: new Date().toString(),
@@ -243,8 +243,9 @@ describe('Row', () => {
     const cellMsg = screen.getByTestId('cell-msg')
 
     expect(cellMsg?.textContent).toBe('my message https://qovery.com')
+    expect(cellMsg.innerHTML.toString()).toContain('style="color: rgb(187, 0, 0);"')
     expect(cellMsg.innerHTML.toString()).toContain(
-      '<a class="link text-accent2-500" target="_blank" href="https://qovery.com">https://qovery.com</a>'
+      '<a href="https://qovery.com" target="_blank">https://qovery.com</a>'
     )
   })
 })
