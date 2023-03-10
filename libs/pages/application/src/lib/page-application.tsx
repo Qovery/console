@@ -22,8 +22,9 @@ import Container from './ui/container/container'
 
 export function PageApplication() {
   const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
-  const environment = useSelector<RootState, Environment | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
+  const environment = useSelector<RootState, Environment | undefined>(
+    (state) => selectEnvironmentById(state, environmentId),
+    equal
   )
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),

@@ -1,7 +1,8 @@
+import equal from 'fast-deep-equal'
 import { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { getApplicationsState } from '@qovery/domains/application'
+import { selectApplicationById } from '@qovery/domains/application'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -35,7 +36,8 @@ export function PageSettingsFeature() {
   )}${APPLICATION_SETTINGS_URL}`
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => getApplicationsState(state).entities[applicationId]
+    (state) => selectApplicationById(state, applicationId),
+    equal
   )
 
   const getLinks = useCallback(() => {

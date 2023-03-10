@@ -100,6 +100,7 @@ export function PageSettingsGeneralFeature() {
       a?.buildpack_language === b?.buildpack_language &&
       a?.dockerfile_path === b?.dockerfile_path
   )
+
   const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
     selectOrganizationById(state, organizationId)
   )
