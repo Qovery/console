@@ -47,6 +47,7 @@
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-payment-inputs": "^1.1.0",
     "@types/react-router-dom": "5.3.3",
+    "ansi-to-react": "^6.1.6",
     "autoprefixer": "10.4.13",
     "axios": "^0.27.2",
     "chance": "^1.1.8",

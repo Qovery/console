@@ -1,5 +1,13 @@
 import { Log } from 'qovery-typescript-axios'
-import { CopyToClipboard, Icon, IconAwesomeEnum, TableFilterProps, TableRowFilter, Tooltip } from '@qovery/shared/ui'
+import {
+  CopyToClipboard,
+  Icon,
+  IconAwesomeEnum,
+  TableFilterProps,
+  TableRowFilter,
+  Tooltip,
+  convertToAnsi,
+} from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 const COLORS = [
@@ -87,7 +95,7 @@ export function Row(props: RowProps) {
           {dateFullFormat(data.created_at)}
         </div>
         <div data-testid="cell-msg" className="py-1 pr-6 text-text-100 relative w-full">
-          <span className="whitespace-pre-wrap break-all">{data.message}</span>
+          <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
           <CopyToClipboard
             className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
             content={data.message}
