@@ -221,7 +221,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
                   name="checkbox-debug"
                   value={(debugMode || false).toString()}
                   onChange={() => setDebugMode(!debugMode)}
-                  label="Debug"
+                  label="Nginx log"
                   className="-ml-1"
                 />
               </div>
