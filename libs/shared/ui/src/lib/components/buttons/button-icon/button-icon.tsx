@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
+import LoaderSpinner from '../../loader-spinner/loader-spinner'
 import { ButtonSize } from '../button/button'
 
 export enum ButtonIconStyle {
@@ -60,10 +61,16 @@ export function ButtonIcon(props: ButtonIconProps) {
             className={defineClass}
             onClick={(e) => onClick && onClick(e)}
           >
-            {notification && (
-              <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+            {loading ? (
+              <LoaderSpinner />
+            ) : (
+              <>
+                {notification && (
+                  <span className="btn__notification w-2 h-2 rounded-lg bg-error-500 absolute -top-0.5 -right-0.5"></span>
+                )}
+                <Icon name={icon} className={iconClassName} />
+              </>
             )}
-            <Icon name={icon} className={iconClassName} />
           </button>
         )}
 

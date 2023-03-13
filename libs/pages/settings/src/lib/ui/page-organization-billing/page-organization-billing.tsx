@@ -97,8 +97,8 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members',
-            linkLabel: 'How to configure my organization members',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#billing',
+            linkLabel: 'Learn more about billing',
             external: true,
           },
         ]}

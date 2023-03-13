@@ -2,12 +2,7 @@ import { Invoice } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  downloadAllInvoices,
-  fetchInvoiceUrl,
-  fetchInvoices,
-  selectOrganizationById,
-} from '@qovery/domains/organization'
+import { fetchInvoiceUrl, fetchInvoices, selectOrganizationById } from '@qovery/domains/organization'
 import { Value } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import InvoicesList from '../../../ui/page-organization-billing-summary/invoices-list/invoices-list'
@@ -21,9 +16,9 @@ export function InvoicesListFeature() {
   const { organizationId } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const organization = useSelector((state: RootState) => selectOrganizationById(state, organizationId || ''))
-  const [downloadLoading, setDownloadLoading] = useState(false)
   const [yearsFilterOptions, setYearsFilterOptions] = useState<Value[]>([])
   const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [idOfInvoiceToDownload, setIdOfInvoiceToDownload] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (organizationId) {
@@ -33,27 +28,22 @@ export function InvoicesListFeature() {
 
   const downloadOne = (invoiceId: string) => {
     if (organizationId && invoiceId) {
+      setIdOfInvoiceToDownload(invoiceId)
       dispatch(fetchInvoiceUrl({ organizationId, invoiceId }))
         .unwrap()
         .then((data) => {
-          window.open(data.url, '_blank')
+          if (data.url) {
+            const link = document.createElement('a')
+            link.href = data.url
+            link.download = data.url.substring(data.url.lastIndexOf('/') + 1)
+            link.click()
+          }
         })
-        .catch((err) => {
-          console.error(err)
-        })
-    }
-  }
-
-  const downloadAll = () => {
-    if (organizationId) {
-      setDownloadLoading(true)
-      dispatch(downloadAllInvoices({ organizationId }))
-        .unwrap()
         .catch((err) => {
           console.error(err)
         })
         .finally(() => {
-          setDownloadLoading(false)
+          setIdOfInvoiceToDownload(undefined)
         })
     }
   }
@@ -63,7 +53,7 @@ export function InvoicesListFeature() {
       setInvoices(organization.invoices.items)
       const years = getListOfYears(organization.invoices.items)
       setYearsFilterOptions([
-        { label: 'Filter by year', value: '' },
+        { label: 'All', value: '' },
         ...years.map((year) => ({ label: `${year}`, value: `${year}` })),
       ])
     }
@@ -85,11 +75,10 @@ export function InvoicesListFeature() {
     <InvoicesList
       invoices={invoices}
       invoicesLoading={!organization?.invoices?.loadingStatus || organization.invoices.loadingStatus === 'loading'}
-      downloadAll={downloadAll}
-      downloadLoading={downloadLoading}
       downloadOne={downloadOne}
       yearsForSorting={yearsFilterOptions}
       onFilterByYear={filterByYear}
+      idOfInvoiceToDownload={idOfInvoiceToDownload}
     />
   )
 }

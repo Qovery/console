@@ -1,4 +1,4 @@
-import { act, getAllByTestId, getByTestId } from '@testing-library/react'
+import { act, getAllByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
@@ -90,19 +90,6 @@ describe('InvoicesListFeature', () => {
     expect(fetchBillingInfoSpy).toHaveBeenCalledWith({
       organizationId: '1',
     })
-  })
-
-  it('should dispatch downloadAll', async () => {
-    const spy: SpyInstance = jest.spyOn(storeOrganization, 'downloadAllInvoices')
-
-    const { baseElement } = render(<InvoicesListFeature />)
-    const button = getByTestId(baseElement, 'download-all-btn')
-
-    await act(() => {
-      button.click()
-    })
-
-    expect(spy).toHaveBeenCalledWith({ organizationId: '1' })
   })
 
   it('should dispatch downloadOne', async () => {

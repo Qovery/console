@@ -84,7 +84,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                         <span className="text-600 font-bold text-xs flex-1">**** {props.creditCard?.last_digit}</span>
                       </>
                     ) : (
-                      <span className="text-xs">No credit card provided</span>
+                      <span className="text-xs text-text-600 font-bold">No credit card provided</span>
                     )}
                   </div>
                 </Skeleton>
@@ -152,8 +152,8 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members',
-            linkLabel: 'How to configure my organization members',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#billing',
+            linkLabel: 'Learn more about billing',
             external: true,
           },
         ]}

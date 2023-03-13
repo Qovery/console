@@ -46,14 +46,6 @@ export const fetchInvoiceUrl = createAsyncThunk(
   }
 )
 
-export const downloadAllInvoices = createAsyncThunk(
-  'organization/download-all-invoices',
-  async (payload: { organizationId: string }) => {
-    const result = await billingApi.organizationDownloadAllInvoices(payload.organizationId)
-    return result.data
-  }
-)
-
 export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   //builder
   builder
@@ -115,11 +107,8 @@ export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<Organi
     .addCase(fetchInvoices.rejected, (state: OrganizationState, action) => {
       toastError(action.error)
     })
-    .addCase(downloadAllInvoices.fulfilled, () => {
-      toast(ToastEnum.SUCCESS, 'Download all invoices', 'You will receive an email containing your invoices')
-    })
-    .addCase(downloadAllInvoices.rejected, (state: OrganizationState, action) => {
-      toastError(action.error)
+    .addCase(fetchInvoiceUrl.fulfilled, (state: OrganizationState, action) => {
+      toast(ToastEnum.SUCCESS, 'Invoice downloaded')
     })
     .addCase(fetchInvoiceUrl.rejected, (state: OrganizationState, action) => {
       toastError(action.error)

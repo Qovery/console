@@ -44,8 +44,6 @@ const props: InvoicesListProps = {
   ],
   invoicesLoading: false,
   invoices: invoices,
-  downloadLoading: false,
-  downloadAll: jest.fn(),
   downloadOne: jest.fn(),
 }
 
@@ -75,17 +73,6 @@ describe('InvoicesList', () => {
     })
 
     expect(props.onFilterByYear).toHaveBeenCalledWith('2018')
-  })
-
-  it('should call downloadAll on click on button', async () => {
-    const { baseElement } = render(<InvoicesList {...props} />)
-    const button = getByTestId(baseElement, 'download-all-btn')
-
-    await act(() => {
-      button.click()
-    })
-
-    expect(props.downloadAll).toHaveBeenCalled()
   })
 
   it('should display one spinner', async () => {

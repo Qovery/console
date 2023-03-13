@@ -1,42 +1,22 @@
 import { Invoice } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Value } from '@qovery/shared/interfaces'
-import {
-  Button,
-  ButtonStyle,
-  IconAwesomeEnum,
-  InputSelectSmall,
-  LoaderSpinner,
-  Table,
-  TableFilterProps,
-  TableHeadProps,
-} from '@qovery/shared/ui'
-import { dateToFormat } from '@qovery/shared/utils'
+import { InputSelectSmall, LoaderSpinner, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
 import TableRowInvoice from './table-row-invoice/table-row-invoice'
 
 export interface InvoicesListProps {
   invoices?: Invoice[]
   invoicesLoading?: boolean
-  downloadAll?: () => void
-  downloadLoading?: boolean
   downloadOne?: (invoiceId: string) => void
   yearsForSorting?: Value[]
   onFilterByYear?: (year?: string) => void
+  idOfInvoiceToDownload?: string | undefined
 }
 
 export function InvoicesList(props: InvoicesListProps) {
   const dataHead: TableHeadProps<Invoice>[] = [
     {
       title: 'Date',
-      filter: [
-        {
-          title: 'Filter by date',
-          key: 'created_at',
-          itemContentCustom: (item) => (
-            <span className="text-text-500 text-sm font-medium">{dateToFormat(item.created_at, 'MMM dd, Y')}</span>
-          ),
-        },
-      ],
     },
     {
       title: 'Plan',
@@ -67,20 +47,11 @@ export function InvoicesList(props: InvoicesListProps) {
             items={props.yearsForSorting || []}
             name="year"
             inputClassName="h-9 !py-[0.4rem]"
-            className="w-[200px] relative z-[1000]"
+            className="w-[200px] relative z-50"
             onChange={(value) => {
               props.onFilterByYear && props.onFilterByYear(value)
             }}
           />
-          <Button
-            style={ButtonStyle.STROKED}
-            dataTestId="download-all-btn"
-            iconRight={IconAwesomeEnum.DOWNLOAD}
-            loading={props.downloadLoading}
-            onClick={props.downloadAll}
-          >
-            Download all
-          </Button>
         </div>
       </div>
       <Table
@@ -104,7 +75,7 @@ export function InvoicesList(props: InvoicesListProps) {
               data={invoice}
               index={index}
               dataHead={dataHead}
-              isLoading={props.invoicesLoading}
+              isLoading={props.idOfInvoiceToDownload === invoice.id}
               columnsWidth={columnWidth}
               downloadInvoice={props.downloadOne}
             />

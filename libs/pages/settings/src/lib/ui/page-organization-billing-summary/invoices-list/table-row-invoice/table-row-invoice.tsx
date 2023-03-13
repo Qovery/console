@@ -1,5 +1,4 @@
 import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   ButtonIcon,
   ButtonIconStyle,
@@ -60,6 +59,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
             className="bg-transparent !w-9 !h-8"
             iconClassName="text-text-500"
             external
+            loading={props.isLoading}
             onClick={() => {
               if (!downloadInvoice) return
               downloadInvoice(data?.id || '')
