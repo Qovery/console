@@ -30,6 +30,22 @@ export const fetchCurrentCost = createAsyncThunk(
   }
 )
 
+export const fetchInvoices = createAsyncThunk(
+  'organization/fetch-invoices',
+  async (payload: { organizationId: string }) => {
+    const result = await billingApi.listOrganizationInvoice(payload.organizationId)
+    return result.data.results
+  }
+)
+
+export const fetchInvoiceUrl = createAsyncThunk(
+  'organization/fetch-invoice-url',
+  async (payload: { organizationId: string; invoiceId: string }) => {
+    const result = await billingApi.getOrganizationInvoicePDF(payload.organizationId, payload.invoiceId)
+    return result.data
+  }
+)
+
 export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   //builder
   builder
@@ -60,6 +76,41 @@ export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<Organi
       organizationAdapter.updateOne(state, update)
     })
     .addCase(fetchBillingInfo.rejected, (state: OrganizationState, action) => {
+      toastError(action.error)
+    })
+    .addCase(fetchInvoices.pending, (state: OrganizationState, action) => {
+      const items = state.entities[action.meta.arg.organizationId]?.invoices?.items
+
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          invoices: {
+            loadingStatus: 'loading',
+            items,
+          },
+        },
+      }
+      organizationAdapter.updateOne(state, update)
+    })
+    .addCase(fetchInvoices.fulfilled, (state: OrganizationState, action) => {
+      const update: Update<OrganizationEntity> = {
+        id: action.meta.arg.organizationId,
+        changes: {
+          invoices: {
+            loadingStatus: 'loaded',
+            items: action.payload,
+          },
+        },
+      }
+      organizationAdapter.updateOne(state, update)
+    })
+    .addCase(fetchInvoices.rejected, (state: OrganizationState, action) => {
+      toastError(action.error)
+    })
+    .addCase(fetchInvoiceUrl.fulfilled, (state: OrganizationState, action) => {
+      toast(ToastEnum.SUCCESS, 'Invoice downloaded')
+    })
+    .addCase(fetchInvoiceUrl.rejected, (state: OrganizationState, action) => {
       toastError(action.error)
     })
     .addCase(fetchCurrentCost.pending, (state: OrganizationState, action) => {
