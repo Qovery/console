@@ -8,7 +8,7 @@ jest.mock('date-fns-tz', () => ({
 }))
 
 describe('Row', () => {
-  const props: RowProps = {
+  let props: RowProps = {
     data: {
       id: '1',
       created_at: '1667834316521',
@@ -51,6 +51,26 @@ describe('Row', () => {
 
     const cellMsg = screen.getByTestId('cell-msg')
     expect(cellMsg?.textContent).toBe(props.data.message)
+  })
+
+  it('should have cell message with ANSI colors and links', () => {
+    props.data = {
+      id: '1',
+      created_at: '1667834316521',
+      message: '\x1b[F\x1b[31;1mmy message https://qovery.com\x1b[m\x1b[E',
+      pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
+      version: '53deb16f853aef759b8be84fbeec96e9727',
+    }
+
+    render(<Row {...props} />)
+
+    const cellMsg = screen.getByTestId('cell-msg')
+
+    expect(cellMsg?.textContent).toBe('my message https://qovery.com')
+    expect(cellMsg.innerHTML.toString()).toContain('style="color: rgb(187, 0, 0);"')
+    expect(cellMsg.innerHTML.toString()).toContain(
+      '<a href="https://qovery.com" target="_blank">https://qovery.com</a>'
+    )
   })
 
   it('should have cell version', () => {

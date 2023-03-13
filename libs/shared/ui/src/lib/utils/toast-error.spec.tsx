@@ -1,7 +1,7 @@
-import toast, { ToastEnum } from '../toast'
+import toast, { ToastEnum } from './toast'
 import { toastError } from './toast-error'
 
-jest.mock('../toast')
+jest.mock('./toast')
 
 describe('error toaster', () => {
   toast.mockImplementation(jest.fn())

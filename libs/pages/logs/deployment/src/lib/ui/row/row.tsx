@@ -1,7 +1,7 @@
 import { EnvironmentLogs } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { LogsType } from '@qovery/shared/enums'
-import { CopyToClipboard, Tooltip, UpdateTimeContext } from '@qovery/shared/ui'
+import { CopyToClipboard, Tooltip, UpdateTimeContext, convertToAnsi } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 export interface RowProps {
@@ -36,19 +36,6 @@ export function Row(props: RowProps) {
         ? 'text-success-500'
         : `${white ? 'text-text-200' : 'text-element-light-lighter-700'}`
     }`
-
-  const buildHtml = (content = '') => {
-    const regexLink = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g
-    // eslint-disable-next-line no-control-regex
-    const regexANSI = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
-
-    return (
-      content
-        .replace(regexLink, `<a class="link text-accent2-500" target="_blank" href='$1$2'>$1$2</a>`)
-        // remove ANSI characters
-        .replace(regexANSI, '')
-    )
-  }
 
   return (
     <div
@@ -95,12 +82,9 @@ export function Row(props: RowProps) {
           true
         )}`}
       >
-        <span
-          className="whitespace-pre-wrap truncate break-all"
-          dangerouslySetInnerHTML={{
-            __html: error ? buildHtml(data.error?.user_log_message) : buildHtml(data.message?.safe_message),
-          }}
-        />
+        <span className="whitespace-pre-wrap truncate break-all">
+          {error ? convertToAnsi(data.error?.user_log_message) : convertToAnsi(data.message?.safe_message)}
+        </span>
         <CopyToClipboard
           className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
           content={error ? (data.error?.user_log_message as string) : (data.message?.safe_message as string)}
