@@ -46,6 +46,14 @@ export const fetchInvoiceUrl = createAsyncThunk(
   }
 )
 
+export const addCreditCode = createAsyncThunk(
+  'organization/add-credit-code',
+  async (payload: { organizationId: string; code: string }) => {
+    const result = await billingApi.addCreditCode(payload.organizationId, { code: payload.code })
+    return result.data
+  }
+)
+
 export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<OrganizationState>) => {
   //builder
   builder
@@ -76,6 +84,12 @@ export const billingInfoExtraReducers = (builder: ActionReducerMapBuilder<Organi
       organizationAdapter.updateOne(state, update)
     })
     .addCase(fetchBillingInfo.rejected, (state: OrganizationState, action) => {
+      toastError(action.error)
+    })
+    .addCase(addCreditCode.fulfilled, (state: OrganizationState, action) => {
+      toast(ToastEnum.SUCCESS, 'Credit code added')
+    })
+    .addCase(addCreditCode.rejected, (state: OrganizationState, action) => {
       toastError(action.error)
     })
     .addCase(fetchInvoices.pending, (state: OrganizationState, action) => {

@@ -1,4 +1,4 @@
-import { getByText, queryByText } from '@testing-library/react'
+import { act, getByTestId, getByText, queryByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { creditCardsFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
@@ -28,6 +28,8 @@ const props: PageOrganizationBillingSummaryProps = {
   numberOfClusters: 130,
   numberOfRunningClusters: 88,
   organization: mockOrganization,
+  onPromoCodeClick: jest.fn(),
+  openIntercom: jest.fn(),
 }
 
 describe('PageOrganizationBillingSummary', () => {
@@ -66,6 +68,24 @@ describe('PageOrganizationBillingSummary', () => {
       <PageOrganizationBillingSummary {...props} creditCardLoading={false} creditCard={undefined} />
     )
     getByText(baseElement, 'No credit card provided')
+  })
+
+  it('should say call intercom on click on upgrade', async () => {
+    const { baseElement } = render(<PageOrganizationBillingSummary {...props} />)
+    const button = getByTestId(baseElement, 'upgrade-button')
+    await act(() => {
+      button.click()
+    })
+    expect(props.openIntercom).toHaveBeenCalled()
+  })
+
+  it('should say call onPromoCodeClick on click on add promo code', async () => {
+    const { baseElement } = render(<PageOrganizationBillingSummary {...props} />)
+    const button = getByTestId(baseElement, 'promo-code-button')
+    await act(() => {
+      button.click()
+    })
+    expect(props.onPromoCodeClick).toHaveBeenCalled()
   })
 
   it('should display not display the payment method box', () => {

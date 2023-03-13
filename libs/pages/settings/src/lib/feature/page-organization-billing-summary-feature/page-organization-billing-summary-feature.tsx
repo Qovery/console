@@ -2,6 +2,7 @@ import { StateEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { useIntercom } from 'react-use-intercom'
 import {
   fetchClusters,
   fetchCreditCards,
@@ -11,12 +12,16 @@ import {
   selectCreditCardsByOrganizationId,
   selectOrganizationById,
 } from '@qovery/domains/organization'
+import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
+import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'
 
 export function PageOrganizationBillingSummaryFeature() {
   useDocumentTitle('Billing summary - Organization settings')
+
+  const { openModal, closeModal } = useModal()
 
   const { organizationId } = useParams()
   const dispatch = useDispatch<AppDispatch>()
@@ -29,6 +34,7 @@ export function PageOrganizationBillingSummaryFeature() {
   const creditCardLoadingStatus = useSelector<RootState, string | undefined>(
     (state) => getCreditCardsState(state).loadingStatus
   )
+  const { show: showIntercom } = useIntercom()
 
   const numberOfRunningClusters =
     clusters?.reduce((acc, cluster) => {
@@ -47,6 +53,16 @@ export function PageOrganizationBillingSummaryFeature() {
     }
   }, [organizationId, dispatch])
 
+  const openPromoCodeModal = () => {
+    openModal({
+      content: <PromoCodeModalFeature closeModal={closeModal} organizationId={organizationId} />,
+    })
+  }
+
+  const openIntercom = () => {
+    showIntercom()
+  }
+
   return (
     <PageOrganizationBillingSummary
       organization={organization}
@@ -54,6 +70,8 @@ export function PageOrganizationBillingSummaryFeature() {
       numberOfRunningClusters={numberOfRunningClusters}
       creditCard={creditCard}
       creditCardLoading={creditCardLoadingStatus === 'loading'}
+      onPromoCodeClick={openPromoCodeModal}
+      openIntercom={openIntercom}
     />
   )
 }
