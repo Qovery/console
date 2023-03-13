@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import {
+  SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_DANGER_ZONE_URL,
@@ -48,17 +49,16 @@ export function PageSettings() {
     {
       title: 'Billing & plans',
       icon: IconAwesomeEnum.CREDIT_CARD,
-      url: pathSettings + SETTINGS_BILLING_URL,
-      // subLinks: [
-      //   // {
-      //   //   title: 'Summary',
-      //   //   url: pathSettings + SETTINGS_MEMBERS_URL,
-      //   // },
-      //   {
-      //     title: 'Billing details',
-      //     url: pathSettings + SETTINGS_BILLING_URL,
-      //   },
-      // ],
+      subLinks: [
+        {
+          title: 'Summary',
+          url: pathSettings + SETTINGS_BILLING_SUMMARY_URL,
+        },
+        {
+          title: 'Billing details',
+          url: pathSettings + SETTINGS_BILLING_URL,
+        },
+      ],
     },
     {
       title: 'Container registries',
