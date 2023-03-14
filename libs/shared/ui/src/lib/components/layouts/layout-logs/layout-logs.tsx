@@ -16,6 +16,7 @@ import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/routes
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
+import IconFa from '../../icon-fa/icon-fa'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import InputCheckbox from '../../inputs/input-checkbox/input-checkbox'
@@ -231,6 +232,16 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 ) : (
                   ''
                 )}
+                <Tooltip content="Documentation about NGINX formats">
+                  <a
+                    className="relative top-[1px] ml-2"
+                    rel="noreferrer"
+                    href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
+                    target="_blank"
+                  >
+                    <IconFa name={IconAwesomeEnum.CIRCLE_INFO} />
+                  </a>
+                </Tooltip>
               </div>
             )}
             <div className="flex">
