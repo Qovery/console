@@ -1,7 +1,7 @@
 import { PlanEnum } from 'qovery-typescript-axios'
 import { CardImages } from 'react-payment-inputs/images'
 import { CreditCard, OrganizationEntity } from '@qovery/shared/interfaces'
-import { CLUSTERS_URL, SETTINGS_BILLING_BETA_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_URL, SETTINGS_BILLING_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { Button, ButtonStyle, HelpSection, Link, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { costToHuman, dateToFormat, upperCaseFirstLetter } from '@qovery/shared/utils'
 import InvoicesListFeature from '../../feature/page-organization-billing-summary-feature/invoices-list-feature/invoices-list-feature'
@@ -95,7 +95,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               </div>
               <Link
                 className="!text-xs font-medium"
-                link={SETTINGS_URL(props.organization?.id || '') + SETTINGS_BILLING_BETA_URL}
+                link={SETTINGS_URL(props.organization?.id || '') + SETTINGS_BILLING_URL}
                 linkLabel="Edit payment"
               />
             </div>

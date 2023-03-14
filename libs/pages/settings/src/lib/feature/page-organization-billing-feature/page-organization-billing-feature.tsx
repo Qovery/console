@@ -34,8 +34,8 @@ export function PageOrganizationBillingFeature() {
   })
 
   useEffect(() => {
-    if (organizationId) dispatch(fetchCreditCards({ organizationId }))
-  }, [organizationId, dispatch])
+    if (organizationId && creditCardLoadingStatus === 'not loaded') dispatch(fetchCreditCards({ organizationId }))
+  }, [organizationId, dispatch, creditCardLoadingStatus])
 
   const openNewCreditCardModal = () => {
     openModal({

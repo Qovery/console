@@ -60,10 +60,10 @@ export function BillingDetailsFeature() {
   }, [setCountryValues])
 
   useEffect(() => {
-    if (organizationId) {
+    if (organizationId && !organization?.billingInfos?.loadingStatus) {
       dispatch(fetchBillingInfo({ organizationId }))
     }
-  }, [organizationId, dispatch, methods])
+  }, [organizationId, dispatch, methods, organization?.billingInfos?.loadingStatus])
 
   useEffect(() => {
     if (organization?.billingInfos?.value) {

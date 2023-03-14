@@ -60,6 +60,8 @@ describe('BillingDetailsFeature', () => {
           },
         }),
     }))
+
+    jest.spyOn(storeOrganization, 'selectOrganizationById').mockReturnValue(mockOrganization)
   })
 
   it('should render successfully', () => {
@@ -69,6 +71,10 @@ describe('BillingDetailsFeature', () => {
 
   it('should fetch the billing info', () => {
     const fetchBillingInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchBillingInfo')
+    jest
+      .spyOn(storeOrganization, 'selectOrganizationById')
+      .mockReturnValue({ ...mockOrganization, billingInfos: { loadingStatus: undefined } })
+
     render(<BillingDetailsFeature />)
 
     expect(fetchBillingInfoSpy).toHaveBeenCalled()

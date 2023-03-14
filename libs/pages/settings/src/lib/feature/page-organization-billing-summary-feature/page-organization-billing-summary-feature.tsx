@@ -9,6 +9,7 @@ import {
   fetchCurrentCost,
   getCreditCardsState,
   selectClustersEntitiesByOrganizationId,
+  selectClustersLoadingStatus,
   selectCreditCardsByOrganizationId,
   selectOrganizationById,
 } from '@qovery/domains/organization'
@@ -29,6 +30,7 @@ export function PageOrganizationBillingSummaryFeature() {
   const clusters = useSelector((state: RootState) =>
     selectClustersEntitiesByOrganizationId(state, organizationId || '')
   )
+  const clustersStatusLoading = useSelector(selectClustersLoadingStatus)
   const creditCards = useSelector((state: RootState) => selectCreditCardsByOrganizationId(state, organizationId || ''))
   const creditCard = creditCards?.[0]
   const creditCardLoadingStatus = useSelector<RootState, string | undefined>(
@@ -46,21 +48,25 @@ export function PageOrganizationBillingSummaryFeature() {
   const numberOfClusters = clusters?.length || undefined
 
   useEffect(() => {
-    if (organizationId) {
+    if (organizationId && !organization?.currentCost?.loadingStatus) {
       dispatch(fetchCurrentCost({ organizationId }))
-      dispatch(fetchClusters({ organizationId }))
-      dispatch(fetchCreditCards({ organizationId }))
     }
-  }, [organizationId, dispatch])
+  }, [organizationId, dispatch, organization?.billingInfos?.loadingStatus])
+
+  useEffect(() => {
+    if (organizationId && creditCardLoadingStatus === 'not loaded') dispatch(fetchCreditCards({ organizationId }))
+  }, [organizationId, dispatch, creditCardLoadingStatus])
+
+  useEffect(() => {
+    if (organizationId && clustersStatusLoading === 'not loaded') {
+      dispatch(fetchClusters({ organizationId }))
+    }
+  }, [organizationId, dispatch, clustersStatusLoading])
 
   const openPromoCodeModal = () => {
     openModal({
       content: <PromoCodeModalFeature closeModal={closeModal} organizationId={organizationId} />,
     })
-  }
-
-  const openIntercom = () => {
-    showIntercom()
   }
 
   return (
@@ -71,7 +77,7 @@ export function PageOrganizationBillingSummaryFeature() {
       creditCard={creditCard}
       creditCardLoading={creditCardLoadingStatus === 'loading'}
       onPromoCodeClick={openPromoCodeModal}
-      openIntercom={openIntercom}
+      openIntercom={showIntercom}
     />
   )
 }

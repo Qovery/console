@@ -77,6 +77,11 @@ describe('InvoicesListFeature', () => {
     mockDispatch.mockImplementation(() => ({
       unwrap: () => Promise.resolve({ url: 'url' }),
     }))
+
+    mockOrganization.invoices = {
+      loadingStatus: 'not loaded',
+      items: invoices,
+    }
   })
 
   it('should render successfully', () => {
@@ -86,6 +91,14 @@ describe('InvoicesListFeature', () => {
 
   it('should dispatch fetchInvoices', () => {
     const fetchBillingInfoSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchInvoices')
+    mockOrganization.invoices = {
+      loadingStatus: undefined,
+      items: invoices,
+    }
+    const fetchOrganizationByIdSpy: SpyInstance = jest
+      .spyOn(storeOrganization, 'selectOrganizationById')
+      .mockReturnValue(mockOrganization)
+
     render(<InvoicesListFeature />)
     expect(fetchBillingInfoSpy).toHaveBeenCalledWith({
       organizationId: '1',
@@ -94,6 +107,11 @@ describe('InvoicesListFeature', () => {
 
   it('should dispatch downloadOne', async () => {
     const spy: SpyInstance = jest.spyOn(storeOrganization, 'fetchInvoiceUrl')
+    mockOrganization.invoices = {
+      loadingStatus: 'loaded',
+      items: invoices,
+    }
+    jest.spyOn(storeOrganization, 'selectOrganizationById').mockReturnValue(mockOrganization)
     window.open = jest.fn((url: string, target: string) => ({}))
     const { baseElement } = render(<InvoicesListFeature />)
     const button = getAllByTestId(baseElement, 'download-invoice-btn')[0]
