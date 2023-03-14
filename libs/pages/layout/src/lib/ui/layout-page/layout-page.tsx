@@ -58,7 +58,7 @@ export function LayoutPage(props: LayoutPageProps) {
             )}
             <div
               className={`relative flex flex-col pt-2 px-2 dark:pt-0 dark:px-0 ${
-                !clusterBanner ? 'min-h-page-container-wbanner' : 'max-h-page-container'
+                clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
               }`}
             >
               {children}

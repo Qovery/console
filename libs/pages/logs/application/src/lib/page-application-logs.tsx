@@ -112,6 +112,7 @@ export function PageApplicationLogs() {
       setLogs([])
       setPauseLogs([])
       setPauseStatusLogs(false)
+      setDebugMode(false)
     }
   }, [applicationId])
 
@@ -217,6 +218,7 @@ export function PageApplicationLogs() {
       lineNumbers={false}
       debugMode={debugMode}
       setDebugMode={setDebugMode}
+      nginxLogsCount={logs.filter((log: Log) => log.pod_name === 'nginx').length}
     >
       <Table
         className="bg-transparent"

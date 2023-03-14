@@ -44,6 +44,7 @@ export interface LayoutLogsProps {
   debugMode?: boolean
   setDebugMode?: (debugMode: boolean) => void
   clusterBanner?: boolean
+  nginxLogsCount?: number
 }
 
 export interface ErrorLogsProps {
@@ -68,6 +69,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     debugMode,
     setDebugMode,
     clusterBanner,
+    nginxLogsCount,
   } = props
 
   const location = useLocation()
@@ -215,15 +217,20 @@ export function LayoutLogs(props: LayoutLogsProps) {
               </p>
             )}
             {setDebugMode && (
-              <div className="mr-auto text-text-300 text-xs font-medium">
+              <div className="flex items-center mr-auto text-text-300 text-xs font-medium">
                 <InputCheckbox
                   dataTestId="checkbox-debug"
                   name="checkbox-debug"
                   value={(debugMode || false).toString()}
                   onChange={() => setDebugMode(!debugMode)}
-                  label="Nginx log"
+                  label="NGINX logs"
                   className="-ml-1"
                 />
+                {debugMode && nginxLogsCount !== undefined ? (
+                  <span className="block ml-1">({nginxLogsCount})</span>
+                ) : (
+                  ''
+                )}
               </div>
             )}
             <div className="flex">
