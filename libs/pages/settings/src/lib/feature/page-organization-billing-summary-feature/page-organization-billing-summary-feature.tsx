@@ -2,7 +2,6 @@ import { StateEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
 import {
   fetchClusters,
   fetchCreditCards,
@@ -18,6 +17,7 @@ import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
 import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'
+import UpgradePlanModalFeature from './upgrade-plan-modal-feature/upgrade-plan-modal-feature'
 
 export function PageOrganizationBillingSummaryFeature() {
   useDocumentTitle('Billing summary - Organization settings')
@@ -36,7 +36,6 @@ export function PageOrganizationBillingSummaryFeature() {
   const creditCardLoadingStatus = useSelector<RootState, string | undefined>(
     (state) => getCreditCardsState(state).loadingStatus
   )
-  const { show: showIntercom } = useIntercom()
 
   const numberOfRunningClusters =
     clusters?.reduce((acc, cluster) => {
@@ -51,7 +50,7 @@ export function PageOrganizationBillingSummaryFeature() {
     if (organizationId && !organization?.currentCost?.loadingStatus) {
       dispatch(fetchCurrentCost({ organizationId }))
     }
-  }, [organizationId, dispatch, organization?.billingInfos?.loadingStatus])
+  }, [organizationId, dispatch, organization?.currentCost?.loadingStatus])
 
   useEffect(() => {
     if (organizationId && creditCardLoadingStatus === 'not loaded') dispatch(fetchCreditCards({ organizationId }))
@@ -69,6 +68,12 @@ export function PageOrganizationBillingSummaryFeature() {
     })
   }
 
+  const openUpgradeModal = () => {
+    openModal({
+      content: <UpgradePlanModalFeature closeModal={closeModal} organization={organization} />,
+    })
+  }
+
   return (
     <PageOrganizationBillingSummary
       organization={organization}
@@ -77,7 +82,7 @@ export function PageOrganizationBillingSummaryFeature() {
       creditCard={creditCard}
       creditCardLoading={creditCardLoadingStatus === 'loading'}
       onPromoCodeClick={openPromoCodeModal}
-      openIntercom={showIntercom}
+      openUpgradeModal={openUpgradeModal}
     />
   )
 }

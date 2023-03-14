@@ -1,4 +1,4 @@
-import { act, getByTestId, waitFor } from '@testing-library/react'
+import { act, getByTestId, getByText, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import InputRadioBox, { InputRadioBoxProps } from './input-radio-box'
 
@@ -43,5 +43,10 @@ describe('InputRadioBox', () => {
   it('should display description if provided', async () => {
     const { baseElement } = render(<InputRadioBox {...props} />)
     getByTestId(baseElement, 'description')
+  })
+
+  it('should display right element', async () => {
+    const { baseElement } = render(<InputRadioBox {...props} rightElement={<h1>Right Element</h1>} />)
+    getByText(baseElement, 'Right Element')
   })
 })

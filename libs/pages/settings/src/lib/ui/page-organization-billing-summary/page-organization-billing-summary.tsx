@@ -13,7 +13,7 @@ export interface PageOrganizationBillingSummaryProps {
   numberOfClusters?: number
   creditCardLoading?: boolean
   onPromoCodeClick?: () => void
-  openIntercom?: () => void
+  openUpgradeModal?: () => void
 }
 
 export function PageOrganizationBillingSummary(props: PageOrganizationBillingSummaryProps) {
@@ -28,7 +28,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Button style={ButtonStyle.STROKED} dataTestId="promo-code-button" onClick={props.onPromoCodeClick}>
               Promo code
             </Button>
-            <Button dataTestId="upgrade-button" onClick={props.openIntercom}>
+            <Button dataTestId="upgrade-button" onClick={props.openUpgradeModal}>
               Upgrade plan
             </Button>
           </div>

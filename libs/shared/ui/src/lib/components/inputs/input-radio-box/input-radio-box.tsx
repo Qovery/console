@@ -8,10 +8,11 @@ export interface InputRadioBoxProps {
   label: string
   value: string
   description?: ReactNode | undefined
+  rightElement?: ReactNode | undefined
 }
 
 export function InputRadioBox(props: InputRadioBoxProps) {
-  const { name, value, description, onChange, fieldValue, label } = props
+  const { name, value, description, onChange, fieldValue, label, rightElement } = props
 
   return (
     <div
@@ -23,8 +24,13 @@ export function InputRadioBox(props: InputRadioBoxProps) {
           : 'bg-element-light-lighter-200 border-element-light-lighter-500'
       }`}
     >
-      <InputRadio big name={name} value={value} label={label} onChange={onChange} formValue={fieldValue} />
-      {description && <div className="ml-[31px] text-text-500 text-sm mt-1">{description}</div>}
+      <div className="flex items-center justify-between w-full">
+        <div>
+          <InputRadio big name={name} value={value} label={label} onChange={onChange} formValue={fieldValue} />
+          {description && <div className="ml-[31px] text-text-500 text-sm mt-1">{description}</div>}
+        </div>
+        {rightElement}
+      </div>
     </div>
   )
 }

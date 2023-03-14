@@ -18,4 +18,5 @@ Primary.args = {
   },
   value: 'start',
   description: <p data-testid="description">Description</p>,
+  rightElement: <h3>49$</h3>,
 }
