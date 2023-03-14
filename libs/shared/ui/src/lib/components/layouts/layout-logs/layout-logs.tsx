@@ -16,6 +16,7 @@ import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/routes
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
+import IconFa from '../../icon-fa/icon-fa'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import InputCheckbox from '../../inputs/input-checkbox/input-checkbox'
@@ -44,6 +45,7 @@ export interface LayoutLogsProps {
   debugMode?: boolean
   setDebugMode?: (debugMode: boolean) => void
   clusterBanner?: boolean
+  nginxLogsCount?: number
 }
 
 export interface ErrorLogsProps {
@@ -68,6 +70,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     debugMode,
     setDebugMode,
     clusterBanner,
+    nginxLogsCount,
   } = props
 
   const location = useLocation()
@@ -215,15 +218,30 @@ export function LayoutLogs(props: LayoutLogsProps) {
               </p>
             )}
             {setDebugMode && (
-              <div className="mr-auto text-text-300 text-xs font-medium">
+              <div className="flex items-center mr-auto text-text-300 text-xs font-medium">
                 <InputCheckbox
                   dataTestId="checkbox-debug"
                   name="checkbox-debug"
                   value={(debugMode || false).toString()}
                   onChange={() => setDebugMode(!debugMode)}
-                  label="Nginx log"
+                  label="NGINX logs"
                   className="-ml-1"
                 />
+                {debugMode && nginxLogsCount !== undefined ? (
+                  <span className="block ml-1">({nginxLogsCount})</span>
+                ) : (
+                  ''
+                )}
+                <Tooltip content="Documentation about NGINX formats">
+                  <a
+                    className="relative top-[1px] ml-2"
+                    rel="noreferrer"
+                    href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
+                    target="_blank"
+                  >
+                    <IconFa name={IconAwesomeEnum.CIRCLE_INFO} />
+                  </a>
+                </Tooltip>
               </div>
             )}
             <div className="flex">
