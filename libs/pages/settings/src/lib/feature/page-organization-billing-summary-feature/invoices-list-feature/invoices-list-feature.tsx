@@ -21,10 +21,10 @@ export function InvoicesListFeature() {
   const [idOfInvoiceToDownload, setIdOfInvoiceToDownload] = useState<string | undefined>(undefined)
 
   useEffect(() => {
-    if (organizationId) {
+    if (organizationId && !organization?.invoices?.loadingStatus) {
       dispatch(fetchInvoices({ organizationId }))
     }
-  }, [organizationId, dispatch])
+  }, [organizationId, dispatch, organization?.invoices?.loadingStatus])
 
   const downloadOne = (invoiceId: string) => {
     if (organizationId && invoiceId) {

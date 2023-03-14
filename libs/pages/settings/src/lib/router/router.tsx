@@ -1,6 +1,5 @@
 import {
   Route,
-  SETTINGS_BILLING_BETA_URL,
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
@@ -25,7 +24,6 @@ import { PageOrganizationRolesEditFeature } from '../feature/page-organization-r
 import { PageOrganizationRolesFeature } from '../feature/page-organization-roles-feature/page-organization-roles-feature'
 import PageProjectDangerZoneFeature from '../feature/page-project-danger-zone-feature/page-project-danger-zone-feature'
 import PageProjectGeneralFeature from '../feature/page-project-general-feature/page-project-general-feature'
-import PageSettingsV2 from '../ui/page-settings-v2/page-settings-v2'
 
 export const ROUTER_SETTINGS: Route[] = [
   {
@@ -45,16 +43,12 @@ export const ROUTER_SETTINGS: Route[] = [
     component: <PageOrganizationRolesEditFeature />,
   },
   {
-    path: SETTINGS_BILLING_BETA_URL,
-    component: <PageOrganizationBillingFeature />,
-  },
-  {
     path: SETTINGS_BILLING_SUMMARY_URL,
     component: <PageOrganizationBillingSummaryFeature />,
   },
   {
     path: SETTINGS_BILLING_URL,
-    component: <PageSettingsV2 path="billing" />,
+    component: <PageOrganizationBillingFeature />,
   },
   {
     path: SETTINGS_CONTAINER_REGISTRIES_URL,

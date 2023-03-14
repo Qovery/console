@@ -1,4 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
+import { IntercomProvider } from 'react-use-intercom'
 import * as storeOrganization from '@qovery/domains/organization'
 import PageOrganizationBillingSummaryFeature from './page-organization-billing-summary-feature'
 
@@ -17,7 +18,11 @@ jest.mock('react-router-dom', () => ({
 
 describe('PageOrganizationBillingSummaryFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOrganizationBillingSummaryFeature />)
+    const { baseElement } = render(
+      <IntercomProvider appId="test">
+        <PageOrganizationBillingSummaryFeature />
+      </IntercomProvider>
+    )
     expect(baseElement).toBeTruthy()
   })
 
@@ -26,7 +31,11 @@ describe('PageOrganizationBillingSummaryFeature', () => {
     const fetchClustersSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchClusters')
     const fetchCurrentCostSpy: SpyInstance = jest.spyOn(storeOrganization, 'fetchCurrentCost')
 
-    render(<PageOrganizationBillingSummaryFeature />)
+    render(
+      <IntercomProvider appId="test">
+        <PageOrganizationBillingSummaryFeature />
+      </IntercomProvider>
+    )
 
     expect(fetchCreditCardsSpy).toHaveBeenCalled()
     expect(fetchClustersSpy).toHaveBeenCalled()
