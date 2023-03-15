@@ -12,7 +12,7 @@ export interface UpgradePlanModalFeatureProps {
 }
 
 export function UpgradePlanModalFeature(props: UpgradePlanModalFeatureProps) {
-  const methods = useForm<{ plan: PlanEnum }>({ defaultValues: { plan: props.organization?.currentCost?.value?.plan } })
+  const methods = useForm<{ plan: PlanEnum }>({ defaultValues: { plan: props.organization?.plan } })
   const { openModal } = useModal()
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -20,9 +20,9 @@ export function UpgradePlanModalFeature(props: UpgradePlanModalFeatureProps) {
   })
 
   useEffect(() => {
-    if (props.organization?.currentCost?.value?.plan)
-      methods.setValue('plan', props.organization.currentCost.value.plan)
-  }, [props.organization?.currentCost?.value?.plan, methods])
+    console.log(props.organization?.plan)
+    if (props.organization?.plan) methods.setValue('plan', props.organization.plan)
+  }, [props.organization, methods])
 
   const openCheckout = (plan: PlanEnum) => {
     if (props.organization) {
@@ -35,7 +35,7 @@ export function UpgradePlanModalFeature(props: UpgradePlanModalFeatureProps) {
   return (
     <FormProvider {...methods}>
       <UpgradePlanModal
-        currentPlan={props.organization?.currentCost?.value?.plan}
+        currentPlan={props.organization?.plan}
         onClose={props.closeModal}
         onSubmit={onSubmit}
         openCheckout={openCheckout}

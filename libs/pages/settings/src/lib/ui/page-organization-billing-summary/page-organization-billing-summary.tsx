@@ -28,7 +28,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Button style={ButtonStyle.STROKED} dataTestId="promo-code-button" onClick={props.onPromoCodeClick}>
               Promo code
             </Button>
-            <Button dataTestId="upgrade-button" onClick={props.openUpgradeModal}>
+            <Button dataTestId="upgrade-button" onClick={props.openUpgradeModal} disabled={!props.organization}>
               Upgrade plan
             </Button>
           </div>

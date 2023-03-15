@@ -88,7 +88,6 @@ export function UpgradePlanModal(props: UpgradePlanModalProps) {
           )}
         />
       </div>
-
       {watchPlan === PlanEnum.FREE &&
         (props.currentPlan === PlanEnum.TEAM ||
           props.currentPlan === PlanEnum.BUSINESS ||
@@ -141,7 +140,6 @@ export function UpgradePlanModal(props: UpgradePlanModalProps) {
             </Button>
           </div>
         )}
-
       {props.currentPlan === PlanEnum.FREE &&
         (watchPlan === PlanEnum.TEAM || watchPlan === PlanEnum.BUSINESS || watchPlan === PlanEnum.ENTERPRISE) && (
           <div className="bg-brand-50 rounded-lg p-6">
