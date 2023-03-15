@@ -22,7 +22,7 @@ import {
   EnvironmentsApi,
   Status,
 } from 'qovery-typescript-axios'
-import { QueryClient, useQuery, useQueryClient } from 'react-query'
+import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoPayload, sortByKey } from '@qovery/shared/utils'
@@ -108,6 +108,105 @@ export const getEnvironmentRunningStatusById = (queryClient: QueryClient, enviro
   const queryKey = ['environments-running-status', environmentId]
   const environmentsRunningStatusById: WebsocketRunningStatusInterface | undefined = queryClient.getQueryData(queryKey)
   return environmentsRunningStatusById
+}
+
+export const useDeleteEnvironment = (projectId: string, environmentId: string, onSettledCallback?: () => void) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async () => {
+      const response = await environmentMainCallsApi.deleteEnvironment(environmentId)
+      return response.data
+    },
+    {
+      onSuccess: () => {
+        queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
+          return old?.filter((environment) => environment.id !== environmentId)
+        })
+        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
+      },
+      onError: (err) => toastError(err as Error),
+      onSettled: () => onSettledCallback && onSettledCallback(),
+    }
+  )
+}
+
+export const useEditEnvironment = (projectId: string, onSettledCallback: () => void) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async ({ environmentId, data }: { environmentId: string; data: EnvironmentEditRequest }) => {
+      const response = await environmentMainCallsApi.editEnvironment(environmentId, data)
+      return response.data
+    },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
+          return old?.map((environment) => (environment.id === variables.environmentId ? result : environment))
+        })
+        toast(ToastEnum.SUCCESS, 'Your environment is updated')
+      },
+      onError: (err) => {
+        toastError(err as Error)
+      },
+      onSettled: () => onSettledCallback(),
+    }
+  )
+}
+
+export const useFetchEnvironmentDeploymentRule = (projectId: string, environmentId: string) => {
+  const queryClient = useQueryClient()
+
+  return useQuery<EnvironmentDeploymentRule, Error>(
+    ['project', projectId, 'environments', environmentId, 'deploymentRules'],
+    async () => {
+      const response = await environmentDeploymentRulesApi.getEnvironmentDeploymentRule(environmentId)
+      return response.data
+    },
+    {
+      initialData: queryClient.getQueryData(['project', projectId, 'environments', environmentId, 'deploymentRules']),
+      onError: (err) => toastError(err),
+    }
+  )
+}
+
+export const useEditEnvironmentDeploymentRule = (
+  projectId: string,
+  environmentId: string,
+  onSettledCallback?: () => void
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async ({
+      environmentId,
+      deploymentRuleId,
+      data,
+    }: {
+      environmentId: string
+      deploymentRuleId: string
+      data: EnvironmentDeploymentRule
+    }) => {
+      const cloneEnvironmentDeploymentRules = Object.assign({}, refactoPayload(data))
+      const response = await environmentDeploymentRulesApi.editEnvironmentDeploymentRule(
+        environmentId,
+        deploymentRuleId,
+        cloneEnvironmentDeploymentRules
+      )
+      return response.data
+    },
+    {
+      onSuccess: (result) => {
+        queryClient.setQueryData<EnvironmentDeploymentRule>(
+          ['project', projectId, 'environments', environmentId, 'deploymentRules'],
+          result
+        )
+        toast(ToastEnum.SUCCESS, 'Your environment deployment rules is updated')
+      },
+      onError: (err) => toastError(err as Error),
+      onSettled: () => onSettledCallback && onSettledCallback(),
+    }
+  )
 }
 
 /// --------

@@ -127,14 +127,17 @@ export const useCreateEnvironmentDeploymentStage = (
           (old: DeploymentStageRequest[] | undefined) => [...(old || []), optimisticDeploymentStage]
         )
 
-        // Return context with the optimistic todo
+        // Return context with the optimistic deploymentStage
         return { optimisticDeploymentStage }
       },
       onSuccess: (result, _, context) => {
         // Replace optimistic deployment stage in the deployment stage list with the result
         queryClient.setQueryData<DeploymentStageResponse[] | undefined>(
           ['environments', environmentId, 'deploymentStageList'],
-          (old) => old?.map((todo) => (todo.id === context?.optimisticDeploymentStage.id ? result : todo))
+          (old) =>
+            old?.map((deploymentStage) =>
+              deploymentStage.id === context?.optimisticDeploymentStage.id ? result : deploymentStage
+            )
         )
 
         toast(ToastEnum.SUCCESS, 'Your stage has been successfully created')
@@ -144,7 +147,7 @@ export const useCreateEnvironmentDeploymentStage = (
         // Remove optimistic deployment stage from the deployment stage list
         queryClient.setQueryData<DeploymentStageResponse[] | undefined>(
           ['environments', environmentId, 'deploymentStageList'],
-          (old) => old?.filter((todo) => todo.id !== context?.optimisticDeploymentStage.id)
+          (old) => old?.filter((deploymentStage) => deploymentStage.id !== context?.optimisticDeploymentStage.id)
         )
         toastError(err as Error)
       },
@@ -169,7 +172,7 @@ export const useEditEnvironmentDeploymentStage = (
       onSuccess: (result, variables) => {
         queryClient.setQueryData<DeploymentStageResponse[] | undefined>(
           ['environments', environmentId, 'deploymentStageList'],
-          (old) => old?.map((todo) => (todo.id === variables.stageId ? result : todo))
+          (old) => old?.map((deploymentStage) => (deploymentStage.id === variables.stageId ? result : deploymentStage))
         )
         toast(ToastEnum.SUCCESS, 'Your stage has been successfully updated')
         onSuccessCallback()
@@ -178,7 +181,7 @@ export const useEditEnvironmentDeploymentStage = (
         // Remove deployment stage from the deployment stage list
         queryClient.setQueryData<DeploymentStageResponse[] | undefined>(
           ['environments', environmentId, 'deploymentStageList'],
-          (old) => old?.filter((todo) => todo.id !== variables.stageId)
+          (old) => old?.filter((deploymentStage) => deploymentStage.id !== variables.stageId)
         )
         toastError(err as Error)
       },
@@ -200,7 +203,7 @@ export const useDeleteEnvironmentDeploymentStage = (environmentId: string) => {
         // Remove deployment stage from the deployment stage list
         queryClient.setQueryData<DeploymentStageResponse[] | undefined>(
           ['environments', environmentId, 'deploymentStageList'],
-          (old) => old?.filter((todo) => todo.id !== variables.stageId)
+          (old) => old?.filter((deploymentStage) => deploymentStage.id !== variables.stageId)
         )
         queryClient.invalidateQueries(['environments', environmentId, 'deploymentStageList'])
         toast(ToastEnum.SUCCESS, 'Your stage has been successfully deleted')

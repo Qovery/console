@@ -1,17 +1,16 @@
-import equal from 'fast-deep-equal'
-import { Cluster, Environment } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { Cluster } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { selectEnvironmentById, updateEnvironment } from '@qovery/domains/environment'
+import { getEnvironmentById, useEditEnvironment, useFetchEnvironments } from '@qovery/domains/environment'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export function PageSettingsGeneralFeature() {
-  const { organizationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   useDocumentTitle('Environment General - Settings - Qovery')
   const dispatch = useDispatch<AppDispatch>()
   const methods = useForm({
@@ -22,15 +21,18 @@ export function PageSettingsGeneralFeature() {
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
 
-  const environment = useSelector<RootState, Environment | undefined>(
-    (state) => selectEnvironmentById(state, environmentId),
-    equal
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+  const editEnvironment = useEditEnvironment(projectId, () => setLoading(false))
+
+  const [loading, setLoading] = useState(false)
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    setLoading(true)
+
     if (data) {
       delete data['cluster_id']
-      await dispatch(updateEnvironment({ environmentId, data }))
+      editEnvironment.mutate({ environmentId, data })
     }
   })
 
@@ -46,7 +48,7 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral clusters={clusters} onSubmit={onSubmit} />
+      <PageSettingsGeneral clusters={clusters} onSubmit={onSubmit} loading={loading} />
     </FormProvider>
   )
 }
