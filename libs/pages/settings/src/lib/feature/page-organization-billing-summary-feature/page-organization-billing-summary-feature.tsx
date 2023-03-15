@@ -71,6 +71,9 @@ export function PageOrganizationBillingSummaryFeature() {
   const openUpgradeModal = () => {
     openModal({
       content: <UpgradePlanModalFeature closeModal={closeModal} organization={organization} />,
+      options: {
+        width: 624,
+      },
     })
   }
 
