@@ -209,8 +209,25 @@ export const useEditEnvironmentDeploymentRule = (
   )
 }
 
+export const useEnvironmentDeploymentHistory = (projectId: string, environmentId: string) => {
+  const queryClient = useQueryClient()
+
+  return useQuery<DeploymentHistoryEnvironment[], Error>(
+    ['project', projectId, 'environments', environmentId, 'deploymentHistory'],
+    async () => {
+      const response = await environmentDeploymentsApi.listEnvironmentDeploymentHistory(environmentId)
+      return response.data.results as DeploymentHistoryEnvironment[]
+    },
+    {
+      initialData: queryClient.getQueryData(['project', projectId, 'environments', environmentId, 'deploymentHistory']),
+      onError: (err) => toastError(err),
+    }
+  )
+}
+
 /// --------
 
+// done
 export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string; withoutStatus?: boolean }>(
   'environments/fetch',
   async (data, thunkApi) => {
@@ -224,6 +241,7 @@ export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: st
   }
 )
 
+// done
 export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: string }>(
   'environments-status/fetch',
   async (data) => {

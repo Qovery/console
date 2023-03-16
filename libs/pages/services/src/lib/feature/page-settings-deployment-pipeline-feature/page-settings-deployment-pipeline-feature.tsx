@@ -1,4 +1,4 @@
-import { CloudProviderEnum, DeploymentStageResponse, EnvironmentAllOfCloudProvider } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
 import { useSelector } from 'react-redux'
@@ -6,10 +6,11 @@ import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
-  selectEnvironmentById,
+  getEnvironmentById,
   useAddServiceToDeploymentStage,
   useDeleteEnvironmentDeploymentStage,
   useFetchDeploymentStageList,
+  useFetchEnvironments,
 } from '@qovery/domains/environment'
 import { Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
@@ -23,11 +24,10 @@ export interface StageRequest {
 }
 
 export function PageSettingsDeploymentPipelineFeature() {
-  const { environmentId = '' } = useParams()
+  const { projectId = '', environmentId = '' } = useParams()
 
-  const cloudProvider = useSelector<RootState, EnvironmentAllOfCloudProvider | undefined>(
-    (state) => selectEnvironmentById(state, environmentId)?.cloud_provider
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const applications = useSelector(
     (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
@@ -112,7 +112,7 @@ export function PageSettingsDeploymentPipelineFeature() {
       setStages={setStages}
       onSubmit={onSubmit}
       services={[...applications, ...databases]}
-      cloudProvider={cloudProvider?.provider as CloudProviderEnum}
+      cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
       onAddStage={() => {
         openModal({
           content: <StageModalFeature onClose={closeModal} environmentId={environmentId} />,
