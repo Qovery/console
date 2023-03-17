@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
@@ -8,7 +9,7 @@ export enum BannerBoxEnum {
 }
 
 export interface BannerBoxProps {
-  message: string
+  message: string | ReactNode
   icon?: IconAwesomeEnum | string
   title?: string
   className?: string

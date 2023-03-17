@@ -6,13 +6,12 @@ import { NavigationLeft, NavigationLeftLinkProps, useModal } from '@qovery/share
 export interface ContainerProps {
   organizationLinks: NavigationLeftLinkProps[]
   projectLinks: NavigationLeftLinkProps[]
-  accountLinks: NavigationLeftLinkProps[]
   children: ReactNode
 }
 
 export function Container(props: ContainerProps) {
   const { organizationId = '' } = useParams()
-  const { organizationLinks, projectLinks, accountLinks, children } = props
+  const { organizationLinks, projectLinks, children } = props
   const { openModal, closeModal } = useModal()
 
   return (
@@ -31,11 +30,6 @@ export function Container(props: ContainerProps) {
                 })
               },
             }}
-            className="py-6 border-t border-element-light-lighter-400"
-          />
-          <NavigationLeft
-            title="Account"
-            links={accountLinks}
             className="py-6 border-t border-element-light-lighter-400"
           />
         </div>

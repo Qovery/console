@@ -82,28 +82,32 @@ export function PageApplicationLogs() {
     },
   })
 
-  useWebSocket(nginxLogsUrl, {
-    onMessage: (message) => {
-      const data = { ...JSON.parse(message?.data), pod_name: 'nginx' }
+  useWebSocket(
+    nginxLogsUrl,
+    {
+      onMessage: (message) => {
+        const data = { ...JSON.parse(message?.data), pod_name: 'nginx' }
 
-      if (pauseStatusLogs) {
-        setPauseLogs((prev: Log[]) => {
-          const sortedLogs = [...prev, data].sort(
-            (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
-          )
-          return sortedLogs
-        })
-      } else {
-        setLogs((prev: Log[]) => {
-          const sortedLogs = [...prev, ...pauseLogs, data].sort(
-            (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
-          )
-          return sortedLogs
-        })
-        setPauseLogs([])
-      }
+        if (pauseStatusLogs) {
+          setPauseLogs((prev: Log[]) => {
+            const sortedLogs = [...prev, data].sort(
+              (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
+            )
+            return sortedLogs
+          })
+        } else {
+          setLogs((prev: Log[]) => {
+            const sortedLogs = [...prev, ...pauseLogs, data].sort(
+              (a: Log, b: Log) => new Date(a.created_at).valueOf() - new Date(b.created_at).valueOf()
+            )
+            return sortedLogs
+          })
+          setPauseLogs([])
+        }
+      },
     },
-  })
+    debugMode
+  )
 
   useEffect(() => {
     // reset state when the applicationId change

@@ -59,7 +59,7 @@ export const formatVersion = (version: string) => {
 
 export interface RowProps {
   data: Log
-  filter: TableFilterProps
+  filter?: TableFilterProps
 }
 
 export function Row(props: RowProps) {
