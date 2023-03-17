@@ -5,7 +5,18 @@ import {
   ClusterRemoteData,
   ClusterResourcesData,
 } from '@qovery/shared/interfaces'
-import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  Link,
+} from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/utils'
 
 export interface StepSummaryProps {
@@ -51,6 +62,24 @@ export function StepSummary(props: StepSummaryProps) {
       </div>
 
       <div className="mb-10">
+        <BannerBox
+          className="mb-5"
+          title="Kubernetes version"
+          message={
+            <span>
+              You should not update not proceed to upgrades on any resources managed by Qovery on your cloud account.
+              Doing otherwise might expose you to eventual irrevocable troubles.
+              <br />
+              <Link
+                size="text-xs"
+                link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
+                linkLabel="See more details"
+                external
+              />
+            </span>
+          }
+          type={BannerBoxEnum.WARNING}
+        />
         <div
           data-testid="summary-general"
           className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2"
