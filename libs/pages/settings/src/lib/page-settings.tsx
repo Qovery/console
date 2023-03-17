@@ -91,16 +91,8 @@ export function PageSettings() {
     ],
   }))
 
-  const accountLinks = [
-    {
-      title: 'General',
-      icon: IconAwesomeEnum.WHEEL,
-      onClick: () => window.open('https://console.qovery.com/platform/organization/user/settings/general'),
-    },
-  ]
-
   return (
-    <Container organizationLinks={organizationLinks} projectLinks={projectLinks} accountLinks={accountLinks}>
+    <Container organizationLinks={organizationLinks} projectLinks={projectLinks}>
       <Routes>
         {ROUTER_SETTINGS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
