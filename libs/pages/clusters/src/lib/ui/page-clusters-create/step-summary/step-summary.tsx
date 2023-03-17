@@ -64,13 +64,14 @@ export function StepSummary(props: StepSummaryProps) {
       <div className="mb-10">
         <BannerBox
           className="mb-5"
-          title="Kubernetes version"
+          title="Qovery manages all for you"
           message={
             <span>
-              You should not update not proceed to upgrades on any resources managed by Qovery on your cloud account.
-              Doing otherwise might expose you to eventual irrevocable troubles.
-              <br />
+              Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+              <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+              drift in the configuration.
               <Link
+                className="ml-0.5"
                 size="text-xs"
                 link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
                 linkLabel="See more details"
