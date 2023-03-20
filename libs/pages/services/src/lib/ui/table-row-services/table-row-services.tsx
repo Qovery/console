@@ -65,7 +65,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
         <div className="flex items-center px-4 gap-1">
           {dataDatabase.mode === DatabaseModeEnum.MANAGED ? (
             <Skeleton show={isLoading} width={16} height={16} rounded={true}>
-              <StatusChip status={data.status?.state} />
+              <StatusChip status={data.status?.state || RunningStatus.STOPPED} />
             </Skeleton>
           ) : (
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
