@@ -24,7 +24,7 @@ import {
 import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { addOneToManyRelation, getEntitiesByIds, refactoPayload, sortByKey } from '@qovery/shared/utils'
+import { getEntitiesByIds, refactoPayload, sortByKey } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
@@ -327,13 +327,13 @@ export const updateEnvironment = createAsyncThunk(
 //   }
 // )
 
-export const cloneEnvironment = createAsyncThunk(
-  'environment/clone',
-  async (payload: { environmentId: string; cloneRequest: CloneRequest }) => {
-    const response = await environmentsActionsApi.cloneEnvironment(payload.environmentId, payload.cloneRequest)
-    return response.data
-  }
-)
+// export const cloneEnvironment = createAsyncThunk(
+//   'environment/clone',
+//   async (payload: { environmentId: string; cloneRequest: CloneRequest }) => {
+//     const response = await environmentsActionsApi.cloneEnvironment(payload.environmentId, payload.cloneRequest)
+//     return response.data
+//   }
+// )
 
 // export const fetchEnvironmentContainers = createAsyncThunk(
 //   'environment-containers/fetch',
@@ -434,17 +434,17 @@ export const environmentsSlice = createSlice({
       //   toast(ToastEnum.ERROR, 'Creation Error', state.error)
       // })
       // clone environment
-      .addCase(cloneEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
-        environmentsAdapter.addOne(state, action.payload)
-        state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
-          ...state.joinProjectEnvironments,
-        })
-        toast(ToastEnum.SUCCESS, 'Your environment has been successfully cloned')
-      })
-      .addCase(cloneEnvironment.rejected, (state: EnvironmentsState, action) => {
-        state.error = action.error.message
-        toast(ToastEnum.ERROR, 'Cloning Error', state.error)
-      })
+      // .addCase(cloneEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
+      //   environmentsAdapter.addOne(state, action.payload)
+      //   state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
+      //     ...state.joinProjectEnvironments,
+      //   })
+      //   toast(ToastEnum.SUCCESS, 'Your environment has been successfully cloned')
+      // })
+      // .addCase(cloneEnvironment.rejected, (state: EnvironmentsState, action) => {
+      //   state.error = action.error.message
+      //   toast(ToastEnum.ERROR, 'Cloning Error', state.error)
+      // })
       // get environments status
       .addCase(fetchEnvironmentsStatus.pending, (state: EnvironmentsState) => {
         state.loadingEnvironmentStatus = 'loading'
