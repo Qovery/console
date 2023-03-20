@@ -8,7 +8,6 @@ import {
 } from '@reduxjs/toolkit'
 import {
   CloneRequest,
-  ContainersApi,
   CreateEnvironmentRequest,
   DatabasesApi,
   DeploymentHistoryEnvironment,
@@ -35,7 +34,6 @@ const environmentsActionsApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
-const environmentContainersApi = new ContainersApi()
 const databasesApi = new DatabasesApi()
 
 export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
@@ -52,8 +50,8 @@ export const useFetchEnvironments = (projectId: string) => {
     {
       initialData: queryClient.getQueryData(['project', projectId, 'environments']),
       onSuccess: () => {
-        // refetch environments-status requests
-        queryClient.invalidateQueries(['environments-status', projectId])
+        // refetch environmentsStatus requests
+        queryClient.invalidateQueries(['environmentsStatus', projectId])
       },
       onError: (err) => toastError(err),
       enabled: projectId !== '',
@@ -69,13 +67,13 @@ export const useFetchEnvironmentsStatus = (projectId: string) => {
   const queryClient = useQueryClient()
 
   return useQuery<Status[], Error>(
-    ['environments-status', projectId],
+    ['environmentsStatus', projectId],
     async () => {
       const response = await environmentsApi.getProjectEnvironmentsStatus(projectId)
       return response.data.results as Status[]
     },
     {
-      initialData: queryClient.getQueryData(['environments-status', projectId]),
+      initialData: queryClient.getQueryData(['environmentsStatus', projectId]),
       onError: (err) => toastError(err),
     }
   )
@@ -109,27 +107,6 @@ export const getEnvironmentRunningStatusById = (queryClient: QueryClient, enviro
   const queryKey = ['environments-running-status', environmentId]
   const environmentsRunningStatusById: WebsocketRunningStatusInterface | undefined = queryClient.getQueryData(queryKey)
   return environmentsRunningStatusById
-}
-
-export const useDeleteEnvironment = (projectId: string, environmentId: string, onSettledCallback?: () => void) => {
-  const queryClient = useQueryClient()
-
-  return useMutation(
-    async () => {
-      const response = await environmentMainCallsApi.deleteEnvironment(environmentId)
-      return response.data
-    },
-    {
-      onSuccess: () => {
-        queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
-          return old?.filter((environment) => environment.id !== environmentId)
-        })
-        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
-      },
-      onError: (err) => toastError(err as Error),
-      onSettled: () => onSettledCallback && onSettledCallback(),
-    }
-  )
 }
 
 export const useEditEnvironment = (projectId: string, onSettledCallback: () => void) => {
@@ -244,7 +221,7 @@ export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: st
 
 // done
 export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: string }>(
-  'environments-status/fetch',
+  'environmentsStatus/fetch',
   async (data) => {
     const response = await environmentsApi.getProjectEnvironmentsStatus(data.projectId)
     return response.data.results as Status[]
@@ -267,27 +244,27 @@ export const updateEnvironment = createAsyncThunk(
   }
 )
 
-export const fetchEnvironmentDeploymentRules = createAsyncThunk(
-  'environment-deployment-rules/fetch',
-  async (environmentId: string) => {
-    const response = await environmentDeploymentRulesApi.getEnvironmentDeploymentRule(environmentId)
-    return response.data as EnvironmentDeploymentRule
-  }
-)
+// export const fetchEnvironmentDeploymentRules = createAsyncThunk(
+//   'environment-deployment-rules/fetch',
+//   async (environmentId: string) => {
+//     const response = await environmentDeploymentRulesApi.getEnvironmentDeploymentRule(environmentId)
+//     return response.data as EnvironmentDeploymentRule
+//   }
+// )
 
-export const editEnvironmentDeploymentRules = createAsyncThunk(
-  'environment-deployment-rules/edit',
-  async (payload: { environmentId: string; deploymentRuleId: string; data: EnvironmentDeploymentRule }) => {
-    const cloneEnvironmentDeploymentRules = Object.assign({}, refactoPayload(payload.data) as any)
+// export const editEnvironmentDeploymentRules = createAsyncThunk(
+//   'environment-deployment-rules/edit',
+//   async (payload: { environmentId: string; deploymentRuleId: string; data: EnvironmentDeploymentRule }) => {
+//     const cloneEnvironmentDeploymentRules = Object.assign({}, refactoPayload(payload.data) as any)
 
-    const response = await environmentDeploymentRulesApi.editEnvironmentDeploymentRule(
-      payload.environmentId,
-      payload.deploymentRuleId,
-      cloneEnvironmentDeploymentRules
-    )
-    return response.data as EnvironmentDeploymentRule
-  }
-)
+//     const response = await environmentDeploymentRulesApi.editEnvironmentDeploymentRule(
+//       payload.environmentId,
+//       payload.deploymentRuleId,
+//       cloneEnvironmentDeploymentRules
+//     )
+//     return response.data as EnvironmentDeploymentRule
+//   }
+// )
 
 export const createEnvironment = createAsyncThunk(
   'environment/create',
@@ -305,13 +282,13 @@ export const cloneEnvironment = createAsyncThunk(
   }
 )
 
-export const fetchEnvironmentContainers = createAsyncThunk(
-  'environment-containers/fetch',
-  async (payload: { environmentId: string }) => {
-    const response = await environmentContainersApi.listContainer(payload.environmentId)
-    return response.data
-  }
-)
+// export const fetchEnvironmentContainers = createAsyncThunk(
+//   'environment-containers/fetch',
+//   async (payload: { environmentId: string }) => {
+//     const response = await environmentContainersApi.listContainer(payload.environmentId)
+//     return response.data
+//   }
+// )
 
 export const fetchDatabaseConfiguration = createAsyncThunk(
   'environment/database-configuration/fetch',
@@ -475,46 +452,46 @@ export const environmentsSlice = createSlice({
         state.error = action.error.message
       })
       // fetch environment deployment rules
-      .addCase(fetchEnvironmentDeploymentRules.pending, (state: EnvironmentsState) => {
-        state.loadingEnvironmentDeploymentRules = 'loading'
-      })
-      .addCase(fetchEnvironmentDeploymentRules.fulfilled, (state: EnvironmentsState, action) => {
-        const update: Update<EnvironmentEntity> = {
-          id: action.meta.arg,
-          changes: {
-            deploymentRules: action.payload,
-          },
-        }
-        environmentsAdapter.updateOne(state, update)
-        state.error = null
-        state.loadingStatus = 'loaded'
-        state.loadingEnvironmentDeploymentRules = 'loaded'
-      })
-      .addCase(fetchEnvironmentDeploymentRules.rejected, (state: EnvironmentsState, action) => {
-        state.loadingEnvironmentDeploymentRules = 'error'
-        state.error = action.error.message
-      })
+      // .addCase(fetchEnvironmentDeploymentRules.pending, (state: EnvironmentsState) => {
+      //   state.loadingEnvironmentDeploymentRules = 'loading'
+      // })
+      // .addCase(fetchEnvironmentDeploymentRules.fulfilled, (state: EnvironmentsState, action) => {
+      //   const update: Update<EnvironmentEntity> = {
+      //     id: action.meta.arg,
+      //     changes: {
+      //       deploymentRules: action.payload,
+      //     },
+      //   }
+      //   environmentsAdapter.updateOne(state, update)
+      //   state.error = null
+      //   state.loadingStatus = 'loaded'
+      //   state.loadingEnvironmentDeploymentRules = 'loaded'
+      // })
+      // .addCase(fetchEnvironmentDeploymentRules.rejected, (state: EnvironmentsState, action) => {
+      //   state.loadingEnvironmentDeploymentRules = 'error'
+      //   state.error = action.error.message
+      // })
       // update environment deployment rules
-      .addCase(editEnvironmentDeploymentRules.pending, (state: EnvironmentsState) => {
-        state.loadingEnvironmentDeploymentRules = 'loading'
-      })
-      .addCase(editEnvironmentDeploymentRules.fulfilled, (state: EnvironmentsState, action) => {
-        const update: Update<EnvironmentEntity> = {
-          id: action.meta.arg.environmentId,
-          changes: {
-            deploymentRules: action.payload,
-          },
-        }
-        environmentsAdapter.updateOne(state, update)
-        state.error = null
-        state.loadingEnvironmentDeploymentRules = 'loaded'
-        toast(ToastEnum.SUCCESS, 'Your environment deployment rules is updated')
-      })
-      .addCase(editEnvironmentDeploymentRules.rejected, (state: EnvironmentsState, action) => {
-        state.loadingEnvironmentDeploymentRules = 'error'
-        toastError(action.error)
-        state.error = action.error.message
-      })
+      // .addCase(editEnvironmentDeploymentRules.pending, (state: EnvironmentsState) => {
+      //   state.loadingEnvironmentDeploymentRules = 'loading'
+      // })
+      // .addCase(editEnvironmentDeploymentRules.fulfilled, (state: EnvironmentsState, action) => {
+      //   const update: Update<EnvironmentEntity> = {
+      //     id: action.meta.arg.environmentId,
+      //     changes: {
+      //       deploymentRules: action.payload,
+      //     },
+      //   }
+      //   environmentsAdapter.updateOne(state, update)
+      //   state.error = null
+      //   state.loadingEnvironmentDeploymentRules = 'loaded'
+      //   toast(ToastEnum.SUCCESS, 'Your environment deployment rules is updated')
+      // })
+      // .addCase(editEnvironmentDeploymentRules.rejected, (state: EnvironmentsState, action) => {
+      //   state.loadingEnvironmentDeploymentRules = 'error'
+      //   toastError(action.error)
+      //   state.error = action.error.message
+      // })
       // fetch database configurations for this environment
       .addCase(fetchDatabaseConfiguration.pending, (state: EnvironmentsState, action) => {
         const update: Update<EnvironmentEntity> = {

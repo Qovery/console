@@ -1,32 +1,40 @@
 import { SerializedError, createAsyncThunk } from '@reduxjs/toolkit'
-import { DeployAllRequest, EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { DeployAllRequest, Environment, EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
+import { useMutation, useQueryClient } from 'react-query'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { fetchEnvironmentDeploymentHistory, fetchEnvironmentsStatus } from './environments.slice'
 
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 
-export const postEnvironmentActionsRestart = createAsyncThunk<
-  any,
-  { projectId: string; environmentId: string; withDeployments?: boolean }
->('environmentActions/restart', async (data, { dispatch }) => {
-  try {
-    const response = await environmentActionApi.restartEnvironment(data.environmentId)
-    if (response.status === 200) {
-      // refetch status after update
-      await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-      // refresh deployments after update
-      if (data.withDeployments)
-        await dispatch(fetchEnvironmentDeploymentHistory({ environmentId: data.environmentId, silently: true }))
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
+export const useActionRestartEnvironment = (
+  projectId: string,
+  environmentId: string,
+  withDeployments?: boolean,
+  onSettledCallback?: () => void
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async () => {
+      const response = await environmentActionApi.restartEnvironment(environmentId)
+      return response.data
+    },
+    {
+      onSuccess: () => {
+        // refetch environmentsStatus requests
+        queryClient.invalidateQueries(['environmentsStatus', projectId])
+
+        if (withDeployments)
+          queryClient.invalidateQueries(['project', projectId, 'environments', environmentId, 'deploymentHistory'])
+
+        toast(ToastEnum.SUCCESS, 'Your environment is redeploying')
+      },
+      onError: (err) => toastError(err as Error),
+      onSettled: () => onSettledCallback && onSettledCallback(),
     }
-    return response
-  } catch (err: any) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Redeploying error', err.message)
-  }
-})
+  )
+}
 
 export const postEnvironmentActionsDeploy = createAsyncThunk<
   any,
@@ -111,22 +119,23 @@ export const postEnvironmentActionsCancelDeployment = createAsyncThunk<
   }
 })
 
-export const deleteEnvironmentAction = createAsyncThunk<any, { projectId: string; environmentId: string }>(
-  'environmentActions/delete',
-  async (data, { dispatch }) => {
-    try {
-      const response = await environmentMainCallsApi.deleteEnvironment(data.environmentId)
-      if (response.status === 204) {
-        // refetch status after update
-        await dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-        // success message
-        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
-      }
+export const useDeleteEnvironment = (projectId: string, environmentId: string, onSettledCallback?: () => void) => {
+  const queryClient = useQueryClient()
 
-      return response
-    } catch (err: any) {
-      // error message
-      return toast(ToastEnum.ERROR, 'Deleting error', err.message)
+  return useMutation(
+    async () => {
+      const response = await environmentMainCallsApi.deleteEnvironment(environmentId)
+      return response.data
+    },
+    {
+      onSuccess: () => {
+        queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
+          return old?.filter((environment) => environment.id !== environmentId)
+        })
+        toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
+      },
+      onError: (err) => toastError(err as Error),
+      onSettled: () => onSettledCallback && onSettledCallback(),
     }
-  }
-)
+  )
+}

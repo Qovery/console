@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  deleteEnvironmentAction,
-  fetchEnvironments,
   postEnvironmentActionsCancelDeployment,
   postEnvironmentActionsDeploy,
-  postEnvironmentActionsRestart,
   postEnvironmentActionsStop,
+  useActionRestartEnvironment,
+  useDeleteEnvironment,
 } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
@@ -60,6 +59,12 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
+  const actionRestartEnvironment = useActionRestartEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
   useEffect(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
@@ -91,16 +96,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           title: 'Confirm redeploy',
           description: 'To confirm the redeploy of your environment, please type the name:',
           name: environment.name,
-          action: () =>
-            dispatch(
-              postEnvironmentActionsRestart({
-                projectId,
-                environmentId: environment.id,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-              })
-            ),
+          action: () => actionRestartEnvironment.mutate(),
         })
       },
     }
@@ -200,22 +196,17 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     status?.state,
   ])
 
+  const deleteEnvironment = useDeleteEnvironment(projectId, environmentId, () =>
+    navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
+  )
+
   const removeEnvironment = async () => {
     openModalConfirmation({
       title: 'Delete environment',
       description: 'To confirm the deletion of your environment, please type the name of the environment:',
       name: environment?.name,
       isDelete: true,
-      action: async () => {
-        await dispatch(
-          deleteEnvironmentAction({
-            projectId,
-            environmentId: environment.id,
-          })
-        )
-        await dispatch(fetchEnvironments({ projectId: projectId }))
-        await navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
-      },
+      action: () => deleteEnvironment.mutate(),
     })
   }
 

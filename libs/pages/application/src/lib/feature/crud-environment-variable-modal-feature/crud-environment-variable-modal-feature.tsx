@@ -2,6 +2,7 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
+import { useActionRestartEnvironment } from '@qovery/domains/environment'
 import { getEnvironmentVariablesState } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
@@ -52,6 +53,8 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
 
+  const actionRestartEnvironment = useActionRestartEnvironment(props.projectId, props.environmentId)
+
   useEffect(() => {
     if (closing && !errorEnvironmentVariable) props.closeModal()
     setClosing(false)
@@ -74,7 +77,9 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
       if (!isFile) {
         delete cloneData.mountPath
       }
-      handleSubmitForEnvSecretCreation(cloneData, setLoading, props, dispatch, setClosing, props.serviceType)
+      handleSubmitForEnvSecretCreation(cloneData, setLoading, props, dispatch, setClosing, props.serviceType, () =>
+        actionRestartEnvironment.mutate()
+      )
     }
   })
 
