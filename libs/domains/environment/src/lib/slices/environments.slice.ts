@@ -229,6 +229,33 @@ export const useCreateEnvironment = (
   )
 }
 
+export const useCloneEnvironment = (
+  projectId: string,
+  onSuccessCallback?: (result: Environment) => void,
+  onSettledCallback?: () => void
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async ({ environmentId, data }: { environmentId: string; data: CloneRequest }) => {
+      const response = await environmentsActionsApi.cloneEnvironment(environmentId, data)
+      return response.data
+    },
+    {
+      onSuccess: (result) => {
+        queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
+          return old ? [...old, result] : old
+        })
+
+        toast(ToastEnum.SUCCESS, 'Your environment has been successfully cloned')
+        onSuccessCallback && onSuccessCallback(result)
+      },
+      onError: (err) => toastError(err as Error),
+      onSettled: () => onSettledCallback && onSettledCallback(),
+    }
+  )
+}
+
 /// --------
 
 // done
