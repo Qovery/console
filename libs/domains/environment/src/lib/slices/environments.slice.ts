@@ -203,21 +203,47 @@ export const useEnvironmentDeploymentHistory = (projectId: string, environmentId
   )
 }
 
+export const useCreateEnvironment = (
+  onSuccessCallback?: (result: Environment) => void,
+  onSettledCallback?: () => void
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async ({ projectId, data }: { projectId: string; data: CreateEnvironmentRequest }) => {
+      const response = await environmentsApi.createEnvironment(projectId, data)
+      return response.data
+    },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<Environment[] | undefined>(['project', variables.projectId, 'environments'], (old) => {
+          return old ? [...old, result] : old
+        })
+
+        toast(ToastEnum.SUCCESS, 'Your environment has been successfully created')
+        onSuccessCallback && onSuccessCallback(result)
+      },
+      onError: (err) => toastError(err as Error),
+      onSettled: () => onSettledCallback && onSettledCallback(),
+    }
+  )
+}
+
 /// --------
 
 // done
-export const fetchEnvironments = createAsyncThunk<Environment[], { projectId: string; withoutStatus?: boolean }>(
-  'environments/fetch',
-  async (data, thunkApi) => {
-    const response = await environmentsApi.listEnvironment(data.projectId)
+// export const c = createAsyncThunk<Environment[], { projectId: string; withoutStatus?: boolean }>(
+//   'environments/fetch',
+//   async (data, thunkApi) => {
+//     const response = await environmentsApi.listEnvironment(data.projectId)
 
-    if (!data.withoutStatus) {
-      thunkApi.dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
-    }
+//     if (!data.withoutStatus) {
+//       thunkApi.dispatch(fetchEnvironmentsStatus({ projectId: data.projectId }))
+//     }
 
-    return response.data.results as Environment[]
-  }
-)
+//     return response.data.results as Environment[]
+//   }
+// )
 
 // done
 export const fetchEnvironmentsStatus = createAsyncThunk<Status[], { projectId: string }>(
@@ -266,13 +292,13 @@ export const updateEnvironment = createAsyncThunk(
 //   }
 // )
 
-export const createEnvironment = createAsyncThunk(
-  'environment/create',
-  async (payload: { projectId: string; environmentRequest: CreateEnvironmentRequest }) => {
-    const response = await environmentsApi.createEnvironment(payload.projectId, payload.environmentRequest)
-    return response.data
-  }
-)
+// export const createEnvironment = createAsyncThunk(
+//   'environment/create',
+//   async (payload: { projectId: string; environmentRequest: CreateEnvironmentRequest }) => {
+//     const response = await environmentsApi.createEnvironment(payload.projectId, payload.environmentRequest)
+//     return response.data
+//   }
+// )
 
 export const cloneEnvironment = createAsyncThunk(
   'environment/clone',
@@ -351,35 +377,35 @@ export const environmentsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // get environments
-      .addCase(fetchEnvironments.pending, (state: EnvironmentsState) => {
-        state.loadingStatus = 'loading'
-      })
-      .addCase(fetchEnvironments.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment[]>) => {
-        environmentsAdapter.upsertMany(state, action.payload)
-        action.payload.forEach((environment) => {
-          state.joinProjectEnvironments = addOneToManyRelation(environment.project?.id, environment.id, {
-            ...state.joinProjectEnvironments,
-          })
-        })
+      // .addCase(fetchEnvironments.pending, (state: EnvironmentsState) => {
+      //   state.loadingStatus = 'loading'
+      // })
+      // .addCase(fetchEnvironments.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment[]>) => {
+      //   environmentsAdapter.upsertMany(state, action.payload)
+      //   action.payload.forEach((environment) => {
+      //     state.joinProjectEnvironments = addOneToManyRelation(environment.project?.id, environment.id, {
+      //       ...state.joinProjectEnvironments,
+      //     })
+      //   })
 
-        state.loadingStatus = 'loaded'
-      })
-      .addCase(fetchEnvironments.rejected, (state: EnvironmentsState, action) => {
-        state.loadingStatus = 'error'
-        state.error = action.error.message
-      })
+      //   state.loadingStatus = 'loaded'
+      // })
+      // .addCase(fetchEnvironments.rejected, (state: EnvironmentsState, action) => {
+      //   state.loadingStatus = 'error'
+      //   state.error = action.error.message
+      // })
       // create environment
-      .addCase(createEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
-        environmentsAdapter.addOne(state, action.payload)
-        state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
-          ...state.joinProjectEnvironments,
-        })
-        toast(ToastEnum.SUCCESS, 'Your environment has been successfully created')
-      })
-      .addCase(createEnvironment.rejected, (state: EnvironmentsState, action) => {
-        state.error = action.error.message
-        toast(ToastEnum.ERROR, 'Creation Error', state.error)
-      })
+      // .addCase(createEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
+      //   environmentsAdapter.addOne(state, action.payload)
+      //   state.joinProjectEnvironments = addOneToManyRelation(action.payload.project?.id, action.payload.id, {
+      //     ...state.joinProjectEnvironments,
+      //   })
+      //   toast(ToastEnum.SUCCESS, 'Your environment has been successfully created')
+      // })
+      // .addCase(createEnvironment.rejected, (state: EnvironmentsState, action) => {
+      //   state.error = action.error.message
+      //   toast(ToastEnum.ERROR, 'Creation Error', state.error)
+      // })
       // clone environment
       .addCase(cloneEnvironment.fulfilled, (state: EnvironmentsState, action: PayloadAction<Environment>) => {
         environmentsAdapter.addOne(state, action.payload)
