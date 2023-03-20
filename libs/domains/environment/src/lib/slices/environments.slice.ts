@@ -56,6 +56,7 @@ export const useFetchEnvironments = (projectId: string) => {
         queryClient.invalidateQueries(['environments-status'])
       },
       onError: (err) => toastError(err),
+      enabled: projectId !== '',
     }
   )
 }
