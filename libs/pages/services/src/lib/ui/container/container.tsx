@@ -77,6 +77,7 @@ export function Container(props: ContainerProps) {
           <>
             <EnvironmentButtonsActions
               environment={environment}
+              status={environmentStatus}
               hasServices={Boolean(applicationsByEnv?.length || databasesByEnv?.length)}
             />
             <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
