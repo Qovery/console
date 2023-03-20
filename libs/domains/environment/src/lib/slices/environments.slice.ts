@@ -53,7 +53,7 @@ export const useFetchEnvironments = (projectId: string) => {
       initialData: queryClient.getQueryData(['project', projectId, 'environments']),
       onSuccess: () => {
         // refetch environments-status requests
-        queryClient.invalidateQueries(['environments-status'])
+        queryClient.invalidateQueries(['environments-status', projectId])
       },
       onError: (err) => toastError(err),
       enabled: projectId !== '',
@@ -69,13 +69,13 @@ export const useFetchEnvironmentsStatus = (projectId: string) => {
   const queryClient = useQueryClient()
 
   return useQuery<Status[], Error>(
-    ['environments-status'],
+    ['environments-status', projectId],
     async () => {
       const response = await environmentsApi.getProjectEnvironmentsStatus(projectId)
       return response.data.results as Status[]
     },
     {
-      initialData: queryClient.getQueryData(['environments-status']),
+      initialData: queryClient.getQueryData(['environments-status', projectId]),
       onError: (err) => toastError(err),
     }
   )
