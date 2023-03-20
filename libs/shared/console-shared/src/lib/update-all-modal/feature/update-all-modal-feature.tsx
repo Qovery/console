@@ -7,7 +7,7 @@ import {
   fetchApplications,
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
-import { postEnvironmentServicesUpdate, selectEnvironmentById } from '@qovery/domains/environment'
+import { selectEnvironmentById, useActionDeployAllEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
@@ -43,6 +43,10 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([])
   const [listLoading, setListLoading] = useState<boolean>(true)
   const [submitButtonLoading, setSubmitButtonLoading] = useState<boolean>(false)
+
+  const actionDeployAllEnvironments = useActionDeployAllEnvironment(environmentId, () => {
+    closeModal()
+  })
 
   const checkService = (serviceId: string) => {
     if (selectedServiceIds.includes(serviceId)) {
@@ -121,14 +125,7 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
         jobs: jobsToUpdate,
       }
 
-      dispatch(postEnvironmentServicesUpdate({ environmentId, deployRequest }))
-        .unwrap()
-        .then(() => {
-          closeModal()
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      actionDeployAllEnvironments.mutate(deployRequest)
     }
   }
 

@@ -10,7 +10,7 @@ import {
   postApplicationActionsRestart,
   postApplicationActionsStop,
 } from '@qovery/domains/application'
-import { postEnvironmentActionsCancelDeployment } from '@qovery/domains/environment'
+import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isContainer, isContainerJob, isGitJob, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
@@ -61,6 +61,12 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const { openModalConfirmation } = useModalConfirmation()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const location = useLocation()
+
+  const actionCancelEnvironment = useActionCancelEnvironment(
+    projectId,
+    environmentId,
+    location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
+  )
 
   const removeService = (id: string, name?: string) => {
     openModalConfirmation({
@@ -178,17 +184,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           description:
             'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
           name: application.name,
-          action: () => {
-            dispatch(
-              postEnvironmentActionsCancelDeployment({
-                projectId,
-                environmentId: environmentId,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
-              })
-            )
-          },
+          action: () => actionCancelEnvironment.mutate(),
         })
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
