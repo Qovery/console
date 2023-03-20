@@ -90,17 +90,6 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
         cluster: dataFormatted.cluster,
       }
       createEnvironment.mutate({ projectId: props.projectId, data: environmentRequest })
-      // dispatch(createEnvironment({ projectId: props.projectId, environmentRequest }))
-      //   .unwrap()
-      //   .then((result) => {
-      //     navigate(SERVICES_URL(props.organizationId, props.projectId, result.id) + SERVICES_GENERAL_URL)
-      //     setLoading(false)
-      //     props.onClose()
-      //   })
-      //   .catch((e) => {
-      //     setLoading(false)
-      //     console.error(e)
-      //   })
     }
   })
 
