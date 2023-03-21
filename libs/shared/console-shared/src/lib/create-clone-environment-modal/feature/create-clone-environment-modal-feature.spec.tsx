@@ -25,6 +25,7 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('CreateCloneEnvironmentModalFeature', () => {
+  const mockMutateCreateEnvironment = jest.fn()
   beforeEach(() => {
     props = {
       onClose: jest.fn(),
@@ -32,11 +33,10 @@ describe('CreateCloneEnvironmentModalFeature', () => {
       organizationId: '0',
       projectId: '1',
     }
-  })
 
-  afterEach(() => {
-    jest.clearAllMocks()
-    jest.restoreAllMocks()
+    useCreateEnvironmentMockSpy.mockReturnValue({
+      mutate: jest.fn(),
+    })
   })
 
   it('should render successfully', () => {
@@ -46,10 +46,6 @@ describe('CreateCloneEnvironmentModalFeature', () => {
 
   describe('creation mode', function () {
     it('should submit form on click on button', async () => {
-      useCreateEnvironmentMockSpy.mockReturnValue({
-        mutate: jest.fn(),
-      })
-
       const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} />)
 
       const input = getByTestId(baseElement, 'input-text')
