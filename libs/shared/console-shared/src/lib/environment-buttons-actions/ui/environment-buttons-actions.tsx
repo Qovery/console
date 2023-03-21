@@ -47,7 +47,7 @@ export interface EnvironmentButtonsActionsProps {
 
 export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps) {
   const { environment, status, hasServices = false } = props
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '' } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
@@ -177,7 +177,6 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
   }, [
     environment,
-    environmentId,
     dispatch,
     openModalConfirmation,
     organizationId,
@@ -191,10 +190,8 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     actionStopEnvironment,
   ])
 
-  const deleteEnvironment = useDeleteEnvironment(
-    projectId,
-    environmentId.length > 0 ? environmentId : environment.id,
-    () => navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
+  const deleteEnvironment = useDeleteEnvironment(projectId, environment.id, () =>
+    navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
   )
 
   const removeEnvironment = async () => {
