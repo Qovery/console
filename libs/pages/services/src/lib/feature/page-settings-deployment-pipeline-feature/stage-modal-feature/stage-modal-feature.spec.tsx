@@ -1,18 +1,18 @@
-import { act, fireEvent, waitFor } from '@testing-library/react'
+import { act, fireEvent } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
-import { useCreateEnvironmentDeploymentStage, useEditEnvironmentDeploymentStage } from '@qovery/domains/environment'
+import * as environmentDomains from '@qovery/domains/environment'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
 import { StageModalFeature, StageModalFeatureProps } from './stage-modal-feature'
 
-jest.mock('@qovery/domains/environment', () => ({
-  ...jest.requireActual('@qovery/domains/environment'),
-  useCreateEnvironmentDeploymentStage: jest.fn(),
-  useEditEnvironmentDeploymentStage: jest.fn(),
-}))
-
-const useCreateEnvironmentDeploymentStageMockSpy = useCreateEnvironmentDeploymentStage as jest.Mock
-const useEditEnvironmentDeploymentStageMockSpy = useEditEnvironmentDeploymentStage as jest.Mock
+const useCreateEnvironmentDeploymentStageMockSpy = jest.spyOn(
+  environmentDomains,
+  'useCreateEnvironmentDeploymentStage'
+) as jest.Mock
+const useEditEnvironmentDeploymentStageMockSpy = jest.spyOn(
+  environmentDomains,
+  'useEditEnvironmentDeploymentStage'
+) as jest.Mock
 
 describe('StageModalFeature', () => {
   const onClose = jest.fn()
@@ -66,7 +66,7 @@ describe('StageModalFeature', () => {
       expect.any(Function)
     )
     expect(
-      useCreateEnvironmentDeploymentStage(environmentId, onClose, expect.any(Function)).mutate
+      useCreateEnvironmentDeploymentStageMockSpy(environmentId, onClose, expect.any(Function)).mutate
     ).toHaveBeenCalledWith({
       data: { name: 'New Stage', description: 'New Stage Description' },
     })
