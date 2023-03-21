@@ -2,7 +2,7 @@ import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId } from '@te
 import { render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as storeEnvironment from '@qovery/domains/environment'
+import * as environmentDomains from '@qovery/domains/environment'
 import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import CreateCloneEnvironmentModalFeature, {
   CreateCloneEnvironmentModalFeatureProps,
@@ -10,27 +10,18 @@ import CreateCloneEnvironmentModalFeature, {
 
 let props: CreateCloneEnvironmentModalFeatureProps
 
+const useCreateEnvironmentMockSpy = jest.spyOn(environmentDomains, 'useCreateEnvironment') as jest.Mock
+const useCloneEnvironmentMockSpy = jest.spyOn(environmentDomains, 'useCloneEnvironment') as jest.Mock
+
 const mockClusters = clusterFactoryMock(3)
 jest.mock('@qovery/domains/organization', () => ({
   ...jest.requireActual('@qovery/domains/organization'),
   selectClustersEntitiesByOrganizationId: () => mockClusters,
 }))
 
-jest.mock('@qovery/domains/environment', () => ({
-  ...jest.requireActual('@qovery/domains/environment'),
-  cloneEnvironment: jest.fn(),
-  createEnvironment: jest.fn().mockImplementation(() => Promise.resolve()),
-}))
-
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
   useParams: () => ({ projectId: '1', organizationId: '0' }),
-}))
-
-const mockDispatch = jest.fn()
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
 }))
 
 describe('CreateCloneEnvironmentModalFeature', () => {
@@ -55,14 +46,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
 
   describe('creation mode', function () {
     it('should submit form on click on button', async () => {
-      // mock the dispatched function
-      const spy = jest.spyOn(storeEnvironment, 'createEnvironment')
-      mockDispatch.mockImplementation(() => ({
-        unwrap: () =>
-          Promise.resolve({
-            data: {},
-          }),
-      }))
+      useCreateEnvironmentMockSpy.mockReturnValue({
+        mutate: jest.fn(),
+      })
 
       const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} />)
 
@@ -87,9 +73,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         fireEvent.click(submitButton)
       })
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(useCreateEnvironmentMockSpy().mutate).toHaveBeenCalledWith({
         projectId: '1',
-        environmentRequest: {
+        data: {
           cluster: mockClusters[2].id,
           mode: EnvironmentModeEnum.STAGING,
           name: 'test',
@@ -100,14 +86,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
 
   describe('cloning mode', function () {
     it('should submit form on click on button', async () => {
-      // mock the dispatched function
-      const spy = jest.spyOn(storeEnvironment, 'cloneEnvironment')
-      mockDispatch.mockImplementation(() => ({
-        unwrap: () =>
-          Promise.resolve({
-            data: {},
-          }),
-      }))
+      useCloneEnvironmentMockSpy.mockReturnValue({
+        mutate: jest.fn(),
+      })
 
       const mockEnv = environmentFactoryMock(1)[0]
       const { baseElement } = render(<CreateCloneEnvironmentModalFeature {...props} environmentToClone={mockEnv} />)
@@ -133,9 +114,9 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         fireEvent.click(submitButton)
       })
 
-      expect(spy).toHaveBeenCalledWith({
+      expect(useCloneEnvironmentMockSpy().mutate).toHaveBeenCalledWith({
         environmentId: mockEnv.id,
-        cloneRequest: {
+        data: {
           cluster_id: mockClusters[2].id,
           mode: EnvironmentModeEnum.STAGING,
           name: 'test',
