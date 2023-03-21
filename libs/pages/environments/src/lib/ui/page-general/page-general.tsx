@@ -38,7 +38,7 @@ export function PageGeneral(props: PageGeneralProps) {
 
   const queryClient = useQueryClient()
   const { openModal, closeModal } = useModal()
-  const [data, setData] = useState(environments)
+  const [data, setData] = useState<Environment[]>([])
   const [filter, setFilter] = useState<TableFilterProps>({})
   const [loading, setLoading] = useState(isLoading)
 

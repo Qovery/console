@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  postEnvironmentActionsCancelDeployment,
-  postEnvironmentActionsDeploy,
-  postEnvironmentActionsStop,
+  useActionCancelEnvironment,
+  useActionDeployEnvironment,
   useActionRestartEnvironment,
+  useActionStopEnvironment,
   useDeleteEnvironment,
 } from '@qovery/domains/environment'
 import { EnvironmentEntity } from '@qovery/shared/interfaces'
@@ -65,20 +65,29 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
   )
 
+  const actionDeployEnvironment = useActionDeployEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
+  const actionStopEnvironment = useActionStopEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
+  const actionCancelEnvironment = useActionCancelEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
   useEffect(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
-
-      onClick: () =>
-        dispatch(
-          postEnvironmentActionsDeploy({
-            projectId,
-            environmentId: environment.id,
-            withDeployments:
-              location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-          })
-        ),
+      onClick: () => actionDeployEnvironment.mutate(),
     }
 
     const state = status?.state
@@ -112,16 +121,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           title: 'Confirm stop',
           description: 'To confirm the stopping of your environment, please type the name:',
           name: environment.name,
-          action: () =>
-            dispatch(
-              postEnvironmentActionsStop({
-                projectId,
-                environmentId: environment.id,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-              })
-            ),
+          action: () => actionStopEnvironment.mutate(),
         })
       },
     }
@@ -137,16 +137,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           description:
             'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
           name: environment.name,
-          action: () =>
-            dispatch(
-              postEnvironmentActionsCancelDeployment({
-                projectId,
-                environmentId: environment.id,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-              })
-            ),
+          action: () => actionCancelEnvironment.mutate(),
         })
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,

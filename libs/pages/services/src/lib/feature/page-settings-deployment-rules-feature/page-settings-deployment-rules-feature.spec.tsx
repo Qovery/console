@@ -1,6 +1,8 @@
+import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { act, render } from '__tests__/utils/setup-jest'
-import { WeekdayEnum } from 'qovery-typescript-axios'
+import { EnvironmentDeploymentRule, WeekdayEnum } from 'qovery-typescript-axios'
 import * as redux from 'react-redux'
+import * as environmentDomain from '@qovery/domains/environment'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { weekdaysValues } from '@qovery/shared/utils'
 import PageSettingsDeploymentRulesFeature, { handleSubmit } from './page-settings-deployment-rules-feature'
@@ -8,6 +10,8 @@ import PageSettingsDeploymentRulesFeature, { handleSubmit } from './page-setting
 import SpyInstance = jest.SpyInstance
 
 const environmentDeploymentRules = environmentFactoryMock(1)[0].deploymentRules
+
+const useFetchEnvironmentDeploymentRuleSpy = jest.spyOn(environmentDomain, 'useFetchEnvironmentDeploymentRule')
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -41,13 +45,30 @@ describe('PageSettingsDeploymentRulesFeature', () => {
     useDispatchSpy = jest.spyOn(redux, 'useDispatch').mockReturnValue(jest.fn())
     useSelectorSpy = jest.spyOn(redux, 'useSelector')
     useSelectorSpy.mockReturnValue(environmentDeploymentRules).mockReturnValue(customDeployment)
+
+    useFetchEnvironmentDeploymentRuleSpy.mockReturnValue(
+      mockUseQueryResult<EnvironmentDeploymentRule>({
+        auto_deploy: true,
+        auto_delete: false,
+        auto_stop: true,
+        auto_preview: true,
+        created_at: '2020-01-01T00:00:00Z',
+        start_time: '1970-01-01T08:00:00.000Z',
+        stop_time: '1970-01-01T18:00:00.000Z',
+        weekdays: [WeekdayEnum.MONDAY, WeekdayEnum.FRIDAY],
+        updated_at: '2020-01-01T00:00:00Z',
+        timezone: 'UTC',
+        id: '1',
+      })
+    )
   })
 
   it('should render successfully & dispatch the deployment fetch', async () => {
     const promise = Promise.resolve()
     const { baseElement } = render(<PageSettingsDeploymentRulesFeature />)
     expect(baseElement).toBeTruthy()
-    expect(useDispatchSpy).toHaveBeenCalled()
+
+    expect(useFetchEnvironmentDeploymentRuleSpy).toHaveBeenCalledWith('', '1')
 
     await act(async () => {
       await promise

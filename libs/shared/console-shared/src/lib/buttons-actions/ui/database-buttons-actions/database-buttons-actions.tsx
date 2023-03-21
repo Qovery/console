@@ -10,7 +10,7 @@ import {
   postDatabaseActionsRestart,
   postDatabaseActionsStop,
 } from '@qovery/domains/database'
-import { postEnvironmentActionsCancelDeployment } from '@qovery/domains/environment'
+import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { SERVICES_DEPLOYMENTS_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import {
@@ -47,6 +47,12 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const { openModalConfirmation } = useModalConfirmation()
   const dispatch = useDispatch<AppDispatch>()
   const location = useLocation()
+
+  const actionCancelEnvironment = useActionCancelEnvironment(
+    projectId,
+    environmentId,
+    location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
+  )
 
   const removeDatabase = (id: string, name?: string) => {
     openModalConfirmation({
@@ -146,16 +152,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
           description:
             'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the database:',
           name: database.name,
-          action: () =>
-            dispatch(
-              postEnvironmentActionsCancelDeployment({
-                projectId,
-                environmentId,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL,
-              })
-            ),
+          action: () => actionCancelEnvironment.mutate(),
         })
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
