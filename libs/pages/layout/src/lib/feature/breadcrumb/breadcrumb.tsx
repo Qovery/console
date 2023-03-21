@@ -15,7 +15,6 @@ export function BreadcrumbFeature() {
   const clusters = useSelector((state: RootState) => selectClustersEntitiesByOrganizationId(state, organizationId))
   const applications = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
   const databases = useSelector((state: RootState) => selectDatabasesEntitiesByEnvId(state, environmentId))
-  // const environments = useSelector((state: RootState) => selectEnvironmentsEntitiesByProjectId(state, projectId))
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
 
   const { data: environments } = useFetchEnvironments(projectId)
