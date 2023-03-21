@@ -38,6 +38,7 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
       description="You will have the possibility to modify the parameters once created"
       onClose={props.closeModal}
       onSubmit={props.onSubmit}
+      loading={props.loading}
       submitLabel={props.environmentToClone ? 'Clone' : 'Create'}
     >
       {props.environmentToClone && (

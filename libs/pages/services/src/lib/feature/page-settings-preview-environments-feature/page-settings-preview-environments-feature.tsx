@@ -37,7 +37,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
       const cloneEnvironmentDeploymentRules = Object.assign({}, environmentDeploymentRules as EnvironmentDeploymentRule)
       cloneEnvironmentDeploymentRules.auto_preview = data['auto_preview']
 
-      editEnvironmentDeploymentRule.mutate({
+      await editEnvironmentDeploymentRule.mutate({
         environmentId,
         deploymentRuleId: environmentDeploymentRules?.id || '',
         data: cloneEnvironmentDeploymentRules,
