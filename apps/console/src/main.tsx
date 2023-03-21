@@ -48,7 +48,7 @@ root.render(
             </ModalProvider>
           </BrowserRouter>
         </Provider>
-        <ReactQueryDevtools initialIsOpen={true} />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Auth0Provider>
   </IntercomProvider>
