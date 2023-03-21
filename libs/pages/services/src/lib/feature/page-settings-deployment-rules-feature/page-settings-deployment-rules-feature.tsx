@@ -50,7 +50,6 @@ export function PageSettingsDeploymentRulesFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data && environmentDeploymentRules) {
       setLoading(true)
-
       const cloneEnvironmentDeploymentRules = handleSubmit(data, environmentDeploymentRules)
 
       editEnvironmentDeploymentRule.mutate({
