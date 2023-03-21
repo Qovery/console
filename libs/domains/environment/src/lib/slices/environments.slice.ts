@@ -103,10 +103,8 @@ export const useEnvironmentRunningStatus = (environmentId: string) => {
   return environmentsRunningStatusById
 }
 
-export const getEnvironmentRunningStatusById = (queryClient: QueryClient, environmentId: string) => {
-  const queryKey = ['environments-running-status', environmentId]
-  const environmentsRunningStatusById: WebsocketRunningStatusInterface | undefined = queryClient.getQueryData(queryKey)
-  return environmentsRunningStatusById
+export const useGetEnvironmentRunningStatusById = (environmentId: string) => {
+  return useQuery<WebsocketRunningStatusInterface, Error>(['environments-running-status', environmentId])
 }
 
 export const useEditEnvironment = (projectId: string, onSettledCallback: () => void) => {

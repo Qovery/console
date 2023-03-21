@@ -1,7 +1,7 @@
 import { Environment, Status } from 'qovery-typescript-axios'
+import { useGetEnvironmentRunningStatusById } from '@qovery/domains/environment'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { RunningStatus } from '@qovery/shared/enums'
-import { WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import {
   Icon,
   Skeleton,
@@ -18,7 +18,6 @@ import { timeAgo } from '@qovery/shared/utils'
 export interface TableRowEnvironmentsProps {
   data: Environment
   status?: Status
-  runningStatus?: WebsocketRunningStatusInterface
   filter: TableFilterProps
   dataHead: TableHeadProps<Environment>[]
   link: string
@@ -29,7 +28,6 @@ export interface TableRowEnvironmentsProps {
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
   const {
     data,
-    runningStatus,
     status,
     dataHead,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
@@ -37,6 +35,9 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     filter,
     isLoading = false,
   } = props
+
+  // todo: should be in TableRowEnvironmentFeature
+  const { data: runningStatus } = useGetEnvironmentRunningStatusById(data.id)
 
   return (
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link} disabled={isLoading}>
