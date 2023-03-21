@@ -59,25 +59,25 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
-  const actionRestartEnvironment = useActionRestartEnvironment(
+  const { mutate: actionRestartEnvironmentMutate } = useActionRestartEnvironment(
     projectId,
     environment.id,
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
   )
 
-  const actionDeployEnvironment = useActionDeployEnvironment(
+  const { mutate: actionDeployEnvironmentMutate } = useActionDeployEnvironment(
     projectId,
     environment.id,
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
   )
 
-  const actionStopEnvironment = useActionStopEnvironment(
+  const { mutate: actionStopEnvironmentMutate } = useActionStopEnvironment(
     projectId,
     environment.id,
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
   )
 
-  const actionCancelEnvironment = useActionCancelEnvironment(
+  const { mutate: actionCancelEnvironmentMutate } = useActionCancelEnvironment(
     projectId,
     environment.id,
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
@@ -87,7 +87,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
-      onClick: () => actionDeployEnvironment.mutate(),
+      onClick: () => actionDeployEnvironmentMutate(),
     }
 
     const state = status?.state
@@ -105,7 +105,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           title: 'Confirm redeploy',
           description: 'To confirm the redeploy of your environment, please type the name:',
           name: environment.name,
-          action: () => actionRestartEnvironment.mutate(),
+          action: () => actionRestartEnvironmentMutate(),
         })
       },
     }
@@ -121,7 +121,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           title: 'Confirm stop',
           description: 'To confirm the stopping of your environment, please type the name:',
           name: environment.name,
-          action: () => actionStopEnvironment.mutate(),
+          action: () => actionStopEnvironmentMutate(),
         })
       },
     }
@@ -137,7 +137,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           description:
             'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
           name: environment.name,
-          action: () => actionCancelEnvironment.mutate(),
+          action: () => actionCancelEnvironmentMutate(),
         })
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
@@ -184,10 +184,10 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     location.pathname,
     openModal,
     status?.state,
-    actionCancelEnvironment,
-    actionDeployEnvironment,
-    actionRestartEnvironment,
-    actionStopEnvironment,
+    actionCancelEnvironmentMutate,
+    actionDeployEnvironmentMutate,
+    actionRestartEnvironmentMutate,
+    actionStopEnvironmentMutate,
   ])
 
   const deleteEnvironment = useDeleteEnvironment(projectId, environment.id, () =>

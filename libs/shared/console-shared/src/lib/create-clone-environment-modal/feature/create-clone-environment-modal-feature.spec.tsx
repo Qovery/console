@@ -25,7 +25,6 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('CreateCloneEnvironmentModalFeature', () => {
-  const mockMutateCreateEnvironment = jest.fn()
   beforeEach(() => {
     props = {
       onClose: jest.fn(),
