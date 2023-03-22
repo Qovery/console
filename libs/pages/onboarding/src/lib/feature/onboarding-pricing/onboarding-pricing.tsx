@@ -24,7 +24,7 @@ const PLANS: OrganizationPlan[] = [
   {
     name: PlanEnum.FREE,
     title: 'Free plan',
-    text: 'Adapted for start',
+    text: 'Free Forever. No CC required',
     price: 0,
     list: [
       'Deploy on your AWS account',
@@ -38,8 +38,8 @@ const PLANS: OrganizationPlan[] = [
   {
     name: PlanEnum.TEAM,
     title: 'Team plan',
-    text: 'Adapted to scale',
-    price: 49,
+    text: 'Ideal for teams',
+    price: 99,
     list: [
       'All FREE features',
       'Up to 3 clusters',
@@ -51,7 +51,7 @@ const PLANS: OrganizationPlan[] = [
   {
     name: PlanEnum.ENTERPRISE,
     title: 'Enterprise plan',
-    text: 'Adapted for 100+ team',
+    text: 'Tailored for your organization',
     price: 899,
     list: [
       'All TEAM features',
