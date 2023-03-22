@@ -1,9 +1,9 @@
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { Environment } from 'qovery-typescript-axios'
 import { BlockContentDelete, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteEnvironment: () => void
-  environment?: EnvironmentEntity
+  environment?: Environment
 }
 
 export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {

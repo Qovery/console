@@ -2,15 +2,18 @@ import {
   ClusterLogs,
   ClusterLogsError,
   ClusterLogsStepEnum,
+  Environment,
   EnvironmentLogs,
   EnvironmentLogsError,
   Log,
   StateEnum,
+  Status,
 } from 'qovery-typescript-axios'
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
+import { getEnvironmentStatusById } from '@qovery/domains/environment'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/routes'
 import { scrollParentToChild } from '@qovery/shared/utils'
@@ -38,7 +41,8 @@ export interface LayoutLogsProps {
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
   applications?: ApplicationEntity[]
-  environment?: EnvironmentEntity
+  environment?: Environment
+  environmentStatuses?: Status[]
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
@@ -71,6 +75,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     setDebugMode,
     clusterBanner,
     nginxLogsCount,
+    environmentStatuses,
   } = props
 
   const location = useLocation()
@@ -155,7 +160,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
               to={DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)}
             >
               <StatusChip
-                status={(environment?.status && environment?.status.state) || StateEnum.STOPPED}
+                status={getEnvironmentStatusById(environment.id, environmentStatuses)?.state || StateEnum.STOPPED}
                 mustRenameStatus
                 className="mr-2"
               />

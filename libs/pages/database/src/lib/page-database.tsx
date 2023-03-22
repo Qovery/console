@@ -1,5 +1,4 @@
 import equal from 'fast-deep-equal'
-import { Environment } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useParams } from 'react-router-dom'
@@ -9,7 +8,7 @@ import {
   fetchDatabaseMetrics,
   selectDatabaseById,
 } from '@qovery/domains/database'
-import { selectEnvironmentById } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -17,10 +16,9 @@ import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 
 export function PageDatabase() {
-  const { databaseId = '', environmentId = '' } = useParams()
-  const environment = useSelector<RootState, Environment | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
+  const { databaseId = '', environmentId = '', projectId = '' } = useParams()
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const database = useSelector<RootState, DatabaseEntity | undefined>(
     (state) => selectDatabaseById(state, databaseId),

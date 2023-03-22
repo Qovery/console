@@ -1,4 +1,4 @@
-import { StateEnum, Status } from 'qovery-typescript-axios'
+import { Environment, StateEnum, Status } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
@@ -10,7 +10,6 @@ import {
   ApplicationEntity,
   ClusterEntity,
   DatabaseEntity,
-  EnvironmentEntity,
   WebsocketRunningStatusInterface,
 } from '@qovery/shared/interfaces'
 import {
@@ -42,7 +41,7 @@ import {
 import { RootState } from '@qovery/store'
 
 export interface ContainerProps {
-  environment?: EnvironmentEntity
+  environment?: Environment
   environmentStatus?: Status
   environmentRunningStatus?: WebsocketRunningStatusInterface
   children?: React.ReactNode

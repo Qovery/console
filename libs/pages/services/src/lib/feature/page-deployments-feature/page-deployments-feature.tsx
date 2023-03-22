@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getEnvironmentById, useEnvironmentDeploymentHistory, useFetchEnvironments } from '@qovery/domains/environment'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { environmentFactoryMock } from '@qovery/shared/factories'
+import { deploymentMock } from '@qovery/shared/factories'
 import { DeploymentService } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
@@ -18,8 +18,6 @@ export function PageDeploymentsFeature() {
     isLoading: loadingStatusDeployments,
     data: environmentDeploymentHistory,
   } = useEnvironmentDeploymentHistory(projectId, environmentId)
-
-  const loadingEnvironment = environmentFactoryMock(1, false, false)
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -88,7 +86,7 @@ export function PageDeploymentsFeature() {
         !loadingStatusDeployments
           ? environmentDeploymentHistory &&
             (mergeDeploymentServices(environmentDeploymentHistory) as DeploymentService[])
-          : (mergeDeploymentServices(loadingEnvironment[0].deployments) as DeploymentService[])
+          : (mergeDeploymentServices([deploymentMock]) as DeploymentService[])
       }
       listHelpfulLinks={listHelpfulLinks}
       isLoading={loadingStatusDeployments}

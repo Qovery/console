@@ -1,4 +1,3 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import {
   CloneRequest,
   CreateEnvironmentRequest,
@@ -16,10 +15,9 @@ import {
   Status,
 } from 'qovery-typescript-axios'
 import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
-import { EnvironmentEntity, EnvironmentsState, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
+import { WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoPayload } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
 
 export const ENVIRONMENTS_FEATURE_KEY = 'environments'
 
@@ -29,8 +27,6 @@ const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const databasesApi = new DatabasesApi()
-
-export const environmentsAdapter = createEntityAdapter<EnvironmentEntity>()
 
 export const useFetchEnvironments = (projectId: string) => {
   const queryClient = useQueryClient()
@@ -250,32 +246,3 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
     }
   )
 }
-
-export const initialEnvironmentsState: EnvironmentsState = environmentsAdapter.getInitialState({
-  loadingStatus: 'not loaded',
-  loadingEnvironmentStatus: 'not loaded',
-  loadingEnvironmentDeployments: 'not loaded',
-  loadingEnvironmentDeploymentRules: 'not loaded',
-  error: null,
-  joinProjectEnvironments: {},
-})
-
-export const environmentsSlice = createSlice({
-  name: ENVIRONMENTS_FEATURE_KEY,
-  initialState: initialEnvironmentsState,
-  reducers: {
-    add: environmentsAdapter.addOne,
-    remove: environmentsAdapter.removeOne,
-  },
-  extraReducers: (builder) => {},
-})
-
-export const environments = environmentsSlice.reducer
-
-export const environmentsActions = environmentsSlice.actions
-
-export const getEnvironmentsState = (rootState: RootState): EnvironmentsState =>
-  rootState.environment[ENVIRONMENTS_FEATURE_KEY]
-
-export const selectEnvironmentById = (state: RootState, environmentId: string) =>
-  getEnvironmentsState(state).entities[environmentId]

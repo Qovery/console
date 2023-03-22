@@ -11,14 +11,14 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useCloneEnvironment, useCreateEnvironment } from '@qovery/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
-import { ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ClusterEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
 import CreateCloneEnvironmentModal from '../ui/create-clone-environment-modal'
 
 export interface CreateCloneEnvironmentModalFeatureProps {
-  environmentToClone?: EnvironmentEntity
+  environmentToClone?: Environment
   onClose: () => void
   projectId: string
   organizationId: string

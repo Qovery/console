@@ -1,10 +1,10 @@
-import { Environment, EnvironmentLogs } from 'qovery-typescript-axios'
+import { EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
-import { selectEnvironmentById, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { LayoutLogs, Table } from '@qovery/shared/ui'
@@ -15,9 +15,8 @@ import Row from './ui/row/row'
 export function PageDeploymentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
-  const environment = useSelector<RootState, Environment | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const applications = useSelector<RootState, ApplicationEntity[] | undefined>((state) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
@@ -120,6 +119,7 @@ export function PageDeploymentLogs() {
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
       environment={environment}
+      environmentStatuses={environmentsStatus.data}
       applications={applications}
       withLogsNavigation
       lineNumbers

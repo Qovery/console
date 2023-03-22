@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react'
+import { Environment } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/shared/factories'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import Button from '../buttons/button/button'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
@@ -15,14 +15,14 @@ export default {
 
 const environmentData = environmentFactoryMock(20)
 
-const addRow = (data: EnvironmentEntity[]): EnvironmentEntity[] => {
+const addRow = (data: Environment[]): Environment[] => {
   const newData = [...data]
   newData.push(environmentFactoryMock(1)[0])
   return newData
 }
 
 const Template: Story<TableProps> = (args) => {
-  const [data, setData] = useState<EnvironmentEntity[]>(environmentData)
+  const [data, setData] = useState<Environment[]>(environmentData)
   const [filter, setFilter] = useState<TableFilterProps>({})
 
   return (

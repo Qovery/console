@@ -1,5 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { StateEnum, Status } from 'qovery-typescript-axios'
+import { Environment, StateEnum, Status } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -10,7 +10,6 @@ import {
   useActionStopEnvironment,
   useDeleteEnvironment,
 } from '@qovery/domains/environment'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_GENERAL_URL,
@@ -40,7 +39,7 @@ import CreateCloneEnvironmentModalFeature from '../../create-clone-environment-m
 import UpdateAllModalFeature from '../../update-all-modal/feature/update-all-modal-feature'
 
 export interface EnvironmentButtonsActionsProps {
-  environment: EnvironmentEntity
+  environment: Environment
   status?: Status
   hasServices?: boolean
 }

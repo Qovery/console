@@ -2,8 +2,9 @@ import equal from 'fast-deep-equal'
 import { Cluster, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { getEnvironmentStatusById, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { IconEnum } from '@qovery/shared/enums'
-import { ApplicationEntity, ClusterEntity, DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
@@ -62,6 +63,8 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
     location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
     locationIsApplicationLogs ||
     locationIsDeploymentLogs
+
+  const { data: environmentStatuses } = useFetchEnvironmentsStatus(projectId || '')
 
   const clustersMenu: MenuData = [
     {
@@ -123,14 +126,14 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       search: true,
       sortAlphabetically: true,
       items: environments
-        ? environments?.map((environment: EnvironmentEntity) => ({
+        ? environments?.map((environment: Environment) => ({
             name: environment.name,
             link: {
               url: `${SERVICES_URL(organizationId, projectId, environment.id)}${SERVICES_GENERAL_URL}`,
             },
             contentLeft: (
               <div className="flex items-center">
-                <StatusChip status={environment.status?.state} />
+                <StatusChip status={getEnvironmentStatusById(environment.id, environmentStatuses)?.state} />
                 <div className="ml-3 mt-0.5">
                   {environment.cloud_provider.provider && <Icon name={`${environment.cloud_provider.provider}_GRAY`} />}
                 </div>

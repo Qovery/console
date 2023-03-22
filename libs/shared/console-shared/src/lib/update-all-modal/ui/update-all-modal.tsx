@@ -1,4 +1,5 @@
-import { ApplicationEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { Environment } from 'qovery-typescript-axios'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   Avatar,
   AvatarStyle,
@@ -16,7 +17,7 @@ import {
 
 export interface UpdateAllModalProps {
   applications?: ApplicationEntity[]
-  environment?: EnvironmentEntity
+  environment?: Environment
   closeModal?: () => void
   submitDisabled?: boolean
   onSubmit?: () => void

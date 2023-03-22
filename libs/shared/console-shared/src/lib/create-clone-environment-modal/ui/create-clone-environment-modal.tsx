@@ -1,12 +1,12 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { Environment, EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { FormEvent, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ClusterEntity, EnvironmentEntity, Value } from '@qovery/shared/interfaces'
+import { ClusterEntity, Value } from '@qovery/shared/interfaces'
 import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CreateCloneEnvironmentModalProps {
   onSubmit: () => void
-  environmentToClone?: EnvironmentEntity
+  environmentToClone?: Environment
   clusters?: ClusterEntity[]
   closeModal: () => void
   loading: boolean
