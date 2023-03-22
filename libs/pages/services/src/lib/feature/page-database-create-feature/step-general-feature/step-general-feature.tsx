@@ -1,9 +1,9 @@
 import { DatabaseConfiguration, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { fetchDatabaseConfiguration, selectEnvironmentById } from '@qovery/domains/environment'
+import { selectEnvironmentById, useFetchDatabaseConfiguration } from '@qovery/domains/environment'
 import { EnvironmentEntity, Value } from '@qovery/shared/interfaces'
 import {
   SERVICES_DATABASE_CREATION_POST_URL,
@@ -13,7 +13,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { RootState } from '@qovery/store'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
 import { GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
@@ -80,29 +80,19 @@ export function StepGeneralFeature() {
     selectEnvironmentById(state, environmentId)
   )
 
-  const dispatch = useDispatch<AppDispatch>()
+  const { data: databaseConfigurations } = useFetchDatabaseConfiguration(projectId, environmentId)
 
   const [databaseTypeOptions, setDatabaseTypeOptions] = useState<Value[]>()
   const [databaseVersionOptions, setDatabaseVersionOptions] = useState<{ [Key: string]: Value[] }>()
 
   useEffect(() => {
-    if (!environment?.databaseConfigurations || environment.databaseConfigurations.loadingStatus === 'not loaded') {
-      dispatch(fetchDatabaseConfiguration({ environmentId }))
-    }
-
-    if (
-      environment?.databaseConfigurations?.loadingStatus === 'loaded' &&
-      environment?.databaseConfigurations?.data &&
-      !databaseTypeOptions &&
-      !databaseVersionOptions
-    ) {
-      const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
-        environment.databaseConfigurations.data
-      )
+    if (databaseConfigurations && databaseConfigurations.length && !databaseTypeOptions && !databaseVersionOptions) {
+      const { databaseTypeOptions, databaseVersionOptions } =
+        generateDatabasesTypesAndVersionOptions(databaseConfigurations)
       setDatabaseTypeOptions(databaseTypeOptions)
       setDatabaseVersionOptions(databaseVersionOptions)
     }
-  }, [dispatch, environment, environmentId])
+  }, [databaseConfigurations, environment, environmentId])
 
   const funnelCardHelp = (
     <FunnelFlowHelpCard
