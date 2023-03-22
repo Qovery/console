@@ -2,7 +2,7 @@ import { Auth0Provider } from '@auth0/auth0-react'
 import posthog from 'posthog-js'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
+// import { ReactQueryDevtools } from 'react-query/devtools'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
@@ -48,7 +48,7 @@ root.render(
             </ModalProvider>
           </BrowserRouter>
         </Provider>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </Auth0Provider>
   </IntercomProvider>
