@@ -57,11 +57,6 @@ export function PageGeneralFeature() {
   ]
 
   function isLoading() {
-    // if at least one collection has value to display, we remove the loading state
-    if (applicationsByEnv.length || databasesByEnv.length) {
-      return false
-    }
-
     // if the two collections are loaded, we remove the loading state
     return !(applicationsLoadingStatus === 'loaded' && databasesLoadingStatus === 'loaded')
   }

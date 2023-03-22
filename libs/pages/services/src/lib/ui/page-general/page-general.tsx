@@ -16,18 +16,17 @@ function PageGeneralMemo(props: PageGeneralProps) {
   const { environmentMode, services, listHelpfulLinks, isLoading } = props
   const { organizationId, projectId, environmentId } = useParams()
 
-  const [data, setData] = useState(services)
+  const [data, setData] = useState<(ApplicationEntity | DatabaseEntity)[]>([])
   const [filter, setFilter] = useState<TableFilterProps>({})
   const [loading, setLoading] = useState(isLoading)
 
   useEffect(() => {
-    setData(services)
     setLoading(isLoading)
-  }, [services, isLoading])
+  }, [isLoading])
 
   const tableHead = [
     {
-      title: `${data.length} service${data.length > 1 ? 's' : ''}`,
+      title: `${data?.length} service${data?.length && data.length > 1 ? 's' : ''}`,
       className: 'px-4 py-2',
       filter: [
         {
