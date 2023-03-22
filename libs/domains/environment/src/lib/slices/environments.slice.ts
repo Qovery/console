@@ -1,4 +1,4 @@
-import { Update, createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit'
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 import {
   CloneRequest,
   CreateEnvironmentRequest,
@@ -42,7 +42,6 @@ export const useFetchEnvironments = (projectId: string) => {
       return response.data.results as Environment[]
     },
     {
-      initialData: queryClient.getQueryData(['project', projectId, 'environments']),
       onSuccess: () => {
         // refetch environmentsStatus requests
         queryClient.invalidateQueries(['environmentsStatus', projectId])
@@ -58,8 +57,6 @@ export const getEnvironmentById = (environmentId: string, environments?: Environ
 }
 
 export const useFetchEnvironmentsStatus = (projectId: string) => {
-  const queryClient = useQueryClient()
-
   return useQuery<Status[], Error>(
     ['environmentsStatus', projectId],
     async () => {
@@ -67,7 +64,6 @@ export const useFetchEnvironmentsStatus = (projectId: string) => {
       return response.data.results as Status[]
     },
     {
-      initialData: queryClient.getQueryData(['environmentsStatus', projectId]),
       onError: (err) => toastError(err),
     }
   )
@@ -125,8 +121,6 @@ export const useEditEnvironment = (projectId: string, onSettledCallback: () => v
 }
 
 export const useFetchEnvironmentDeploymentRule = (projectId: string, environmentId: string) => {
-  const queryClient = useQueryClient()
-
   return useQuery<EnvironmentDeploymentRule, Error>(
     ['project', projectId, 'environments', environmentId, 'deploymentRules'],
     async () => {
@@ -134,7 +128,6 @@ export const useFetchEnvironmentDeploymentRule = (projectId: string, environment
       return response.data
     },
     {
-      initialData: queryClient.getQueryData(['project', projectId, 'environments', environmentId, 'deploymentRules']),
       onError: (err) => toastError(err),
     }
   )
@@ -180,8 +173,6 @@ export const useEditEnvironmentDeploymentRule = (
 }
 
 export const useEnvironmentDeploymentHistory = (projectId: string, environmentId: string) => {
-  const queryClient = useQueryClient()
-
   return useQuery<DeploymentHistoryEnvironment[], Error>(
     ['project', projectId, 'environments', environmentId, 'deploymentHistory'],
     async () => {
@@ -189,7 +180,6 @@ export const useEnvironmentDeploymentHistory = (projectId: string, environmentId
       return response.data.results as DeploymentHistoryEnvironment[]
     },
     {
-      initialData: queryClient.getQueryData(['project', projectId, 'environments', environmentId, 'deploymentHistory']),
       onError: (err) => toastError(err),
     }
   )
@@ -249,8 +239,6 @@ export const useCloneEnvironment = (
 }
 
 export const useFetchDatabaseConfiguration = (projectId: string, environmentId: string) => {
-  const queryClient = useQueryClient()
-
   return useQuery<DatabaseConfiguration[], Error>(
     ['project', projectId, 'environments', environmentId, 'databaseConfiguration'],
     async () => {
@@ -258,25 +246,10 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
       return response.data.results as DatabaseConfiguration[]
     },
     {
-      initialData: queryClient.getQueryData([
-        'project',
-        projectId,
-        'environments',
-        environmentId,
-        'databaseConfiguration',
-      ]),
       onError: (err) => toastError(err),
     }
   )
 }
-
-export const fetchDatabaseConfiguration = createAsyncThunk(
-  'environment/database-configuration/fetch',
-  async (payload: { environmentId: string }) => {
-    const response = await databasesApi.listEnvironmentDatabaseConfig(payload.environmentId)
-    return response.data.results
-  }
-)
 
 export const initialEnvironmentsState: EnvironmentsState = environmentsAdapter.getInitialState({
   loadingStatus: 'not loaded',
@@ -294,33 +267,7 @@ export const environmentsSlice = createSlice({
     add: environmentsAdapter.addOne,
     remove: environmentsAdapter.removeOne,
   },
-  extraReducers: (builder) => {
-    builder
-      // fetch database configurations for this environment
-      .addCase(fetchDatabaseConfiguration.pending, (state: EnvironmentsState, action) => {
-        const update: Update<EnvironmentEntity> = {
-          id: action.meta.arg.environmentId,
-          changes: {
-            databaseConfigurations: {
-              loadingStatus: 'loading',
-            },
-          },
-        }
-        environmentsAdapter.updateOne(state, update)
-      })
-      .addCase(fetchDatabaseConfiguration.fulfilled, (state: EnvironmentsState, action) => {
-        const update: Update<EnvironmentEntity> = {
-          id: action.meta.arg.environmentId,
-          changes: {
-            databaseConfigurations: {
-              loadingStatus: 'loaded',
-              data: action.payload,
-            },
-          },
-        }
-        environmentsAdapter.updateOne(state, update)
-      })
-  },
+  extraReducers: (builder) => {},
 })
 
 export const environments = environmentsSlice.reducer

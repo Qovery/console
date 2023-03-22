@@ -8,11 +8,6 @@ import StepGeneralFeature from './step-general-feature'
 const mockSetGeneralData = jest.fn()
 const mockNavigate = jest.fn()
 
-jest.mock('@qovery/domains/environment', () => ({
-  ...jest.requireActual('@qovery/domains/environment'),
-  fetchDatabaseConfiguration: jest.fn(),
-}))
-
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
