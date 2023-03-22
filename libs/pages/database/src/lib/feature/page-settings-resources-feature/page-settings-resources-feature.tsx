@@ -3,8 +3,8 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editDatabase, selectDatabaseById } from '@qovery/domains/database'
-import { selectEnvironmentById } from '@qovery/domains/environment'
-import { DatabaseEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
@@ -19,15 +19,14 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
 }
 
 export function PageSettingsResourcesFeature() {
-  const { databaseId = '', environmentId = '' } = useParams()
+  const { databaseId = '', environmentId = '', projectId = '' } = useParams()
 
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
 
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const methods = useForm({
     mode: 'onChange',

@@ -1,12 +1,12 @@
 import { Chance } from 'chance'
 import {
   DeploymentHistoryStatusEnum,
+  Environment,
   EnvironmentModeEnum,
   ServiceDeploymentStatusEnum,
   StateEnum,
   WeekdayEnum,
 } from 'qovery-typescript-axios'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 
@@ -26,7 +26,7 @@ const database = {
   status: chance.pickone(Object.values([DeploymentHistoryStatusEnum.SUCCESS, DeploymentHistoryStatusEnum.FAILED])),
 }
 
-const deployment = {
+export const deploymentMock = {
   id: chance.integer().toString(),
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
@@ -49,7 +49,7 @@ const deploymentRules = {
   weekdays: [chance.pickone(Object.values(WeekdayEnum))],
 }
 
-export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): EnvironmentEntity[] =>
+export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): Environment[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${(index + 1) * Math.random()}`,
     created_at: chance.date().toString(),
@@ -72,6 +72,6 @@ export const environmentFactoryMock = (howMany: number, noStatus = false, noDepl
           service_deployment_status: chance.pickone(Object.values([ServiceDeploymentStatusEnum.UP_TO_DATE])),
         }
       : undefined,
-    deployments: !noDeployments ? [deployment, deployment, deployment] : undefined,
+    deployments: !noDeployments ? [deploymentMock, deploymentMock, deploymentMock] : undefined,
     deploymentRules: deploymentRules,
   }))

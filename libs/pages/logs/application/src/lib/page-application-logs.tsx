@@ -1,4 +1,4 @@
-import { Environment, Log } from 'qovery-typescript-axios'
+import { Log } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -8,7 +8,7 @@ import {
   selectApplicationById,
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
-import { fetchEnvironmentsStatus, selectEnvironmentById } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import {
@@ -27,9 +27,8 @@ import Row from './ui/row/row'
 export function PageApplicationLogs() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
-  const environment = useSelector<RootState, Environment | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const applications = useSelector<RootState, ApplicationEntity[] | undefined>((state) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
@@ -184,17 +183,19 @@ export function PageApplicationLogs() {
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const environmentsStatus = useFetchEnvironmentsStatus(projectId)
+
   const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
   )
 
   useEffect(() => {
     const fetchServicesStatusByInterval = setInterval(() => {
-      dispatch(fetchEnvironmentsStatus({ projectId }))
+      environmentsStatus.refetch()
       if (applicationsByEnv.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
     }, 3000)
     return () => clearInterval(fetchServicesStatusByInterval)
-  }, [dispatch, environmentId, applicationsByEnv.length, projectId])
+  }, [dispatch, environmentsStatus, environmentId, applicationsByEnv.length])
 
   const memoRow = useMemo(
     () =>
@@ -216,6 +217,7 @@ export function PageApplicationLogs() {
       }}
       applications={applications}
       environment={environment}
+      environmentStatuses={environmentsStatus.data}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
       withLogsNavigation

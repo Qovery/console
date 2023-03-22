@@ -3,9 +3,9 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
-import { selectEnvironmentById } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { getServiceType, isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
@@ -23,7 +23,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity) 
 }
 
 export function PageSettingsResourcesFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { applicationId = '', environmentId = '', projectId = '' } = useParams()
 
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
@@ -38,9 +38,8 @@ export function PageSettingsResourcesFeature() {
       JSON.stringify(a?.instances) === JSON.stringify(b?.instances)
   )
 
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const methods = useForm({
     mode: 'onChange',

@@ -1,17 +1,15 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { StateEnum } from 'qovery-typescript-axios'
+import { Environment, StateEnum, Status } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  deleteEnvironmentAction,
-  fetchEnvironments,
-  postEnvironmentActionsCancelDeployment,
-  postEnvironmentActionsDeploy,
-  postEnvironmentActionsRestart,
-  postEnvironmentActionsStop,
+  useActionCancelEnvironment,
+  useActionDeployEnvironment,
+  useActionRestartEnvironment,
+  useActionStopEnvironment,
+  useDeleteEnvironment,
 } from '@qovery/domains/environment'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_GENERAL_URL,
@@ -41,13 +39,14 @@ import CreateCloneEnvironmentModalFeature from '../../create-clone-environment-m
 import UpdateAllModalFeature from '../../update-all-modal/feature/update-all-modal-feature'
 
 export interface EnvironmentButtonsActionsProps {
-  environment: EnvironmentEntity
+  environment: Environment
+  status?: Status
   hasServices?: boolean
 }
 
 export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps) {
-  const { environment, hasServices = false } = props
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { environment, status, hasServices = false } = props
+  const { organizationId = '', projectId = '' } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
@@ -59,23 +58,38 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
+  const { mutate: actionRestartEnvironmentMutate } = useActionRestartEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
+  const { mutate: actionDeployEnvironmentMutate } = useActionDeployEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
+  const { mutate: actionStopEnvironmentMutate } = useActionStopEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
+  const { mutate: actionCancelEnvironmentMutate } = useActionCancelEnvironment(
+    projectId,
+    environment.id,
+    location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
+  )
+
   useEffect(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
-
-      onClick: () =>
-        dispatch(
-          postEnvironmentActionsDeploy({
-            projectId,
-            environmentId: environment.id,
-            withDeployments:
-              location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-          })
-        ),
+      onClick: () => actionDeployEnvironmentMutate(),
     }
 
-    const state = environment.status?.state
+    const state = status?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -90,16 +104,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           title: 'Confirm redeploy',
           description: 'To confirm the redeploy of your environment, please type the name:',
           name: environment.name,
-          action: () =>
-            dispatch(
-              postEnvironmentActionsRestart({
-                projectId,
-                environmentId: environment.id,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-              })
-            ),
+          action: () => actionRestartEnvironmentMutate(),
         })
       },
     }
@@ -115,16 +120,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           title: 'Confirm stop',
           description: 'To confirm the stopping of your environment, please type the name:',
           name: environment.name,
-          action: () =>
-            dispatch(
-              postEnvironmentActionsStop({
-                projectId,
-                environmentId: environment.id,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-              })
-            ),
+          action: () => actionStopEnvironmentMutate(),
         })
       },
     }
@@ -140,16 +136,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           description:
             'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
           name: environment.name,
-          action: () =>
-            dispatch(
-              postEnvironmentActionsCancelDeployment({
-                projectId,
-                environmentId: environment.id,
-                withDeployments:
-                  location.pathname ===
-                  SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL,
-              })
-            ),
+          action: () => actionCancelEnvironmentMutate(),
         })
       },
       contentLeft: <Icon name={IconAwesomeEnum.XMARK} className="text-sm text-brand-400" />,
@@ -189,14 +176,22 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
   }, [
     environment,
-    environmentId,
     dispatch,
     openModalConfirmation,
     organizationId,
     projectId,
     location.pathname,
     openModal,
+    status?.state,
+    actionCancelEnvironmentMutate,
+    actionDeployEnvironmentMutate,
+    actionRestartEnvironmentMutate,
+    actionStopEnvironmentMutate,
   ])
+
+  const deleteEnvironment = useDeleteEnvironment(projectId, environment.id, () =>
+    navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
+  )
 
   const removeEnvironment = async () => {
     openModalConfirmation({
@@ -204,20 +199,11 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       description: 'To confirm the deletion of your environment, please type the name of the environment:',
       name: environment?.name,
       isDelete: true,
-      action: async () => {
-        await dispatch(
-          deleteEnvironmentAction({
-            projectId,
-            environmentId: environment.id,
-          })
-        )
-        await dispatch(fetchEnvironments({ projectId: projectId }))
-        await navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
-      },
+      action: () => deleteEnvironment.mutate(),
     })
   }
 
-  const canDelete = environment?.status && isDeleteAvailable(environment.status.state)
+  const canDelete = status?.state && isDeleteAvailable(status.state)
 
   const buttonActionsDefault = [
     ...(hasServices

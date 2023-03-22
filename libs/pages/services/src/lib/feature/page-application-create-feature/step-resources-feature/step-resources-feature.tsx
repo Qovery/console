@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { selectEnvironmentById } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ApplicationResourcesData, ClusterEntity, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { ApplicationResourcesData, ClusterEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -25,9 +25,9 @@ export function StepResourcesFeature() {
   const navigate = useNavigate()
   const [maxInstances, setMaxInstance] = useState(50)
 
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) =>
     selectClusterById(state, environment?.cluster_id || '')
   )

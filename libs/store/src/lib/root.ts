@@ -9,8 +9,6 @@ import {
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { databases, initialDatabasesState } from '@qovery/domains/database'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { environments, initialEnvironmentsState } from '@qovery/domains/environment'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   environmentVariables,
   initialEnvironmentVariablesState,
@@ -52,10 +50,6 @@ export const projectReducer = combineReducers({
   deploymentRules: deploymentRulesReducer,
 })
 
-export const environmentReducer = combineReducers({
-  environments: environments,
-})
-
 export const environmentVariable = combineReducers({
   public: environmentVariables,
   secret: secretEnvironmentVariables,
@@ -70,7 +64,6 @@ export const rootReducer = combineReducers({
   organization: organizationReducer,
   cluster: clusterReducer,
   project: projectReducer,
-  environment: environmentReducer,
   databases: databases,
   environmentVariable,
   application: applicationReducer,
@@ -101,9 +94,6 @@ export const initialRootState = (): RootState => ({
   project: {
     projects: initialProjectsState,
     deploymentRules: initialDeploymentRulesState,
-  },
-  environment: {
-    environments: initialEnvironmentsState,
   },
   environmentVariable: {
     public: initialEnvironmentVariablesState,

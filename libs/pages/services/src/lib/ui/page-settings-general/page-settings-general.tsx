@@ -7,10 +7,11 @@ import { environmentModeValues } from '@qovery/shared/utils'
 export interface PageSettingsGeneralProps {
   onSubmit: () => void
   clusters: Cluster[]
+  loading: boolean
 }
 
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { clusters, onSubmit } = props
+  const { clusters, onSubmit, loading } = props
   const { control, formState } = useFormContext()
 
   const clustersList: Value[] = clusters
@@ -87,6 +88,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               disabled={!formState.isValid}
               size={ButtonSize.LARGE}
               style={ButtonStyle.BASIC}
+              loading={loading}
               type="submit"
             >
               Save

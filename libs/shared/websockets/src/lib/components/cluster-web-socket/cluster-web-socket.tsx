@@ -1,15 +1,14 @@
+import { Environment } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { useQueryClient } from 'react-query'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { applicationsActions, applicationsLoadingStatus } from '@qovery/domains/application'
 import { databasesActions, databasesLoadingStatus } from '@qovery/domains/database'
-import {
-  environmentsActions,
-  environmentsLoadingStatus,
-  selectEnvironmentsIdByClusterId,
-} from '@qovery/domains/environment'
+import { updateEnvironmentsRunningStatus, useFetchEnvironments } from '@qovery/domains/environment'
 import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch } from '@qovery/store'
 
 export interface ClusterWebSocketProps {
   url: string
@@ -19,11 +18,12 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
   const { url } = props
   const realUrl = new URL(url)
   const clusterId = realUrl.searchParams.get('cluster') || ''
+  const { projectId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
-  //const [clusterId, setClusterId] = useState('')
+  const queryClient = useQueryClient()
+
   const appsLoadingStatus = useSelector(applicationsLoadingStatus)
   const dbsLoadingStatus = useSelector(databasesLoadingStatus)
-  const envsLoadingStatus = useSelector(environmentsLoadingStatus)
 
   const { lastMessage } = useWebSocket(url, {
     //Will attempt to reconnect on all close events, such as server shutting down
@@ -31,18 +31,19 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
     share: true,
   })
 
-  const environmentsIdAssociatedToCluster = useSelector(
-    (state: RootState) => selectEnvironmentsIdByClusterId(state, clusterId),
-    shallowEqual
-  )
+  const { isLoading: envsLoadingStatus, data: environments } = useFetchEnvironments(projectId)
+
+  const environmentsIdAssociatedToCluster = environments
+    ?.filter((env: Environment) => {
+      return env.cluster_id === clusterId
+    })
+    .map((env) => env.id)
 
   const storeEnvironmentRunningStatus = useCallback(
-    (message: { environments: WebsocketRunningStatusInterface[] }, clusterId: string): void => {
-      dispatch(
-        environmentsActions.updateEnvironmentsRunningStatus({ websocketRunningStatus: message.environments, clusterId })
-      )
+    (message: { environments: WebsocketRunningStatusInterface[] }): void => {
+      updateEnvironmentsRunningStatus(queryClient, message.environments)
     },
-    [dispatch]
+    [queryClient]
   )
 
   const storeApplicationsRunningStatus = useCallback(
@@ -92,14 +93,15 @@ export function ClusterWebSocket(props: ClusterWebSocketProps) {
   useEffect(() => {
     if (lastMessage !== null) {
       const message = JSON.parse(lastMessage.data) as { environments: WebsocketRunningStatusInterface[] }
-      storeEnvironmentRunningStatus(message, clusterId)
+
+      storeEnvironmentRunningStatus(message)
 
       if (appsLoadingStatus === 'loaded') {
-        storeApplicationsRunningStatus(message, environmentsIdAssociatedToCluster)
+        environmentsIdAssociatedToCluster && storeApplicationsRunningStatus(message, environmentsIdAssociatedToCluster)
       }
 
       if (dbsLoadingStatus === 'loaded') {
-        storeDatabasesRunningStatus(message, environmentsIdAssociatedToCluster)
+        environmentsIdAssociatedToCluster && storeDatabasesRunningStatus(message, environmentsIdAssociatedToCluster)
       }
     }
   }, [

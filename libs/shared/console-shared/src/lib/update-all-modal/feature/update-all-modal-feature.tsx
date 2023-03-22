@@ -7,9 +7,9 @@ import {
   fetchApplications,
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
-import { postEnvironmentServicesUpdate, selectEnvironmentById } from '@qovery/domains/environment'
+import { getEnvironmentById, useActionDeployAllEnvironment, useFetchEnvironments } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob, isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, EnvironmentEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import UpdateAllModal from '../ui/update-all-modal'
@@ -20,10 +20,11 @@ export interface UpdateAllModalFeatureProps {
 }
 
 export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
-  const { environmentId } = props
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state: RootState) =>
-    selectEnvironmentById(state, props.environmentId)
-  )
+  const { environmentId, projectId } = props
+
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+
   const { closeModal } = useModal()
   const dispatch: AppDispatch = useDispatch()
   const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
@@ -43,6 +44,10 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([])
   const [listLoading, setListLoading] = useState<boolean>(true)
   const [submitButtonLoading, setSubmitButtonLoading] = useState<boolean>(false)
+
+  const actionDeployAllEnvironments = useActionDeployAllEnvironment(environmentId, () => {
+    closeModal()
+  })
 
   const checkService = (serviceId: string) => {
     if (selectedServiceIds.includes(serviceId)) {
@@ -121,14 +126,7 @@ export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
         jobs: jobsToUpdate,
       }
 
-      dispatch(postEnvironmentServicesUpdate({ environmentId, deployRequest }))
-        .unwrap()
-        .then(() => {
-          closeModal()
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      actionDeployAllEnvironments.mutate(deployRequest)
     }
   }
 

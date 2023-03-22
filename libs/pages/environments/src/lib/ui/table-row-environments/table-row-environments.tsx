@@ -1,6 +1,7 @@
+import { Environment, Status } from 'qovery-typescript-axios'
+import { useGetEnvironmentRunningStatusById } from '@qovery/domains/environment'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { RunningStatus } from '@qovery/shared/enums'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
 import {
   Icon,
   Skeleton,
@@ -15,9 +16,10 @@ import {
 import { timeAgo } from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentsProps {
-  data: EnvironmentEntity
+  data: Environment
+  status?: Status
   filter: TableFilterProps
-  dataHead: TableHeadProps<EnvironmentEntity>[]
+  dataHead: TableHeadProps<Environment>[]
   link: string
   columnsWidth?: string
   isLoading?: boolean
@@ -26,6 +28,7 @@ export interface TableRowEnvironmentsProps {
 export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
   const {
     data,
+    status,
     dataHead,
     columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
     link,
@@ -33,12 +36,15 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     isLoading = false,
   } = props
 
+  // todo: should be in TableRowEnvironmentFeature
+  const { data: runningStatus } = useGetEnvironmentRunningStatusById(data.id)
+
   return (
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
           <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-            <StatusChip status={(data.running_status && data.running_status.state) || RunningStatus.STOPPED} />
+            <StatusChip status={runningStatus?.state || RunningStatus.STOPPED} />
           </Skeleton>
           <Tooltip
             content={
@@ -66,14 +72,14 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center">
               <p className="flex items-center leading-7 text-text-400 text-sm">
-                <StatusLabel status={data.status && data.status.state} />
-                {data.status?.last_deployment_date && (
+                <StatusLabel status={status && status.state} />
+                {status?.last_deployment_date && (
                   <span className="text-xs text-text-300 mx-3 font-medium">
-                    {timeAgo(new Date(data.status.last_deployment_date))} ago
+                    {timeAgo(new Date(status.last_deployment_date))} ago
                   </span>
                 )}
               </p>
-              <EnvironmentButtonsActions environment={data} hasServices={true} />
+              <EnvironmentButtonsActions environment={data} status={status} hasServices={true} />
             </div>
           </Skeleton>
         </div>

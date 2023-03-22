@@ -1,29 +1,23 @@
-import { JobScheduleEvent } from 'qovery-typescript-axios'
+import { DeploymentHistoryEnvironment, JobScheduleEvent } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  environmentsLoadingEnvironmentDeployments,
-  fetchEnvironmentDeploymentHistory,
-  selectEnvironmentById,
-} from '@qovery/domains/environment'
+import { getEnvironmentById, useEnvironmentDeploymentHistory, useFetchEnvironments } from '@qovery/domains/environment'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { environmentFactoryMock } from '@qovery/shared/factories'
-import { DeploymentService, EnvironmentEntity } from '@qovery/shared/interfaces'
+import { deploymentMock } from '@qovery/shared/factories'
+import { DeploymentService } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
-  const { environmentId = '', projectId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
+  const { projectId = '', environmentId = '' } = useParams()
 
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
-  )
-
-  const loadingStatusDeployments = useSelector<RootState>((state) => environmentsLoadingEnvironmentDeployments(state))
-  const loadingEnvironment = environmentFactoryMock(1, false, false)
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+  const {
+    refetch,
+    isLoading: loadingStatusDeployments,
+    data: environmentDeploymentHistory,
+  } = useEnvironmentDeploymentHistory(projectId, environmentId)
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -33,9 +27,9 @@ export function PageDeploymentsFeature() {
     },
   ]
 
-  const mergeDeploymentServices = (env: EnvironmentEntity) => {
+  const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnvironment[]) => {
     const merged: DeploymentService[] = []
-    env.deployments?.forEach((deployment) => {
+    deploymentHistory?.forEach((deployment) => {
       deployment.applications?.forEach((app) => {
         const a: DeploymentService = {
           ...app,
@@ -76,32 +70,26 @@ export function PageDeploymentsFeature() {
     return merged
   }
 
-  const isLoading = loadingStatusDeployments !== 'loaded'
-
   useEffect(() => {
-    const fetchEnv = () => {
-      dispatch(fetchEnvironmentDeploymentHistory({ environmentId }))
-    }
+    const fetchEnv = () => refetch()
 
-    !environment?.deployments && fetchEnv()
+    !environmentDeploymentHistory && fetchEnv()
 
-    const pullDeployments = setInterval(
-      () => dispatch(fetchEnvironmentDeploymentHistory({ environmentId, silently: true })),
-      2500
-    )
+    const pullDeployments = setInterval(() => refetch(), 2500)
 
     return () => clearInterval(pullDeployments)
-  }, [dispatch, environmentId, projectId, environment])
+  }, [environmentDeploymentHistory, refetch, environmentId, projectId, environment])
 
   return (
     <PageDeployments
       deployments={
-        !isLoading
-          ? environment && (mergeDeploymentServices(environment) as DeploymentService[])
-          : (mergeDeploymentServices(loadingEnvironment[0]) as DeploymentService[])
+        !loadingStatusDeployments
+          ? environmentDeploymentHistory &&
+            (mergeDeploymentServices(environmentDeploymentHistory) as DeploymentService[])
+          : (mergeDeploymentServices([deploymentMock]) as DeploymentService[])
       }
       listHelpfulLinks={listHelpfulLinks}
-      isLoading={isLoading}
+      isLoading={loadingStatusDeployments}
     />
   )
 }

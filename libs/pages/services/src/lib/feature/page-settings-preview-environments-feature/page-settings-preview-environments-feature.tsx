@@ -4,31 +4,20 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
-import {
-  editEnvironmentDeploymentRules,
-  environmentsLoadingEnvironmentDeploymentRules,
-  environmentsLoadingStatus,
-  fetchEnvironmentDeploymentRules,
-  selectEnvironmentDeploymentRulesByEnvId,
-} from '@qovery/domains/environment'
+import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function PageSettingsPreviewEnvironmentsFeature() {
-  const { environmentId = '' } = useParams()
+  const { projectId = '', environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(false)
 
-  const environmentDeploymentRules = useSelector<RootState, EnvironmentDeploymentRule | undefined>(
-    (state) => selectEnvironmentDeploymentRulesByEnvId(state, environmentId),
-    (a, b) => a?.auto_preview === b?.auto_preview
-  )
-
-  const loadingStatusEnvironment = useSelector(environmentsLoadingStatus)
-
-  const loadingStatusEnvironmentDeploymentRules = useSelector(environmentsLoadingEnvironmentDeploymentRules)
+  const { isFetched: loadingStatusEnvironmentDeploymentRules, data: environmentDeploymentRules } =
+    useFetchEnvironmentDeploymentRule(projectId, environmentId)
+  const editEnvironmentDeploymentRule = useEditEnvironmentDeploymentRule(projectId, environmentId)
 
   const applications = useSelector<RootState, ApplicationEntity[] | undefined>(
     (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
@@ -48,13 +37,11 @@ export function PageSettingsPreviewEnvironmentsFeature() {
       const cloneEnvironmentDeploymentRules = Object.assign({}, environmentDeploymentRules as EnvironmentDeploymentRule)
       cloneEnvironmentDeploymentRules.auto_preview = data['auto_preview']
 
-      await dispatch(
-        editEnvironmentDeploymentRules({
-          environmentId,
-          deploymentRuleId: environmentDeploymentRules?.id || '',
-          data: cloneEnvironmentDeploymentRules,
-        })
-      )
+      await editEnvironmentDeploymentRule.mutate({
+        environmentId,
+        deploymentRuleId: environmentDeploymentRules?.id || '',
+        data: cloneEnvironmentDeploymentRules,
+      })
 
       await applications?.forEach(async (application: ApplicationEntity) => {
         if (application.id === Object.keys(data).find((key) => key === application.id)) {
@@ -80,19 +67,15 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const toggleAll = (value: boolean) => {
     //set all preview applications "true" when env preview is true
-    if (loadingStatusEnvironmentDeploymentRules === 'loaded') {
+    if (loadingStatusEnvironmentDeploymentRules) {
       applications?.forEach((application) => methods.setValue(application.id, value, { shouldDirty: true }))
     }
   }
 
   useEffect(() => {
-    if (loadingStatusEnvironment === 'loaded') dispatch(fetchEnvironmentDeploymentRules(environmentId))
-  }, [dispatch, loadingStatusEnvironment, environmentId])
-
-  useEffect(() => {
     // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
-    if (loadingStatusEnvironmentDeploymentRules === 'loaded' && !loading) {
-      methods.setValue('auto_preview', environmentDeploymentRules?.auto_preview)
+    if (environmentDeploymentRules && loadingStatusEnvironmentDeploymentRules && !loading) {
+      methods.setValue('auto_preview', environmentDeploymentRules.auto_preview)
       applications?.forEach((application) => methods.setValue(application.id, application.auto_preview))
     }
   }, [loadingStatusEnvironmentDeploymentRules, methods, environmentDeploymentRules, applications])

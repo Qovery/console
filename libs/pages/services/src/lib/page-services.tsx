@@ -1,12 +1,16 @@
-import equal from 'fast-deep-equal'
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { fetchEnvironmentsStatus, selectEnvironmentById } from '@qovery/domains/environment'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import {
+  getEnvironmentById,
+  getEnvironmentStatusById,
+  useEnvironmentRunningStatus,
+  useFetchEnvironments,
+  useFetchEnvironmentsStatus,
+} from '@qovery/domains/environment'
 import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch } from '@qovery/store'
 import { ROUTER_SERVICES } from './router/router'
 import Container from './ui/container/container'
 
@@ -16,10 +20,10 @@ export function PageServices() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>(
-    (state) => selectEnvironmentById(state, environmentId),
-    equal
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+  const environmentsStatus = useFetchEnvironmentsStatus(projectId)
+  const environmentRunningStatus = useEnvironmentRunningStatus(environmentId)
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -27,12 +31,16 @@ export function PageServices() {
     if (location.pathname === SERVICES_URL(organizationId, projectId, environmentId)) {
       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${APPLICATION_GENERAL_URL}`)
     }
-    const fetchEnvironmentsStatusByInterval = setInterval(() => dispatch(fetchEnvironmentsStatus({ projectId })), 3000)
+    const fetchEnvironmentsStatusByInterval = setInterval(() => environmentsStatus.refetch(), 3000)
     return () => clearInterval(fetchEnvironmentsStatusByInterval)
-  }, [location, navigate, organizationId, projectId, environmentId, dispatch])
+  }, [location, navigate, environmentsStatus, projectId, organizationId, environmentId, dispatch])
 
   return (
-    <Container environment={environment}>
+    <Container
+      environment={environment}
+      environmentStatus={getEnvironmentStatusById(environmentId, environmentsStatus.data)}
+      environmentRunningStatus={environmentRunningStatus}
+    >
       <Routes>
         {ROUTER_SERVICES.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />

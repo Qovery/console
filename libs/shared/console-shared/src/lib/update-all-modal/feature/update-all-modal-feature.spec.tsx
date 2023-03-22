@@ -1,12 +1,12 @@
 import { act, getAllByTestId, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { Commit, DeployAllRequest } from 'qovery-typescript-axios'
-import * as storeEnvironment from '@qovery/domains/environment'
+import { Commit } from 'qovery-typescript-axios'
+import * as environmentDomains from '@qovery/domains/environment'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import UpdateAllModalFeature, { UpdateAllModalFeatureProps } from './update-all-modal-feature'
 
-import SpyInstance = jest.SpyInstance
+const useActionDeployAllEnvironmentSpy = jest.spyOn(environmentDomains, 'useActionDeployAllEnvironment') as jest.Mock
 
 const mockApplications = applicationFactoryMock(3).map((app) => {
   return {
@@ -61,20 +61,16 @@ describe('UpdateAllModalFeature', () => {
     projectId: 'project1',
   }
 
+  beforeEach(() => {
+    useActionDeployAllEnvironmentSpy.mockReturnValue({ mutate: jest.fn() })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = render(<UpdateAllModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should postEnvironmentServicesUpdate have been called on submit with good payload', async () => {
-    const postEnvironmentServicesUpdateSpy: SpyInstance = jest.spyOn(storeEnvironment, 'postEnvironmentServicesUpdate')
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
     const { baseElement } = render(<UpdateAllModalFeature {...props} />)
 
     const deselectAll = getByTestId(baseElement, 'deselect-all')
@@ -95,17 +91,14 @@ describe('UpdateAllModalFeature', () => {
       submitButton.click()
     })
 
-    expect(postEnvironmentServicesUpdateSpy).toHaveBeenCalledWith({
-      environmentId: 'env1',
-      deployRequest: {
-        applications: [
-          {
-            application_id: mockApplications[0].id,
-            git_commit_id: mockApplications[0].commits.items[0].git_commit_id,
-          },
-        ],
-        jobs: [],
-      } as DeployAllRequest,
+    expect(useActionDeployAllEnvironmentSpy().mutate).toHaveBeenCalledWith({
+      applications: [
+        {
+          application_id: mockApplications[0].id,
+          git_commit_id: mockApplications[0].commits.items[0].git_commit_id,
+        },
+      ],
+      jobs: [],
     })
   })
 })

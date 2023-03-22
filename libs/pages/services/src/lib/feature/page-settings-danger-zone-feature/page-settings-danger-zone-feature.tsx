@@ -1,26 +1,19 @@
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { deleteEnvironmentAction, selectEnvironmentById } from '@qovery/domains/environment'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
+import { getEnvironmentById, useDeleteEnvironment, useFetchEnvironments } from '@qovery/domains/environment'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const environment = useSelector<RootState, EnvironmentEntity | undefined>((state) =>
-    selectEnvironmentById(state, environmentId)
+
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+  const deleteEnvironment = useDeleteEnvironment(projectId, environmentId, () =>
+    navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
   )
 
-  const deleteEnvironment = () => {
-    dispatch(deleteEnvironmentAction({ projectId, environmentId }))
-      .unwrap()
-      .then(() => navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL))
-  }
-
-  return <PageSettingsDangerZone deleteEnvironment={deleteEnvironment} environment={environment} />
+  return <PageSettingsDangerZone deleteEnvironment={() => deleteEnvironment.mutate()} environment={environment} />
 }
 
 export default PageSettingsDangerZoneFeature

@@ -1,16 +1,9 @@
 import { EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  editEnvironmentDeploymentRules,
-  environmentsLoadingStatus,
-  fetchEnvironmentDeploymentRules,
-  selectEnvironmentDeploymentRulesByEnvId,
-} from '@qovery/domains/environment'
+import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
 import { dateToHours } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsDeployment from '../../ui/page-settings-deployment-rules/page-settings-deployment-rules'
 
 export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: EnvironmentDeploymentRule) => {
@@ -27,15 +20,12 @@ export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: Env
 }
 
 export function PageSettingsDeploymentRulesFeature() {
-  const { environmentId = '' } = useParams()
-  const dispatch = useDispatch<AppDispatch>()
+  const { projectId = '', environmentId = '' } = useParams()
   const [loading, setLoading] = useState(false)
 
-  const loadingStatusEnvironment = useSelector(environmentsLoadingStatus)
-
-  const environmentDeploymentRules = useSelector<RootState, EnvironmentDeploymentRule | undefined>(
-    (state) => selectEnvironmentDeploymentRulesByEnvId(state, environmentId),
-    (a, b) => a?.auto_deploy === b?.auto_deploy && a?.auto_delete === b?.auto_delete
+  const { data: environmentDeploymentRules } = useFetchEnvironmentDeploymentRule(projectId, environmentId)
+  const editEnvironmentDeploymentRule = useEditEnvironmentDeploymentRule(projectId, environmentId, () =>
+    setLoading(false)
   )
 
   const methods = useForm({
@@ -43,10 +33,6 @@ export function PageSettingsDeploymentRulesFeature() {
   })
 
   const watchAutoStop = methods.watch('auto_stop')
-
-  useEffect(() => {
-    if (loadingStatusEnvironment === 'loaded') dispatch(fetchEnvironmentDeploymentRules(environmentId))
-  }, [dispatch, loadingStatusEnvironment, environmentId])
 
   useEffect(() => {
     const startTime = environmentDeploymentRules?.start_time && dateToHours(environmentDeploymentRules?.start_time)
@@ -64,17 +50,13 @@ export function PageSettingsDeploymentRulesFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     if (data && environmentDeploymentRules) {
       setLoading(true)
-
       const cloneEnvironmentDeploymentRules = handleSubmit(data, environmentDeploymentRules)
 
-      await dispatch(
-        editEnvironmentDeploymentRules({
-          environmentId,
-          deploymentRuleId: environmentDeploymentRules?.id || '',
-          data: cloneEnvironmentDeploymentRules,
-        })
-      )
-      setLoading(false)
+      editEnvironmentDeploymentRule.mutate({
+        environmentId,
+        deploymentRuleId: environmentDeploymentRules?.id || '',
+        data: cloneEnvironmentDeploymentRules,
+      })
     }
   })
 

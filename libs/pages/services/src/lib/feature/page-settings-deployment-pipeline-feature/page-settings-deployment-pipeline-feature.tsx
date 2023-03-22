@@ -1,21 +1,19 @@
-import equal from 'fast-deep-equal'
-import { CloudProviderEnum, DeploymentStageResponse, EnvironmentAllOfCloudProvider } from 'qovery-typescript-axios'
+import { CloudProviderEnum, DeploymentStageResponse } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
-  addServiceToDeploymentStage,
-  deleteEnvironmentDeploymentStage,
-  environmentsLoadingStatus,
-  fetchDeploymentStageList,
-  selectEnvironmentById,
+  getEnvironmentById,
+  useAddServiceToDeploymentStage,
+  useDeleteEnvironmentDeploymentStage,
+  useFetchDeploymentStageList,
+  useFetchEnvironments,
 } from '@qovery/domains/environment'
-import { EnvironmentEntity } from '@qovery/shared/interfaces'
-import { Icon, IconAwesomeEnum, ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { RootState } from '@qovery/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 import StageOrderModalFeature from './stage-order-modal-feature/stage-order-modal-feature'
@@ -26,12 +24,10 @@ export interface StageRequest {
 }
 
 export function PageSettingsDeploymentPipelineFeature() {
-  const { environmentId = '' } = useParams()
-  const dispatch: AppDispatch = useDispatch()
+  const { projectId = '', environmentId = '' } = useParams()
 
-  const cloudProvider = useSelector<RootState, EnvironmentAllOfCloudProvider | undefined>(
-    (state) => selectEnvironmentById(state, environmentId)?.cloud_provider
-  )
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
 
   const applications = useSelector(
     (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),
@@ -42,55 +38,31 @@ export function PageSettingsDeploymentPipelineFeature() {
     (a, b) => a.length === b.length
   )
 
-  const loadingStatus = useSelector(environmentsLoadingStatus)
-
-  const deploymentStage = useSelector<RootState, EnvironmentEntity | undefined>(
-    (state) => selectEnvironmentById(state, environmentId),
-    (a, b) => equal(a?.deploymentStage?.items, b?.deploymentStage?.items)
-  )?.deploymentStage
-
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  useEffect(() => {
-    if (loadingStatus === 'loaded') dispatch(fetchDeploymentStageList({ environmentId }))
-  }, [dispatch, environmentId, loadingStatus])
+  const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
 
-  const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>(deploymentStage?.items)
+  const { data: deploymentStageList } = useFetchDeploymentStageList(environmentId)
+  const addServiceToDeploymentStage = useAddServiceToDeploymentStage(environmentId)
+  const deleteEnvironmentDeploymentStage = useDeleteEnvironmentDeploymentStage(environmentId)
 
   useEffect(() => {
-    if (deploymentStage?.items) setStages(deploymentStage?.items)
-  }, [setStages, deploymentStage?.items])
+    if (deploymentStageList) {
+      setStages(deploymentStageList)
+    }
+  }, [deploymentStageList])
 
   const onSubmit = (newStage: StageRequest, prevStage: StageRequest) => {
-    // dispatch function with two actions, undo and update stage
-    function dispatchServiceToDeployment(stage: StageRequest, previous?: boolean) {
-      dispatch(addServiceToDeploymentStage({ deploymentStageId: stage.deploymentStageId, serviceId: stage.serviceId }))
-        .unwrap()
-        .then(() => {
-          if (previous) {
-            // toast after apply undo
-            toast(ToastEnum.SUCCESS, 'Your deployment stage is updated')
-          } else {
-            // default toast when we don't apply undo
-            toast(
-              ToastEnum.SUCCESS,
-              'Your deployment stage is updated',
-              'Do you need to go back?',
-              () => dispatchServiceToDeployment(prevStage, true),
-              '',
-              'Undo'
-            )
-          }
-        })
-        .catch((e) => console.error(e))
-    }
-
-    if (deploymentStage?.items) {
+    if (deploymentStageList) {
       // remove current toast to avoid flood of multiple toasts
       toastAction.remove()
-      // dispatch action
-      dispatchServiceToDeployment(newStage)
+      // mutate action
+      addServiceToDeploymentStage.mutate({
+        deploymentStageId: newStage.deploymentStageId,
+        serviceId: newStage.serviceId,
+        prevStage,
+      })
     }
   }
 
@@ -125,7 +97,7 @@ export function PageSettingsDeploymentPipelineFeature() {
               isDelete: true,
               description: 'Are you sure you want to delete this stage?',
               name: stage.name,
-              action: () => dispatch(deleteEnvironmentDeploymentStage({ environmentId, stageId: stage.id })),
+              action: () => deleteEnvironmentDeploymentStage.mutate({ stageId: stage.id }),
             }),
           contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
           containerClassName: 'text-error-600',
@@ -140,7 +112,7 @@ export function PageSettingsDeploymentPipelineFeature() {
       setStages={setStages}
       onSubmit={onSubmit}
       services={[...applications, ...databases]}
-      cloudProvider={cloudProvider?.provider as CloudProviderEnum}
+      cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
       onAddStage={() => {
         openModal({
           content: <StageModalFeature onClose={closeModal} environmentId={environmentId} />,
