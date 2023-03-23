@@ -61,6 +61,7 @@ export const useFetchEnvironmentsStatus = (projectId: string) => {
     },
     {
       onError: (err) => toastError(err),
+      enabled: projectId !== '',
     }
   )
 }
