@@ -73,12 +73,9 @@ export function MenuAccount(props: MenuAccountProps) {
                   <span className="text-text-400 text-xs">{user.email}</span>
                 </div>
               </div>
-              <Icon name={IconAwesomeEnum.WHEEL} className="text-brand-500 link" />
             </div>
           ),
           containerClassName: '!h-14',
-          onClick: () =>
-            window.location.replace('https://console.qovery.com/platform/organization/user/settings/general'),
         },
       ],
     },
