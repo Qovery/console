@@ -273,7 +273,7 @@ export const useEditWebhook = (
   )
 }
 
-export const useCreateWebhooks = (
+export const useCreateWebhook = (
   organizationId: string,
   onSuccessCallback: (result: OrganizationWebhookResponse) => void
 ) => {

@@ -1,22 +1,23 @@
-/* eslint-disable-next-line */
 import { OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
   Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
   HelpSection,
   Icon,
   IconAwesomeEnum,
   InputToggle,
-  Link,
   LoaderSpinner,
 } from '@qovery/shared/ui'
-import { timeAgo } from '@qovery/shared/utils'
 
 export interface PageOrganizationWebhooksProps {
   webhookLoading: boolean
   webhooks?: OrganizationWebhookResponse[]
   openAddNew: () => void
+  openEdit: (webhook: OrganizationWebhookResponse) => void
   onToggle: (id: string, enabled: boolean) => void
 }
 
@@ -46,21 +47,27 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
           ) : props.webhooks && props.webhooks?.length > 0 ? (
             <ul className="flex flex-col gap-2">
               {props.webhooks?.map((webhook) => (
-                <li key={webhook.id} className="flex items-center justify-between">
+                <li key={webhook.id} data-testid="webhook-row" className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <Link link={webhook.target_url || ''} linkLabel={webhook.target_url} external></Link>
+                    <p className="text-text-600 font-medium text-xs mb-1">{webhook.target_url}</p>
                     <div className="text-xs text-text-400 flex gap-3">
-                      <span>{webhook.kind}</span>
-                      <span className="text-brand-500 font-medium cursor-pointer">{webhook.events?.length} events</span>
-                      <span>{timeAgo(new Date(webhook.updated_at || ''))}</span>
+                      <span>{webhook.kind} Slack</span>
                     </div>
                   </div>
-                  <div>
+                  <div className="flex gap-5 items-center">
                     <InputToggle
                       title="Enabled"
                       value={webhook.enabled}
                       small
                       onChange={(e) => props.onToggle(webhook.id, e)}
+                    />
+                    <ButtonIcon
+                      icon={IconAwesomeEnum.WHEEL}
+                      style={ButtonIconStyle.STROKED}
+                      size={ButtonSize.TINY}
+                      onClick={() => props.openEdit(webhook)}
+                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                      iconClassName="!text-xs"
                     />
                   </div>
                 </li>
@@ -69,7 +76,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
           ) : (
             <div data-testid="placeholder-credit-card" className="text-center px-3 py-6">
               <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-              <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-credit-card">
+              <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-webhook">
                 No webhook found. <br /> Please add one.
               </p>
             </div>

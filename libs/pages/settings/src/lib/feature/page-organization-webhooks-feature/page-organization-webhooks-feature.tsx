@@ -2,10 +2,12 @@ import { OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useEditWebhook, useFetchWebhooks } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import PageOrganizationWebhooks from '../../ui/page-organization-webhooks/page-organization-webhooks'
 import WebhookCrudModalFeature from './webhook-crud-modal-feature/webhook-crud-modal-feature'
 
 export function PageOrganizationWebhooksFeature() {
+  useDocumentTitle('Webhooks - Organization settings')
   const { organizationId = '' } = useParams()
   const fetchWebhooks = useFetchWebhooks(organizationId)
   const { openModal, closeModal } = useModal()
@@ -14,6 +16,12 @@ export function PageOrganizationWebhooksFeature() {
   const openAddNew = () => {
     openModal({
       content: <WebhookCrudModalFeature organizationId={organizationId} closeModal={closeModal} />,
+    })
+  }
+
+  const openEdit = (webhook: OrganizationWebhookResponse) => {
+    openModal({
+      content: <WebhookCrudModalFeature organizationId={organizationId} webhook={webhook} closeModal={closeModal} />,
     })
   }
 
@@ -41,6 +49,7 @@ export function PageOrganizationWebhooksFeature() {
       webhookLoading={fetchWebhooks.isLoading}
       openAddNew={openAddNew}
       onToggle={toggleWebhook}
+      openEdit={openEdit}
     />
   )
 }

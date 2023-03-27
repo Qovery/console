@@ -30,8 +30,8 @@ export function QoveryIcon(props: IconProps) {
           y2="213.14"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0.25" stop-color="#7366FF" />
-          <stop offset="1" stop-color="#5219FF" />
+          <stop offset="0.25" stopColor="#7366FF" />
+          <stop offset="1" stopColor="#5219FF" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_1_359"
@@ -41,8 +41,8 @@ export function QoveryIcon(props: IconProps) {
           y2="252.888"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#7366FF" />
-          <stop offset="1" stop-color="#A299FF" />
+          <stop stopColor="#7366FF" />
+          <stop offset="1" stopColor="#A299FF" />
         </linearGradient>
       </defs>
     </svg>

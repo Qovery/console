@@ -6,21 +6,12 @@ import {
 } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IconEnum } from '@qovery/shared/enums'
-import {
-  Button,
-  ButtonSize,
-  ButtonStyle,
-  Icon,
-  InputSelect,
-  InputTags,
-  InputText,
-  InputTextArea,
-} from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, InputSelect, InputTags, InputText, InputTextArea } from '@qovery/shared/ui'
 
 export interface WebhookCrudModalProps {
   closeModal: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
+  isEdition?: boolean
 }
 
 export function WebhookCrudModal(props: WebhookCrudModalProps) {
@@ -66,12 +57,12 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
                 {
                   label: 'Slack',
                   value: OrganizationWebhookKindEnum.SLACK,
-                  icon: <Icon name={IconEnum.SLACK} className="w-4 h-4" />,
+                  //icon: <Icon name={IconEnum.SLACK} className="w-4 h-4" />,
                 },
                 {
                   label: 'Standard',
                   value: OrganizationWebhookKindEnum.STANDARD,
-                  icon: <Icon name={IconEnum.QOVERY} className="w-4 h-4" />,
+                  //icon: <Icon name={IconEnum.QOVERY} className="w-4 h-4" />,
                 },
               ]}
               onChange={field.onChange}
@@ -103,9 +94,6 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         <Controller
           name={'target_secret'}
           control={control}
-          rules={{
-            required: 'Please enter secret',
-          }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"
@@ -121,41 +109,43 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         <div className="text-text-600 font-bold mb-3">Event & filters</div>
 
         <div className="mb-3">
-          <Controller
-            name={'events'}
-            control={control}
-            rules={{
-              required: 'Please enter events',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                onChange={field.onChange}
-                value={field.value}
-                isMulti
-                options={[
-                  {
-                    label: OrganizationWebhookEventEnum.FAILURE,
-                    value: OrganizationWebhookEventEnum.FAILURE,
-                  },
-                  {
-                    label: OrganizationWebhookEventEnum.STARTED,
-                    value: OrganizationWebhookEventEnum.STARTED,
-                  },
-                  {
-                    label: OrganizationWebhookEventEnum.CANCELLED,
-                    value: OrganizationWebhookEventEnum.CANCELLED,
-                  },
-                  {
-                    label: OrganizationWebhookEventEnum.SUCCESSFUL,
-                    value: OrganizationWebhookEventEnum.SUCCESSFUL,
-                  },
-                ]}
-                label="Events"
-                dataTestId="events-input"
-              />
-            )}
-          />
-          <p className="text-text-400 text-xs">List all the events you want to be notified about.</p>
+          <div data-testid={'test-debug'}>
+            <Controller
+              name={'events'}
+              control={control}
+              rules={{
+                required: 'Please enter events',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  onChange={field.onChange}
+                  value={field.value}
+                  isMulti
+                  options={[
+                    {
+                      label: OrganizationWebhookEventEnum.FAILURE,
+                      value: OrganizationWebhookEventEnum.FAILURE,
+                    },
+                    {
+                      label: OrganizationWebhookEventEnum.STARTED,
+                      value: OrganizationWebhookEventEnum.STARTED,
+                    },
+                    {
+                      label: OrganizationWebhookEventEnum.CANCELLED,
+                      value: OrganizationWebhookEventEnum.CANCELLED,
+                    },
+                    {
+                      label: OrganizationWebhookEventEnum.SUCCESSFUL,
+                      value: OrganizationWebhookEventEnum.SUCCESSFUL,
+                    },
+                  ]}
+                  label="Events"
+                  dataTestId="events-input"
+                />
+              )}
+            />
+            <p className="text-text-400 text-xs">List all the events you want to be notified about.</p>
+          </div>
         </div>
 
         <div className="mb-3">
@@ -170,7 +160,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
                 onChange={field.onChange}
                 tags={field.value || []}
                 placeholder="Add new project name filter"
-                label="Project filter"
+                label="Project name filter"
                 dataTestId="project-filter-input"
               />
             )}
@@ -212,7 +202,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
                   },
                 ]}
                 value={field.value}
-                label="Events"
+                label="Environment type filter"
                 dataTestId="environment-type-input"
               />
             )}
@@ -236,7 +226,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
           </Button>
 
           <Button type="submit" dataTestId="submit-button" size={ButtonSize.XLARGE} disabled={!formState.isValid}>
-            Create
+            {props.isEdition ? 'Update' : 'Create'}
           </Button>
         </div>
       </form>
