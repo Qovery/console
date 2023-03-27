@@ -90,10 +90,10 @@ export const useEnvironmentRunningStatus = (environmentId: string) => {
   return environmentsRunningStatusById
 }
 
-export const useGetEnvironmentRunningStatusById = (environmentId: string) => {
+export const useGetEnvironmentRunningStatusById = (environmentId: string, isLoading: boolean) => {
   return useQuery<WebsocketRunningStatusInterface, Error>(['environments-running-status', environmentId], {
     // removed error when we use mock id
-    enabled: !environmentId.includes('.'),
+    enabled: !isLoading,
   })
 }
 
