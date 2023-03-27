@@ -33,7 +33,7 @@ export function DraggableItem(props: DraggableItemProps) {
 
   const contentWithParams = serviceType === ServiceTypeEnum.DATABASE
 
-  const content = (name: string, type: string, mode: string) => {
+  const content = (name = '', type = '', mode = '') => {
     return (
       <div className={`text-text-500 font-medium ${contentWithParams ? 'text-xs' : 'text-ssm'}`}>
         <Truncate truncateLimit={contentWithParams ? 32 : 27} text={name || ''} />
@@ -58,9 +58,9 @@ export function DraggableItem(props: DraggableItemProps) {
         className="mr-2"
         serviceType={serviceType}
         cloudProvider={cloudProvider}
-        buildMode={(service as ApplicationEntity).build_mode}
+        buildMode={(service as ApplicationEntity)?.build_mode}
       />
-      {content(service?.name, (service as DatabaseEntity)?.type, (service as DatabaseEntity).mode)}
+      {content(service?.name, (service as DatabaseEntity)?.type, (service as DatabaseEntity)?.mode)}
     </div>
   )
 }

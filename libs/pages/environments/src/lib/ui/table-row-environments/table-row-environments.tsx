@@ -37,7 +37,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
   } = props
 
   // todo: should be in TableRowEnvironmentFeature
-  const { data: runningStatus } = useGetEnvironmentRunningStatusById(data.id)
+  const { data: runningStatus } = useGetEnvironmentRunningStatusById(data.id, isLoading)
 
   return (
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link} disabled={isLoading}>
