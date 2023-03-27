@@ -27,6 +27,7 @@ export function PageOrganizationWebhooksFeature() {
     if (webhook !== undefined)
       editWebhook.mutate({
         organizationId,
+        webhookId,
         data: {
           ...webhook,
           enabled: enabled,

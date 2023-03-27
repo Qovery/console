@@ -277,7 +277,7 @@ export const editApplicationAdvancedSettings = createAsyncThunk<
   if (isContainer(data.serviceType)) {
     response = await containerConfigurationApi.editContainerAdvancedSettings(
       data.applicationId,
-      data.settings as ContainerAdvancedSettings[]
+      data.settings as ContainerAdvancedSettings
     )
   } else if (isJob(data.serviceType)) {
     response = await jobConfigurationApi.editJobAdvancedSettings(

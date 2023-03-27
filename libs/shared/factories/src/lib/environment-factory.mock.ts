@@ -1,6 +1,6 @@
 import { Chance } from 'chance'
 import {
-  DeploymentHistoryStatusEnum,
+  DeploymentHistoryEnvironment,
   Environment,
   EnvironmentModeEnum,
   ServiceDeploymentStatusEnum,
@@ -23,10 +23,10 @@ const database = {
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
   name: chance.name(),
-  status: chance.pickone(Object.values([DeploymentHistoryStatusEnum.SUCCESS, DeploymentHistoryStatusEnum.FAILED])),
+  status: chance.pickone(Object.values([StateEnum.RUNNING, StateEnum.STOP_ERROR])),
 }
 
-export const deploymentMock = {
+export const deploymentMock: DeploymentHistoryEnvironment = {
   id: chance.integer().toString(),
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),

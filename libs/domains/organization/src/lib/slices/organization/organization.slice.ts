@@ -242,8 +242,16 @@ export const useEditWebhook = (
   const queryClient = useQueryClient()
 
   return useMutation(
-    async ({ organizationId, data }: { organizationId: string; data: OrganizationWebhookCreateRequest }) => {
-      const response = await webhookApi.editOrganizationWebhook(organizationId, data)
+    async ({
+      organizationId,
+      webhookId,
+      data,
+    }: {
+      organizationId: string
+      webhookId: string
+      data: OrganizationWebhookCreateRequest
+    }) => {
+      const response = await webhookApi.editOrganizationWebhook(organizationId, webhookId, data)
       return response.data
     },
     {
