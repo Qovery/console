@@ -58,9 +58,9 @@ export function DraggableItem(props: DraggableItemProps) {
         className="mr-2"
         serviceType={serviceType}
         cloudProvider={cloudProvider}
-        buildMode={(service as ApplicationEntity).build_mode}
+        buildMode={(service as ApplicationEntity)?.build_mode}
       />
-      {content(service?.name, (service as DatabaseEntity)?.type, (service as DatabaseEntity).mode)}
+      {content(service?.name, (service as DatabaseEntity)?.type, (service as DatabaseEntity)?.mode)}
     </div>
   )
 }
