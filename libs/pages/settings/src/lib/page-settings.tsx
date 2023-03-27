@@ -14,6 +14,7 @@ import {
   SETTINGS_PROJECT_URL,
   SETTINGS_ROLES_URL,
   SETTINGS_URL,
+  SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
@@ -69,6 +70,11 @@ export function PageSettings() {
       title: 'Git repositories access',
       icon: IconAwesomeEnum.KEY,
       url: pathSettings + SETTINGS_GIT_REPOSITORY_ACCESS_URL,
+    },
+    {
+      title: 'Webhook',
+      icon: IconAwesomeEnum.TOWER_BROADCAST,
+      url: pathSettings + SETTINGS_WEBHOOKS,
     },
     {
       title: 'Danger zone',

@@ -9,6 +9,7 @@ export const SETTINGS_ROLES_URL = '/roles'
 export const SETTINGS_ROLES_EDIT_URL = (roleId = ':roleId') => `/roles/edit/${roleId}`
 export const SETTINGS_BILLING_URL = '/billing-detail'
 export const SETTINGS_BILLING_SUMMARY_URL = '/billing-summary'
+export const SETTINGS_WEBHOOKS = '/webhooks'
 export const SETTINGS_DANGER_ZONE_URL = '/danger-zone'
 // project settings
 export const SETTINGS_PROJECT_URL = (projectId = ':projectId') => `/${projectId}/project`

@@ -12,6 +12,7 @@ import {
   SETTINGS_PROJECT_URL,
   SETTINGS_ROLES_EDIT_URL,
   SETTINGS_ROLES_URL,
+  SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
 import PageOrganizationBillingFeature from '../feature/page-organization-billing-feature/page-organization-billing-feature'
 import PageOrganizationBillingSummaryFeature from '../feature/page-organization-billing-summary-feature/page-organization-billing-summary-feature'
@@ -22,6 +23,7 @@ import PageOrganizationGithubRepositoryAccessFeature from '../feature/page-organ
 import { PageOrganizationMembersFeature } from '../feature/page-organization-members-feature/page-organization-members-feature'
 import { PageOrganizationRolesEditFeature } from '../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import { PageOrganizationRolesFeature } from '../feature/page-organization-roles-feature/page-organization-roles-feature'
+import PageOrganizationWebhooksFeature from '../feature/page-organization-webhooks-feature/page-organization-webhooks-feature'
 import PageProjectDangerZoneFeature from '../feature/page-project-danger-zone-feature/page-project-danger-zone-feature'
 import PageProjectGeneralFeature from '../feature/page-project-general-feature/page-project-general-feature'
 
@@ -41,6 +43,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_ROLES_EDIT_URL(),
     component: <PageOrganizationRolesEditFeature />,
+  },
+  {
+    path: SETTINGS_WEBHOOKS,
+    component: <PageOrganizationWebhooksFeature />,
   },
   {
     path: SETTINGS_BILLING_SUMMARY_URL,
