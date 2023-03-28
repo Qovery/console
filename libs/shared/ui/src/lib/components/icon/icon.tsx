@@ -29,9 +29,11 @@ import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
 import PostgresqlIcon from './icons/postgresql'
+import { QoveryIcon } from './icons/qovery'
 import RedisIcon from './icons/redis'
 import ScalewayIcon from './icons/scaleway'
 import ScalewayGrayIcon from './icons/scaleway-gray'
+import SlackIcon from './icons/slack'
 
 export interface IconProps {
   name: IconEnum | IconAwesomeEnum | string
@@ -84,6 +86,10 @@ export function Icon(props: IconProps) {
       return <SuccessIcon {...formattedProps} />
     case IconEnum.ERROR:
       return <ErrorIcon {...formattedProps} />
+    case IconEnum.QOVERY:
+      return <QoveryIcon {...formattedProps} />
+    case IconEnum.SLACK:
+      return <SlackIcon {...formattedProps} />
     case IconEnum.PAUSE:
       return <PauseIcon {...formattedProps} />
     case IconEnum.DELETE:

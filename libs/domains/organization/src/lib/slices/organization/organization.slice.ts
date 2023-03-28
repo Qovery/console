@@ -11,6 +11,7 @@ import {
   ContainerRegistriesApi,
   ContainerRegistryRequest,
   ContainerRegistryResponse,
+  Environment,
   InviteMember,
   InviteMemberRequest,
   MembersApi,
@@ -21,7 +22,11 @@ import {
   OrganizationEditRequest,
   OrganizationMainCallsApi,
   OrganizationRequest,
+  OrganizationWebhookApi,
+  OrganizationWebhookCreateRequest,
+  OrganizationWebhookResponse,
 } from 'qovery-typescript-axios'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/utils'
@@ -214,6 +219,112 @@ export const postInviteMember = createAsyncThunk(
     return result.data as InviteMember
   }
 )
+
+const webhookApi = new OrganizationWebhookApi()
+
+export const useFetchWebhooks = (organizationId: string) => {
+  return useQuery<OrganizationWebhookResponse[], Error>(
+    ['organization', organizationId, 'webhooks'],
+    async () => {
+      const response = await webhookApi.listOrganizationWebHooks(organizationId)
+      return response.data.results as Environment[]
+    },
+    {
+      onError: (err) => toastError(err),
+    }
+  )
+}
+
+export const useDeleteWebhook = (organizationId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async (data: { webhookId: string }) => {
+      const response = await webhookApi.deleteOrganizationWebhook(organizationId, data.webhookId)
+      return response.data
+    },
+    {
+      onSuccess: (data, variables) => {
+        queryClient.setQueryData<OrganizationWebhookResponse[] | undefined>(
+          ['organization', organizationId, 'webhooks'],
+          (old) => {
+            return old?.filter((environment) => environment.id !== variables.webhookId)
+          }
+        )
+        toast(ToastEnum.SUCCESS, 'Your webhook is being deleted')
+      },
+      onError: (err) => toastError(err as Error),
+    }
+  )
+}
+
+export const useEditWebhook = (
+  organizationId: string,
+  onSuccessCallback: (result: OrganizationWebhookResponse) => void
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async ({
+      organizationId,
+      webhookId,
+      data,
+    }: {
+      organizationId: string
+      webhookId: string
+      data: OrganizationWebhookCreateRequest
+    }) => {
+      const response = await webhookApi.editOrganizationWebhook(organizationId, webhookId, data)
+      return response.data
+    },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<OrganizationWebhookResponse[] | undefined>(
+          ['organization', organizationId, 'webhooks'],
+          (old) => {
+            return old?.map((webhook) => (webhook.id === result.id ? result : webhook))
+          }
+        )
+
+        toast(ToastEnum.SUCCESS, 'Your webhook has been successfully updated')
+        onSuccessCallback && onSuccessCallback(result)
+      },
+      onError: (err) => {
+        toastError(err as Error)
+      },
+    }
+  )
+}
+
+export const useCreateWebhook = (
+  organizationId: string,
+  onSuccessCallback: (result: OrganizationWebhookResponse) => void
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async ({ organizationId, data }: { organizationId: string; data: OrganizationWebhookCreateRequest }) => {
+      const response = await webhookApi.createOrganizationWebhook(organizationId, data)
+      return response.data
+    },
+    {
+      onSuccess: (result, variables) => {
+        queryClient.setQueryData<OrganizationWebhookResponse[] | undefined>(
+          ['organization', organizationId, 'webhooks'],
+          (old) => {
+            return old ? [...old, result] : old
+          }
+        )
+
+        toast(ToastEnum.SUCCESS, 'Your webhook has been successfully created')
+        onSuccessCallback && onSuccessCallback(result)
+      },
+      onError: (err) => {
+        toastError(err as Error)
+      },
+    }
+  )
+}
 
 export const initialOrganizationState: OrganizationState = organizationAdapter.getInitialState({
   loadingStatus: 'not loaded',
