@@ -1,4 +1,4 @@
-import { getByLabelText, getByTestId, getByText, queryByTestId } from '@testing-library/react'
+import { getByLabelText, getByTestId, getByText, queryByTestId, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
@@ -10,7 +10,7 @@ describe('ClusterResourcesSettings', () => {
   let props: ClusterResourcesSettingsProps
   beforeEach(() => {
     defaultValues = {
-      instance_type: 't3.medium',
+      instance_type: 't2.micro',
       disk_size: 20,
       cluster_type: 'MANAGED',
       nodes: [1, 3],
@@ -27,7 +27,7 @@ describe('ClusterResourcesSettings', () => {
           value: 't2.small',
         },
         {
-          label: 't2.medium (2CPU - 4GB RAM)',
+          label: 't2.medium (2CPU - 4GB RAM - ARM)',
           value: 't2.medium',
         },
       ],
@@ -99,5 +99,20 @@ describe('ClusterResourcesSettings', () => {
     )
 
     expect(queryByTestId(baseElement, 'banner-box')).toBeNull()
+  })
+
+  it('should display warning instance box', async () => {
+    const { baseElement } = render(
+      wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
+        defaultValues: {
+          ...defaultValues,
+          instance_type: 't2.medium',
+        },
+      })
+    )
+
+    await waitFor(() => {
+      getByTestId(baseElement, 'warning-instance')
+    })
   })
 })
