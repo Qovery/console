@@ -47,7 +47,7 @@ export function BannerBox(props: BannerBoxProps) {
 
   return (
     <div
-      data-testid={'banner-box' || dataTestId}
+      data-testid={dataTestId || 'banner-box'}
       className={`border px-4 py-3 bg rounded flex ${className} ${boxClasses[type]}`}
     >
       <div className={`mr-3 shrink-0 ${iconInCircle ? circleIconWrapperClasses : ''}`}>

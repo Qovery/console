@@ -9,7 +9,7 @@ export function listInstanceTypeFormatter(list: ClusterInstanceTypeResponseListR
     })
     .map((v) => {
       return {
-        label: `${v.name} (${v.cpu}CPU - ${v.ram_in_gb}GB RAM)`,
+        label: `${v.name} (${v.cpu}CPU - ${v.ram_in_gb}GB RAM - ${v.architecture})`,
         value: v.type,
       }
     })

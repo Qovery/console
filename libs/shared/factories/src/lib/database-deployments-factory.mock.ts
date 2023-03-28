@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { DeploymentHistoryDatabase, DeploymentHistoryStatusEnum } from 'qovery-typescript-axios'
+import { DeploymentHistoryDatabase, StateEnum } from 'qovery-typescript-axios'
 
 const chance = new Chance()
 
@@ -9,5 +9,5 @@ export const databaseDeploymentsFactoryMock = (howMany: number): DeploymentHisto
     created_at: new Date().toString(),
     updated_at: new Date().toString(),
     name: chance.name(),
-    status: chance.pickone(Object.values([DeploymentHistoryStatusEnum.SUCCESS, DeploymentHistoryStatusEnum.FAILED])),
+    status: chance.pickone(Object.values([StateEnum.RUNNING, StateEnum.READY])),
   }))

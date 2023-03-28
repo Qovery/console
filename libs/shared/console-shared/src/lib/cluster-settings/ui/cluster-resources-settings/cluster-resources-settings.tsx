@@ -1,4 +1,5 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
@@ -19,12 +20,25 @@ export interface ClusterResourcesSettingsProps {
   clusterTypeOptions?: Value[]
   instanceTypeOptions?: Value[]
   cloudProvider?: CloudProviderEnum
+  showWarningInstance?: boolean
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const { control, watch } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
+  const [warningInstance, setWarningInstance] = useState(false)
   const watchClusterType = watch('cluster_type')
+
+  const watchInstanceType = watch('instance_type')
+
+  useEffect(() => {
+    const instanceType: Value | undefined = props.instanceTypeOptions?.find(
+      (option) => option.value === watchInstanceType
+    )
+    if (instanceType) {
+      setWarningInstance(instanceType.label.indexOf('ARM') !== -1)
+    }
+  }, [watchInstanceType, props.instanceTypeOptions])
 
   return (
     <div>
@@ -86,6 +100,15 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 iconRightClassName="text-2xs relative top-[1px]"
                 external
               />
+              {warningInstance && (
+                <BannerBox
+                  dataTestId="warning-instance"
+                  message="You selected an instance with ARM64/AARCH64 Cpu architecture. To deploy your services, be sure all containers and dockerfile you are using are compatible with this CPU architecture"
+                  className="mb-3"
+                  title="Be careful"
+                  type={BannerBoxEnum.WARNING}
+                />
+              )}
             </div>
           )}
         />
