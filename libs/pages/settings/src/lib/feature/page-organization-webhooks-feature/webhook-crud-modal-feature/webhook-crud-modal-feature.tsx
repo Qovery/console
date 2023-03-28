@@ -40,7 +40,12 @@ export function WebhookCrudModalFeature(props: WebhookCrudModalFeatureProps) {
 
   return (
     <FormProvider {...methods}>
-      <WebhookCrudModal closeModal={props.closeModal} onSubmit={onSubmit} isEdition={Boolean(props.webhook)} />
+      <WebhookCrudModal
+        closeModal={props.closeModal}
+        onSubmit={onSubmit}
+        isEdition={Boolean(props.webhook)}
+        isLoading={editWebhook.isLoading || createWebhooks.isLoading}
+      />
     </FormProvider>
   )
 }

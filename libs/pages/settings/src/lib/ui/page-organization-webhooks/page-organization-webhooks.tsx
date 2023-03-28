@@ -75,12 +75,23 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       {webhook.updated_at && <span>Last updated {timeAgo(new Date(webhook.updated_at))} ago</span>}
                     </div>
                   </div>
-                  <div className="flex gap-5 items-center">
+                  <div className="flex items-center">
                     <InputToggle
                       title="Enabled"
+                      className="mr-5"
                       value={webhook.enabled}
                       small
                       onChange={(e) => props.onToggle(webhook.id, e)}
+                    />
+
+                    <ButtonIcon
+                      icon={IconAwesomeEnum.WHEEL}
+                      style={ButtonIconStyle.STROKED}
+                      size={ButtonSize.TINY}
+                      onClick={() => props.openEdit(webhook)}
+                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                      iconClassName="!text-xs"
+                      dataTestId="edit-webhook"
                     />
                     <ButtonIcon
                       icon={IconAwesomeEnum.TRASH}
@@ -90,15 +101,6 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       dataTestId="delete-webhook"
                       className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
                       iconClassName="!text-xs"
-                    />
-                    <ButtonIcon
-                      icon={IconAwesomeEnum.WHEEL}
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonSize.TINY}
-                      onClick={() => props.openEdit(webhook)}
-                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
-                      iconClassName="!text-xs"
-                      dataTestId="edit-webhook"
                     />
                   </div>
                 </li>
