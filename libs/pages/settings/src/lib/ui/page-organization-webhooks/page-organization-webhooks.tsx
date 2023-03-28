@@ -1,4 +1,4 @@
-import { OrganizationWebhookResponse } from 'qovery-typescript-axios'
+import { OrganizationWebhookKindEnum, OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
@@ -11,7 +11,9 @@ import {
   IconAwesomeEnum,
   InputToggle,
   LoaderSpinner,
+  Truncate,
 } from '@qovery/shared/ui'
+import { timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageOrganizationWebhooksProps {
   webhookLoading: boolean
@@ -19,6 +21,7 @@ export interface PageOrganizationWebhooksProps {
   openAddNew: () => void
   openEdit: (webhook: OrganizationWebhookResponse) => void
   onToggle: (id: string, enabled: boolean) => void
+  onDelete: (webhook: OrganizationWebhookResponse) => void
 }
 
 export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
@@ -27,12 +30,10 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8 gap-3">
           <div>
-            <h1 className="h5 text-text-700 mb-2">
-              Webhook <Icon name={IconEnum.SLACK} />
-            </h1>
+            <h1 className="h5 text-text-700 mb-2">Webhook</h1>
             <p className="text-text-500 text-xs">
-              Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis
-              mollit. Exercitation veniam consequat sunt nostrud amet.
+              Qovery allows you to create webhooks at organization-level so that, when an event happens on an
+              environment within your organization, you can get notified on external applications (for instance, Slack).
             </p>
           </div>
           <Button
@@ -44,19 +45,34 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
             Add new
           </Button>
         </div>
-        <BlockContent title="Webhook">
+        <BlockContent title="Webhook" classNameContent="">
           {props.webhookLoading ? (
-            <div className="flex justify-center">
+            <div className="flex justify-center  py-4 px-5">
               <LoaderSpinner className="w-5" />
             </div>
           ) : props.webhooks && props.webhooks?.length > 0 ? (
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col">
               {props.webhooks?.map((webhook) => (
-                <li key={webhook.id} data-testid="webhook-row" className="flex items-center justify-between">
+                <li
+                  key={webhook.id}
+                  data-testid="webhook-row"
+                  className="flex items-center justify-between border-b border-element-light-lighter-500 py-4 px-5 last:border-0"
+                >
                   <div className="flex flex-col">
-                    <p className="text-text-600 font-medium text-xs mb-1">{webhook.target_url}</p>
+                    <p className="text-text-600 font-medium text-xs mb-1">
+                      <Truncate truncateLimit={60} text={webhook.target_url || ''} />
+                    </p>
                     <div className="text-xs text-text-400 flex gap-3">
-                      <span>{webhook.kind} Slack</span>
+                      <span className="flex gap-2">
+                        <Icon
+                          name={
+                            webhook.kind === OrganizationWebhookKindEnum.STANDARD ? IconEnum.QOVERY : IconEnum.SLACK
+                          }
+                          className="h-4 w-4"
+                        />{' '}
+                        {upperCaseFirstLetter(webhook.kind || '')}
+                      </span>
+                      {webhook.updated_at && <span>Last updated {timeAgo(new Date(webhook.updated_at))} ago</span>}
                     </div>
                   </div>
                   <div className="flex gap-5 items-center">
@@ -67,11 +83,20 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       onChange={(e) => props.onToggle(webhook.id, e)}
                     />
                     <ButtonIcon
+                      icon={IconAwesomeEnum.TRASH}
+                      style={ButtonIconStyle.STROKED}
+                      size={ButtonSize.TINY}
+                      onClick={() => props.onDelete(webhook)}
+                      dataTestId="delete-webhook"
+                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                      iconClassName="!text-xs"
+                    />
+                    <ButtonIcon
                       icon={IconAwesomeEnum.WHEEL}
                       style={ButtonIconStyle.STROKED}
                       size={ButtonSize.TINY}
                       onClick={() => props.openEdit(webhook)}
-                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
                       iconClassName="!text-xs"
                       dataTestId="edit-webhook"
                     />
@@ -80,7 +105,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
               ))}
             </ul>
           ) : (
-            <div data-testid="placeholder-credit-card" className="text-center px-3 py-6">
+            <div className="text-center py-4 px-5">
               <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
               <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-webhook">
                 No webhook found. <br /> Please add one.

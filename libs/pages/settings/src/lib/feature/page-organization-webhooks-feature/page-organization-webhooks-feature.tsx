@@ -1,7 +1,7 @@
 import { OrganizationWebhookResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useEditWebhook, useFetchWebhooks } from '@qovery/domains/organization'
-import { useModal } from '@qovery/shared/ui'
+import { useDeleteWebhook, useEditWebhook, useFetchWebhooks } from '@qovery/domains/organization'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import PageOrganizationWebhooks from '../../ui/page-organization-webhooks/page-organization-webhooks'
 import WebhookCrudModalFeature from './webhook-crud-modal-feature/webhook-crud-modal-feature'
@@ -10,7 +10,9 @@ export function PageOrganizationWebhooksFeature() {
   useDocumentTitle('Webhooks - Organization settings')
   const { organizationId = '' } = useParams()
   const fetchWebhooks = useFetchWebhooks(organizationId)
+  const deleteWebhooks = useDeleteWebhook(organizationId)
   const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
   const editWebhook = useEditWebhook(organizationId, closeModal)
 
   const openAddNew = () => {
@@ -22,6 +24,18 @@ export function PageOrganizationWebhooksFeature() {
   const openEdit = (webhook: OrganizationWebhookResponse) => {
     openModal({
       content: <WebhookCrudModalFeature organizationId={organizationId} webhook={webhook} closeModal={closeModal} />,
+    })
+  }
+
+  const onDelete = (webhook: OrganizationWebhookResponse) => {
+    openModalConfirmation({
+      title: 'Delete webhook',
+      isDelete: true,
+      description: 'To confirm the deletion of your webhook, please type the target url of the webhook:',
+      name: webhook.target_url || '',
+      action: () => {
+        deleteWebhooks.mutate({ webhookId: webhook.id })
+      },
     })
   }
 
@@ -50,6 +64,7 @@ export function PageOrganizationWebhooksFeature() {
       openAddNew={openAddNew}
       onToggle={toggleWebhook}
       openEdit={openEdit}
+      onDelete={onDelete}
     />
   )
 }

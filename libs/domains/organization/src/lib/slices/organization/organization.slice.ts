@@ -235,6 +235,29 @@ export const useFetchWebhooks = (organizationId: string) => {
   )
 }
 
+export const useDeleteWebhook = (organizationId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation(
+    async (data: { webhookId: string }) => {
+      const response = await webhookApi.deleteOrganizationWebhook(organizationId, data.webhookId)
+      return response.data
+    },
+    {
+      onSuccess: (data, variables) => {
+        queryClient.setQueryData<OrganizationWebhookResponse[] | undefined>(
+          ['organization', organizationId, 'webhooks'],
+          (old) => {
+            return old?.filter((environment) => environment.id !== variables.webhookId)
+          }
+        )
+        toast(ToastEnum.SUCCESS, 'Your webhook is being deleted')
+      },
+      onError: (err) => toastError(err as Error),
+    }
+  )
+}
+
 export const useEditWebhook = (
   organizationId: string,
   onSuccessCallback: (result: OrganizationWebhookResponse) => void
