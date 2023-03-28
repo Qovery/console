@@ -35,7 +35,12 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
               mollit. Exercitation veniam consequat sunt nostrud amet.
             </p>
           </div>
-          <Button onClick={props.openAddNew} iconRight={IconAwesomeEnum.CIRCLE_PLUS} className="shrink-0">
+          <Button
+            dataTestId="add-new"
+            onClick={props.openAddNew}
+            iconRight={IconAwesomeEnum.CIRCLE_PLUS}
+            className="shrink-0"
+          >
             Add new
           </Button>
         </div>
@@ -68,6 +73,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       onClick={() => props.openEdit(webhook)}
                       className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
                       iconClassName="!text-xs"
+                      dataTestId="edit-webhook"
                     />
                   </div>
                 </li>
@@ -87,8 +93,8 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#managing-git-permissions-using-the-qovery-github-app',
-            linkLabel: 'Managing Git Permissions Using the Qovery Github application',
+            link: 'https://hub.qovery.com/docs/using-qovery/integration/webhook/',
+            linkLabel: 'Managing your Webhooks',
             external: true,
           },
         ]}

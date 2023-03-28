@@ -6,7 +6,17 @@ import {
 } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputSelect, InputTags, InputText, InputTextArea } from '@qovery/shared/ui'
+import { IconEnum } from '@qovery/shared/enums'
+import {
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  InputSelect,
+  InputTags,
+  InputText,
+  InputTextArea,
+} from '@qovery/shared/ui'
 
 export interface WebhookCrudModalProps {
   closeModal: () => void
@@ -22,7 +32,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
     <div className="p-6">
       <h2 className="h4 text-text-600 max-w-sm truncate mb-6">Create new webhook</h2>
 
-      <form onSubmit={onSubmit}>
+      <form data-testid="form" onSubmit={onSubmit}>
         <div className="text-text-600 font-bold mb-3">General</div>
 
         <Controller
@@ -57,12 +67,12 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
                 {
                   label: 'Slack',
                   value: OrganizationWebhookKindEnum.SLACK,
-                  //icon: <Icon name={IconEnum.SLACK} className="w-4 h-4" />,
+                  icon: <Icon name={IconEnum.SLACK} className="w-4 h-4" />,
                 },
                 {
                   label: 'Standard',
                   value: OrganizationWebhookKindEnum.STANDARD,
-                  //icon: <Icon name={IconEnum.QOVERY} className="w-4 h-4" />,
+                  icon: <Icon name={IconEnum.QOVERY} className="w-4 h-4" />,
                 },
               ]}
               onChange={field.onChange}
@@ -121,6 +131,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
                   onChange={field.onChange}
                   value={field.value}
                   isMulti
+                  portal
                   options={[
                     {
                       label: OrganizationWebhookEventEnum.FAILURE,
@@ -180,9 +191,9 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
             }}
             render={({ field, fieldState: { error } }) => (
               <InputSelect
+                portal
                 onChange={field.onChange}
                 isMulti
-                portal
                 options={[
                   {
                     label: EnvironmentModeEnum.DEVELOPMENT,
