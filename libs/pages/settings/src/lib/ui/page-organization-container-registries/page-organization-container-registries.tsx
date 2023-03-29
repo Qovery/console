@@ -13,6 +13,7 @@ import {
   IconAwesomeEnum,
   LoaderSpinner,
   Tooltip,
+  Truncate,
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
 
@@ -70,7 +71,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                   <Icon name={logoByRegistryKind(registry.kind)} width="20" height="20" />
                   <div className="ml-4">
                     <h2 className="flex text-xs text-text-600 font-medium mb-1">
-                      {registry.name}
+                      <Truncate truncateLimit={60} text={registry.name || ''} />
                       {registry.description && (
                         <Tooltip content={registry.description}>
                           <div className="ml-1 cursor-pointer">

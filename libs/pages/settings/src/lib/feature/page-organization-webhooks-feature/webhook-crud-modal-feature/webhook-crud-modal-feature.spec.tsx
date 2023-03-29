@@ -42,7 +42,7 @@ describe('WebhookCrudModalFeature', () => {
   })
 
   it('should mutate useCreateWebhook', async () => {
-    const { baseElement, debug } = render(<WebhookCrudModalFeature {...props} />)
+    const { baseElement } = render(<WebhookCrudModalFeature {...props} />)
     const url = getByLabelText(baseElement, 'URL')
     const kind = getByLabelText(baseElement, 'Kind')
     const description = getByLabelText(baseElement, 'Description')
@@ -101,8 +101,6 @@ describe('WebhookCrudModalFeature', () => {
     const secret = getByLabelText(baseElement, 'Secret')
     const tags = getByTestId(baseElement, 'input-tags-field')
     const envType = getByLabelText(baseElement, 'Environment type filter')
-
-    await act(() => {})
 
     await act(() => {
       fireEvent.change(url, { target: { value: 'https://test.com' } })
