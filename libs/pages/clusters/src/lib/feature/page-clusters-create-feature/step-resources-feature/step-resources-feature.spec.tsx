@@ -12,18 +12,21 @@ const mockInstanceType = [
     cpu: 1,
     ram_in_gb: 1,
     type: 't2.micro',
+    architecture: 'arm64',
   },
   {
     name: 't2.small',
     cpu: 1,
     ram_in_gb: 2,
     type: 't2.small',
+    architecture: 'arm64',
   },
   {
     name: 't2.medium',
     cpu: 2,
     ram_in_gb: 4,
     type: 't2.medium',
+    architecture: 'x86_64',
   },
 ]
 
@@ -108,7 +111,7 @@ describe('StepResourcesFeature', () => {
     )
 
     const select = getByLabelText(baseElement, 'Instance type')
-    selectEvent.select(select, 't2.small (1CPU - 2GB RAM)', {
+    selectEvent.select(select, 't2.small (1CPU - 2GB RAM - arm64)', {
       container: document.body,
     })
 
