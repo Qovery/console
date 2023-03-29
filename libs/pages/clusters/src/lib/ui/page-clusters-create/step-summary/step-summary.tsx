@@ -132,7 +132,7 @@ export function StepSummary(props: StepSummaryProps) {
                 Instance type:{' '}
                 <strong className="font-medium">
                   {props.detailInstanceType?.name} ({props.detailInstanceType?.cpu}CPU -{' '}
-                  {props.detailInstanceType?.ram_in_gb}GB RAM)
+                  {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
                 </strong>
               </li>
               <li>

@@ -22,18 +22,21 @@ const mockInstanceType = [
     cpu: 1,
     ram_in_gb: 1,
     type: 't2.micro',
+    architecture: 'arm64',
   },
   {
     name: 't2.small',
     cpu: 1,
     ram_in_gb: 2,
     type: 't2.small',
+    architecture: 'arm64',
   },
   {
     name: 't2.medium',
     cpu: 2,
     ram_in_gb: 4,
     type: 't2.medium',
+    architecture: 'x86_64',
   },
 ]
 
@@ -95,7 +98,7 @@ describe('PageSettingsResourcesFeature', () => {
     getByText(baseElement, `min ${mockCluster?.min_running_nodes} - max ${mockCluster?.max_running_nodes}`)
 
     await waitFor(() => {
-      getByText(baseElement, 't2.micro (1CPU - 1GB RAM)')
+      getByText(baseElement, 't2.micro (1CPU - 1GB RAM - arm64)')
     })
   })
 
