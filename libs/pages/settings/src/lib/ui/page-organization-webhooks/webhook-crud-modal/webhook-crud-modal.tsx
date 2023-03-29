@@ -31,7 +31,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       <div className="text-text-600 font-bold mb-3">General</div>
 
       <Controller
-        name={'target_url'}
+        name="target_url"
         control={control}
         rules={{
           required: 'Please enter a target url.',
@@ -49,7 +49,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       />
 
       <Controller
-        name={'kind'}
+        name="kind"
         control={control}
         rules={{
           required: 'Please select a kind.',
@@ -79,25 +79,21 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       />
 
       <Controller
-        name={'description'}
+        name="description"
         control={control}
-        rules={{
-          required: 'Please enter a description.',
-        }}
-        render={({ field, fieldState: { error } }) => (
+        render={({ field }) => (
           <InputTextArea
             className="mb-3"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
             label="Description"
-            error={error?.message}
           />
         )}
       />
 
       <Controller
-        name={'target_secret'}
+        name="target_secret"
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputText
@@ -114,14 +110,14 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       <div className="text-text-600 font-bold mb-3">Event & filters</div>
 
       <div className="mb-3">
-        <div data-testid={'test-debug'}>
+        <div data-testid="test-debug">
           <Controller
-            name={'events'}
+            name="events"
             control={control}
             rules={{
               required: 'Please enter events',
             }}
-            render={({ field, fieldState: { error } }) => (
+            render={({ field }) => (
               <InputSelect
                 onChange={field.onChange}
                 value={field.value}
@@ -156,12 +152,9 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
 
       <div className="mb-3">
         <Controller
-          name={'project_names_filter'}
+          name="project_names_filter"
           control={control}
-          rules={{
-            required: 'Please enter project names filter',
-          }}
-          render={({ field, fieldState: { error } }) => (
+          render={({ field }) => (
             <InputTags
               onChange={field.onChange}
               tags={field.value || []}
@@ -181,12 +174,9 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
 
       <div className="mb-3">
         <Controller
-          name={'environment_types_filter'}
+          name="environment_types_filter"
           control={control}
-          rules={{
-            required: 'Please enter environment types filter',
-          }}
-          render={({ field, fieldState: { error } }) => (
+          render={({ field }) => (
             <InputSelect
               portal
               onChange={field.onChange}

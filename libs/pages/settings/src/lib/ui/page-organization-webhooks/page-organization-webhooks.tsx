@@ -11,6 +11,7 @@ import {
   IconAwesomeEnum,
   InputToggle,
   LoaderSpinner,
+  Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
 import { timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -59,8 +60,15 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                   className="flex items-center justify-between border-b border-element-light-lighter-500 py-4 px-5 last:border-0"
                 >
                   <div className="flex flex-col">
-                    <p className="text-text-600 font-medium text-xs mb-1">
+                    <p className="flex text-text-600 font-medium text-xs mb-1">
                       <Truncate truncateLimit={60} text={webhook.target_url || ''} />
+                      {webhook.description && (
+                        <Tooltip content={webhook.description}>
+                          <div className="ml-1 cursor-pointer">
+                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                          </div>
+                        </Tooltip>
+                      )}
                     </p>
                     <div className="text-xs text-text-400 flex gap-3">
                       <span className="flex gap-2">
