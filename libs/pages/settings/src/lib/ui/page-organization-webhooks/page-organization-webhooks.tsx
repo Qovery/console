@@ -85,8 +85,8 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                   </div>
                   <div className="flex items-center">
                     <InputToggle
-                      title="Enabled"
-                      className="mr-5"
+                      title={`${webhook.enabled ? 'Enabled' : 'Disabled'}`}
+                      className={`${webhook.enabled ? 'mr-5' : 'mr-4'}`}
                       value={webhook.enabled}
                       small
                       onChange={(e) => props.onToggle(webhook.id, e)}
