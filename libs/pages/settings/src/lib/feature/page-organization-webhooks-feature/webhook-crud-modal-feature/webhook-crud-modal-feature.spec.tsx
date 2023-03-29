@@ -102,8 +102,6 @@ describe('WebhookCrudModalFeature', () => {
     const tags = getByTestId(baseElement, 'input-tags-field')
     const envType = getByLabelText(baseElement, 'Environment type filter')
 
-    await act(() => {})
-
     await act(() => {
       fireEvent.change(url, { target: { value: 'https://test.com' } })
       selectEvent.select(kind, ['Standard'], {
