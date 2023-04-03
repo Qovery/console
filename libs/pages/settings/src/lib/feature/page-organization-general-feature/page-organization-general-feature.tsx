@@ -9,12 +9,14 @@ import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationGeneral from '../../ui/page-organization-general/page-organization-general'
 
 export const handleSubmit = (data: FieldValues, organization: Organization) => {
+  console.log(data['website_url'])
+
   return {
     ...organization,
     logo_url: data['logo_url'],
     name: data['name'],
     description: data['description'],
-    website_url: data['website_url'],
+    website_url: data['website_url'] === '' ? undefined : data['website_url'],
     admin_emails: data['admin_emails'],
   }
 }
