@@ -45,6 +45,8 @@ export function StatusChip(props: StatusChipProps) {
         return true
       case StateEnum.STOP_QUEUED:
         return true
+      case StateEnum.CANCELING:
+        return true
       case StateEnum.QUEUED:
         return true
       case StateEnum.DELETE_QUEUED:
