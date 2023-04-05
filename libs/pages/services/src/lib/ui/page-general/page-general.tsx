@@ -26,7 +26,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
 
   const tableHead = [
     {
-      title: `${data?.length} service${data?.length && data.length > 1 ? 's' : ''}`,
+      title: !loading ? `${data?.length} service${data?.length && data.length > 1 ? 's' : ''}` : `0 service`,
       className: 'px-4 py-2',
       filter: [
         {

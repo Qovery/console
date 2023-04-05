@@ -47,7 +47,7 @@ export function PageGeneral(props: PageGeneralProps) {
 
   const tableHead = [
     {
-      title: `Environment${data.length > 1 ? 's' : ''}`,
+      title: !loading ? `${data?.length} environment${data?.length && data.length > 1 ? 's' : ''}` : `0 environment`,
       className: 'px-4 py-2',
       filter: [
         {

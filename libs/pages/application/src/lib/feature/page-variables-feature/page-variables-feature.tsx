@@ -100,7 +100,7 @@ export function PageVariablesFeature() {
 
   const tableHead: TableHeadProps<EnvironmentVariableEntity>[] = [
     {
-      title: `${data.length} variable${data.length > 1 ? 's' : ''}`,
+      title: !isLoading ? `${data?.length} variable${data?.length && data.length > 1 ? 's' : ''}` : `0 variable`,
       className: 'px-4 py-2',
     },
     {
