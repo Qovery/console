@@ -15,7 +15,7 @@ import {
   InputTextSmall,
   InputToggle,
 } from '@qovery/shared/ui'
-import { computeAvailableScope } from '@qovery/shared/utils'
+import { computeAvailableScope, generateScopeLabel } from '@qovery/shared/utils'
 import { validateKey, warningMessage } from '../../feature/import-environment-variable-modal-feature/utils/form-check'
 
 export interface ImportEnvironmentVariableModalProps {
@@ -82,7 +82,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                   className="w-[188px]"
                   dataTestId="select-scope-for-all"
                   name="search"
-                  items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
+                  items={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
                   onChange={(value?: string) => {
                     props.changeScopeForAll(value as APIVariableScopeEnum)
                     trigger().then()
@@ -170,7 +170,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                         field.onChange(e)
                         trigger(key + '_key').then()
                       }}
-                      items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
+                      items={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
                     />
                   )}
                 />

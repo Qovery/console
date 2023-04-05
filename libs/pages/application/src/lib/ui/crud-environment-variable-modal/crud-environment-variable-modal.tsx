@@ -2,6 +2,7 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, ButtonStyle, Icon, InputSelect, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { generateScopeLabel } from '@qovery/shared/utils'
 import {
   DataFormEnvironmentVariableInterface,
   EnvironmentVariableCrudMode,
@@ -152,7 +153,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             <InputSelect
               className="mb-4"
               portal
-              options={props.availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
+              options={props.availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
               onChange={field.onChange}
               value={field.value}
               label="Scope"

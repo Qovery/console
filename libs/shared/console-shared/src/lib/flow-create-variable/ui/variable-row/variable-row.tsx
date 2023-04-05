@@ -10,6 +10,7 @@ import {
   InputTextSmall,
   InputToggle,
 } from '@qovery/shared/ui'
+import { generateScopeLabel } from '@qovery/shared/utils'
 
 export interface VariableRowProps {
   index: number
@@ -85,7 +86,7 @@ export function VariableRow(props: VariableRowProps) {
                 field.onChange(e)
                 trigger(`variables.${index}.value`).then()
               }}
-              items={availableScopes.map((s) => ({ value: s, label: s.toLowerCase() }))}
+              items={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
             />
           )}
         />

@@ -1,5 +1,6 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
+import { upperCaseFirstLetter } from './uppercase-first-letter'
 
 const environmentScopes = (serviceType?: ServiceTypeEnum) => [
   {
@@ -63,4 +64,14 @@ export function getScopeHierarchy(scope?: APIVariableScopeEnum, serviceType?: Se
   const hierarchy = environmentScopes(serviceType).find((s) => s.name === scope)?.hierarchy
 
   return hierarchy || -1
+}
+
+export function generateScopeLabel(scope: APIVariableScopeEnum): string {
+  if (
+    scope === APIVariableScopeEnum.APPLICATION ||
+    scope === APIVariableScopeEnum.JOB ||
+    scope === APIVariableScopeEnum.CONTAINER
+  )
+    return 'Service'
+  return upperCaseFirstLetter(scope) as string
 }
