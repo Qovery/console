@@ -189,8 +189,11 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     actionStopEnvironmentMutate,
   ])
 
-  const deleteEnvironment = useDeleteEnvironment(projectId, environment.id, () =>
-    navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL)
+  const deleteEnvironment = useDeleteEnvironment(
+    projectId,
+    environment.id,
+    () => navigate(ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL),
+    status?.state && status.state === StateEnum.READY
   )
 
   const removeEnvironment = async () => {

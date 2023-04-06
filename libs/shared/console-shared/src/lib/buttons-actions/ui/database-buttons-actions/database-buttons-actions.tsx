@@ -54,14 +54,14 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
   )
 
-  const removeDatabase = (id: string, name?: string) => {
+  const removeDatabase = (id: string, name?: string, force = false) => {
     openModalConfirmation({
       title: `Delete database`,
       description: `To confirm the deletion of your database, please type the name of the database:`,
       name: name,
       isDelete: true,
       action: () => {
-        dispatch(deleteDatabaseAction({ environmentId, databaseId: id }))
+        dispatch(deleteDatabaseAction({ environmentId, databaseId: id, force }))
         navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       },
     })
@@ -221,7 +221,12 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
                     name: 'Delete database',
                     containerClassName: 'text-error-600',
                     contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
-                    onClick: () => removeDatabase(database.id, database.name),
+                    onClick: () =>
+                      removeDatabase(
+                        database.id,
+                        database.name,
+                        database.status?.state && database.status?.state === StateEnum.READY
+                      ),
                   },
                 ],
               },
