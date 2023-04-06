@@ -68,7 +68,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
   )
 
-  const removeService = (id: string, name?: string) => {
+  const removeService = (id: string, name?: string, force = false) => {
     openModalConfirmation({
       title: `Delete application`,
       description: `To confirm the deletion of your application, please type the name of the application:`,
@@ -76,7 +76,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       isDelete: true,
       action: () => {
         dispatch(
-          deleteApplicationAction({ environmentId, applicationId: id, serviceType: getServiceType(application) })
+          deleteApplicationAction({ environmentId, applicationId: id, serviceType: getServiceType(application), force })
         )
         navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       },
@@ -325,7 +325,12 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                     name: 'Delete service',
                     containerClassName: 'text-error-600',
                     contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
-                    onClick: () => removeService(application.id, application.name),
+                    onClick: () =>
+                      removeService(
+                        application.id,
+                        application.name,
+                        application.status?.state && application.status.state === StateEnum.READY
+                      ),
                   },
                 ],
               },

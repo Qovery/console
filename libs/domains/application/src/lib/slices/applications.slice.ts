@@ -52,6 +52,7 @@ import {
   refactoContainerApplicationPayload,
   refactoGitApplicationPayload,
   refactoJobPayload,
+  removeOneToManyRelation,
   shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
@@ -311,6 +312,35 @@ export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
   return response.data
 })
 
+export const deleteApplicationAction = createAsyncThunk<
+  any,
+  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; force?: boolean }
+>('applicationActions/delete', async (data, { dispatch }) => {
+  try {
+    let response
+    if (isContainer(data.serviceType)) {
+      response = await containerMainCallsApi.deleteContainer(data.applicationId)
+    } else if (isJob(data.serviceType)) {
+      response = await jobMainCallsApi.deleteJob(data.applicationId)
+    } else {
+      response = await applicationMainCallsApi.deleteApplication(data.applicationId)
+    }
+
+    if (response.status === 204) {
+      // refetch status after update
+      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your application is being deleted')
+    }
+
+    return response
+  } catch (err) {
+    // error message
+    toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
+    return
+  }
+})
+
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -408,6 +438,14 @@ export const applicationsSlice = createSlice({
             undefined,
             'Redeploy'
           )
+        }
+      })
+      .addCase(deleteApplicationAction.fulfilled, (state: ApplicationsState, action) => {
+        if (action.meta.arg.force) {
+          applicationsAdapter.removeOne(state, action.meta.arg.applicationId)
+          state.joinEnvApplication = removeOneToManyRelation(action.meta.arg.applicationId, {
+            ...state.joinEnvApplication,
+          })
         }
       })
       .addCase(editApplication.rejected, (state: ApplicationsState, action) => {

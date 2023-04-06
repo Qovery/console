@@ -66,7 +66,7 @@ export const useFetchEnvironmentsStatus = (projectId: string) => {
   )
 }
 
-export const getEnvironmentStatusById = (environmentId: string, status?: Status[]) => {
+export const getEnvironmentStatusById = (environmentId: string, status?: Status[]): Status | undefined => {
   return status?.find((environment) => environment.id === environmentId)
 }
 

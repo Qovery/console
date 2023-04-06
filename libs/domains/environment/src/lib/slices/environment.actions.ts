@@ -137,7 +137,12 @@ export const useActionCancelEnvironment = (
   )
 }
 
-export const useDeleteEnvironment = (projectId: string, environmentId: string, onSettledCallback?: () => void) => {
+export const useDeleteEnvironment = (
+  projectId: string,
+  environmentId: string,
+  onSettledCallback?: () => void,
+  force?: boolean
+) => {
   const queryClient = useQueryClient()
 
   return useMutation(
@@ -147,9 +152,12 @@ export const useDeleteEnvironment = (projectId: string, environmentId: string, o
     },
     {
       onSuccess: () => {
-        queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
-          return old?.filter((environment) => environment.id !== environmentId)
-        })
+        if (force) {
+          queryClient.setQueryData<Environment[] | undefined>(['project', projectId, 'environments'], (old) => {
+            return old?.filter((environment) => environment.id !== environmentId)
+          })
+        }
+
         toast(ToastEnum.SUCCESS, 'Your environment is being deleted')
       },
       onError: (err) => toastError(err as Error),

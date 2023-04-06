@@ -24,6 +24,7 @@ import {
   addOneToManyRelation,
   getEntitiesByIds,
   refactoDatabasePayload,
+  removeOneToManyRelation,
   shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
@@ -110,6 +111,26 @@ export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { da
   }
 )
 
+export const deleteDatabaseAction = createAsyncThunk<
+  any,
+  { environmentId: string; databaseId: string; force?: boolean }
+>('databaseActions/delete', async (data, { dispatch }) => {
+  try {
+    const response = await databaseMainCallsApi.deleteDatabase(data.databaseId)
+    if (response.status === 204 || response.status === 200) {
+      // refetch status after update
+      await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
+      // success message
+      toast(ToastEnum.SUCCESS, 'Your database is being deleted')
+    }
+
+    return response
+  } catch (err) {
+    toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
+    return
+  }
+})
+
 export const initialDatabasesState: DatabasesState = databasesAdapter.getInitialState({
   loadingStatus: 'not loaded',
   error: null,
@@ -195,6 +216,14 @@ export const databasesSlice = createSlice({
       .addCase(fetchDatabase.rejected, (state: DatabasesState, action) => {
         state.loadingStatus = 'error'
         state.error = action.error.message
+      })
+      .addCase(deleteDatabaseAction.fulfilled, (state: DatabasesState, action) => {
+        if (action.meta.arg.force) {
+          databasesAdapter.removeOne(state, action.meta.arg.databaseId)
+          state.joinEnvDatabase = removeOneToManyRelation(action.meta.arg.databaseId, {
+            ...state.joinEnvDatabase,
+          })
+        }
       })
       // create
       .addCase(createDatabase.fulfilled, (state: DatabasesState, action) => {

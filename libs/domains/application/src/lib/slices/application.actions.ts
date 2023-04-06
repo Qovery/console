@@ -1,25 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import {
-  ApplicationActionsApi,
-  ApplicationMainCallsApi,
-  ContainerActionsApi,
-  ContainerMainCallsApi,
-  JobActionsApi,
-  JobForceEvent,
-  JobMainCallsApi,
-} from 'qovery-typescript-axios'
+import { ApplicationActionsApi, ContainerActionsApi, JobActionsApi, JobForceEvent } from 'qovery-typescript-axios'
 import { ServiceTypeEnum, isApplication, isContainer, isJob } from '@qovery/shared/enums'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { fetchApplicationDeployments, fetchApplicationsStatus } from './applications.slice'
 
 const applicationActionApi = new ApplicationActionsApi()
-const applicationMainCallsApi = new ApplicationMainCallsApi()
-
 const containerActionApi = new ContainerActionsApi()
-const containerMainCallsApi = new ContainerMainCallsApi()
-
 const jobActionApi = new JobActionsApi()
-const jobMainCallsApi = new JobMainCallsApi()
 
 export const postApplicationActionsRestart = createAsyncThunk<
   any,
@@ -224,34 +211,6 @@ export const postApplicationActionsStop = createAsyncThunk<
   } catch (err) {
     // error message
     return toast(ToastEnum.ERROR, 'Stopping error', (err as Error).message)
-  }
-})
-
-export const deleteApplicationAction = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum }
->('applicationActions/delete', async (data, { dispatch }) => {
-  try {
-    let response
-    if (isContainer(data.serviceType)) {
-      response = await containerMainCallsApi.deleteContainer(data.applicationId)
-    } else if (isJob(data.serviceType)) {
-      response = await jobMainCallsApi.deleteJob(data.applicationId)
-    } else {
-      response = await applicationMainCallsApi.deleteApplication(data.applicationId)
-    }
-
-    if (response.status === 204) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your application is being deleted')
-    }
-
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
   }
 })
 
