@@ -1,0 +1,83 @@
+import equal from 'fast-deep-equal'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Route, Routes, useLocation, useParams } from 'react-router-dom'
+import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
+import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import {
+  getEnvironmentById,
+  getEnvironmentStatusById,
+  useFetchEnvironments,
+  useFetchEnvironmentsStatus,
+} from '@qovery/domains/environment'
+import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/utils'
+import { AppDispatch, RootState } from '@qovery/store'
+import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
+import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
+import SidebarFeature from './feature/sidebar-feature/sidebar-feature'
+
+export function PageEnvironmentLogs() {
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const { data: environments } = useFetchEnvironments(projectId)
+  const { data: environmentsStatuses } = useFetchEnvironmentsStatus(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+  const environmentStatus = getEnvironmentStatusById(environmentId, environmentsStatuses)
+  const location = useLocation()
+
+  useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
+
+  const applications = useSelector<RootState, ApplicationEntity[]>(
+    (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
+    equal
+  )
+  const databases = useSelector<RootState, DatabaseEntity[]>(
+    (state) => selectDatabasesEntitiesByEnvId(state, environmentId),
+    equal
+  )
+
+  const [serviceId, setServiceId] = useState<string>('')
+
+  useEffect(() => {
+    const fetchServicesStatusByInterval = setInterval(() => {
+      if (applications.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
+      if (databases.length > 0) dispatch(fetchDatabasesStatus({ environmentId }))
+    }, 3000)
+    return () => clearInterval(fetchServicesStatusByInterval)
+  }, [dispatch, environmentId, applications.length, databases.length])
+
+  return (
+    <div className="flex h-full">
+      <SidebarFeature serviceId={serviceId} />
+      <Routes>
+        <Route
+          path={DEPLOYMENT_LOGS_URL()}
+          element={<DeploymentLogsFeature clusterId={environment?.cluster_id || ''} setServiceId={setServiceId} />}
+        />
+        <Route
+          path={SERVICE_LOGS_URL()}
+          element={<PodLogsFeature clusterId={environment?.cluster_id || ''} setServiceId={setServiceId} />}
+        />
+      </Routes>
+      {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
+        location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
+        <div className="flex justify-center w-[calc(100%-8px)] min-h-full bg-element-light-darker-400 m-1 rounded">
+          <div className="flex flex-col items-center mt-12">
+            <Icon name={IconAwesomeEnum.WRENCH} className="text-text-300" />
+            <p className="text-text-300 font-medium">
+              Environment is {environmentStatus?.state.toLowerCase().replace('_', ' ')}, please select a service on the
+              left menu.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default PageEnvironmentLogs

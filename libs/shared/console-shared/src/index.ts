@@ -33,3 +33,6 @@ export * from './lib/cluster-settings/feature/create-edit-credentials-modal-feat
 export * from './lib/cluster-settings/ui/card-cluster-feature/card-cluster-feature'
 export * from './lib/add-credit-card-modal/feature/add-credit-card-modal-feature'
 export * from './lib/need-redeploy-flag/ui/need-redeploy-flag'
+export * from './lib/layout-logs/layout-logs'
+export * from './lib/layout-logs/tabs-cluster-logs/card-cluster/card-cluster'
+export * from './lib/layout-logs/update-time-context/update-time-context'

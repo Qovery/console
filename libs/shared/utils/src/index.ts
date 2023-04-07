@@ -23,6 +23,7 @@ export * from './lib/tools/compute-available-environment-variable-scope'
 export * from './lib/tools/environment-variable-file'
 export * from './lib/tools/sort-by-key'
 export * from './lib/tools/cost-to-human'
+export * from './lib/tools/merge-deployment-services'
 // constants
 export * from './lib/constants/environment-mode-values'
 export * from './lib/constants/timezone-values'

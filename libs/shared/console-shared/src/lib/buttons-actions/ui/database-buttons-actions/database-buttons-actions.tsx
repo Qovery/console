@@ -12,7 +12,13 @@ import {
 } from '@qovery/domains/database'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
-import { SERVICES_DEPLOYMENTS_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
+  SERVICES_DEPLOYMENTS_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_URL,
+} from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -201,15 +207,37 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       menus: buttonStatusActions,
     },
     {
+      triggerTooltip: 'Logs',
+      iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
+      onClick: () =>
+        navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(database.id)),
+    },
+    {
       triggerTooltip: 'Other actions',
       iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
       menus: [
         {
           items: [
             {
+              name: 'Logs',
+              contentLeft: <Icon name={IconAwesomeEnum.SCROLL} className="text-sm text-brand-400" />,
+              onClick: () =>
+                navigate(
+                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(database.id)
+                ),
+            },
+            {
               name: 'Copy identifiers',
               contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
               onClick: () => copyToClipboard(copyContent),
+            },
+            {
+              ...(canDelete && {
+                name: 'Delete database',
+                containerClassName: 'text-error-600',
+                contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
+                onClick: () => removeDatabase(database.id, database.name),
+              }),
             },
           ],
         },

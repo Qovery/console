@@ -11,9 +11,9 @@ import {
   useDeleteEnvironment,
 } from '@qovery/domains/environment'
 import {
-  DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
+  ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -223,7 +223,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     {
       triggerTooltip: 'Logs',
       iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
-      onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environment.id)),
+      onClick: () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id)),
     },
     {
       triggerTooltip: 'Other actions',
@@ -234,7 +234,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
             {
               name: 'Logs',
               contentLeft: <Icon name={IconAwesomeEnum.SCROLL} className="text-sm text-brand-400" />,
-              onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environment.id)),
+              onClick: () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id)),
             },
             {
               name: 'Copy identifiers',

@@ -2,21 +2,21 @@ import equal from 'fast-deep-equal'
 import { Cluster, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import React, { useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { getEnvironmentStatusById, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
-  APPLICATION_LOGS_URL,
   APPLICATION_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
+  ENVIRONMENT_LOGS_URL,
   INFRA_LOGS_URL,
   OVERVIEW_URL,
   SERVICES_GENERAL_URL,
@@ -51,10 +51,10 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
 
   const locationIsApplicationLogs = location.pathname.includes(
-    APPLICATION_LOGS_URL(organizationId, projectId, environmentId, applicationId)
+    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
   )
   const locationIsDeploymentLogs = location.pathname.includes(
-    DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)
+    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
   )
 
   const locationIsClusterLogs = location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
@@ -280,8 +280,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
         )}
         {matchLogsRoute && (
           <div className="flex">
-            <div className="w-4 h-auto text-element-light-lighter-600 text-center mx-3 mt-3">/</div>
-            <div className="flex items-center text-accent1-300 bg-accent1-800 font-medium text-xs px-2.5 py-1 rounded-[35px] mt-2">
+            <div className="flex items-center text-accent1-300 bg-accent1-800 font-medium text-ssm px-1.5 h-6 rounded-[3px] ml-3 mt-2">
               LOGS
             </div>
           </div>

@@ -4,16 +4,17 @@ import Icon from '../icon/icon'
 
 export interface BadgeServiceProps {
   serviceType: ServiceTypeEnum
-  cloudProvider: CloudProviderEnum
+  cloudProvider?: CloudProviderEnum
   buildMode?: BuildModeEnum
   size?: string
   padding?: string
   className?: string
+  notRounded?: boolean
 }
 
 export const iconByService = (
   serviceType: ServiceTypeEnum,
-  cloudProvider: CloudProviderEnum,
+  cloudProvider?: CloudProviderEnum,
   buildMode?: BuildModeEnum
 ) => {
   switch (serviceType) {
@@ -41,18 +42,22 @@ export const iconByService = (
 }
 
 export function BadgeService(props: BadgeServiceProps) {
-  const { serviceType, cloudProvider, buildMode, size = '28', padding = '1', className = '' } = props
+  const { serviceType, cloudProvider, buildMode, notRounded, size = '28', padding = '1', className = '' } = props
 
   return (
     <div
-      className={`flex items-center justify-center shrink-0 border border-element-light-lighter-400 rounded-full ${className} `}
+      className={`flex items-center justify-center shrink-0 
+      ${!notRounded ? 'border border-element-light-lighter-400 rounded-full' : ''} 
+      ${className} `}
       style={{
         width: `${size}px`,
         height: `${size}px`,
         padding: `${padding}px`,
       }}
     >
-      <span className="w-full h-full p-1">{iconByService(serviceType, cloudProvider, buildMode)}</span>
+      <span className={`w-full h-full ${!notRounded ? 'p-1' : ''}`}>
+        {iconByService(serviceType, cloudProvider, buildMode)}
+      </span>
     </div>
   )
 }

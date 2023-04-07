@@ -9,7 +9,7 @@ import {
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
 } from '@qovery/shared/routes'
 import { timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
 import ButtonIconAction from '../../buttons/button-icon-action/button-icon-action'
@@ -54,7 +54,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
   const buttonActionsDefault = [
     {
       iconLeft: <Icon name={IconAwesomeEnum.SCROLL} />,
-      onClick: () => navigate(DEPLOYMENT_LOGS_URL(organizationId, projectId, environmentId)),
+      onClick: () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)),
     },
   ]
 

@@ -14,10 +14,11 @@ import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isContainer, isContainerJob, isGitJob, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
-  APPLICATION_LOGS_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
@@ -270,7 +271,8 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     {
       triggerTooltip: 'Logs',
       iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
-      onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)),
+      onClick: () =>
+        navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)),
     },
     {
       triggerTooltip: 'Other actions',
@@ -281,7 +283,10 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
             {
               name: 'Logs',
               contentLeft: <Icon name={IconAwesomeEnum.SCROLL} className="text-sm text-brand-400" />,
-              onClick: () => navigate(APPLICATION_LOGS_URL(organizationId, projectId, environmentId, application.id)),
+              onClick: () =>
+                navigate(
+                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
+                ),
             },
             {
               ...(!isContainer(application) && {
