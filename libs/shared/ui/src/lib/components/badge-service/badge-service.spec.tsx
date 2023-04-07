@@ -27,7 +27,7 @@ describe('BadgeService', () => {
       <Icon name={IconEnum.DOCKER} className="w-full h-full relative left-[1px]" />
     )
     expect(iconByService(ServiceTypeEnum.APPLICATION, CloudProviderEnum.AWS, BuildModeEnum.BUILDPACKS)).toEqual(
-      <Icon name={IconEnum.BUILDPACKS} className="w-full h-full" />
+      <Icon name={IconEnum.BUILDPACKS} className="w-full h-full " />
     )
     expect(iconByService(ServiceTypeEnum.CONTAINER, CloudProviderEnum.AWS)).toEqual(
       <Icon name={IconEnum.CONTAINER} className="w-full h-full" />

@@ -42,6 +42,13 @@ export function StatusChip(props: StatusChipProps) {
         return true
       case StateEnum.DELETING:
         return true
+      default:
+        return false
+    }
+  }
+
+  function showQueueIcon(): boolean {
+    switch (status) {
       case StateEnum.STOP_QUEUED:
         return true
       case StateEnum.CANCELING:
@@ -131,6 +138,7 @@ export function StatusChip(props: StatusChipProps) {
           />
         )}
         {showProgressIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PROGRESS} />}
+        {showQueueIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" pathColor="#A0AFC5" name={IconEnum.PROGRESS} />}
         {showErrorIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.ERROR} />}
         {showStoppedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PAUSE} />}
         {showDeletedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.DELETE} />}
