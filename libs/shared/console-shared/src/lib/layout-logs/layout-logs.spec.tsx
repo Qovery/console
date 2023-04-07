@@ -1,5 +1,5 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import { ClusterLogsStepEnum } from 'qovery-typescript-axios'
+import { ClusterLogsStepEnum, StateEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock, clusterLogFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { LayoutLogs, LayoutLogsProps } from './layout-logs'
 
@@ -11,8 +11,7 @@ describe('LayoutLogs', () => {
       items: clusterLogFactoryMock(2, true),
     },
     tabInformation: <div>information</div>,
-    applications: applicationFactoryMock(2),
-    environment: environmentFactoryMock(1)[0],
+    applicationStatus: StateEnum.BUILDING,
   }
 
   beforeEach(() => {
@@ -30,11 +29,9 @@ describe('LayoutLogs', () => {
       items: [],
     }
 
-    render(<LayoutLogs {...props} />)
+    const { getByTestId } = render(<LayoutLogs {...props} />)
 
-    const loadingScreen = screen.getByTestId('loading-screen')
-
-    expect(loadingScreen.querySelector('p')?.textContent).toBe('Loading...')
+    expect(getByTestId('spinner'))
   })
 
   it('should have screen when data is empty', () => {
@@ -94,7 +91,7 @@ describe('LayoutLogs', () => {
     expect(tabsLogs).toBeInTheDocument()
   })
 
-  it('should have navigation with application', () => {
+  it('should have a navigation', () => {
     props.data = {
       loadingStatus: 'loaded',
       items: [
@@ -108,36 +105,11 @@ describe('LayoutLogs', () => {
       ],
     }
     props.withLogsNavigation = true
-    props.applications = applicationFactoryMock(2)
 
-    render(<LayoutLogs {...props} />)
+    const { getByText } = render(<LayoutLogs {...props} />)
 
-    const navApplication = screen.getAllByTestId('nav-application')
-
-    expect(navApplication[0].textContent).toBe(props.applications[0].name)
-    expect(navApplication[1].textContent).toBe(props.applications[1].name)
-  })
-
-  it('should have navigation with environment', () => {
-    props.data = {
-      loadingStatus: 'loaded',
-      items: [
-        {
-          id: '1',
-          created_at: '1667834316521',
-          message: 'message',
-          pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
-          version: '53deb16f853aef759b8be84fbeec96e9727',
-        },
-      ],
-    }
-    props.withLogsNavigation = true
-    props.environment = environmentFactoryMock(1)[0]
-
-    render(<LayoutLogs {...props} />)
-
-    const navEnvironment = screen.getByTestId('nav-environment')
-    expect(navEnvironment)
+    getByText('Deployment logs')
+    getByText('Live logs')
   })
 
   it('should have debug checkbox when debug is true', () => {
@@ -159,8 +131,8 @@ describe('LayoutLogs', () => {
         },
       ],
     }
-    props.debugMode = true
-    props.setDebugMode = jest.fn()
+    props.enabledNginx = true
+    props.setEnabledNginx = jest.fn()
 
     render(<LayoutLogs {...props} />)
 
