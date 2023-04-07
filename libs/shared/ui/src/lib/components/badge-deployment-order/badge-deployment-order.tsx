@@ -13,11 +13,8 @@ export const colors = [
   '#474787',
   '#1e90ff',
   '#ffa502',
-  '#ff4757',
   '#5352ed',
   '#70a1ff',
-  '#3742fa',
-  '#eccc68',
 ]
 
 export function getColorFromUID(uid: string) {
