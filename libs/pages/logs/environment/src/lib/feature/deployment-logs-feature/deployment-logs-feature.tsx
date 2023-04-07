@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { EnvironmentLogs, StateEnum } from 'qovery-typescript-axios'
+import { EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -15,29 +15,6 @@ import DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
 export interface DeploymentLogsFeatureProps {
   clusterId: string
   setServiceId: (id: string) => void
-}
-
-const hideDeploymentLogs = (status: StateEnum) => {
-  switch (status) {
-    case StateEnum.CANCELED:
-      return true
-    case StateEnum.DELETED:
-      return true
-    case StateEnum.DELETE_ERROR:
-      return true
-    case StateEnum.DEPLOYED:
-      return true
-    case StateEnum.READY:
-      return true
-    case StateEnum.RUNNING:
-      return true
-    case StateEnum.STOPPED:
-      return true
-    case StateEnum.RESTARTED:
-      return true
-    default:
-      return false
-  }
 }
 
 export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
@@ -61,10 +38,9 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
 
   useDocumentTitle(`Deployment logs ${loadingStatus === 'loaded' ? `- ${application?.name}` : '- Loading...'}`)
 
-  const hideDeploymentLogsBoolean = hideDeploymentLogs(
-    mergeDeploymentServices(environmentDeploymentHistory).find((service: DeploymentService) => service.id === serviceId)
-      ?.status as StateEnum
-  )
+  const hideDeploymentLogsBoolean: boolean = mergeDeploymentServices(
+    environmentDeploymentHistory ? [environmentDeploymentHistory[0]] : []
+  ).some((service: DeploymentService) => service.id !== serviceId)
 
   useEffect(() => {
     if (hideDeploymentLogsBoolean) setLoadingStatus('loaded')
