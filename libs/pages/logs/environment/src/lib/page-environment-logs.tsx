@@ -4,12 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
-import {
-  getEnvironmentById,
-  getEnvironmentStatusById,
-  useFetchEnvironments,
-  useFetchEnvironmentsStatus,
-} from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
@@ -25,9 +20,7 @@ export function PageEnvironmentLogs() {
   const dispatch = useDispatch<AppDispatch>()
 
   const { data: environments } = useFetchEnvironments(projectId)
-  const { data: environmentsStatuses } = useFetchEnvironmentsStatus(projectId)
   const environment = getEnvironmentById(environmentId, environments)
-  const environmentStatus = getEnvironmentStatusById(environmentId, environmentsStatuses)
   const location = useLocation()
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
@@ -70,8 +63,7 @@ export function PageEnvironmentLogs() {
           <div className="flex flex-col items-center mt-12">
             <Icon name={IconAwesomeEnum.WRENCH} className="text-text-300" />
             <p className="text-text-300 font-medium">
-              Environment is {environmentStatus?.state.toLowerCase().replace('_', ' ')}, please select a service on the
-              left menu.
+              Please select a service on the left menu to access its deployment logs or live logs
             </p>
           </div>
         </div>
