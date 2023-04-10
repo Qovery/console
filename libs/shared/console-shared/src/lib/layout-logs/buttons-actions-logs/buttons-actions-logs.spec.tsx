@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import { RefObject } from 'react'
 import ButtonsActionsLogs, { ButtonsActionsLogsProps } from './buttons-actions-logs'
 
@@ -30,24 +30,31 @@ describe('ButtonsActionsLogs', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should triggers downloadJSON on click', () => {
+  it('should triggers downloadJSON on click', async () => {
     const { getByTestId } = render(<ButtonsActionsLogs {...props} />)
 
     const downloadButton = getByTestId('download')
     downloadButton.click()
-    expect(downloadButton).toBeDefined()
+
+    await act(async () => {
+      expect(downloadButton).toBeDefined()
+    })
   })
 
-  it('should triggers forcedScroll on click', () => {
+  it('should triggers forcedScroll on click', async () => {
     const { getByTestId } = render(<ButtonsActionsLogs {...props} />)
 
     const scrollUpButton = getByTestId('scroll-up-button')
     const scrollDownButton = getByTestId('scroll-down-button')
 
     scrollUpButton.click()
-    expect(refScrollSection?.current?.scrollTop).toBe(0)
+    await act(async () => {
+      expect(refScrollSection?.current?.scrollTop).toBe(0)
+    })
 
     scrollDownButton.click()
-    expect(refScrollSection?.current?.scrollTop).toBe(refScrollSection?.current?.scrollHeight)
+    await act(async () => {
+      expect(refScrollSection?.current?.scrollTop).toBe(refScrollSection?.current?.scrollHeight)
+    })
   })
 })
