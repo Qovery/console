@@ -34,6 +34,10 @@ describe('DeploymentLogs', () => {
     pauseStatusLogs: false,
   }
 
+  beforeEach(() => {
+    window.HTMLElement.prototype.scroll = jest.fn()
+  })
+
   it('should render successfully', () => {
     const { getByText, baseElement } = render(<DeploymentLogs {...props} />)
     expect(baseElement).toBeTruthy()

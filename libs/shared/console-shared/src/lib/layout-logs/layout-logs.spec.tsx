@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { ClusterLogsStepEnum, StateEnum } from 'qovery-typescript-axios'
-import { applicationFactoryMock, clusterLogFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
+import { clusterLogFactoryMock } from '@qovery/shared/factories'
 import { LayoutLogs, LayoutLogsProps } from './layout-logs'
 
 describe('LayoutLogs', () => {
