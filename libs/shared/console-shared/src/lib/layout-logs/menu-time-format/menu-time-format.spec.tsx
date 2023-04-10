@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import MenuTimeFormat, { MenuTimeFormatProps } from './menu-time-format'
 
 describe('MenuTimeFormat', () => {
@@ -14,17 +14,21 @@ describe('MenuTimeFormat', () => {
     expect(getByText('UTC')).toBeInTheDocument()
   })
 
-  it('should updates time context to local browser time', () => {
+  it('should updates time context to local browser time', async () => {
     const { getByText } = render(<MenuTimeFormat {...props} />)
     const localBrowserTimeButton = getByText('Local browser time')
-    localBrowserTimeButton.click()
-    expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: false })
+    await act(() => {
+      localBrowserTimeButton.click()
+      expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: false })
+    })
   })
 
-  it('should updates time context to UTC', () => {
+  it('should updates time context to UTC', async () => {
     const { getByText } = render(<MenuTimeFormat {...props} />)
     const utcButton = getByText('UTC')
-    utcButton.click()
-    expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: true })
+    await act(() => {
+      utcButton.click()
+      expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: true })
+    })
   })
 })
