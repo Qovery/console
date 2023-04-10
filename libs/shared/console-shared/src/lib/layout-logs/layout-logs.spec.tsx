@@ -136,7 +136,7 @@ describe('LayoutLogs', () => {
 
     render(<LayoutLogs {...props} />)
 
-    const checboxDebug = screen.getByTestId('checkbox-debug')
-    expect(checboxDebug)
+    const checkboxDebug = screen.getByTestId('checkbox-debug')
+    expect(checkboxDebug)
   })
 })

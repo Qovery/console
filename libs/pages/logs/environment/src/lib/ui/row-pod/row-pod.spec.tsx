@@ -8,7 +8,8 @@ jest.mock('date-fns-tz', () => ({
 }))
 
 describe('RowPod', () => {
-  let props: RowPodProps = {
+  const props: RowPodProps = {
+    index: 1,
     data: {
       id: '1',
       created_at: '1667834316521',

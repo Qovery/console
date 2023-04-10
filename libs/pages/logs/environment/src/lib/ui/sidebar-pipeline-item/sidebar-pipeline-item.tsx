@@ -1,3 +1,4 @@
+import { DeploymentStageWithServicesStatuses, Status } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { RunningStatus, getServiceType } from '@qovery/shared/enums'
@@ -5,15 +6,17 @@ import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { BadgeDeploymentOrder, BadgeService, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
 
-function mergeServices(applications: any[], databases: any[], containers: any[], jobs: any[]) {
-  return [...applications, ...databases, ...containers, ...jobs]
+export function mergeServices(applications?: Status[], databases?: Status[], containers?: Status[], jobs?: Status[]) {
+  return (
+    (applications && databases && containers && jobs && [...applications, ...databases, ...containers, ...jobs]) || []
+  )
 }
 
 export interface SidebarPipelineItemProps {
   serviceId: string
   index: number
   services: Array<ApplicationEntity | DatabaseEntity>
-  currentStage: any
+  currentStage: DeploymentStageWithServicesStatuses
 }
 
 export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
@@ -35,11 +38,12 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
   return (
     <div className="mb-1.5">
       <div
+        data-testid="toggle-stage"
         className="cursor-pointer inline-flex items-center text-text-200 text-ssm font-medium mb-1.5 select-none"
         onClick={() => setOpenStage(!openStage)}
       >
-        <BadgeDeploymentOrder className="mr-3" id={currentStage.stage.id} order={index} />
-        {currentStage.stage.name}
+        <BadgeDeploymentOrder className="mr-3" id={currentStage?.stage?.id || ''} order={index} />
+        {currentStage?.stage?.name}
         <Icon name={IconAwesomeEnum.CARET_DOWN} className={`ml-3 text-text-400 ${!openStage ? '-rotate-90' : ''}`} />
       </div>
       {openStage && (

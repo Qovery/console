@@ -1,5 +1,4 @@
 import { render } from '__tests__/utils/setup-jest'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import MenuTimeFormat, { MenuTimeFormatProps } from './menu-time-format'
 
 describe('MenuTimeFormat', () => {
@@ -9,7 +8,23 @@ describe('MenuTimeFormat', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<MenuTimeFormat {...props} />)
+    const { getByText, baseElement } = render(<MenuTimeFormat {...props} />)
     expect(baseElement).toBeTruthy()
+    expect(getByText('Local browser time')).toBeInTheDocument()
+    expect(getByText('UTC')).toBeInTheDocument()
+  })
+
+  it('should updates time context to local browser time', () => {
+    const { getByText } = render(<MenuTimeFormat {...props} />)
+    const localBrowserTimeButton = getByText('Local browser time')
+    localBrowserTimeButton.click()
+    expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: false })
+  })
+
+  it('should updates time context to UTC', () => {
+    const { getByText } = render(<MenuTimeFormat {...props} />)
+    const utcButton = getByText('UTC')
+    utcButton.click()
+    expect(props.setUpdateTimeContext).toHaveBeenCalledWith({ utc: true })
   })
 })

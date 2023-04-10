@@ -68,7 +68,10 @@ export function RowPod(props: RowPodProps) {
 
   return (
     <TableRowFilter data={data} filter={filter}>
-      <div className="group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 w-full overflow-y-auto">
+      <div
+        data-testid="pod-log-row"
+        className="group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 w-full overflow-y-auto"
+      >
         <div
           data-testid="index"
           className="bg-element-light-darker-500 text-text-500 group-hover:bg-element-light-darker-200"

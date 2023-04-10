@@ -1,9 +1,15 @@
 import { render } from '__tests__/utils/setup-jest'
-import SidebarPipeline from './sidebar-pipeline'
+import { applicationFactoryMock } from '@qovery/shared/factories'
+import SidebarPipeline, { SidebarPipelineProps } from './sidebar-pipeline'
 
 describe('SidebarPipeline', () => {
+  const props: SidebarPipelineProps = {
+    services: applicationFactoryMock(2),
+    serviceId: '1',
+  }
+
   it('should render successfully', () => {
-    const { baseElement } = render(<SidebarPipeline />)
+    const { baseElement } = render(<SidebarPipeline {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })

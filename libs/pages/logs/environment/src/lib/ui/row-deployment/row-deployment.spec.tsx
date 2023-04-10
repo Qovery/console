@@ -34,7 +34,7 @@ describe('RowDeployment', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-success-500 text-text-800 group-hover:bg-success-600')
+    expect(index).toHaveClass('text-success-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400')
   })
 
   it('should have error index color', () => {
@@ -52,68 +52,7 @@ describe('RowDeployment', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-error-500 text-text-800 group-hover:bg-error-600')
-  })
-
-  it('should have cell status format text', () => {
-    props.data = {
-      type: LogsType.INFO,
-      timestamp: new Date().toString(),
-      details: {
-        stage: {
-          step: 'DeploymentInProgress',
-        },
-      },
-    }
-
-    render(<RowDeployment {...props} />)
-
-    const cellDate = screen.getByTestId('cell-status')
-
-    expect(cellDate.textContent).toBe('Deployment_In_Progress')
-    expect(cellDate).toHaveClass(
-      'py-1 pl-2.5 pr-2 text-2xs font-bold shrink-0 truncate uppercase w-[154px] text-accent2-400'
-    )
-  })
-
-  it('should have error cell status color', () => {
-    props.data = {
-      type: LogsType.ERROR,
-      timestamp: new Date().toString(),
-      details: {
-        stage: {
-          step: 'DeployedError',
-        },
-      },
-    }
-
-    render(<RowDeployment {...props} />)
-
-    const cellDate = screen.getByTestId('cell-status')
-
-    expect(cellDate).toHaveClass(
-      'py-1 pl-2.5 pr-2 text-2xs font-bold shrink-0 truncate uppercase w-[154px] text-error-500'
-    )
-  })
-
-  it('should have success cell status color', () => {
-    props.data = {
-      type: LogsType.INFO,
-      timestamp: new Date().toString(),
-      details: {
-        stage: {
-          step: 'Deployed',
-        },
-      },
-    }
-
-    render(<RowDeployment {...props} />)
-
-    const cellDate = screen.getByTestId('cell-status')
-
-    expect(cellDate).toHaveClass(
-      'py-1 pl-2.5 pr-2 text-2xs font-bold shrink-0 truncate uppercase w-[154px] text-success-400'
-    )
+    expect(index).toHaveClass('text-error-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400')
   })
 
   it('should have error cell date color', () => {
@@ -131,7 +70,7 @@ describe('RowDeployment', () => {
 
     const cellDate = screen.getByTestId('cell-date')
 
-    expect(cellDate).toHaveClass('py-1 px-2 font-code shrink-0 w-[154px] text-error-500')
+    expect(cellDate).toHaveClass('py-1 pl-2 pr-3 font-code shrink-0 w-[158px] text-error-500')
   })
 
   it('should have success cell date color', () => {
@@ -149,27 +88,7 @@ describe('RowDeployment', () => {
 
     const cellDate = screen.getByTestId('cell-date')
 
-    expect(cellDate).toHaveClass('py-1 px-2 font-code shrink-0 w-[154px] text-success-500')
-  })
-
-  it('should have cell with scope name', () => {
-    props.data = {
-      type: LogsType.INFO,
-      timestamp: new Date().toString(),
-      details: {
-        stage: {
-          step: 'Deployed',
-        },
-        transmitter: {
-          name: 'message',
-        },
-      },
-    }
-
-    render(<RowDeployment {...props} />)
-
-    const cellScope = screen.getByTestId('cell-scope')
-    expect(cellScope.textContent).toBe(props.data.details.transmitter?.name)
+    expect(cellDate).toHaveClass('py-1 pl-2 pr-3 font-code shrink-0 w-[158px] text-success-500')
   })
 
   it('should have cell success message', () => {
@@ -193,9 +112,7 @@ describe('RowDeployment', () => {
 
     const cellMsg = screen.getByTestId('cell-msg')
 
-    expect(cellMsg).toHaveClass(
-      'py-1 pl-4 pr-6 font-code relative w-[calc(100%-502px)] overflow-hidden text-success-500'
-    )
+    expect(cellMsg).toHaveClass('py-1 pr-6 font-code relative w-full overflow-hidden text-success-500')
     expect(cellMsg?.textContent).toBe(props.data.message?.safe_message)
   })
 
@@ -217,7 +134,7 @@ describe('RowDeployment', () => {
 
     const cellMsg = screen.getByTestId('cell-msg')
 
-    expect(cellMsg).toHaveClass('py-1 pl-4 pr-6 font-code relative w-[calc(100%-502px)] overflow-hidden text-error-500')
+    expect(cellMsg).toHaveClass('py-1 pr-6 font-code relative w-full overflow-hidden text-error-500')
     expect(cellMsg?.textContent).toBe(props.data.error?.user_log_message)
   })
 

@@ -4,8 +4,8 @@ import { LayoutLogsDataProps } from '../../layout-logs'
 
 export interface ButtonsActionsLogsProps {
   refScrollSection: RefObject<HTMLDivElement>
-  setPauseLogs: any
   data: LayoutLogsDataProps
+  setPauseLogs?: (pause: boolean) => void
   pauseLogs?: boolean
 }
 
@@ -41,6 +41,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
         <Tooltip side="top" content="Resume real-time logs" open={pauseLogs}>
           <div>
             <ButtonIcon
+              dataTestId="pause-button"
               icon={!pauseLogs ? IconAwesomeEnum.PAUSE : IconAwesomeEnum.PLAY}
               size={ButtonSize.TINY}
               style={!pauseLogs ? ButtonIconStyle.DARK : ButtonIconStyle.BASIC}
@@ -50,6 +51,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
         </Tooltip>
       )}
       <ButtonIcon
+        dataTestId="scroll-up-button"
         icon={IconAwesomeEnum.ARROW_UP_TO_LINE}
         className="ml-2 mr-px !rounded-tr-none !rounded-br-none"
         size={ButtonSize.TINY}
@@ -57,14 +59,19 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
         onClick={() => forcedScroll()}
       />
       <ButtonIcon
+        dataTestId="scroll-down-button"
         icon={IconAwesomeEnum.ARROW_DOWN_TO_LINE}
         className="mr-2 !rounded-tl-none !rounded-bl-none"
         size={ButtonSize.TINY}
         style={ButtonIconStyle.DARK}
         onClick={() => forcedScroll(true)}
       />
-      <a className="btn btn-icon btn-icon--small btn-icon--dark" onClick={(event) => downloadJSON(event)}>
-        <Icon name="icon-solid-cloud-arrow-down" />
+      <a
+        data-testid="download"
+        className="btn btn-icon btn-icon--small btn-icon--dark"
+        onClick={(event) => downloadJSON(event)}
+      >
+        <Icon name={IconAwesomeEnum.CLOUD_ARROW_DOWN} />
       </a>
     </>
   )
