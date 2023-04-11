@@ -17,11 +17,11 @@ import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
-  DEPLOYMENT_LOGS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
+  SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
@@ -272,7 +272,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       triggerTooltip: 'Logs',
       iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
       onClick: () =>
-        navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)),
+        navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(application.id)),
     },
     {
       triggerTooltip: 'Other actions',
@@ -285,7 +285,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               contentLeft: <Icon name={IconAwesomeEnum.SCROLL} className="text-sm text-brand-400" />,
               onClick: () =>
                 navigate(
-                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(application.id)
+                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(application.id)
                 ),
             },
             {
