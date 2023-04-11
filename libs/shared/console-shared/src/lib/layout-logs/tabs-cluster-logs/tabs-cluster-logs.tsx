@@ -62,7 +62,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
   return (
     <div
       data-testid="tabs-logs"
-      className="w-[360px] h-full shrink-0 border-l border-t border-element-light-darker-100 bg-element-light-darker-400"
+      className="w-[360px] h-[calc(100%+0.5rem)] shrink-0 bg-element-light-darker-400 relative z-20"
     >
       <div className="py-2 px-5">
         <Tabs className="bg-transparent" classNameBtn="grow justify-center" items={items} fullWidth />
