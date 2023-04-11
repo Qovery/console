@@ -30,7 +30,7 @@ export interface LayoutLogsProps {
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
-  applicationStatus?: StateEnum
+  serviceStatus?: StateEnum
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
@@ -62,7 +62,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     setEnabledNginx,
     clusterBanner,
     countNginx,
-    applicationStatus,
+    serviceStatus,
     placeholderDescription = 'Logs not available',
   } = props
 
@@ -111,7 +111,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
           {LinkNavigation(
             'Live logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
-            applicationStatus
+            serviceStatus
           )}
         </div>
       )}

@@ -11,7 +11,7 @@ describe('LayoutLogs', () => {
       items: clusterLogFactoryMock(2, true),
     },
     tabInformation: <div>information</div>,
-    applicationStatus: StateEnum.BUILDING,
+    serviceStatus: StateEnum.BUILDING,
   }
 
   beforeEach(() => {

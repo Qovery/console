@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { selectApplicationById } from '@qovery/domains/application'
+import { selectDatabaseById } from '@qovery/domains/database'
 import { useAuth } from '@qovery/shared/auth'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import PodLogs from '../../ui/pod-logs/pod-logs'
@@ -29,8 +30,9 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
   )
+  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
 
-  useDocumentTitle(`Live logs ${application ? `- ${application?.name}` : '- Loading...'}`)
+  useDocumentTitle(`Live logs ${application ? `- ${application?.name || database?.name}` : '- Loading...'}`)
 
   const { getAccessTokenSilently } = useAuth()
 
@@ -94,7 +96,7 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
 
   return (
     <PodLogs
-      application={application}
+      service={application || database}
       loadingStatus={loadingStatus}
       logs={logsSorted as Log[]}
       pauseStatusLogs={pauseStatusLogs}

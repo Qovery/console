@@ -11,12 +11,11 @@ export interface DeploymentLogsProps {
   setPauseStatusLogs: (pause: boolean) => void
   errors: ErrorLogsProps[]
   hideDeploymentLogs?: boolean
-  applicationStatus?: StateEnum
+  serviceStatus?: StateEnum
 }
 
 export function DeploymentLogs(props: DeploymentLogsProps) {
-  const { logs, errors, hideDeploymentLogs, pauseStatusLogs, setPauseStatusLogs, applicationStatus, loadingStatus } =
-    props
+  const { logs, errors, hideDeploymentLogs, pauseStatusLogs, setPauseStatusLogs, serviceStatus, loadingStatus } = props
 
   const memoRow = useMemo(
     () => logs?.map((log: EnvironmentLogs, index: number) => <RowDeployment key={index} index={index} data={log} />),
@@ -32,7 +31,7 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
       placeholderDescription="This service is not being deployed right now"
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
-      applicationStatus={applicationStatus}
+      serviceStatus={serviceStatus}
       errors={errors}
       withLogsNavigation
       lineNumbers

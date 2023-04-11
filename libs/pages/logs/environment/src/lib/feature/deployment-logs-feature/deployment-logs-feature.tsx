@@ -1,13 +1,13 @@
-import equal from 'fast-deep-equal'
 import { EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { selectApplicationById } from '@qovery/domains/application'
+import { selectDatabaseById } from '@qovery/domains/database'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
-import { ApplicationEntity, DeploymentService, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, DeploymentService, LoadingStatus } from '@qovery/shared/interfaces'
 import { mergeDeploymentServices, useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
@@ -22,17 +22,19 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
   const { refetch, data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
-  const application = useSelector<RootState, ApplicationEntity | undefined>(
-    (state) => selectApplicationById(state, serviceId),
-    equal
+  const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
+    selectApplicationById(state, serviceId)
   )
+  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('not loaded')
   const [logs, setLogs] = useState<EnvironmentLogs[]>([])
   const [pauseLogs, setPauseLogs] = useState<EnvironmentLogs[]>([])
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
 
-  useDocumentTitle(`Deployment logs ${loadingStatus === 'loaded' ? `- ${application?.name}` : '- Loading...'}`)
+  useDocumentTitle(
+    `Deployment logs ${loadingStatus === 'loaded' ? `- ${application?.name || database?.name}` : '- Loading...'}`
+  )
 
   const hideDeploymentLogsBoolean =
     loadingStatus === 'loaded' &&
@@ -110,7 +112,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       errors={errors}
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
-      applicationStatus={application?.status?.state}
+      serviceStatus={application?.status?.state || database?.status?.state}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
     />
   )

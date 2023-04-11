@@ -32,9 +32,7 @@ export const iconByService = (
     case ServiceTypeEnum.LIFECYCLE_JOB:
       return <Icon name={IconEnum.LIFECYCLE_JOB} className="w-full h-full" />
     case ServiceTypeEnum.DATABASE:
-      return (
-        <Icon name={cloudProvider === CloudProviderEnum.AWS ? IconEnum.AWS : IconEnum.SCW} className="w-full h-full" />
-      )
+      return <Icon name={IconEnum.DATABASE} className="w-full h-full" />
 
     default:
       return serviceType
@@ -42,7 +40,7 @@ export const iconByService = (
 }
 
 export function BadgeService(props: BadgeServiceProps) {
-  const { serviceType, cloudProvider, buildMode, notRounded, size = '28', padding = '1', className = '' } = props
+  const { serviceType, buildMode, cloudProvider, notRounded, size = '28', padding = '1', className = '' } = props
 
   return (
     <div

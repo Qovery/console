@@ -1,7 +1,7 @@
 import { Log } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { LayoutLogs } from '@qovery/shared/console-shared'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum, StatusChip, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
 import RowPod from '../row-pod/row-pod'
 
@@ -10,7 +10,7 @@ export interface PodLogsProps {
   logs: Log[]
   pauseStatusLogs: boolean
   setPauseStatusLogs: (pause: boolean) => void
-  application?: ApplicationEntity
+  service?: ApplicationEntity | DatabaseEntity
   enabledNginx?: boolean
   setEnabledNginx?: (debugMode: boolean) => void
   countNginx?: number
@@ -19,7 +19,7 @@ export interface PodLogsProps {
 export function PodLogs(props: PodLogsProps) {
   const {
     logs,
-    application,
+    service,
     pauseStatusLogs,
     setPauseStatusLogs,
     loadingStatus,
@@ -42,7 +42,7 @@ export function PodLogs(props: PodLogsProps) {
           key: 'pod_name',
           itemContentCustom: (data: Log, currentFilter: string) => {
             const isActive = data.pod_name === currentFilter
-            const currentPod = application?.running_status?.pods.filter((pod) => pod.name === data.pod_name)[0]
+            const currentPod = service?.running_status?.pods.filter((pod) => pod.name === data.pod_name)[0]
             return (
               <div
                 className={`group flex items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
@@ -105,7 +105,7 @@ export function PodLogs(props: PodLogsProps) {
       }}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
-      applicationStatus={application?.status?.state}
+      serviceStatus={service?.status?.state}
       enabledNginx={enabledNginx}
       setEnabledNginx={setEnabledNginx}
       countNginx={countNginx}

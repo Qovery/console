@@ -39,10 +39,10 @@ describe('BadgeService', () => {
       <Icon name={IconEnum.LIFECYCLE_JOB} className="w-full h-full" />
     )
     expect(iconByService(ServiceTypeEnum.DATABASE, CloudProviderEnum.AWS)).toEqual(
-      <Icon name={IconEnum.AWS} className="w-full h-full" />
+      <Icon name={IconEnum.DATABASE} className="w-full h-full" />
     )
     expect(iconByService(ServiceTypeEnum.DATABASE, CloudProviderEnum.SCW)).toEqual(
-      <Icon name={IconEnum.SCW} className="w-full h-full" />
+      <Icon name={IconEnum.DATABASE} className="w-full h-full" />
     )
   })
 })

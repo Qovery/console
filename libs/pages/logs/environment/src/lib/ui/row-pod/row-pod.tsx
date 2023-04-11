@@ -76,7 +76,7 @@ export function RowPod(props: RowPodProps) {
           data-testid="index"
           className="bg-element-light-darker-500 text-text-500 group-hover:bg-element-light-darker-200"
         >
-          <div className="text-right w-10 h-5 px-2 pt-[2px] font-code">{index + 1}</div>
+          <div className="text-right w-10 h-5 px-2 pt-0.5 font-code">{index + 1}</div>
         </div>
         <div
           data-testid="cell-pod-name"
@@ -95,7 +95,7 @@ export function RowPod(props: RowPodProps) {
           {!data.pod_name && !data.message.includes('No pods found' || '') && <span className="block">NGINX</span>}
           {!data.pod_name && data.message.includes('No pods found' || '') && <span className="block">undefined</span>}
         </div>
-        <div data-testid="cell-version" className="pt-[2px] flex whitespace-nowrap text-text-100 min-w-[85px]">
+        <div data-testid="cell-version" className="pt-0.5 flex whitespace-nowrap text-text-100 min-w-[85px]">
           {data.version && (
             <span>
               <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
@@ -103,10 +103,10 @@ export function RowPod(props: RowPodProps) {
             </span>
           )}
         </div>
-        <div data-testid="cell-date" className="px-4 pt-[2px] text-element-light-lighter-700 whitespace-nowrap">
+        <div data-testid="cell-date" className="px-4 pt-0.5 text-element-light-lighter-700 whitespace-nowrap">
           {dateFullFormat(data.created_at)}
         </div>
-        <div data-testid="cell-msg" className="pr-6 pt-[2px] text-text-100 relative w-full">
+        <div data-testid="cell-msg" className="pr-6 pt-0.5 text-text-100 relative w-full">
           <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
           <CopyToClipboard
             className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"

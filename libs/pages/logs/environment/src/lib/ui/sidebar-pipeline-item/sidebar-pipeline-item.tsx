@@ -70,7 +70,7 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
                   >
                     <span className="flex">
                       <BadgeService
-                        className="mr-2.5"
+                        className="mr-2.5 mt-0.5"
                         serviceType={getServiceType(currentApplication(service.id) as ApplicationEntity)}
                         buildMode={(currentApplication(service.id) as ApplicationEntity)?.build_mode}
                         size="16"
