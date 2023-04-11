@@ -1,7 +1,8 @@
-import { EnvironmentLogs, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import { EnvironmentLogs, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
+import { RunningStatus } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Link } from '@qovery/shared/ui'
@@ -14,7 +15,7 @@ export interface DeploymentLogsProps {
   setPauseStatusLogs: (pause: boolean) => void
   errors: ErrorLogsProps[]
   hideDeploymentLogs?: boolean
-  serviceStatus?: StateEnum
+  serviceRunningStatus?: RunningStatus
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
 }
 
@@ -25,7 +26,7 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
     hideDeploymentLogs,
     pauseStatusLogs,
     setPauseStatusLogs,
-    serviceStatus,
+    serviceRunningStatus,
     serviceDeploymentStatus,
     loadingStatus,
   } = props
@@ -69,7 +70,7 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
       placeholderDescription={displayPlaceholder(serviceDeploymentStatus)}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
-      serviceStatus={serviceStatus}
+      serviceRunningStatus={serviceRunningStatus}
       errors={errors}
       withLogsNavigation
       lineNumbers

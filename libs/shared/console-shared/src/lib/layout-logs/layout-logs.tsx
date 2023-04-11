@@ -5,10 +5,10 @@ import {
   EnvironmentLogs,
   EnvironmentLogsError,
   Log,
-  StateEnum,
 } from 'qovery-typescript-axios'
 import { ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
+import { RunningStatus } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -30,7 +30,7 @@ export interface LayoutLogsProps {
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
-  serviceStatus?: StateEnum
+  serviceRunningStatus?: RunningStatus
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
@@ -62,7 +62,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     setEnabledNginx,
     clusterBanner,
     countNginx,
-    serviceStatus,
+    serviceRunningStatus,
     placeholderDescription = 'Logs not available',
   } = props
 
@@ -80,7 +80,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     if (row) scrollParentToChild(section, row, 100)
   }
 
-  const LinkNavigation = (name: string, link: string, status?: StateEnum) => {
+  const LinkNavigation = (name: string, link: string, status?: RunningStatus) => {
     const isActive = location.pathname.includes(link)
     return (
       <Link
@@ -111,7 +111,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
           {LinkNavigation(
             'Live logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
-            serviceStatus
+            serviceRunningStatus
           )}
         </div>
       )}

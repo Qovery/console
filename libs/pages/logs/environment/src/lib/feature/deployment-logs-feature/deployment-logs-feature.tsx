@@ -112,7 +112,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       errors={errors}
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
-      serviceStatus={application?.status?.state || database?.status?.state}
+      serviceRunningStatus={application?.running_status?.state || database?.running_status?.state}
       serviceDeploymentStatus={
         application?.status?.service_deployment_status || database?.status?.service_deployment_status
       }
