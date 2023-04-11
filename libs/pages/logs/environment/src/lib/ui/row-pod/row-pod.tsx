@@ -70,22 +70,22 @@ export function RowPod(props: RowPodProps) {
     <TableRowFilter data={data} filter={filter}>
       <div
         data-testid="pod-log-row"
-        className="group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 w-full overflow-y-auto"
+        className="group flex justify-between font-code text-xs hover:bg-element-light-darker-400 w-full overflow-y-auto mb-[2px]"
       >
         <div
           data-testid="index"
           className="bg-element-light-darker-500 text-text-500 group-hover:bg-element-light-darker-200"
         >
-          <div className="text-right w-10 h-6 py-1 px-2 font-code">{index + 1}</div>
+          <div className="text-right w-10 h-5 px-2 font-code">{index + 1}</div>
         </div>
         <div
           data-testid="cell-pod-name"
-          className="py-1 px-4 text-element-light-lighter-700 whitespace-nowrap min-w-[215px]"
+          className="px-4 text-element-light-lighter-700 whitespace-nowrap min-w-[215px]"
           style={{ color: getColorByPod(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
             <Tooltip content={data.pod_name || ''}>
-              <span className="flex justify-center px-2 py-1 bg-element-light-darker-100 rounded-[40px]">
+              <span className="h-5 flex justify-center items-center px-2 bg-element-light-darker-100 rounded-[40px]">
                 {data.pod_name && data.pod_name.length > 23
                   ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
                   : data.pod_name}
@@ -95,7 +95,7 @@ export function RowPod(props: RowPodProps) {
           {!data.pod_name && !data.message.includes('No pods found' || '') && <span className="block">NGINX</span>}
           {!data.pod_name && data.message.includes('No pods found' || '') && <span className="block">undefined</span>}
         </div>
-        <div data-testid="cell-version" className="flex whitespace-nowrap py-1 text-text-100 min-w-[85px]">
+        <div data-testid="cell-version" className="pt-[2px] flex whitespace-nowrap text-text-100 min-w-[85px]">
           {data.version && (
             <span>
               <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
@@ -103,10 +103,10 @@ export function RowPod(props: RowPodProps) {
             </span>
           )}
         </div>
-        <div data-testid="cell-date" className="py-1 px-4 text-element-light-lighter-700 whitespace-nowrap">
+        <div data-testid="cell-date" className="px-4 pt-[2px] text-element-light-lighter-700 whitespace-nowrap">
           {dateFullFormat(data.created_at)}
         </div>
-        <div data-testid="cell-msg" className="py-1 pr-6 text-text-100 relative w-full">
+        <div data-testid="cell-msg" className="pr-6 pt-[2px] text-text-100 relative w-full">
           <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
           <CopyToClipboard
             className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"

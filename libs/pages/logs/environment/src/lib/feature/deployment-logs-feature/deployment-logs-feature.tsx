@@ -21,11 +21,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   const { clusterId, setServiceId } = props
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
-  const {
-    // refetch,
-    // isLoading: loadingStatusDeployments,
-    data: environmentDeploymentHistory,
-  } = useEnvironmentDeploymentHistory(projectId, environmentId)
+  const { refetch, data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, serviceId),
     equal
@@ -38,9 +34,11 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
 
   useDocumentTitle(`Deployment logs ${loadingStatus === 'loaded' ? `- ${application?.name}` : '- Loading...'}`)
 
-  const hideDeploymentLogsBoolean: boolean = mergeDeploymentServices(
-    environmentDeploymentHistory ? [environmentDeploymentHistory[0]] : []
-  ).some((service: DeploymentService) => service.id !== serviceId)
+  const hideDeploymentLogsBoolean: boolean =
+    !environmentDeploymentHistory ||
+    !mergeDeploymentServices([environmentDeploymentHistory[0]]).some(
+      (service: DeploymentService) => service.id === serviceId
+    )
 
   useEffect(() => {
     if (hideDeploymentLogsBoolean) setLoadingStatus('loaded')
@@ -48,17 +46,19 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
 
   // reset deployment logs by serviceId
   useEffect(() => {
+    setLoadingStatus('not loaded')
+    setLogs([])
     setServiceId(serviceId)
   }, [setServiceId, serviceId])
 
   // fetch application deployments because if not currently deployed display a message
-  // useEffect(() => {
-  //   const fetchEnv = () => refetch()
-  //   !environmentDeploymentHistory && fetchEnv()
-  //   const pullDeployments = setInterval(() => refetch(), 2500)
+  useEffect(() => {
+    const fetchEnv = () => refetch()
+    !environmentDeploymentHistory && fetchEnv()
+    const pullDeployments = setInterval(() => refetch(), 2500)
 
-  //   return () => clearInterval(pullDeployments)
-  // }, [environmentDeploymentHistory, refetch, environmentId, projectId])
+    return () => clearInterval(pullDeployments)
+  }, [environmentDeploymentHistory, refetch, environmentId, projectId])
 
   const { getAccessTokenSilently } = useAuth()
 
