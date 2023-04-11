@@ -38,7 +38,7 @@ export interface LayoutLogsProps {
   setEnabledNginx?: (debugMode: boolean) => void
   clusterBanner?: boolean
   countNginx?: number
-  placeholderDescription?: string
+  placeholderDescription?: string | ReactNode
 }
 
 export interface ErrorLogsProps {

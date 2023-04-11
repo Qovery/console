@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { ClusterLogsStepEnum, StateEnum } from 'qovery-typescript-axios'
+import { ClusterLogsStepEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 import DeploymentLogs, { DeploymentLogsProps } from './deployment-logs'
 
@@ -29,7 +29,8 @@ describe('DeploymentLogs', () => {
       },
     ],
     hideDeploymentLogs: false,
-    applicationStatus: StateEnum.DEPLOYING,
+    serviceStatus: StateEnum.DEPLOYING,
+    serviceDeploymentStatus: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
     setPauseStatusLogs: jest.fn(),
     pauseStatusLogs: false,
   }
@@ -48,6 +49,6 @@ describe('DeploymentLogs', () => {
     props.hideDeploymentLogs = true
     const { getByText } = render(<DeploymentLogs {...props} />)
 
-    expect(getByText('This service is not being deployed right now')).toBeInTheDocument()
+    expect(getByText('This service has never been deployed and no thus logs are available.')).toBeInTheDocument()
   })
 })

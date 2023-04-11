@@ -113,6 +113,9 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
       serviceStatus={application?.status?.state || database?.status?.state}
+      serviceDeploymentStatus={
+        application?.status?.service_deployment_status || database?.status?.service_deployment_status
+      }
       hideDeploymentLogs={hideDeploymentLogsBoolean}
     />
   )
