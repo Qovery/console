@@ -77,14 +77,14 @@ export function StepSummary(props: StepSummaryProps) {
                   <li>
                     Image tag: <strong>{props.generalData.image_tag}</strong>
                   </li>
-                  <li>
-                    Image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
-                  </li>
-                  <li>
-                    CMD arguments: <strong>{props.generalData.cmd_arguments}</strong>
-                  </li>
                 </>
               )}
+              <li>
+                Image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
+              </li>
+              <li>
+                CMD arguments: <strong>{props.generalData.cmd_arguments}</strong>
+              </li>
             </ul>
           </div>
 

@@ -13,7 +13,7 @@ import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (data: FieldValues, application: ApplicationEntity) => {
-  const cloneApplication = Object.assign({}, application)
+  let cloneApplication = Object.assign({}, application)
   cloneApplication.name = data['name']
   cloneApplication.description = data['description']
 
@@ -35,6 +35,12 @@ export const handleGitApplicationSubmit = (data: FieldValues, application: Appli
     }
 
     cloneApplication.git_repository = git_repository
+  }
+
+  cloneApplication = {
+    ...cloneApplication,
+    arguments: (data['cmd_arguments'] && data['cmd_arguments'].length && eval(data['cmd_arguments'])) || [],
+    entrypoint: data['image_entry_point'] || '',
   }
 
   return cloneApplication
@@ -180,11 +186,6 @@ export function PageSettingsGeneralFeature() {
         methods.setValue('registry', application.registry?.id)
         methods.setValue('image_name', application.image_name)
         methods.setValue('image_tag', application.tag)
-        methods.setValue('image_entry_point', application.entrypoint)
-        methods.setValue(
-          'cmd_arguments',
-          application.arguments && application.arguments?.length ? JSON.stringify(application.arguments) : ''
-        )
         methods.unregister('buildpack_language')
         methods.unregister('dockerfile_path')
 
@@ -192,6 +193,12 @@ export function PageSettingsGeneralFeature() {
 
         dispatch(fetchOrganizationContainerRegistries({ organizationId }))
       }
+
+      methods.setValue('image_entry_point', application.entrypoint)
+      methods.setValue(
+        'cmd_arguments',
+        application.arguments && application.arguments?.length ? JSON.stringify(application.arguments) : ''
+      )
     }
 
     if (isJob(application)) {

@@ -119,6 +119,8 @@ describe('PageApplicationPostFeature', () => {
       data: {
         name: 'test',
         description: '',
+        arguments: undefined,
+        entrypoint: '',
         ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
         cpu: 500,
         memory: 512,

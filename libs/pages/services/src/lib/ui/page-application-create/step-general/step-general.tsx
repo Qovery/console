@@ -99,9 +99,10 @@ export function StepGeneral(props: StepGeneralProps) {
         {isContainer(watchServiceType) && (
           <>
             <GeneralContainerSettings organization={props.organization} />
-            <EntrypointCmdInputs />
           </>
         )}
+
+        <EntrypointCmdInputs />
 
         <div className="flex justify-between">
           <Button
