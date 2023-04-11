@@ -65,6 +65,8 @@ export function refactoGitApplicationPayload(application: Partial<GitApplication
     buildpack_language: application.buildpack_language,
     max_running_instances: application.max_running_instances,
     min_running_instances: application.min_running_instances,
+    entrypoint: application.entrypoint,
+    arguments: application.arguments,
   }
 
   return applicationRequestPayload

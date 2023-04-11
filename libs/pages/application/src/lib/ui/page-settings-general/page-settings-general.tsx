@@ -89,6 +89,9 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           {isApplication(type) && (
             <>
               <EditGitRepositorySettingsFeature />
+              <BlockContent title="Entrypoint and arguments">
+                <EntrypointCmdInputs />
+              </BlockContent>
               <BlockContent title="Build mode">
                 <Controller
                   name="build_mode"

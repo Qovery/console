@@ -87,6 +87,8 @@ export function StepSummaryFeature() {
             root_path: generalData.root_path,
             branch: generalData.branch,
           },
+          arguments: generalData.cmd,
+          entrypoint: generalData.image_entry_point || '',
         }
 
         if (generalData.build_mode === BuildModeEnum.DOCKER) {
