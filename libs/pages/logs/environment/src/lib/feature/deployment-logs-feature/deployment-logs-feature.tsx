@@ -34,11 +34,12 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
 
   useDocumentTitle(`Deployment logs ${loadingStatus === 'loaded' ? `- ${application?.name}` : '- Loading...'}`)
 
-  const hideDeploymentLogsBoolean: boolean =
-    !environmentDeploymentHistory ||
-    !mergeDeploymentServices([environmentDeploymentHistory[0]]).some(
-      (service: DeploymentService) => service.id === serviceId
-    )
+  const hideDeploymentLogsBoolean =
+    loadingStatus === 'loaded' &&
+    (!environmentDeploymentHistory ||
+      !mergeDeploymentServices([environmentDeploymentHistory[0]]).some(
+        (service: DeploymentService) => service.id === serviceId
+      ))
 
   useEffect(() => {
     if (hideDeploymentLogsBoolean) setLoadingStatus('loaded')
@@ -46,8 +47,6 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
 
   // reset deployment logs by serviceId
   useEffect(() => {
-    setLoadingStatus('not loaded')
-    setLogs([])
     setServiceId(serviceId)
   }, [setServiceId, serviceId])
 
@@ -77,10 +76,15 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       onMessage: (message) => {
         setLoadingStatus('loaded')
 
+        const newLog = JSON.parse(message?.data)
+
         if (pauseStatusLogs) {
-          setPauseLogs((prev: EnvironmentLogs[]) => [...prev, ...JSON.parse(message?.data)])
+          setPauseLogs((prev: EnvironmentLogs[]) => [...prev, ...newLog])
         } else {
-          setLogs((prev: EnvironmentLogs[]) => [...prev, ...pauseLogs, ...JSON.parse(message?.data)])
+          setLogs((prev: EnvironmentLogs[]) => {
+            // return unique log by timestamp
+            return [...new Map([...prev, ...pauseLogs, ...newLog].map((item) => [item['timestamp'], item])).values()]
+          })
           setPauseLogs([])
         }
       },

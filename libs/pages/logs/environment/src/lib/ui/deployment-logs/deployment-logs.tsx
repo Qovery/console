@@ -10,7 +10,7 @@ export interface DeploymentLogsProps {
   pauseStatusLogs: boolean
   setPauseStatusLogs: (pause: boolean) => void
   errors: ErrorLogsProps[]
-  hideDeploymentLogs: boolean
+  hideDeploymentLogs?: boolean
   applicationStatus?: StateEnum
 }
 

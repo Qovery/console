@@ -1,8 +1,11 @@
 import { IconProps } from '../icon'
 
 export function ProgressIcon(props: IconProps) {
+  const newProps = { ...props }
+  delete newProps.pathColor
+
   return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg">
+    <svg {...newProps} xmlns="http://www.w3.org/2000/svg">
       <path
         fill={`${props.pathColor ? props.pathColor : '#FF7C00'}`}
         fillRule="evenodd"
