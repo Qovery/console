@@ -36,9 +36,6 @@ export function PageEnvironmentLogs() {
     equal
   )
 
-  // const [serviceId, setServiceId] = useState<string>('')
-  // const [stageId, setStageId] = useState<string>('')
-
   useEffect(() => {
     const fetchServicesStatusByInterval = setInterval(() => {
       if (applications.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
