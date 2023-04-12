@@ -1,3 +1,4 @@
+import { BuildModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -22,6 +23,7 @@ export function StepGeneral(props: StepGeneralProps) {
   const navigate = useNavigate()
 
   const watchServiceType = watch('serviceType')
+  const watchBuildMode = watch('build_mode')
 
   return (
     <div>
@@ -96,13 +98,13 @@ export function StepGeneral(props: StepGeneralProps) {
         <div className="border-b border-b-element-light-lighter-400 mb-6"></div>
         {isApplication(watchServiceType) && <CreateGeneralGitApplication />}
 
-        {isContainer(watchServiceType) && (
-          <>
-            <GeneralContainerSettings organization={props.organization} />
-          </>
-        )}
+        {isContainer(watchServiceType) && <GeneralContainerSettings organization={props.organization} />}
 
-        <EntrypointCmdInputs />
+        {watchServiceType &&
+        (isContainer(watchServiceType) ||
+          (isApplication(watchServiceType) && watchBuildMode !== BuildModeEnum.BUILDPACKS)) ? (
+          <EntrypointCmdInputs />
+        ) : null}
 
         <div className="flex justify-between">
           <Button
