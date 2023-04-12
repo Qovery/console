@@ -36,7 +36,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 mb-8 text-text-700">Resources</h2>
         <form onSubmit={onSubmit}>
-          <p className="text-text-500 text-xs mb-3">Manage the database's resources and horizontal auto-scaling.</p>
+          <p className="text-text-500 text-xs mb-3">Manage the database's resources</p>
 
           {database.mode !== DatabaseModeEnum.MANAGED && (
             <>
