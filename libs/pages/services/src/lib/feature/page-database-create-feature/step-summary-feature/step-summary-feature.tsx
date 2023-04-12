@@ -33,11 +33,7 @@ export function StepSummaryFeature() {
   }
 
   const onBack = () => {
-    if (generalData?.mode === DatabaseModeEnum.MANAGED) {
-      gotoGlobalInformations()
-    } else {
-      gotoResources()
-    }
+    gotoResources()
   }
 
   useEffect(() => {
@@ -62,12 +58,12 @@ export function StepSummaryFeature() {
         version: generalData.version,
         accessibility: generalData.accessibility,
         mode: generalData.mode,
+        storage: storage,
       }
 
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
         databaseRequest.cpu = cpu
         databaseRequest.memory = memory
-        databaseRequest.storage = storage
       }
 
       dispatch(
@@ -112,6 +108,7 @@ export function StepSummaryFeature() {
           resourcesData={resourcesData}
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}
+          isManaged={generalData.mode === DatabaseModeEnum.MANAGED}
         />
       )}
     </FunnelFlowBody>

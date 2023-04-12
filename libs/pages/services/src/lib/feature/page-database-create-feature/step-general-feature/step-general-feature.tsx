@@ -5,7 +5,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { getEnvironmentById, useFetchDatabaseConfiguration, useFetchEnvironments } from '@qovery/domains/environment'
 import { Value } from '@qovery/shared/interfaces'
 import {
-  SERVICES_DATABASE_CREATION_POST_URL,
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
   SERVICES_DATABASE_CREATION_URL,
   SERVICES_URL,
@@ -139,12 +138,7 @@ export function StepGeneralFeature() {
 
     setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
-
-    if (data.mode === DatabaseModeEnum.MANAGED) {
-      navigate(pathCreate + SERVICES_DATABASE_CREATION_POST_URL)
-    } else {
-      navigate(pathCreate + SERVICES_DATABASE_CREATION_RESOURCES_URL)
-    }
+    navigate(pathCreate + SERVICES_DATABASE_CREATION_RESOURCES_URL)
   })
 
   return (

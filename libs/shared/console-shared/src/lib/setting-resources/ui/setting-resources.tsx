@@ -11,6 +11,7 @@ export interface SettingResourcesProps {
   minInstances?: number
   maxInstances?: number
   isDatabase?: boolean
+  isManaged?: boolean
   clusterId?: string
 }
 
@@ -21,6 +22,7 @@ export function SettingResources(props: SettingResourcesProps) {
     minInstances = 1,
     maxInstances = 50,
     isDatabase = false,
+    isManaged = false,
     clusterId = '',
   } = props
   const { control, watch } = useFormContext()
@@ -38,80 +40,88 @@ export function SettingResources(props: SettingResourcesProps) {
   return (
     <div>
       <p className="text-text-500 text-xs mb-3">Manage the application's resources and horizontal auto-scaling.</p>
-      <BlockContent title="vCPU">
-        <Controller
-          name="cpu"
-          control={control}
-          render={({ field }) => (
-            <InputText
-              type="number"
-              name={field.name}
-              label="Size (in milli vCPU)"
-              value={field.value}
-              onChange={field.onChange}
+      {!isManaged && (
+        <>
+          <BlockContent title="vCPU">
+            <Controller
+              name="cpu"
+              control={control}
+              render={({ field }) => (
+                <InputText
+                  type="number"
+                  name={field.name}
+                  label="Size (in milli vCPU)"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
             />
-          )}
-        />
-        {application && (
-          <p className="text-text-400 text-xs mt-3">
-            Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-            {application?.maximum_cpu} mili vCPU.{' '}
-            {clusterId && (
-              <Link
-                className="!text-xs"
-                link={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                linkLabel="Edit node"
+            {application && (
+              <p className="text-text-400 text-xs mt-3">
+                Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
+                {application?.maximum_cpu} mili vCPU.{' '}
+                {clusterId && (
+                  <Link
+                    className="!text-xs"
+                    link={
+                      CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
+                    }
+                    linkLabel="Edit node"
+                  />
+                )}
+              </p>
+            )}
+            {displayWarningCpu && (
+              <BannerBox
+                dataTestId="banner-box"
+                className="mt-3"
+                title="Not enough resources"
+                message="Increase the capacity of your cluster nodes or reduce the service consumption."
+                type={BannerBoxEnum.ERROR}
               />
             )}
-          </p>
-        )}
-        {displayWarningCpu && (
-          <BannerBox
-            dataTestId="banner-box"
-            className="mt-3"
-            title="Not enough resources"
-            message="Increase the capacity of your cluster nodes or reduce the service consumption."
-            type={BannerBoxEnum.ERROR}
-          />
-        )}
-      </BlockContent>
-      <BlockContent title="Memory">
-        <Controller
-          name="memory"
-          control={control}
-          rules={inputSizeUnitRules(maxMemoryBySize)}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-memory-memory"
-              type="number"
-              name={field.name}
-              label="Size in MB"
-              value={field.value}
-              onChange={field.onChange}
-              error={
-                error?.type === 'required'
-                  ? 'Please enter a size.'
-                  : error?.type === 'max'
-                  ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
-                  : undefined
-              }
+          </BlockContent>
+          <BlockContent title="Memory">
+            <Controller
+              name="memory"
+              control={control}
+              rules={inputSizeUnitRules(maxMemoryBySize)}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-memory-memory"
+                  type="number"
+                  name={field.name}
+                  label="Size in MB"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={
+                    error?.type === 'required'
+                      ? 'Please enter a size.'
+                      : error?.type === 'max'
+                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                      : undefined
+                  }
+                />
+              )}
             />
-          )}
-        />
-        {application && (
-          <p className="text-text-400 text-xs mt-3">
-            Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
-            {application.maximum_memory} MB.{' '}
-            {clusterId && (
-              <Link
-                className="!text-xs"
-                link={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                linkLabel="Edit node"
-              />
+            {application && (
+              <p className="text-text-400 text-xs mt-3">
+                Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
+                {application.maximum_memory} MB.{' '}
+                {clusterId && (
+                  <Link
+                    className="!text-xs"
+                    link={
+                      CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
+                    }
+                    linkLabel="Edit node"
+                  />
+                )}
+              </p>
             )}
-          </p>
-        )}
-      </BlockContent>
+          </BlockContent>
+        </>
+      )}
 
       {!isJob(application) && watchInstances && (
         <BlockContent title="Instances">

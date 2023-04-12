@@ -7,6 +7,7 @@ import { ResourcesData } from '../../../feature/page-database-create-feature/dat
 export interface StepResourcesProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
+  isManaged?: boolean
 }
 
 export function StepResources(props: StepResourcesProps) {
@@ -19,7 +20,7 @@ export function StepResources(props: StepResourcesProps) {
       </div>
 
       <form onSubmit={props.onSubmit}>
-        <SettingResources isDatabase displayWarningCpu={false} />
+        <SettingResources isDatabase isManaged={props.isManaged} displayWarningCpu={false} />
 
         <div className="flex justify-between">
           <Button

@@ -1,3 +1,4 @@
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -36,71 +37,79 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <h2 className="h5 mb-8 text-text-700">Resources</h2>
         <form onSubmit={onSubmit}>
           <p className="text-text-500 text-xs mb-3">Manage the database's resources and horizontal auto-scaling.</p>
-          <BlockContent title="vCPU">
-            <Controller
-              name="cpu"
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  type="number"
-                  name={field.name}
-                  label="Size (in milli vCPU)"
-                  value={field.value}
-                  onChange={field.onChange}
+
+          {database.mode !== DatabaseModeEnum.MANAGED && (
+            <>
+              <BlockContent title="vCPU">
+                <Controller
+                  name="cpu"
+                  control={control}
+                  render={({ field }) => (
+                    <InputText
+                      type="number"
+                      name={field.name}
+                      label="Size (in milli vCPU)"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
-              )}
-            />
-            <p className="text-text-400 text-xs mt-3">
-              Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-              {database?.maximum_cpu} mili vCPU.{' '}
-              {clusterId && (
-                <Link
-                  className="!text-xs"
-                  link={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                  linkLabel="Edit node"
+                <p className="text-text-400 text-xs mt-3">
+                  Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
+                  {database?.maximum_cpu} mili vCPU.{' '}
+                  {clusterId && (
+                    <Link
+                      className="!text-xs"
+                      link={
+                        CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
+                      }
+                      linkLabel="Edit node"
+                    />
+                  )}
+                </p>
+              </BlockContent>
+              <BlockContent title="Memory">
+                <Controller
+                  name="memory"
+                  control={control}
+                  rules={inputSizeUnitRules(maxMemoryBySize)}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      dataTestId="input-memory-memory"
+                      type="number"
+                      name={field.name}
+                      label="Size in MB"
+                      value={field.value}
+                      onChange={field.onChange}
+                      error={
+                        error?.type === 'required'
+                          ? 'Please enter a size.'
+                          : error?.type === 'max'
+                          ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                          : undefined
+                      }
+                    />
+                  )}
                 />
-              )}
-            </p>
-          </BlockContent>
-          <BlockContent title="Memory">
-            <Controller
-              name="memory"
-              control={control}
-              rules={inputSizeUnitRules(maxMemoryBySize)}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-memory-memory"
-                  type="number"
-                  name={field.name}
-                  label="Size in MB"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={
-                    error?.type === 'required'
-                      ? 'Please enter a size.'
-                      : error?.type === 'max'
-                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
-                      : undefined
-                  }
-                />
-              )}
-            />
-            {database && (
-              <p className="text-text-400 text-xs mt-3">
-                Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
-                {database.maximum_memory} MB.{' '}
-                {clusterId && (
-                  <Link
-                    className="!text-xs"
-                    link={
-                      CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
-                    }
-                    linkLabel="Edit node"
-                  />
+                {database && (
+                  <p className="text-text-400 text-xs mt-3">
+                    Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
+                    {database.maximum_memory} MB.{' '}
+                    {clusterId && (
+                      <Link
+                        className="!text-xs"
+                        link={
+                          CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
+                        }
+                        linkLabel="Edit node"
+                      />
+                    )}
+                  </p>
                 )}
-              </p>
-            )}
-          </BlockContent>
+              </BlockContent>
+            </>
+          )}
+
           <BlockContent title="Storage">
             <Controller
               name="storage"
