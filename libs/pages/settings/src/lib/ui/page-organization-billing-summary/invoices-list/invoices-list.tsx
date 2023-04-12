@@ -19,9 +19,6 @@ export function InvoicesList(props: InvoicesListProps) {
       title: 'Date',
     },
     {
-      title: 'Plan',
-    },
-    {
       title: 'Status',
       filter: [
         {
@@ -35,7 +32,7 @@ export function InvoicesList(props: InvoicesListProps) {
     },
   ]
   const [filter, setFilter] = useState<TableFilterProps>({})
-  const columnWidth = '30% 20% 20% 20% 10%'
+  const columnWidth = '30% 30% 30% 10%'
 
   return (
     <div className="mb-3">

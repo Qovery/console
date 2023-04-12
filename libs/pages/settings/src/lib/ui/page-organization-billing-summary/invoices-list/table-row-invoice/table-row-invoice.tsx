@@ -44,7 +44,6 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
     >
       <>
         <div className="px-4 text-xs text-text-500 font-medium">{dateToFormat(data.created_at, 'MMM dd, Y')}</div>
-        <div className="px-4 text-xs text-text-500 font-medium">Professional</div>
         <div className="px-4 text-xs text-text-500 font-medium">
           <Tag className={`border  ${statusBadgeClassNames[data.status]}`} size={TagSize.SMALL}>
             {data.status.replace('_', ' ')}
