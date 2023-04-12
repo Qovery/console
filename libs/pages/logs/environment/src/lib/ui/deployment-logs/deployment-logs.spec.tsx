@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { ClusterLogsStepEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import { ClusterLogsStepEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 import DeploymentLogs, { DeploymentLogsProps } from './deployment-logs'
 

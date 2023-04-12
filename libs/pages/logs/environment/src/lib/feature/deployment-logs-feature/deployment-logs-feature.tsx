@@ -1,5 +1,5 @@
 import { EnvironmentLogs } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
@@ -11,15 +11,16 @@ import { ApplicationEntity, DatabaseEntity, DeploymentService, LoadingStatus } f
 import { mergeDeploymentServices, useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
+import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
 export interface DeploymentLogsFeatureProps {
   clusterId: string
-  setServiceId: (id: string) => void
 }
 
 export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
-  const { clusterId, setServiceId } = props
+  const { clusterId } = props
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
+  const { stageId, updateServiceId } = useContext(ServiceStageIdsContext)
 
   const { data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
@@ -49,8 +50,8 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
 
   // reset deployment logs by serviceId
   useEffect(() => {
-    setServiceId(serviceId)
-  }, [setServiceId, serviceId])
+    updateServiceId(serviceId)
+  }, [updateServiceId, serviceId])
 
   const { getAccessTokenSilently } = useAuth()
 
@@ -85,7 +86,13 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
     !hideDeploymentLogsBoolean
   )
 
-  const errors = logs
+  const logsByServiceId = logs.filter(
+    (currentData: EnvironmentLogs) =>
+      (currentData.details.stage?.id === stageId || !currentData.details.stage?.id) &&
+      (currentData.details.transmitter?.type === 'Environment' || currentData.details.transmitter?.id === serviceId)
+  )
+
+  const errors = logsByServiceId
     .map((log: EnvironmentLogs, index: number) => ({
       index: index,
       errors: log.error,
@@ -96,10 +103,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
     <DeploymentLogs
       loadingStatus={loadingStatus}
       // filter by same transmitter id and environment type
-      logs={logs.filter(
-        (currentData: EnvironmentLogs) =>
-          currentData.details.transmitter?.type === 'Environment' || currentData.details.transmitter?.id === serviceId
-      )}
+      logs={logsByServiceId}
       errors={errors}
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}

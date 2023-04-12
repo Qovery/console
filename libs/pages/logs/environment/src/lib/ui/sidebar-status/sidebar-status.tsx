@@ -13,7 +13,7 @@ export function SidebarStatus(props: SidebarStatusProps) {
     <div className="border-b border-element-light-darker-100 p-5">
       <p className="flex items-center justify-between text-text-300 text-xs mb-2">
         Pipeline deployment status:
-        <StatusChip status={environmentDeploymentHistory?.status} />
+        <StatusChip status={environmentDeploymentHistory?.status} mustRenameStatus />
       </p>
       <p className="flex items-center justify-between text-text-300 text-xs mb-2">
         Deployment id:

@@ -1,5 +1,5 @@
 import { DeploymentStageWithServicesStatuses } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
@@ -10,14 +10,11 @@ import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { RootState } from '@qovery/store'
 import Sidebar from '../../ui/sidebar/sidebar'
+import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
-export interface SidebarFeatureProps {
-  serviceId: string
-}
-
-export function SidebarFeature(props: SidebarFeatureProps) {
-  const { serviceId } = props
+export function SidebarFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { serviceId } = useContext(ServiceStageIdsContext)
 
   const { data: environments } = useFetchEnvironments(projectId)
   const environment = getEnvironmentById(environmentId, environments)

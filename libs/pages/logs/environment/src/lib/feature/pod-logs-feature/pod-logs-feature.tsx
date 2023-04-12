@@ -1,5 +1,5 @@
 import { Log } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
@@ -10,15 +10,16 @@ import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
 import PodLogs from '../../ui/pod-logs/pod-logs'
+import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
 export interface PodLogsFeatureProps {
-  setServiceId: (id: string) => void
   clusterId: string
 }
 
 export function PodLogsFeature(props: PodLogsFeatureProps) {
-  const { clusterId, setServiceId } = props
+  const { clusterId } = props
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
+  const { updateServiceId } = useContext(ServiceStageIdsContext)
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('not loaded')
   const [logs, setLogs] = useState<Log[]>([])
@@ -80,14 +81,14 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
 
   // reset pod logs by serviceId
   useEffect(() => {
-    setServiceId(serviceId)
+    updateServiceId(serviceId)
     setLogs([])
     setPauseLogs([])
     setPauseStatusLogs(false)
     setLoadingStatus('not loaded')
     setNginxLogs([])
     setEnabledNginx && setEnabledNginx(false)
-  }, [setServiceId, serviceId, setEnabledNginx])
+  }, [updateServiceId, serviceId, setEnabledNginx])
 
   const logsSorted =
     enabledNginx && nginxLogs

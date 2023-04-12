@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
@@ -12,6 +12,7 @@ import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
+import { ServiceStageIdsProvider } from './feature/service-stage-ids-context/service-stage-ids-context'
 import SidebarFeature from './feature/sidebar-feature/sidebar-feature'
 
 export function PageEnvironmentLogs() {
@@ -35,7 +36,8 @@ export function PageEnvironmentLogs() {
     equal
   )
 
-  const [serviceId, setServiceId] = useState<string>('')
+  // const [serviceId, setServiceId] = useState<string>('')
+  // const [stageId, setStageId] = useState<string>('')
 
   useEffect(() => {
     const fetchServicesStatusByInterval = setInterval(() => {
@@ -47,17 +49,16 @@ export function PageEnvironmentLogs() {
 
   return (
     <div className="flex h-full">
-      <SidebarFeature serviceId={serviceId} />
-      <Routes>
-        <Route
-          path={DEPLOYMENT_LOGS_URL()}
-          element={<DeploymentLogsFeature clusterId={environment?.cluster_id || ''} setServiceId={setServiceId} />}
-        />
-        <Route
-          path={SERVICE_LOGS_URL()}
-          element={<PodLogsFeature clusterId={environment?.cluster_id || ''} setServiceId={setServiceId} />}
-        />
-      </Routes>
+      <ServiceStageIdsProvider>
+        <SidebarFeature />
+        <Routes>
+          <Route
+            path={DEPLOYMENT_LOGS_URL()}
+            element={<DeploymentLogsFeature clusterId={environment?.cluster_id || ''} />}
+          />
+          <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id || ''} />} />
+        </Routes>
+      </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
         <div className="flex justify-center w-[calc(100%-8px)] min-h-full bg-element-light-darker-400 m-1 rounded">

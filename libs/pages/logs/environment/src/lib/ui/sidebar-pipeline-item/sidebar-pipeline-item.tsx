@@ -1,10 +1,11 @@
 import { DeploymentStageWithServicesStatuses, Status } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { RunningStatus, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { BadgeDeploymentOrder, BadgeService, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
+import { ServiceStageIdsContext } from '../../feature/service-stage-ids-context/service-stage-ids-context'
 
 export function mergeServices(applications?: Status[], databases?: Status[], containers?: Status[], jobs?: Status[]) {
   return (
@@ -22,6 +23,7 @@ export interface SidebarPipelineItemProps {
 export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
   const { currentStage, index, serviceId, services } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { updateStageId } = useContext(ServiceStageIdsContext)
 
   const currentApplication = (serviceId: string) =>
     services.find((service: ApplicationEntity | DatabaseEntity) => service.id === serviceId)
@@ -34,6 +36,13 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
   )
 
   const [openStage, setOpenStage] = useState(servicesStages.length > 0)
+
+  useEffect(() => {
+    const activeStage = servicesStages.some((service: Status) => service.id === serviceId)
+    if (activeStage) {
+      currentStage.stage?.id && updateStageId(currentStage.stage.id)
+    }
+  }, [serviceId, currentStage.stage?.id, servicesStages, updateStageId])
 
   return (
     <div className="mb-1.5">
