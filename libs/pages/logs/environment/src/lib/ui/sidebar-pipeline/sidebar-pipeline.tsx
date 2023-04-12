@@ -12,8 +12,8 @@ export function SidebarPipeline(props: SidebarPipelineProps) {
   const { serviceId, services, statusStages } = props
 
   return (
-    <>
-      <p className="text-text-300 text-xs mt-2.5 mb-4">Pipeline</p>
+    <div className="p-5">
+      <p className="text-text-100 text-xs mb-4 font-medium">Pipeline</p>
       {statusStages?.map((currentStage: DeploymentStageWithServicesStatuses, index: number) => (
         <SidebarPipelineItem
           key={index}
@@ -23,7 +23,7 @@ export function SidebarPipeline(props: SidebarPipelineProps) {
           services={services}
         />
       ))}
-    </>
+    </div>
   )
 }
 

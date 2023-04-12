@@ -2,8 +2,7 @@ import { EnvironmentLogs, ServiceDeploymentStatusEnum } from 'qovery-typescript-
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
-import { RunningStatus } from '@qovery/shared/enums'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Link } from '@qovery/shared/ui'
 import RowDeployment from '../row-deployment/row-deployment'
@@ -15,7 +14,7 @@ export interface DeploymentLogsProps {
   setPauseStatusLogs: (pause: boolean) => void
   errors: ErrorLogsProps[]
   hideDeploymentLogs?: boolean
-  serviceRunningStatus?: RunningStatus
+  serviceRunningStatus?: ServiceRunningStatus
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
 }
 
@@ -41,7 +40,7 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
   const displayPlaceholder = (serviceDeploymentStatus?: ServiceDeploymentStatusEnum) => {
     switch (serviceDeploymentStatus) {
       case ServiceDeploymentStatusEnum.NEVER_DEPLOYED:
-        return 'This service has never been deployed and no thus logs are available.'
+        return 'This service has never been deployed and thus no logs are available.'
       default:
         return (
           <div>

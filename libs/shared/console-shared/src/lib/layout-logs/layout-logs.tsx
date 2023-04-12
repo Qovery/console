@@ -9,7 +9,7 @@ import {
 import { ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { RunningStatus } from '@qovery/shared/enums'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, StatusChip, Tooltip } from '@qovery/shared/ui'
@@ -30,7 +30,7 @@ export interface LayoutLogsProps {
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
-  serviceRunningStatus?: RunningStatus
+  serviceRunningStatus?: ServiceRunningStatus
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
@@ -80,7 +80,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     if (row) scrollParentToChild(section, row, 100)
   }
 
-  const LinkNavigation = (name: string, link: string, status?: RunningStatus) => {
+  const LinkNavigation = (name: string, link: string, status?: ServiceRunningStatus) => {
     const isActive = location.pathname.includes(link)
     return (
       <Link
@@ -90,7 +90,13 @@ export function LayoutLogs(props: LayoutLogsProps) {
         }`}
         to={link}
       >
-        {status && <StatusChip status={status} mustRenameStatus className="mr-2" />}
+        {status && (
+          <StatusChip
+            status={status.state}
+            appendTooltipMessage={status.state === RunningStatus.ERROR ? status.pods[0]?.state_message : ''}
+            className="mr-2"
+          />
+        )}
         <span className="truncate">{name}</span>
       </Link>
     )

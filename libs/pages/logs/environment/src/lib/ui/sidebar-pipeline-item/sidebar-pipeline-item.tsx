@@ -79,7 +79,15 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
                       />
                       <span className="truncate max-w-[190px]">{currentApplication(service.id)?.name}</span>
                     </span>
-                    <StatusChip status={currentApplication(service.id)?.status?.state || RunningStatus.STOPPED} />
+                    <StatusChip
+                      status={currentApplication(service.id)?.status?.state || RunningStatus.STOPPED}
+                      mustRenameStatus
+                      appendTooltipMessage={
+                        currentApplication(service.id)?.status && currentApplication(service.id)?.status?.message
+                          ? currentApplication(service.id)?.status?.message
+                          : ''
+                      }
+                    />
                   </Link>
                 )}
               </div>

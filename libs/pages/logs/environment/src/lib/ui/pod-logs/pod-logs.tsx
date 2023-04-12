@@ -105,7 +105,7 @@ export function PodLogs(props: PodLogsProps) {
       }}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
-      serviceRunningStatus={service?.running_status?.state}
+      serviceRunningStatus={service?.running_status}
       enabledNginx={enabledNginx}
       setEnabledNginx={setEnabledNginx}
       countNginx={countNginx}

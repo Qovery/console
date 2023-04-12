@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { getEnvironmentById, useEnvironmentDeploymentHistory, useFetchEnvironments } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { RootState } from '@qovery/store'
@@ -29,6 +29,8 @@ export function SidebarFeature(props: SidebarFeatureProps) {
     selectDatabasesEntitiesByEnvId(state, environmentId)
   )
 
+  const { data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
+
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
 
   const { getAccessTokenSilently } = useAuth()
@@ -46,7 +48,14 @@ export function SidebarFeature(props: SidebarFeatureProps) {
     onMessage: (message) => setStatusStages(JSON.parse(message?.data).stages),
   })
 
-  return <Sidebar services={[...applications, ...databases]} serviceId={serviceId} statusStages={statusStages} />
+  return (
+    <Sidebar
+      services={[...applications, ...databases]}
+      serviceId={serviceId}
+      statusStages={statusStages}
+      environmentDeploymentHistory={environmentDeploymentHistory && environmentDeploymentHistory[0]}
+    />
+  )
 }
 
 export default SidebarFeature

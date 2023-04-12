@@ -20,6 +20,7 @@ export function PageEnvironmentLogs() {
   const dispatch = useDispatch<AppDispatch>()
 
   const { data: environments } = useFetchEnvironments(projectId)
+
   const environment = getEnvironmentById(environmentId, environments)
   const location = useLocation()
 

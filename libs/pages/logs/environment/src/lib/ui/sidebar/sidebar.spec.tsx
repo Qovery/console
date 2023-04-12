@@ -21,6 +21,6 @@ describe('Sidebar', () => {
     toggleButton.click()
 
     expect(toggleButton).toHaveClass('border-l')
-    expect(sidebar).toHaveClass('w-full p-3')
+    expect(sidebar).toHaveClass('w-full')
   })
 })

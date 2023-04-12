@@ -29,7 +29,6 @@ describe('DeploymentLogs', () => {
       },
     ],
     hideDeploymentLogs: false,
-    serviceStatus: StateEnum.DEPLOYING,
     serviceDeploymentStatus: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
     setPauseStatusLogs: jest.fn(),
     pauseStatusLogs: false,
@@ -49,6 +48,6 @@ describe('DeploymentLogs', () => {
     props.hideDeploymentLogs = true
     const { getByText } = render(<DeploymentLogs {...props} />)
 
-    expect(getByText('This service has never been deployed and no thus logs are available.')).toBeInTheDocument()
+    expect(getByText('This service has never been deployed and thus no logs are available.')).toBeInTheDocument()
   })
 })

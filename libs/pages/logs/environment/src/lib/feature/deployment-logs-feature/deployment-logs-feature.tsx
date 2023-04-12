@@ -56,10 +56,10 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   useEffect(() => {
     const fetchEnv = () => refetch()
     !environmentDeploymentHistory && fetchEnv()
-    const pullDeployments = setInterval(() => refetch(), 2500)
+    const pullDeployments = setInterval(() => hideDeploymentLogsBoolean && refetch(), 2500)
 
     return () => clearInterval(pullDeployments)
-  }, [environmentDeploymentHistory, refetch, environmentId, projectId])
+  }, [environmentDeploymentHistory, refetch, environmentId, projectId, hideDeploymentLogsBoolean])
 
   const { getAccessTokenSilently } = useAuth()
 
@@ -112,7 +112,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       errors={errors}
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
-      serviceRunningStatus={application?.running_status?.state || database?.running_status?.state}
+      serviceRunningStatus={application?.running_status || database?.running_status}
       serviceDeploymentStatus={
         application?.status?.service_deployment_status || database?.status?.service_deployment_status
       }
