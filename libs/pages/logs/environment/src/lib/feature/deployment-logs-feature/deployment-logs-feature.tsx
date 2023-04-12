@@ -21,7 +21,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   const { clusterId, setServiceId } = props
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
-  const { refetch, data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
+  const { data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
   )
@@ -51,15 +51,6 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   useEffect(() => {
     setServiceId(serviceId)
   }, [setServiceId, serviceId])
-
-  // fetch application deployments because if not currently deployed display a message
-  useEffect(() => {
-    const fetchEnv = () => refetch()
-    !environmentDeploymentHistory && fetchEnv()
-    const pullDeployments = setInterval(() => hideDeploymentLogsBoolean && refetch(), 2500)
-
-    return () => clearInterval(pullDeployments)
-  }, [environmentDeploymentHistory, refetch, environmentId, projectId, hideDeploymentLogsBoolean])
 
   const { getAccessTokenSilently } = useAuth()
 

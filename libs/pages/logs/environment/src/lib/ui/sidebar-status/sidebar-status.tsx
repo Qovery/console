@@ -20,9 +20,7 @@ export function SidebarStatus(props: SidebarStatusProps) {
         <Tooltip content={environmentDeploymentHistory?.id || ''}>
           <span className="text-brand-400">
             {environmentDeploymentHistory?.id && environmentDeploymentHistory?.id.length > 23
-              ? `${environmentDeploymentHistory?.id?.substring(0, 10)}...${environmentDeploymentHistory?.id?.slice(
-                  -10
-                )}`
+              ? `${environmentDeploymentHistory?.id?.substring(0, 8)}...${environmentDeploymentHistory?.id?.slice(-8)}`
               : environmentDeploymentHistory?.id}
           </span>
         </Tooltip>

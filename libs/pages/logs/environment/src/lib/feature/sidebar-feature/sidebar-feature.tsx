@@ -1,5 +1,5 @@
 import { DeploymentStageWithServicesStatuses } from 'qovery-typescript-axios'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
@@ -29,7 +29,16 @@ export function SidebarFeature(props: SidebarFeatureProps) {
     selectDatabasesEntitiesByEnvId(state, environmentId)
   )
 
-  const { data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
+  const { refetch, data: environmentDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
+
+  // fetch application deployments because if not currently deployed display a message
+  useEffect(() => {
+    const fetchEnv = () => refetch()
+    !environmentDeploymentHistory && fetchEnv()
+    const pullDeployments = setInterval(() => refetch(), 3000)
+
+    return () => clearInterval(pullDeployments)
+  }, [environmentDeploymentHistory, refetch, environmentId, projectId])
 
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
 
