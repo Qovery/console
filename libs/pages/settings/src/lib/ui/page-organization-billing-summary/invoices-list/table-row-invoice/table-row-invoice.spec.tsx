@@ -31,9 +31,6 @@ beforeEach(() => {
         ],
       },
       {
-        title: 'Plan',
-      },
-      {
         title: 'Status',
         filter: [
           {
@@ -59,7 +56,6 @@ describe('TableRowDeployment', () => {
     const { baseElement } = render(<TableRowInvoice {...props} />)
 
     getByText(baseElement, 'Jan 01, 2021')
-    getByText(baseElement, 'Professional')
     getByText(baseElement, 'UNKNOWN')
     getByText(baseElement, '€100')
     getByTestId(baseElement, 'download-invoice-btn')
