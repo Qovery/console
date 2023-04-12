@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { applicationsLoadingStatus, getApplicationsState } from '@qovery/domains/application'
-import { fetchOrganizationContainerRegistries } from '@qovery/domains/organization'
+import { fetchOrganizationContainerRegistries, selectOrganizationById } from '@qovery/domains/organization'
 import { isContainer, isContainerJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, LoadingStatus, OrganizationEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageGeneral from '../../ui/page-general/page-general'
@@ -23,6 +23,9 @@ export function PageGeneralFeature() {
     },
   ]
   const loadingStatus = useSelector<RootState, LoadingStatus>((state) => applicationsLoadingStatus(state))
+  const organization = useSelector<RootState, OrganizationEntity | undefined>((state) =>
+    selectOrganizationById(state, organizationId)
+  )
   const dispatch = useDispatch<AppDispatch>()
   const organizationLoadingStatus = useSelector<RootState, LoadingStatus>(
     (state) => state.organization.organizations.loadingStatus
@@ -43,20 +46,31 @@ export function PageGeneralFeature() {
     if (
       application &&
       (isContainer(application) || isContainerJob(application)) &&
-      organizationLoadingStatus === 'loaded'
+      organizationLoadingStatus === 'loaded' &&
+      (organization?.containerRegistries?.loadingStatus === 'not loaded' ||
+        organization?.containerRegistries?.loadingStatus === undefined)
     ) {
       dispatch(fetchOrganizationContainerRegistries({ organizationId }))
-        .unwrap()
-        .then((registries) => {
-          const reg = registries.find(
-            (registry) =>
-              registry.id ===
-              (isContainerJob(application) ? application.source?.image?.registry_id : application.registry?.id)
-          )
-          setCurrentRegistry(reg)
-        })
     }
-  }, [organizationId, dispatch, organizationLoadingStatus, application, setCurrentRegistry])
+  }, [
+    organizationId,
+    dispatch,
+    organizationLoadingStatus,
+    application,
+    setCurrentRegistry,
+    organization?.containerRegistries,
+  ])
+
+  useEffect(() => {
+    if (organization?.containerRegistries?.items && application) {
+      const reg = organization?.containerRegistries?.items.find(
+        (registry) =>
+          registry.id ===
+          (isContainerJob(application) ? application.source?.image?.registry_id : application.registry?.id)
+      )
+      setCurrentRegistry(reg)
+    }
+  }, [organization?.containerRegistries?.items, application])
 
   return (
     <PageGeneral
