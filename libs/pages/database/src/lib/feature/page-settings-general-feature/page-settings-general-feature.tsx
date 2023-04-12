@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editDatabase, selectDatabaseById } from '@qovery/domains/database'
+import { editDatabase, postDatabaseActionsRestart, selectDatabaseById } from '@qovery/domains/database'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
@@ -17,7 +17,7 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
 }
 
 export function PageSettingsGeneralFeature() {
-  const { databaseId = '' } = useParams()
+  const { databaseId = '', environmentId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
 
@@ -28,6 +28,17 @@ export function PageSettingsGeneralFeature() {
     reValidateMode: 'onChange',
   })
 
+  const toasterCallback = () => {
+    if (database) {
+      dispatch(
+        postDatabaseActionsRestart({
+          databaseId,
+          environmentId,
+        })
+      )
+    }
+  }
+
   const onSubmit = methods.handleSubmit((data) => {
     if (data && database) {
       setLoading(true)
@@ -37,6 +48,7 @@ export function PageSettingsGeneralFeature() {
         editDatabase({
           databaseId: databaseId,
           data: cloneDatabase,
+          toasterCallback,
         })
       )
         .unwrap()

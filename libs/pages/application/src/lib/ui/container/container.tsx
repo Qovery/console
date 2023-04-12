@@ -158,7 +158,7 @@ export function Container(props: ContainerProps) {
       {application &&
         application.status &&
         application.status.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-          <NeedRedeployFlag application={application} onClickCTA={redeployApplication} />
+          <NeedRedeployFlag service={application} onClickCTA={redeployApplication} />
         )}
       {children}
     </ApplicationContext.Provider>

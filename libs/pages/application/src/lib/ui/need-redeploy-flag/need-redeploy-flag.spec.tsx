@@ -9,7 +9,7 @@ const mockApplication: ApplicationEntity = applicationFactoryMock(1)[0]
 
 describe('NeedRedeployFlag', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<NeedRedeployFlag application={mockApplication} />)
+    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -18,7 +18,7 @@ describe('NeedRedeployFlag', () => {
       state: StateEnum.DEPLOYED,
       service_deployment_status: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
     }
-    const { baseElement } = render(<NeedRedeployFlag application={mockApplication} />)
+    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
 
     getByRole(baseElement, 'button', { name: 'Deploy now' })
   })
@@ -28,7 +28,7 @@ describe('NeedRedeployFlag', () => {
       state: StateEnum.DEPLOYED,
       service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
     }
-    const { baseElement } = render(<NeedRedeployFlag application={mockApplication} />)
+    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} />)
 
     getByRole(baseElement, 'button', { name: 'Redeploy now' })
   })
@@ -39,7 +39,7 @@ describe('NeedRedeployFlag', () => {
       service_deployment_status: ServiceDeploymentStatusEnum.OUT_OF_DATE,
     }
     const spy = jest.fn()
-    const { baseElement } = render(<NeedRedeployFlag application={mockApplication} onClickCTA={spy} />)
+    const { baseElement } = render(<NeedRedeployFlag service={mockApplication} onClickCTA={spy} />)
 
     const button = getByRole(baseElement, 'button', { name: 'Redeploy now' })
 

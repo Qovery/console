@@ -74,15 +74,13 @@ describe('PageSettingsResourcesFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    expect(editDatabaseSpy).toHaveBeenCalledWith({
-      databaseId: mockDatabase.id,
-      data: {
-        ...mockDatabase,
-        ...{
-          memory: 512,
-          storage: 512,
-          cpu: 1,
-        },
+    expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
+    expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
+      ...mockDatabase,
+      ...{
+        memory: 512,
+        storage: 512,
+        cpu: 1,
       },
     })
   })
