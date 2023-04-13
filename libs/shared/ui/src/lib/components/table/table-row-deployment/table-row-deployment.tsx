@@ -1,4 +1,4 @@
-import { DeploymentHistoryApplication, DeploymentHistoryDatabase, StateEnum } from 'qovery-typescript-axios'
+import { DeploymentHistoryApplication, DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
@@ -11,7 +11,7 @@ import {
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
 } from '@qovery/shared/routes'
-import { renameStatus, timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
 import ButtonIconAction from '../../buttons/button-icon-action/button-icon-action'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
