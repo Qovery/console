@@ -27,8 +27,8 @@ export function SidebarStatus(props: SidebarStatusProps) {
       </p>
       <p className="flex items-center justify-between text-text-300 text-xs">
         Deployment start time:
-        {environmentDeploymentHistory?.updated_at && (
-          <span className="text-text-100">{dateFullFormat(environmentDeploymentHistory.updated_at)}</span>
+        {environmentDeploymentHistory?.created_at && (
+          <span className="text-text-100">{dateFullFormat(environmentDeploymentHistory.created_at)}</span>
         )}
       </p>
     </div>
