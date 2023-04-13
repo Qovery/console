@@ -14,6 +14,7 @@ export interface StepSummaryProps {
   gotoResources: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
+  isManaged?: boolean
 }
 
 export function StepSummary(props: StepSummaryProps) {
@@ -63,31 +64,33 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        {props.generalData.mode !== DatabaseModeEnum.MANAGED && (
-          <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10">
-            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
-            <div className="flex-grow mr-2">
-              <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
-              <ul className="text-text-400 text-sm list-none">
-                <li>
-                  CPU: <strong className="font-medium">{props.resourcesData['cpu']}</strong>
-                </li>
-                <li>
-                  Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
-                </li>
-                <li>
-                  Storage: <strong className="font-medium">{props.resourcesData.storage} GB</strong>
-                </li>
-              </ul>
-            </div>
-            <ButtonIcon
-              onClick={props.gotoResources}
-              icon={IconAwesomeEnum.WHEEL}
-              style={ButtonIconStyle.FLAT}
-              className="text-text-500 hover:text-text-700"
-            />
+        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10">
+          <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
+          <div className="flex-grow mr-2">
+            <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
+            <ul className="text-text-400 text-sm list-none">
+              {props.generalData.mode !== DatabaseModeEnum.MANAGED && (
+                <>
+                  <li>
+                    CPU: <strong className="font-medium">{props.resourcesData['cpu']}</strong>
+                  </li>
+                  <li>
+                    Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
+                  </li>
+                </>
+              )}
+              <li>
+                Storage: <strong className="font-medium">{props.resourcesData.storage} GB</strong>
+              </li>
+            </ul>
           </div>
-        )}
+          <ButtonIcon
+            onClick={props.gotoResources}
+            icon={IconAwesomeEnum.WHEEL}
+            style={ButtonIconStyle.FLAT}
+            className="text-text-500 hover:text-text-700"
+          />
+        </div>
 
         <div className="flex justify-between mt-10">
           <Button

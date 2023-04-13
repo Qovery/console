@@ -1,3 +1,4 @@
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -71,7 +72,7 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources onBack={onBack} onSubmit={onSubmit} />
+        <StepResources isManaged={generalData?.mode === DatabaseModeEnum.MANAGED} onBack={onBack} onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )

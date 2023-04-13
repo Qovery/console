@@ -79,9 +79,7 @@ describe('PageSettingsGeneralFeature', () => {
       mockDatabase
     )
 
-    expect(editDatabaseSpy).toHaveBeenCalledWith({
-      databaseId: mockDatabase.id,
-      data: cloneApplication,
-    })
+    expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
+    expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual(cloneApplication)
   })
 })

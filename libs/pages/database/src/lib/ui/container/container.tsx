@@ -1,8 +1,9 @@
-import { Environment } from 'qovery-typescript-axios'
-import { useSelector } from 'react-redux'
+import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
+import { postDatabaseActionsDeploy, postDatabaseActionsRestart } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
-import { DatabaseButtonsActions } from '@qovery/shared/console-shared'
+import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import {
@@ -12,7 +13,7 @@ import {
   DATABASE_URL,
 } from '@qovery/shared/routes'
 import { Header, Icon, Skeleton, StatusChip, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 
 export interface ContainerProps {
   database?: DatabaseEntity
@@ -23,12 +24,14 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { database, environment, children } = props
 
-  const { organizationId, projectId, environmentId, databaseId } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
   const location = useLocation()
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
   )
+
+  const dispatch = useDispatch<AppDispatch>()
 
   const headerActions = (
     <>
@@ -82,21 +85,6 @@ export function Container(props: ContainerProps) {
         DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
     },
-    // {
-    //   icon: <Icon name="icon-solid-chart-area" />,
-    //   name: 'Metrics',
-    //   active:
-    //     location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_METRICS_URL,
-    //   link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_METRICS_URL,
-    // },
-    // {
-    //   icon: <Icon name="icon-solid-wheel" />,
-    //   name: 'Variables',
-    //   active:
-    //     location.pathname ===
-    //     DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_VARIABLES_URL,
-    //   link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_VARIABLES_URL,
-    // },
     {
       icon: <Icon name="icon-solid-wheel" />,
       name: 'Settings',
@@ -107,10 +95,25 @@ export function Container(props: ContainerProps) {
     },
   ]
 
+  const redeployDatabase = () => {
+    if (database) {
+      if (database?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+        dispatch(postDatabaseActionsDeploy({ environmentId, databaseId }))
+      } else {
+        dispatch(postDatabaseActionsRestart({ environmentId, databaseId }))
+      }
+    }
+  }
+
   return (
     <>
       <Header title={database?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
+      {database &&
+        database.status &&
+        database.status.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+          <NeedRedeployFlag service={database} onClickCTA={redeployDatabase} />
+        )}
       {children}
     </>
   )

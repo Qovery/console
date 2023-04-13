@@ -32,14 +32,6 @@ export function StepSummaryFeature() {
     navigate(pathCreate + SERVICES_DATABASE_CREATION_RESOURCES_URL)
   }
 
-  const onBack = () => {
-    if (generalData?.mode === DatabaseModeEnum.MANAGED) {
-      gotoGlobalInformations()
-    } else {
-      gotoResources()
-    }
-  }
-
   useEffect(() => {
     !generalData?.name && gotoGlobalInformations()
   }, [generalData, navigate, environmentId, organizationId, projectId, gotoGlobalInformations])
@@ -62,12 +54,12 @@ export function StepSummaryFeature() {
         version: generalData.version,
         accessibility: generalData.accessibility,
         mode: generalData.mode,
+        storage: storage,
       }
 
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
         databaseRequest.cpu = cpu
         databaseRequest.memory = memory
-        databaseRequest.storage = storage
       }
 
       dispatch(
@@ -107,11 +99,12 @@ export function StepSummaryFeature() {
           isLoadingCreate={loadingCreate}
           isLoadingCreateAndDeploy={loadingCreateAndDeploy}
           onSubmit={onSubmit}
-          onPrevious={onBack}
+          onPrevious={gotoResources}
           generalData={generalData}
           resourcesData={resourcesData}
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}
+          isManaged={generalData.mode === DatabaseModeEnum.MANAGED}
         />
       )}
     </FunnelFlowBody>

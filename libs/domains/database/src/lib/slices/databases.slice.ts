@@ -78,7 +78,7 @@ export const fetchDatabase = createAsyncThunk<Database, { databaseId: string }>(
 
 export const editDatabase = createAsyncThunk(
   'database/edit',
-  async (payload: { databaseId: string; data: DatabaseEntity }) => {
+  async (payload: { databaseId: string; data: DatabaseEntity; toasterCallback: () => void }) => {
     const cloneDatabase = Object.assign({}, refactoDatabasePayload(payload.data) as DatabaseEntity)
 
     const response = await databaseMainCallsApi.editDatabase(payload.databaseId, cloneDatabase)
@@ -255,7 +255,15 @@ export const databasesSlice = createSlice({
         databasesAdapter.updateOne(state, update)
         state.error = null
         state.loadingStatus = 'loaded'
-        toast(ToastEnum.SUCCESS, `Your database ${action.payload.name} has been updated`)
+
+        toast(
+          ToastEnum.SUCCESS,
+          `Database updated`,
+          'You must redeploy to apply the settings update',
+          action.meta.arg.toasterCallback,
+          undefined,
+          'Redeploy'
+        )
       })
       .addCase(editDatabase.rejected, (state: DatabasesState, action) => {
         state.loadingStatus = 'error'
