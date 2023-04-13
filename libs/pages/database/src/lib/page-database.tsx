@@ -6,6 +6,7 @@ import {
   databasesLoadingStatus,
   fetchDatabaseMasterCredentials,
   fetchDatabaseMetrics,
+  fetchDatabasesStatus,
   selectDatabaseById,
 } from '@qovery/domains/database'
 import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
@@ -36,7 +37,14 @@ export function PageDatabase() {
       database?.metrics?.loadingStatus !== 'loaded' && dispatch(fetchDatabaseMetrics({ databaseId }))
       database?.credentials?.loadingStatus !== 'loaded' && dispatch(fetchDatabaseMasterCredentials({ databaseId }))
     }
-  }, [database && databaseId, loadingStatus])
+
+    const fetchDatabaseStatusByInterval = setInterval(
+      () => database && dispatch(fetchDatabasesStatus({ environmentId })),
+      3000
+    )
+
+    return () => clearInterval(fetchDatabaseStatusByInterval)
+  }, [databaseId, loadingStatus, environmentId, database, dispatch])
 
   return (
     <Container database={database} environment={environment}>
