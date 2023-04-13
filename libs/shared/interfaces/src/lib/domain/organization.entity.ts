@@ -7,6 +7,7 @@ import {
   Invoice,
   Member,
   Organization,
+  OrganizationApiToken,
   OrganizationAvailableRole,
   OrganizationCurrentCost,
   OrganizationCustomRole,
@@ -53,5 +54,9 @@ export interface OrganizationEntity extends Organization {
   invoices?: {
     loadingStatus: LoadingStatus
     items?: Invoice[]
+  }
+  apiTokens?: {
+    loadingStatus: LoadingStatus
+    items?: OrganizationApiToken[]
   }
 }

@@ -1,5 +1,4 @@
-import { ContainerRegistryKindEnum, ContainerRegistryResponse } from 'qovery-typescript-axios'
-import { IconEnum } from '@qovery/shared/enums'
+import { OrganizationApiToken } from 'qovery-typescript-axios'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -15,31 +14,19 @@ import {
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 
 export interface PageOrganizationContainerRegistriesProps {
   onAddRegistry: () => void
-  onEdit: (registry: ContainerRegistryResponse) => void
-  onDelete: (registry: ContainerRegistryResponse) => void
-  containerRegistries?: ContainerRegistryResponse[]
+  onDelete: (token: OrganizationApiToken) => void
+  apiTokens?: OrganizationApiToken[]
   loading?: LoadingStatus
 }
 
-export const logoByRegistryKind = (kind?: ContainerRegistryKindEnum) => {
-  switch (kind) {
-    case ContainerRegistryKindEnum.DOCR:
-      return IconEnum.DO
-    case ContainerRegistryKindEnum.DOCKER_HUB:
-      return IconEnum.DOCKER
-    case ContainerRegistryKindEnum.SCALEWAY_CR:
-      return IconEnum.SCW
-    default:
-      return IconEnum.AWS
-  }
-}
-
 export function PageOrganizationApi(props: PageOrganizationContainerRegistriesProps) {
-  const { containerRegistries, loading, onAddRegistry, onEdit, onDelete } = props
+  const { apiTokens, loading, onAddRegistry, onDelete } = props
+
+  console.log(apiTokens, loading)
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -55,25 +42,24 @@ export function PageOrganizationApi(props: PageOrganizationContainerRegistriesPr
             Add new
           </Button>
         </div>
-        {(loading === 'not loaded' || loading === 'loading') && containerRegistries?.length === 0 ? (
+        {(loading === 'not loaded' || loading === 'loading') && apiTokens?.length === 0 ? (
           <div data-testid="registries-loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
-        ) : containerRegistries && containerRegistries.length > 0 ? (
+        ) : apiTokens && apiTokens.length > 0 ? (
           <BlockContent title="Token List" classNameContent="">
-            {containerRegistries?.map((registry: ContainerRegistryResponse) => (
+            {apiTokens?.map((token: OrganizationApiToken) => (
               <div
-                data-testid={`registries-list-${registry.id}`}
-                key={registry.id}
+                data-testid={`registries-list-${token.id}`}
+                key={token.id}
                 className="flex justify-between items-center px-5 py-4 border-b border-element-light-lighter-500 last:border-0"
               >
                 <div className="flex">
-                  <Icon name={logoByRegistryKind(registry.kind)} width="20" height="20" />
-                  <div className="ml-4">
+                  <div className="">
                     <h2 className="flex text-xs text-text-600 font-medium mb-1">
-                      <Truncate truncateLimit={60} text={registry.name || ''} />
-                      {registry.description && (
-                        <Tooltip content={registry.description}>
+                      <Truncate truncateLimit={60} text={token.name || ''} />
+                      {token.description && (
+                        <Tooltip content={token.description}>
                           <div className="ml-1 cursor-pointer">
                             <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
                           </div>
@@ -81,30 +67,18 @@ export function PageOrganizationApi(props: PageOrganizationContainerRegistriesPr
                       )}
                     </h2>
                     <p className="text-xs text-text-400">
-                      {registry.kind}{' '}
-                      <span className="inline-block ml-3">
-                        Last updated {timeAgo(new Date(registry.updated_at || ''))}
-                      </span>{' '}
-                      <span className="inline-block ml-3">
-                        Created since {dateYearMonthDayHourMinuteSecond(new Date(registry.created_at || ''), false)}
+                      <span className="inline-block">
+                        Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
                       </span>
                     </p>
                   </div>
                 </div>
                 <div>
                   <ButtonIcon
-                    icon={IconAwesomeEnum.WHEEL}
-                    style={ButtonIconStyle.STROKED}
-                    size={ButtonSize.TINY}
-                    onClick={() => onEdit(registry)}
-                    className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
-                    iconClassName="!text-xs"
-                  />
-                  <ButtonIcon
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
-                    onClick={() => onDelete(registry)}
+                    onClick={() => onDelete(token)}
                     className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"
                   />
@@ -114,7 +88,7 @@ export function PageOrganizationApi(props: PageOrganizationContainerRegistriesPr
           </BlockContent>
         ) : (
           loading === 'loaded' &&
-          containerRegistries?.length === 0 && (
+          apiTokens?.length === 0 && (
             <EmptyState
               dataTestId="empty-state"
               title="No container registry"
