@@ -11,8 +11,8 @@ import {
   EnvironmentDeploymentRuleApi,
   EnvironmentEditRequest,
   EnvironmentMainCallsApi,
+  EnvironmentStatus,
   EnvironmentsApi,
-  Status,
 } from 'qovery-typescript-axios'
 import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import { WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
@@ -53,11 +53,11 @@ export const getEnvironmentById = (environmentId: string, environments?: Environ
 }
 
 export const useFetchEnvironmentsStatus = (projectId: string) => {
-  return useQuery<Status[], Error>(
+  return useQuery<EnvironmentStatus[], Error>(
     ['environmentsStatus', projectId],
     async () => {
       const response = await environmentsApi.getProjectEnvironmentsStatus(projectId)
-      return response.data.results as Status[]
+      return response.data.results as EnvironmentStatus[]
     },
     {
       onError: (err) => toastError(err),
@@ -66,7 +66,10 @@ export const useFetchEnvironmentsStatus = (projectId: string) => {
   )
 }
 
-export const getEnvironmentStatusById = (environmentId: string, status?: Status[]): Status | undefined => {
+export const getEnvironmentStatusById = (
+  environmentId: string,
+  status?: EnvironmentStatus[]
+): EnvironmentStatus | undefined => {
   return status?.find((environment) => environment.id === environmentId)
 }
 

@@ -1,5 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { Environment, StateEnum, Status } from 'qovery-typescript-axios'
+import { Environment, EnvironmentStatus, StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -40,7 +40,7 @@ import UpdateAllModalFeature from '../../update-all-modal/feature/update-all-mod
 
 export interface EnvironmentButtonsActionsProps {
   environment: Environment
-  status?: Status
+  status?: EnvironmentStatus
   hasServices?: boolean
 }
 
