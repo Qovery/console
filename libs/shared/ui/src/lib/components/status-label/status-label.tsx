@@ -15,6 +15,7 @@ export function StatusLabel(props: StatusLabelProps) {
     switch (status) {
       case StateEnum.READY:
         return true
+      case StateEnum.DEPLOYED:
       case StateEnum.RUNNING:
         return true
       default:
@@ -73,7 +74,7 @@ export function StatusLabel(props: StatusLabelProps) {
       data-testid="status-label"
     >
       {showProgressIcon() && <Icon name={IconEnum.PROGRESS} width="12" viewBox="0 0 12 12" className="mr-2 mt-[1px]" />}
-      {status !== StateEnum.RUNNING
+      {status !== StateEnum.RUNNING && status !== StateEnum.DEPLOYED
         ? upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())
         : renameStatus(status)}
       {showErrorIcon() && <Icon name={IconEnum.ERROR} width="12" viewBox="0 0 14 14" className="ml-2 mt-[1px]" />}

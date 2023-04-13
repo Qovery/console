@@ -59,7 +59,7 @@ export const containerFactoryMock = (howMany: number): ContainerApplicationEntit
     },
     status: {
       id: chance.guid(),
-      state: StateEnum.RUNNING,
+      state: StateEnum.DEPLOYED,
       message: '',
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
       last_deployment_date: new Date().toString(),

@@ -23,7 +23,7 @@ const database = {
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
   name: chance.name(),
-  status: chance.pickone(Object.values([StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
 }
 
 export const deploymentMock: DeploymentHistoryEnvironment = {

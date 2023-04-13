@@ -19,11 +19,11 @@ describe('ClusterButtonsActionsFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render actions for RUNNING status', async () => {
+  it('should render actions for DEPLOYED status', async () => {
     props.cluster.extendedStatus = {
       loadingStatus: 'loaded',
       status: {
-        status: StateEnum.RUNNING,
+        status: StateEnum.DEPLOYED,
       },
     }
     const { baseElement } = render(<ClusterButtonsActions {...props} />)

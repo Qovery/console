@@ -66,6 +66,7 @@ export const isDeleteAvailable = (status: StateEnum): boolean => {
     status === StateEnum.STOPPED ||
     status === StateEnum.DELETE_ERROR ||
     status === StateEnum.RUNNING ||
+    status === StateEnum.DEPLOYED ||
     status === StateEnum.CANCELED
   )
 }
@@ -78,6 +79,7 @@ export const isUpdateAvailable = (status: StateEnum): boolean => {
     status === StateEnum.STOPPED ||
     status === StateEnum.DELETE_ERROR ||
     status === StateEnum.DELETED ||
+    status === StateEnum.DEPLOYED ||
     status === StateEnum.RUNNING
   )
 }
@@ -126,6 +128,7 @@ export const getStatusClusterMessage = (status?: StateEnum, isAlreadyDeployed?: 
     case StateEnum.READY:
     case StateEnum.DELETED:
     case StateEnum.RUNNING:
+    case StateEnum.DEPLOYED:
     default:
       return ''
   }

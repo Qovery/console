@@ -43,7 +43,7 @@ describe('EnvironmentButtonsActions', () => {
   })
 
   it('should render buttons with Running status', () => {
-    props.status!.state = StateEnum.RUNNING
+    props.status!.state = StateEnum.DEPLOYED
     const { baseElement } = render(<EnvironmentButtonsActions {...props} />)
     expect(baseElement).toBeTruthy()
 
