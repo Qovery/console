@@ -79,16 +79,20 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
     enabledNginx
   )
 
-  // reset pod logs by serviceId
+  // update serviceId
   useEffect(() => {
     updateServiceId(serviceId)
+  }, [updateServiceId, serviceId])
+
+  // reset pod logs
+  useEffect(() => {
     setLogs([])
     setPauseLogs([])
     setPauseStatusLogs(false)
     setLoadingStatus('not loaded')
     setNginxLogs([])
     setEnabledNginx && setEnabledNginx(false)
-  }, [updateServiceId, serviceId, setEnabledNginx])
+  }, [serviceId, setEnabledNginx])
 
   const logsSorted =
     enabledNginx && nginxLogs

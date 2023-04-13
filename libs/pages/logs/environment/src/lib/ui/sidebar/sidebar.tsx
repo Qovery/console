@@ -23,7 +23,7 @@ export function Sidebar(props: SidebarProps) {
       className={`flex shrink-0 border-x border-element-light-darker-100 bg-element-light-darker-400 
       ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
     >
-      <div data-testid="sidebar" className={`w-full ${!openSidebar ? 'hidden' : ''}`}>
+      <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
         <SidebarStatus environmentDeploymentHistory={environmentDeploymentHistory} />
         <SidebarPipeline services={services} serviceId={serviceId} statusStages={statusStages} />
       </div>
