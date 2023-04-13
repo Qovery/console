@@ -1,4 +1,4 @@
-import { DeploymentStageWithServicesStatuses } from 'qovery-typescript-axios'
+import { DeploymentStageWithServicesStatuses, EnvironmentStatus } from 'qovery-typescript-axios'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -38,6 +38,7 @@ export function SidebarFeature() {
   }, [environmentDeploymentHistory, refetch, environmentId, projectId])
 
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
+  const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
 
   const { getAccessTokenSilently } = useAuth()
 
@@ -51,7 +52,10 @@ export function SidebarFeature() {
   }, [organizationId, environment?.cluster_id, projectId, environmentId, getAccessTokenSilently])
 
   useWebSocket(deploymentStatusUrl, {
-    onMessage: (message) => setStatusStages(JSON.parse(message?.data).stages),
+    onMessage: (message) => {
+      setStatusStages(JSON.parse(message?.data).stages)
+      setEnvironmentStatus(JSON.parse(message?.data).environment)
+    },
   })
 
   return (
@@ -59,6 +63,7 @@ export function SidebarFeature() {
       services={[...applications, ...databases]}
       serviceId={serviceId}
       statusStages={statusStages}
+      environmentStatus={environmentStatus}
       environmentDeploymentHistory={environmentDeploymentHistory && environmentDeploymentHistory[0]}
     />
   )
