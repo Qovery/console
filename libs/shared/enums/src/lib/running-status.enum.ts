@@ -1,6 +1,7 @@
 export enum RunningStatus {
   STARTING = 'STARTING',
   RUNNING = 'RUNNING',
+  DEPLOYED = 'DEPLOYED',
   WARNING = 'WARNING',
   ERROR = 'ERROR',
   STOPPING = 'STOPPING',
