@@ -12,6 +12,7 @@ export const getColorForStatus = (status?: StateEnum): string => {
   switch (status) {
     case StateEnum.DEPLOYMENT_QUEUED:
     case StateEnum.DEPLOYING:
+    case StateEnum.DEPLOYED:
     case StateEnum.RUNNING:
     case StateEnum.STOP_QUEUED:
     case StateEnum.STOPPING:

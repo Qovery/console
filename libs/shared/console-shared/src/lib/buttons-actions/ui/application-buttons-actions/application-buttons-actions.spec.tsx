@@ -21,7 +21,7 @@ describe('ApplicationButtonsActionsFeature', () => {
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
     mockApplication.running_status = {
-      state: RunningStatus.RUNNING,
+      state: RunningStatus.DEPLOYED,
       id: 'id',
       pods: [],
     }
@@ -32,8 +32,8 @@ describe('ApplicationButtonsActionsFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render actions for RUNNING status', async () => {
-    mockApplication.status.state = StateEnum.RUNNING
+  it('should render actions for DEPLOYED status', async () => {
+    mockApplication.status.state = StateEnum.DEPLOYED
     const { baseElement } = render(<ApplicationButtonsActions {...props} />)
 
     getByText(baseElement, 'Redeploy')
@@ -92,7 +92,7 @@ describe('ApplicationButtonsActionsFeature', () => {
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
     mockJob.running_status = {
-      state: RunningStatus.RUNNING,
+      state: RunningStatus.DEPLOYED,
       id: 'id',
       pods: [],
     }

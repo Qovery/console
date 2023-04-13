@@ -9,5 +9,5 @@ export const databaseDeploymentsFactoryMock = (howMany: number): DeploymentHisto
     created_at: new Date().toString(),
     updated_at: new Date().toString(),
     name: chance.name(),
-    status: chance.pickone(Object.values([StateEnum.RUNNING, StateEnum.READY])),
+    status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.READY])),
   }))

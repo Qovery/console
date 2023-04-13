@@ -20,7 +20,7 @@ describe('DatabaseButtonsActionsFeature', () => {
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
     mockDatabase.running_status = {
-      state: RunningStatus.RUNNING,
+      state: RunningStatus.DEPLOYED,
       id: 'id',
       pods: [],
     }
@@ -31,8 +31,8 @@ describe('DatabaseButtonsActionsFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render actions for RUNNING status', async () => {
-    mockDatabase.status.state = StateEnum.RUNNING
+  it('should render actions for DEPLOYED status', async () => {
+    mockDatabase.status.state = StateEnum.DEPLOYED
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
     getByText(baseElement, 'Redeploy')
