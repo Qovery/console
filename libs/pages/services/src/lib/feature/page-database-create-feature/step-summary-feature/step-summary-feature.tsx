@@ -32,10 +32,6 @@ export function StepSummaryFeature() {
     navigate(pathCreate + SERVICES_DATABASE_CREATION_RESOURCES_URL)
   }
 
-  const onBack = () => {
-    gotoResources()
-  }
-
   useEffect(() => {
     !generalData?.name && gotoGlobalInformations()
   }, [generalData, navigate, environmentId, organizationId, projectId, gotoGlobalInformations])
@@ -103,7 +99,7 @@ export function StepSummaryFeature() {
           isLoadingCreate={loadingCreate}
           isLoadingCreateAndDeploy={loadingCreateAndDeploy}
           onSubmit={onSubmit}
-          onPrevious={onBack}
+          onPrevious={gotoResources}
           generalData={generalData}
           resourcesData={resourcesData}
           gotoResources={gotoResources}

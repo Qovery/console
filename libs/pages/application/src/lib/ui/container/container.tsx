@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ApplicationButtonsActions } from '@qovery/shared/console-shared'
+import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity } from '@qovery/shared/interfaces'
 import {
@@ -23,7 +23,6 @@ import {
 } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
-import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export const ApplicationContext = createContext<{
   showHideAllEnvironmentVariablesValues: boolean

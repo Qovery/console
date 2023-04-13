@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { postDatabaseActionsDeploy, postDatabaseActionsRestart } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
-import { DatabaseButtonsActions } from '@qovery/shared/console-shared'
+import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import {
@@ -14,7 +14,6 @@ import {
 } from '@qovery/shared/routes'
 import { Header, Icon, Skeleton, StatusChip, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
-import NeedRedeployFlag from '../../../../../application/src/lib/ui/need-redeploy-flag/need-redeploy-flag'
 
 export interface ContainerProps {
   database?: DatabaseEntity
@@ -25,7 +24,7 @@ export interface ContainerProps {
 export function Container(props: ContainerProps) {
   const { database, environment, children } = props
 
-  const { organizationId, projectId, environmentId = '', databaseId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
   const location = useLocation()
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
