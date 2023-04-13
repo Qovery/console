@@ -117,9 +117,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
             <p className="text-xs text-text-400 font-medium">
-              {data?.status !== StateEnum.RUNNING && data?.status !== StateEnum.DEPLOYED
-                ? upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())
-                : renameStatus(data?.status)}
+              {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())}
             </p>
           </Skeleton>
         </div>
