@@ -2,6 +2,7 @@ export const SETTINGS_URL = (organizationId = ':organizationId') => `/organizati
 // organization settings
 export const SETTINGS_GENERAL_URL = '/general'
 export const SETTINGS_CONTAINER_REGISTRIES_URL = '/container-registries'
+export const SETTINGS_API_URL = '/api'
 export const SETTINGS_GIT_REPOSITORY_ACCESS_URL = '/git-repository-access'
 export const SETTINGS_MEMBERS_URL = '/members'
 export const SETTINGS_ROLES_URL = '/roles'

@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import {
+  SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
@@ -75,6 +76,11 @@ export function PageSettings() {
       title: 'Webhook',
       icon: IconAwesomeEnum.TOWER_BROADCAST,
       url: pathSettings + SETTINGS_WEBHOOKS,
+    },
+    {
+      title: 'API',
+      icon: IconAwesomeEnum.CLOUD_ARROW_UP,
+      url: pathSettings + SETTINGS_API_URL,
     },
     {
       title: 'Danger zone',

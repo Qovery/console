@@ -99,5 +99,6 @@ export enum IconAwesomeEnum {
   ARROW_DOWN_19 = 'icon-solid-arrow-down-1-9',
   DOWNLOAD = 'icon-solid-download',
   TOWER_BROADCAST = 'icon-solid-tower-broadcast',
+  CLOUD_CHECK = 'icon-solid-cloud-check',
   // schema: favicons name
 }
