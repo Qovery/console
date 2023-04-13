@@ -11,4 +11,4 @@ export const ENVIRONMENT_LOGS_URL = (
 
 export const SERVICE_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/live-logs`
 
-export const DEPLOYMENT_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/deployment`
+export const DEPLOYMENT_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/deployment-logs`
