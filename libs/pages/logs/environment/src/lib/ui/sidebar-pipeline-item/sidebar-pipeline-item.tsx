@@ -90,7 +90,6 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
                     </span>
                     <StatusChip
                       status={currentApplication(service.id)?.status?.state || RunningStatus.STOPPED}
-                      mustRenameStatus
                       appendTooltipMessage={
                         currentApplication(service.id)?.status && currentApplication(service.id)?.status?.message
                           ? currentApplication(service.id)?.status?.message
