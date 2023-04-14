@@ -70,9 +70,10 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   )
 
   const hideDeploymentLogsBoolean =
-    loadingStatus === 'loaded' &&
-    statusStages &&
-    (getServiceStatuesById(statusStages, serviceId) as Status).is_part_last_deployment
+    statusStages && (getServiceStatuesById(statusStages, serviceId) as Status).is_part_last_deployment === false
+
+  console.log('is_part_last_deployment: ', statusStages && (getServiceStatuesById(statusStages, serviceId) as Status))
+  console.log('hideDeploymentLogsBoolea: ', hideDeploymentLogsBoolean)
 
   // reset deployment logs by serviceId
   useEffect(() => {
@@ -102,7 +103,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       setPauseStatusLogs={setPauseStatusLogs}
       serviceRunningStatus={application?.running_status || database?.running_status}
       serviceDeploymentStatus={
-        application?.status?.service_deployment_status || database?.status?.service_deployment_status
+        statusStages && (getServiceStatuesById(statusStages, serviceId) as Status).service_deployment_status
       }
       hideDeploymentLogs={hideDeploymentLogsBoolean}
     />
