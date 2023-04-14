@@ -1,6 +1,7 @@
 import { render } from '__tests__/utils/setup-jest'
 import { DeploymentStageWithServicesStatuses, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { Route, Routes } from 'react-router-dom'
+import { LogsType } from '@qovery/shared/enums'
 import DeploymentLogsFeature, { DeploymentLogsFeatureProps, getServiceStatuesById } from './deployment-logs-feature'
 
 const services: DeploymentStageWithServicesStatuses[] = [
@@ -36,8 +37,24 @@ const services: DeploymentStageWithServicesStatuses[] = [
 
 describe('DeploymentLogsFeature', () => {
   const props: DeploymentLogsFeatureProps = {
-    clusterId: '1',
+    logs: [
+      {
+        type: LogsType.INFO,
+        timestamp: new Date().toString(),
+        details: {
+          stage: {
+            step: 'Deployed',
+          },
+        },
+        message: {
+          safe_message: 'Log 1',
+        },
+      },
+    ],
     statusStages: services,
+    pauseStatusLogs: false,
+    loadingStatus: 'loaded',
+    setPauseStatusLogs: jest.fn(),
   }
 
   it('should render successfully', () => {

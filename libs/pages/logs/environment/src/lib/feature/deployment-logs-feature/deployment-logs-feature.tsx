@@ -1,11 +1,9 @@
 import { DeploymentStageWithServicesStatuses, EnvironmentLogs, Status } from 'qovery-typescript-axios'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import useWebSocket from 'react-use-websocket'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
-import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/store'
@@ -13,7 +11,10 @@ import DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
 export interface DeploymentLogsFeatureProps {
-  clusterId: string
+  logs: EnvironmentLogs[]
+  pauseStatusLogs: boolean
+  loadingStatus: LoadingStatus
+  setPauseStatusLogs: (pause: boolean) => void
   statusStages?: DeploymentStageWithServicesStatuses[]
 }
 
@@ -55,19 +56,14 @@ export function getServiceStatuesById(services: DeploymentStageWithServicesStatu
 }
 
 export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
-  const { clusterId, statusStages } = props
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
+  const { logs, loadingStatus, pauseStatusLogs, setPauseStatusLogs, statusStages } = props
+  const { serviceId = '' } = useParams()
   const { stageId, updateServiceId } = useContext(ServiceStageIdsContext)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
   )
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
-
-  const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('not loaded')
-  const [logs, setLogs] = useState<EnvironmentLogs[]>([])
-  const [pauseLogs, setPauseLogs] = useState<EnvironmentLogs[]>([])
-  const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
 
   useDocumentTitle(
     `Deployment logs ${loadingStatus === 'loaded' ? `- ${application?.name || database?.name}` : '- Loading...'}`
@@ -76,49 +72,12 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   const hideDeploymentLogsBoolean =
     loadingStatus === 'loaded' &&
     statusStages &&
-    !(getServiceStatuesById(statusStages, serviceId) as Status).is_part_last_deployment
-
-  useEffect(() => {
-    if (hideDeploymentLogsBoolean) setLoadingStatus('loaded')
-  }, [setLoadingStatus, hideDeploymentLogsBoolean])
+    (getServiceStatuesById(statusStages, serviceId) as Status).is_part_last_deployment
 
   // reset deployment logs by serviceId
   useEffect(() => {
     updateServiceId(serviceId)
   }, [updateServiceId, serviceId])
-
-  const { getAccessTokenSilently } = useAuth()
-
-  const deploymentLogsUrl: () => Promise<string> = useCallback(async () => {
-    const url = `wss://ws.qovery.com/deployment/logs?organization=${organizationId}&cluster=${clusterId}&project=${projectId}&environment=${environmentId}`
-    const token = await getAccessTokenSilently()
-
-    return new Promise((resolve) => {
-      resolve(url + `&bearer_token=${token}`)
-    })
-  }, [organizationId, clusterId, projectId, environmentId, getAccessTokenSilently])
-
-  useWebSocket(
-    deploymentLogsUrl,
-    {
-      onMessage: (message) => {
-        setLoadingStatus('loaded')
-
-        const newLog = JSON.parse(message?.data)
-
-        if (pauseStatusLogs) {
-          setPauseLogs((prev: EnvironmentLogs[]) => [...prev, ...newLog])
-        } else {
-          setLogs((prev: EnvironmentLogs[]) => {
-            // return unique log by timestamp
-            return [...new Map([...prev, ...pauseLogs, ...newLog].map((item) => [item['timestamp'], item])).values()]
-          })
-          setPauseLogs([])
-        }
-      },
-    },
-    !hideDeploymentLogsBoolean
-  )
 
   const logsByServiceId = logs.filter(
     (currentData: EnvironmentLogs) =>
