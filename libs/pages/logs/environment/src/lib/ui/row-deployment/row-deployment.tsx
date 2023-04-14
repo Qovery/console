@@ -51,7 +51,9 @@ export function RowDeployment(props: RowDeploymentProps) {
         className={`py-1 pr-6 font-code relative w-full overflow-hidden ${colorsCellClassName(true)}`}
       >
         <span className="whitespace-pre-wrap truncate break-all">
-          {error ? convertToAnsi(data.error?.user_log_message) : convertToAnsi(data.message?.safe_message)}
+          {type === LogsType.ERROR
+            ? convertToAnsi(data.error?.user_log_message)
+            : convertToAnsi(data.message?.safe_message)}
         </span>
         <CopyToClipboard
           className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
