@@ -39,7 +39,7 @@ export function SettingResources(props: SettingResourcesProps) {
 
   return (
     <div>
-      <p className="text-text-500 text-xs mb-3">Manage the application's resources and horizontal auto-scaling.</p>
+      <p className="text-text-500 text-xs mb-3">Manage the resources assigned to the service.</p>
       {!isManaged && (
         <>
           <BlockContent title="vCPU">
