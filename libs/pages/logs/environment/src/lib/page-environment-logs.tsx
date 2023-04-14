@@ -1,10 +1,13 @@
 import equal from 'fast-deep-equal'
-import { useEffect } from 'react'
+import { DeploymentStageWithServicesStatuses, EnvironmentStatus } from 'qovery-typescript-axios'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useLocation, useParams } from 'react-router-dom'
+import useWebSocket from 'react-use-websocket'
 import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
@@ -13,7 +16,7 @@ import { AppDispatch, RootState } from '@qovery/store'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import { ServiceStageIdsProvider } from './feature/service-stage-ids-context/service-stage-ids-context'
-import SidebarFeature from './feature/sidebar-feature/sidebar-feature'
+import Sidebar from './ui/sidebar/sidebar'
 
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
@@ -44,14 +47,39 @@ export function PageEnvironmentLogs() {
     return () => clearInterval(fetchServicesStatusByInterval)
   }, [dispatch, environmentId, applications.length, databases.length])
 
+  const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
+  const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
+
+  const { getAccessTokenSilently } = useAuth()
+
+  const deploymentStatusUrl: () => Promise<string> = useCallback(async () => {
+    const url = `wss://ws.qovery.com/deployment/status?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}`
+    const token = await getAccessTokenSilently()
+
+    return new Promise((resolve) => {
+      environment?.cluster_id && resolve(url + `&bearer_token=${token}`)
+    })
+  }, [organizationId, environment?.cluster_id, projectId, environmentId, getAccessTokenSilently])
+
+  useWebSocket(deploymentStatusUrl, {
+    onMessage: (message) => {
+      setStatusStages(JSON.parse(message?.data).stages)
+      setEnvironmentStatus(JSON.parse(message?.data).environment)
+    },
+  })
+
   return (
     <div className="flex h-full">
       <ServiceStageIdsProvider>
-        <SidebarFeature />
+        <Sidebar
+          services={[...applications, ...databases]}
+          statusStages={statusStages}
+          environmentStatus={environmentStatus}
+        />
         <Routes>
           <Route
             path={DEPLOYMENT_LOGS_URL()}
-            element={<DeploymentLogsFeature clusterId={environment?.cluster_id || ''} />}
+            element={<DeploymentLogsFeature statusStages={statusStages} clusterId={environment?.cluster_id || ''} />}
           />
           <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id || ''} />} />
         </Routes>

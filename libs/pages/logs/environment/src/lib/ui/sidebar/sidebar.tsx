@@ -3,15 +3,15 @@ import {
   DeploymentStageWithServicesStatuses,
   EnvironmentStatus,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { ServiceStageIdsContext } from '../../feature/service-stage-ids-context/service-stage-ids-context'
 import SidebarPipeline from '../sidebar-pipeline/sidebar-pipeline'
 import SidebarStatus from '../sidebar-status/sidebar-status'
 
 export interface SidebarProps {
   services: Array<ApplicationEntity | DatabaseEntity>
-  serviceId: string
   statusStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
   environmentDeploymentHistory?: DeploymentHistoryEnvironment
@@ -19,7 +19,9 @@ export interface SidebarProps {
 }
 
 export function Sidebar(props: SidebarProps) {
-  const { services, environmentDeploymentHistory, serviceId, statusStages, environmentStatus, clusterBanner } = props
+  const { services, statusStages, environmentStatus, clusterBanner } = props
+
+  const { serviceId } = useContext(ServiceStageIdsContext)
 
   const [openSidebar, setOpenSidebar] = useState(true)
 
@@ -29,10 +31,7 @@ export function Sidebar(props: SidebarProps) {
       ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
-        <SidebarStatus
-          environmentDeploymentHistory={environmentDeploymentHistory}
-          environmentStatus={environmentStatus}
-        />
+        <SidebarStatus environmentStatus={environmentStatus} />
         <SidebarPipeline services={services} serviceId={serviceId} statusStages={statusStages} />
       </div>
       <div

@@ -1,14 +1,13 @@
-import { DeploymentHistoryEnvironment, EnvironmentStatus } from 'qovery-typescript-axios'
+import { EnvironmentStatus } from 'qovery-typescript-axios'
 import { StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 export interface SidebarStatusProps {
-  environmentDeploymentHistory?: DeploymentHistoryEnvironment
   environmentStatus?: EnvironmentStatus
 }
 
 export function SidebarStatus(props: SidebarStatusProps) {
-  const { environmentDeploymentHistory, environmentStatus } = props
+  const { environmentStatus } = props
 
   return (
     <div className="border-b border-element-light-darker-100 p-5">
@@ -18,11 +17,14 @@ export function SidebarStatus(props: SidebarStatusProps) {
       </p>
       <p className="flex items-center justify-between text-text-300 text-xs mb-2">
         Deployment id:
-        <Tooltip content={environmentDeploymentHistory?.id || ''}>
+        <Tooltip content={environmentStatus?.last_deployment_id || ''}>
           <span className="text-brand-400">
-            {environmentDeploymentHistory?.id && environmentDeploymentHistory?.id.length > 23
-              ? `${environmentDeploymentHistory?.id?.substring(0, 8)}...${environmentDeploymentHistory?.id?.slice(-8)}`
-              : environmentDeploymentHistory?.id}
+            {environmentStatus?.last_deployment_id && environmentStatus?.last_deployment_id.length > 23
+              ? `${environmentStatus?.last_deployment_id?.substring(
+                  0,
+                  8
+                )}...${environmentStatus?.last_deployment_id?.slice(-8)}`
+              : environmentStatus?.last_deployment_id}
           </span>
         </Tooltip>
       </p>
