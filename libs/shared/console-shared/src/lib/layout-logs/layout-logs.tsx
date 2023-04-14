@@ -80,7 +80,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
     if (row) scrollParentToChild(section, row, 100)
   }
 
-  const LinkNavigation = (name: string, link: string, status?: ServiceRunningStatus) => {
+  const LinkNavigation = (name: string, link: string, status?: ServiceRunningStatus, displayStatusChip = true) => {
     const isActive = location.pathname.includes(link)
     return (
       <Link
@@ -90,13 +90,18 @@ export function LayoutLogs(props: LayoutLogsProps) {
         }`}
         to={link}
       >
-        {status && (
+        {displayStatusChip && (
           <StatusChip
-            status={status.state}
-            appendTooltipMessage={status.state === RunningStatus.ERROR ? status.pods[0]?.state_message : ''}
+            status={(status as ServiceRunningStatus)?.state || RunningStatus.STOPPED}
+            appendTooltipMessage={
+              (status as ServiceRunningStatus)?.state === RunningStatus.ERROR
+                ? (status as ServiceRunningStatus).pods[0]?.state_message
+                : ''
+            }
             className="mr-2"
           />
         )}
+
         <span className="truncate">{name}</span>
       </Link>
     )
@@ -112,7 +117,9 @@ export function LayoutLogs(props: LayoutLogsProps) {
         <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-element-light-darker-200 bg-element-light-darker-700">
           {LinkNavigation(
             'Deployment logs',
-            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId),
+            undefined,
+            false
           )}
           {LinkNavigation(
             'Live logs',

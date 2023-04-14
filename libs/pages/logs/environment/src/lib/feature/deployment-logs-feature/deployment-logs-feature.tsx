@@ -18,36 +18,38 @@ export interface DeploymentLogsFeatureProps {
   statusStages?: DeploymentStageWithServicesStatuses[]
 }
 
-export function getServiceStatuesById(services: DeploymentStageWithServicesStatuses[], serviceId = '') {
-  for (const service of services) {
-    if (service.stage?.id === serviceId) {
-      return service
-    }
-    if (service.applications && service.applications?.length > 0) {
-      for (const application of service.applications) {
-        if (application.id === serviceId) {
-          return application
+export function getServiceStatuesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
+  if (services) {
+    for (const service of services) {
+      if (service.stage?.id === serviceId) {
+        return service
+      }
+      if (service.applications && service.applications?.length > 0) {
+        for (const application of service.applications) {
+          if (application.id === serviceId) {
+            return application
+          }
         }
       }
-    }
-    if (service.jobs && service.jobs?.length > 0) {
-      for (const job of service.jobs) {
-        if (job.id === serviceId) {
-          return job
+      if (service.jobs && service.jobs?.length > 0) {
+        for (const job of service.jobs) {
+          if (job.id === serviceId) {
+            return job
+          }
         }
       }
-    }
-    if (service.databases && service.databases?.length > 0) {
-      for (const database of service.databases) {
-        if (database.id === serviceId) {
-          return database
+      if (service.databases && service.databases?.length > 0) {
+        for (const database of service.databases) {
+          if (database.id === serviceId) {
+            return database
+          }
         }
       }
-    }
-    if (service.containers && service.containers?.length > 0) {
-      for (const container of service.containers) {
-        if (container.id === serviceId) {
-          return container
+      if (service.containers && service.containers?.length > 0) {
+        for (const container of service.containers) {
+          if (container.id === serviceId) {
+            return container
+          }
         }
       }
     }
@@ -69,11 +71,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
     `Deployment logs ${loadingStatus === 'loaded' ? `- ${application?.name || database?.name}` : '- Loading...'}`
   )
 
-  const hideDeploymentLogsBoolean =
-    statusStages && (getServiceStatuesById(statusStages, serviceId) as Status).is_part_last_deployment === false
-
-  console.log('is_part_last_deployment: ', statusStages && (getServiceStatuesById(statusStages, serviceId) as Status))
-  console.log('hideDeploymentLogsBoolea: ', hideDeploymentLogsBoolean)
+  const hideDeploymentLogsBoolean = !(getServiceStatuesById(statusStages, serviceId) as Status)?.is_part_last_deployment
 
   // reset deployment logs by serviceId
   useEffect(() => {
@@ -102,9 +100,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
       serviceRunningStatus={application?.running_status || database?.running_status}
-      serviceDeploymentStatus={
-        statusStages && (getServiceStatuesById(statusStages, serviceId) as Status).service_deployment_status
-      }
+      serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
     />
   )

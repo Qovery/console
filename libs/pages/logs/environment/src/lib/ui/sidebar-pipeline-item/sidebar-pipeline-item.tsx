@@ -73,9 +73,9 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
                     }
                     className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-text-100 rounded-[3px] ${
                       serviceId === service.id
-                        ? 'bg-element-light-darker-100 text-text-100'
+                        ? 'bg-element-light-darker-100 !text-text-100'
                         : 'text-text-200 hover:bg-element-light-darker-300'
-                    }`}
+                    } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >
                     <span className="flex">
                       <BadgeService
