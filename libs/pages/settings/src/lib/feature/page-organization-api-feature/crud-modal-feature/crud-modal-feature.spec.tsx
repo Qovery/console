@@ -1,39 +1,9 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent, getAllByRole, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
-import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'
-import { containerRegistriesByOrganizationIdMock, organizationFactoryMock } from '@qovery/shared/factories'
-import { OrganizationEntity } from '@qovery/shared/interfaces'
-import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
+import { CrudModalFeature, CrudModalFeatureProps } from './crud-modal-feature'
 
 import SpyInstance = jest.SpyInstance
-
-const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
-const mockContainerRegistries = containerRegistriesByOrganizationIdMock
-
-jest.mock('@qovery/domains/organization', () => {
-  return {
-    ...jest.requireActual('@qovery/domains/organization'),
-    editOrganizationContainerRegistry: jest.fn(),
-    postOrganizationContainerRegistry: jest.fn(),
-    fetchAvailableContainerRegistry: jest.fn(),
-    getOrganizationsState: () => ({
-      loadingStatus: 'loaded',
-      ids: [mockOrganization.id],
-      entities: {
-        [mockOrganization.id]: mockOrganization,
-      },
-      error: null,
-    }),
-    selectOrganizationById: () => mockOrganization,
-    selectAvailableContainerRegistry: () => [
-      {
-        kind: 'DOCKER_HUB',
-      },
-    ],
-  }
-})
 
 const mockDispatch = jest.fn()
 jest.mock('react-redux', () => ({
@@ -41,15 +11,10 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }))
 
-jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
-  useParams: () => ({ organizationId: mockOrganization.id }),
-}))
-
 describe('CrudModalFeature', () => {
   const props: CrudModalFeatureProps = {
     onClose: jest.fn(),
-    registry: mockContainerRegistries[0],
+    organizationId: '1',
   }
 
   it('should render successfully', async () => {
@@ -59,104 +24,43 @@ describe('CrudModalFeature', () => {
     })
   })
 
-  it('should dispatch editOrganizationContainerRegistry if form is submitted', async () => {
-    const editOrganizationContainerRegistrySpy: SpyInstance = jest.spyOn(
-      storeOrganization,
-      'editOrganizationContainerRegistry'
-    )
-
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          data: {},
-        }),
-    }))
-
-    const { getByTestId } = render(<CrudModalFeature {...props} />)
-
-    await act(() => {
-      const inputUsername = getByTestId('input-username')
-      fireEvent.input(inputUsername, { target: { value: 'hello' } })
-      const inputPassword = getByTestId('input-password')
-      fireEvent.input(inputPassword, { target: { value: 'password' } })
-    })
-
-    expect(getByTestId('submit-button')).not.toBeDisabled()
-
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
-
-    const mockContainerRegistriesConfig = mockContainerRegistries[0]
-
-    expect(editOrganizationContainerRegistrySpy).toHaveBeenCalledWith({
-      data: {
-        name: mockContainerRegistriesConfig.name,
-        description: mockContainerRegistriesConfig.description,
-        kind: mockContainerRegistriesConfig.kind,
-        url: mockContainerRegistriesConfig.url,
-        config: {
-          username: 'hello',
-          password: 'password',
-        },
-      },
-      containerRegistryId: mockContainerRegistriesConfig.id,
-      organizationId: '',
-    })
+  it('should render 2 inputs', async () => {
+    const { baseElement } = render(<CrudModalFeature {...props} />)
+    expect(getAllByRole(baseElement, 'textbox')).toHaveLength(2)
   })
 
-  it('should dispatch postOrganizationContainerRegistry if form is submitted', async () => {
-    const postOrganizationContainerRegistry: SpyInstance = jest.spyOn(
-      storeOrganization,
-      'postOrganizationContainerRegistry'
-    )
-
+  it('should render submit and call good api endpoint', async () => {
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
         Promise.resolve({
-          data: {},
+          results: {
+            data: {},
+          },
         }),
     }))
 
-    props.registry = undefined
-
-    const { getByTestId, getByLabelText } = render(<CrudModalFeature {...props} />)
-
-    await act(() => {
-      const inputName = getByTestId('input-name')
-      fireEvent.input(inputName, { target: { value: 'my-registry' } })
-
-      selectEvent.select(getByLabelText('Type'), ContainerRegistryKindEnum.DOCKER_HUB, { container: document.body })
-    })
+    const postApiTokenSpy: SpyInstance = jest.spyOn(storeOrganization, 'postApiToken')
+    const { baseElement } = render(<CrudModalFeature {...props} />)
+    const inputs = getAllByRole(baseElement, 'textbox')
 
     await act(() => {
-      const inputUsername = getByTestId('input-username')
-      fireEvent.input(inputUsername, { target: { value: 'hello' } })
-
-      const inputPassword = getByTestId('input-password')
-      fireEvent.input(inputPassword, { target: { value: 'password' } })
+      fireEvent.change(inputs[0], { target: { value: 'test' } })
+      fireEvent.change(inputs[1], { target: { value: 'description' } })
     })
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    const button = getByTestId(baseElement, 'submit-button')
 
+    expect(button).not.toBeDisabled()
     await act(() => {
-      getByTestId('submit-button').click()
+      button.click()
     })
 
-    const mockContainerRegistriesConfig = mockContainerRegistries[0]
-
-    expect(postOrganizationContainerRegistry).toHaveBeenCalledWith({
-      data: {
-        name: 'my-registry',
-        kind: mockContainerRegistriesConfig.kind,
-        description: undefined,
-        url: undefined,
-        config: {
-          username: 'hello',
-          password: 'password',
-        },
+    expect(postApiTokenSpy).toHaveBeenCalledWith({
+      organizationId: props.organizationId,
+      token: {
+        name: 'test',
+        description: 'description',
       },
-      organizationId: '',
     })
   })
 })

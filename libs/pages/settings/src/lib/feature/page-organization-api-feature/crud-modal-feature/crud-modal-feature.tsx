@@ -1,4 +1,4 @@
-import { ContainerRegistryResponse, OrganizationApiTokenCreateRequest } from 'qovery-typescript-axios'
+import { OrganizationApiTokenCreateRequest } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -11,19 +11,18 @@ import ValueModal from '../../../ui/page-organization-api/value-modal/value-moda
 export interface CrudModalFeatureProps {
   onClose: () => void
   organizationId?: string
-  registry?: ContainerRegistryResponse
 }
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
-  const { organizationId = '', onClose, registry } = props
+  const { organizationId = '', onClose } = props
   const { openModal, closeModal } = useModal()
 
   const [loading, setLoading] = useState(false)
 
   const methods = useForm<OrganizationApiTokenCreateRequest>({
     defaultValues: {
-      name: registry?.name,
-      description: registry?.description,
+      name: '',
+      description: '',
     },
     mode: 'onChange',
   })
