@@ -1,4 +1,4 @@
-import { Environment, Status } from 'qovery-typescript-axios'
+import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getEnvironmentStatusById } from '@qovery/domains/environment'
@@ -25,7 +25,7 @@ import TableRowEnvironments from '../table-row-environments/table-row-environmen
 
 export interface PageGeneralProps {
   environments: Environment[]
-  environmentsStatus?: Status[]
+  environmentsStatus?: EnvironmentStatus[]
   listHelpfulLinks: BaseLink[]
   isLoading?: boolean
   clusterAvailable?: boolean
