@@ -18,6 +18,7 @@ export function StatusChip(props: StatusChipProps) {
     switch (status) {
       case StateEnum.DEPLOYED:
       case RunningStatus.COMPLETED:
+      case RunningStatus.RUNNING:
         return true
       default:
         return false
