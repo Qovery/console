@@ -44,9 +44,13 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
       default:
         return (
           <div>
-            This service is not being deployed right now and thus no deployment logs are available.
+            No deployment logs are available for this service since it has not been deployed recently.
             <p>
-              You can access the application logs from the{' '}
+              Services recently deployed are displayed <a className="text-brand-400">in purple</a> within the list on
+              the left.
+            </p>
+            <p>
+              You can still access the application logs from the{' '}
               <Link
                 className="link text-accent2-500 mr-1"
                 size="text-base"
