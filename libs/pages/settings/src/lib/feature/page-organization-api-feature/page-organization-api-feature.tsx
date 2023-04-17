@@ -1,12 +1,8 @@
-import { ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { OrganizationApiToken } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  deleteOrganizationContainerRegistry,
-  fetchApiTokens,
-  selectOrganizationById,
-} from '@qovery/domains/organization'
+import { deleteApiToken, fetchApiTokens, selectOrganizationById } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -39,17 +35,17 @@ export function PageOrganizationApiFeature() {
       onAddRegistry={() => {
         openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
       }}
-      onDelete={(registry: ContainerRegistryResponse) => {
+      onDelete={(token: OrganizationApiToken) => {
         openModalConfirmation({
-          title: 'Delete container registry',
+          title: 'Delete API token',
           isDelete: true,
-          description: 'Are you sure you want to delete this container registry?',
-          name: registry?.name,
+          description: 'Are you sure you want to delete this token?',
+          name: token?.name,
           action: () => {
             dispatch(
-              deleteOrganizationContainerRegistry({
+              deleteApiToken({
                 organizationId: organizationId,
-                containerRegistryId: registry.id,
+                apiTokenId: token.id,
               })
             )
           },

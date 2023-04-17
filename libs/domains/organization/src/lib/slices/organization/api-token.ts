@@ -3,6 +3,7 @@ import {
   OrganizationApiToken,
   OrganizationApiTokenApi,
   OrganizationApiTokenCreateRequest,
+  OrganizationApiTokenScope,
 } from 'qovery-typescript-axios'
 import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
@@ -21,15 +22,18 @@ export const fetchApiTokens = createAsyncThunk(
 export const postApiToken = createAsyncThunk(
   'organization/post-api-token',
   async (payload: { organizationId: string; token: OrganizationApiTokenCreateRequest }) => {
-    const response = await apiTokenApi.createOrganizationApiToken(payload.organizationId, payload.token)
-    return response?.data as OrganizationApiToken
+    const response = await apiTokenApi.createOrganizationApiToken(payload.organizationId, {
+      ...payload.token,
+      scope: OrganizationApiTokenScope.ADMIN,
+    })
+    return response?.data
   }
 )
 
 export const deleteApiToken = createAsyncThunk(
   'organization/delete-api-token',
   async (payload: { apiTokenId: string; organizationId: string }) => {
-    return await apiTokenApi.deleteOrganizationApiToken(payload.apiTokenId, payload.organizationId)
+    return await apiTokenApi.deleteOrganizationApiToken(payload.organizationId, payload.apiTokenId)
   }
 )
 

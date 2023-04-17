@@ -56,5 +56,8 @@ describe('InputText', () => {
 
     const wrapper = screen.getByTestId('right-floating-component')
     expect(wrapper).toHaveClass('absolute top-1/2 -translate-y-1/2 right-4')
+
+    const input = screen.getByRole('textbox')
+    expect(input).toHaveClass('!pr-9')
   })
 })
