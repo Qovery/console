@@ -15,7 +15,7 @@ const service = {
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
   name: chance.name(),
-  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.STOP_ERROR])),
 }
 
 const database = {
@@ -23,7 +23,7 @@ const database = {
   created_at: chance.date().toString(),
   updated_at: chance.date().toString(),
   name: chance.name(),
-  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+  status: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.STOP_ERROR])),
 }
 
 export const deploymentMock: DeploymentHistoryEnvironment = {
@@ -67,7 +67,7 @@ export const environmentFactoryMock = (howMany: number, noStatus = false, noDepl
     status: !noStatus
       ? {
           id: `${index}`,
-          state: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+          state: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.STOP_ERROR])),
           message: chance.word({ length: 10 }),
           service_deployment_status: chance.pickone(Object.values([ServiceDeploymentStatusEnum.UP_TO_DATE])),
         }

@@ -16,7 +16,6 @@ export function StatusLabel(props: StatusLabelProps) {
       case StateEnum.READY:
         return true
       case StateEnum.DEPLOYED:
-      case StateEnum.RUNNING:
         return true
       default:
         return false
@@ -26,12 +25,10 @@ export function StatusLabel(props: StatusLabelProps) {
   function showProgressIcon(): boolean {
     switch (status) {
       case StateEnum.BUILDING:
-        return true
       case StateEnum.STOPPING:
-        return true
       case StateEnum.DEPLOYING:
-        return true
       case StateEnum.DELETING:
+      case StateEnum.RESTARTING:
         return true
       default:
         return false
@@ -53,11 +50,11 @@ export function StatusLabel(props: StatusLabelProps) {
 
   function showErrorIcon(): boolean {
     switch (status) {
+      case StateEnum.BUILD_ERROR:
       case StateEnum.DEPLOYMENT_ERROR:
-        return true
       case StateEnum.STOP_ERROR:
-        return true
       case StateEnum.DELETE_ERROR:
+      case StateEnum.RESTART_ERROR:
         return true
       default:
         return false

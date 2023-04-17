@@ -14,5 +14,5 @@ export const databaseStatusFactoryMock = (howMany: number): Status[] =>
         ServiceDeploymentStatusEnum.UP_TO_DATE,
       ])
     ),
-    state: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.RUNNING, StateEnum.STOP_ERROR])),
+    state: chance.pickone(Object.values([StateEnum.DEPLOYED, StateEnum.STOP_ERROR])),
   }))

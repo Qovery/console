@@ -17,7 +17,6 @@ export function StatusChip(props: StatusChipProps) {
   function showRunningIcon(): boolean {
     switch (status) {
       case StateEnum.DEPLOYED:
-      case StateEnum.RUNNING:
       case RunningStatus.COMPLETED:
         return true
       default:
@@ -37,10 +36,10 @@ export function StatusChip(props: StatusChipProps) {
   function showProgressIcon(): boolean {
     switch (status) {
       case StateEnum.BUILDING:
-        return true
       case StateEnum.DEPLOYING:
-        return true
       case StateEnum.DELETING:
+      case StateEnum.RESTARTING:
+      case StateEnum.STOPPING:
         return true
       default:
         return false
@@ -69,6 +68,8 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.DEPLOYMENT_ERROR:
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
+      case StateEnum.BUILD_ERROR:
+      case StateEnum.RESTART_ERROR:
       case RunningStatus.ERROR:
         return true
       default:
