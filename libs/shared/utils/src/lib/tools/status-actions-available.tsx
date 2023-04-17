@@ -9,7 +9,9 @@ export const isDeployAvailable = (status: StateEnum): boolean => {
 }
 
 export const isRestartAvailable = (runningStatus: RunningStatus, status: StateEnum): boolean => {
-  return runningStatus === RunningStatus.DEPLOYED && isRedeployAvailable(status)
+  return (
+    (runningStatus === RunningStatus.RUNNING || runningStatus === RunningStatus.DEPLOYED) && isRedeployAvailable(status)
+  )
 }
 
 export const isRedeployAvailable = (status: StateEnum): boolean => {
