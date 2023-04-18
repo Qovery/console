@@ -78,7 +78,7 @@ export function PageSettings() {
       url: pathSettings + SETTINGS_WEBHOOKS,
     },
     {
-      title: 'API',
+      title: 'API Token',
       icon: IconAwesomeEnum.CLOUD_ARROW_UP,
       url: pathSettings + SETTINGS_API_URL,
     },

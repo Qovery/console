@@ -31,9 +31,10 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">API</h1>
+            <h1 className="h5 text-text-700 mb-2">API Token</h1>
             <p className="text-text-500 text-xs">
-              Generate and manage the API tokens to access your organization settings via the Qovery API
+              API token allows third-party applications or script to access your organization via the Qovery API (CI/CD,
+              Terraform script, Pulumi etc..)
             </p>
           </div>
           <Button onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
