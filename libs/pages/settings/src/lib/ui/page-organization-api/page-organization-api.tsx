@@ -37,7 +37,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
               Terraform script, Pulumi etc..)
             </p>
           </div>
-          <Button onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button className="shrink-0" onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add new
           </Button>
         </div>
