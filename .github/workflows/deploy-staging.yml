@@ -11,7 +11,7 @@ jobs:
       flow: deploy-staging
       branch: staging
       configuration: staging
-      project-name: Console V3
+      project-name: R&D / Frontend
       environment-name: staging
       application-names: console
       application-commit-id: ${{ github.sha }}

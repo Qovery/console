@@ -1,3 +1,4 @@
+import { getByDisplayValue, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ValueModal, ValueModalProps } from './value-modal'
@@ -7,9 +8,19 @@ const props: ValueModalProps = {
   token: 'token',
 }
 
-describe('CrudModal', () => {
+describe('ValueModal', () => {
   it('should render successfully', () => {
     const { baseElement } = render(wrapWithReactHookForm(<ValueModal {...props} />))
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should render copy paste widget', () => {
+    const { baseElement } = render(wrapWithReactHookForm(<ValueModal {...props} />))
+    getByTestId(baseElement, 'copy-container')
+  })
+
+  it('should render token value', () => {
+    const { baseElement } = render(wrapWithReactHookForm(<ValueModal {...props} />))
+    getByDisplayValue(baseElement, 'token')
   })
 })

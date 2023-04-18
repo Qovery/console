@@ -16,17 +16,15 @@ import {
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 
-export interface PageOrganizationContainerRegistriesProps {
-  onAddRegistry: () => void
+export interface PageOrganizationApiProps {
+  onAddToken: () => void
   onDelete: (token: OrganizationApiToken) => void
   apiTokens?: OrganizationApiToken[]
   loading?: LoadingStatus
 }
 
-export function PageOrganizationApi(props: PageOrganizationContainerRegistriesProps) {
-  const { apiTokens, loading, onAddRegistry, onDelete } = props
-
-  console.log(apiTokens, loading)
+export function PageOrganizationApi(props: PageOrganizationApiProps) {
+  const { apiTokens, loading, onAddToken, onDelete } = props
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -38,19 +36,19 @@ export function PageOrganizationApi(props: PageOrganizationContainerRegistriesPr
               Generate and manage the API tokens to access your organization settings via the Qovery API
             </p>
           </div>
-          <Button onClick={() => onAddRegistry()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button onClick={() => onAddToken()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add new
           </Button>
         </div>
         {(loading === 'not loaded' || loading === 'loading') && apiTokens?.length === 0 ? (
-          <div data-testid="registries-loader" className="flex justify-center">
+          <div data-testid="loader" className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
         ) : apiTokens && apiTokens.length > 0 ? (
           <BlockContent title="Token List" classNameContent="">
             {apiTokens?.map((token: OrganizationApiToken) => (
               <div
-                data-testid={`registries-list-${token.id}`}
+                data-testid={`token-list-${token.id}`}
                 key={token.id}
                 className="flex justify-between items-center px-5 py-4 border-b border-element-light-lighter-500 last:border-0"
               >
@@ -81,6 +79,7 @@ export function PageOrganizationApi(props: PageOrganizationContainerRegistriesPr
                     onClick={() => onDelete(token)}
                     className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"
+                    dataTestId="delete-token"
                   />
                 </div>
               </div>
@@ -91,8 +90,8 @@ export function PageOrganizationApi(props: PageOrganizationContainerRegistriesPr
           apiTokens?.length === 0 && (
             <EmptyState
               dataTestId="empty-state"
-              title="No container registry"
-              description="Define a container registry for your organization"
+              title="No API token found"
+              description="Define an API token for your organization"
             />
           )
         )}

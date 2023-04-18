@@ -32,7 +32,7 @@ export function PageOrganizationApiFeature() {
     <PageOrganizationApi
       apiTokens={organization?.apiTokens?.items}
       loading={organization?.apiTokens?.loadingStatus || 'not loaded'}
-      onAddRegistry={() => {
+      onAddToken={() => {
         openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
       }}
       onDelete={(token: OrganizationApiToken) => {
