@@ -70,7 +70,7 @@ export function RowPod(props: RowPodProps) {
     <TableRowFilter data={data} filter={filter}>
       <div
         data-testid="pod-log-row"
-        className="group flex justify-between font-code text-xs hover:bg-element-light-darker-400 w-full mb-[2px]"
+        className="group flex justify-between font-code text-xs hover:bg-element-light-darker-400 w-full mb-[2px] select-none"
       >
         <div
           data-testid="index"
@@ -106,7 +106,7 @@ export function RowPod(props: RowPodProps) {
         <div data-testid="cell-date" className="px-4 pt-0.5 text-element-light-lighter-700 whitespace-nowrap">
           {dateFullFormat(data.created_at)}
         </div>
-        <div data-testid="cell-msg" className="pr-6 pt-0.5 text-text-100 relative w-full">
+        <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-text-100 relative w-full">
           <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
           <CopyToClipboard
             className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"

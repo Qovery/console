@@ -40,7 +40,7 @@ export function Row(props: RowProps) {
 
   return (
     <div
-      className={`group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 ${
+      className={`group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 select-none ${
         realError || success ? 'bg-element-light-darker-300' : ''
       } ${realError ? 'row-error' : ''}`}
     >
@@ -51,7 +51,7 @@ export function Row(props: RowProps) {
         <div data-testid="cell-date" className={`py-1 px-2 ${colorsCellClassName()}`}>
           {firstDate && dateDifference(new Date(data.timestamp as string), firstDate)}
         </div>
-        <div data-testid="cell-msg" className={`py-1 w-11/12 ${colorsCellClassName(true)}`}>
+        <div data-testid="cell-msg" className={`py-1 w-11/12 select-text ${colorsCellClassName(true)}`}>
           <span className="font-bold">{data.step} - </span>
           <span className="whitespace-pre-wrap">
             {type === LogsType.ERROR ? data.error?.user_log_message : data.message?.safe_message}
