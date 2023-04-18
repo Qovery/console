@@ -1,11 +1,10 @@
-import { DeploymentHistoryEnvironment, JobScheduleEvent } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getEnvironmentById, useEnvironmentDeploymentHistory, useFetchEnvironments } from '@qovery/domains/environment'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { deploymentMock } from '@qovery/shared/factories'
 import { DeploymentService } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
+import { mergeDeploymentServices } from '@qovery/shared/utils'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
@@ -26,49 +25,6 @@ export function PageDeploymentsFeature() {
       external: true,
     },
   ]
-
-  const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnvironment[]) => {
-    const merged: DeploymentService[] = []
-    deploymentHistory?.forEach((deployment) => {
-      deployment.applications?.forEach((app) => {
-        const a: DeploymentService = {
-          ...app,
-          execution_id: deployment.id,
-          type: ServiceTypeEnum.APPLICATION,
-        }
-        merged.push(a)
-      })
-
-      deployment.containers?.forEach((container) => {
-        const c: DeploymentService = {
-          ...container,
-          execution_id: deployment.id,
-          type: ServiceTypeEnum.CONTAINER,
-        }
-        merged.push(c)
-      })
-
-      deployment.databases?.forEach((db) => {
-        const d: DeploymentService = {
-          ...db,
-          execution_id: deployment.id,
-          type: ServiceTypeEnum.DATABASE,
-        }
-        merged.push(d)
-      })
-
-      deployment.jobs?.forEach((job) => {
-        const j: DeploymentService = {
-          ...job,
-          execution_id: deployment.id,
-          type:
-            job.schedule?.event === JobScheduleEvent.CRON ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB,
-        }
-        merged.push(j)
-      })
-    })
-    return merged
-  }
 
   useEffect(() => {
     const fetchEnv = () => refetch()

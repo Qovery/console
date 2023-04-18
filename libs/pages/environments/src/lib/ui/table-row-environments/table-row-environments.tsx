@@ -1,4 +1,4 @@
-import { Environment, Status } from 'qovery-typescript-axios'
+import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
 import { useGetEnvironmentRunningStatusById } from '@qovery/domains/environment'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { RunningStatus } from '@qovery/shared/enums'
@@ -17,7 +17,7 @@ import { timeAgo } from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentsProps {
   data: Environment
-  status?: Status
+  status?: EnvironmentStatus
   filter: TableFilterProps
   dataHead: TableHeadProps<Environment>[]
   link: string

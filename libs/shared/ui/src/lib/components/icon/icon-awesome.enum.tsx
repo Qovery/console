@@ -100,5 +100,6 @@ export enum IconAwesomeEnum {
   DOWNLOAD = 'icon-solid-download',
   TOWER_BROADCAST = 'icon-solid-tower-broadcast',
   CLOUD_CHECK = 'icon-solid-cloud-check',
+  WRENCH = 'icon-solid-wrench',
   // schema: favicons name
 }

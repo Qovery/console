@@ -40,7 +40,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const numberOfRunningClusters =
     clusters?.reduce((acc, cluster) => {
-      if (cluster.status === StateEnum.RUNNING) {
+      if (cluster.status === StateEnum.DEPLOYED) {
         return acc + 1
       }
       return acc

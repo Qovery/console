@@ -76,7 +76,7 @@ export function Container(props: ContainerProps) {
     {
       icon: (
         <Skeleton width={16} height={16} rounded show={!database?.status}>
-          <StatusChip mustRenameStatus status={database?.status && database?.status.state} />
+          <StatusChip status={database?.status && database?.status.state} />
         </Skeleton>
       ),
       name: 'Deployments',

@@ -1,4 +1,4 @@
-import { Environment, StateEnum, Status } from 'qovery-typescript-axios'
+import { Environment, EnvironmentStatus, StateEnum } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
@@ -42,7 +42,7 @@ import { RootState } from '@qovery/store'
 
 export interface ContainerProps {
   environment?: Environment
-  environmentStatus?: Status
+  environmentStatus?: EnvironmentStatus
   environmentRunningStatus?: WebsocketRunningStatusInterface
   children?: React.ReactNode
 }
@@ -113,7 +113,7 @@ export function Container(props: ContainerProps) {
     {
       icon: (
         <Skeleton show={environmentStatus?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip mustRenameStatus status={(environmentStatus && environmentStatus.state) || StateEnum.STOPPED} />
+          <StatusChip status={(environmentStatus && environmentStatus.state) || StateEnum.STOPPED} />
         </Skeleton>
       ),
       name: 'Deployments',

@@ -60,7 +60,7 @@
     "msw": "^1.0.1",
     "postcss": "8.4.19",
     "posthog-js": "^1.24.0",
-    "qovery-typescript-axios": "^1.1.120",
+    "qovery-typescript-axios": "^1.1.129",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.0",
     "react-country-flag": "^3.0.2",

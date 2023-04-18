@@ -1,6 +1,6 @@
 import { DeploymentHistoryStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
-import { renameStatus, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 
@@ -9,17 +9,16 @@ export interface StatusChipProps {
   appendTooltipMessage?: string
   className?: string
   isRunningStatus?: boolean
-  mustRenameStatus?: boolean
 }
 
 export function StatusChip(props: StatusChipProps) {
-  const { status, className = '', appendTooltipMessage = '', mustRenameStatus } = props
+  const { status, className = '', appendTooltipMessage = '' } = props
 
   function showRunningIcon(): boolean {
     switch (status) {
       case StateEnum.DEPLOYED:
-      case StateEnum.RUNNING:
       case RunningStatus.COMPLETED:
+      case RunningStatus.RUNNING:
         return true
       default:
         return false
@@ -38,11 +37,18 @@ export function StatusChip(props: StatusChipProps) {
   function showProgressIcon(): boolean {
     switch (status) {
       case StateEnum.BUILDING:
-        return true
       case StateEnum.DEPLOYING:
-        return true
       case StateEnum.DELETING:
+      case StateEnum.RESTARTING:
+      case StateEnum.STOPPING:
         return true
+      default:
+        return false
+    }
+  }
+
+  function showQueueIcon(): boolean {
+    switch (status) {
       case StateEnum.STOP_QUEUED:
         return true
       case StateEnum.CANCELING:
@@ -63,6 +69,8 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.DEPLOYMENT_ERROR:
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
+      case StateEnum.BUILD_ERROR:
+      case StateEnum.RESTART_ERROR:
       case RunningStatus.ERROR:
         return true
       default:
@@ -114,9 +122,7 @@ export function StatusChip(props: StatusChipProps) {
     <Tooltip
       content={
         <span>
-          {status === StateEnum.RUNNING && mustRenameStatus
-            ? renameStatus(status)
-            : upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
+          {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
           {appendTooltipMessage ? ' - ' + appendTooltipMessage : ''}
         </span>
       }
@@ -134,6 +140,7 @@ export function StatusChip(props: StatusChipProps) {
           />
         )}
         {showProgressIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PROGRESS} />}
+        {showQueueIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" pathColor="#A0AFC5" name={IconEnum.PROGRESS} />}
         {showErrorIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.ERROR} />}
         {showStoppedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PAUSE} />}
         {showDeletedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.DELETE} />}

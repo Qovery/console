@@ -1,6 +1,6 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
-import { renameStatus, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Icon from '../icon/icon'
 
 export interface StatusLabelProps {
@@ -15,7 +15,7 @@ export function StatusLabel(props: StatusLabelProps) {
     switch (status) {
       case StateEnum.READY:
         return true
-      case StateEnum.RUNNING:
+      case StateEnum.DEPLOYED:
         return true
       default:
         return false
@@ -25,12 +25,10 @@ export function StatusLabel(props: StatusLabelProps) {
   function showProgressIcon(): boolean {
     switch (status) {
       case StateEnum.BUILDING:
-        return true
       case StateEnum.STOPPING:
-        return true
       case StateEnum.DEPLOYING:
-        return true
       case StateEnum.DELETING:
+      case StateEnum.RESTARTING:
         return true
       default:
         return false
@@ -52,11 +50,11 @@ export function StatusLabel(props: StatusLabelProps) {
 
   function showErrorIcon(): boolean {
     switch (status) {
+      case StateEnum.BUILD_ERROR:
       case StateEnum.DEPLOYMENT_ERROR:
-        return true
       case StateEnum.STOP_ERROR:
-        return true
       case StateEnum.DELETE_ERROR:
+      case StateEnum.RESTART_ERROR:
         return true
       default:
         return false
@@ -73,9 +71,7 @@ export function StatusLabel(props: StatusLabelProps) {
       data-testid="status-label"
     >
       {showProgressIcon() && <Icon name={IconEnum.PROGRESS} width="12" viewBox="0 0 12 12" className="mr-2 mt-[1px]" />}
-      {status !== StateEnum.RUNNING
-        ? upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())
-        : renameStatus(status)}
+      {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
       {showErrorIcon() && <Icon name={IconEnum.ERROR} width="12" viewBox="0 0 14 14" className="ml-2 mt-[1px]" />}
     </span>
   )

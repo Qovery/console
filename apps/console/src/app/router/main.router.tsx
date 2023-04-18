@@ -4,8 +4,7 @@ import { PagesCluster } from '@qovery/pages/cluster'
 import { PageClusters } from '@qovery/pages/clusters'
 import { PageDatabase } from '@qovery/pages/database'
 import { PageEnvironments } from '@qovery/pages/environments'
-import { PageApplicationLogs } from '@qovery/pages/logs/application'
-import { PageDeploymentLogs } from '@qovery/pages/logs/deployment'
+import { PageEnvironmentLogs } from '@qovery/pages/logs/environment'
 import { PageInfraLogs } from '@qovery/pages/logs/infra'
 import { PageOnboarding } from '@qovery/pages/onboarding'
 import { OverviewPage } from '@qovery/pages/overview/feature'
@@ -14,13 +13,12 @@ import { PageSettings } from '@qovery/pages/settings'
 import { AcceptInvitationFeature, GithubApplicationCallbackFeature } from '@qovery/shared/console-shared'
 import {
   ACCEPT_INVITATION_URL,
-  APPLICATION_LOGS_URL,
   APPLICATION_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_URL,
+  ENVIRONMENT_LOGS_URL,
   GITHUB_APPLICATION_CALLBACK_URL,
   INFRA_LOGS_URL,
   ONBOARDING_URL,
@@ -123,15 +121,8 @@ export const ROUTER: RouterProps[] = [
     darkMode: true,
   },
   {
-    path: `${APPLICATION_LOGS_URL()}`,
-    component: <PageApplicationLogs />,
-    protected: true,
-    layout: true,
-    darkMode: true,
-  },
-  {
-    path: `${DEPLOYMENT_LOGS_URL()}`,
-    component: <PageDeploymentLogs />,
+    path: `${ENVIRONMENT_LOGS_URL()}/*`,
+    component: <PageEnvironmentLogs />,
     protected: true,
     layout: true,
     darkMode: true,

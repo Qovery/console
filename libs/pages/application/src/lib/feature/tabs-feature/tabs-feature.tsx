@@ -66,11 +66,7 @@ export function TabsFeature() {
     {
       icon: (
         <Skeleton show={application?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip
-            mustRenameStatus
-            status={(application?.status && application?.status.state) || StateEnum.STOPPED}
-            appendTooltipMessage={application?.status && application.status.message ? application.status.message : ''}
-          />
+          <StatusChip status={(application?.status && application?.status.state) || StateEnum.STOPPED} />
         </Skeleton>
       ),
       name: 'Deployments',

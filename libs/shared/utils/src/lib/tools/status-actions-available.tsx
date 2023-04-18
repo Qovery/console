@@ -9,12 +9,15 @@ export const isDeployAvailable = (status: StateEnum): boolean => {
 }
 
 export const isRestartAvailable = (runningStatus: RunningStatus, status: StateEnum): boolean => {
-  return runningStatus === RunningStatus.RUNNING && isRedeployAvailable(status)
+  return (
+    (runningStatus === RunningStatus.RUNNING || runningStatus === RunningStatus.DEPLOYED) && isRedeployAvailable(status)
+  )
 }
 
 export const isRedeployAvailable = (status: StateEnum): boolean => {
   return (
     (status === StateEnum.BUILDING ||
+      status === StateEnum.BUILD_ERROR ||
       status === StateEnum.QUEUED ||
       status === StateEnum.STOP_QUEUED ||
       status === StateEnum.DELETE_QUEUED ||
@@ -27,7 +30,6 @@ export const isRedeployAvailable = (status: StateEnum): boolean => {
       status === StateEnum.STOP_ERROR ||
       status === StateEnum.DELETING ||
       status === StateEnum.DELETE_ERROR ||
-      status === StateEnum.RUNNING ||
       status === StateEnum.DEPLOYMENT_QUEUED ||
       status === StateEnum.RESTART_QUEUED ||
       status === StateEnum.CANCELED) &&
@@ -38,14 +40,12 @@ export const isRedeployAvailable = (status: StateEnum): boolean => {
 export const isStopAvailable = (status: StateEnum): boolean => {
   return (
     (status === StateEnum.BUILDING ||
+      status === StateEnum.BUILD_ERROR ||
       status === StateEnum.QUEUED ||
       status === StateEnum.STOP_QUEUED ||
       status === StateEnum.DELETE_QUEUED ||
-      status === StateEnum.DEPLOYING ||
       status === StateEnum.DEPLOYED ||
       status === StateEnum.RESTARTED ||
-      status === StateEnum.DELETING ||
-      status === StateEnum.RUNNING ||
       status === StateEnum.DEPLOYMENT_ERROR ||
       status === StateEnum.RESTART_ERROR ||
       status === StateEnum.DEPLOYMENT_QUEUED ||
@@ -59,13 +59,14 @@ export const isStopAvailable = (status: StateEnum): boolean => {
 export const isDeleteAvailable = (status: StateEnum): boolean => {
   return (
     status === StateEnum.READY ||
+    status === StateEnum.BUILD_ERROR ||
     status === StateEnum.DEPLOYMENT_ERROR ||
     status === StateEnum.RESTART_ERROR ||
-    status === StateEnum.STOPPING ||
     status === StateEnum.STOP_ERROR ||
-    status === StateEnum.STOPPED ||
     status === StateEnum.DELETE_ERROR ||
-    status === StateEnum.RUNNING ||
+    status === StateEnum.STOPPED ||
+    status === StateEnum.DEPLOYED ||
+    status === StateEnum.RESTARTED ||
     status === StateEnum.CANCELED
   )
 }
@@ -73,12 +74,14 @@ export const isDeleteAvailable = (status: StateEnum): boolean => {
 export const isUpdateAvailable = (status: StateEnum): boolean => {
   return (
     status === StateEnum.DEPLOYMENT_ERROR ||
+    status === StateEnum.BUILD_ERROR ||
     status === StateEnum.RESTART_ERROR ||
     status === StateEnum.STOP_ERROR ||
-    status === StateEnum.STOPPED ||
     status === StateEnum.DELETE_ERROR ||
+    status === StateEnum.STOPPED ||
     status === StateEnum.DELETED ||
-    status === StateEnum.RUNNING
+    status === StateEnum.RESTARTED ||
+    status === StateEnum.DEPLOYED
   )
 }
 
@@ -86,10 +89,13 @@ export const isCancelBuildAvailable = (status: StateEnum): boolean => {
   return (
     status === StateEnum.BUILDING ||
     status === StateEnum.DEPLOYING ||
+    status === StateEnum.RESTARTING ||
+    status === StateEnum.STOPPING ||
+    status === StateEnum.DELETING ||
+    status === StateEnum.STOP_QUEUED ||
     status === StateEnum.DEPLOYMENT_QUEUED ||
     status === StateEnum.RESTART_QUEUED ||
-    status === StateEnum.DELETE_QUEUED ||
-    status === StateEnum.DELETING
+    status === StateEnum.DELETE_QUEUED
   )
 }
 
@@ -109,14 +115,14 @@ export const getStatusClusterMessage = (status?: StateEnum, isAlreadyDeployed?: 
       else return 'Updating queued'
     case StateEnum.STOP_QUEUED:
       return 'Pause queued'
+    case StateEnum.BUILD_ERROR:
+      return 'Build error'
     case StateEnum.STOP_ERROR:
       return 'Pause error'
     case StateEnum.STOPPING:
       return 'Pausing...'
     case StateEnum.STOPPED:
       return 'Paused'
-    // case StateEnum.RUNNING_ERROR:
-    //   return 'Error'
     case StateEnum.DELETE_QUEUED:
       return 'Deletion queued'
     case StateEnum.DELETING:
@@ -125,7 +131,7 @@ export const getStatusClusterMessage = (status?: StateEnum, isAlreadyDeployed?: 
       return 'Deletion error'
     case StateEnum.READY:
     case StateEnum.DELETED:
-    case StateEnum.RUNNING:
+    case StateEnum.DEPLOYED:
     default:
       return ''
   }

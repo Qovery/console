@@ -3,6 +3,7 @@ import { Dispatch, Fragment, SetStateAction } from 'react'
 import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import {
+  BadgeDeploymentOrder,
   Button,
   ButtonIcon,
   ButtonIconStyle,
@@ -19,7 +20,6 @@ import {
 } from '@qovery/shared/ui'
 import { StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
 import { move, reorderService } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
-import BadgeDeploymentOrder from './badge-deployment-order/badge-deployment-order'
 import DraggableItem from './draggable-item/draggable-item'
 
 export interface PageSettingsDeploymentPipelineProps {
