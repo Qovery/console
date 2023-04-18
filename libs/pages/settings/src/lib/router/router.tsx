@@ -1,5 +1,6 @@
 import {
   Route,
+  SETTINGS_API_URL,
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
@@ -14,6 +15,7 @@ import {
   SETTINGS_ROLES_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
+import PageOrganizationApiFeature from '../feature/page-organization-api-feature/page-organization-api-feature'
 import PageOrganizationBillingFeature from '../feature/page-organization-billing-feature/page-organization-billing-feature'
 import PageOrganizationBillingSummaryFeature from '../feature/page-organization-billing-summary-feature/page-organization-billing-summary-feature'
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
@@ -59,6 +61,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_CONTAINER_REGISTRIES_URL,
     component: <PageOrganizationContainerRegistriesFeature />,
+  },
+  {
+    path: SETTINGS_API_URL,
+    component: <PageOrganizationApiFeature />,
   },
   {
     path: SETTINGS_GIT_REPOSITORY_ACCESS_URL,

@@ -15614,7 +15614,7 @@ q@^1.5.1:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==
 
-qovery-typescript-axios@^1.1.129:
+qovery-typescript-axios@^1.1.130:
   version "1.1.130"
   resolved "https://registry.yarnpkg.com/qovery-typescript-axios/-/qovery-typescript-axios-1.1.130.tgz#73b9020cc4e7ecced1446dad7225cf474e71dbb5"
   integrity sha512-anLtPutLdWPTc3k88KHYZ2QzFNSSQMFn0moMSCjENTK6hZDkoDNoMXVZ/RkAR8KR+VFChzGcX7QFSRFVynmpFQ==

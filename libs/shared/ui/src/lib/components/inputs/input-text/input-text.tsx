@@ -75,7 +75,7 @@ export function InputText(props: InputTextProps) {
               data-testid={dataTestId || 'input-text'}
               name={name}
               id={label}
-              className="input__value"
+              className={`input__value ${rightElement ? '!pr-9' : ''}`}
               type={currentType}
               disabled={disabled}
               value={currentValue}

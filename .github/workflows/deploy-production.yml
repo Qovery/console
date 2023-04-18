@@ -11,7 +11,7 @@ jobs:
       flow: deploy-production
       branch: main
       configuration: production
-      project-name: Console V3
+      project-name: R&D / Frontend
       environment-name: production
       application-names: console
       application-commit-id: ${{ github.sha }}
