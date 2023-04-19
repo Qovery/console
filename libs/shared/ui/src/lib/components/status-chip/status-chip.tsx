@@ -40,7 +40,6 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.DEPLOYING:
       case StateEnum.DELETING:
       case StateEnum.RESTARTING:
-      case StateEnum.STOPPING:
         return true
       default:
         return false
