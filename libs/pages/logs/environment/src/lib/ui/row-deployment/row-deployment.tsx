@@ -34,7 +34,7 @@ export function RowDeployment(props: RowDeploymentProps) {
 
   return (
     <div
-      className={`group flex min-h-6 text-xs ${
+      className={`group flex min-h-6 text-xs select-none ${
         error || success
           ? ' bg-element-light-darker-200 hover:bg-element-light-darker-300'
           : 'bg-element-light-darker-500 hover:bg-element-light-darker-400'
@@ -48,7 +48,7 @@ export function RowDeployment(props: RowDeploymentProps) {
       </div>
       <div
         data-testid="cell-msg"
-        className={`py-1 pr-6 font-code relative w-full overflow-hidden ${colorsCellClassName(true)}`}
+        className={`select-text py-1 pr-6 font-code relative w-full overflow-hidden ${colorsCellClassName(true)}`}
       >
         <span className="whitespace-pre-wrap truncate break-all">
           {type === LogsType.ERROR
