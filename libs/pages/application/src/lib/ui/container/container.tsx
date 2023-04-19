@@ -1,12 +1,18 @@
-import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
-import { createContext, useState } from 'react'
+import { CustomDomain, Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { createContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
+import {
+  fetchCustomDomains,
+  getCustomDomainsState,
+  postApplicationActionsDeploy,
+  postApplicationActionsRestart,
+  selectCustomDomainsByApplicationId,
+} from '@qovery/domains/application'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
-import { ApplicationEntity, ClusterEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, ClusterEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import {
   Button,
   ButtonSize,
@@ -63,32 +69,43 @@ export function Container(props: ContainerProps) {
     }
   }
 
-  const menuLink: MenuData = []
+  const customDomainsLoadingStatus: LoadingStatus = useSelector<RootState, LoadingStatus>(
+    (state) => getCustomDomainsState(state).loadingStatus
+  )
 
-  if (application && application.links && application.links.items) {
-    const items: MenuItemProps[] = application.links.items.map((link) => {
+  useEffect(() => {
+    if (application && customDomainsLoadingStatus === 'not loaded')
+      dispatch(fetchCustomDomains({ applicationId, serviceType: getServiceType(application) }))
+  }, [customDomainsLoadingStatus, dispatch, application, applicationId])
+
+  const customDomains = useSelector<RootState, CustomDomain[]>((state) =>
+    selectCustomDomainsByApplicationId(state, applicationId)
+  )
+  const [menuLink, setMenuLink] = useState<MenuData>([])
+
+  useEffect(() => {
+    const items: MenuItemProps[] = customDomains.map((link) => {
       return {
-        name: link.url || '',
+        name: link.domain || '',
         link: {
-          url: link.url || '',
+          url: link.domain || '',
           external: true,
         },
-        copy: link.url || undefined,
+        copy: link.domain || undefined,
         copyTooltip: 'Copy the link',
       }
     })
 
-    menuLink.push({
-      title: 'Links',
-      items,
-    })
-  }
+    setMenuLink([
+      {
+        title: 'Links',
+        items,
+      },
+    ])
+  }, [customDomains, setMenuLink])
 
   const headerButtons = (
     <div className="flex items-start gap-2">
-      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
       {application?.links && application.links.items && application.links.items.length > 0 && (
         <Menu
           menus={menuLink}
