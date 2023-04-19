@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   createCustomDomain,
   editCustomDomain,
+  fetchApplicationLinks,
   getCustomDomainsState,
   postApplicationActionsRestart,
 } from '@qovery/domains/application'
@@ -59,7 +60,10 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         })
       )
         .unwrap()
-        .then(() => props.onClose())
+        .then(() => {
+          dispatch(fetchApplicationLinks({ applicationId: props.application?.id || '' }))
+          props.onClose()
+        })
         .catch((e) => console.error(e))
     } else {
       dispatch(
@@ -71,7 +75,10 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         })
       )
         .unwrap()
-        .then(() => props.onClose())
+        .then(() => {
+          dispatch(fetchApplicationLinks({ applicationId: props.application?.id || '' }))
+          props.onClose()
+        })
         .catch((e) => console.error(e))
     }
   })

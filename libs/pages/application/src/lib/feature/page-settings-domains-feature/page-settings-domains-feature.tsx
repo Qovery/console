@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
   deleteCustomDomain,
+  fetchApplicationLinks,
   fetchCustomDomains,
   getApplicationsState,
   getCustomDomainsState,
@@ -64,6 +65,13 @@ export function PageSettingsDomainsFeature() {
           action: () => {
             if (application) {
               dispatch(deleteCustomDomain({ applicationId, customDomain, serviceType: getServiceType(application) }))
+                .unwrap()
+                .then(() => {
+                  dispatch(fetchApplicationLinks({ applicationId }))
+                })
+                .catch((e) => {
+                  console.error(e)
+                })
             }
           },
         })
