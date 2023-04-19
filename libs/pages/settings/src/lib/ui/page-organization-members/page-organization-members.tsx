@@ -193,7 +193,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/members-rbac/#organization-members',
             linkLabel: 'How to configure my organization members',
             external: true,
           },
