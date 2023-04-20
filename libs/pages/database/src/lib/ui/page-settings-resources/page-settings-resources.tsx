@@ -49,13 +49,6 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                   Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
                   <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
                   drift in the configuration.
-                  <Link
-                    className="ml-0.5"
-                    size="text-xs"
-                    link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
-                    linkLabel="See more details"
-                    external
-                  />
                 </span>
               }
               type={BannerBoxEnum.WARNING}
