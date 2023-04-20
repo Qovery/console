@@ -64,7 +64,7 @@ export function StepSummary(props: StepSummaryProps) {
       <div className="mb-10">
         <BannerBox
           className="mb-5"
-          title="Qovery manages all for you"
+          title="Qovery manages this resource for you"
           message={
             <span>
               Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.

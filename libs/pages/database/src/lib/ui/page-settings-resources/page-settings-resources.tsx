@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
+  BannerBox,
+  BannerBoxEnum,
   BlockContent,
   Button,
   ButtonSize,
@@ -37,6 +39,28 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <h2 className="h5 mb-8 text-text-700">Resources</h2>
         <form onSubmit={onSubmit}>
           <p className="text-text-500 text-xs mb-3">Manage the database's resources</p>
+
+          {database.mode == DatabaseModeEnum.MANAGED && (
+            <BannerBox
+              className="mb-5"
+              title="Qovery manages this resource for you"
+              message={
+                <span>
+                  Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                  <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+                  drift in the configuration.
+                  <Link
+                    className="ml-0.5"
+                    size="text-xs"
+                    link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
+                    linkLabel="See more details"
+                    external
+                  />
+                </span>
+              }
+              type={BannerBoxEnum.WARNING}
+            />
+          )}
 
           {database.mode !== DatabaseModeEnum.MANAGED && (
             <>

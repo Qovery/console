@@ -7,11 +7,9 @@ import {
   BannerBox,
   BannerBoxEnum,
   BlockContent,
-  IconAwesomeEnum,
   InputRadioBox,
   InputSelect,
   InputText,
-  Link,
   Slider,
 } from '@qovery/shared/ui'
 
@@ -91,15 +89,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 error={error?.message}
                 options={props.instanceTypeOptions || []}
               />
-              <Link
-                className="text-accent2-500 font-medium block mb-3 ml-4"
-                size="text-xs"
-                link="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
-                linkLabel="How does it work?"
-                iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-                iconRightClassName="text-2xs relative top-[1px]"
-                external
-              />
+              <p className="text-text-400 text-xs my-3">Instance type to be used to run your Kubernetes nodes.</p>
               {warningInstance && (
                 <BannerBox
                   dataTestId="warning-instance"
@@ -129,6 +119,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
           )}
         />
+        <p className="text-text-400 text-xs my-3">
+          Storage allocated to your Kubernetes nodes to store files, application images etc..
+        </p>
       </BlockContent>
 
       {watchClusterType === KubernetesEnum.MANAGED && (

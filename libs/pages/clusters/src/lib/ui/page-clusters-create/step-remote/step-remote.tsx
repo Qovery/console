@@ -25,7 +25,7 @@ export function StepRemote(props: StepRemoteProps) {
           but we recommend doing it now to avoid downtime.
         </p>
         <Link
-          link="#"
+          link="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#generating-an-ssh-key-for-your-cluster"
           external
           linkLabel="How to generate an SSH Key"
           iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}

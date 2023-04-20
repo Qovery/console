@@ -1,5 +1,16 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import {
+  BannerBox,
+  BannerBoxEnum,
+  Button,
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  Link,
+} from '@qovery/shared/ui'
 import {
   GeneralData,
   ResourcesData,
@@ -30,6 +41,27 @@ export function StepSummary(props: StepSummaryProps) {
       </div>
 
       <div className="mb-10">
+        {props.generalData.mode == DatabaseModeEnum.MANAGED && (
+          <BannerBox
+            className="mb-5"
+            title="Qovery manages this resource for you"
+            message={
+              <span>
+                Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+                <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
+                drift in the configuration.
+                <Link
+                  className="ml-0.5"
+                  size="text-xs"
+                  link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
+                  linkLabel="See more details"
+                  external
+                />
+              </span>
+            }
+            type={BannerBoxEnum.WARNING}
+          />
+        )}
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
