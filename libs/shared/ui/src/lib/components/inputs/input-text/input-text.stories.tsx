@@ -14,11 +14,18 @@ const defaultProps: InputTextProps = {
   name: 'firstName',
   rightElement: null,
   disabled: false,
+  type: 'text',
 }
 
 export const Primary = Template.bind({})
 Primary.args = {
   ...defaultProps,
+}
+
+export const Time = Template.bind({})
+Time.args = {
+  ...defaultProps,
+  type: 'time',
 }
 
 const TemplateWithRightElement: Story<InputTextProps> = (args) => <InputText {...args} />
