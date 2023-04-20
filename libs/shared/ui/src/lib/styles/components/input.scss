@@ -32,6 +32,10 @@
   @apply absolute left-0 bottom-[7px] w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
 }
 
+.input__value[type='time'] {
+  overflow: visible;
+}
+
 .input--focused,
 .input__button--focused {
   outline: 3px solid theme('colors.brand.100');
