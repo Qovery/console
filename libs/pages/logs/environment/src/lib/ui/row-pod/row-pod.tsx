@@ -1,4 +1,6 @@
 import { Log } from 'qovery-typescript-axios'
+import { useContext } from 'react'
+import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import {
   CopyToClipboard,
   Icon,
@@ -65,6 +67,7 @@ export interface RowPodProps {
 
 export function RowPod(props: RowPodProps) {
   const { data, filter, index } = props
+  const { utc } = useContext(UpdateTimeContext)
 
   return (
     <TableRowFilter data={data} filter={filter}>
@@ -104,7 +107,7 @@ export function RowPod(props: RowPodProps) {
           )}
         </div>
         <div data-testid="cell-date" className="px-4 pt-0.5 text-element-light-lighter-700 whitespace-nowrap">
-          {dateFullFormat(data.created_at)}
+          {dateFullFormat(data.created_at, utc ? 'UTC' : undefined)}
         </div>
         <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-text-100 relative w-full">
           <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
