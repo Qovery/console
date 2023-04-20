@@ -101,8 +101,8 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#container-registry-management',
-            linkLabel: 'How to configure my container registry',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/api-token',
+            linkLabel: 'How to configure the Token API',
             external: true,
           },
         ]}

@@ -107,7 +107,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#managing-git-permissions-using-the-qovery-github-app',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/git-repository-access',
             linkLabel: 'Managing Git Permissions Using the Qovery Github application',
             external: true,
           },
