@@ -167,6 +167,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
         <BannerBox
+          dataTestId="aws-cost-banner"
           iconRealColors
           icon={IconEnum.AWS}
           iconInCircle
