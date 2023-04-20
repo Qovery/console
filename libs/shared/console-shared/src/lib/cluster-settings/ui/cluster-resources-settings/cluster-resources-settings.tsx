@@ -7,7 +7,6 @@ import {
   BannerBox,
   BannerBoxEnum,
   BlockContent,
-  IconAwesomeEnum,
   InputRadioBox,
   InputSelect,
   InputText,
@@ -42,6 +41,25 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
   return (
     <div>
+      <BannerBox
+        className="mb-5"
+        title="Qovery manages this resource for you"
+        message={
+          <span>
+            Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
+            <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a drift
+            in the configuration.
+            <Link
+              className="ml-0.5"
+              size="text-xs"
+              link="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
+              linkLabel="See more details"
+              external
+            />
+          </span>
+        }
+        type={BannerBoxEnum.WARNING}
+      />
       <BlockContent title="Cluster" className="mb-5">
         {!props.fromDetail ? (
           <Controller
@@ -91,15 +109,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 error={error?.message}
                 options={props.instanceTypeOptions || []}
               />
-              <Link
-                className="text-accent2-500 font-medium block mb-3 ml-4"
-                size="text-xs"
-                link="https://hub.qovery.com/docs/using-qovery/configuration/deployment-rule/#why-using-deployment-rule"
-                linkLabel="How does it work?"
-                iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
-                iconRightClassName="text-2xs relative top-[1px]"
-                external
-              />
+              <p className="text-text-400 text-xs my-3">Instance type to be used to run your Kubernetes nodes.</p>
               {warningInstance && (
                 <BannerBox
                   dataTestId="warning-instance"
@@ -129,6 +139,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
           )}
         />
+        <p className="text-text-400 text-xs my-3">
+          Storage allocated to your Kubernetes nodes to store files, application images etc..
+        </p>
       </BlockContent>
 
       {watchClusterType === KubernetesEnum.MANAGED && (
@@ -154,6 +167,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
         <BannerBox
+          dataTestId="aws-cost-banner"
           iconRealColors
           icon={IconEnum.AWS}
           iconInCircle

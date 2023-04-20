@@ -86,7 +86,7 @@ describe('ClusterResourcesSettings', () => {
       })
     )
 
-    getByTestId(baseElement, 'banner-box')
+    getByTestId(baseElement, 'aws-cost-banner')
   })
 
   it('should not display banner box in detail mode and for Scaleway', () => {
@@ -98,7 +98,7 @@ describe('ClusterResourcesSettings', () => {
       })
     )
 
-    expect(queryByTestId(baseElement, 'banner-box')).toBeNull()
+    expect(queryByTestId(baseElement, 'aws-cost-banner')).toBeNull()
   })
 
   it('should display warning instance box', async () => {
