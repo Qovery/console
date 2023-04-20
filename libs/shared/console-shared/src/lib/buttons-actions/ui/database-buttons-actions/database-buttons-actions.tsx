@@ -12,7 +12,13 @@ import {
 } from '@qovery/domains/database'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
-import { SERVICES_DEPLOYMENTS_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
+import {
+  ENVIRONMENT_LOGS_URL,
+  SERVICES_DEPLOYMENTS_URL,
+  SERVICES_GENERAL_URL,
+  SERVICES_URL,
+  SERVICE_LOGS_URL,
+} from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -200,41 +206,51 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       menusClassName: 'border-r border-r-element-light-lighter-500',
       menus: buttonStatusActions,
     },
-    {
-      triggerTooltip: 'Other actions',
-      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
-      menus: [
-        {
-          items: [
-            {
-              name: 'Copy identifiers',
-              contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
-              onClick: () => copyToClipboard(copyContent),
-            },
-          ],
-        },
-        ...(canDelete
-          ? [
-              {
-                items: [
-                  {
-                    name: 'Delete database',
-                    containerClassName: 'text-error-600',
-                    contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
-                    onClick: () =>
-                      removeDatabase(
-                        database.id,
-                        database.name,
-                        database.status?.state && database.status?.state === StateEnum.READY
-                      ),
-                  },
-                ],
-              },
-            ]
-          : []),
-      ],
-    },
   ]
+
+  if (database.mode === DatabaseModeEnum.CONTAINER) {
+    buttonActionsDefault.push({
+      triggerTooltip: 'Logs',
+      iconLeft: <Icon name={IconAwesomeEnum.SCROLL} className="px-0.5" />,
+      onClick: () =>
+        navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(database.id)),
+    })
+  }
+
+  buttonActionsDefault.push({
+    triggerTooltip: 'Other actions',
+    iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} className="px-0.5" />,
+    menus: [
+      {
+        items: [
+          {
+            name: 'Copy identifiers',
+            contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
+            onClick: () => copyToClipboard(copyContent),
+          },
+        ],
+      },
+      ...(canDelete
+        ? [
+            {
+              items: [
+                {
+                  name: 'Delete database',
+                  containerClassName: 'text-error-600',
+                  contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
+                  onClick: () =>
+                    removeDatabase(
+                      database.id,
+                      database.name,
+                      database.status?.state && database.status?.state === StateEnum.READY
+                    ),
+                },
+              ],
+            },
+          ]
+        : []),
+    ],
+  })
 
   return <ButtonIconAction className="!h-8" actions={buttonActionsDefault} />
 }
