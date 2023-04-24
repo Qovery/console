@@ -67,7 +67,8 @@ export const isDeleteAvailable = (status: StateEnum): boolean => {
     status === StateEnum.STOPPED ||
     status === StateEnum.DEPLOYED ||
     status === StateEnum.RESTARTED ||
-    status === StateEnum.CANCELED
+    status === StateEnum.CANCELED ||
+    status === StateEnum.DELETED
   )
 }
 
