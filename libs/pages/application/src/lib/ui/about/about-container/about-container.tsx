@@ -2,7 +2,7 @@ import { ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { IconEnum, isContainerJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { Button, ButtonStyle, Skeleton } from '@qovery/shared/ui'
+import { Button, ButtonStyle, Skeleton, Truncate } from '@qovery/shared/ui'
 
 export interface AboutContainerProps {
   loadingStatus?: LoadingStatus
@@ -34,7 +34,10 @@ export function AboutContainer(props: AboutContainerProps) {
         Image name: <strong className="font-medium text-text-500">{getContainer()?.image_name}</strong>
       </div>
       <div className="mb-3 flex gap-3">
-        Image tag: <strong className="font-medium text-text-500">{getContainer()?.tag}</strong>
+        Image tag:{' '}
+        <strong className="font-medium text-text-500">
+          <Truncate truncateLimit={20} text={getContainer()?.tag || ''} />
+        </strong>
       </div>
       <div className="flex gap-3 items-center">
         Registry:{' '}
