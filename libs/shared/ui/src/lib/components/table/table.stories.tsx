@@ -93,5 +93,59 @@ export const Primary = Template.bind({})
 Primary.args = {
   dataHead: dataHead,
   className: 'bg-white rounded-sm',
-  columnsWidth: '33% 33% 33%',
+  columnsWidth: '33% 33% 33% 100%',
+}
+
+const TemplateExpand: Story<TableProps> = (args) => {
+  const [data, setData] = useState<Environment[]>(environmentData)
+  const [filter, setFilter] = useState<TableFilterProps>({})
+
+  // Add a new state variable for the expanded row
+  const [expandedRow, setExpandedRow] = useState(null)
+
+  // Define a function to toggle the expanded row
+  const toggleExpandedRow = (index) => {
+    if (index === expandedRow) {
+      setExpandedRow(null) // close the expanded row if it's already open
+    } else {
+      setExpandedRow(index) // open the expanded row if it's closed
+    }
+  }
+
+  return (
+    <>
+      <Button className="mb-4" onClick={() => setData(addRow(data))}>
+        Add Row
+      </Button>
+      <Table {...args} data={data} setFilter={setFilter} setDataSort={setData}>
+        <>
+          {data.map((currentData: Environment, index) => (
+            <TableRow key={index} columnsWidth={args.columnsWidth} data={currentData} filter={filter} link="/">
+              <>
+                <button onClick={() => toggleExpandedRow(currentData.id)}>Expand</button>
+                <div className="px-2 text-sm text-text-500">
+                  {currentData.name} - {currentData.status?.state}
+                </div>
+                <div className="px-2 text-xs text-text-500 truncate">{currentData.created_at}</div>
+                <div className="px-2 text-sm text-text-500">{currentData.mode}</div>
+
+                <div
+                  className={`px-2 bg-brand-100 col-span-3 ${expandedRow === currentData.id ? 'visible' : 'hidden'}`}
+                >
+                  Expanded row
+                </div>
+              </>
+            </TableRow>
+          ))}
+        </>
+      </Table>
+    </>
+  )
+}
+
+export const WithExpand = TemplateExpand.bind({})
+WithExpand.args = {
+  dataHead: dataHead,
+  className: 'bg-white rounded-sm',
+  columnsWidth: '34% 33% 33%',
 }
