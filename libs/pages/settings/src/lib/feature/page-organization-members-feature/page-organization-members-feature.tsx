@@ -121,7 +121,7 @@ export function PageOrganizationMembersFeature() {
       title: 'Confirm ownership transfer',
       description: 'Confirm by entering the member name',
       name: user?.name,
-      mode: EnvironmentModeEnum.PRODUCTION,
+      mode: process.env['NODE_ENV'] === 'production' ? EnvironmentModeEnum.PRODUCTION : EnvironmentModeEnum.DEVELOPMENT,
       action: () => {
         dispatch(transferOwnershipMemberRole({ organizationId, userId: user.id }))
           .unwrap()
