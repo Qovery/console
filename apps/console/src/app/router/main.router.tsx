@@ -66,7 +66,7 @@ export const ROUTER: RouterProps[] = [
     layout: false,
   },
   {
-    path: EVENTS_URL(),
+    path: `${EVENTS_URL()}/*`,
     component: <PageEvents />,
     protected: true,
     layout: true,
