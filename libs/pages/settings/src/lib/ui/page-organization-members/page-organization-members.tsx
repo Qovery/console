@@ -14,7 +14,7 @@ export interface PageOrganizationMembersProps {
   deleteMember: (userId: string) => void
   deleteInviteMember: (inviteId: string) => void
   resendInvite: (inviteId: string, data: InviteMemberRequest) => void
-  transferOwnership: (userId: string) => void
+  transferOwnership: (user: Member) => void
   setDataMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
   setDataInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
   loadingInviteMembers: boolean

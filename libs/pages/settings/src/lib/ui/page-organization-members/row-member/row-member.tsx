@@ -30,7 +30,7 @@ export interface RowMemberProps {
   loading: boolean
   columnsWidth: string
   filter: TableFilterProps
-  transferOwnership?: (userId: string) => void
+  transferOwnership?: (user: Member) => void
   editMemberRole?: (userId: string, roleId: string) => void
   deleteMember?: (userId: string) => void
   deleteInviteMember?: (inviteId: string) => void
@@ -135,7 +135,7 @@ export function RowMember(props: RowMemberProps) {
             ? [
                 {
                   name: 'Transfer ownership',
-                  onClick: () => transferOwnership && transferOwnership(member.id),
+                  onClick: () => transferOwnership && transferOwnership(member),
                   contentLeft: <Icon name={IconAwesomeEnum.RIGHT_LEFT} className="text-sm text-brand-500" />,
                 },
               ]
