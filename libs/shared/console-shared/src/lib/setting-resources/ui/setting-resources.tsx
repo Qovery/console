@@ -1,9 +1,9 @@
-import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, Slider, inputSizeUnitRules } from '@qovery/shared/ui'
+import { Controller, useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 
 export interface SettingResourcesProps {
   displayWarningCpu: boolean
@@ -98,15 +98,15 @@ export function SettingResources(props: SettingResourcesProps) {
                     error?.type === 'required'
                       ? 'Please enter a size.'
                       : error?.type === 'max'
-                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
-                      : undefined
+                        ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                        : undefined
                   }
                 />
               )}
             />
             {application && (
               <p className="text-text-400 text-xs mt-3">
-                Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
+                Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
                 {application.maximum_memory} MB.{' '}
                 {clusterId && (
                   <Link
