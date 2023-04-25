@@ -1,4 +1,4 @@
-import { InviteMember, InviteMemberRequest, Member } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, InviteMember, InviteMemberRequest, Member } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -121,6 +121,7 @@ export function PageOrganizationMembersFeature() {
       title: 'Confirm ownership transfer',
       description: 'Confirm by entering the member name',
       name: user?.name,
+      mode: EnvironmentModeEnum.PRODUCTION,
       action: () => {
         dispatch(transferOwnershipMemberRole({ organizationId, userId: user.id }))
           .unwrap()
