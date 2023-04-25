@@ -110,7 +110,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
                 />
                 {database && (
                   <p className="text-text-400 text-xs mt-3">
-                    Minimum value is 10 MB. Maximum value allowed based on the selected cluster instance type:{' '}
+                    Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
                     {database.maximum_memory} MB.{' '}
                     {clusterId && (
                       <Link
