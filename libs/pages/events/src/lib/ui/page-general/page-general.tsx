@@ -1,6 +1,6 @@
 /* eslint-disable-next-line */
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
-import { LoaderSpinner } from '@qovery/shared/ui'
+import { LoaderSpinner, Table, TableHeadProps } from '@qovery/shared/ui'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
@@ -12,6 +12,29 @@ export interface PageGeneralProps {
 
 export function PageGeneral(props: PageGeneralProps) {
   const { isLoading, events, nextLink, prevLink } = props
+  const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
+    {
+      title: 'Timestamp',
+    },
+    {
+      title: 'Event type',
+    },
+    {
+      title: 'Target type',
+    },
+    {
+      title: 'Target',
+    },
+    {
+      title: 'Change',
+    },
+    {
+      title: 'User',
+    },
+    {
+      title: 'Tool',
+    },
+  ]
 
   console.log(nextLink, prevLink)
   return (
@@ -19,11 +42,18 @@ export function PageGeneral(props: PageGeneralProps) {
       {isLoading ? (
         <LoaderSpinner />
       ) : (
-        <ul>
-          {events?.map((event) => (
-            <RowEventFeature key={event.id} event={event} />
-          ))}
-        </ul>
+        <Table
+          dataHead={dataHead}
+          data={events}
+          className="border border-element-light-lighter-400 rounded"
+          classNameHead="!bg-transparent"
+        >
+          <>
+            {events?.map((event) => (
+              <RowEventFeature key={event.id} event={event} nbCols={dataHead.length} />
+            ))}
+          </>
+        </Table>
       )}
     </div>
   )
