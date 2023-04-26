@@ -44,10 +44,10 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
       default:
         return (
           <div>
-            No deployment logs are available for this service since it has not been deployed recently.
+            No Deployment Logs available for this service.
             <p>
-              Services recently deployed are displayed <a className="text-brand-400">in purple</a> within the list on
-              the left.
+              Deployment Logs are available only for services deployed during the last deployment execution (
+              <a className="text-brand-400">in purple</a> within the list on the left).
             </p>
             <p>
               You can still access the application logs from the{' '}
