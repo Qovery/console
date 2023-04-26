@@ -1,4 +1,4 @@
-import { InviteMember, InviteMemberRequest, Member } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, InviteMember, InviteMemberRequest, Member } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -15,7 +15,7 @@ import {
 } from '@qovery/domains/organization'
 import { selectUser } from '@qovery/domains/user'
 import { membersMock } from '@qovery/shared/factories'
-import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
+import { ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
@@ -52,6 +52,8 @@ export function PageOrganizationMembersFeature() {
 
   const [dataMembers, setDataMembers] = useState<Member[]>(organization?.members?.items || membersDataMock)
   const [dataInviteMembers, setDataInviteMembers] = useState<InviteMember[]>(organization?.inviteMembers?.items || [])
+
+  const { openModalConfirmation } = useModalConfirmation()
 
   const fetchMembersDispatch = useCallback((): void => {
     dispatch(fetchMembers({ organizationId }))
@@ -114,10 +116,18 @@ export function PageOrganizationMembersFeature() {
       .catch((e) => console.error(e))
   }
 
-  const onClickTransferOwnership = (userId: string) => {
-    dispatch(transferOwnershipMemberRole({ organizationId, userId }))
-      .unwrap()
-      .then(() => fetchMembersDispatch())
+  const onClickTransferOwnership = (user: Member) => {
+    openModalConfirmation({
+      title: 'Confirm ownership transfer',
+      description: 'Confirm by entering the member name',
+      name: user?.name,
+      mode: process.env['NODE_ENV'] === 'production' ? EnvironmentModeEnum.PRODUCTION : EnvironmentModeEnum.DEVELOPMENT,
+      action: () => {
+        dispatch(transferOwnershipMemberRole({ organizationId, userId: user.id }))
+          .unwrap()
+          .then(() => fetchMembersDispatch())
+      },
+    })
   }
 
   const onClickResendInvite = (inviteId: string, data: InviteMemberRequest) => {
