@@ -22,11 +22,13 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
   const { updateServiceId } = useContext(ServiceStageIdsContext)
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('not loaded')
+  const [messageChunks, setMessageChunks] = useState<Log[][]>([])
   const [logs, setLogs] = useState<Log[]>([])
-  const [pauseLogs, setPauseLogs] = useState<Log[]>([])
   const [nginxLogs, setNginxLogs] = useState<Log[]>([])
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
   const [enabledNginx, setEnabledNginx] = useState<boolean>(false)
+  const chunkSize = 500
+  const [debounceTime, setDebounceTime] = useState(1000)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
@@ -51,33 +53,57 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
     return new Promise((resolve) => resolve(url))
   }, [organizationId, clusterId, projectId, environmentId, serviceId, getAccessTokenSilently])
 
-  useWebSocket(applicationLogsUrl, {
-    onMessage: (message) => {
-      setLoadingStatus('loaded')
-
-      if (pauseStatusLogs) {
-        setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
+  const onMessageHandler = useCallback((message: MessageEvent) => {
+    setMessageChunks((prevChunks) => {
+      const lastChunk = prevChunks[prevChunks.length - 1] || []
+      if (lastChunk.length < chunkSize) {
+        return [...prevChunks.slice(0, -1), [...lastChunk, JSON.parse(message?.data)]]
       } else {
-        setLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
-        setPauseLogs([])
+        return [...prevChunks, [JSON.parse(message?.data)]]
       }
-    },
+    })
+  }, [])
+
+  const onNginxMessageHandler = useCallback((message: MessageEvent) => {
+    setMessageChunks((prevChunks) => {
+      const lastChunk = prevChunks[prevChunks.length - 1] || []
+      if (lastChunk.length < chunkSize) {
+        return [...prevChunks.slice(0, -1), [...lastChunk, JSON.parse(message?.data)]]
+      } else {
+        return [...prevChunks, [JSON.parse(message?.data)]]
+      }
+    })
+  }, [])
+  useWebSocket(applicationLogsUrl, {
+    onMessage: onMessageHandler,
   })
 
   useWebSocket(
     nginxLogsUrl,
     {
-      onMessage: (message) => {
-        if (pauseStatusLogs) {
-          setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
-        } else {
-          setNginxLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
-          setPauseLogs([])
-        }
-      },
+      onMessage: onNginxMessageHandler,
     },
     enabledNginx
   )
+
+  useEffect(() => {
+    if (messageChunks.length === 0 || pauseStatusLogs) return
+    const timerId = setTimeout(() => {
+      setLoadingStatus('loaded')
+      if (!pauseStatusLogs) {
+        setMessageChunks((prevChunks) => prevChunks.slice(1))
+        setLogs((prevLogs) => [...prevLogs, ...messageChunks[0]])
+
+        if (logs.length > 1000) {
+          setDebounceTime(100)
+        }
+      }
+    }, debounceTime)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [messageChunks, pauseStatusLogs])
 
   // update serviceId
   useEffect(() => {
@@ -87,7 +113,6 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
   // reset pod logs
   useEffect(() => {
     setLogs([])
-    setPauseLogs([])
     setPauseStatusLogs(false)
     setLoadingStatus('not loaded')
     setNginxLogs([])

@@ -139,7 +139,7 @@ export function LayoutLogs(props: LayoutLogsProps) {
                 src="/assets/images/event-placeholder-dark.svg"
                 alt="Event placeholder"
               />
-              <p className="mt-5 text-text-100 font-medium text-center">{placeholderDescription}</p>
+              <div className="mt-5 text-text-100 font-medium text-center">{placeholderDescription}</div>
             </div>
           )}
         </div>

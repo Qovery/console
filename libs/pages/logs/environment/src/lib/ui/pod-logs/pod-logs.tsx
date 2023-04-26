@@ -93,7 +93,10 @@ export function PodLogs(props: PodLogsProps) {
   ]
 
   const memoRow = useMemo(
-    () => logs?.map((log: Log, index: number) => <RowPod key={index} index={index} data={log} filter={filter} />),
+    () =>
+      logs?.map((log: Log, index: number) => {
+        return <RowPod key={log.created_at + log.message} index={index} data={log} filter={filter} />
+      }),
     [logs, filter]
   )
 

@@ -129,13 +129,13 @@ export function PageEnvironmentLogs() {
         <div className="flex justify-center w-[calc(100%-8px)] min-h-full bg-element-light-darker-400 m-1 rounded">
           <div className="flex flex-col items-center mt-12">
             <Icon name={IconAwesomeEnum.WRENCH} className="text-text-300" />
-            <p className="text-text-300 font-medium">
+            <div className="text-text-300 font-medium">
               Please select a service on the left menu to access its deployment logs or live logs.
               <p>
                 You can access the deployment logs only for the services recently deployed (
                 <a className="text-brand-400">in purple</a>).
               </p>
-            </p>
+            </div>
           </div>
         </div>
       )}

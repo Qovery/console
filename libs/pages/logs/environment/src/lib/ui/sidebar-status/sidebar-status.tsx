@@ -11,10 +11,10 @@ export function SidebarStatus(props: SidebarStatusProps) {
 
   return (
     <div className="border-b border-element-light-darker-100 p-5">
-      <p className="flex items-center justify-between text-text-300 text-xs mb-2">
+      <div className="flex items-center justify-between text-text-300 text-xs mb-2">
         Pipeline deployment status:
         <StatusChip status={environmentStatus?.last_deployment_state || environmentStatus?.state} />
-      </p>
+      </div>
       <p className="flex items-center justify-between text-text-300 text-xs mb-2">
         Deployment id:
         <Tooltip content={environmentStatus?.last_deployment_id || ''}>
