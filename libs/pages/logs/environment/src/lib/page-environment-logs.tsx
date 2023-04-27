@@ -68,8 +68,10 @@ export function PageEnvironmentLogs() {
     },
   })
 
+  const [messageChunks, setMessageChunks] = useState<EnvironmentLogs[][]>([])
+  const chunkSize = 500
+  const [debounceTime, setDebounceTime] = useState(1000)
   const [logs, setLogs] = useState<EnvironmentLogs[]>([])
-  const [pauseLogs, setPauseLogs] = useState<EnvironmentLogs[]>([])
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
   const [loadingStatusDeploymentLogs, setLoadingStatusDeploymentLogs] = useState<LoadingStatus>('not loaded')
 
@@ -88,17 +90,38 @@ export function PageEnvironmentLogs() {
 
       const newLog = JSON.parse(message?.data)
 
-      if (pauseStatusLogs) {
-        setPauseLogs((prev: EnvironmentLogs[]) => [...prev, ...newLog])
-      } else {
-        setLogs((prev: EnvironmentLogs[]) => {
-          // return unique log by timestamp
-          return [...new Map([...prev, ...pauseLogs, ...newLog].map((item) => [item['timestamp'], item])).values()]
-        })
-        setPauseLogs([])
-      }
+      setMessageChunks((prevChunks) => {
+        const lastChunk = prevChunks[prevChunks.length - 1] || []
+        if (lastChunk.length < chunkSize) {
+          return [...prevChunks.slice(0, -1), [...lastChunk, ...newLog]]
+        } else {
+          return [...prevChunks, [...newLog]]
+        }
+      })
     },
   })
+
+  useEffect(() => {
+    if (messageChunks.length === 0 || pauseStatusLogs) return
+
+    const timerId = setTimeout(() => {
+      if (!pauseStatusLogs) {
+        setMessageChunks((prevChunks) => prevChunks.slice(1))
+        setLogs((prevLogs) => {
+          const combinedLogs = [...prevLogs, ...messageChunks[0]]
+          return [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
+        })
+
+        if (logs.length > 1000) {
+          setDebounceTime(100)
+        }
+      }
+    }, debounceTime)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [messageChunks, pauseStatusLogs])
 
   return (
     <div className="flex h-full">
