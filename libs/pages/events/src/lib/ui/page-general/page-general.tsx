@@ -45,7 +45,7 @@ export function PageGeneral(props: PageGeneralProps) {
           dataHead={dataHead}
           data={events}
           className="border border-element-light-lighter-400 rounded"
-          classNameHead="!bg-transparent"
+          classNameHead="rounder-tl rounder-tr"
         >
           <>
             {events?.map((event) => (
