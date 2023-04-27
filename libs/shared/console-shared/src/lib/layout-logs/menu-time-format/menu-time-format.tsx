@@ -13,7 +13,7 @@ export function MenuTimeFormat(props: MenuTimeFormatProps) {
       title: 'Time format',
       items: [
         {
-          name: 'Local browser timed',
+          name: 'Local browser time',
           contentLeft: (
             <Icon
               name={IconAwesomeEnum.CHECK}
