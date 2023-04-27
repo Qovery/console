@@ -1,7 +1,15 @@
 import { Log } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
-import { Icon, IconAwesomeEnum, TableFilterProps, TableRowFilter, Tooltip, convertToAnsi } from '@qovery/shared/ui'
+import {
+  CopyToClipboard,
+  Icon,
+  IconAwesomeEnum,
+  TableFilterProps,
+  TableRowFilter,
+  Tooltip,
+  convertToAnsi,
+} from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 const COLORS = [
@@ -94,7 +102,7 @@ export function RowPod(props: RowPodProps) {
           {data.version && (
             <span>
               <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
-              {/*{formatVersion(data.version)}*/}
+              {formatVersion(data.version)}
             </span>
           )}
         </div>
@@ -103,10 +111,10 @@ export function RowPod(props: RowPodProps) {
         </div>
         <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-text-100 relative w-full">
           <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
-          {/*<CopyToClipboard*/}
-          {/*  className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"*/}
-          {/*  content={data.message}*/}
-          {/*/>*/}
+          <CopyToClipboard
+            className="opacity-0 group-hover:opacity-100 text-white !absolute right-2 top-1"
+            content={data.message}
+          />
         </div>
       </div>
     </TableRowFilter>
