@@ -1,5 +1,5 @@
 import { EnvironmentStatus } from 'qovery-typescript-axios'
-import { StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 export interface SidebarStatusProps {
@@ -12,11 +12,11 @@ export function SidebarStatus(props: SidebarStatusProps) {
   return (
     <div className="border-b border-element-light-darker-100 p-5">
       <p className="flex items-center justify-between text-text-300 text-xs mb-2">
-        Pipeline deployment status:
+        Deployment status:
         <StatusChip status={environmentStatus?.last_deployment_state || environmentStatus?.state} />
       </p>
       <p className="flex items-center justify-between text-text-300 text-xs mb-2">
-        Deployment id:
+        Deployment Execution id:
         <Tooltip content={environmentStatus?.last_deployment_id || ''}>
           <span className="text-brand-400">
             {environmentStatus?.last_deployment_id && environmentStatus?.last_deployment_id.length > 23
@@ -34,6 +34,28 @@ export function SidebarStatus(props: SidebarStatusProps) {
           <span className="text-text-100">{dateFullFormat(environmentStatus?.last_deployment_date || '')}</span>
         </p>
       )}
+      <p className="flex items-center justify-between text-text-300 text-xs mt-2">
+        Parallel Deployment:
+        <span className="flex text-text-100">
+          4{' '}
+          <Tooltip side="right" content="Number of services deployed in parallel on each pipeline stage">
+            <div className="flex items-center">
+              <Icon className="cursor-pointer ml-1 text-xs text-element-light-text-300" name="icon-solid-circle-info" />
+            </div>
+          </Tooltip>
+        </span>
+      </p>
+      <p className="flex items-center justify-between text-text-300 text-xs mt-2">
+        Assigned build resources:
+        <span className="flex text-text-100">
+          4CPU / 8GB Mem
+          <Tooltip side="right" content="Resource assigned by Qovery to build each application">
+            <div className="flex items-center">
+              <Icon className="cursor-pointer ml-1 text-xs text-element-light-text-300" name="icon-solid-circle-info" />
+            </div>
+          </Tooltip>
+        </span>
+      </p>
     </div>
   )
 }
