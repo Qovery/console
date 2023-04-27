@@ -78,13 +78,13 @@ describe('RowPod', () => {
     render(<RowPod {...props} />)
 
     const cellVersion = screen.getByTestId('cell-version')
-    expect(cellVersion?.textContent).toBe('53d...727')
+    expect(cellVersion?.textContent).toBe('53deb16')
   })
 
   it('should have function to format version', () => {
     const { baseElement } = render(<div>{formatVersion('53deb16f853aef759b8be84fbeec96e9727')}</div>)
 
-    expect(baseElement.textContent).toBe('53d...727')
+    expect(baseElement.textContent).toBe('53deb16')
     expect(formatVersion('53deb')).toBe('53deb')
   })
 })

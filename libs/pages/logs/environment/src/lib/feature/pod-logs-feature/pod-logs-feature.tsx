@@ -1,5 +1,5 @@
 import { Log } from 'qovery-typescript-axios'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
@@ -22,11 +22,15 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
   const { updateServiceId } = useContext(ServiceStageIdsContext)
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('not loaded')
+  const [messageChunks, setMessageChunks] = useState<Log[][]>([])
+  const [messageNGINXChunks, setMessageNGINXChunks] = useState<Log[][]>([])
   const [logs, setLogs] = useState<Log[]>([])
-  const [pauseLogs, setPauseLogs] = useState<Log[]>([])
   const [nginxLogs, setNginxLogs] = useState<Log[]>([])
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
   const [enabledNginx, setEnabledNginx] = useState<boolean>(false)
+  const chunkSize = 500
+  const [debounceTime] = useState(500)
+  const logCounter = useRef(0)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
@@ -51,33 +55,67 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
     return new Promise((resolve) => resolve(url))
   }, [organizationId, clusterId, projectId, environmentId, serviceId, getAccessTokenSilently])
 
-  useWebSocket(applicationLogsUrl, {
-    onMessage: (message) => {
-      setLoadingStatus('loaded')
-
-      if (pauseStatusLogs) {
-        setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
+  const onMessageHandler = useCallback((message: MessageEvent) => {
+    setMessageChunks((prevChunks) => {
+      const lastChunk = prevChunks[prevChunks.length - 1] || []
+      if (lastChunk.length < chunkSize) {
+        return [...prevChunks.slice(0, -1), [...lastChunk, { ...JSON.parse(message?.data), id: logCounter.current++ }]]
       } else {
-        setLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
-        setPauseLogs([])
+        return [...prevChunks, [{ ...JSON.parse(message?.data), id: logCounter.current++ }]]
       }
-    },
+    })
+  }, [])
+
+  const onNginxMessageHandler = useCallback((message: MessageEvent) => {
+    setMessageNGINXChunks((prevChunks) => {
+      const lastChunk = prevChunks[prevChunks.length - 1] || []
+      if (lastChunk.length < chunkSize) {
+        return [...prevChunks.slice(0, -1), [...lastChunk, { ...JSON.parse(message?.data), id: logCounter.current++ }]]
+      } else {
+        return [...prevChunks, [{ ...JSON.parse(message?.data), id: logCounter.current++ }]]
+      }
+    })
+  }, [])
+  useWebSocket(applicationLogsUrl, {
+    onMessage: onMessageHandler,
   })
 
   useWebSocket(
     nginxLogsUrl,
     {
-      onMessage: (message) => {
-        if (pauseStatusLogs) {
-          setPauseLogs((prev: Log[]) => [...prev, JSON.parse(message?.data)])
-        } else {
-          setNginxLogs((prev: Log[]) => [...prev, ...pauseLogs, JSON.parse(message?.data)])
-          setPauseLogs([])
-        }
-      },
+      onMessage: onNginxMessageHandler,
     },
     enabledNginx
   )
+
+  useEffect(() => {
+    if (messageChunks.length === 0 || pauseStatusLogs) return
+    const timerId = setTimeout(() => {
+      setLoadingStatus('loaded')
+      if (!pauseStatusLogs) {
+        setMessageChunks((prevChunks) => prevChunks.slice(1))
+        setLogs((prevLogs) => [...prevLogs, ...messageChunks[0]])
+      }
+    }, debounceTime)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [messageChunks, pauseStatusLogs, debounceTime])
+
+  useEffect(() => {
+    if (messageNGINXChunks.length === 0 || pauseStatusLogs) return
+    const timerId = setTimeout(() => {
+      if (!pauseStatusLogs) {
+        setMessageNGINXChunks((prevChunks) => prevChunks.slice(1))
+        setNginxLogs((prevLogs) => [...prevLogs, ...messageNGINXChunks[0]])
+      }
+    }, debounceTime)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [messageNGINXChunks, pauseStatusLogs, debounceTime])
 
   // update serviceId
   useEffect(() => {
@@ -87,17 +125,19 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
   // reset pod logs
   useEffect(() => {
     setLogs([])
-    setPauseLogs([])
+    setMessageChunks([])
     setPauseStatusLogs(false)
     setLoadingStatus('not loaded')
     setNginxLogs([])
+    setMessageNGINXChunks([])
     setEnabledNginx && setEnabledNginx(false)
   }, [serviceId, setEnabledNginx])
 
-  const logsSorted =
-    enabledNginx && nginxLogs
+  const logsSorted = useMemo<Log[]>(() => {
+    return enabledNginx && nginxLogs
       ? [...logs, ...nginxLogs].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
       : logs
+  }, [enabledNginx, nginxLogs, logs])
 
   return (
     <PodLogs

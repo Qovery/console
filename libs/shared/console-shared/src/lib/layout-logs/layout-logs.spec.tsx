@@ -44,7 +44,7 @@ describe('LayoutLogs', () => {
 
     const loadingScreen = screen.getByTestId('loading-screen')
 
-    expect(loadingScreen.querySelector('p')?.textContent).toBe('Logs not available')
+    expect(loadingScreen.querySelector('div')?.textContent).toBe('Logs not available')
   })
 
   it('should have text with error line', () => {
