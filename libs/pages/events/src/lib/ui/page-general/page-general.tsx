@@ -1,4 +1,3 @@
-/* eslint-disable-next-line */
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
 import { LoaderSpinner, Table, TableHeadProps } from '@qovery/shared/ui'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
@@ -50,7 +49,7 @@ export function PageGeneral(props: PageGeneralProps) {
         >
           <>
             {events?.map((event) => (
-              <RowEventFeature key={event.id} event={event} nbCols={dataHead.length} />
+              <RowEventFeature key={event.timestamp} event={event} nbCols={dataHead.length} />
             ))}
           </>
         </Table>
