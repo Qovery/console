@@ -104,6 +104,11 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
       })
 
+      const applydeploymentRuleButton = getByTestId(baseElement, 'apply-deployment-rule')
+      await act(async () => {
+        fireEvent.click(applydeploymentRuleButton)
+      })
+
       const submitButton = getByTestId(baseElement, 'submit-button')
       await act(async () => {
         fireEvent.click(submitButton)
@@ -115,6 +120,7 @@ describe('CreateCloneEnvironmentModalFeature', () => {
           cluster_id: mockClusters[2].id,
           mode: EnvironmentModeEnum.STAGING,
           name: 'test',
+          apply_deployment_rule: false,
         },
       })
     })

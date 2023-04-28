@@ -39,6 +39,7 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
       name: props.environmentToClone?.name ? props.environmentToClone?.name + '-clone' : '',
       cluster: 'automatic',
       mode: 'automatic',
+      apply_deployment_rule: true,
     },
   })
 
@@ -62,10 +63,11 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
   )
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    const dataFormatted: { name: string; cluster?: string; mode?: string } = {
+    const dataFormatted: { name: string; cluster?: string; mode?: string; applyDeploymentRule?: boolean } = {
       name: data.name,
       cluster: data.cluster,
       mode: data.mode,
+      applyDeploymentRule: data.apply_deployment_rule,
     }
 
     if (dataFormatted.cluster === 'automatic') delete dataFormatted.cluster
@@ -79,6 +81,7 @@ export function CreateCloneEnvironmentModalFeature(props: CreateCloneEnvironment
         name: dataFormatted.name,
         mode: dataFormatted.mode as EnvironmentModeEnum,
         cluster_id: dataFormatted.cluster,
+        apply_deployment_rule: dataFormatted.applyDeploymentRule,
       }
       cloneEnvironment.mutate({ environmentId: props.environmentToClone.id, data: cloneRequest })
     } else {

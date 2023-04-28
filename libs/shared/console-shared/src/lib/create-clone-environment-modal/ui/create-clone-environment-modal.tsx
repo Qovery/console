@@ -2,7 +2,7 @@ import { Environment, EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { FormEvent, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ClusterEntity, Value } from '@qovery/shared/interfaces'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { InputSelect, InputText, InputToggle, ModalCrud } from '@qovery/shared/ui'
 
 export interface CreateCloneEnvironmentModalProps {
   onSubmit: () => void
@@ -109,6 +109,23 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
           />
         )}
       />
+      {props.environmentToClone && (
+        <Controller
+          name="apply_deployment_rule"
+          control={control}
+          render={({ field }) => (
+            <InputToggle
+              dataTestId="apply-deployment-rule"
+              value={field.value}
+              onChange={field.onChange}
+              title="Apply deployment rule"
+              description="Apply deployment rule logic to configure the new environment"
+              forceAlignTop
+              small
+            />
+          )}
+        />
+      )}
     </ModalCrud>
   )
 }
