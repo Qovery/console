@@ -16,7 +16,7 @@
   "dependencies": {
     "@auth0/auth0-react": "^1.10.1",
     "@elgorditosalsero/react-gtm-hook": "^2.6.0",
-    "@nrwl/cli": "15.7.0",
+    "@nrwl/cli": "15.9.3",
     "@nrwl/cypress": "15.7.0",
     "@nrwl/devkit": "15.7.0",
     "@nrwl/eslint-plugin-nx": "15.7.0",
