@@ -5,7 +5,6 @@ import InputSelectSmall from '../inputs/input-select-small/input-select-small'
 export interface PaginationProps {
   nextDisabled?: boolean
   previousDisabled?: boolean
-  prevLink?: string
   className?: string
   onNext: () => void
   onPrevious: () => void
@@ -37,7 +36,6 @@ export function Pagination(props: PaginationProps) {
         />
       </div>
       <div className="flex gap-3 items-center">
-        <span className="text-xs text-element-light-lighter-600">Results 1-10 of 100</span>
         <InputSelectSmall
           dataTestId="select-page-size"
           name="pageSize"
