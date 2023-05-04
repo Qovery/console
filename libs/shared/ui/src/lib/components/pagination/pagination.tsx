@@ -39,6 +39,7 @@ export function Pagination(props: PaginationProps) {
       <div className="flex gap-3 items-center">
         <span className="text-xs text-element-light-lighter-600">Results 1-10 of 100</span>
         <InputSelectSmall
+          dataTestId="select-page-size"
           name="pageSize"
           label=""
           className="!w-16"
