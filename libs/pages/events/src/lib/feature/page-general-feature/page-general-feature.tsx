@@ -11,7 +11,7 @@ import { eventsFactoryMock } from '@qovery/shared/factories'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
-const extractQueryParams = (urlString: string): EventQueryParams => {
+export const extractEventQueryParams = (urlString: string): EventQueryParams => {
   const url = new URL(urlString, window.location.origin) // Add the base URL to properly parse the relative URL
   const searchParams = new URLSearchParams(url.search)
 
@@ -30,6 +30,11 @@ const extractQueryParams = (urlString: string): EventQueryParams => {
     stepBackToken: searchParams.get('stepBackToken') || undefined,
   }
 
+  // remove undefined values with typescript typing
+  Object.keys(queryParams).forEach(
+    (key) =>
+      queryParams[key as keyof EventQueryParams] === undefined && delete queryParams[key as keyof EventQueryParams]
+  )
   return queryParams
 }
 
@@ -39,26 +44,26 @@ export function PageGeneralFeature() {
   const location = useLocation()
   const [, setSearchParams] = useSearchParams()
   const [queryParams, setQueryParams] = useState<EventQueryParams>({})
-  const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const [pageSize, setPageSize] = useState<string>('10')
+  const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
   const [placeholderEvents] = useState(eventsFactoryMock(10))
 
   useEffect(() => {
-    const newQueryParams: EventQueryParams = extractQueryParams(location.pathname + location.search)
+    const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
     setQueryParams(newQueryParams)
   }, [location])
 
   const onPrevious = () => {
     if (eventsData?.links?.previous) {
-      setSearchParams(JSON.parse(JSON.stringify(extractQueryParams(eventsData.links.previous))))
+      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.previous))))
     }
   }
 
   const onNext = () => {
     if (eventsData?.links?.next) {
-      setSearchParams(JSON.parse(JSON.stringify(extractQueryParams(eventsData.links.next))))
+      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.next))))
     }
   }
 
