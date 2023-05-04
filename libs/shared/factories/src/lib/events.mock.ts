@@ -29,7 +29,7 @@ export const eventsFactoryMock = (howMany: number): OrganizationEventResponse[] 
         OrganizationEventType.ACCEPT,
       ])
     ),
-    change: chance.name(),
+    change: JSON.stringify({ hello: 'world' }),
     created_at: chance.date().toString(),
     project_id: chance.guid(),
     target_id: chance.guid(),

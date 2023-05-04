@@ -85,15 +85,13 @@ export function PageGeneral(props: PageGeneralProps) {
       >
         <>
           {isLoading ? (
-            <>
-              {placeholderEvents?.map((event) => (
-                <RowEventFeature key={event.timestamp} event={event} nbCols={dataHead.length} isPlaceholder />
-              ))}
-            </>
+            placeholderEvents?.map((event) => (
+              <RowEventFeature key={event.timestamp} event={event} nbCols={dataHead.length} isPlaceholder />
+            ))
           ) : events && events.length === 0 ? (
             <div className="text-center py-4 px-5">
               <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-              <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-webhook">
+              <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-result">
                 No events found. <br /> Try to change your filters.
               </p>
             </div>
