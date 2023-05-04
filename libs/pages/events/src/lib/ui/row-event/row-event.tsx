@@ -1,6 +1,6 @@
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { Icon, IconAwesomeEnum, Skeleton, TagEvent } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 
@@ -17,15 +17,10 @@ export function RowEvent(props: RowEventProps) {
 
   return (
     <div
+      data-testid="row-event"
       className={`grid py-5 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0 grid-cols-${nbCols}`}
     >
       <div className="px-4 flex gap-3">
-        <div onClick={() => setExpanded(!expanded)}>
-          <Icon
-            name={IconAwesomeEnum.ANGLE_DOWN}
-            className={`text-xs cursor-pointer block ${expanded ? 'rotate-180' : ''}`}
-          />
-        </div>
         <Skeleton height={24} width={120} show={isPlaceholder}>
           <>{dateYearMonthDayHourMinuteSecond(new Date(event.timestamp || ''))}</>
         </Skeleton>
@@ -43,7 +38,9 @@ export function RowEvent(props: RowEventProps) {
       <div className="px-4  whitespace-nowrap overflow-hidden text-ellipsis">
         <Skeleton height={24} width={80} show={isPlaceholder}>
           <>
-            {event.target_name} {event.sub_target_type && `::${event.sub_target_type}`}
+            {event.target_name}
+            {''}
+            {event.sub_target_type && `::${event.sub_target_type}`}
           </>
         </Skeleton>
       </div>
@@ -51,10 +48,10 @@ export function RowEvent(props: RowEventProps) {
         <Skeleton height={24} width={80} show={isPlaceholder}>
           <span>API Request</span>
         </Skeleton>
-        <div onClick={() => setExpanded(!expanded)}>
+        <div data-testid={'expand-button'} onClick={() => setExpanded(!expanded)}>
           <Icon
             name={IconAwesomeEnum.ANGLE_DOWN}
-            className={`text-xs cursor-pointer block ${expanded ? 'rotate-180' : ''}`}
+            className={`text-xs cursor-pointer block ${expanded ? '' : 'rotate-180'}`}
           />
         </div>
       </div>
@@ -69,7 +66,10 @@ export function RowEvent(props: RowEventProps) {
         </Skeleton>
       </div>
       {expanded && (
-        <div className={`col-span-${nbCols} bg-element-light-darker-100 -mb-5 mt-5 text-red-50`}>
+        <div
+          className={`col-span-${nbCols} bg-element-light-darker-100 -mb-5 mt-5 text-red-50`}
+          data-testid="expanded-panel"
+        >
           <SyntaxHighlighter
             language="json"
             style={dark}

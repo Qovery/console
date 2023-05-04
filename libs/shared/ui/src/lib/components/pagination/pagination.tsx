@@ -18,6 +18,7 @@ export function Pagination(props: PaginationProps) {
     <div className={`flex justify-between ${props.className || ''}`}>
       <div className="flex gap-0.5 items-center">
         <ButtonIcon
+          dataTestId="button-previous-page"
           icon={IconAwesomeEnum.CHEVRON_LEFT}
           style={ButtonIconStyle.STROKED}
           className="!w-8 !h-8"
@@ -26,6 +27,7 @@ export function Pagination(props: PaginationProps) {
           iconClassName="!text-xs"
         />
         <ButtonIcon
+          dataTestId="button-next-page"
           icon={IconAwesomeEnum.CHEVRON_RIGHT}
           style={ButtonIconStyle.STROKED}
           className="!w-8 !h-8"
