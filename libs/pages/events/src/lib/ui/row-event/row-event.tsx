@@ -35,13 +35,13 @@ export function RowEvent(props: RowEventProps) {
           <>{upperCaseFirstLetter(event.target_type)}</>
         </Skeleton>
       </div>
-      <div className="px-4  whitespace-nowrap overflow-hidden text-ellipsis">
+      <div className="px-4">
         <Skeleton height={24} width={80} show={isPlaceholder}>
-          <>
+          <span className="whitespace-nowrap overflow-hidden text-ellipsis">
             {event.target_name}
             {''}
             {event.sub_target_type && `::${event.sub_target_type}`}
-          </>
+          </span>
         </Skeleton>
       </div>
       <div className="px-4 flex gap-3">
@@ -57,7 +57,7 @@ export function RowEvent(props: RowEventProps) {
       </div>
       <div className="px-4">
         <Skeleton height={24} width={80} show={isPlaceholder}>
-          <span>{event.triggered_by}</span>
+          <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.triggered_by}</span>
         </Skeleton>
       </div>
       <div className="px-4">
