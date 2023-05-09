@@ -33,7 +33,7 @@ export function PodLogs(props: PodLogsProps) {
   const tableHead: TableHeadProps<Log>[] = [
     {
       title: 'Pod name',
-      className: 'ml-14 pr-4 py-2 h-full text-text-300 w-[198px]',
+      className: 'ml-14 pr-4 py-2 h-full text-text-300 w-[208px]',
       classNameTitle: 'text-text-300',
       menuWidth: 360,
       filter: [

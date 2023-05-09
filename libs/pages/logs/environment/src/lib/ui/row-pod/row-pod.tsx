@@ -1,7 +1,15 @@
 import { Log } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { UpdateTimeContext } from '@qovery/shared/console-shared'
-import { Icon, IconAwesomeEnum, TableFilterProps, TableRowFilter, Tooltip, convertToAnsi } from '@qovery/shared/ui'
+import {
+  CopyToClipboard,
+  Icon,
+  IconAwesomeEnum,
+  TableFilterProps,
+  TableRowFilter,
+  Tooltip,
+  convertToAnsi,
+} from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 
 const COLORS = [
@@ -73,26 +81,26 @@ export function RowPod(props: RowPodProps) {
         </div>
         <div
           data-testid="cell-pod-name"
-          className="px-4 text-element-light-lighter-700 whitespace-nowrap min-w-[215px]"
+          className="px-4 text-element-light-lighter-700 whitespace-nowrap min-w-[225px]"
           style={{ color: getColorByPod(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
-            <Tooltip content={data.pod_name || ''}>
-              <span className="h-5 flex justify-center items-center px-2 bg-element-light-darker-100 rounded-[40px]">
-                {data.pod_name && data.pod_name.length > 23
-                  ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
-                  : data.pod_name}
-              </span>
-            </Tooltip>
+            <span className="h-5 flex justify-center items-center px-2 bg-element-light-darker-100 rounded-[40px] gap-1">
+              {data.pod_name && data.pod_name.length > 23
+                ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
+                : data.pod_name}
+              <CopyToClipboard className="opacity-50" content={data.pod_name} />
+            </span>
           )}
           {!data.pod_name && !data.message.includes('No pods found' || '') && <span className="block">NGINX</span>}
           {!data.pod_name && data.message.includes('No pods found' || '') && <span className="block">undefined</span>}
         </div>
         <div data-testid="cell-version" className="pt-0.5 flex whitespace-nowrap text-text-100 min-w-[85px]">
           {data.version && (
-            <span>
+            <span className="group/version">
               <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-1" />
               {formatVersion(data.version)}
+              <CopyToClipboard className="opacity-0 ml-1 group-hover/version:opacity-80" content={data.version} />
             </span>
           )}
         </div>
