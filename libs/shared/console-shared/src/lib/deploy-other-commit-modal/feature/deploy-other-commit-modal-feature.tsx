@@ -92,7 +92,10 @@ export function DeployOtherCommitModalFeature(props: DeployOtherCommitModalFeatu
       isLoading={isLoading === 'loading'}
       selectedCommitId={selectedCommitId}
       setSelectedCommitId={setSelectedCommitId}
-      currentCommitId={application?.git_repository?.deployed_commit_id}
+      currentCommitId={
+        application?.git_repository?.deployed_commit_id ||
+        application?.source?.docker?.git_repository?.deployed_commit_id
+      }
       buttonDisabled={buttonDisabled()}
       handleDeploy={handleDeploy}
       deployLoading={deployLoading}
