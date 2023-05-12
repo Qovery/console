@@ -42,6 +42,9 @@ export const defaultProjectPermission = (permission: string) => {
 export const handleSubmit = (data: FieldValues, currentRole: OrganizationCustomRole) => {
   const cloneCurrentRole = Object.assign({}, currentRole)
 
+  cloneCurrentRole.name = data['name']
+  cloneCurrentRole.description = data['description']
+
   // update project permissions
   const projectPermissions = currentRole.project_permissions?.map((project) => {
     const currentProject = data['project_permissions'][project.project_id || '']
