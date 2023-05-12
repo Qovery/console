@@ -124,7 +124,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                     <div className="w-60 shrink-0 rounded">
                       <div className="h-11 flex justify-between items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <div className="flex items-center">
-                          <BadgeDeploymentOrder id={stage.id} order={stage.deployment_order} />
+                          <BadgeDeploymentOrder order={stage.deployment_order} />
                           <span className="block truncate text-text-500 text-2xs font-bold">
                             <Truncate truncateLimit={28} text={stage.name || ''} />
                           </span>

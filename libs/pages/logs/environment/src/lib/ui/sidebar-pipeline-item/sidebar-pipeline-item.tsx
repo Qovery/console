@@ -51,7 +51,7 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
         className="cursor-pointer inline-flex items-center text-text-200 text-ssm font-medium mb-1.5 select-none"
         onClick={() => setOpenStage(!openStage)}
       >
-        <BadgeDeploymentOrder className="mr-3" id={currentStage?.stage?.id || ''} order={index} />
+        <BadgeDeploymentOrder className="mr-3" order={index} />
         {currentStage?.stage?.name}
         <Icon name={IconAwesomeEnum.CARET_DOWN} className={`ml-3 text-text-400 ${!openStage ? '-rotate-90' : ''}`} />
       </div>

@@ -65,7 +65,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
                           {index}
                         </div>
                         <div className={snapshot && classNameItem(snapshot.isDragging)}>
-                          <BadgeDeploymentOrder id={stage.id} order={stage.deployment_order} />
+                          <BadgeDeploymentOrder order={stage.deployment_order} />
                           <span className="block ml-1">{stage.name}</span>
                         </div>
                       </div>
