@@ -1,6 +1,6 @@
 import { CustomDomain } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { CopyToClipboard, InputText, ModalCrud } from '@qovery/shared/ui'
+import { BannerBox, BannerBoxEnum, CopyToClipboard, IconAwesomeEnum, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   customDomain?: CustomDomain
@@ -65,6 +65,13 @@ export function CrudModal(props: CrudModalProps) {
           />
         </>
       )}
+      <BannerBox
+        className="mt-7"
+        title="How to config"
+        message="You need to configure a CNAME record to your domain based on the domain provided in the “Value” field. Qovery will handle TLS/SSL certificate creation and renewal."
+        icon={IconAwesomeEnum.CIRCLE_INFO}
+        type={BannerBoxEnum.INFO}
+      />
     </ModalCrud>
   )
 }
