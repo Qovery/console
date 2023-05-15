@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import {
   applicationsLoadingStatus,
   editApplication,
-  postApplicationActionsRestart,
+  postApplicationActionsRedeploy,
   selectApplicationById,
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
@@ -38,7 +38,7 @@ export function PageSettingsPortsFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRestart({
+        postApplicationActionsRedeploy({
           applicationId: applicationId,
           environmentId: environmentId,
           serviceType: getServiceType(application),

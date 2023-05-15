@@ -2,7 +2,7 @@ import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axio
 import { createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { postApplicationActionsDeploy, postApplicationActionsRestart } from '@qovery/domains/application'
+import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
@@ -57,7 +57,7 @@ export function Container(props: ContainerProps) {
         )
       } else {
         dispatch(
-          postApplicationActionsRestart({ environmentId, applicationId, serviceType: getServiceType(application) })
+          postApplicationActionsRedeploy({ environmentId, applicationId, serviceType: getServiceType(application) })
         )
       }
     }

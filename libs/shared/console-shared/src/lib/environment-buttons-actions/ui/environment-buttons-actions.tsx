@@ -6,7 +6,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   useActionCancelEnvironment,
   useActionDeployEnvironment,
-  useActionRestartEnvironment,
+  useActionRedeployEnvironment,
   useActionStopEnvironment,
   useDeleteEnvironment,
 } from '@qovery/domains/environment'
@@ -58,7 +58,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
-  const { mutate: actionRestartEnvironmentMutate } = useActionRestartEnvironment(
+  const { mutate: actionRedeployEnvironmentMutate } = useActionRedeployEnvironment(
     projectId,
     environment.id,
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
@@ -104,7 +104,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
           title: 'Confirm redeploy',
           description: 'To confirm the redeploy of your environment, please type the name:',
           name: environment.name,
-          action: () => actionRestartEnvironmentMutate(),
+          action: () => actionRedeployEnvironmentMutate(),
         })
       },
     }
@@ -185,7 +185,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     status?.state,
     actionCancelEnvironmentMutate,
     actionDeployEnvironmentMutate,
-    actionRestartEnvironmentMutate,
+    actionRedeployEnvironmentMutate,
     actionStopEnvironmentMutate,
   ])
 

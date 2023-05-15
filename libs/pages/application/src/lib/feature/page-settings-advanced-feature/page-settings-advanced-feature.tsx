@@ -7,7 +7,7 @@ import {
   fetchApplicationAdvancedSettings,
   fetchDefaultApplicationAdvancedSettings,
   getApplicationsState,
-  postApplicationActionsRestart,
+  postApplicationActionsRedeploy,
   selectApplicationById,
 } from '@qovery/domains/application'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
@@ -73,7 +73,7 @@ export function PageSettingsAdvancedFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
       )
     }
   }

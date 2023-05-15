@@ -5,7 +5,7 @@ import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 const environmentActionApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 
-export const useActionRestartEnvironment = (
+export const useActionRedeployEnvironment = (
   projectId: string,
   environmentId: string,
   withDeployments?: boolean,
@@ -15,7 +15,7 @@ export const useActionRestartEnvironment = (
 
   return useMutation(
     async () => {
-      const response = await environmentActionApi.restartEnvironment(environmentId)
+      const response = await environmentActionApi.redeployEnvironment(environmentId)
       return response.data
     },
     {

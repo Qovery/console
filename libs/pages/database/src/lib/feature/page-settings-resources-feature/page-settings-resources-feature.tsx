@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editDatabase, postDatabaseActionsRestart, selectDatabaseById } from '@qovery/domains/database'
+import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@qovery/domains/database'
 import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -48,7 +48,7 @@ export function PageSettingsResourcesFeature() {
   const toasterCallback = () => {
     if (database) {
       dispatch(
-        postDatabaseActionsRestart({
+        postDatabaseActionsRedeploy({
           databaseId,
           environmentId,
         })

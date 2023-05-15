@@ -5,11 +5,11 @@ import { fetchDatabasesStatus } from './databases.slice'
 
 const databaseActionApi = new DatabaseActionsApi()
 
-export const postDatabaseActionsRestart = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
-  'databaseActions/restart',
+export const postDatabaseActionsRedeploy = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
+  'databaseActions/redeploy',
   async (data, { dispatch }) => {
     try {
-      const response = await databaseActionApi.restartDatabase(data.databaseId)
+      const response = await databaseActionApi.redeployDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
         // refetch status after update
         await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))

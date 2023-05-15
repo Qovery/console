@@ -1,5 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { postApplicationActionsRestart } from '@qovery/domains/application'
+import { postApplicationActionsRedeploy } from '@qovery/domains/application'
 import {
   createAliasEnvironmentVariables,
   createAliasSecret,
@@ -28,7 +28,7 @@ export function handleSubmitForEnvSecretCreation(
   dispatch: any,
   setClosing: (b: boolean) => void,
   serviceType: ServiceTypeEnum,
-  actionRestartEnvironment: () => void
+  actionRedeployEnvironment: () => void
 ): void {
   if (data) {
     let entityId
@@ -53,10 +53,10 @@ export function handleSubmitForEnvSecretCreation(
         data.scope === APIVariableScopeEnum.APPLICATION
       ) {
         dispatch(
-          postApplicationActionsRestart({ applicationId: props.applicationId, environmentId: props.environmentId })
+          postApplicationActionsRedeploy({ applicationId: props.applicationId, environmentId: props.environmentId })
         )
       } else {
-        actionRestartEnvironment()
+        actionRedeployEnvironment()
       }
     }
 

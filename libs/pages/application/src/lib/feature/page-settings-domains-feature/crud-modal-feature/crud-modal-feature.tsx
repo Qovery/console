@@ -7,7 +7,7 @@ import {
   editCustomDomain,
   fetchApplicationLinks,
   getCustomDomainsState,
-  postApplicationActionsRestart,
+  postApplicationActionsRedeploy,
 } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
@@ -33,7 +33,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const toasterCallback = () => {
     if (props.application) {
       dispatch(
-        postApplicationActionsRestart({
+        postApplicationActionsRedeploy({
           applicationId: props.application.id,
           environmentId: props.application.environment?.id || '',
           serviceType: getServiceType(props.application),

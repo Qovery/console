@@ -2,7 +2,7 @@ import { ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import { editApplication, postApplicationActionsRestart } from '@qovery/domains/application'
+import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
@@ -58,7 +58,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   const toasterCallback = () => {
     if (props.application) {
       dispatch(
-        postApplicationActionsRestart({
+        postApplicationActionsRedeploy({
           applicationId: props.application?.id || '',
           environmentId: props.application?.environment?.id || '',
           serviceType: getServiceType(props.application),

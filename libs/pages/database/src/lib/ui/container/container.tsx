@@ -1,7 +1,7 @@
 import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
-import { postDatabaseActionsDeploy, postDatabaseActionsRestart } from '@qovery/domains/database'
+import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
@@ -100,7 +100,7 @@ export function Container(props: ContainerProps) {
       if (database?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         dispatch(postDatabaseActionsDeploy({ environmentId, databaseId }))
       } else {
-        dispatch(postDatabaseActionsRestart({ environmentId, databaseId }))
+        dispatch(postDatabaseActionsRedeploy({ environmentId, databaseId }))
       }
     }
   }

@@ -1,7 +1,7 @@
 import { ServiceStorageStorage, StorageTypeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { editApplication, getApplicationsState, postApplicationActionsRestart } from '@qovery/domains/application'
+import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -47,7 +47,7 @@ export function StorageModalFeature(props: StorageModalFeatureProps) {
   const toasterCallback = () => {
     if (props.application) {
       dispatch(
-        postApplicationActionsRestart({
+        postApplicationActionsRedeploy({
           applicationId: props.application.id,
           environmentId: props.application.environment?.id || '',
           serviceType: getServiceType(props.application),

@@ -8,18 +8,18 @@ const applicationActionApi = new ApplicationActionsApi()
 const containerActionApi = new ContainerActionsApi()
 const jobActionApi = new JobActionsApi()
 
-export const postApplicationActionsRestart = createAsyncThunk<
+export const postApplicationActionsRedeploy = createAsyncThunk<
   any,
   { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
->('applicationActions/restart', async (data, { dispatch }) => {
+>('applicationActions/redeploy', async (data, { dispatch }) => {
   try {
     let response
     if (isContainer(data.serviceType)) {
-      response = await containerActionApi.restartContainer(data.applicationId)
+      response = await containerActionApi.redeployContainer(data.applicationId)
     } else if (isJob(data.serviceType)) {
-      response = await jobActionApi.restartJob(data.applicationId)
+      response = await jobActionApi.redeployJob(data.applicationId)
     } else {
-      response = await applicationActionApi.restartApplication(data.applicationId)
+      response = await applicationActionApi.redeployApplication(data.applicationId)
     }
 
     if (response.status === 202) {
@@ -87,11 +87,11 @@ export const postApplicationActionsDeploy = createAsyncThunk<
   try {
     let response
     if (isContainer(data.serviceType)) {
-      response = await containerActionApi.restartContainer(data.applicationId)
+      response = await containerActionApi.redeployContainer(data.applicationId)
     } else if (isJob(data.serviceType)) {
-      response = await jobActionApi.restartJob(data.applicationId)
+      response = await jobActionApi.redeployJob(data.applicationId)
     } else {
-      response = await applicationActionApi.restartApplication(data.applicationId)
+      response = await applicationActionApi.redeployApplication(data.applicationId)
     }
 
     if (response.status === 202) {
