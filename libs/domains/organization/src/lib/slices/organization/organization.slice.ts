@@ -168,7 +168,7 @@ export const deleteCustomRole = createAsyncThunk(
   'customRole/delete',
   async (payload: { organizationId: string; customRoleId: string }) => {
     // delete custom role by id
-    await customRolesApi.deleteOrganizationCustomRole(payload.organizationId, payload.customRoleId)
+    return await customRolesApi.deleteOrganizationCustomRole(payload.organizationId, payload.customRoleId)
   }
 )
 

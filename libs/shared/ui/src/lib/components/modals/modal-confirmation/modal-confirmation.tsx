@@ -53,7 +53,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
           icon={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
         />
       )}
-      <p className="text-text-400 text-sm mb-6">
+      <div className="text-text-400 text-sm mb-6">
         {description}
         <Tooltip content="Copy">
           <span
@@ -64,7 +64,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
             {name} <Icon name="icon-solid-copy" />
           </span>
         </Tooltip>
-      </p>
+      </div>
       <form onSubmit={onSubmit}>
         <Controller
           name="name"
