@@ -24,7 +24,6 @@ export function StatusLabel(props: StatusLabelProps) {
 
   function showProgressIcon(): boolean {
     switch (status) {
-      case StateEnum.BUILDING:
       case StateEnum.STOPPING:
       case StateEnum.DEPLOYING:
       case StateEnum.DELETING:
@@ -35,26 +34,30 @@ export function StatusLabel(props: StatusLabelProps) {
     }
   }
 
-  // function showSpinnerIcon(): boolean {
-  //   switch (status) {
-  //     case StateEnum.STOP_QUEUED:
-  //       return true
-  //     case StateEnum.QUEUED:
-  //       return true
-  //     case StateEnum.DELETE_QUEUED:
-  //       return true
-  //     default:
-  //       return false
-  //   }
-  // }
+  function showBuildProgressIcon(): boolean {
+    switch (status) {
+      case StateEnum.BUILDING:
+        return true
+      default:
+        return false
+    }
+  }
 
   function showErrorIcon(): boolean {
     switch (status) {
-      case StateEnum.BUILD_ERROR:
       case StateEnum.DEPLOYMENT_ERROR:
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
       case StateEnum.RESTART_ERROR:
+        return true
+      default:
+        return false
+    }
+  }
+
+  function showBuildErrorIcon(): boolean {
+    switch (status) {
+      case StateEnum.BUILD_ERROR:
         return true
       default:
         return false
@@ -70,9 +73,15 @@ export function StatusLabel(props: StatusLabelProps) {
       className={`flex items-center px-3 h-8 border border-element-lighter-500 rounded-full text-text-500 text-xs font-medium truncate ${className}`}
       data-testid="status-label"
     >
-      {showProgressIcon() && <Icon name={IconEnum.PROGRESS} width="12" viewBox="0 0 12 12" className="mr-2 mt-[1px]" />}
+      {showProgressIcon() && (
+        <Icon name={IconEnum.PROGRESS} pathColor="#43C9D5" width="12" viewBox="0 0 12 12" className="mr-2 mt-[1px]" />
+      )}
+      {showBuildProgressIcon() && <Icon width="0.875rem" pathColor="#43C9D5" name={IconEnum.HAMMER} />}
       {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
       {showErrorIcon() && <Icon name={IconEnum.ERROR} width="12" viewBox="0 0 14 14" className="ml-2 mt-[1px]" />}
+      {showBuildErrorIcon() && (
+        <Icon width="0.875rem" pathColor="#FF6240" name={IconEnum.HAMMER} className="ml-2 mt-[1px]" />
+      )}
     </span>
   )
 }
