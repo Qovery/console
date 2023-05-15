@@ -1,14 +1,17 @@
 import { Control, Controller } from 'react-hook-form'
-import { Button, ButtonSize, ButtonStyle, InputText } from '@qovery/shared/ui'
+import { useNavigate } from 'react-router-dom'
+import { Button, ButtonSize, ButtonStyle, IconAwesomeEnum, InputText } from '@qovery/shared/ui'
 
 export interface StepProjectProps {
   onSubmit: () => void
   control: Control<any, any>
   authLogout: () => void
+  backButton?: boolean
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control, authLogout } = props
+  const { onSubmit, control, authLogout, backButton } = props
+  const navigate = useNavigate()
 
   return (
     <div className="pb-10">
@@ -54,14 +57,25 @@ export function StepProject(props: StepProjectProps) {
           )}
         />
         <div className="mt-10 pt-5 flex justify-between border-t border-element-light-lighter-400">
-          <Button
-            onClick={() => authLogout()}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
-            iconLeft="icon-solid-arrow-left"
-          >
-            Disconnect
-          </Button>
+          {!backButton ? (
+            <Button
+              onClick={() => authLogout()}
+              size={ButtonSize.XLARGE}
+              style={ButtonStyle.STROKED}
+              iconLeft={IconAwesomeEnum.ARROW_LEFT}
+            >
+              Disconnect
+            </Button>
+          ) : (
+            <Button
+              onClick={() => navigate(-1)}
+              size={ButtonSize.XLARGE}
+              style={ButtonStyle.STROKED}
+              iconLeft={IconAwesomeEnum.ARROW_LEFT}
+            >
+              Back
+            </Button>
+          )}
           <Button size={ButtonSize.XLARGE} style={ButtonStyle.BASIC} type="submit">
             Continue
           </Button>
