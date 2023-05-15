@@ -36,6 +36,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
       // update auto preview for environment
       const cloneEnvironmentDeploymentRules = Object.assign({}, environmentDeploymentRules as EnvironmentDeploymentRule)
       cloneEnvironmentDeploymentRules.auto_preview = data['auto_preview']
+      cloneEnvironmentDeploymentRules.on_demand_preview = data['on_demand_preview']
 
       await editEnvironmentDeploymentRule.mutate({
         environmentId,
@@ -66,16 +67,30 @@ export function PageSettingsPreviewEnvironmentsFeature() {
   })
 
   const toggleAll = (value: boolean) => {
+    methods.setValue('on_demand_preview', value)
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules) {
       applications?.forEach((application) => methods.setValue(application.id, value, { shouldDirty: true }))
     }
   }
 
+  // Force enable Preview if we enable preview from the 1rst application
+  const toggleEnablePreview = (value: boolean) => {
+    const isApplicationPreviewEnabled = applications ? applications.some((app) => app.auto_preview) : false
+    if (isApplicationPreviewEnabled || !value) {
+      return
+    }
+
+    methods.setValue('on_demand_preview', value)
+    methods.setValue('auto_preview', value)
+  }
+
   useEffect(() => {
     // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
     if (environmentDeploymentRules && loadingStatusEnvironmentDeploymentRules && !loading) {
-      methods.setValue('auto_preview', environmentDeploymentRules.auto_preview)
+      const isApplicationPreviewEnabled = applications ? applications.some((app) => app.auto_preview) : false
+      methods.setValue('auto_preview', environmentDeploymentRules.auto_preview || isApplicationPreviewEnabled)
+      methods.setValue('on_demand_preview', environmentDeploymentRules.on_demand_preview)
       applications?.forEach((application) => methods.setValue(application.id, application.auto_preview))
     }
   }, [loadingStatusEnvironmentDeploymentRules, methods, environmentDeploymentRules, applications])
@@ -87,6 +102,7 @@ export function PageSettingsPreviewEnvironmentsFeature() {
         applications={applications}
         loading={loading}
         toggleAll={toggleAll}
+        toggleEnablePreview={toggleEnablePreview}
       />
     </FormProvider>
   )
