@@ -23,6 +23,7 @@ import DOGrayIcon from './icons/do-gray'
 import DockerIcon from './icons/docker'
 import EnvironmentIcon from './icons/environment'
 import GitIcon from './icons/git'
+import HammerIcon from './icons/hammer'
 import InformationIcon from './icons/information'
 import LifecycleJobIcon from './icons/lifecycle-job'
 import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
@@ -120,6 +121,8 @@ export function Icon(props: IconProps) {
       return <LifecycleJobIcon {...formattedProps} />
     case IconEnum.LIFECYCLE_JOB_STROKE:
       return <LifecycleJobStrokeIcon {...formattedProps} />
+    case IconEnum.HAMMER:
+      return <HammerIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

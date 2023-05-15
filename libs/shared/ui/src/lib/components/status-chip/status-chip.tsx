@@ -36,10 +36,18 @@ export function StatusChip(props: StatusChipProps) {
 
   function showProgressIcon(): boolean {
     switch (status) {
-      case StateEnum.BUILDING:
       case StateEnum.DEPLOYING:
       case StateEnum.DELETING:
       case StateEnum.RESTARTING:
+        return true
+      default:
+        return false
+    }
+  }
+
+  function showBuildProgressIcon(): boolean {
+    switch (status) {
+      case StateEnum.BUILDING:
         return true
       default:
         return false
@@ -68,9 +76,17 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.DEPLOYMENT_ERROR:
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
-      case StateEnum.BUILD_ERROR:
       case StateEnum.RESTART_ERROR:
       case RunningStatus.ERROR:
+        return true
+      default:
+        return false
+    }
+  }
+
+  function showBuildErrorIcon(): boolean {
+    switch (status) {
+      case StateEnum.BUILD_ERROR:
         return true
       default:
         return false
@@ -138,11 +154,15 @@ export function StatusChip(props: StatusChipProps) {
             name={IconEnum.SUCCESS}
           />
         )}
-        {showProgressIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PROGRESS} />}
+        {showProgressIcon() && (
+          <Icon width="0.875rem" viewBox="0 0 14 14" pathColor="#43C9D5" name={IconEnum.PROGRESS} />
+        )}
         {showQueueIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" pathColor="#A0AFC5" name={IconEnum.PROGRESS} />}
         {showErrorIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.ERROR} />}
         {showStoppedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.PAUSE} />}
         {showDeletedIcon() && <Icon width="0.875rem" viewBox="0 0 14 14" name={IconEnum.DELETE} />}
+        {showBuildErrorIcon() && <Icon width="0.875rem" pathColor="#FF6240" name={IconEnum.HAMMER} />}
+        {showBuildProgressIcon() && <Icon width="0.875rem" pathColor="#43C9D5" name={IconEnum.HAMMER} />}
         {showSpinner() && (
           <svg
             role="status"
