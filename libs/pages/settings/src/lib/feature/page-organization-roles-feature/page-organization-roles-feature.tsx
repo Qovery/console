@@ -62,6 +62,13 @@ export function PageOrganizationRolesFeature() {
                 customRoleId: customRole.id || '',
               })
             )
+              .unwrap()
+              .then(() =>
+                // fetch the list of available roles after add new role
+                // state update doesn't work need to be refetch because request don't return response
+                dispatch(fetchAvailableRoles({ organizationId }))
+              )
+              .catch((e) => console.error(e))
           },
         })
       }}
