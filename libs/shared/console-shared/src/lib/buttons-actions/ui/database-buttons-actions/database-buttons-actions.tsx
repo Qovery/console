@@ -7,7 +7,7 @@ import {
   deleteDatabaseAction,
   postDatabaseActionsDeploy,
   postDatabaseActionsReboot,
-  postDatabaseActionsRestart,
+  postDatabaseActionsRedeploy,
   postDatabaseActionsStop,
 } from '@qovery/domains/database'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
@@ -104,7 +104,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
           name: database.name,
           action: () => {
             dispatch(
-              postDatabaseActionsRestart({
+              postDatabaseActionsRedeploy({
                 environmentId,
                 databaseId: database.id,
               })

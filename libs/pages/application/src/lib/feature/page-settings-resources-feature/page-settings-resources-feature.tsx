@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
+import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
 import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
@@ -61,7 +61,7 @@ export function PageSettingsResourcesFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
       )
     }
   }

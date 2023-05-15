@@ -7,7 +7,7 @@ import {
   deleteApplicationAction,
   postApplicationActionsDeploy,
   postApplicationActionsReboot,
-  postApplicationActionsRestart,
+  postApplicationActionsRedeploy,
   postApplicationActionsStop,
 } from '@qovery/domains/application'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
@@ -116,7 +116,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           name: application.name,
           action: () => {
             dispatch(
-              postApplicationActionsRestart({
+              postApplicationActionsRedeploy({
                 environmentId,
                 applicationId: application.id,
                 serviceType: getServiceType(application),

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { editApplication, postApplicationActionsRestart, selectApplicationById } from '@qovery/domains/application'
+import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
 import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { ApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
@@ -27,7 +27,7 @@ export function PageSettingsConfigureJobFeature() {
   const toasterCallback = () => {
     if (application) {
       dispatch(
-        postApplicationActionsRestart({ applicationId, environmentId, serviceType: getServiceType(application) })
+        postApplicationActionsRedeploy({ applicationId, environmentId, serviceType: getServiceType(application) })
       )
     }
   }
