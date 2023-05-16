@@ -48,7 +48,7 @@ describe('RowEvent', () => {
     const { baseElement } = render(<RowEvent {...props} />)
 
     expect(queryByTestId(baseElement, 'expanded-panel')).toBeNull()
-    const button = getByTestId(baseElement, 'expand-button')
+    const button = getByTestId(baseElement, 'row-event')
 
     await act(() => {
       button.click()
