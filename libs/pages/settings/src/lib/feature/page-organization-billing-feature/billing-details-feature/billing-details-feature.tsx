@@ -46,7 +46,7 @@ export function BillingDetailsFeature() {
       dispatch(editBillingInfo({ organizationId, billingInfoRequest: data }))
         .unwrap()
         .then((data) => {
-          methods.reset(data)
+          methods.reset(data as BillingInfoRequest)
         })
         .catch(console.error)
         .then(() => setEditInProcess(false))
@@ -67,7 +67,7 @@ export function BillingDetailsFeature() {
 
   useEffect(() => {
     if (organization?.billingInfos?.value) {
-      methods.reset(organization.billingInfos.value)
+      methods.reset(organization.billingInfos.value as BillingInfoRequest)
     }
   }, [organization, methods])
 

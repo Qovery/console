@@ -48,7 +48,7 @@ export function StatusLabel(props: StatusLabelProps) {
       case StateEnum.DEPLOYMENT_ERROR:
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
-      case StateEnum.RESTART_ERROR:
+      case StateEnum.RESTARTED_ERROR:
         return true
       default:
         return false
