@@ -7,17 +7,21 @@ import PageSettingsPreviewEnvironments, {
 } from './page-settings-preview-environments'
 
 const props: PageSettingsPreviewEnvironmentsProps = {
+  loading: false,
   onSubmit: jest.fn(),
   applications: applicationFactoryMock(3),
   toggleAll: jest.fn(),
+  toggleEnablePreview: jest.fn(),
 }
 
 describe('PageSettingsPreviewEnvironments', () => {
   const defaultValues: any = {
     auto_preview: false,
+    on_demand_preview: false,
     0: true,
     1: true,
   }
+
   it('should render successfully', async () => {
     const { baseElement } = render(wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />))
 
@@ -44,12 +48,30 @@ describe('PageSettingsPreviewEnvironments', () => {
       expect(screen.getByTestId(`toggle-1`).querySelector('input')?.getAttribute('value')).toBe('true')
     })
   })
+  it('should have the toggle with on_demand_preview', async () => {
+    render(
+      wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />, {
+        defaultValues,
+      })
+    )
+
+    await act(() => {
+      const toggle = screen.getByTestId('toggle-on-demand-preview')
+      fireEvent.click(toggle)
+    })
+
+    await waitFor(async () => {
+      expect(screen.getByTestId(`toggle-on-demand-preview`)?.querySelector('input')?.getAttribute('value')).toBe('true')
+    })
+  })
 
   it(`should have margin when we have applications`, () => {
     render(wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />))
 
     const toggles = screen.getByTestId('toggles')
-
     expect(toggles.classList.contains('mt-5')).toBe(true)
+
+    const applicationTitle = screen.getByTestId('applications-title')
+    expect(applicationTitle).toBeTruthy()
   })
 })

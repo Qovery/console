@@ -8,10 +8,11 @@ export interface PageSettingsPreviewEnvironmentsProps {
   loading: boolean
   applications?: ApplicationEntity[]
   toggleAll: (value: boolean) => void
+  toggleEnablePreview: (value: boolean) => void
 }
 
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
-  const { onSubmit, applications, loading, toggleAll } = props
+  const { onSubmit, applications, loading, toggleAll, toggleEnablePreview } = props
   const { control, formState } = useFormContext()
 
   return (
@@ -23,26 +24,49 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
           </div>
         </div>
         <form onSubmit={onSubmit}>
-          <BlockContent title="General">
+          <BlockContent title="Global settings">
             <Controller
               name="auto_preview"
               control={control}
               render={({ field }) => (
                 <InputToggle
                   dataTestId="toggle-all"
+                  className="mb-5"
                   value={field.value}
                   onChange={(value) => {
                     toggleAll(value)
                     field.onChange(value)
                   }}
-                  title="Activate preview environment for all applications"
-                  description="Automatically create a preview environment when a merge/pull request is submitted on one of your applications."
+                  title="Turn on Preview Environments"
+                  description="Use this environment as Blueprint to create a preview environment when a Pull Request is submitted on one of your applications."
                   forceAlignTop
                   small
                 />
               )}
             />
+            <Controller
+              name="on_demand_preview"
+              control={control}
+              render={({ field }) => (
+                <InputToggle
+                  dataTestId="toggle-on-demand-preview"
+                  className="mb-5"
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="Create on demand"
+                  description="Trigger the creation only when requested within the Pull Request. Disabling this option will create a preview environment for each Pull Request."
+                  forceAlignTop
+                  small
+                />
+              )}
+            />
+
             <div data-testid="toggles" className={applications && applications.length > 0 ? 'mt-5' : ''}>
+              {applications && applications.length > 0 && (
+                <h2 data-testid="applications-title" className="font-medium text-text-600 text-ssm mb-5">
+                  Create Preview for PR opened on those services
+                </h2>
+              )}
               {applications?.map((application: ApplicationEntity) => (
                 <div key={application.id} className="h-9 flex items-center">
                   <Controller
@@ -52,7 +76,10 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                       <InputToggle
                         dataTestId={`toggle-${application.id}`}
                         value={field.value}
-                        onChange={field.onChange}
+                        onChange={(value) => {
+                          toggleEnablePreview(value)
+                          field.onChange(value)
+                        }}
                         title={
                           <span className="flex items-center -top-1 relative">
                             <Icon name={IconEnum.APPLICATION} className="mr-3" /> {application.name}
