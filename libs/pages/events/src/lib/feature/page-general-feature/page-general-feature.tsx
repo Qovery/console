@@ -47,8 +47,6 @@ export function PageGeneralFeature() {
   const [pageSize, setPageSize] = useState<string>('10')
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
-  const [placeholderEvents] = useState(eventsFactoryMock(10))
-
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
@@ -77,7 +75,7 @@ export function PageGeneralFeature() {
 
   return (
     <PageGeneral
-      events={eventsData?.events}
+      events={eventsData?.events || eventsFactoryMock(10)}
       isLoading={isLoading}
       onNext={onNext}
       onPrevious={onPrevious}
@@ -85,7 +83,7 @@ export function PageGeneralFeature() {
       nextDisabled={!eventsData?.links?.next}
       onPageSizeChange={onPageSizeChange}
       pageSize={pageSize}
-      placeholderEvents={placeholderEvents}
+      placeholderEvents={eventsFactoryMock(10)}
     />
   )
 }
