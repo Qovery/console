@@ -64,7 +64,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         setResourcesData: mockSetResourceData,
         resourcesData: {
           instance_type: 't3.medium',
-          disk_size: 20,
+          disk_size: 50,
           cluster_type: 'MANAGED',
           nodes: [1, 3],
         },

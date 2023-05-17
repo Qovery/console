@@ -11,7 +11,7 @@ describe('ClusterResourcesSettings', () => {
   beforeEach(() => {
     defaultValues = {
       instance_type: 't2.micro',
-      disk_size: 20,
+      disk_size: 50,
       cluster_type: 'MANAGED',
       nodes: [1, 3],
     }

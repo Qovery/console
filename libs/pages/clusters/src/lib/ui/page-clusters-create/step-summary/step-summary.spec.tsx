@@ -19,7 +19,7 @@ const props: StepSummaryProps = {
     cluster_type: 'MANAGED',
     instance_type: 't2.micro',
     nodes: [1, 4],
-    disk_size: 20,
+    disk_size: 50,
   },
   featuresData: {
     [STATIC_IP]: {
