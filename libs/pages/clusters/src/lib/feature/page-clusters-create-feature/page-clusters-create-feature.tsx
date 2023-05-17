@@ -65,7 +65,7 @@ export const steps = (cloudProvider?: CloudProviderEnum, clusterType?: string) =
 
 export const defaultResourcesData: ClusterResourcesData = {
   cluster_type: '',
-  disk_size: 20,
+  disk_size: 50,
   instance_type: '',
   nodes: [3, 10],
 }

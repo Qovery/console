@@ -15,7 +15,7 @@ export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudP
     cloud_provider: customCloudProvider ? customCloudProvider : chance.pickone(Object.values(CloudProviderEnum)),
     min_running_nodes: 1,
     max_running_nodes: 5,
-    disk_size: 10,
+    disk_size: 20,
     status: chance.pickone(Object.values(StateEnum)),
     is_default: false,
     version: '1.22',

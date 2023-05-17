@@ -44,7 +44,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           cluster_type: 'MANAGED',
           instance_type: 't2.micro',
           nodes: [1, 4],
-          disk_size: 20,
+          disk_size: 50,
         },
         setResourcesData: mockSetResourcesData,
         remoteData: {
@@ -110,7 +110,7 @@ describe('StepSummaryFeature', () => {
         max_running_nodes: 4,
         kubernetes: 'MANAGED',
         instance_type: 't2.micro',
-        disk_size: 20,
+        disk_size: 50,
         ssh_keys: ['ssh_key'],
         features: [
           {
