@@ -50,6 +50,8 @@ export function PageGeneralFeature() {
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
+    if (newQueryParams.pageSize) setPageSize(newQueryParams.pageSize.toString())
+
     setQueryParams(newQueryParams)
   }, [location])
 

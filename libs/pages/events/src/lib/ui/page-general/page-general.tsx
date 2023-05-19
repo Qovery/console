@@ -78,7 +78,7 @@ export function PageGeneral(props: PageGeneralProps) {
         </div>
       </Table>
       <Pagination
-        className="pt-4 pb-6"
+        className="pt-4 pb-20"
         onPrevious={onPrevious}
         onNext={onNext}
         nextDisabled={nextDisabled}

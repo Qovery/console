@@ -1,7 +1,7 @@
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
-import { Icon, IconAwesomeEnum, Skeleton, TagEvent } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, Skeleton, TagEvent, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface RowEventProps {
@@ -44,16 +44,17 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="px-4">
           <Skeleton height={24} width={80} show={isPlaceholder}>
-            <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-              {event.target_name}
-              {''}
-              {event.sub_target_type && `::${event.sub_target_type}`}
-            </span>
+            <Tooltip content="project:environment (service)">
+              <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+                {event.project_name ? `${event.project_name}:` : ''}
+                {event.environment_name || ''} ({event.target_name})
+              </span>
+            </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={24} width={80} show={isPlaceholder}>
-            <span>API Request</span>
+            <span> {event.sub_target_type || ''}</span>
           </Skeleton>
         </div>
         <div className="px-4">
@@ -68,7 +69,13 @@ export function RowEvent(props: RowEventProps) {
         </div>
       </div>
       {expanded && (
-        <div className="bg-element-light-darker-100 text-red-50" data-testid="expanded-panel">
+        <div
+          className="bg-element-light-darker-100 text-red-50 max-h-[388px] overflow-y-auto"
+          data-testid="expanded-panel"
+        >
+          <div className="sticky flex items-center h-7 px-4 bg-element-light-lighter-800 text-text-300 text-xs font-medium">
+            Object Status after request (here you can find the JSON returned by our API)
+          </div>
           <SyntaxHighlighter
             language="json"
             style={dark}

@@ -10,7 +10,6 @@ const props: RowEventProps = {
   event: mockEvent,
   isPlaceholder: false,
   expanded: false,
-  nbCols: 7,
   setExpanded: jest.fn(),
 }
 
@@ -38,8 +37,8 @@ describe('RowEvent', () => {
     getByText(baseElement, dateYearMonthDayHourMinuteSecond(new Date(mockEvent.timestamp || '')))
     getByTestId(baseElement, 'tag')
     getByText(baseElement, upperCaseFirstLetter(mockEvent.target_type)!)
-    getByText(baseElement, `${mockEvent.target_name}::${mockEvent.sub_target_type}`)
-    getByText(baseElement, 'API Request')
+    getByText(baseElement, `${mockEvent.project_name}:${mockEvent.environment_name} (${mockEvent.target_name})`)
+    getByText(baseElement, mockEvent.sub_target_type)
     getByText(baseElement, mockEvent.triggered_by!)
     getByText(baseElement, upperCaseFirstLetter(mockEvent.origin)!)
   })
@@ -54,10 +53,5 @@ describe('RowEvent', () => {
       button.click()
     })
     expect(props.setExpanded).toHaveBeenCalledWith(true)
-
-    const render2 = render(<RowEvent {...props} expanded />)
-
-    const panel = getByTestId(render2.baseElement, 'expanded-panel')
-    expect(panel).toHaveClass('col-span-7')
   })
 })

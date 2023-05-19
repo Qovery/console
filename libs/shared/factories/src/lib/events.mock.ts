@@ -32,8 +32,10 @@ export const eventsFactoryMock = (howMany: number): OrganizationEventResponse[] 
     change: JSON.stringify({ hello: 'world' }),
     created_at: chance.date().toString(),
     project_id: chance.guid(),
+    project_name: chance.name(),
     target_id: chance.guid(),
     environment_id: chance.guid(),
+    environment_name: chance.name(),
     target_name: chance.name(),
     target_type: chance.pickone(
       Object.values([
