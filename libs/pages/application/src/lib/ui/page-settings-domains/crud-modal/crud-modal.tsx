@@ -8,6 +8,7 @@ export interface CrudModalProps {
   onClose: () => void
   loading?: boolean
   isEdit?: boolean
+  link?: string
 }
 
 export function CrudModal(props: CrudModalProps) {
@@ -40,31 +41,27 @@ export function CrudModal(props: CrudModalProps) {
           />
         )}
       />
-      {props.isEdit && (
-        <>
-          <InputText
-            disabled
-            className="mb-3"
-            name="type"
-            value="CNAME"
-            label="Type"
-            rightElement={<CopyToClipboard className="text-text-600 text-sm" content="CNAME" />}
+      <InputText
+        disabled
+        className="mb-3"
+        name="type"
+        value="CNAME"
+        label="Type"
+        rightElement={<CopyToClipboard className="text-text-600 text-sm" content="CNAME" />}
+      />
+      <InputText
+        disabled
+        className="mb-6"
+        name="type"
+        value={props.isEdit ? props.customDomain?.validation_domain : props.link}
+        label="Value"
+        rightElement={
+          <CopyToClipboard
+            className="text-text-600 text-sm"
+            content={(props.isEdit ? props.customDomain?.validation_domain : props.link) || ''}
           />
-          <InputText
-            disabled
-            className="mb-6"
-            name="type"
-            value={props.customDomain?.validation_domain}
-            label="Value"
-            rightElement={
-              <CopyToClipboard
-                className="text-text-600 text-sm"
-                content={props.customDomain?.validation_domain || ''}
-              />
-            }
-          />
-        </>
-      )}
+        }
+      />
       <BannerBox
         className="mt-7"
         title="How to config"

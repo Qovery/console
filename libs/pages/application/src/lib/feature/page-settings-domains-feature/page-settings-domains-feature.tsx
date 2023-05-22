@@ -24,7 +24,7 @@ export function PageSettingsDomainsFeature() {
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
-    (a, b) => a?.id === b?.id
+    (a, b) => a?.id === b?.id || a?.links?.items?.length === b?.links?.items?.length
   )
 
   const customDomains = useSelector<RootState, CustomDomain[] | undefined>((state) =>
