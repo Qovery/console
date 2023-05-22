@@ -513,7 +513,9 @@ export const clusterSlice = createSlice({
 
         toast(
           ToastEnum.ERROR,
-          `Your advanced settings have not been updated. Something must be wrong with the values provided`
+          action.error.message
+            ? action.error.message
+            : `Your advanced settings have not been updated. Something must be wrong with the values provided`
         )
         clusterAdapter.updateOne(state, update)
       })
