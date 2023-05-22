@@ -1,9 +1,12 @@
+import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@qovery/domains/database'
-import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { selectClusterById } from '@qovery/domains/organization'
+import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -17,9 +20,18 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
 }
 
 export function PageSettingsGeneralFeature() {
-  const { databaseId = '', environmentId = '' } = useParams()
+  const { environmentId = '', projectId = '', databaseId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
+
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
+  const { data: environments } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId, environments)
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
+    selectClusterById(state, environment?.cluster_id || '')
+  )
+
+  const publicOptionNotAvailable =
+    cluster?.kubernetes === KubernetesEnum.K3_S && database?.mode === DatabaseModeEnum.CONTAINER
 
   const [loading, setLoading] = useState(false)
 
@@ -81,7 +93,7 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} loading={loading} />
+      <PageSettingsGeneral onSubmit={onSubmit} loading={loading} publicOptionNotAvailable={publicOptionNotAvailable} />
     </FormProvider>
   )
 }

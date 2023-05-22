@@ -327,6 +327,9 @@ export const databasesSlice = createSlice({
           },
         }
         databasesAdapter.updateOne(state, update)
+
+        state.error = action.error.message
+        toastError(action.error)
       })
       .addCase(fetchDatabaseDeployments.pending, (state: DatabasesState, action) => {
         const update = {
