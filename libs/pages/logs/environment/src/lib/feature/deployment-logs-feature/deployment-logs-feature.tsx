@@ -78,9 +78,13 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
     updateServiceId(serviceId)
   }, [updateServiceId, serviceId])
 
+  // deployment logs by serviceId and stageId
+  // display when name is delete or stageId is empty
   const logsByServiceId = logs.filter(
     (currentData: EnvironmentLogs) =>
-      (currentData.details.stage?.id === stageId || !currentData.details.stage?.id) &&
+      (currentData.details.stage?.id === stageId ||
+        !currentData.details.stage?.id ||
+        currentData.details.stage.name === 'delete') &&
       (currentData.details.transmitter?.type === 'Environment' || currentData.details.transmitter?.id === serviceId)
   )
 
