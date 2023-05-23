@@ -76,7 +76,9 @@ export function StatusLabel(props: StatusLabelProps) {
       {showProgressIcon() && (
         <Icon name={IconEnum.PROGRESS} pathColor="#43C9D5" width="12" viewBox="0 0 12 12" className="mr-2 mt-[1px]" />
       )}
-      {showBuildProgressIcon() && <Icon width="0.875rem" pathColor="#43C9D5" name={IconEnum.HAMMER} />}
+      {showBuildProgressIcon() && (
+        <Icon width="0.875rem" pathColor="#43C9D5" className="mr-2 mt-[1px]" name={IconEnum.HAMMER} />
+      )}
       {upperCaseFirstLetter(status?.replace('_', ' ').toLowerCase())}
       {showErrorIcon() && <Icon name={IconEnum.ERROR} width="12" viewBox="0 0 14 14" className="ml-2 mt-[1px]" />}
       {showBuildErrorIcon() && (
