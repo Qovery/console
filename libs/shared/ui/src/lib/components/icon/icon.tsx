@@ -21,6 +21,7 @@ import DatabaseIcon from './icons/database'
 import DOIcon from './icons/do'
 import DOGrayIcon from './icons/do-gray'
 import DockerIcon from './icons/docker'
+import DopplerIcon from './icons/doppler'
 import EnvironmentIcon from './icons/environment'
 import GitIcon from './icons/git'
 import HammerIcon from './icons/hammer'
@@ -123,6 +124,8 @@ export function Icon(props: IconProps) {
       return <LifecycleJobStrokeIcon {...formattedProps} />
     case IconEnum.HAMMER:
       return <HammerIcon {...formattedProps} />
+    case IconEnum.DOPPLER:
+      return <DopplerIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

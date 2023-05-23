@@ -169,6 +169,14 @@ export function TabsFeature() {
             })
           },
         },
+        {
+          name: 'Import from Doppler',
+          contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-500" />,
+          link: {
+            url: 'https://dashboard.doppler.com',
+            external: true,
+          },
+        },
       ],
     },
   ]
