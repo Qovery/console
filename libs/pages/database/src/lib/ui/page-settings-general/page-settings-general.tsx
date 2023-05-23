@@ -17,6 +17,7 @@ import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
+  publicOptionNotAvailable?: boolean
   loading?: boolean
 }
 
@@ -31,14 +32,18 @@ const databasesMode = Object.values(DatabaseModeEnum).map((value) => ({
   value: value,
 }))
 
-const databasesAccessibility = Object.values(DatabaseAccessibilityEnum).map((value) => ({
-  label: upperCaseFirstLetter(value) || '',
-  value: value,
-}))
-
 export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { onSubmit, loading } = props
+  const { onSubmit, loading, publicOptionNotAvailable } = props
   const { control, formState } = useFormContext()
+
+  const databasesAccessibility = Object.values(DatabaseAccessibilityEnum).map((value) => ({
+    label: upperCaseFirstLetter(value) || '',
+    value: value,
+  }))
+
+  if (publicOptionNotAvailable) {
+    databasesAccessibility.splice(1, 1)
+  }
 
   return (
     <div className="flex flex-col justify-between w-full">

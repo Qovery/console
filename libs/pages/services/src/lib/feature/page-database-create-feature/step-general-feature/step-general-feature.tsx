@@ -1,9 +1,11 @@
-import { DatabaseConfiguration, DatabaseModeEnum } from 'qovery-typescript-axios'
+import { DatabaseConfiguration, DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getEnvironmentById, useFetchDatabaseConfiguration, useFetchEnvironments } from '@qovery/domains/environment'
-import { Value } from '@qovery/shared/interfaces'
+import { selectClusterById } from '@qovery/domains/organization'
+import { ClusterEntity, Value } from '@qovery/shared/interfaces'
 import {
   SERVICES_DATABASE_CREATION_RESOURCES_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -11,6 +13,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
 import { GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
@@ -77,6 +80,10 @@ export function StepGeneralFeature() {
   const { data: environments } = useFetchEnvironments(projectId)
   const environment = getEnvironmentById(environmentId, environments)
 
+  const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
+    selectClusterById(state, environment?.cluster_id || '')
+  )
+
   const { data: databaseConfigurations } = useFetchDatabaseConfiguration(projectId, environmentId)
 
   const [databaseTypeOptions, setDatabaseTypeOptions] = useState<Value[]>()
@@ -124,6 +131,9 @@ export function StepGeneralFeature() {
   const watchModeDatabase = methods.watch('mode')
   const watchTypeDatabase = methods.watch('type')
 
+  const publicOptionNotAvailable =
+    cluster?.kubernetes === KubernetesEnum.K3_S && watchModeDatabase === DatabaseModeEnum.CONTAINER
+
   useEffect(() => {
     if (methods.formState.isDirty) {
       methods.setValue('version', '')
@@ -149,6 +159,7 @@ export function StepGeneralFeature() {
           onSubmit={onSubmit}
           databaseTypeOptions={databaseTypeOptions}
           databaseVersionOptions={databaseVersionOptions}
+          publicOptionNotAvailable={publicOptionNotAvailable}
         />
       </FormProvider>
     </FunnelFlowBody>

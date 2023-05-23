@@ -34,7 +34,9 @@ export function PageDatabase() {
 
   useEffect(() => {
     if (database && databaseId && loadingStatus === 'loaded') {
-      database?.metrics?.loadingStatus !== 'loaded' && dispatch(fetchDatabaseMetrics({ databaseId }))
+      database?.metrics?.loadingStatus !== 'loaded' &&
+        database?.metrics?.loadingStatus !== 'error' &&
+        dispatch(fetchDatabaseMetrics({ databaseId }))
       database?.credentials?.loadingStatus !== 'loaded' && dispatch(fetchDatabaseMasterCredentials({ databaseId }))
     }
 

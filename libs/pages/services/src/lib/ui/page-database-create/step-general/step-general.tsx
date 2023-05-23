@@ -21,16 +21,31 @@ export interface StepGeneralProps {
   databaseTypeOptions?: Value[]
   databaseVersionOptions?: { [Key: string]: Value[] }
   cloudProvider?: string
+  publicOptionNotAvailable?: boolean
 }
 
 export function StepGeneral(props: StepGeneralProps) {
   const { control, formState, watch } = useFormContext<GeneralData>()
   const { organizationId = '', environmentId = '', projectId = '' } = useParams()
   const navigate = useNavigate()
-  const { databaseTypeOptions, databaseVersionOptions = {} } = props
+  const { databaseTypeOptions, databaseVersionOptions = {}, publicOptionNotAvailable } = props
 
   const watchType = watch('type')
   const watchMode = watch('mode')
+
+  const databaseAccessibilityOptions = [
+    {
+      label: 'Private',
+      value: DatabaseAccessibilityEnum.PRIVATE,
+    },
+  ]
+
+  if (!publicOptionNotAvailable) {
+    databaseAccessibilityOptions.push({
+      label: 'Public',
+      value: DatabaseAccessibilityEnum.PUBLIC,
+    })
+  }
 
   return (
     <div>
@@ -149,16 +164,7 @@ export function StepGeneral(props: StepGeneralProps) {
           render={({ field, fieldState: { error } }) => (
             <InputSelect
               label="Accessibility"
-              options={[
-                {
-                  label: 'Private',
-                  value: DatabaseAccessibilityEnum.PRIVATE,
-                },
-                {
-                  label: 'Public',
-                  value: DatabaseAccessibilityEnum.PUBLIC,
-                },
-              ]}
+              options={databaseAccessibilityOptions}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
