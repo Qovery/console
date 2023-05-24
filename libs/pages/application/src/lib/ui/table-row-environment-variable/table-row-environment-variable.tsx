@@ -68,7 +68,10 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               <Skeleton show={isLoading} width={250} height={16}>
                 <div className="cursor-pointer w-full mt-0.5 text-text-600 text-ssm font-medium flex items-center">
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
-                    <span className="bg-[#3391FB] font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
+                    <span
+                      data-testid="doppler-tag"
+                      className="bg-[#3391FB] font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2"
+                    >
                       {variable.owned_by}
                     </span>
                   )}{' '}
