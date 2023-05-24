@@ -55,7 +55,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="px-4">
           <Skeleton height={24} width={80} show={isPlaceholder}>
-            <span> {event.sub_target_type || ''}</span>
+            <span>{event.sub_target_type || ''}</span>
           </Skeleton>
         </div>
         <div className="px-4">
