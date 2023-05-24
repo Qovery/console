@@ -56,9 +56,7 @@ export function EntrypointCmdInputs(props: EntrypointCmdInputsProps) {
           />
         )}
       />
-      <p className="text-xs ml-4 mt-1 text-text-400">
-        Expected format: ["rails", "-h", "0.0.0.0", "-p", "8080", "string"]
-      </p>
+      <p className="text-xs ml-4 mt-1 text-text-400">Expected format: ["-h", "0.0.0.0", "-p", "8080", "string"]</p>
     </div>
   )
 }
