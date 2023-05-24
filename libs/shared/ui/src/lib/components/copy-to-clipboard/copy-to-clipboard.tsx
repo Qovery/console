@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { copyToClipboard as copyToClipboardUtil } from '@qovery/shared/utils'
 import Icon from '../icon/icon'
+import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import Tooltip from '../tooltip/tooltip'
 
 export interface CopyToClipboardProps {
@@ -13,13 +14,13 @@ export interface CopyToClipboardProps {
 export function CopyToClipboard(props: CopyToClipboardProps) {
   const { content, className = '', iconClassName = '', tooltipContent = 'Copy' } = props
 
-  const [icon, setIcon] = useState('icon-solid-copy')
+  const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
 
   const copyToClipboard = () => {
     copyToClipboardUtil(content)
-    setIcon('icon-solid-check')
+    setIcon(IconAwesomeEnum.CHECK)
     setTimeout(() => {
-      setIcon('icon-solid-copy')
+      setIcon(IconAwesomeEnum.COPY)
     }, 1000)
   }
 

@@ -3,6 +3,7 @@ import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { Icon, IconAwesomeEnum, Skeleton, TagEvent, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
+import CopyButton from '../copy-button/copy-button'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
@@ -70,12 +71,13 @@ export function RowEvent(props: RowEventProps) {
       </div>
       {expanded && (
         <div
-          className="bg-element-light-darker-100 text-red-50 max-h-[388px] overflow-y-auto"
+          className="relative bg-element-light-darker-100 text-red-50 max-h-[388px] overflow-y-auto"
           data-testid="expanded-panel"
         >
-          <div className="sticky flex items-center h-7 px-4 bg-element-light-lighter-800 text-text-300 text-xs font-medium">
+          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-lighter-800 text-text-300 text-xs font-medium z-[1]">
             Object Status after request (here you can find the JSON returned by our API)
           </div>
+          <CopyButton className="sticky top-10 right-8 ml-auto z-[1]" content={event.change || ''} />
           <SyntaxHighlighter
             language="json"
             style={dark}
@@ -84,6 +86,10 @@ export function RowEvent(props: RowEventProps) {
               borderRadius: '0.25rem',
               backgroundColor: 'transparent',
               fontSize: '12px',
+              position: 'relative',
+              top: '-12px',
+              height: 'calc(100% - 12px)',
+              zIndex: 0,
             }}
             wrapLines
           >
