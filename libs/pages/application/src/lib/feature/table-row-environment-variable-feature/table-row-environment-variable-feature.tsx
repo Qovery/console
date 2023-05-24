@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { deleteEnvironmentVariable, deleteSecret } from '@qovery/domains/environment-variable'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { ExternalServiceEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -12,6 +12,7 @@ import {
 import {
   ButtonIconActionElementProps,
   Icon,
+  IconAwesomeEnum,
   MenuItemProps,
   TableFilterProps,
   TableHeadProps,
@@ -149,16 +150,30 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
   const rowActions: ButtonIconActionElementProps[] = [
     {
-      iconLeft: <Icon name="icon-solid-ellipsis-v" />,
+      iconLeft: <Icon name={IconAwesomeEnum.ELLIPSIS_V} />,
       menus: [
         {
-          items: computeMenuActions(),
+          items:
+            variable.owned_by === ExternalServiceEnum.DOPPLER
+              ? [
+                  {
+                    name: 'Edit in Doppler',
+                    contentLeft: (
+                      <Icon name={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE} className="text-sm text-brand-500" />
+                    ),
+                    link: {
+                      url: 'https://dashboard.doppler.com',
+                      external: true,
+                    },
+                  },
+                ]
+              : computeMenuActions(),
         },
       ],
     },
   ]
 
-  if (variable.scope !== APIVariableScopeEnum.BUILT_IN) {
+  if (variable.owned_by === 'QOVERY' && variable.scope !== APIVariableScopeEnum.BUILT_IN) {
     rowActions[0]?.menus?.push({
       items: [
         {
@@ -211,7 +226,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
               },
             })
           },
-          contentLeft: <Icon name="icon-solid-trash" className="text-sm text-error-600" />,
+          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
         },
       ],
     })

@@ -43,7 +43,8 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): En
 
 export const mockSecretEnvironmentVariable = (
   isAlias = false,
-  isOverride = false
+  isOverride = false,
+  ownedBy = 'QOVERY'
 ): SecretEnvironmentVariableEntity => ({
   id: chance.integer().toString(),
   created_at: chance.date().toString(),
@@ -74,6 +75,7 @@ export const mockSecretEnvironmentVariable = (
     : isAlias
     ? APIVariableTypeEnum.ALIAS
     : APIVariableTypeEnum.VALUE,
+  owned_by: ownedBy,
 })
 
 export const environmentVariableFactoryMock = (

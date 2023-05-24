@@ -2,7 +2,7 @@ import { ClickEvent } from '@szhsin/react-menu'
 import { LinkedServiceTypeEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
-import { IconEnum } from '@qovery/shared/enums'
+import { ExternalServiceEnum, IconEnum } from '@qovery/shared/enums'
 import {
   EnvironmentVariableEntity,
   EnvironmentVariableSecretOrPublic,
@@ -67,12 +67,19 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
             <div className="mx-3 w-full">
               <Skeleton show={isLoading} width={250} height={16}>
                 <div className="cursor-pointer w-full mt-0.5 text-text-600 text-ssm font-medium flex items-center">
-                  {' '}
+                  {variable.owned_by === ExternalServiceEnum.DOPPLER && (
+                    <span
+                      data-testid="doppler-tag"
+                      className="bg-[#3391FB] font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2"
+                    >
+                      {variable.owned_by}
+                    </span>
+                  )}{' '}
                   {(variable as EnvironmentVariableEntity).aliased_variable ||
                   (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-accent3-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                      <span className="bg-accent3-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
                         ALIAS
                       </span>
                     </>
@@ -80,7 +87,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     (variable as SecretEnvironmentVariableEntity).overridden_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-brand-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                      <span className="bg-brand-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
                         OVERRIDE
                       </span>
                     </>
@@ -88,15 +95,22 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     ''
                   )}
                   {(variable as EnvironmentVariableEntity).mount_path ? (
-                    <span className="bg-accent1-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+                    <span className="bg-accent1-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
                       FILE
                     </span>
                   ) : (
                     ''
                   )}
                   <Tooltip align="start" content={variable.key || ''}>
-                    <span className="truncate w-full">{variable.key}</span>
+                    <span className="truncate">{variable.key}</span>
                   </Tooltip>
+                  {variable.owned_by === ExternalServiceEnum.DOPPLER && (
+                    <Tooltip content="Sync with Doppler">
+                      <span className="ml-2">
+                        <Icon name={IconEnum.DOPPLER} width="11px" height="11px" />
+                      </span>
+                    </Tooltip>
+                  )}
                 </div>
               </Skeleton>
             </div>
