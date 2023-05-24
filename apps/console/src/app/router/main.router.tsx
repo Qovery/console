@@ -4,6 +4,7 @@ import { PagesCluster } from '@qovery/pages/cluster'
 import { PageClusters } from '@qovery/pages/clusters'
 import { PageDatabase } from '@qovery/pages/database'
 import { PageEnvironments } from '@qovery/pages/environments'
+import { PageEvents } from '@qovery/pages/events'
 import { PageEnvironmentLogs } from '@qovery/pages/logs/environment'
 import { PageInfraLogs } from '@qovery/pages/logs/infra'
 import { PageOnboarding } from '@qovery/pages/onboarding'
@@ -19,6 +20,7 @@ import {
   DATABASE_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
+  EVENTS_URL,
   GITHUB_APPLICATION_CALLBACK_URL,
   INFRA_LOGS_URL,
   ONBOARDING_URL,
@@ -62,6 +64,13 @@ export const ROUTER: RouterProps[] = [
     component: <RedirectOverview />,
     protected: true,
     layout: false,
+  },
+  {
+    path: `${EVENTS_URL()}/*`,
+    component: <PageEvents />,
+    protected: true,
+    layout: true,
+    topBar: false,
   },
   {
     path: OVERVIEW_URL(),

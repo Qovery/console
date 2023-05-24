@@ -229,6 +229,14 @@ module.exports = {
       },
     },
   },
+  safelist: [
+    {
+      pattern: /grid-cols-(2|3|4|5|6|7|8|9|10)/,
+    },
+    {
+      pattern: /col-span-(2|3|4|5|6|7|8|9|10)/,
+    },
+  ],
   variants: {
     extend: {},
   },

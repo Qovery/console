@@ -119,6 +119,10 @@
     width: inherit;
     min-width: theme('spacing.9');
   }
+
+  &.btn--disabled {
+    color: theme('colors.element.light.lighter.500');
+  }
 }
 
 .btn-icon--raised {

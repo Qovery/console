@@ -1,5 +1,12 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { CLUSTERS_URL, CLUSTER_URL, INFRA_LOGS_URL, ORGANIZATION_URL, SETTINGS_URL } from '@qovery/shared/routes'
+import {
+  CLUSTERS_URL,
+  CLUSTER_URL,
+  EVENTS_URL,
+  INFRA_LOGS_URL,
+  ORGANIZATION_URL,
+  SETTINGS_URL,
+} from '@qovery/shared/routes'
 import {
   ButtonIcon,
   ButtonIconStyle,
@@ -19,6 +26,7 @@ export function Navigation() {
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
+  const matchEventsRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/events`)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
   const matchClusterRoute =
     pathname.includes(CLUSTERS_URL(organizationId)) ||
@@ -95,6 +103,17 @@ export function Navigation() {
                 style={ButtonIconStyle.ALT}
                 size={ButtonSize.XLARGE}
                 link={CLUSTERS_URL(organizationId)}
+              />
+            </div>
+          </Tooltip>
+          <Tooltip content="Events" side="right">
+            <div>
+              <ButtonIcon
+                className={matchEventsRoute ? 'is-active' : ''}
+                icon={IconAwesomeEnum.CLOCK_ROTATE_LEFT}
+                style={ButtonIconStyle.ALT}
+                size={ButtonSize.XLARGE}
+                link={EVENTS_URL(organizationId)}
               />
             </div>
           </Tooltip>
