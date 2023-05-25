@@ -26,6 +26,7 @@ export function PageGeneral(props: PageGeneralProps) {
     pageSize,
     placeholderEvents,
   } = props
+
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
       title: 'Timestamp',

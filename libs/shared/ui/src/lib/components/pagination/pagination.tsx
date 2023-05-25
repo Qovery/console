@@ -1,5 +1,6 @@
+// import { useState } from 'react'
 import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
-import { ButtonSize } from '../buttons/button/button'
+import Button, { ButtonSize, ButtonStyle } from '../buttons/button/button'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import InputSelectSmall from '../inputs/input-select-small/input-select-small'
 
@@ -7,13 +8,26 @@ export interface PaginationProps {
   nextDisabled?: boolean
   previousDisabled?: boolean
   className?: string
-  onNext: () => void
-  onPrevious: () => void
+  onNext: () => void | PaginationAction
+  onPrevious: () => void | PaginationAction
   pageSize?: string
   onPageSizeChange?: (pageSize: string) => void
 }
 
+export interface PaginationAction {
+  index: number
+  url: string
+  action: () => void
+}
+
 export function Pagination(props: PaginationProps) {
+  // const [visitedPages, setVisitedPages] = useState<PaginationAction[] | undefined>([
+  //   {
+  //     index: 1,
+  //     url: props.onNext.action,
+  //   },
+  // ])
+
   return (
     <div className={`flex justify-between ${props.className || ''}`}>
       <div className="flex gap-0.5 items-center">
@@ -27,6 +41,16 @@ export function Pagination(props: PaginationProps) {
           onClick={() => props.onPrevious()}
           iconClassName="!text-xs"
         />
+        <Button
+          dataTestId="button-previous-page"
+          style={ButtonStyle.STROKED}
+          size={ButtonSize.SMALL}
+          className="!w-8"
+          disabled={props.previousDisabled}
+          onClick={() => props.onNext()}
+        >
+          1
+        </Button>
         <ButtonIcon
           dataTestId="button-next-page"
           icon={IconAwesomeEnum.CHEVRON_RIGHT}
@@ -42,7 +66,6 @@ export function Pagination(props: PaginationProps) {
         <InputSelectSmall
           dataTestId="select-page-size"
           name="pageSize"
-          label=""
           className="!w-16"
           defaultValue={props.pageSize || '10'}
           onChange={(e) => props.onPageSizeChange && props.onPageSizeChange(e || '')}
