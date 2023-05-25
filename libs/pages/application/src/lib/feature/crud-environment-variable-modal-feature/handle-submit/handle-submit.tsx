@@ -53,7 +53,11 @@ export function handleSubmitForEnvSecretCreation(
         data.scope === APIVariableScopeEnum.APPLICATION
       ) {
         dispatch(
-          postApplicationActionsRedeploy({ applicationId: props.applicationId, environmentId: props.environmentId })
+          postApplicationActionsRedeploy({
+            applicationId: props.applicationId,
+            environmentId: props.environmentId,
+            serviceType: serviceType,
+          })
         )
       } else {
         actionRedeployEnvironment()
