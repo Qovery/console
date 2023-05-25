@@ -11,6 +11,7 @@ const props: RowEventProps = {
   isPlaceholder: false,
   expanded: false,
   setExpanded: jest.fn(),
+  columnsWidth: '',
 }
 
 describe('RowEvent', () => {
@@ -32,13 +33,11 @@ describe('RowEvent', () => {
   it('should render 7 cells with good content', () => {
     const { baseElement } = render(<RowEvent {...props} />)
 
-    expect(getByTestId(baseElement, 'row-event')).toHaveClass('grid-cols-7')
-
     getByText(baseElement, dateYearMonthDayHourMinuteSecond(new Date(mockEvent.timestamp || '')))
     getByTestId(baseElement, 'tag')
     getByText(baseElement, upperCaseFirstLetter(mockEvent.target_type)!)
-    getByText(baseElement, `${mockEvent.project_name}:${mockEvent.environment_name} (${mockEvent.target_name})`)
-    getByText(baseElement, mockEvent.sub_target_type)
+    getByText(baseElement, mockEvent.target_name)
+    getByText(baseElement, upperCaseFirstLetter(mockEvent.sub_target_type)?.replace('_', ' '))
     getByText(baseElement, mockEvent.triggered_by!)
     getByText(baseElement, upperCaseFirstLetter(mockEvent.origin)!)
   })

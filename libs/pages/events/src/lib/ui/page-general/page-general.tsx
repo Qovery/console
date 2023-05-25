@@ -50,6 +50,8 @@ export function PageGeneral(props: PageGeneralProps) {
     },
   ]
 
+  const columnsWidth = '13% 12% 12% 15% 15% 22% 10%'
+
   return (
     <>
       <div className="py-6 flex justify-between">
@@ -61,10 +63,13 @@ export function PageGeneral(props: PageGeneralProps) {
         data={events}
         className="border border-element-light-lighter-400 rounded"
         classNameHead="rounded-t"
+        columnsWidth={columnsWidth}
       >
         <div>
           {isLoading ? (
-            placeholderEvents?.map((event) => <RowEventFeature key={event.timestamp} event={event} isPlaceholder />)
+            placeholderEvents?.map((event) => (
+              <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} isPlaceholder />
+            ))
           ) : events && events.length === 0 ? (
             <div className="text-center py-4 px-5">
               <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
@@ -73,7 +78,7 @@ export function PageGeneral(props: PageGeneralProps) {
               </p>
             </div>
           ) : (
-            events?.map((event) => <RowEventFeature key={event.timestamp} event={event} />)
+            events?.map((event) => <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />)
           )}
         </div>
       </Table>

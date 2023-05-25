@@ -8,18 +8,20 @@ import CopyButton from '../copy-button/copy-button'
 export interface RowEventProps {
   event: OrganizationEventResponse
   expanded: boolean
+  columnsWidth: string
   setExpanded: (expanded: boolean) => void
   isPlaceholder?: boolean
 }
 
 export function RowEvent(props: RowEventProps) {
-  const { event, expanded, setExpanded, isPlaceholder } = props
+  const { event, expanded, setExpanded, isPlaceholder, columnsWidth } = props
 
   return (
     <>
       <div
         data-testid="row-event"
-        className="grid grid-cols-7 h-14 py-3 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
+        className="grid h-14 py-3 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
+        style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
         <div className="px-4 flex gap-3">
@@ -45,22 +47,37 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="px-4">
           <Skeleton height={24} width={80} show={isPlaceholder}>
-            <Tooltip content="project:environment (service)">
-              <span className="whitespace-nowrap overflow-hidden text-ellipsis">
-                {event.project_name ? `${event.project_name}:` : ''}
-                {event.environment_name || ''} ({event.target_name})
-              </span>
+            <Tooltip
+              content={
+                <div>
+                  {event.project_name && (
+                    <span>
+                      Project: {event.project_name} <br />
+                    </span>
+                  )}
+                  {event.environment_name && (
+                    <span>
+                      Environment: {event.environment_name} <br />
+                    </span>
+                  )}
+                  Target: {event.target_name}
+                </div>
+              }
+            >
+              <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.target_name}</span>
             </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={24} width={80} show={isPlaceholder}>
-            <span>{event.sub_target_type || ''}</span>
+            <span>{upperCaseFirstLetter(event.sub_target_type || '')?.replace('_', ' ')}</span>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={24} width={80} show={isPlaceholder}>
-            <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.triggered_by}</span>
+            <Tooltip content={event.triggered_by || ''}>
+              <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.triggered_by}</span>
+            </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
