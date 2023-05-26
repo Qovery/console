@@ -92,7 +92,9 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         loading={loadingStatus === 'loading'}
         isEdit={!!props.customDomain}
         link={
-          (props.application?.links?.items && props.application?.links?.items[0].url?.replace('https://', '')) || ''
+          props.application?.links?.items && props.application?.links?.items?.length > 0
+            ? props.application?.links?.items[0].url?.replace('https://', '')
+            : ''
         }
       />
     </FormProvider>

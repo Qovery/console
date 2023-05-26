@@ -49,19 +49,22 @@ export function CrudModal(props: CrudModalProps) {
         label="Type"
         rightElement={<CopyToClipboard className="text-text-600 text-sm" content="CNAME" />}
       />
-      <InputText
-        disabled
-        className="mb-6"
-        name="type"
-        value={props.isEdit ? props.customDomain?.validation_domain : props.link}
-        label="Value"
-        rightElement={
-          <CopyToClipboard
-            className="text-text-600 text-sm"
-            content={(props.isEdit ? props.customDomain?.validation_domain : props.link) || ''}
+      {props.customDomain?.validation_domain ||
+        (props.link && (
+          <InputText
+            disabled
+            className="mb-6"
+            name="type"
+            value={props.isEdit ? props.customDomain?.validation_domain : props.link}
+            label="Value"
+            rightElement={
+              <CopyToClipboard
+                className="text-text-600 text-sm"
+                content={(props.isEdit ? props.customDomain?.validation_domain : props.link) || ''}
+              />
+            }
           />
-        }
-      />
+        ))}
       <BannerBox
         className="mt-7"
         title="How to config"
