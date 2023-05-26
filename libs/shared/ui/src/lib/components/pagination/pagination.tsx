@@ -1,4 +1,5 @@
 // import { useState } from 'react'
+import { useState } from 'react'
 import ButtonIcon, { ButtonIconStyle } from '../buttons/button-icon/button-icon'
 import Button, { ButtonSize, ButtonStyle } from '../buttons/button/button'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
@@ -8,8 +9,8 @@ export interface PaginationProps {
   nextDisabled?: boolean
   previousDisabled?: boolean
   className?: string
-  onNext: () => void | PaginationAction
-  onPrevious: () => void | PaginationAction
+  onNext: PaginationAction
+  onPrevious: PaginationAction
   pageSize?: string
   onPageSizeChange?: (pageSize: string) => void
 }
@@ -21,12 +22,13 @@ export interface PaginationAction {
 }
 
 export function Pagination(props: PaginationProps) {
-  // const [visitedPages, setVisitedPages] = useState<PaginationAction[] | undefined>([
-  //   {
-  //     index: 1,
-  //     url: props.onNext.action,
-  //   },
-  // ])
+  const [visitedPages, setVisitedPages] = useState<PaginationAction[]>([
+    {
+      index: 1,
+      url: props.onNext.url,
+      action: props.onNext.action,
+    },
+  ])
 
   return (
     <div className={`flex justify-between ${props.className || ''}`}>
@@ -38,19 +40,26 @@ export function Pagination(props: PaginationProps) {
           size={ButtonSize.SMALL}
           className="!w-8"
           disabled={props.previousDisabled}
-          onClick={() => props.onPrevious()}
+          onClick={() => {
+            props.onPrevious.action()
+          }}
           iconClassName="!text-xs"
         />
-        <Button
-          dataTestId="button-previous-page"
-          style={ButtonStyle.STROKED}
-          size={ButtonSize.SMALL}
-          className="!w-8"
-          disabled={props.previousDisabled}
-          onClick={() => props.onNext()}
-        >
-          1
-        </Button>
+        {visitedPages.map((page) => (
+          <Button
+            dataTestId="button-previous-page"
+            style={ButtonStyle.STROKED}
+            size={ButtonSize.SMALL}
+            className="!w-8 btn--no-min-w"
+            // disabled={props.previousDisabled}
+            onClick={() => {
+              props.onNext.action()
+              setVisitedPages([...visitedPages, props.onNext])
+            }}
+          >
+            {page.index}
+          </Button>
+        ))}
         <ButtonIcon
           dataTestId="button-next-page"
           icon={IconAwesomeEnum.CHEVRON_RIGHT}
@@ -58,7 +67,9 @@ export function Pagination(props: PaginationProps) {
           size={ButtonSize.SMALL}
           className="!w-8"
           disabled={props.nextDisabled}
-          onClick={() => props.onNext()}
+          onClick={() => {
+            props.onNext.action()
+          }}
           iconClassName="!text-xs"
         />
       </div>

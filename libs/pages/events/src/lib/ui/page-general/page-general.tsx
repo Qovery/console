@@ -1,13 +1,13 @@
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
-import { Icon, IconAwesomeEnum, Pagination, Table, TableHeadProps } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, Pagination, PaginationAction, Table, TableHeadProps } from '@qovery/shared/ui'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
   isLoading: boolean
   events?: OrganizationEventResponse[]
   placeholderEvents?: OrganizationEventResponse[]
-  onNext: () => void
-  onPrevious: () => void
+  onNext: PaginationAction
+  onPrevious: PaginationAction
   nextDisabled?: boolean
   previousDisabled?: boolean
   onPageSizeChange?: (pageSize: string) => void

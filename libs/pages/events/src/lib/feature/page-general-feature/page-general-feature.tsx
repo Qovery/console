@@ -55,16 +55,40 @@ export function PageGeneralFeature() {
     setQueryParams(newQueryParams)
   }, [location])
 
-  const onPrevious = () => {
-    if (eventsData?.links?.previous) {
-      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.previous))))
-    }
+  // const onPrevious = () => {
+  //   if (eventsData?.links?.previous) {
+  //     setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.previous))))
+  //   }
+  // }
+
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
+  const onPrevious = {
+    index: currentPage,
+    url: eventsData?.links?.previous ? eventsData.links.previous : '',
+    action: () => {
+      if (eventsData?.links?.previous) {
+        setCurrentPage(currentPage - 1)
+        setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.previous))))
+      }
+    },
   }
 
-  const onNext = () => {
-    if (eventsData?.links?.next) {
-      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.next))))
-    }
+  // const onNext = () => {
+  //   if (eventsData?.links?.next) {
+  //     setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.next))))
+  //   }
+  // }
+
+  const onNext = {
+    index: currentPage,
+    url: eventsData?.links?.next ? eventsData.links.next : '',
+    action: () => {
+      if (eventsData?.links?.next) {
+        setCurrentPage(currentPage + 1)
+        setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.next))))
+      }
+    },
   }
 
   const onPageSizeChange = (pageSize: string) => {
