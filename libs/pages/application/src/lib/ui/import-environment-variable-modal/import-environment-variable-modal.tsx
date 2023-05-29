@@ -47,7 +47,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-text-600 mb-6 max-w-sm">Import variables</h2>
+      <h2 className="h4 text-text-600 mb-6 max-w-sm">Import variables from .env file</h2>
 
       {props.showDropzone ? (
         <div {...props.dropzoneGetRootProps({ className: 'dropzone' })}>
