@@ -1,5 +1,6 @@
 import { OrganizationAvailableRole, OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
+import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
@@ -13,7 +14,7 @@ import {
   LoaderSpinner,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { MemberRoleEnum, RolesIcons } from '../page-organization-members/row-member/row-member'
+import { RolesIcons } from '../page-organization-members/row-member/row-member'
 
 export interface PageOrganizationRolesProps {
   onAddRole: () => void

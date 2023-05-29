@@ -1,11 +1,6 @@
-import {
-  InviteMember,
-  InviteMemberRequest,
-  InviteMemberRoleEnum,
-  Member,
-  OrganizationAvailableRole,
-} from 'qovery-typescript-axios'
+import { InviteMember, InviteMemberRequest, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
+import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   Avatar,
@@ -40,20 +35,12 @@ export interface RowMemberProps {
   userIsOwner?: boolean
 }
 
-enum InviteMemberRoleExtendEnum {
-  DEVOPS = 'DEVOPS',
-  BILLING = 'BILLING',
-}
-
 export const RolesIcons: { [key: string]: string } = {
   ADMIN: IconAwesomeEnum.USER_CROWN,
   BILLING: IconAwesomeEnum.WALLET,
   DEVOPS: IconAwesomeEnum.WHEEL,
   VIEWER: IconAwesomeEnum.EYE,
 }
-
-type MemberRoleEnum = InviteMemberRoleEnum | InviteMemberRoleExtendEnum
-export const MemberRoleEnum = { ...InviteMemberRoleEnum, ...InviteMemberRoleExtendEnum }
 
 export function RowMember(props: RowMemberProps) {
   const {
@@ -77,7 +64,7 @@ export function RowMember(props: RowMemberProps) {
 
   const name = (member as Member).name?.split(' ') || (member as InviteMember).email.split(' ')
 
-  const isOwner = member.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER
+  const isOwner = member.role_name?.toUpperCase() === MemberRoleEnum.OWNER
 
   const menuItem = (role: OrganizationAvailableRole, customRole: boolean) => ({
     name: upperCaseFirstLetter(role.name) || '',
@@ -208,25 +195,23 @@ export function RowMember(props: RowMemberProps) {
     },
   ]
 
-  const input = (role?: InviteMemberRoleEnum | string) => (
+  const input = (role?: MemberRoleEnum | string) => (
     <Skeleton className="shrink-0" show={loading} width={176} height={30}>
       <div
         data-testid="input"
         className={`flex relative px-3 py-2 border rounded select-none w-44 ${
-          role?.toUpperCase() === InviteMemberRoleEnum.OWNER || !(member as Member).last_activity_at
+          role?.toUpperCase() === MemberRoleEnum.OWNER || !(member as Member).last_activity_at
             ? 'bg-element-light-lighter-200 border-element-light-lighter-500 text-text-400'
             : 'border-element-light-ligther-600 text-text-600 cursor-pointer'
         }`}
       >
         <span className="text-sm">{upperCaseFirstLetter(role)}</span>
-        {!loadingUpdateRole &&
-          role?.toUpperCase() !== InviteMemberRoleEnum.OWNER &&
-          (member as Member).last_activity_at && (
-            <Icon
-              name={IconAwesomeEnum.ANGLE_DOWN}
-              className="absolute top-2.5 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
-            />
-          )}
+        {!loadingUpdateRole && role?.toUpperCase() !== MemberRoleEnum.OWNER && (member as Member).last_activity_at && (
+          <Icon
+            name={IconAwesomeEnum.ANGLE_DOWN}
+            className="absolute top-2.5 right-4 text-sm text-text-500 leading-3 translate-y-0.5 pointer-events-none"
+          />
+        )}
         {loadingUpdateRole && <LoaderSpinner className="w-4 h-4 absolute top-2.5 right-4" />}
       </div>
     </Skeleton>

@@ -1,11 +1,6 @@
-import {
-  InviteMember,
-  InviteMemberRequest,
-  InviteMemberRoleEnum,
-  Member,
-  OrganizationAvailableRole,
-} from 'qovery-typescript-axios'
+import { InviteMember, InviteMemberRequest, Member, OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { MemberRoleEnum } from '@qovery/shared/enums'
 import { Button, HelpSection, IconAwesomeEnum, Table, TableFilterProps } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
 
@@ -147,7 +142,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
               <RowMember
                 key={member.id}
                 filter={filterMembers}
-                userIsOwner={userIsOwner?.role_name?.toUpperCase() === InviteMemberRoleEnum.OWNER}
+                userIsOwner={userIsOwner?.role_name?.toUpperCase() === MemberRoleEnum.OWNER}
                 loading={loadingMembers}
                 member={member}
                 availableRoles={availableRoles}

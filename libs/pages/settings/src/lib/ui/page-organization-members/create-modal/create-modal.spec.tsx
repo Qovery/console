@@ -1,7 +1,6 @@
 import { act, fireEvent, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { InviteMemberRoleEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import CreateModal, { CreateModalProps } from './create-modal'
 
@@ -9,11 +8,11 @@ const props: CreateModalProps = {
   availableRoles: [
     {
       id: '1111-1111-1111-1111',
-      name: InviteMemberRoleEnum.ADMIN,
+      name: 'ADMIN',
     },
     {
       id: '2222-2222-2222-2222',
-      name: InviteMemberRoleEnum.VIEWER,
+      name: 'VIEWER',
     },
   ],
   loading: false,
