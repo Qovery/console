@@ -39,7 +39,7 @@ export const extractEventQueryParams = (urlString: string): EventQueryParams => 
 }
 
 export function PageGeneralFeature() {
-  useDocumentTitle('Events - Qovery')
+  useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
   const location = useLocation()
   const [, setSearchParams] = useSearchParams()

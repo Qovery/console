@@ -15,12 +15,12 @@ import { AcceptInvitationFeature, GithubApplicationCallbackFeature } from '@qove
 import {
   ACCEPT_INVITATION_URL,
   APPLICATION_URL,
+  AUDIT_LOGS_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
-  EVENTS_URL,
   GITHUB_APPLICATION_CALLBACK_URL,
   INFRA_LOGS_URL,
   ONBOARDING_URL,
@@ -66,7 +66,7 @@ export const ROUTER: RouterProps[] = [
     layout: false,
   },
   {
-    path: `${EVENTS_URL()}/*`,
+    path: `${AUDIT_LOGS_URL()}/*`,
     component: <PageEvents />,
     protected: true,
     layout: true,

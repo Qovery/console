@@ -1,8 +1,8 @@
 import { Link, useLocation, useParams } from 'react-router-dom'
 import {
+  AUDIT_LOGS_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
-  EVENTS_URL,
   INFRA_LOGS_URL,
   ORGANIZATION_URL,
   SETTINGS_URL,
@@ -106,14 +106,14 @@ export function Navigation() {
               />
             </div>
           </Tooltip>
-          <Tooltip content="Events" side="right">
+          <Tooltip content="Audit Logs" side="right">
             <div>
               <ButtonIcon
                 className={matchEventsRoute ? 'is-active' : ''}
                 icon={IconAwesomeEnum.CLOCK_ROTATE_LEFT}
                 style={ButtonIconStyle.ALT}
                 size={ButtonSize.XLARGE}
-                link={EVENTS_URL(organizationId)}
+                link={AUDIT_LOGS_URL(organizationId)}
               />
             </div>
           </Tooltip>

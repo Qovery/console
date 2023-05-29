@@ -9,7 +9,7 @@ export * from './sub-router/logs.router'
 export * from './sub-router/clusters.router'
 export * from './sub-router/cluster.router'
 export * from './sub-router/job.router'
-export * from './sub-router/events.router'
+export * from './sub-router/audit-logs.router'
 
 export const INDEX_URL = '/'
 export const ACCEPT_INVITATION_URL = `/accept-invitation`
