@@ -105,7 +105,7 @@ export function TabsFeature() {
       {
         items: [
           {
-            name: 'Import variables',
+            name: 'Import from .env file',
             onClick: (e: ClickEvent) => {
               openModal({
                 content: (
