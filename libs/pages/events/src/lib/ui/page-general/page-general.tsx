@@ -55,7 +55,7 @@ export function PageGeneral(props: PageGeneralProps) {
   return (
     <>
       <div className="py-6 flex justify-between">
-        <h2 className="h4 text-text-700">Events</h2>
+        <h2 className="h4 text-text-700">Audit Logs</h2>
       </div>
 
       <Table

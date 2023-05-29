@@ -19,11 +19,13 @@ import {
   ButtonStyle,
   Icon,
   IconAwesomeEnum,
+  IconFa,
   MenuData,
   Skeleton,
   StatusChip,
   Tabs,
   TabsItem,
+  Tooltip,
   useModal,
 } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
@@ -125,6 +127,18 @@ export function TabsFeature() {
           {
             name: 'Import from Doppler',
             contentLeft: <Icon name={IconAwesomeEnum.ROTATE} className="text-sm text-brand-500" />,
+            contentRight: (
+              <Tooltip content="Documentation">
+                <a
+                  className="ml-2"
+                  rel="noreferrer"
+                  href="https://hub.qovery.com/docs/using-qovery/integration/secret-manager/doppler/"
+                  target="_blank"
+                >
+                  <IconFa name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-500 text-sm" />
+                </a>
+              </Tooltip>
+            ),
             link: {
               url: 'https://dashboard.doppler.com',
               external: true,

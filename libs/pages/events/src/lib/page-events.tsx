@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { EVENTS_GENERAL_URL, EVENTS_URL } from '@qovery/shared/routes'
+import { AUDIT_LOGS_GENERAL_URL, AUDIT_LOGS_URL } from '@qovery/shared/routes'
 import { ROUTER_EVENTS } from './router/router'
 
 export function PageEvents() {
@@ -11,7 +11,7 @@ export function PageEvents() {
         {ROUTER_EVENTS.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
-        <Route path="*" element={<Navigate replace to={EVENTS_URL(organizationId) + EVENTS_GENERAL_URL} />} />
+        <Route path="*" element={<Navigate replace to={AUDIT_LOGS_URL(organizationId) + AUDIT_LOGS_GENERAL_URL} />} />
       </Routes>
     </div>
   )
