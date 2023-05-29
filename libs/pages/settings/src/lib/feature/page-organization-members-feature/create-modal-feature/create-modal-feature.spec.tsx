@@ -1,5 +1,4 @@
 import { act, fireEvent, render } from '@testing-library/react'
-import { InviteMemberRoleEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import CreateModalFeature, { CreateModalFeatureProps } from './create-modal-feature'
 
@@ -24,11 +23,11 @@ describe('CreateModalFeature', () => {
     availableRoles: [
       {
         id: '1111-1111-1111-1111',
-        name: InviteMemberRoleEnum.ADMIN,
+        name: 'ADMIN',
       },
       {
         id: '2222-2222-2222-2222',
-        name: InviteMemberRoleEnum.VIEWER,
+        name: 'VIEWER',
       },
     ],
     organizationId: '1',
