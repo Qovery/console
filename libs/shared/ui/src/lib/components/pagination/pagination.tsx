@@ -42,7 +42,6 @@ export function Pagination(props: PaginationProps) {
         <InputSelectSmall
           dataTestId="select-page-size"
           name="pageSize"
-          label=""
           className="!w-16"
           defaultValue={props.pageSize || '10'}
           onChange={(e) => props.onPageSizeChange && props.onPageSizeChange(e || '')}

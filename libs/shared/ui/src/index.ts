@@ -1,4 +1,5 @@
 export * from './lib/components/pagination/pagination'
+export * from './lib/components/pagination-numbers/pagination-numbers'
 export * from './lib/components/inputs/input-radio-box/input-radio-box'
 export * from './lib/components/scroll-shadow-wrapper/scroll-shadow-wrapper'
 export * from './lib/components/modal-alert/use-modal-alert/use-modal-alert'

@@ -1,5 +1,5 @@
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
-import { Icon, IconAwesomeEnum, Pagination, Table, TableHeadProps } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, PaginationNumbers, Table, TableHeadProps } from '@qovery/shared/ui'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
@@ -8,6 +8,7 @@ export interface PageGeneralProps {
   placeholderEvents?: OrganizationEventResponse[]
   onNext: () => void
   onPrevious: () => void
+  currentPage: number
   nextDisabled?: boolean
   previousDisabled?: boolean
   onPageSizeChange?: (pageSize: string) => void
@@ -20,6 +21,7 @@ export function PageGeneral(props: PageGeneralProps) {
     events,
     onNext,
     onPrevious,
+    currentPage,
     onPageSizeChange,
     nextDisabled,
     previousDisabled,
@@ -82,7 +84,17 @@ export function PageGeneral(props: PageGeneralProps) {
           )}
         </div>
       </Table>
-      <Pagination
+      <PaginationNumbers
+        className="pt-4 pb-20"
+        onPrevious={onPrevious}
+        onNext={onNext}
+        currentPage={currentPage}
+        nextDisabled={nextDisabled}
+        previousDisabled={previousDisabled}
+        pageSize={pageSize}
+        onPageSizeChange={onPageSizeChange}
+      />
+      {/* <Pagination
         className="pt-4 pb-20"
         onPrevious={onPrevious}
         onNext={onNext}
@@ -90,7 +102,7 @@ export function PageGeneral(props: PageGeneralProps) {
         previousDisabled={previousDisabled}
         pageSize={pageSize}
         onPageSizeChange={onPageSizeChange}
-      />
+      /> */}
     </>
   )
 }
