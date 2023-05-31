@@ -11,9 +11,11 @@ import DatePickerHeader from './date-picker-header/date-picker-header'
 export interface DatePickerProps {
   onChange: (startDate: Date, endDate?: Date) => void
   isOpen: boolean
+  minDate?: Date
+  maxDate?: Date
 }
 
-export function DatePicker({ onChange, isOpen, children }: PropsWithChildren<DatePickerProps>) {
+export function DatePicker({ onChange, isOpen, minDate, maxDate, children }: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date>(new Date())
   const [endDate, setEndDate] = useState<Date | undefined>()
 
@@ -60,6 +62,9 @@ export function DatePicker({ onChange, isOpen, children }: PropsWithChildren<Dat
             endDate={endDate}
             renderCustomHeader={(params: ReactDatePickerCustomHeaderProps) => <DatePickerHeader {...params} />}
             calendarContainer={renderContainer}
+            maxDate={maxDate}
+            minDate={minDate}
+            showDisabledMonthNavigation
             selectsRange
             useWeekdaysShort
             inline

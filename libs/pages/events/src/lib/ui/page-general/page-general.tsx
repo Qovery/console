@@ -1,3 +1,4 @@
+import { addMonths } from 'date-fns'
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
 import {
   Button,
@@ -74,7 +75,12 @@ export function PageGeneral({
       </div>
       <div className="flex items-center mb-4">
         <p className="text-text-400 text-ssm font-medium mr-1.5">Select</p>
-        <DatePicker onChange={onChangeTimestamp} isOpen={isOpenTimestamp}>
+        <DatePicker
+          onChange={onChangeTimestamp}
+          isOpen={isOpenTimestamp}
+          maxDate={new Date()}
+          minDate={addMonths(new Date(), -1)}
+        >
           <Button
             onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
             style={ButtonStyle.STROKED}
