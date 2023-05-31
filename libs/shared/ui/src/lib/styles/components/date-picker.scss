@@ -1,7 +1,8 @@
 // This style override the library react-datepicker
 
 .date-picker {
-  .react-datepicker__header--custom {
+  .react-datepicker__header--custom,
+  .react-datepicker__day--keyboard-selected {
     border: 0;
     padding: 0;
     background-color: transparent;
@@ -58,9 +59,13 @@
   }
 
   .react-datepicker__day--selected,
-  .react-datepicker__day--in-range,
-  .react-datepicker__day--keyboard-selected,
-  .react-datepicker__day--in-selecting-range:not(.react-datepicker__day--range-start) {
+  .react-datepicker__day--in-range:not(.react-datepicker__day--range-start),
+  .react-datepicker__day--in-selecting-range:not(
+      .react-datepicker__day--in-range,
+      .react-datepicker__month-text--in-range,
+      .react-datepicker__quarter-text--in-range,
+      .react-datepicker__year-text--in-range
+    ) {
     background-color: theme('colors.brand.50');
     color: theme('colors.brand.500');
   }

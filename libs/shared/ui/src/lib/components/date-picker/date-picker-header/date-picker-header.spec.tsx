@@ -1,38 +1,57 @@
-import { render } from '@testing-library/react'
-import DatePicker, { DatePickerProps } from './date-picker-header'
+import { render } from '__tests__/utils/setup-jest'
+import { DatePickerHeader } from './date-picker-header'
 
-describe('DatePicker', () => {
-  let props: DatePickerProps
+describe('DatePickerHeader', () => {
+  const mockDate = new Date(2023, 4, 31) // May 31, 2023
 
-  beforeEach(() => {
-    props = {
-      description: 'Test description',
-    }
+  it('renders the correct month and year', () => {
+    const { getByText } = render(
+      <DatePickerHeader
+        date={mockDate}
+        decreaseMonth={jest.fn()}
+        increaseMonth={jest.fn()}
+        prevMonthButtonDisabled={false}
+        nextMonthButtonDisabled={false}
+      />
+    )
+
+    expect(getByText('May')).toBeInTheDocument()
+    expect(getByText('2023')).toBeInTheDocument()
   })
 
-  it('should render successfully', () => {
-    const { baseElement } = render(<DatePicker {...props} />)
-    expect(baseElement).toBeTruthy()
+  it('calls the decreaseMonth and increaseMonth functions when buttons are clicked', () => {
+    const decreaseMonthMock = jest.fn()
+    const increaseMonthMock = jest.fn()
+
+    const { getByTestId } = render(
+      <DatePickerHeader
+        date={mockDate}
+        decreaseMonth={decreaseMonthMock}
+        increaseMonth={increaseMonthMock}
+        prevMonthButtonDisabled={false}
+        nextMonthButtonDisabled={false}
+      />
+    )
+
+    getByTestId('date-picker-header-previous-btn').click()
+    getByTestId('date-picker-header-next-btn').click()
+
+    expect(decreaseMonthMock).toHaveBeenCalledTimes(1)
+    expect(increaseMonthMock).toHaveBeenCalledTimes(1)
   })
 
-  it('should add spacing between links except the last one', () => {
-    const links = [
-      {
-        link: '#',
-        linkLabel: 'How to configure my application',
-        external: true,
-      },
-      {
-        link: '#',
-        linkLabel: 'How to delete my application',
-        external: true,
-      },
-    ]
-    const { baseElement } = render(<DatePicker {...props} links={links} />)
-    const linksElement = baseElement.getElementsByTagName('a')
-    expect(linksElement[0].classList).toContain('mb-2')
-    expect(linksElement[1].classList).not.toContain('mb-2')
+  it('disables the buttons when prevMonthButtonDisabled or nextMonthButtonDisabled is true', () => {
+    const { getByTestId } = render(
+      <DatePickerHeader
+        date={mockDate}
+        decreaseMonth={jest.fn()}
+        increaseMonth={jest.fn()}
+        prevMonthButtonDisabled={true}
+        nextMonthButtonDisabled={true}
+      />
+    )
 
-    expect(baseElement).toBeTruthy()
+    expect(getByTestId('date-picker-header-previous-btn')).toBeDisabled()
+    expect(getByTestId('date-picker-header-next-btn')).toBeDisabled()
   })
 })

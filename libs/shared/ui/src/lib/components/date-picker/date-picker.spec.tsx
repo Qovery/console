@@ -1,38 +1,20 @@
-import { render } from '@testing-library/react'
-import DatePicker, { DatePickerProps } from './date-picker'
+import { render } from '__tests__/utils/setup-jest'
+import DatePicker from './date-picker'
 
 describe('DatePicker', () => {
-  let props: DatePickerProps
-
-  beforeEach(() => {
-    props = {
-      description: 'Test description',
-    }
-  })
-
   it('should render successfully', () => {
-    const { baseElement } = render(<DatePicker {...props} />)
+    const mockOnChange = jest.fn()
+    const { baseElement } = render(<DatePicker onChange={mockOnChange} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should add spacing between links except the last one', () => {
-    const links = [
-      {
-        link: '#',
-        linkLabel: 'How to configure my application',
-        external: true,
-      },
-      {
-        link: '#',
-        linkLabel: 'How to delete my application',
-        external: true,
-      },
-    ]
-    const { baseElement } = render(<DatePicker {...props} links={links} />)
-    const linksElement = baseElement.getElementsByTagName('a')
-    expect(linksElement[0].classList).toContain('mb-2')
-    expect(linksElement[1].classList).not.toContain('mb-2')
+  it('calls onChange with selected dates when Apply button is clicked', () => {
+    const mockOnChange = jest.fn()
+    const { getByText } = render(<DatePicker onChange={mockOnChange} />)
 
-    expect(baseElement).toBeTruthy()
+    const applyButton = getByText('Apply')
+    applyButton.click()
+
+    expect(mockOnChange).toHaveBeenCalled()
   })
 })

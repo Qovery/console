@@ -8,20 +8,18 @@ import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../buttons/button/button'
 import DatePickerHeader from './date-picker-header/date-picker-header'
 
-export function DatePicker() {
-  const [isOpen, setIsOpen] = useState(true)
-  const [startDate, setStartDate] = useState<Date | null>(new Date())
-  const [endDate, setEndDate] = useState<Date | null>(null)
+export interface DatePickerProps {
+  onChange: (startDate: Date, endDate?: Date) => void
+}
 
-  const handleChange = (dates: [Date | null, Date | null]) => {
+export function DatePicker({ onChange }: DatePickerProps) {
+  const [startDate, setStartDate] = useState<Date>(new Date())
+  const [endDate, setEndDate] = useState<Date | undefined>()
+
+  const handleChange = (dates: [Date, Date]) => {
     const [start, end] = dates
     setStartDate(start)
     setEndDate(end)
-  }
-
-  const handleClick = (e: any) => {
-    e.preventDefault()
-    setIsOpen(!isOpen)
   }
 
   const renderContainer = ({ children }: CalendarContainerProps) => {
@@ -39,30 +37,27 @@ export function DatePicker() {
         </svg>
         <div className="flex flex-col relative p-5">
           {children}
-          <Button className="mt-5">Apply</Button>
+          <Button className="mt-5" onClick={() => onChange(startDate, endDate)}>
+            Apply
+          </Button>
         </div>
       </CalendarContainer>
     )
   }
 
   return (
-    <>
-      <button onClick={handleClick}>test</button>
-      {isOpen && (
-        <DatePickerLib
-          withPortal
-          selected={startDate}
-          onChange={handleChange}
-          startDate={startDate}
-          endDate={endDate}
-          renderCustomHeader={(params: ReactDatePickerCustomHeaderProps) => <DatePickerHeader {...params} />}
-          calendarContainer={renderContainer}
-          selectsRange
-          useWeekdaysShort
-          inline
-        />
-      )}
-    </>
+    <DatePickerLib
+      withPortal
+      selected={startDate}
+      onChange={handleChange}
+      startDate={startDate}
+      endDate={endDate}
+      renderCustomHeader={(params: ReactDatePickerCustomHeaderProps) => <DatePickerHeader {...params} />}
+      calendarContainer={renderContainer}
+      selectsRange
+      useWeekdaysShort
+      inline
+    />
   )
 }
 
