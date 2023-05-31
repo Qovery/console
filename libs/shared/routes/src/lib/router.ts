@@ -15,6 +15,9 @@ export const INDEX_URL = '/'
 export const ACCEPT_INVITATION_URL = `/accept-invitation`
 export const GITHUB_APPLICATION_CALLBACK_URL = `/github-application-callback`
 export const ORGANIZATION_URL = (organizationId = ':organizationId') => `/organization/${organizationId}`
+export const ORGANIZATION_PROJECT_URL = '/project'
+export const ORGANIZATION_AUDIT_LOGS_URL = '/audit-logs'
+
 export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
   `/organization/${organizationId}/project/${projectId}/overview`
 export interface Route {

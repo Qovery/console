@@ -56,3 +56,8 @@ export const dateFullFormat = (date: string, timeZone?: string) => {
 export const dateToFormat = (date: string, format: string) => {
   return formatInTimeZone(new Date(date), format, 'UTC')
 }
+
+export function convertDatetoTimestamp(strDate: string) {
+  const datum = Date.parse(strDate)
+  return datum / 1000
+}

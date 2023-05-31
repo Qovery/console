@@ -19,15 +19,16 @@ const Template: Story = () => {
   }
 
   return (
-    <div>
-      <Button className="inline-flex" onClick={() => setIsOpen(!isOpen)}>
-        Open date-picker
-      </Button>
-      {isOpen && <DatePicker onChange={handleChange} />}
+    <>
+      <DatePicker onChange={handleChange} isOpen={isOpen}>
+        <Button className="inline-flex" onClick={() => setIsOpen(!isOpen)}>
+          Open date-picker
+        </Button>
+      </DatePicker>
       <p className="mt-1 text-text-700 font-medium">
         {date && dateFullFormat(date[0].toString())} - {date && dateFullFormat(date[1].toString())}
       </p>
-    </div>
+    </>
   )
 }
 

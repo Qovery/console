@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { useDocumentTitle } from '@qovery/shared/utils'
+import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export const extractEventQueryParams = (urlString: string): EventQueryParams => {
@@ -45,6 +45,7 @@ export function PageGeneralFeature() {
   const [, setSearchParams] = useSearchParams()
   const [queryParams, setQueryParams] = useState<EventQueryParams>({})
   const [pageSize, setPageSize] = useState<string>('10')
+  const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
   useEffect(() => {
@@ -75,6 +76,16 @@ export function PageGeneralFeature() {
     })
   }
 
+  const handleChangeTimestamp = (startDate: Date, endDate?: Date) => {
+    setSearchParams((prev) => {
+      prev.set('fromTimestamp', convertDatetoTimestamp(startDate.toString()).toString() + '000000')
+      prev.set('toTimestamp', endDate ? convertDatetoTimestamp(endDate.toString()).toString() + '000000000' : '')
+      return prev
+    })
+
+    setIsOpenTimestamp(!isOpenTimestamp)
+  }
+
   return (
     <PageGeneral
       events={eventsData?.events || eventsFactoryMock(10)}
@@ -86,6 +97,9 @@ export function PageGeneralFeature() {
       onPageSizeChange={onPageSizeChange}
       pageSize={pageSize}
       placeholderEvents={eventsFactoryMock(10)}
+      onChangeTimestamp={handleChangeTimestamp}
+      setIsOpenTimestamp={setIsOpenTimestamp}
+      isOpenTimestamp={isOpenTimestamp}
     />
   )
 }

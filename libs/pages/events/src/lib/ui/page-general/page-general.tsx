@@ -1,5 +1,15 @@
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
-import { Icon, IconAwesomeEnum, Pagination, Table, TableHeadProps } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonSize,
+  ButtonStyle,
+  DatePicker,
+  Icon,
+  IconAwesomeEnum,
+  Pagination,
+  Table,
+  TableHeadProps,
+} from '@qovery/shared/ui'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
@@ -8,24 +18,29 @@ export interface PageGeneralProps {
   placeholderEvents?: OrganizationEventResponse[]
   onNext: () => void
   onPrevious: () => void
+  onChangeTimestamp: (startDate: Date, endDate?: Date) => void
+  isOpenTimestamp: boolean
+  setIsOpenTimestamp: (isOpen: boolean) => void
   nextDisabled?: boolean
   previousDisabled?: boolean
   onPageSizeChange?: (pageSize: string) => void
   pageSize?: string
 }
 
-export function PageGeneral(props: PageGeneralProps) {
-  const {
-    isLoading,
-    events,
-    onNext,
-    onPrevious,
-    onPageSizeChange,
-    nextDisabled,
-    previousDisabled,
-    pageSize,
-    placeholderEvents,
-  } = props
+export function PageGeneral({
+  isLoading,
+  events,
+  onNext,
+  onPrevious,
+  onPageSizeChange,
+  nextDisabled,
+  previousDisabled,
+  pageSize,
+  placeholderEvents,
+  onChangeTimestamp,
+  isOpenTimestamp,
+  setIsOpenTimestamp,
+}: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
       title: 'Timestamp',
@@ -56,6 +71,19 @@ export function PageGeneral(props: PageGeneralProps) {
     <>
       <div className="py-6 flex justify-between">
         <h2 className="h4 text-text-700">Audit Logs</h2>
+      </div>
+      <div className="flex items-center mb-4">
+        <p className="text-text-400 text-ssm font-medium mr-1.5">Select</p>
+        <DatePicker onChange={onChangeTimestamp} isOpen={isOpenTimestamp}>
+          <Button
+            onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+            style={ButtonStyle.STROKED}
+            size={ButtonSize.TINY}
+            iconRight={IconAwesomeEnum.SQUARE_PLUS}
+          >
+            Timeframe
+          </Button>
+        </DatePicker>
       </div>
 
       <Table
