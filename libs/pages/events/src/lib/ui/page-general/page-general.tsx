@@ -80,6 +80,7 @@ export function PageGeneral({
           isOpen={isOpenTimestamp}
           maxDate={new Date()}
           minDate={addMonths(new Date(), -1)}
+          showTimeInput
         >
           <Button
             onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
