@@ -25,7 +25,7 @@ export function RowEvent(props: RowEventProps) {
         onClick={() => setExpanded(!expanded)}
       >
         <div className="px-4 flex gap-3">
-          <Skeleton height={24} width={120} show={isPlaceholder}>
+          <Skeleton height={16} width={120} show={isPlaceholder}>
             <div className="flex gap-3">
               <Icon
                 name={IconAwesomeEnum.ANGLE_DOWN}
@@ -36,17 +36,17 @@ export function RowEvent(props: RowEventProps) {
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={28} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <TagEvent eventType={event.event_type} />
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <>{upperCaseFirstLetter(event.target_type)}</>
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <Tooltip
               content={
                 <div>
@@ -69,19 +69,19 @@ export function RowEvent(props: RowEventProps) {
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <span>{upperCaseFirstLetter(event.sub_target_type || '')?.replace('_', ' ')}</span>
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <Tooltip content={event.triggered_by || ''}>
               <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.triggered_by}</span>
             </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <span>{upperCaseFirstLetter(event.origin)}</span>
           </Skeleton>
         </div>

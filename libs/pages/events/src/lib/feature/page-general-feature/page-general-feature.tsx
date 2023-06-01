@@ -94,11 +94,12 @@ export function PageGeneralFeature() {
       return prev
     })
     setTimestamps(undefined)
+    setIsOpenTimestamp(false)
   }
 
   return (
     <PageGeneral
-      events={eventsData?.events || eventsFactoryMock(10)}
+      events={eventsData?.events || eventsFactoryMock(30)}
       isLoading={isLoading}
       onNext={onNext}
       onPrevious={onPrevious}
@@ -106,11 +107,10 @@ export function PageGeneralFeature() {
       nextDisabled={!eventsData?.links?.next}
       onPageSizeChange={onPageSizeChange}
       pageSize={pageSize}
-      placeholderEvents={eventsFactoryMock(10)}
+      placeholderEvents={eventsFactoryMock(30)}
       onChangeTimestamp={handleChangeTimestamp}
       onChangeClearTimestamp={handleClearTimestamp}
       timestamps={timestamps}
-      startDate={extractEventQueryParams(location.search).fromTimestamp}
       setIsOpenTimestamp={setIsOpenTimestamp}
       isOpenTimestamp={isOpenTimestamp}
     />

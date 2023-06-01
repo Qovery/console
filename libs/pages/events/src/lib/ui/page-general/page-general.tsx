@@ -23,7 +23,6 @@ export interface PageGeneralProps {
   onChangeTimestamp: (startDate: Date, endDate: Date) => void
   onChangeClearTimestamp: () => void
   timestamps?: [Date, Date]
-  startDate?: string
   isOpenTimestamp: boolean
   setIsOpenTimestamp: (isOpen: boolean) => void
   nextDisabled?: boolean

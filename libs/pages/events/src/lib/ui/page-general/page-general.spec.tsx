@@ -13,6 +13,11 @@ const props: PageGeneralProps = {
   onPrevious: jest.fn(),
   onPageSizeChange: jest.fn(),
   events: eventsFactoryMock(10),
+  onChangeTimestamp: jest.fn(),
+  onChangeClearTimestamp: jest.fn(),
+  timestamps: [new Date(), new Date()],
+  isOpenTimestamp: false,
+  setIsOpenTimestamp: jest.fn(),
 }
 
 describe('PageGeneral', () => {
