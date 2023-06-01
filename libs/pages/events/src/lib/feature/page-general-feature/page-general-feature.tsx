@@ -12,11 +12,11 @@ import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export const extractEventQueryParams = (urlString: string): EventQueryParams => {
-  const url = new URL(urlString, window.location.origin) // Add the base URL to properly parse the relative URL
+  const url = new URL(urlString, window.location.origin) // add the base URL to properly parse the relative URL
   const searchParams = new URLSearchParams(url.search)
 
   const queryParams: EventQueryParams = {
-    // Parse other query parameters as needed
+    // parse other query parameters as needed
     pageSize: searchParams.get('pageSize') ? parseInt(searchParams.get('pageSize') as string, 10) : undefined,
     origin: (searchParams.get('origin') as OrganizationEventOrigin) || undefined,
     subTargetType: (searchParams.get('subTargetType') as OrganizationEventSubTargetType) || undefined,
@@ -44,8 +44,9 @@ export function PageGeneralFeature() {
   const location = useLocation()
   const [, setSearchParams] = useSearchParams()
   const [queryParams, setQueryParams] = useState<EventQueryParams>({})
-  const [pageSize, setPageSize] = useState<string>('10')
+  const [pageSize, setPageSize] = useState<string>('30')
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
+  const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
   useEffect(() => {
@@ -76,14 +77,23 @@ export function PageGeneralFeature() {
     })
   }
 
-  const handleChangeTimestamp = (startDate: Date, endDate?: Date) => {
+  const handleChangeTimestamp = (startDate: Date, endDate: Date) => {
     setSearchParams((prev) => {
-      prev.set('fromTimestamp', convertDatetoTimestamp(startDate.toString()).toString() + '000000')
-      prev.set('toTimestamp', endDate ? convertDatetoTimestamp(endDate.toString()).toString() + '000000000' : '')
+      prev.set('fromTimestamp', convertDatetoTimestamp(startDate.toString()).toString())
+      prev.set('toTimestamp', endDate ? convertDatetoTimestamp(endDate.toString()).toString() : '')
       return prev
     })
-
+    setTimestamps([startDate, endDate])
     setIsOpenTimestamp(!isOpenTimestamp)
+  }
+
+  const handleClearTimestamp = () => {
+    setSearchParams((prev) => {
+      prev.delete('fromTimestamp')
+      prev.delete('toTimestamp')
+      return prev
+    })
+    setTimestamps(undefined)
   }
 
   return (
@@ -98,6 +108,9 @@ export function PageGeneralFeature() {
       pageSize={pageSize}
       placeholderEvents={eventsFactoryMock(10)}
       onChangeTimestamp={handleChangeTimestamp}
+      onChangeClearTimestamp={handleClearTimestamp}
+      timestamps={timestamps}
+      startDate={extractEventQueryParams(location.search).fromTimestamp}
       setIsOpenTimestamp={setIsOpenTimestamp}
       isOpenTimestamp={isOpenTimestamp}
     />

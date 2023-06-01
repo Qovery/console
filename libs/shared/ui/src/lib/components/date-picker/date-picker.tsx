@@ -15,6 +15,7 @@ export interface DatePickerProps {
   minDate?: Date
   maxDate?: Date
   showTimeInput?: boolean
+  isClearable?: boolean
 }
 
 export function DatePicker({
@@ -23,6 +24,7 @@ export function DatePicker({
   minDate,
   maxDate,
   showTimeInput,
+  isClearable,
   children,
 }: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date>(new Date())
@@ -107,6 +109,8 @@ export function DatePicker({
             calendarContainer={renderContainer}
             maxDate={maxDate}
             minDate={minDate}
+            isClearable={isClearable}
+            clearButtonClassName=""
             showDisabledMonthNavigation
             selectsRange
             useWeekdaysShort

@@ -43,7 +43,7 @@ export function Pagination(props: PaginationProps) {
           dataTestId="select-page-size"
           name="pageSize"
           className="!w-16"
-          defaultValue={props.pageSize || '10'}
+          defaultValue={props.pageSize || '30'}
           onChange={(e) => props.onPageSizeChange && props.onPageSizeChange(e || '')}
           items={[
             {

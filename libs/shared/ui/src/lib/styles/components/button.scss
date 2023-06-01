@@ -22,6 +22,12 @@
 
 .btn--stroked {
   @apply bg-element-light-lighter-200 hover:bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 text-text-500;
+
+  &.btn--active {
+    color: theme('colors.brand.500');
+    border-color: theme('colors.brand.500');
+    background-color: theme('colors.element.light.lighter.400');
+  }
 }
 
 .btn--flat {

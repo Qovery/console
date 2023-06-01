@@ -11,6 +11,7 @@ import {
   Table,
   TableHeadProps,
 } from '@qovery/shared/ui'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
@@ -19,7 +20,10 @@ export interface PageGeneralProps {
   placeholderEvents?: OrganizationEventResponse[]
   onNext: () => void
   onPrevious: () => void
-  onChangeTimestamp: (startDate: Date, endDate?: Date) => void
+  onChangeTimestamp: (startDate: Date, endDate: Date) => void
+  onChangeClearTimestamp: () => void
+  timestamps?: [Date, Date]
+  startDate?: string
   isOpenTimestamp: boolean
   setIsOpenTimestamp: (isOpen: boolean) => void
   nextDisabled?: boolean
@@ -39,8 +43,10 @@ export function PageGeneral({
   pageSize,
   placeholderEvents,
   onChangeTimestamp,
+  onChangeClearTimestamp,
   isOpenTimestamp,
   setIsOpenTimestamp,
+  timestamps,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -82,14 +88,32 @@ export function PageGeneral({
           minDate={addMonths(new Date(), -1)}
           showTimeInput
         >
-          <Button
-            onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-            style={ButtonStyle.STROKED}
-            size={ButtonSize.TINY}
-            iconRight={IconAwesomeEnum.CLOCK}
-          >
-            Timeframe
-          </Button>
+          {!timestamps ? (
+            <Button
+              className={`${isOpenTimestamp ? 'btn--active' : ''}`}
+              onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+              style={ButtonStyle.STROKED}
+              size={ButtonSize.TINY}
+              iconRight={IconAwesomeEnum.CLOCK}
+            >
+              Timeframe
+            </Button>
+          ) : (
+            <Button onClick={() => setIsOpenTimestamp(!isOpenTimestamp)} size={ButtonSize.TINY}>
+              {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} -{' '}
+              {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
+              <span
+                className="px-1 py-1 relative left-1"
+                role="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onChangeClearTimestamp()
+                }}
+              >
+                <Icon name={IconAwesomeEnum.CROSS} />
+              </span>
+            </Button>
+          )}
         </DatePicker>
       </div>
 
