@@ -102,7 +102,7 @@ export function PageGeneral({
               </Button>
             ) : (
               <Button onClick={() => setIsOpenTimestamp(!isOpenTimestamp)} size={ButtonSize.TINY}>
-                {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} -{' '}
+                from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
                 {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
                 <span
                   className="px-1 py-1 relative left-1"

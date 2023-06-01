@@ -1,6 +1,11 @@
 // This style override the library react-datepicker
 
 .date-picker {
+  &.date-picker--open {
+    transform: translateY(0);
+    animation-name: menuOpenBottom;
+  }
+
   .react-datepicker__header--custom,
   .react-datepicker__day--keyboard-selected {
     border: 0;
@@ -73,4 +78,10 @@
   .react-datepicker__day--range-end.react-datepicker__day--range-start {
     border-radius: theme('spacing.1');
   }
+}
+
+.date-picker--open {
+  animation-duration: $menuTiming;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: forwards;
 }

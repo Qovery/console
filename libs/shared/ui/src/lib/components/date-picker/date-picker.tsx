@@ -15,7 +15,6 @@ export interface DatePickerProps {
   minDate?: Date
   maxDate?: Date
   showTimeInput?: boolean
-  isClearable?: boolean
 }
 
 export function DatePicker({
@@ -24,7 +23,6 @@ export function DatePicker({
   minDate,
   maxDate,
   showTimeInput,
-  isClearable,
   children,
 }: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date>(new Date())
@@ -49,7 +47,7 @@ export function DatePicker({
 
   const renderContainer = ({ children }: CalendarContainerProps) => {
     return (
-      <CalendarContainer className="date-picker bg-white inline-flex rounded relative mt-2 -ml-2 shadow-[0_0_32px_rgba(0,0,0,0.08)]">
+      <CalendarContainer className="bg-white inline-flex rounded relative mt-2 -ml-2 shadow-[0_0_32px_rgba(0,0,0,0.08)]">
         <svg
           className="absolute -top-[6px] left-3 shadow-lg"
           xmlns="http://www.w3.org/2000/svg"
@@ -97,7 +95,7 @@ export function DatePicker({
     <div className="relative">
       {children}
       {isOpen && (
-        <div className="absolute z-50 mt-2.5">
+        <div className={`date-picker absolute z-50 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
           <DatePickerLib
             withPortal
             portalId="root-portal"
@@ -109,8 +107,6 @@ export function DatePicker({
             calendarContainer={renderContainer}
             maxDate={maxDate}
             minDate={minDate}
-            isClearable={isClearable}
-            clearButtonClassName=""
             showDisabledMonthNavigation
             selectsRange
             useWeekdaysShort
