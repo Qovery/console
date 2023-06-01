@@ -20,7 +20,7 @@ const Template: Story = () => {
 
   return (
     <>
-      <DatePicker onChange={handleChange} isOpen={isOpen}>
+      <DatePicker onChange={handleChange} isOpen={isOpen} showTimeInput>
         <Button className="inline-flex" onClick={() => setIsOpen(!isOpen)}>
           Open date-picker
         </Button>

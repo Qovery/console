@@ -6,23 +6,43 @@ import DatePickerLib, {
 } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../buttons/button/button'
+import InputText from '../inputs/input-text/input-text'
 import DatePickerHeader from './date-picker-header/date-picker-header'
 
 export interface DatePickerProps {
-  onChange: (startDate: Date, endDate?: Date) => void
+  onChange: (startDate: Date, endDate: Date) => void
   isOpen: boolean
   minDate?: Date
   maxDate?: Date
+  showTimeInput?: boolean
 }
 
-export function DatePicker({ onChange, isOpen, minDate, maxDate, children }: PropsWithChildren<DatePickerProps>) {
+export function DatePicker({
+  onChange,
+  isOpen,
+  minDate,
+  maxDate,
+  showTimeInput,
+  children,
+}: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date>(new Date())
-  const [endDate, setEndDate] = useState<Date | undefined>()
+  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [startTime, setStartTime] = useState<string>('00:00')
+  const [endTime, setEndTime] = useState<string>('23:59')
 
   const handleChange = (dates: [Date, Date]) => {
     const [start, end] = dates
+
     setStartDate(start)
     setEndDate(end)
+  }
+
+  const getCombinedDateTime = (date: Date, time: string) => {
+    const [hours, minutes] = time.split(':')
+    const combinedDateTime = new Date(date)
+    combinedDateTime.setHours(parseInt(hours, 10))
+    combinedDateTime.setMinutes(parseInt(minutes, 10))
+    return combinedDateTime
   }
 
   const renderContainer = ({ children }: CalendarContainerProps) => {
@@ -40,7 +60,30 @@ export function DatePicker({ onChange, isOpen, minDate, maxDate, children }: Pro
         </svg>
         <div className="flex flex-col relative p-5">
           {children}
-          <Button className="mt-5" onClick={() => onChange(startDate, endDate)}>
+          {showTimeInput && (
+            <div className="flex mt-3">
+              <InputText
+                label="Start time"
+                name="start-time"
+                type="time"
+                className="flex-grow mr-2"
+                value={startTime}
+                onChange={(e) => setStartTime(e.currentTarget.value)}
+              />
+              <InputText
+                label="End time"
+                name="end-time"
+                type="time"
+                className="flex-grow"
+                value={endTime}
+                onChange={(e) => setEndTime(e.currentTarget.value)}
+              />
+            </div>
+          )}
+          <Button
+            className="mt-5"
+            onClick={() => onChange(getCombinedDateTime(startDate, startTime), getCombinedDateTime(endDate, endTime))}
+          >
             Apply
           </Button>
         </div>

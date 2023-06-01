@@ -20,7 +20,7 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className="grid h-14 py-3 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
+        className="grid h-11 py-2.5 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
@@ -88,10 +88,10 @@ export function RowEvent(props: RowEventProps) {
       </div>
       {expanded && (
         <div
-          className="relative bg-element-light-darker-100 text-red-50 max-h-[388px] overflow-y-auto"
+          className="relative bg-element-light-darker-500 max-h-[388px] overflow-y-auto"
           data-testid="expanded-panel"
         >
-          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-lighter-800 text-text-300 text-xs font-medium z-[1]">
+          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-darker-200 text-text-200 text-xs z-[1]">
             Object Status after request (here you can find the JSON returned by our API)
           </div>
           <CopyButton className="sticky top-10 right-8 ml-auto z-[1]" content={event.change || ''} />

@@ -69,4 +69,8 @@
     background-color: theme('colors.brand.50');
     color: theme('colors.brand.500');
   }
+
+  .react-datepicker__day--range-end.react-datepicker__day--range-start {
+    border-radius: theme('spacing.1');
+  }
 }
