@@ -86,7 +86,7 @@ export function PageGeneral({
             onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
             style={ButtonStyle.STROKED}
             size={ButtonSize.TINY}
-            iconRight={IconAwesomeEnum.SQUARE_PLUS}
+            iconRight={IconAwesomeEnum.CLOCK}
           >
             Timeframe
           </Button>
