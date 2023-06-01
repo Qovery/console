@@ -23,7 +23,7 @@ export function CopyButton(props: CopyButtonProps) {
   return (
     <div
       onClick={() => onClickCopyToClipboard(content)}
-      className={`cursor-pointer bg-element-light-lighter-800 text-brand-300 hover:text-brand-400 transition-all ease-in-out duration-150 font-medium text-xs rounded w-[63px] px-2 py-1 ${className}`}
+      className={`cursor-pointer bg-element-light-darker-100 border border-element-light-lighter-800 text-text-200 hover:text-text-100 transition-all ease-in-out duration-150 font-medium text-xs rounded w-[63px] px-2 py-1 ${className}`}
     >
       Copy
       <IconFa name={icon} className="ml-2 text-xs" />

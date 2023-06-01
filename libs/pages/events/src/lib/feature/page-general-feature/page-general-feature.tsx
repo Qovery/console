@@ -79,6 +79,8 @@ export function PageGeneralFeature() {
 
   const handleChangeTimestamp = (startDate: Date, endDate: Date) => {
     setSearchParams((prev) => {
+      prev.delete('continueToken')
+      prev.delete('stepBackToken')
       prev.set('fromTimestamp', convertDatetoTimestamp(startDate.toString()).toString())
       prev.set('toTimestamp', endDate ? convertDatetoTimestamp(endDate.toString()).toString() : '')
       return prev
