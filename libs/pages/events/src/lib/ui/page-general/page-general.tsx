@@ -84,10 +84,12 @@ export function PageGeneral({
         <div className="flex items-center mb-4">
           <p className="text-text-400 text-ssm font-medium mr-1.5">Select</p>
           <DatePicker
+            key={timestamps ? timestamps[0].toString() : 'timestamp'}
             onChange={onChangeTimestamp}
             isOpen={isOpenTimestamp}
             maxDate={new Date()}
             minDate={addMonths(new Date(), -1)}
+            defaultDates={timestamps}
             showTimeInput
           >
             {!timestamps ? (

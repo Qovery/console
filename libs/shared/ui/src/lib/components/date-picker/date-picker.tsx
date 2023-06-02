@@ -15,6 +15,7 @@ export interface DatePickerProps {
   minDate?: Date
   maxDate?: Date
   showTimeInput?: boolean
+  defaultDates?: [Date, Date]
 }
 
 export function DatePicker({
@@ -23,10 +24,11 @@ export function DatePicker({
   minDate,
   maxDate,
   showTimeInput,
+  defaultDates,
   children,
 }: PropsWithChildren<DatePickerProps>) {
-  const [startDate, setStartDate] = useState<Date>(new Date())
-  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [startDate, setStartDate] = useState<Date>(defaultDates ? defaultDates[0] : new Date())
+  const [endDate, setEndDate] = useState<Date>(defaultDates ? defaultDates[1] : new Date())
   const inputStartTime = useRef<HTMLInputElement>(null)
   const inputEndTime = useRef<HTMLInputElement>(null)
 
