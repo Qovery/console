@@ -38,12 +38,27 @@
   @apply bg-transparent text-text-400 hover:bg-element-light-lighter-400 hover:text-brand-500;
 }
 
+.dark {
+  .btn--dark {
+    color: theme('colors.text.300');
+
+    &.is-active,
+    &:hover {
+      background-color: theme('colors.brand.500');
+      color: theme('colors.text.100');
+    }
+  }
+}
+
 .btn--dark {
-  @apply bg-element-light-darker-100 text-text-100 dark:text-text-300;
+  color: theme('colors.text.200');
+  background-color: theme('colors.element.light.darker.100');
+  border: 1px solid theme('colors.element.light.lighter.800');
 
   &.is-active,
   &:hover {
-    @apply bg-element-light-darker-200 dark:bg-brand-500 dark:text-text-100;
+    color: theme('colors.text.100');
+    background-color: theme('colors.element.light.darker.200');
   }
 }
 

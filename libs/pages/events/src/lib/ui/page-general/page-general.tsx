@@ -92,6 +92,7 @@ export function PageGeneral({
           >
             {!timestamps ? (
               <Button
+                dataTestId="timeframe-button"
                 className={`${isOpenTimestamp ? 'btn--active' : ''}`}
                 onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
                 style={ButtonStyle.STROKED}
@@ -101,10 +102,15 @@ export function PageGeneral({
                 Timeframe
               </Button>
             ) : (
-              <Button onClick={() => setIsOpenTimestamp(!isOpenTimestamp)} size={ButtonSize.TINY}>
+              <Button
+                dataTestId="timeframe-values"
+                onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+                size={ButtonSize.TINY}
+              >
                 from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
                 {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
                 <span
+                  data-testid="clear-timestamp"
                   className="px-1 py-1 relative left-1"
                   role="button"
                   onClick={(event) => {

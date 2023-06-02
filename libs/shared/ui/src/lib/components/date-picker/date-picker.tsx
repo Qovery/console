@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from 'react'
+import { PropsWithChildren, useCallback, useRef, useState } from 'react'
 import DatePickerLib, {
   CalendarContainer,
   CalendarContainerProps,
@@ -27,23 +27,23 @@ export function DatePicker({
 }: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date>(new Date())
   const [endDate, setEndDate] = useState<Date>(new Date())
-  const [startTime, setStartTime] = useState<string>('00:00')
-  const [endTime, setEndTime] = useState<string>('23:59')
+  const inputStartTime = useRef<HTMLInputElement>(null)
+  const inputEndTime = useRef<HTMLInputElement>(null)
 
-  const handleChange = (dates: [Date, Date]) => {
+  const handleChange = useCallback((dates: [Date, Date]) => {
     const [start, end] = dates
 
     setStartDate(start)
     setEndDate(end)
-  }
+  }, [])
 
-  const getCombinedDateTime = (date: Date, time: string) => {
+  const getCombinedDateTime = useCallback((date: Date, time: string) => {
     const [hours, minutes] = time.split(':')
     const combinedDateTime = new Date(date)
     combinedDateTime.setHours(parseInt(hours, 10))
     combinedDateTime.setMinutes(parseInt(minutes, 10))
     return combinedDateTime
-  }
+  }, [])
 
   const renderContainer = ({ children }: CalendarContainerProps) => {
     return (
@@ -67,22 +67,27 @@ export function DatePicker({
                 name="start-time"
                 type="time"
                 className="flex-grow mr-2"
-                value={startTime}
-                onChange={(e) => setStartTime(e.currentTarget.value)}
+                customRef={inputStartTime}
+                value="00:00"
               />
               <InputText
                 label="End time"
                 name="end-time"
                 type="time"
                 className="flex-grow"
-                value={endTime}
-                onChange={(e) => setEndTime(e.currentTarget.value)}
+                customRef={inputEndTime}
+                value="23:59"
               />
             </div>
           )}
           <Button
             className="mt-5"
-            onClick={() => onChange(getCombinedDateTime(startDate, startTime), getCombinedDateTime(endDate, endTime))}
+            onClick={() =>
+              onChange(
+                getCombinedDateTime(startDate, inputStartTime?.current?.value || '00:00'),
+                getCombinedDateTime(endDate, inputEndTime?.current?.value || '23:59')
+              )
+            }
           >
             Apply
           </Button>
@@ -98,7 +103,6 @@ export function DatePicker({
         <div className={`date-picker absolute z-50 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
           <DatePickerLib
             withPortal
-            portalId="root-portal"
             selected={startDate}
             onChange={handleChange}
             startDate={startDate}

@@ -94,7 +94,9 @@ export function RowEvent(props: RowEventProps) {
           <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-darker-200 text-text-200 text-xs z-[1]">
             Object Status after request (here you can find the JSON returned by our API)
           </div>
-          <CopyButton className="sticky top-10 right-8 ml-auto z-[1]" content={event.change || ''} />
+          <div className="flex justify-end sticky top-9 z-[1]">
+            <CopyButton className="mr-7" content={event.change || ''} />
+          </div>
           <SyntaxHighlighter
             language="json"
             style={dark}

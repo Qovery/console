@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
+import { Button, ButtonSize, ButtonStyle, IconAwesomeEnum, IconFa } from '@qovery/shared/ui'
 import { copyToClipboard } from '@qovery/shared/utils'
 
 export interface CopyButtonProps {
@@ -7,9 +7,7 @@ export interface CopyButtonProps {
   className?: string
 }
 
-export function CopyButton(props: CopyButtonProps) {
-  const { content, className = '' } = props
-
+export function CopyButton({ content, className = '' }: CopyButtonProps) {
   const [icon, setIcon] = useState(IconAwesomeEnum.COPY)
 
   const onClickCopyToClipboard = (content: string) => {
@@ -21,13 +19,15 @@ export function CopyButton(props: CopyButtonProps) {
   }
 
   return (
-    <div
+    <Button
       onClick={() => onClickCopyToClipboard(content)}
-      className={`cursor-pointer bg-element-light-darker-100 border border-element-light-lighter-800 text-text-200 hover:text-text-100 transition-all ease-in-out duration-150 font-medium text-xs rounded w-[63px] px-2 py-1 ${className}`}
+      style={ButtonStyle.DARK}
+      size={ButtonSize.TINY}
+      className={`cursor-pointer font-medium ${className}`}
     >
       Copy
       <IconFa name={icon} className="ml-2 text-xs" />
-    </div>
+    </Button>
   )
 }
 

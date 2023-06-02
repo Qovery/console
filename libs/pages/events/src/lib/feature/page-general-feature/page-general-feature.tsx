@@ -53,6 +53,11 @@ export function PageGeneralFeature() {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
     if (newQueryParams.pageSize) setPageSize(newQueryParams.pageSize.toString())
+    if (newQueryParams.fromTimestamp && newQueryParams.toTimestamp)
+      setTimestamps([
+        new Date(parseInt(newQueryParams.fromTimestamp, 10) * 1000),
+        new Date(parseInt(newQueryParams.toTimestamp, 10) * 1000),
+      ])
 
     setQueryParams(newQueryParams)
   }, [location])

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from 'react'
+import { FormEvent, ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
@@ -12,7 +12,8 @@ export interface InputTextProps {
   error?: string
   disabled?: boolean
   dataTestId?: string
-  rightElement?: React.ReactNode
+  rightElement?: ReactNode
+  customRef?: RefObject<HTMLInputElement>
 }
 
 export function InputText(props: InputTextProps) {
@@ -27,6 +28,7 @@ export function InputText(props: InputTextProps) {
     disabled,
     rightElement,
     dataTestId,
+    customRef,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -73,6 +75,7 @@ export function InputText(props: InputTextProps) {
             </label>
             <input
               data-testid={dataTestId || 'input-text'}
+              ref={customRef}
               name={name}
               id={label}
               className={`input__value ${rightElement ? '!pr-9' : ''}`}
