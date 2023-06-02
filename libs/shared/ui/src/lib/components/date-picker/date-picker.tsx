@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useRef, useState } from 'react'
+import { PropsWithChildren, useRef, useState } from 'react'
 import DatePickerLib, {
   CalendarContainer,
   CalendarContainerProps,
@@ -32,20 +32,20 @@ export function DatePicker({
   const inputStartTime = useRef<HTMLInputElement>(null)
   const inputEndTime = useRef<HTMLInputElement>(null)
 
-  const handleChange = useCallback((dates: [Date, Date]) => {
+  const handleChange = (dates: [Date, Date]) => {
     const [start, end] = dates
 
     setStartDate(start)
     setEndDate(end)
-  }, [])
+  }
 
-  const getCombinedDateTime = useCallback((date: Date, time: string) => {
+  const getCombinedDateTime = (date: Date, time: string) => {
     const [hours, minutes] = time.split(':')
     const combinedDateTime = new Date(date)
     combinedDateTime.setHours(parseInt(hours, 10))
     combinedDateTime.setMinutes(parseInt(minutes, 10))
     return combinedDateTime
-  }, [])
+  }
 
   const renderContainer = ({ children }: CalendarContainerProps) => {
     return (
