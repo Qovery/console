@@ -44,6 +44,15 @@
 }
 
 @font-face {
+  font-family: 'FontAwesome';
+  src: url('/assets/fonts/font-awesome/fa-regular-400.woff2') format('woff2'),
+    url('/assets/fonts/font-awesome/fa-regular-400.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
   font-family: 'Hack';
   src: url('/assets/fonts/hack/hack-regular.woff2') format('woff2'),
     url('/assets/fonts/hack/hack-regular.woff') format('woff');

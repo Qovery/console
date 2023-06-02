@@ -1,6 +1,7 @@
-import { getAllByTestId, getByTestId } from '@testing-library/react'
+import { fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { eventsFactoryMock } from '@qovery/shared/factories'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import PageGeneral, { PageGeneralProps } from './page-general'
 
 const props: PageGeneralProps = {
@@ -13,6 +14,11 @@ const props: PageGeneralProps = {
   onPrevious: jest.fn(),
   onPageSizeChange: jest.fn(),
   events: eventsFactoryMock(10),
+  onChangeTimestamp: jest.fn(),
+  onChangeClearTimestamp: jest.fn(),
+  timestamps: [new Date(), new Date()],
+  isOpenTimestamp: false,
+  setIsOpenTimestamp: jest.fn(),
 }
 
 describe('PageGeneral', () => {
@@ -51,5 +57,39 @@ describe('PageGeneral', () => {
     const { baseElement } = render(<PageGeneral {...props} />)
     getByTestId(baseElement, 'button-previous-page').click()
     expect(props.onPrevious).toHaveBeenCalled()
+  })
+
+  it('should call onPageSizeChange when changing page size', () => {
+    const { getByTestId } = render(<PageGeneral {...props} />)
+    fireEvent.change(getByTestId('select-page-size'), { target: { value: '100' } })
+    expect(props.onPageSizeChange).toHaveBeenCalledWith('100')
+  })
+
+  it('should call onChangeClearTimestamp when clearing the timeframe', async () => {
+    props.timestamps = [new Date(), new Date()]
+
+    const { getByTestId } = render(<PageGeneral {...props} />)
+    expect(getByTestId('timeframe-values')).toHaveTextContent(
+      `from: ${dateYearMonthDayHourMinuteSecond(
+        props.timestamps[0],
+        true,
+        false
+      )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
+    )
+    getByTestId('clear-timestamp').click()
+    expect(props.onChangeClearTimestamp).toHaveBeenCalled()
+  })
+
+  it('should render correct timeframe button label if timestamps are provided', () => {
+    props.timestamps = [new Date(), new Date()]
+
+    const { getByTestId } = render(<PageGeneral {...props} />)
+    expect(getByTestId('timeframe-values')).toHaveTextContent(
+      `from: ${dateYearMonthDayHourMinuteSecond(
+        props.timestamps[0],
+        true,
+        false
+      )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
+    )
   })
 })

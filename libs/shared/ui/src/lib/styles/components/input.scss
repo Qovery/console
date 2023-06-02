@@ -141,6 +141,10 @@ input[type='number'] {
   // remove the chrome widget for number input
   -moz-appearance: textfield;
 
+  &::-webkit-datetime-edit-ampm-field {
+    display: none;
+  }
+
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;

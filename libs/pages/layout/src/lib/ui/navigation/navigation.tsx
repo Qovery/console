@@ -4,6 +4,8 @@ import {
   CLUSTERS_URL,
   CLUSTER_URL,
   INFRA_LOGS_URL,
+  ORGANIZATION_AUDIT_LOGS_URL,
+  ORGANIZATION_PROJECT_URL,
   ORGANIZATION_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
@@ -25,8 +27,8 @@ export function Navigation() {
   const { pathname } = useLocation()
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
-  const matchOrganizationRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/project`)
-  const matchEventsRoute = pathname.includes(`${ORGANIZATION_URL(organizationId)}/events`)
+  const matchOrganizationRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_PROJECT_URL)
+  const matchEventsRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_AUDIT_LOGS_URL)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
   const matchClusterRoute =
     pathname.includes(CLUSTERS_URL(organizationId)) ||

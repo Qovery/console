@@ -9,11 +9,16 @@ export interface TagProps {
   className?: string
   size?: TagSize
   dataTestId?: string
+  fontWeight?: string
 }
 
-export function Tag(props: TagProps) {
-  const { children, className = '', size = TagSize.NORMAL, dataTestId = 'tag' } = props
-
+export function Tag({
+  children,
+  className = '',
+  size = TagSize.NORMAL,
+  fontWeight = 'font-bold',
+  dataTestId = 'tag',
+}: TagProps) {
   const normalClassName = size === TagSize.NORMAL ? 'h-7 px-2' : ''
   const bigClassName = size === TagSize.BIG ? 'h-8 px-3' : ''
   const smallClassName = size === TagSize.SMALL ? 'h-5 px-1.5' : ''
@@ -21,7 +26,7 @@ export function Tag(props: TagProps) {
   return (
     <span
       data-testid={dataTestId}
-      className={`rounded text-xs items-center inline-flex font-bold ${normalClassName} ${bigClassName} ${smallClassName} ${className}`}
+      className={`rounded text-xs items-center inline-flex ${fontWeight} ${normalClassName} ${bigClassName} ${smallClassName} ${className}`}
     >
       {children}
     </span>

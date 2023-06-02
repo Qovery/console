@@ -36,7 +36,7 @@ export const dateToHours = (date: string) => {
 }
 
 // 2022-09-10 10:10:20
-export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
+export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true, withSecond = true) {
   const year = date.getFullYear()
   const month = (date.getMonth() + 1).toString().padStart(2, '0')
   const day = date.getDate().toString().padStart(2, '0')
@@ -44,7 +44,7 @@ export function dateYearMonthDayHourMinuteSecond(date: Date, withTime = true) {
   const minute = date.getMinutes().toString().padStart(2, '0')
   const second = date.getSeconds().toString().padStart(2, '0')
 
-  return `${year}-${month}-${day}${withTime ? ` ${hour}:${minute}:${second}` : ''}`
+  return `${year}-${month}-${day}${withTime ? ` ${hour}:${minute}${withSecond ? `:${second}` : ''}` : ''}`
 }
 
 // 15 Sep, 10:23:20:20
@@ -55,4 +55,9 @@ export const dateFullFormat = (date: string, timeZone?: string) => {
 
 export const dateToFormat = (date: string, format: string) => {
   return formatInTimeZone(new Date(date), format, 'UTC')
+}
+
+export function convertDatetoTimestamp(strDate: string) {
+  const datum = Date.parse(strDate)
+  return datum / 1000
 }

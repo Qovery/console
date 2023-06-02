@@ -36,7 +36,6 @@ export enum IconAwesomeEnum {
   ROTATE = 'icon-solid-rotate',
   LINK = 'icon-solid-link',
   ELLIPSIS_V = 'icon-solid-ellipsis-v',
-  CLOCK = 'icon-solid-clock',
   BROWSER = 'icon-solid-browser',
   ELLIPSIS_VERTICAL = 'icon-solid-ellipsis-vertical',
   CHART_AREA = 'icon-solid-chart-area',
@@ -105,5 +104,6 @@ export enum IconAwesomeEnum {
   ERASER = 'icon-solid-eraser',
   CHEVRON_LEFT = 'icon-solid-chevron-left',
   CHEVRON_RIGHT = 'icon-solid-chevron-right',
+  CLOCK = 'icon-regular-clock',
   // schema: favicons name
 }

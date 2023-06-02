@@ -41,6 +41,10 @@
             "label": "solid"
           },
           {
+            "value": "regular",
+            "label": "regular"
+          },
+          {
             "value": "brands",
             "label": "brands"
           }

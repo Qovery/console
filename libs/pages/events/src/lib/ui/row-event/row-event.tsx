@@ -20,12 +20,12 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className="grid h-14 py-3 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
+        className="grid h-11 py-2.5 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
         <div className="px-4 flex gap-3">
-          <Skeleton height={24} width={120} show={isPlaceholder}>
+          <Skeleton height={16} width={120} show={isPlaceholder}>
             <div className="flex gap-3">
               <Icon
                 name={IconAwesomeEnum.ANGLE_DOWN}
@@ -36,17 +36,17 @@ export function RowEvent(props: RowEventProps) {
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={28} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <TagEvent eventType={event.event_type} />
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <>{upperCaseFirstLetter(event.target_type)}</>
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <Tooltip
               content={
                 <div>
@@ -69,32 +69,34 @@ export function RowEvent(props: RowEventProps) {
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <span>{upperCaseFirstLetter(event.sub_target_type || '')?.replace('_', ' ')}</span>
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <Tooltip content={event.triggered_by || ''}>
               <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.triggered_by}</span>
             </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={24} width={80} show={isPlaceholder}>
+          <Skeleton height={16} width={80} show={isPlaceholder}>
             <span>{upperCaseFirstLetter(event.origin)}</span>
           </Skeleton>
         </div>
       </div>
       {expanded && (
         <div
-          className="relative bg-element-light-darker-100 text-red-50 max-h-[388px] overflow-y-auto"
+          className="relative bg-element-light-darker-500 max-h-[388px] overflow-y-auto"
           data-testid="expanded-panel"
         >
-          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-lighter-800 text-text-300 text-xs font-medium z-[1]">
+          <div className="sticky top-[0px] flex items-center h-7 px-4 bg-element-light-darker-200 text-text-200 text-xs z-[1]">
             Object Status after request (here you can find the JSON returned by our API)
           </div>
-          <CopyButton className="sticky top-10 right-8 ml-auto z-[1]" content={event.change || ''} />
+          <div className="flex justify-end sticky top-9 z-[1]">
+            <CopyButton className="mr-7" content={event.change || ''} />
+          </div>
           <SyntaxHighlighter
             language="json"
             style={dark}
