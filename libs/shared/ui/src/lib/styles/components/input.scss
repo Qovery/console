@@ -135,15 +135,22 @@ input[type='datetime'] {
   &::-webkit-calendar-picker-indicator {
     background: none;
   }
+  &::-webkit-datetime-edit-ampm-field {
+    display: none;
+  }
+  &::-webkit-clear-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    margin: -10px;
+  }
 }
 
 input[type='number'] {
   // remove the chrome widget for number input
   -moz-appearance: textfield;
-
-  &::-webkit-datetime-edit-ampm-field {
-    display: none;
-  }
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
