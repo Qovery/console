@@ -17,6 +17,9 @@ export function StepResources(props: StepResourcesProps) {
     <>
       <div className="mb-10">
         <h3 className="text-text-700 text-lg mb-2">Set resources</h3>
+        <p className="text-sm text-text-500 max-w-content-with-navigation-left">
+          You can customize some of the resources assigned to the database.
+        </p>
       </div>
 
       <form onSubmit={props.onSubmit}>

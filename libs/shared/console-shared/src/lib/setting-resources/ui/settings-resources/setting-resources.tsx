@@ -1,9 +1,10 @@
+import { Controller, useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, Slider, inputSizeUnitRules } from '@qovery/shared/ui'
-import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
+import SettingResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
 export interface SettingResourcesProps {
   displayWarningCpu: boolean
@@ -39,7 +40,6 @@ export function SettingResources(props: SettingResourcesProps) {
 
   return (
     <div>
-      <p className="text-text-500 text-xs mb-3">Manage the resources assigned to the service.</p>
       {!isManaged && (
         <>
           <BlockContent title="vCPU">
@@ -98,8 +98,8 @@ export function SettingResources(props: SettingResourcesProps) {
                     error?.type === 'required'
                       ? 'Please enter a size.'
                       : error?.type === 'max'
-                        ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
-                        : undefined
+                      ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
+                      : undefined
                   }
                 />
               )}
@@ -145,6 +145,8 @@ export function SettingResources(props: SettingResourcesProps) {
           </p>
         </BlockContent>
       )}
+
+      <SettingResourcesInstanceTypesFeature />
 
       {isDatabase && (
         <BlockContent title="Storage">
