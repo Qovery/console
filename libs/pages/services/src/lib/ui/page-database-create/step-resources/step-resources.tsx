@@ -1,6 +1,6 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SettingResources } from '@qovery/shared/console-shared'
+import { SettingsResources } from '@qovery/shared/console-shared'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 import { ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
@@ -8,6 +8,7 @@ export interface StepResourcesProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   isManaged?: boolean
+  databaseType?: string
 }
 
 export function StepResources(props: StepResourcesProps) {
@@ -23,7 +24,7 @@ export function StepResources(props: StepResourcesProps) {
       </div>
 
       <form onSubmit={props.onSubmit}>
-        <SettingResources isDatabase isManaged={props.isManaged} displayWarningCpu={false} />
+        <SettingsResources isDatabase isManaged={props.isManaged} displayWarningCpu={false} />
 
         <div className="flex justify-between">
           <Button

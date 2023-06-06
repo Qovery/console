@@ -2,6 +2,7 @@ import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { SettingsResourcesInstanceTypesFeature } from '@qovery/shared/console-shared'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
@@ -40,7 +41,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <form onSubmit={onSubmit}>
           <p className="text-text-500 text-xs mb-3">Manage the database's resources</p>
 
-          {database.mode == DatabaseModeEnum.MANAGED && (
+          {database.mode === DatabaseModeEnum.MANAGED && (
             <BannerBox
               className="mb-5"
               title="Qovery manages this resource for you"
@@ -126,6 +127,8 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               </BlockContent>
             </>
           )}
+
+          {database.instance_type && <SettingsResourcesInstanceTypesFeature databaseType={database.type} />}
 
           <BlockContent title="Storage">
             <Controller

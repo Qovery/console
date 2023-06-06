@@ -1,12 +1,14 @@
+import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, Slider, inputSizeUnitRules } from '@qovery/shared/ui'
-import SettingResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
-export interface SettingResourcesProps {
+// import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
+
+export interface SettingsResourcesProps {
   displayWarningCpu: boolean
   application?: ApplicationEntity
   minInstances?: number
@@ -14,9 +16,10 @@ export interface SettingResourcesProps {
   isDatabase?: boolean
   isManaged?: boolean
   clusterId?: string
+  databaseType?: DatabaseTypeEnum
 }
 
-export function SettingResources(props: SettingResourcesProps) {
+export function SettingsResources(props: SettingsResourcesProps) {
   const {
     displayWarningCpu,
     application,
@@ -146,7 +149,9 @@ export function SettingResources(props: SettingResourcesProps) {
         </BlockContent>
       )}
 
-      <SettingResourcesInstanceTypesFeature />
+      {/* {isDatabase && isManaged && props.databaseType && (
+        <SettingsResourcesInstanceTypesFeature databaseType={props.databaseType} />
+      )} */}
 
       {isDatabase && (
         <BlockContent title="Storage">
@@ -175,4 +180,4 @@ export function SettingResources(props: SettingResourcesProps) {
   )
 }
 
-export default SettingResources
+export default SettingsResources

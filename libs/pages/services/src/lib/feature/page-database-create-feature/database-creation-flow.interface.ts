@@ -13,4 +13,5 @@ export interface ResourcesData {
   memory: number
   cpu: number
   storage: number
+  instance_type?: string
 }

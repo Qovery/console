@@ -1,6 +1,6 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SettingResources } from '@qovery/shared/console-shared'
+import { SettingsResources } from '@qovery/shared/console-shared'
 import { ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
@@ -20,7 +20,7 @@ export function StepResources(props: StepResourcesProps) {
       </div>
 
       <form onSubmit={props.onSubmit}>
-        <SettingResources maxInstances={props.maximumInstances} displayWarningCpu={false} />
+        <SettingsResources maxInstances={props.maximumInstances} displayWarningCpu={false} />
 
         <div className="flex justify-between">
           <Button

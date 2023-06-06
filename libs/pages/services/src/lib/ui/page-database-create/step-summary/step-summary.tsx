@@ -28,6 +28,8 @@ export interface StepSummaryProps {
 }
 
 export function StepSummary(props: StepSummaryProps) {
+  console.log(props.resourcesData)
+
   return (
     <div>
       <div className="mb-10">
@@ -93,7 +95,7 @@ export function StepSummary(props: StepSummaryProps) {
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
             <ul className="text-text-400 text-sm list-none">
-              {props.generalData.mode !== DatabaseModeEnum.MANAGED && (
+              {props.generalData.mode !== DatabaseModeEnum.MANAGED ? (
                 <>
                   <li>
                     CPU: <strong className="font-medium">{props.resourcesData['cpu']}</strong>
@@ -102,6 +104,10 @@ export function StepSummary(props: StepSummaryProps) {
                     Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
                   </li>
                 </>
+              ) : (
+                <li>
+                  Instance type: <strong className="font-medium">{props.resourcesData.instance_type}</strong>
+                </li>
               )}
               <li>
                 Storage: <strong className="font-medium">{props.resourcesData.storage} GB</strong>

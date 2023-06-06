@@ -60,6 +60,8 @@ export function StepSummaryFeature() {
       if (databaseRequest.mode !== DatabaseModeEnum.MANAGED) {
         databaseRequest.cpu = cpu
         databaseRequest.memory = memory
+      } else {
+        databaseRequest.instance_type = resourcesData.instance_type
       }
 
       dispatch(

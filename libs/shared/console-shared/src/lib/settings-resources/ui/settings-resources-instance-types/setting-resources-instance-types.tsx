@@ -2,12 +2,12 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
 import { BannerBox, BannerBoxEnum, BlockContent, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
 
-export interface SettingResourcesInstanceTypesProps {
+export interface SettingsResourcesInstanceTypesProps {
   loading: boolean
   databaseInstanceTypes?: Value[]
 }
 
-export function SettingResourcesInstanceTypes(props: SettingResourcesInstanceTypesProps) {
+export function SettingsResourcesInstanceTypes(props: SettingsResourcesInstanceTypesProps) {
   const { control } = useFormContext()
 
   return (
@@ -43,4 +43,4 @@ export function SettingResourcesInstanceTypes(props: SettingResourcesInstanceTyp
   )
 }
 
-export default SettingResourcesInstanceTypes
+export default SettingsResourcesInstanceTypes
