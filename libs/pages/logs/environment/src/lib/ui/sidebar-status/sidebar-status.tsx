@@ -45,17 +45,6 @@ export function SidebarStatus(props: SidebarStatusProps) {
           </Tooltip>
         </span>
       </p>
-      <p className="flex items-center justify-between text-text-300 text-xs mt-2">
-        Assigned build resources:
-        <span className="flex text-text-100">
-          4CPU / 8GB Mem
-          <Tooltip side="right" content="Resource assigned by Qovery to build each application">
-            <div className="flex items-center">
-              <Icon className="cursor-pointer ml-1 text-xs text-element-light-text-300" name="icon-solid-circle-info" />
-            </div>
-          </Tooltip>
-        </span>
-      </p>
     </div>
   )
 }
