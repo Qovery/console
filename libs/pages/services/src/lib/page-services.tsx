@@ -31,8 +31,6 @@ export function PageServices() {
     if (location.pathname === SERVICES_URL(organizationId, projectId, environmentId)) {
       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${APPLICATION_GENERAL_URL}`)
     }
-    const fetchEnvironmentsStatusByInterval = setInterval(() => environmentsStatus.refetch(), 3000)
-    return () => clearInterval(fetchEnvironmentsStatusByInterval)
   }, [location, navigate, environmentsStatus, projectId, organizationId, environmentId, dispatch])
 
   return (

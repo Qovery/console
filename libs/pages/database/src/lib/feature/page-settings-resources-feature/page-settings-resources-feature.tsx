@@ -34,6 +34,7 @@ export function PageSettingsResourcesFeature() {
       memory: database?.memory,
       storage: database?.storage,
       cpu: database?.cpu || 10,
+      instance_type: database?.instance_type,
     },
   })
 
@@ -42,8 +43,9 @@ export function PageSettingsResourcesFeature() {
       memory: database?.memory,
       storage: database?.storage,
       cpu: database?.cpu || 10,
+      instance_type: database?.instance_type,
     })
-  }, [methods, database?.memory, database?.storage, database?.cpu])
+  }, [methods, database?.memory, database?.storage, database?.cpu, database?.instance_type])
 
   const toasterCallback = () => {
     if (database) {

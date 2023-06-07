@@ -28,7 +28,7 @@ const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const databasesApi = new DatabasesApi()
 
-export const useFetchEnvironments = (projectId: string) => {
+export const useFetchEnvironments = (projectId: string, noRefetchStatus = false) => {
   const queryClient = useQueryClient()
 
   return useQuery<Environment[], Error>(
@@ -39,8 +39,10 @@ export const useFetchEnvironments = (projectId: string) => {
     },
     {
       onSuccess: () => {
-        // refetch environmentsStatus requests
-        queryClient.invalidateQueries(['environmentsStatus', projectId])
+        if (!noRefetchStatus) {
+          // refetch environmentsStatus requests
+          queryClient.invalidateQueries(['environmentsStatus', projectId])
+        }
       },
       onError: (err) => toastError(err),
       enabled: projectId !== '',
@@ -52,7 +54,7 @@ export const getEnvironmentById = (environmentId: string, environments?: Environ
   return environments?.find((environment) => environment.id === environmentId)
 }
 
-export const useFetchEnvironmentsStatus = (projectId: string) => {
+export const useFetchEnvironmentsStatus = (projectId: string, refetchInterval = 3000) => {
   return useQuery<EnvironmentStatus[], Error>(
     ['environmentsStatus', projectId],
     async () => {
@@ -62,6 +64,8 @@ export const useFetchEnvironmentsStatus = (projectId: string) => {
     {
       onError: (err) => toastError(err),
       enabled: projectId !== '',
+      refetchInterval: refetchInterval,
+      staleTime: 60000,
     }
   )
 }

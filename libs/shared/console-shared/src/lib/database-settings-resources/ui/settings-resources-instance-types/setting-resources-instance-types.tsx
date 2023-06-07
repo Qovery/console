@@ -1,13 +1,15 @@
+import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
 import { BannerBox, BannerBoxEnum, BlockContent, IconAwesomeEnum, InputSelect } from '@qovery/shared/ui'
 
 export interface SettingsResourcesInstanceTypesProps {
-  loading: boolean
   databaseInstanceTypes?: Value[]
 }
 
-export function SettingsResourcesInstanceTypes(props: SettingsResourcesInstanceTypesProps) {
+export function SettingsResourcesInstanceTypesMemo({
+  databaseInstanceTypes = [],
+}: SettingsResourcesInstanceTypesProps) {
   const { control } = useFormContext()
 
   return (
@@ -26,7 +28,7 @@ export function SettingsResourcesInstanceTypes(props: SettingsResourcesInstanceT
               value={field.value}
               label="Instance type"
               error={error?.message}
-              options={props.databaseInstanceTypes || []}
+              options={databaseInstanceTypes}
             />
             <p className="text-text-400 text-xs my-3">
               The chosen instance type has a direct impact on your cloud provider cost.
@@ -42,5 +44,9 @@ export function SettingsResourcesInstanceTypes(props: SettingsResourcesInstanceT
     </BlockContent>
   )
 }
+
+export const SettingsResourcesInstanceTypes = React.memo(SettingsResourcesInstanceTypesMemo, (prevProps, nextProps) => {
+  return JSON.stringify(prevProps.databaseInstanceTypes) === JSON.stringify(nextProps.databaseInstanceTypes)
+})
 
 export default SettingsResourcesInstanceTypes

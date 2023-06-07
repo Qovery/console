@@ -1,6 +1,6 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SettingsResources } from '@qovery/shared/console-shared'
+import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
@@ -13,7 +13,7 @@ export interface PageSettingsResourcesProps {
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, application, displayWarningCpu, clusterId } = props
+  const { onSubmit, loading, application, clusterId, displayWarningCpu } = props
   const { formState } = useFormContext()
 
   if (!application) return null
@@ -26,7 +26,11 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           Manage the resources assigned to the service.
         </p>
         <form onSubmit={onSubmit}>
-          <SettingsResources displayWarningCpu={displayWarningCpu} application={application} clusterId={clusterId} />
+          <ApplicationSettingsResources
+            displayWarningCpu={displayWarningCpu}
+            application={application}
+            clusterId={clusterId}
+          />
           <div className="flex justify-end">
             <Button
               dataTestId="submit-button"

@@ -28,8 +28,6 @@ export interface StepSummaryProps {
 }
 
 export function StepSummary(props: StepSummaryProps) {
-  console.log(props.resourcesData)
-
   return (
     <div>
       <div className="mb-10">

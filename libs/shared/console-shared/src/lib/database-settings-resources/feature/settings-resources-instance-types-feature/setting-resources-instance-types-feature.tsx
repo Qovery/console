@@ -1,5 +1,5 @@
 import { DatabaseTypeEnum, ManagedDatabaseInstanceTypeResponse } from 'qovery-typescript-axios'
-import React from 'react'
+import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useFetchDatabaseInstanceTypes } from '@qovery/domains/database'
@@ -13,39 +13,31 @@ export interface SettingsResourcesInstanceTypesFeatureProps {
   databaseType: DatabaseTypeEnum
 }
 
-export function SettingsResourcesInstanceTypesFeatureMemo({
-  databaseType,
-}: SettingsResourcesInstanceTypesFeatureProps) {
+export function SettingsResourcesInstanceTypesFeature({ databaseType }: SettingsResourcesInstanceTypesFeatureProps) {
   const { projectId = '', environmentId = '' } = useParams()
 
-  const { data: environments } = useFetchEnvironments(projectId)
-
+  const { data: environments } = useFetchEnvironments(projectId, true)
   const environment = getEnvironmentById(environmentId, environments)
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
   )
-  const { isLoading, data: databaseInstanceTypes } = useFetchDatabaseInstanceTypes(
+
+  const { data: databaseInstanceTypes } = useFetchDatabaseInstanceTypes(
     cluster?.cloud_provider,
     databaseType,
     cluster?.region
   )
 
-  return (
-    <SettingsResourcesInstanceTypes
-      databaseInstanceTypes={databaseInstanceTypes?.map((instanceType: ManagedDatabaseInstanceTypeResponse) => ({
+  const formatDatabaseInstanceTypes = useMemo(
+    () =>
+      databaseInstanceTypes?.map((instanceType: ManagedDatabaseInstanceTypeResponse) => ({
         label: instanceType.name,
         value: instanceType.name,
-      }))}
-      loading={isLoading}
-    />
+      })),
+    [databaseInstanceTypes]
   )
-}
 
-export const SettingsResourcesInstanceTypesFeature = React.memo(
-  SettingsResourcesInstanceTypesFeatureMemo,
-  (prevProps, nextProps) => {
-    return prevProps.databaseType === nextProps.databaseType
-  }
-)
+  return <SettingsResourcesInstanceTypes databaseInstanceTypes={formatDatabaseInstanceTypes} />
+}
 
 export default SettingsResourcesInstanceTypesFeature

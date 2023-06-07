@@ -12,8 +12,8 @@ import { toastError } from '@qovery/shared/ui'
 const cloudProviderApi = new CloudProviderApi()
 
 export const useFetchDatabaseInstanceTypes = (
-  provider = CloudProviderEnum.AWS,
-  databaseType = DatabaseTypeEnum.MYSQL,
+  provider?: CloudProviderEnum,
+  databaseType?: DatabaseTypeEnum,
   region?: string
 ) => {
   return useQuery<ManagedDatabaseInstanceTypeResponse[], Error>(
@@ -22,16 +22,15 @@ export const useFetchDatabaseInstanceTypes = (
       let response: AxiosResponse<ManagedDatabaseInstanceTypeResponseList>
 
       if (provider === CloudProviderEnum.AWS && region) {
-        response = await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)
+        response = await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType || '')
       } else {
-        response = await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)
+        response = await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType || '')
       }
 
       return response.data.results as ManagedDatabaseInstanceTypeResponse[]
     },
     {
       onError: (err) => toastError(err),
-      enabled: !provider && !databaseType,
     }
   )
 }

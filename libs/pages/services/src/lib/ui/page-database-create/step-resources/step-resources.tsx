@@ -1,6 +1,7 @@
+import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SettingsResources } from '@qovery/shared/console-shared'
+import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 import { ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
@@ -8,10 +9,10 @@ export interface StepResourcesProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   isManaged?: boolean
-  databaseType?: string
+  databaseType?: DatabaseTypeEnum
 }
 
-export function StepResources(props: StepResourcesProps) {
+export function StepResources({ onSubmit, isManaged, onBack, databaseType }: StepResourcesProps) {
   const { formState } = useFormContext<ResourcesData>()
 
   return (
@@ -23,12 +24,17 @@ export function StepResources(props: StepResourcesProps) {
         </p>
       </div>
 
-      <form onSubmit={props.onSubmit}>
-        <SettingsResources isDatabase isManaged={props.isManaged} displayWarningCpu={false} />
+      <form onSubmit={onSubmit}>
+        <DatabaseSettingsResources
+          isDatabase
+          isManaged={isManaged}
+          displayWarningCpu={false}
+          databaseType={databaseType}
+        />
 
         <div className="flex justify-between">
           <Button
-            onClick={props.onBack}
+            onClick={onBack}
             className="btn--no-min-w"
             type="button"
             size={ButtonSize.XLARGE}

@@ -1,45 +1,37 @@
 import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { isJob } from '@qovery/shared/enums'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, Slider, inputSizeUnitRules } from '@qovery/shared/ui'
+import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
+import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
-// import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
-
-export interface SettingsResourcesProps {
-  displayWarningCpu: boolean
-  application?: ApplicationEntity
+export interface DatabaseSettingsResourcesProps {
+  database?: DatabaseEntity
   minInstances?: number
   maxInstances?: number
   isDatabase?: boolean
   isManaged?: boolean
   clusterId?: string
   databaseType?: DatabaseTypeEnum
+  displayWarningCpu?: boolean
 }
 
-export function SettingsResources(props: SettingsResourcesProps) {
-  const {
-    displayWarningCpu,
-    application,
-    minInstances = 1,
-    maxInstances = 50,
-    isDatabase = false,
-    isManaged = false,
-    clusterId = '',
-  } = props
-  const { control, watch } = useFormContext()
+export function DatabaseSettingsResources({
+  database,
+  displayWarningCpu,
+  databaseType,
+  isManaged = false,
+  clusterId = '',
+}: DatabaseSettingsResourcesProps) {
+  const { control } = useFormContext()
   const { organizationId = '' } = useParams()
 
-  let maxMemoryBySize = application?.maximum_memory
+  const maxMemoryBySize = database?.maximum_memory
 
-  if (!application) {
-    // until api allows us to fetch the max possible value
-    maxMemoryBySize = 128000
+  if (database) {
+    databaseType = database.type
   }
-
-  const watchInstances = watch('instances')
 
   return (
     <div>
@@ -59,10 +51,10 @@ export function SettingsResources(props: SettingsResourcesProps) {
                 />
               )}
             />
-            {application && (
+            {database && (
               <p className="text-text-400 text-xs mt-3">
                 Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-                {application?.maximum_cpu} mili vCPU.{' '}
+                {database?.maximum_cpu} mili vCPU.{' '}
                 {clusterId && (
                   <Link
                     className="!text-xs"
@@ -107,10 +99,10 @@ export function SettingsResources(props: SettingsResourcesProps) {
                 />
               )}
             />
-            {application && (
+            {database && (
               <p className="text-text-400 text-xs mt-3">
                 Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
-                {application.maximum_memory} MB.{' '}
+                {database?.maximum_memory} MB.{' '}
                 {clusterId && (
                   <Link
                     className="!text-xs"
@@ -125,59 +117,30 @@ export function SettingsResources(props: SettingsResourcesProps) {
           </BlockContent>
         </>
       )}
-
-      {!isJob(application) && watchInstances && (
-        <BlockContent title="Instances">
-          <p className="text-text-600 mb-3 font-medium">{`${watchInstances[0]} - ${watchInstances[1]}`}</p>
-          <Controller
-            name="instances"
-            control={control}
-            render={({ field }) => (
-              <Slider min={minInstances} max={maxInstances} step={1} onChange={field.onChange} value={field.value} />
-            )}
-          />
-          <p className="text-text-400 text-xs mt-3">
-            {application?.instances?.items && (
-              <span className="flex mb-1">
-                Current consumption: {application.instances.items.length} instance
-                {application.instances.items.length > 1 ? 's' : ''}
-              </span>
-            )}
-            Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
-            CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
-          </p>
-        </BlockContent>
-      )}
-
-      {/* {isDatabase && isManaged && props.databaseType && (
-        <SettingsResourcesInstanceTypesFeature databaseType={props.databaseType} />
-      )} */}
-
-      {isDatabase && (
-        <BlockContent title="Storage">
-          <Controller
-            name="storage"
-            control={control}
-            rules={{
-              pattern: {
-                value: /^[0-9]+$/,
-                message: 'Please enter a number.',
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                label="Size in GB"
-                value={field.value}
-                onChange={field.onChange}
-                error={error?.message}
-              />
-            )}
-          />
-        </BlockContent>
-      )}
+      {isManaged && databaseType && <SettingsResourcesInstanceTypesFeature databaseType={databaseType} />}
+      <BlockContent title="Storage">
+        <Controller
+          name="storage"
+          control={control}
+          rules={{
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Please enter a number.',
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              name={field.name}
+              label="Size in GB"
+              value={field.value}
+              onChange={field.onChange}
+              error={error?.message}
+            />
+          )}
+        />
+      </BlockContent>
     </div>
   )
 }
 
-export default SettingsResources
+export default DatabaseSettingsResources

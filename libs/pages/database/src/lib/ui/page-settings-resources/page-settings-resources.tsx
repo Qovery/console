@@ -1,22 +1,9 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
-import { SettingsResourcesInstanceTypesFeature } from '@qovery/shared/console-shared'
+import { useFormContext } from 'react-hook-form'
+import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
-import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import {
-  BannerBox,
-  BannerBoxEnum,
-  BlockContent,
-  Button,
-  ButtonSize,
-  ButtonStyle,
-  HelpSection,
-  InputText,
-  Link,
-  inputSizeUnitRules,
-} from '@qovery/shared/ui'
+import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -27,20 +14,16 @@ export interface PageSettingsResourcesProps {
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { onSubmit, loading, database, clusterId } = props
-  const { control, formState } = useFormContext()
-  const { organizationId = '' } = useParams()
-
-  const maxMemoryBySize = database?.maximum_memory
+  const { formState } = useFormContext()
 
   if (!database) return null
 
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h2 className="h5 mb-8 text-text-700">Resources</h2>
+        <h2 className="h5 text-text-700 mb-2">Resources</h2>
+        <p className="text-sm text-text-500 max-w-content-with-navigation-left mb-8">Manage the database's resources</p>
         <form onSubmit={onSubmit}>
-          <p className="text-text-500 text-xs mb-3">Manage the database's resources</p>
-
           {database.mode === DatabaseModeEnum.MANAGED && (
             <BannerBox
               className="mb-5"
@@ -56,106 +39,12 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             />
           )}
 
-          {database.mode !== DatabaseModeEnum.MANAGED && (
-            <>
-              <BlockContent title="vCPU">
-                <Controller
-                  name="cpu"
-                  control={control}
-                  render={({ field }) => (
-                    <InputText
-                      type="number"
-                      name={field.name}
-                      label="Size (in milli vCPU)"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-                <p className="text-text-400 text-xs mt-3">
-                  Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
-                  {database?.maximum_cpu} mili vCPU.{' '}
-                  {clusterId && (
-                    <Link
-                      className="!text-xs"
-                      link={
-                        CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
-                      }
-                      linkLabel="Edit node"
-                    />
-                  )}
-                </p>
-              </BlockContent>
-              <BlockContent title="Memory">
-                <Controller
-                  name="memory"
-                  control={control}
-                  rules={inputSizeUnitRules(maxMemoryBySize)}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      dataTestId="input-memory-memory"
-                      type="number"
-                      name={field.name}
-                      label="Size in MB"
-                      value={field.value}
-                      onChange={field.onChange}
-                      error={
-                        error?.type === 'required'
-                          ? 'Please enter a size.'
-                          : error?.type === 'max'
-                          ? `Maximum allowed ${field.name} is: ${maxMemoryBySize} MB.`
-                          : undefined
-                      }
-                    />
-                  )}
-                />
-                {database && (
-                  <p className="text-text-400 text-xs mt-3">
-                    Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
-                    {database.maximum_memory} MB.{' '}
-                    {clusterId && (
-                      <Link
-                        className="!text-xs"
-                        link={
-                          CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL
-                        }
-                        linkLabel="Edit node"
-                      />
-                    )}
-                  </p>
-                )}
-              </BlockContent>
-            </>
-          )}
+          <DatabaseSettingsResources
+            database={database}
+            clusterId={clusterId}
+            isManaged={database.mode === DatabaseModeEnum.MANAGED}
+          />
 
-          {database.instance_type && <SettingsResourcesInstanceTypesFeature databaseType={database.type} />}
-
-          <BlockContent title="Storage">
-            <Controller
-              name="storage"
-              control={control}
-              rules={{
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: 'Please enter a number.',
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  type="number"
-                  name={field.name}
-                  dataTestId="input-memory-storage"
-                  label="Size in GB"
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={error?.message}
-                />
-              )}
-            />
-            <p data-testid="current-consumption" className="text-text-400 text-xs mt-1 ml-4">
-              Current consumption: {database.storage} GB
-            </p>
-          </BlockContent>
           <div className="flex justify-end">
             <Button
               dataTestId="submit-button"
