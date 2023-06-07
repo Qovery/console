@@ -3,26 +3,24 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { BannerBox, BannerBoxEnum, BlockContent, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
+import { BlockContent, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
 import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
 
 export interface DatabaseSettingsResourcesProps {
   database?: DatabaseEntity
-  minInstances?: number
-  maxInstances?: number
   isDatabase?: boolean
   isManaged?: boolean
   clusterId?: string
   databaseType?: DatabaseTypeEnum
-  displayWarningCpu?: boolean
+  displayInstanceTypesWarning?: boolean
 }
 
 export function DatabaseSettingsResources({
   database,
-  displayWarningCpu,
   databaseType,
   isManaged = false,
   clusterId = '',
+  displayInstanceTypesWarning = false,
 }: DatabaseSettingsResourcesProps) {
   const { control } = useFormContext()
   const { organizationId = '' } = useParams()
@@ -66,15 +64,6 @@ export function DatabaseSettingsResources({
                 )}
               </p>
             )}
-            {displayWarningCpu && (
-              <BannerBox
-                dataTestId="banner-box"
-                className="mt-3"
-                title="Not enough resources"
-                message="Increase the capacity of your cluster nodes or reduce the service consumption."
-                type={BannerBoxEnum.ERROR}
-              />
-            )}
           </BlockContent>
           <BlockContent title="Memory">
             <Controller
@@ -117,7 +106,12 @@ export function DatabaseSettingsResources({
           </BlockContent>
         </>
       )}
-      {isManaged && databaseType && <SettingsResourcesInstanceTypesFeature databaseType={databaseType} />}
+      {isManaged && databaseType && (
+        <SettingsResourcesInstanceTypesFeature
+          databaseType={databaseType}
+          displayWarning={displayInstanceTypesWarning}
+        />
+      )}
       <BlockContent title="Storage">
         <Controller
           name="storage"

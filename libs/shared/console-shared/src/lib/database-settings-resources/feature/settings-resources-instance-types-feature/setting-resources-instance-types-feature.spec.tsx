@@ -7,6 +7,7 @@ import SettingsResourcesInstanceTypesFeature, {
 
 const props: SettingsResourcesInstanceTypesFeatureProps = {
   databaseType: DatabaseTypeEnum.MYSQL,
+  displayWarning: true,
 }
 
 describe('SettingsResourcesInstanceTypesFeature', () => {
@@ -14,9 +15,6 @@ describe('SettingsResourcesInstanceTypesFeature', () => {
     const { baseElement } = render(
       wrapWithReactHookForm(<SettingsResourcesInstanceTypesFeature {...props} />, {
         defaultValues: {
-          instances: [1, 18],
-          cpu: [3],
-          memory: 1024,
           instance_type: 'db.t3.medium',
         },
       })

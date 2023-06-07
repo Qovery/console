@@ -11,9 +11,13 @@ import SettingsResourcesInstanceTypes from '../../ui/settings-resources-instance
 
 export interface SettingsResourcesInstanceTypesFeatureProps {
   databaseType: DatabaseTypeEnum
+  displayWarning: boolean
 }
 
-export function SettingsResourcesInstanceTypesFeature({ databaseType }: SettingsResourcesInstanceTypesFeatureProps) {
+export function SettingsResourcesInstanceTypesFeature({
+  databaseType,
+  displayWarning,
+}: SettingsResourcesInstanceTypesFeatureProps) {
   const { projectId = '', environmentId = '' } = useParams()
 
   const { data: environments } = useFetchEnvironments(projectId, true)
@@ -37,7 +41,12 @@ export function SettingsResourcesInstanceTypesFeature({ databaseType }: Settings
     [databaseInstanceTypes]
   )
 
-  return <SettingsResourcesInstanceTypes databaseInstanceTypes={formatDatabaseInstanceTypes} />
+  return (
+    <SettingsResourcesInstanceTypes
+      databaseInstanceTypes={formatDatabaseInstanceTypes}
+      displayWarning={displayWarning}
+    />
+  )
 }
 
 export default SettingsResourcesInstanceTypesFeature

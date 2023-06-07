@@ -14,9 +14,12 @@ export interface PageSettingsResourcesProps {
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
   const { onSubmit, loading, database, clusterId } = props
-  const { formState } = useFormContext()
+  const { formState, watch } = useFormContext()
 
   if (!database) return null
+
+  const displayInstanceTypesWarning =
+    watch('instance_type') !== database.instance_type && database.mode === DatabaseModeEnum.MANAGED
 
   return (
     <div className="flex flex-col justify-between w-full">
@@ -43,6 +46,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             database={database}
             clusterId={clusterId}
             isManaged={database.mode === DatabaseModeEnum.MANAGED}
+            displayInstanceTypesWarning={displayInstanceTypesWarning}
           />
 
           <div className="flex justify-end">

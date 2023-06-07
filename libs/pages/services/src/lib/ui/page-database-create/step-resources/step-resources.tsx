@@ -25,12 +25,7 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
       </div>
 
       <form onSubmit={onSubmit}>
-        <DatabaseSettingsResources
-          isDatabase
-          isManaged={isManaged}
-          displayWarningCpu={false}
-          databaseType={databaseType}
-        />
+        <DatabaseSettingsResources isDatabase isManaged={isManaged} databaseType={databaseType} />
 
         <div className="flex justify-between">
           <Button
