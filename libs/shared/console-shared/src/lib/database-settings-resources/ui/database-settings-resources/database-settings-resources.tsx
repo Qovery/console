@@ -130,6 +130,7 @@ export function DatabaseSettingsResources({
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
+              dataTestId="input-memory-storage"
               name={field.name}
               label="Size in GB"
               value={field.value}

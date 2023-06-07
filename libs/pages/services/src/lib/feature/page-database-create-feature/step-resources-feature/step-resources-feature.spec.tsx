@@ -29,7 +29,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           accessibility: DatabaseAccessibilityEnum.PRIVATE,
           version: '1',
           type: DatabaseTypeEnum.MYSQL,
-          mode: DatabaseModeEnum.MANAGED,
+          mode: DatabaseModeEnum.CONTAINER,
         },
         setGeneralData: jest.fn(),
         resourcesData: {
