@@ -1,13 +1,28 @@
-import { act } from '@testing-library/react'
+import { act, waitFor } from '@testing-library/react'
+import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { getByTestId, render } from '__tests__/utils/setup-jest'
-import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
+import {
+  CloudProviderEnum,
+  DatabaseAccessibilityEnum,
+  DatabaseModeEnum,
+  DatabaseTypeEnum,
+  ManagedDatabaseInstanceTypeResponse,
+} from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
+import selectEvent from 'react-select-event'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepResourcesFeature from './step-resources-feature'
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => jest.fn(),
+}))
+
+const mockUseFetchDatabaseInstanceTypes: jest.Mock = jest.fn()
+jest.mock('@qovery/domains/database', () => ({
+  ...jest.requireActual('@qovery/domains/database'),
+  useFetchDatabaseInstanceTypes: (provider: CloudProviderEnum, databaseType: DatabaseTypeEnum, region: string) =>
+    mockUseFetchDatabaseInstanceTypes(provider, databaseType, region),
 }))
 
 const mockNavigate = jest.fn()
@@ -46,6 +61,15 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 }
 
 describe('PageDatabaseCreateResourcesFeature', () => {
+  beforeEach(() => {
+    mockUseFetchDatabaseInstanceTypes.mockReturnValue(
+      mockUseQueryResult<ManagedDatabaseInstanceTypeResponse[]>([
+        {
+          name: 'db.t3.medium',
+        },
+      ])
+    )
+  })
   it('should render successfully', () => {
     const { baseElement } = render(
       <ContextWrapper>
@@ -86,6 +110,56 @@ describe('PageDatabaseCreateResourcesFeature', () => {
       cpu: [100],
       memory: 100,
     })
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services/create/database/post')
+  })
+
+  it('should render resources with managed type', async () => {
+    const { getByTestId, getByText, getByLabelText, debug } = render(
+      <DatabaseCreateContext.Provider
+        value={{
+          currentStep: 1,
+          setCurrentStep: jest.fn(),
+          generalData: {
+            name: 'test',
+            accessibility: DatabaseAccessibilityEnum.PRIVATE,
+            version: '1',
+            type: DatabaseTypeEnum.MYSQL,
+            mode: DatabaseModeEnum.MANAGED,
+          },
+          setGeneralData: jest.fn(),
+          resourcesData: {
+            storage: 1,
+            cpu: 100,
+            memory: 100,
+            instance_type: 'db.t3.medium',
+          },
+          setResourcesData: mockSetResourcesData,
+        }}
+      >
+        <StepResourcesFeature />
+      </DatabaseCreateContext.Provider>
+    )
+
+    const realSelect = getByLabelText('Instance type')
+
+    await act(() => {
+      selectEvent.select(realSelect, 'db.t3.medium')
+    })
+
+    debug()
+
+    expect(getByText('db.t3.medium')).toBeInTheDocument()
+
+    const button = getByTestId('button-submit')
+
+    await waitFor(() => {
+      expect(button).not.toBeDisabled()
+    })
+
+    await act(() => {
+      button.click()
+    })
+
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services/create/database/post')
   })
 })
