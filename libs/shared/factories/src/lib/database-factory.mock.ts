@@ -4,7 +4,7 @@ import { DatabaseEntity } from '@qovery/shared/interfaces'
 
 const chance = new Chance()
 
-export const databaseFactoryMock = (howMany: number): DatabaseEntity[] =>
+export const databaseFactoryMock = (howMany: number, mode = DatabaseModeEnum.CONTAINER): DatabaseEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     created_at: new Date().toString(),
@@ -12,7 +12,7 @@ export const databaseFactoryMock = (howMany: number): DatabaseEntity[] =>
     name: chance.name(),
     type: DatabaseTypeEnum.POSTGRESQL,
     version: '12',
-    mode: DatabaseModeEnum.CONTAINER,
+    mode: mode,
     accessibility: DatabaseAccessibilityEnum.PRIVATE,
     cpu: 1,
     memory: 1024,
@@ -25,4 +25,5 @@ export const databaseFactoryMock = (howMany: number): DatabaseEntity[] =>
     maximum_cpu: 5012,
     maximum_memory: 5012,
     disk_encrypted: false,
+    instance_type: 't2.micro',
   }))

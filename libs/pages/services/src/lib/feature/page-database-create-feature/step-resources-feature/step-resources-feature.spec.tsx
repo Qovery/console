@@ -114,7 +114,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
   })
 
   it('should render resources with managed type', async () => {
-    const { getByTestId, getByText, getByLabelText, debug } = render(
+    const { getByTestId, getByText, getByLabelText } = render(
       <DatabaseCreateContext.Provider
         value={{
           currentStep: 1,
@@ -145,8 +145,6 @@ describe('PageDatabaseCreateResourcesFeature', () => {
     await act(() => {
       selectEvent.select(realSelect, 'db.t3.medium')
     })
-
-    debug()
 
     expect(getByText('db.t3.medium')).toBeInTheDocument()
 

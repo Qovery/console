@@ -14,6 +14,7 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
   cloneDatabase.cpu = data['cpu']
   cloneDatabase.memory = Number(data['memory'])
   cloneDatabase.storage = Number(data['storage'])
+  cloneDatabase.instance_type = data['instance_type']
 
   return cloneDatabase
 }

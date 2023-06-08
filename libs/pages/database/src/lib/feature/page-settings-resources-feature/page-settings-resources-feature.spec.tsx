@@ -51,6 +51,9 @@ describe('PageSettingsResourcesFeature', () => {
     mockUseFetchDatabaseInstanceTypes.mockReturnValue(
       mockUseQueryResult<ManagedDatabaseInstanceTypeResponse[]>([
         {
+          name: 't2.micro',
+        },
+        {
           name: 'db.t3.medium',
         },
       ])
@@ -73,7 +76,7 @@ describe('PageSettingsResourcesFeature', () => {
     expect(db.storage).toBe(storage)
   })
 
-  it('should dispatch editDatabase if form is submitted', async () => {
+  it('should dispatch editDatabase for CONTAINER if form is submitted', async () => {
     const editDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'editDatabase')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
@@ -102,32 +105,13 @@ describe('PageSettingsResourcesFeature', () => {
         memory: 512,
         storage: 512,
         cpu: 1,
+        mode: DatabaseModeEnum.CONTAINER,
       },
     })
   })
 
-  beforeEach(() => {
-    jest.mock('@qovery/domains/database', () => {
-      const { DatabaseModeEnum } = jest.requireMock('@qovery/domains/database')
-      const mockDatabase = {
-        ...databaseFactoryMock(1)[0],
-      }
-
-      return {
-        ...jest.requireMock('@qovery/domains/database'),
-        getDatabasesState: () => ({
-          loadingStatus: 'loaded',
-          ids: [mockDatabase.id],
-          entities: {
-            [mockDatabase.id]: mockDatabase,
-          },
-          error: null,
-        }),
-      }
-    })
-  })
-
-  it('should dispatch editDatabase for managed if form is submitted', async () => {
+  it('should dispatch editDatabase for MANAGED db if form is submitted', async () => {
+    mockDatabase.mode = DatabaseModeEnum.MANAGED
     const editDatabaseSpy: SpyInstance = jest.spyOn(storeDatabase, 'editDatabase')
     mockDispatch.mockImplementation(() => ({
       unwrap: () =>
@@ -139,12 +123,15 @@ describe('PageSettingsResourcesFeature', () => {
     const { getByTestId, getByLabelText } = render(<PageSettingsResourcesFeature />)
 
     const realSelect = getByLabelText('Instance type')
+
     await act(() => {
-      selectEvent.select(realSelect, 'db.t3.medium')
+      selectEvent.select(realSelect, 'db.t3.medium', {
+        container: document.body,
+      })
     })
 
     await act(() => {
-      fireEvent.input(getByTestId('input-memory-storage'), { target: { value: 512 } })
+      fireEvent.input(getByTestId('input-memory-storage'), { target: { value: 510 } })
     })
 
     expect(getByTestId('submit-button')).not.toBeDisabled()
@@ -153,13 +140,16 @@ describe('PageSettingsResourcesFeature', () => {
       getByTestId('submit-button').click()
     })
 
-    expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
-    expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
-      ...mockDatabase,
-      ...{
-        storage: 512,
-        instance_type: 'db.t3.medium',
-      },
+    await act(() => {
+      expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
+      expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
+        ...mockDatabase,
+        ...{
+          storage: 510,
+          instance_type: 'db.t3.medium',
+          mode: DatabaseModeEnum.MANAGED,
+        },
+      })
     })
   })
 })
