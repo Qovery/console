@@ -14,6 +14,7 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
   cloneDatabase.cpu = data['cpu']
   cloneDatabase.memory = Number(data['memory'])
   cloneDatabase.storage = Number(data['storage'])
+  cloneDatabase.instance_type = data['instance_type']
 
   return cloneDatabase
 }
@@ -34,6 +35,7 @@ export function PageSettingsResourcesFeature() {
       memory: database?.memory,
       storage: database?.storage,
       cpu: database?.cpu || 10,
+      instance_type: database?.instance_type,
     },
   })
 
@@ -42,8 +44,9 @@ export function PageSettingsResourcesFeature() {
       memory: database?.memory,
       storage: database?.storage,
       cpu: database?.cpu || 10,
+      instance_type: database?.instance_type,
     })
-  }, [methods, database?.memory, database?.storage, database?.cpu])
+  }, [methods, database?.memory, database?.storage, database?.cpu, database?.instance_type])
 
   const toasterCallback = () => {
     if (database) {

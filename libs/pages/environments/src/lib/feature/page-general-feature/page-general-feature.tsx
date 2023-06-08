@@ -1,5 +1,4 @@
 import { Cluster } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useFetchEnvironments, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
@@ -21,11 +20,6 @@ export function PageGeneralFeature() {
 
   const { isLoading, data: environments = [] } = useFetchEnvironments(projectId)
   const environmentsStatus = useFetchEnvironmentsStatus(projectId)
-
-  useEffect(() => {
-    const fetchEnvironmentsStatusByInterval = setInterval(() => environmentsStatus.refetch(), 3000)
-    return () => clearInterval(fetchEnvironmentsStatusByInterval)
-  }, [environmentsStatus, projectId])
 
   const listHelpfulLinks: BaseLink[] = [
     {

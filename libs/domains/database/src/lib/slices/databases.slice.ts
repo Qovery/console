@@ -6,7 +6,10 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
+import { AxiosResponse } from 'axios'
 import {
+  CloudProviderApi,
+  CloudProviderEnum,
   Credentials,
   Database,
   DatabaseCurrentMetric,
@@ -14,8 +17,10 @@ import {
   DatabaseMainCallsApi,
   DatabaseMetricsApi,
   DatabaseRequest,
+  DatabaseTypeEnum,
   DatabasesApi,
   DeploymentHistoryDatabase,
+  ManagedDatabaseInstanceTypeResponseList,
   Status,
 } from 'qovery-typescript-axios'
 import { DatabaseEntity, DatabasesState, LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
@@ -38,6 +43,7 @@ const databasesApi = new DatabasesApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
 const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const databaseMetricsApi = new DatabaseMetricsApi()
+const cloudProviderApi = new CloudProviderApi()
 
 export const fetchDatabases = createAsyncThunk<Database[], { environmentId: string; withoutStatus?: boolean }>(
   'databases/fetch',
@@ -129,6 +135,25 @@ export const deleteDatabaseAction = createAsyncThunk<
     toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
     return
   }
+})
+
+export const fetchDatabaseInstanceTypes = createAsyncThunk<
+  ManagedDatabaseInstanceTypeResponseList,
+  { provider: CloudProviderEnum; region?: string; databaseType?: DatabaseTypeEnum }
+>('database/instanceTypes', async (data) => {
+  let response: AxiosResponse<ManagedDatabaseInstanceTypeResponseList>
+
+  if (data.databaseType) {
+    if (data.provider === CloudProviderEnum.AWS && data.region) {
+      response = await cloudProviderApi.listAWSManagedDatabaseInstanceType(data.region, data.databaseType)
+    } else {
+      response = await cloudProviderApi.listSCWManagedDatabaseInstanceType(data.databaseType)
+    }
+  } else {
+    throw new Error("The database type isn't defined.")
+  }
+
+  return response.data
 })
 
 export const initialDatabasesState: DatabasesState = databasesAdapter.getInitialState({

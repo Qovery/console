@@ -43,6 +43,7 @@ export function PageDatabaseCreateFeature() {
     memory: 512,
     cpu: 500,
     storage: 10,
+    instance_type: 'db.t3.medium',
   })
 
   const navigate = useNavigate()

@@ -1,6 +1,6 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SettingResources } from '@qovery/shared/console-shared'
+import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
 import { ApplicationResourcesData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
@@ -9,7 +9,7 @@ export interface StepResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
 }
 
-export function StepResources(props: StepResourcesProps) {
+export function StepResources({ onBack, onSubmit }: StepResourcesProps) {
   const { formState } = useFormContext<ApplicationResourcesData>()
 
   return (
@@ -19,12 +19,12 @@ export function StepResources(props: StepResourcesProps) {
         <p className="text-xs text-text-500">Configure the resources required to run your job</p>
       </div>
 
-      <form onSubmit={props.onSubmit}>
-        <SettingResources displayWarningCpu={false} />
+      <form onSubmit={onSubmit}>
+        <ApplicationSettingsResources displayWarningCpu={false} />
 
         <div className="flex justify-between">
           <Button
-            onClick={props.onBack}
+            onClick={onBack}
             className="btn--no-min-w"
             type="button"
             size={ButtonSize.XLARGE}

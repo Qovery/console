@@ -1,6 +1,7 @@
+import { DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { SettingResources } from '@qovery/shared/console-shared'
+import { DatabaseSettingsResources } from '@qovery/shared/console-shared'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 import { ResourcesData } from '../../../feature/page-database-create-feature/database-creation-flow.interface'
 
@@ -8,23 +9,27 @@ export interface StepResourcesProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   isManaged?: boolean
+  databaseType?: DatabaseTypeEnum
 }
 
-export function StepResources(props: StepResourcesProps) {
+export function StepResources({ onSubmit, isManaged, onBack, databaseType }: StepResourcesProps) {
   const { formState } = useFormContext<ResourcesData>()
 
   return (
     <>
       <div className="mb-10">
         <h3 className="text-text-700 text-lg mb-2">Set resources</h3>
+        <p className="text-sm text-text-500 max-w-content-with-navigation-left">
+          You can customize some of the resources assigned to the database.
+        </p>
       </div>
 
-      <form onSubmit={props.onSubmit}>
-        <SettingResources isDatabase isManaged={props.isManaged} displayWarningCpu={false} />
+      <form onSubmit={onSubmit}>
+        <DatabaseSettingsResources isDatabase isManaged={isManaged} databaseType={databaseType} />
 
         <div className="flex justify-between">
           <Button
-            onClick={props.onBack}
+            onClick={onBack}
             className="btn--no-min-w"
             type="button"
             size={ButtonSize.XLARGE}

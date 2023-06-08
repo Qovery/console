@@ -72,7 +72,12 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources isManaged={generalData?.mode === DatabaseModeEnum.MANAGED} onBack={onBack} onSubmit={onSubmit} />
+        <StepResources
+          isManaged={generalData?.mode === DatabaseModeEnum.MANAGED}
+          onBack={onBack}
+          onSubmit={onSubmit}
+          databaseType={generalData?.type}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )

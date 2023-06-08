@@ -76,7 +76,7 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.DEPLOYMENT_ERROR:
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
-      case StateEnum.RESTARTED_ERROR:
+      case StateEnum.RESTART_ERROR:
       case RunningStatus.ERROR:
         return true
       default:

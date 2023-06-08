@@ -1,16 +1,16 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import SettingResources, { SettingResourcesProps } from './setting-resources'
+import ApplicationSettingsResources, { ApplicationSettingsResourcesProps } from './application-settings-resources'
 
-const props: SettingResourcesProps = {
+const props: ApplicationSettingsResourcesProps = {
   application: undefined,
   displayWarningCpu: false,
 }
 
-describe('SettingResources', () => {
+describe('SettingsResources', () => {
   it('should render successfully', () => {
     const { baseElement } = render(
-      wrapWithReactHookForm(<SettingResources {...props} />, {
+      wrapWithReactHookForm(<ApplicationSettingsResources {...props} />, {
         defaultValues: {
           instances: [1, 18],
           cpu: [3],
