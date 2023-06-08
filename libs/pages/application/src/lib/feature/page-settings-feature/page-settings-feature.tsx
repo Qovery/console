@@ -11,6 +11,7 @@ import {
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
+  APPLICATION_SETTINGS_HEALTHCHECKS_URL,
   APPLICATION_SETTINGS_PORT_URL,
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
@@ -74,6 +75,11 @@ export function PageSettingsFeature() {
           title: 'Domain',
           icon: IconAwesomeEnum.EARTH_AMERICAS,
           url: pathSettings + APPLICATION_SETTINGS_DOMAIN_URL,
+        },
+        {
+          title: 'Health Checks',
+          icon: IconAwesomeEnum.SHIELD_CHECK,
+          url: pathSettings + APPLICATION_SETTINGS_HEALTHCHECKS_URL,
         },
         {
           title: 'Port',
