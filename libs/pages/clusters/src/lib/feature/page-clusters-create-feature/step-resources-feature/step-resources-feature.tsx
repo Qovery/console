@@ -68,9 +68,6 @@ export function StepResourcesFeature() {
     if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
       if (data.cluster_type === KubernetesEnum.K3_S) {
         navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
-        setRemoteData({
-          ssh_key: '',
-        })
         setFeaturesData(undefined)
       } else {
         navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
