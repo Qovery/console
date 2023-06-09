@@ -141,6 +141,7 @@ export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
     cpu: database.cpu,
     memory: database.memory,
     storage: database.storage,
+    instance_type: database.instance_type,
   }
 
   return databaseRequestPayload
