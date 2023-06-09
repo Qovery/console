@@ -1,11 +1,25 @@
+import { PortProtocolEnum } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { IconAwesomeEnum, IconFa, InputTextSmall, TableEdition, TableEditionRow, Tooltip } from '@qovery/shared/ui'
+import {
+  IconAwesomeEnum,
+  IconFa,
+  InputSelectSmall,
+  InputTextSmall,
+  TableEdition,
+  TableEditionRow,
+  Tooltip,
+} from '@qovery/shared/ui'
 
-/* eslint-disable-next-line */
-export interface ApplicationSettingsHealthchecksProps {}
+export interface ApplicationSettingsHealthchecksProps {
+  ports?: number[]
+}
 
-export function ApplicationSettingsHealthchecks(props: ApplicationSettingsHealthchecksProps) {
+export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHealthchecksProps) {
   const { control } = useFormContext()
+
+  const [type, setType] = useState<PortProtocolEnum>()
+  console.log(type)
 
   const tableHead: TableEditionRow[] = [
     {
@@ -47,8 +61,131 @@ export function ApplicationSettingsHealthchecks(props: ApplicationSettingsHealth
         {
           content: (
             <div className="flex justify-between w-full">
-              Initial Delay (in seconds)
+              Type
               <Tooltip content='Select the type of probe to use. "NONE" disables the probe, which we strongly advise against, as Kubernetes is then unable to check the state of your application.'>
+                <span>
+                  <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
+                </span>
+              </Tooltip>
+            </div>
+          ),
+        },
+        {
+          content: (
+            <Controller
+              name="readiness_probe.type"
+              control={control}
+              render={({ field }) => (
+                <InputSelectSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={(value) => {
+                    setType(value as PortProtocolEnum)
+                    field.onChange(value)
+                  }}
+                  items={Object.values(PortProtocolEnum).map((value) => ({
+                    label: value,
+                    value,
+                  }))}
+                />
+              )}
+            />
+          ),
+        },
+        {
+          content: '',
+        },
+      ],
+    },
+    {
+      cells: [
+        {
+          content: (
+            <div className="flex justify-between w-full">
+              Port
+              <Tooltip content="When configuring an HTTP liveness probe, this advanced setting allows you to set the path to access on the HTTP/HTTPS server to perform the health check.">
+                <span>
+                  <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
+                </span>
+              </Tooltip>
+            </div>
+          ),
+        },
+        {
+          content: (
+            <Controller
+              name={`readiness_probe.type.${type?.toLowerCase()}.port`}
+              control={control}
+              render={({ field }) => (
+                <InputSelectSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  items={
+                    ports
+                      ? ports.map((value) => ({
+                          label: value.toString(),
+                          value: value.toString(),
+                        }))
+                      : []
+                  }
+                />
+              )}
+            />
+          ),
+        },
+        {
+          content: '',
+        },
+      ],
+    },
+    {
+      cells: [
+        {
+          content: (
+            <div className="flex justify-between w-full">
+              Path
+              <Tooltip content="Allows to define the path to be used to run the probe check.">
+                <span>
+                  <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
+                </span>
+              </Tooltip>
+            </div>
+          ),
+        },
+        {
+          content: (
+            <Controller
+              name={`readiness_probe.type.${type?.toLowerCase()}.path`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+        {
+          content: '',
+        },
+      ],
+    },
+    {
+      cells: [
+        {
+          content: (
+            <div className="flex justify-between w-full">
+              Initial Delay (in seconds)
+              <Tooltip content="Allows you to specify an interval, in seconds, between the application container start and the first liveness check.">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>

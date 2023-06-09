@@ -63,7 +63,11 @@ export function StepPortFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     setPortData(data)
-    navigate(pathCreate + SERVICES_CREATION_POST_URL)
+
+    if (data.ports.length > 0) {
+    } else {
+      navigate(pathCreate + SERVICES_CREATION_POST_URL)
+    }
   })
 
   const onBack = () => {

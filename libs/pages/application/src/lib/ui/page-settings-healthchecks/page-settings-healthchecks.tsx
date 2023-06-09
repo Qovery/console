@@ -1,13 +1,15 @@
+import { ServicePort } from 'qovery-typescript-axios'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { HelpSection, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: LoadingStatus
+  ports?: ServicePort[]
   onSubmit?: () => void
 }
 
-export function PageSettingsHealthchecks({ onSubmit, loading }: PageSettingsHealthchecksProps) {
+export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSettingsHealthchecksProps) {
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
       <div className="p-8 max-w-content-with-navigation-left">
@@ -24,7 +26,7 @@ export function PageSettingsHealthchecks({ onSubmit, loading }: PageSettingsHeal
                 <LoaderSpinner className="w-6" />
               </div>
             ) : (
-              <ApplicationSettingsHealthchecks />
+              <ApplicationSettingsHealthchecks ports={ports?.map((port) => port.internal_port)} />
             )}
             {/* <StickyActionFormToaster
               visible={formState.isDirty}

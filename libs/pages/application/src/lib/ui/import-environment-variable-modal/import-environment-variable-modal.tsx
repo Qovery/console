@@ -79,7 +79,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               <p className="font-medium text-text-600 text-ssm">Apply for all</p>
               <div className="flex gap-4">
                 <InputSelectSmall
-                  className="w-[188px]"
+                  inputClassName="font-normal bg-white"
                   dataTestId="select-scope-for-all"
                   name="search"
                   items={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
