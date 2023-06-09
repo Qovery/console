@@ -1,4 +1,5 @@
 import equal from 'fast-deep-equal'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useParams } from 'react-router-dom'
@@ -33,7 +34,7 @@ export function PageDatabase() {
   const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
-    if (database && databaseId && loadingStatus === 'loaded') {
+    if (database && database.mode !== DatabaseModeEnum.MANAGED && databaseId && loadingStatus === 'loaded') {
       database?.metrics?.loadingStatus !== 'loaded' &&
         database?.metrics?.loadingStatus !== 'error' &&
         dispatch(fetchDatabaseMetrics({ databaseId }))
