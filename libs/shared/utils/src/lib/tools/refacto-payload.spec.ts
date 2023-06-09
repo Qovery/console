@@ -141,6 +141,7 @@ describe('testing payload refactoring', () => {
     response.cpu = 1024
     response.memory = 1024
     response.storage = 1024
+    response.instance_type = 't2.small'
 
     expect(refactoDatabasePayload(response)).toEqual({
       name: 'hello',
@@ -150,6 +151,7 @@ describe('testing payload refactoring', () => {
       cpu: 1024,
       memory: 1024,
       storage: 1024,
+      instance_type: 't2.small',
     })
   })
 
