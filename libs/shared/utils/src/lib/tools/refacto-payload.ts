@@ -89,6 +89,7 @@ export function refactoContainerApplicationPayload(application: Partial<Containe
     arguments: application.arguments,
     entrypoint: application.entrypoint,
     auto_preview: application.auto_preview,
+    healthchecks: application.healthchecks,
   }
 
   return containerRequestPayload

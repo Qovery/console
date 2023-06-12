@@ -1,7 +1,8 @@
 import { ServicePort } from 'qovery-typescript-axios'
+import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import { HelpSection, LoaderSpinner } from '@qovery/shared/ui'
+import { HelpSection, StickyActionFormToaster } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: LoadingStatus
@@ -10,6 +11,8 @@ export interface PageSettingsHealthchecksProps {
 }
 
 export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSettingsHealthchecksProps) {
+  const { formState } = useFormContext()
+
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
       <div className="p-8 max-w-content-with-navigation-left">
@@ -21,20 +24,13 @@ export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSetti
         </p>
         <form onSubmit={onSubmit}>
           <div className="relative">
-            {!loading || loading === 'loading' ? (
-              <div className="flex justify-center">
-                <LoaderSpinner className="w-6" />
-              </div>
-            ) : (
-              <ApplicationSettingsHealthchecks ports={ports?.map((port) => port.internal_port)} />
-            )}
-            {/* <StickyActionFormToaster
+            <ApplicationSettingsHealthchecks ports={ports?.map((port) => port.internal_port)} />
+            <StickyActionFormToaster
               visible={formState.isDirty}
-              onSubmit={props.onSubmit}
-              onReset={props.discardChanges}
+              onSubmit={onSubmit}
               disabledValidation={!formState.isValid}
-              loading={props.loading === 'loading'}
-            /> */}
+              loading={loading === 'loading'}
+            />
           </div>
         </form>
       </div>

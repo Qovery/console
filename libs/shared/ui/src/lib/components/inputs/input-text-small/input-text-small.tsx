@@ -15,6 +15,7 @@ export interface InputTextSmallProps {
   label?: string
   errorMessagePosition?: 'left' | 'bottom'
   hasShowPasswordButton?: boolean
+  disabled?: boolean
 }
 
 export function InputTextSmall(props: InputTextSmallProps) {
@@ -29,6 +30,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
     className = '',
     errorMessagePosition = 'bottom',
     hasShowPasswordButton = false,
+    disabled = false,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -36,6 +38,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const hasFocus = focused ? 'input--focused' : ''
+  const hasDisabled = disabled ? 'input--disabled' : ''
 
   const classNameError = errorMessagePosition === 'left' ? 'flex gap-3 items-center' : ''
 
@@ -52,7 +55,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           </div>
         </Tooltip>
       )}
-      <div data-testid="input" className={`input input--small flex-grow ${hasError} ${hasFocus}`}>
+      <div data-testid="input" className={`input input--small flex-grow ${hasError} ${hasFocus} ${hasDisabled}`}>
         <label className="hidden" htmlFor={props.label}>
           {props.label}
         </label>
@@ -65,6 +68,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           placeholder={placeholder}
           value={value}
           onInput={onChange}
+          disabled={disabled}
           id={props.label}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}

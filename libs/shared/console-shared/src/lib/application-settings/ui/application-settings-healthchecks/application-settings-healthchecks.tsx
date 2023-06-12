@@ -1,4 +1,3 @@
-import { PortProtocolEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
@@ -11,6 +10,13 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 
+export enum ProbeTypeEnum {
+  HTTP = 'HTTP',
+  GRPC = 'GRPC',
+  TCP = 'TCP',
+  EXEC = 'EXEC',
+}
+
 export interface ApplicationSettingsHealthchecksProps {
   ports?: number[]
 }
@@ -18,8 +24,7 @@ export interface ApplicationSettingsHealthchecksProps {
 export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHealthchecksProps) {
   const { control } = useFormContext()
 
-  const [type, setType] = useState<PortProtocolEnum>()
-  console.log(type)
+  const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(ProbeTypeEnum.HTTP)
 
   const tableHead: TableEditionRow[] = [
     {
@@ -81,10 +86,10 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
                   data-testid="value"
                   name={field.name}
                   onChange={(value) => {
-                    setType(value as PortProtocolEnum)
+                    setTypeReadiness(value as ProbeTypeEnum)
                     field.onChange(value)
                   }}
-                  items={Object.values(PortProtocolEnum).map((value) => ({
+                  items={Object.values(ProbeTypeEnum).map((value) => ({
                     label: value,
                     value,
                   }))}
@@ -115,7 +120,7 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
         {
           content: (
             <Controller
-              name={`readiness_probe.type.${type?.toLowerCase()}.port`}
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
               control={control}
               render={({ field }) => (
                 <InputSelectSmall
@@ -158,7 +163,7 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
         {
           content: (
             <Controller
-              name={`readiness_probe.type.${type?.toLowerCase()}.path`}
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -318,6 +323,7 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
+                  disabled
                   data-testid="value"
                   name={field.name}
                   onChange={field.onChange}

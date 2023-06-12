@@ -22,6 +22,7 @@ export const SERVICES_DATABASE_CREATION_URL = prefix + '/create/database'
 export const SERVICES_CREATION_GENERAL_URL = '/general'
 export const SERVICES_CREATION_RESOURCES_URL = '/resources'
 export const SERVICES_CREATION_PORTS_URL = '/ports'
+export const SERVICES_CREATION_HEALTHCHECKS_URL = '/health-checks'
 export const SERVICES_CREATION_POST_URL = '/post'
 
 // subrouter for database steps /create/general /create/settings etc...

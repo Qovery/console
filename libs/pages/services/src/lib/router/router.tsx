@@ -2,6 +2,7 @@ import {
   Route,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
+  SERVICES_CREATION_HEALTHCHECKS_URL,
   SERVICES_CREATION_PORTS_URL,
   SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
@@ -27,6 +28,7 @@ import {
 } from '@qovery/shared/routes'
 import { PageApplicationCreateFeature } from '../feature/page-application-create-feature/page-application-create-feature'
 import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
+import { StepHealthchecksFeature as ApplicationStepHealthchecksFeature } from '../feature/page-application-create-feature/step-healthchecks-feature/step-healthchecks-feature'
 import { StepPortFeature as ApplicationStepPortFeature } from '../feature/page-application-create-feature/step-port-feature/step-port-feature'
 import { StepResourcesFeature as ApplicationStepResourcesFeature } from '../feature/page-application-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature as ApplicationStepSummaryFeature } from '../feature/page-application-create-feature/step-summary-feature/step-summary-feature'
@@ -115,6 +117,10 @@ export const ROUTER_SERVICE_CREATION: Route[] = [
   {
     path: SERVICES_CREATION_PORTS_URL,
     component: <ApplicationStepPortFeature />,
+  },
+  {
+    path: SERVICES_CREATION_HEALTHCHECKS_URL,
+    component: <ApplicationStepHealthchecksFeature />,
   },
   {
     path: SERVICES_CREATION_POST_URL,
