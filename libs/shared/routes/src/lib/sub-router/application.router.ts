@@ -6,7 +6,6 @@ export const APPLICATION_URL = (
 ) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}`
 export const APPLICATION_GENERAL_URL = '/general'
 export const APPLICATION_DEPLOYMENTS_URL = '/deployments'
-export const APPLICATION_METRICS_URL = '/metrics'
 export const APPLICATION_VARIABLES_URL = '/variables'
 export const APPLICATION_SETTINGS_URL = '/settings'
 

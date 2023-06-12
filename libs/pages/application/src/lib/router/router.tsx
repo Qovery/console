@@ -1,7 +1,6 @@
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
-  APPLICATION_METRICS_URL,
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
   APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
@@ -16,7 +15,6 @@ import {
 } from '@qovery/shared/routes'
 import PageDeploymentsFeature from '../feature/page-deployments-feature/page-deployments-feature'
 import PageGeneralFeature from '../feature/page-general-feature/page-general-feature'
-import PageMetricsFeature from '../feature/page-metrics-feature/page-metrics-feature'
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsConfigureJobFeature from '../feature/page-settings-configure-job-feature/page-settings-configure-job-feature'
 import PageSettingsDangerZoneFeature from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -36,10 +34,6 @@ export const ROUTER_APPLICATION: Route[] = [
   {
     path: APPLICATION_DEPLOYMENTS_URL,
     component: <PageDeploymentsFeature />,
-  },
-  {
-    path: APPLICATION_METRICS_URL,
-    component: <PageMetricsFeature />,
   },
   {
     path: APPLICATION_VARIABLES_URL,

@@ -38,7 +38,10 @@ export function PageDatabase() {
       database?.metrics?.loadingStatus !== 'loaded' &&
         database?.metrics?.loadingStatus !== 'error' &&
         dispatch(fetchDatabaseMetrics({ databaseId }))
-      database?.credentials?.loadingStatus !== 'loaded' && dispatch(fetchDatabaseMasterCredentials({ databaseId }))
+    }
+
+    if (database && databaseId && loadingStatus === 'loaded' && database?.credentials?.loadingStatus !== 'loaded') {
+      dispatch(fetchDatabaseMasterCredentials({ databaseId }))
     }
 
     const fetchDatabaseStatusByInterval = setInterval(
