@@ -60,7 +60,22 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                 />
               )}
             />
-
+            <Controller
+              name="auto_delete"
+              control={control}
+              render={({ field }) => (
+                <InputToggle
+                  dataTestId="auto-delete"
+                  className="mb-5"
+                  value={field.value}
+                  onChange={field.onChange}
+                  title="Auto-delete"
+                  description="This environment will be automatically deleted when a branch from a related application is merged or deleted."
+                  forceAlignTop
+                  small
+                />
+              )}
+            />
             <div data-testid="toggles" className={applications && applications.length > 0 ? 'mt-5' : ''}>
               {applications && applications.length > 0 && (
                 <h2 data-testid="applications-title" className="font-medium text-text-600 text-ssm mb-5">
