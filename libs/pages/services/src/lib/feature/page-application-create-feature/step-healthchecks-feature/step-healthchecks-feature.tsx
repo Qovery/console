@@ -1,10 +1,12 @@
+import { Healthcheck } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { FlowPortData } from '@qovery/shared/interfaces'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/console-shared'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
+  SERVICES_CREATION_PORTS_URL,
   SERVICES_CREATION_POST_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -32,12 +34,13 @@ export function StepHealthchecksFeature() {
     <FunnelFlowHelpCard
       title="Configuring the Health Checks"
       items={[
-        'Configure how Kubernetes check the status of your application and decide if it can receive traffic or needs to be restarted',
-        'Liveness Probe: an automatic check that verifies if the application is still in a healthy state',
-        'Readiness Probe: an automatic check that verifies if the application is ready to receive traffic',
+        'Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can receive traffic or needs to be restarted (during the deployment and run phases)',
+        'Liveness Probe: it verifies if the application has an healthy state. If it fails, the application is restarted',
+        'Readiness Probe: it verifies if the application is ready to receive traffic',
+        'If your application has special processing requirements (long start-up phase, re-load operations during the run) you can customize the liveness and readiness probes to match your needs (have a look at the documentation)',
       ]}
       helpSectionProps={{
-        description: 'This is still a description',
+        description: 'Need help? You may find these links useful',
         links: [
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#ports',
@@ -51,21 +54,50 @@ export function StepHealthchecksFeature() {
   )
 
   useEffect(() => {
-    setCurrentStep(3)
+    setCurrentStep(4)
   }, [setCurrentStep])
 
-  const methods = useForm<FlowPortData>({
-    defaultValues: portData,
+  const methods = useForm({
+    defaultValues: {
+      readiness_probe: {
+        type: {
+          [ProbeTypeEnum.TCP.toLowerCase()]: {
+            port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
+          },
+        },
+        initial_delay_seconds: 30,
+        period_seconds: 10,
+        timeout_seconds: 1,
+        success_threshold: 1,
+        failure_threshold: 3,
+      },
+      liveness_probe: {
+        type: {
+          [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
+        },
+        initial_delay_seconds: 30,
+        period_seconds: 10,
+        timeout_seconds: 5,
+        success_threshold: 1,
+        failure_threshold: 3,
+      },
+    },
     mode: 'onChange',
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    setPortData(data)
+    console.log(data)
+
+    setPortData({
+      ports: portData?.ports || [],
+      healthchecks: data as Healthcheck,
+    })
+
     navigate(pathCreate + SERVICES_CREATION_POST_URL)
   })
 
   const onBack = () => {
-    navigate(pathCreate + SERVICES_CREATION_POST_URL)
+    navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
   }
 
   return (

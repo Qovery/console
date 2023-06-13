@@ -40,7 +40,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity):
       dataType = {
         [type]: {
           port: parseInt(currentData['type'][type]['port'], 10),
-          host: currentData['type'][type]['service'] || null,
+          service: currentData['type'][type]['service'] || null,
         },
       }
     } else {
@@ -89,31 +89,40 @@ export function PageSettingsHealthchecksFeature() {
 
   const [loading, setLoading] = useState<LoadingStatus>('not loaded')
 
+  // const typeReadiness =
+  //   application?.healthchecks?.readiness_probe?.type &&
+  //   Object.keys(application?.healthchecks?.readiness_probe?.type || '')
+
+  // const typeLiveness =
+  //   application?.healthchecks?.liveness_probe?.type &&
+  //   Object.keys(application?.healthchecks?.liveness_probe?.type || '')
+
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: {
-      readiness_probe: {
-        initial_delay_seconds: 30,
-        period_seconds: 10,
-        timeout_seconds: 1,
-        success_threshold: 1,
-        failure_threshold: 3,
-      },
-      liveness_probe: {
-        initial_delay_seconds: 30,
-        period_seconds: 10,
-        timeout_seconds: 5,
-        success_threshold: 1,
-        failure_threshold: 3,
-      },
-    },
+    // defaultValues: {
+    //   readiness_probe: {
+    //     currentType: typeReadiness,
+    //     initial_delay_seconds: application?.healthchecks?.readiness_probe?.initial_delay_seconds || 30,
+    //     period_seconds: application?.healthchecks?.readiness_probe?.period_seconds || 10,
+    //     timeout_seconds: application?.healthchecks?.readiness_probe?.timeout_seconds || 1,
+    //     success_threshold: application?.healthchecks?.readiness_probe?.success_threshold || 1,
+    //     failure_threshold: application?.healthchecks?.readiness_probe?.failure_threshold || 3,
+    //   },
+    //   liveness_probe: {
+    //     currentType: typeLiveness,
+    //     initial_delay_seconds: application?.healthchecks?.liveness_probe?.initial_delay_seconds || 30,
+    //     period_seconds: application?.healthchecks?.liveness_probe?.period_seconds || 10,
+    //     timeout_seconds: application?.healthchecks?.liveness_probe?.timeout_seconds || 5,
+    //     success_threshold: application?.healthchecks?.liveness_probe?.success_threshold || 1,
+    //     failure_threshold: application?.healthchecks?.liveness_probe?.failure_threshold || 3,
+    //   },
+    // },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
     if (application) {
       setLoading('loading')
       const cloneApplication = handleSubmit(data, application)
-      console.log(cloneApplication)
 
       dispatch(
         editApplication({

@@ -17,14 +17,28 @@ export enum ProbeTypeEnum {
   EXEC = 'EXEC',
 }
 
+export const ProbeTypeWithNoneEnum = {
+  ...ProbeTypeEnum,
+  NONE: 'NONE',
+} as const
+
+export type ProbeTypeWithNoneEnum = (typeof ProbeTypeWithNoneEnum)[keyof typeof ProbeTypeWithNoneEnum]
+
 export interface ApplicationSettingsHealthchecksProps {
   ports?: number[]
+  defaultTypeReadiness: ProbeTypeEnum
+  defaultTypeLiveness: ProbeTypeWithNoneEnum
 }
 
-export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHealthchecksProps) {
+export function ApplicationSettingsHealthchecks({
+  ports,
+  defaultTypeReadiness,
+  defaultTypeLiveness,
+}: ApplicationSettingsHealthchecksProps) {
   const { control } = useFormContext()
 
-  const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(ProbeTypeEnum.HTTP)
+  const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
+  const [typeLiveness, setTypeLiveness] = useState<ProbeTypeWithNoneEnum>(defaultTypeLiveness)
 
   const tableHead: TableEditionRow[] = [
     {
@@ -80,11 +94,13 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
             <Controller
               name="readiness_probe.type"
               control={control}
+              rules={{ required: 'Please enter a type.' }}
               render={({ field }) => (
                 <InputSelectSmall
                   className="shrink-0 grow flex-1"
                   data-testid="value"
                   name={field.name}
+                  defaultValue={Object.keys(field.value)[0].toUpperCase()}
                   onChange={(value) => {
                     setTypeReadiness(value as ProbeTypeEnum)
                     field.onChange(value)
@@ -99,7 +115,29 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: (
+            <Controller
+              name="liveness_probe.type"
+              control={control}
+              rules={{ required: 'Please enter a type.' }}
+              render={({ field }) => (
+                <InputSelectSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  defaultValue={Object.keys(field.value)[0].toUpperCase()}
+                  onChange={(value) => {
+                    setTypeLiveness(value as ProbeTypeWithNoneEnum)
+                    field.onChange(value)
+                  }}
+                  items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
+                    label: value,
+                    value,
+                  }))}
+                />
+              )}
+            />
+          ),
         },
       ],
     },
@@ -120,6 +158,7 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
         {
           content: (
             <Controller
+              key={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
               control={control}
               render={({ field }) => (
@@ -142,28 +181,44 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+            <Controller
+              key={`liveness_probe.type.${typeLiveness?.toLowerCase()}.port`}
+              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.port`}
+              control={control}
+              render={({ field }) => (
+                <InputSelectSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  items={
+                    ports
+                      ? ports.map((value) => ({
+                          label: value.toString(),
+                          value: value.toString(),
+                        }))
+                      : []
+                  }
+                />
+              )}
+            />
+          ),
         },
       ],
     },
-    {
+  ]
+
+  if (typeReadiness === ProbeTypeEnum.TCP || typeLiveness === ProbeTypeWithNoneEnum.TCP) {
+    tableBody.push({
       cells: [
         {
-          content: (
-            <div className="flex justify-between w-full">
-              Path
-              <Tooltip content="Allows to define the path to be used to run the probe check.">
-                <span>
-                  <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
-                </span>
-              </Tooltip>
-            </div>
-          ),
+          content: <div className="flex justify-between w-full">Host</div>,
         },
         {
-          content: (
+          content: typeReadiness === ProbeTypeEnum.TCP && (
             <Controller
-              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.host`}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -180,10 +235,229 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: typeLiveness === ProbeTypeWithNoneEnum.TCP && (
+            <Controller
+              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.host`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
         },
       ],
-    },
+    })
+  }
+
+  if (typeReadiness === ProbeTypeEnum.HTTP || typeLiveness === ProbeTypeWithNoneEnum.HTTP) {
+    tableBody.push(
+      {
+        cells: [
+          {
+            content: (
+              <div className="flex justify-between w-full">
+                Path
+                <Tooltip content="Allows to define the path to be used to run the probe check.">
+                  <span>
+                    <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
+                  </span>
+                </Tooltip>
+              </div>
+            ),
+          },
+          {
+            content: typeReadiness === ProbeTypeEnum.HTTP && (
+              <Controller
+                name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputTextSmall
+                    className="shrink-0 grow flex-1"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    errorMessagePosition="left"
+                    label={field.name}
+                  />
+                )}
+              />
+            ),
+          },
+          {
+            content: typeLiveness === ProbeTypeWithNoneEnum.HTTP && (
+              <Controller
+                name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.path`}
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputTextSmall
+                    className="shrink-0 grow flex-1"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    errorMessagePosition="left"
+                    label={field.name}
+                  />
+                )}
+              />
+            ),
+          },
+        ],
+      },
+      {
+        cells: [
+          {
+            content: <div className="flex justify-between w-full">Scheme</div>,
+          },
+          {
+            content: typeReadiness === ProbeTypeEnum.HTTP && (
+              <Controller
+                name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.scheme`}
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputTextSmall
+                    className="shrink-0 grow flex-1"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    errorMessagePosition="left"
+                    label={field.name}
+                  />
+                )}
+              />
+            ),
+          },
+          {
+            content: typeLiveness === ProbeTypeWithNoneEnum.HTTP && (
+              <Controller
+                name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.scheme`}
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputTextSmall
+                    className="shrink-0 grow flex-1"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    errorMessagePosition="left"
+                    label={field.name}
+                  />
+                )}
+              />
+            ),
+          },
+        ],
+      }
+    )
+  }
+
+  if (typeReadiness === ProbeTypeEnum.EXEC || typeLiveness === ProbeTypeWithNoneEnum.EXEC) {
+    tableBody.push({
+      cells: [
+        {
+          content: <div className="flex justify-between w-full">Command</div>,
+        },
+        {
+          content: typeReadiness === ProbeTypeEnum.EXEC && (
+            <Controller
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.command`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+        {
+          content: typeLiveness === ProbeTypeWithNoneEnum.EXEC && (
+            <Controller
+              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.command`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+      ],
+    })
+  }
+
+  if (typeReadiness === ProbeTypeEnum.GRPC || typeLiveness === ProbeTypeWithNoneEnum.GRPC) {
+    tableBody.push({
+      cells: [
+        {
+          content: <div className="flex justify-between w-full">Service</div>,
+        },
+        {
+          content: typeReadiness === ProbeTypeEnum.GRPC && (
+            <Controller
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.service`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+        {
+          content: typeLiveness === ProbeTypeWithNoneEnum.GRPC && (
+            <Controller
+              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.service`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+      ],
+    })
+  }
+
+  tableBody.push(
     {
       cells: [
         {
@@ -219,7 +493,24 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+            <Controller
+              name="liveness_probe.initial_delay_seconds"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
         },
       ],
     },
@@ -258,7 +549,24 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+            <Controller
+              name="liveness_probe.period_seconds"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
         },
       ],
     },
@@ -297,7 +605,24 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+            <Controller
+              name="liveness_probe.timeout_seconds"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
         },
       ],
     },
@@ -337,7 +662,25 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+            <Controller
+              name="liveness_probe.success_threshold"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  disabled
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
         },
       ],
     },
@@ -376,11 +719,28 @@ export function ApplicationSettingsHealthchecks({ ports }: ApplicationSettingsHe
           ),
         },
         {
-          content: '',
+          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+            <Controller
+              name="liveness_probe.failure_threshold"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
         },
       ],
-    },
-  ]
+    }
+  )
 
   const table = [...tableHead, ...tableBody]
 

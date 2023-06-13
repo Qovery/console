@@ -1,3 +1,5 @@
+import { Healthcheck } from 'qovery-typescript-axios'
+
 export interface PortData {
   application_port: number | undefined
   external_port: number | undefined
@@ -6,4 +8,5 @@ export interface PortData {
 
 export interface FlowPortData {
   ports: PortData[]
+  healthchecks?: Healthcheck
 }

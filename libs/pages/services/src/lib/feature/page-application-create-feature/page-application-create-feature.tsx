@@ -33,6 +33,7 @@ export const steps: { title: string }[] = [
   { title: 'Create new application' },
   { title: 'Set resources' },
   { title: 'Set port' },
+  { title: 'Set health checks' },
   { title: 'Ready to install' },
 ]
 
@@ -50,6 +51,7 @@ export function PageApplicationCreateFeature() {
 
   const [portData, setPortData] = useState<FlowPortData | undefined>({
     ports: [],
+    healthchecks: {},
   })
 
   const navigate = useNavigate()
@@ -75,7 +77,7 @@ export function PageApplicationCreateFeature() {
         onExit={() => {
           navigate(SERVICES_URL(organizationId, projectId, environmentId))
         }}
-        totalSteps={4}
+        totalSteps={steps.length}
         currentStep={currentStep}
         currentTitle={steps[currentStep - 1].title}
         portal

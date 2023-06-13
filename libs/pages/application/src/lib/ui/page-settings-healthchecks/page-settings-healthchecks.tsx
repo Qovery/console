@@ -1,6 +1,6 @@
 import { ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
-import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
+import { ApplicationSettingsHealthchecks, ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/console-shared'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { HelpSection, StickyActionFormToaster } from '@qovery/shared/ui'
 
@@ -24,7 +24,11 @@ export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSetti
         </p>
         <form onSubmit={onSubmit}>
           <div className="relative">
-            <ApplicationSettingsHealthchecks ports={ports?.map((port) => port.internal_port)} />
+            <ApplicationSettingsHealthchecks
+              defaultTypeReadiness={ProbeTypeEnum.TCP}
+              defaultTypeLiveness={ProbeTypeWithNoneEnum.NONE}
+              ports={ports?.map((port) => port.internal_port)}
+            />
             <StickyActionFormToaster
               visible={formState.isDirty}
               onSubmit={onSubmit}

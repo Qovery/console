@@ -40,7 +40,7 @@ export function StepPortFeature() {
         'Declared ports are also used to check the liveness/readiness of your application.',
       ]}
       helpSectionProps={{
-        description: 'This is still a description',
+        description: 'Need help? You may find these links useful',
         links: [
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/application/#ports',
