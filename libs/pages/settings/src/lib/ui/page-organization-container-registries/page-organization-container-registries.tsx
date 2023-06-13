@@ -48,7 +48,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           <div>
             <h1 className="h5 text-text-700 mb-2">Container registries</h1>
             <p className="text-text-500 text-xs">
-              Define and manage the container registry to be used within your organization.
+              Define and manage the container registry to be used within your organization to deploy applications.
             </p>
           </div>
           <Button onClick={() => onAddRegistry()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>

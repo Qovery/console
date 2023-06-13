@@ -35,7 +35,11 @@ export function CreateCloneEnvironmentModal(props: CreateCloneEnvironmentModalPr
   return (
     <ModalCrud
       title={props.environmentToClone ? 'Clone Environment' : 'Create Environment'}
-      description="You will have the possibility to modify the parameters once created"
+      description={
+        props.environmentToClone
+          ? "Clone the environment on the same or different target cluster. Cluster can't be changed after creation"
+          : "Create a new environment and deploy your application on the selected cluster. Cluster can't be changed after creation"
+      }
       onClose={props.closeModal}
       onSubmit={props.onSubmit}
       loading={props.loading}

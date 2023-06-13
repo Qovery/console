@@ -54,7 +54,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                   value={field.value}
                   onChange={field.onChange}
                   title="Create on demand"
-                  description="Trigger the creation only when requested within the Pull Request. Disabling this option will create a preview environment for each Pull Request."
+                  description="Trigger the creation of the preview environment only when requested within the Pull Request. Disabling this option will create a preview environment for each Pull Request."
                   forceAlignTop
                   small
                 />

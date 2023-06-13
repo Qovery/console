@@ -176,7 +176,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                           value={field.value}
                           onChange={field.onChange}
                           title="Auto-deploy"
-                          description="Your applications will be redeployed each time a commit is done on the selected branch."
+                          description="Automatically deploy every new commit on the applications within this environment (if the branch matches). Only the impacted applications will be redeployed."
                           small
                         />
                       )}

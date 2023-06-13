@@ -89,7 +89,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
         !loading && (
           <EmptyState
             title="No service found"
-            description="You can create an application from a git repository, from an image registry or create a database"
+            description="You can create a service from the button on the top"
             className="bg-white rounded-t-sm mt-2 pt-10"
             imageWidth="w-[160px]"
           />
