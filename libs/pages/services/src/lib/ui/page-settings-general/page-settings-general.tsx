@@ -80,7 +80,9 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 />
               )}
             />
-            <p className="text-xs text-text-400 ml-4">Clusters cannot be changed at this time.</p>
+            <p className="text-xs text-text-400 ml-4">
+              Cluster cannot be changed. Clone the environment to deploy the same applications on another cluster.
+            </p>
           </BlockContent>
           <div className="flex justify-end">
             <Button

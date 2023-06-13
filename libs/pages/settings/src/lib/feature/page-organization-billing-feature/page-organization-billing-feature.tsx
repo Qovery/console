@@ -46,9 +46,10 @@ export function PageOrganizationBillingFeature() {
   const onDeleteCreditCard = (creditCard: CreditCard) => {
     openModalConfirmation({
       title: 'Delete credit card',
-      description: 'Are you sure you want to delete this credit card?',
+      description: 'Write the last digits of your credit card to delete it.',
       name: creditCard.last_digit,
       isDelete: true,
+      placeholder: 'Enter the last digits',
       action: async () => {
         await dispatch(deleteCreditCard({ organizationId: organizationId || '', creditCardId: creditCard.id }))
       },

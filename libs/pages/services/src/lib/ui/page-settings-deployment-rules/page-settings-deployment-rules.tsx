@@ -41,7 +41,7 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
                   value={field.value}
                   onChange={field.onChange}
                   title="Auto-deploy"
-                  description="The services from the environment will be automatically updated when they are updated."
+                  description="Automatically deploy every new commit on the applications within this environment (if the branch matches). Only the impacted applications will be redeployed."
                   forceAlignTop
                   small
                 />

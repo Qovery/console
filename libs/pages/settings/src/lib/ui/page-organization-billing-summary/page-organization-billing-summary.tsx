@@ -106,11 +106,6 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="flex-1 p-5 h-[114px]">
             <div className="text-text-400 text-xs mb-1 font-medium">Seats</div>
             <div className="text-text-600 font-bold text-sm mb-1">N/A</div>
-            <Link
-              className="!text-xs font-medium"
-              link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#organization-members"
-              linkLabel="Manage members"
-            />
           </div>
           <div className="flex-1 p-5 h-[114px]">
             <div className="text-text-400 text-xs mb-1 font-medium">Cluster</div>

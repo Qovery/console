@@ -27,7 +27,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
     title,
     className = '',
     customWidth = 'w-full',
-    description = 'All your data are going to be deleted. Use it carefully this action is irreversible.',
+    description = 'All your data are going to be deleted. Use it carefully this action is irreversible. The operation might take a few minutes to complete.',
     ctaLabel = 'Delete',
     callback,
     list,
