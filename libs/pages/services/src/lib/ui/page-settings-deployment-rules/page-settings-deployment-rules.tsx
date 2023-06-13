@@ -36,7 +36,6 @@ export function PageSettingsDeploymentRules(props: PageSettingsDeploymentRulesPr
               control={control}
               render={({ field }) => (
                 <InputToggle
-                  className="mb-5"
                   dataTestId="auto-deploy"
                   value={field.value}
                   onChange={field.onChange}
