@@ -11,6 +11,7 @@ export interface UseModalConfirmationProps {
   mode?: EnvironmentModeEnum | string | undefined
   warning?: string
   isDelete?: boolean
+  placeholder?: string
 }
 
 export function useModalConfirmation() {
@@ -31,6 +32,7 @@ export function useModalConfirmation() {
             name={modalConfirmation.name}
             warning={modalConfirmation.warning}
             callback={modalConfirmation.action}
+            placeholder={modalConfirmation.placeholder}
           />
         ),
       })
