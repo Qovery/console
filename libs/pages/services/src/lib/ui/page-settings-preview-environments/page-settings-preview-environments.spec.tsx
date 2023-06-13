@@ -18,6 +18,7 @@ describe('PageSettingsPreviewEnvironments', () => {
   const defaultValues: any = {
     auto_preview: false,
     on_demand_preview: false,
+    auto_delete: false,
     0: true,
     1: true,
   }
@@ -62,6 +63,22 @@ describe('PageSettingsPreviewEnvironments', () => {
 
     await waitFor(async () => {
       expect(screen.getByTestId(`toggle-on-demand-preview`)?.querySelector('input')?.getAttribute('value')).toBe('true')
+    })
+  })
+  it('should have the toggle with auto delete', async () => {
+    render(
+      wrapWithReactHookForm(<PageSettingsPreviewEnvironments {...props} />, {
+        defaultValues,
+      })
+    )
+
+    await act(() => {
+      const toggle = screen.getByTestId('auto-delete')
+      fireEvent.click(toggle)
+    })
+
+    await waitFor(async () => {
+      expect(screen.getByTestId(`auto-delete`)?.querySelector('input')?.getAttribute('value')).toBe('true')
     })
   })
 
