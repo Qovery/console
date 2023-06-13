@@ -22,7 +22,7 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
           receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by
           two probes: Liveness and Readiness. If your application has special processing requirements (long start-up
           phase, re-load operations during the run), you can customize the liveness and readiness probes to match your
-          needs (have a look at the documentation){' '}
+          needs (have a look at the documentation)
         </p>
       </div>
 

@@ -99,24 +99,6 @@ export function PageSettingsHealthchecksFeature() {
 
   const methods = useForm({
     mode: 'onChange',
-    // defaultValues: {
-    //   readiness_probe: {
-    //     currentType: typeReadiness,
-    //     initial_delay_seconds: application?.healthchecks?.readiness_probe?.initial_delay_seconds || 30,
-    //     period_seconds: application?.healthchecks?.readiness_probe?.period_seconds || 10,
-    //     timeout_seconds: application?.healthchecks?.readiness_probe?.timeout_seconds || 1,
-    //     success_threshold: application?.healthchecks?.readiness_probe?.success_threshold || 1,
-    //     failure_threshold: application?.healthchecks?.readiness_probe?.failure_threshold || 3,
-    //   },
-    //   liveness_probe: {
-    //     currentType: typeLiveness,
-    //     initial_delay_seconds: application?.healthchecks?.liveness_probe?.initial_delay_seconds || 30,
-    //     period_seconds: application?.healthchecks?.liveness_probe?.period_seconds || 10,
-    //     timeout_seconds: application?.healthchecks?.liveness_probe?.timeout_seconds || 5,
-    //     success_threshold: application?.healthchecks?.liveness_probe?.success_threshold || 1,
-    //     failure_threshold: application?.healthchecks?.liveness_probe?.failure_threshold || 3,
-    //   },
-    // },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -139,23 +121,27 @@ export function PageSettingsHealthchecksFeature() {
   })
 
   useEffect(() => {
-    const setProbeValues = (probeName: string, values: Probe) => {
-      Object.entries(values).forEach(([field, value]) => {
-        if (typeof value === 'object' && value !== null) {
-          setProbeValues(`${probeName}.${field}`, value)
-        } else {
-          methods.setValue(`${probeName}.${field}` as any, value)
-        }
-      })
-    }
+    // const setProbeValues = (probeName: string, values: Probe) => {
+    //   Object.entries(values).forEach(([field, value]) => {
+    //     if (typeof value === 'object' && value !== null) {
+    //       setProbeValues(`${probeName}.${field}`, value)
+    //     } else {
+    //       methods.setValue(`${probeName}.${field}` as any, value)
+    //     }
+    //   })
+    // }
 
     if (application?.healthchecks) {
-      if (application?.healthchecks?.liveness_probe)
-        setProbeValues('liveness_probe', application?.healthchecks?.liveness_probe)
-      if (application?.healthchecks?.readiness_probe)
-        setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
+      console.log(application.healthchecks)
+      methods.reset(application.healthchecks)
+      // if (application?.healthchecks?.liveness_probe)
+      //   setProbeValues('liveness_probe', application?.healthchecks?.liveness_probe)
+      // if (application?.healthchecks?.readiness_probe)
+      //   setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
     }
   }, [methods, application])
+
+  // defaultTypeReadiness={Object.keys(application?.healthchecks?.readiness_probe?.type)}
 
   return (
     <FormProvider {...methods}>

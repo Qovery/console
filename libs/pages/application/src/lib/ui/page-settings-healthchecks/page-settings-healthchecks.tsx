@@ -6,6 +6,8 @@ import { HelpSection, StickyActionFormToaster } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: LoadingStatus
+  defaultTypeReadiness?: ProbeTypeEnum
+  defaultTypeLiveness?: ProbeTypeWithNoneEnum
   ports?: ServicePort[]
   onSubmit?: () => void
 }

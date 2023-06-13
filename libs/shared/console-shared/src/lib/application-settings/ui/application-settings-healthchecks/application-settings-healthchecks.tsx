@@ -35,7 +35,7 @@ export function ApplicationSettingsHealthchecks({
   defaultTypeReadiness,
   defaultTypeLiveness,
 }: ApplicationSettingsHealthchecksProps) {
-  const { control } = useFormContext()
+  const { control, reset } = useFormContext()
 
   const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
   const [typeLiveness, setTypeLiveness] = useState<ProbeTypeWithNoneEnum>(defaultTypeLiveness)
@@ -95,22 +95,25 @@ export function ApplicationSettingsHealthchecks({
               name="readiness_probe.type"
               control={control}
               rules={{ required: 'Please enter a type.' }}
-              render={({ field }) => (
-                <InputSelectSmall
-                  className="shrink-0 grow flex-1"
-                  data-testid="value"
-                  name={field.name}
-                  defaultValue={Object.keys(field.value)[0].toUpperCase()}
-                  onChange={(value) => {
-                    setTypeReadiness(value as ProbeTypeEnum)
-                    field.onChange(value)
-                  }}
-                  items={Object.values(ProbeTypeEnum).map((value) => ({
-                    label: value,
-                    value,
-                  }))}
-                />
-              )}
+              render={({ field }) => {
+                console.log(field.value)
+                return (
+                  <InputSelectSmall
+                    className="shrink-0 grow flex-1"
+                    data-testid="value"
+                    name={field.name}
+                    defaultValue={(field.value && Object.keys(field.value)[0].toUpperCase()) || ''}
+                    onChange={(value) => {
+                      setTypeReadiness(value as ProbeTypeEnum)
+                      field.onChange(value)
+                    }}
+                    items={Object.values(ProbeTypeEnum).map((value) => ({
+                      label: value,
+                      value,
+                    }))}
+                  />
+                )
+              }}
             />
           ),
         },
@@ -125,10 +128,22 @@ export function ApplicationSettingsHealthchecks({
                   className="shrink-0 grow flex-1"
                   data-testid="value"
                   name={field.name}
-                  defaultValue={Object.keys(field.value)[0].toUpperCase()}
+                  defaultValue={
+                    (field.value && Object.keys(field.value)[0].toUpperCase()) || ProbeTypeWithNoneEnum.NONE
+                  }
                   onChange={(value) => {
                     setTypeLiveness(value as ProbeTypeWithNoneEnum)
                     field.onChange(value)
+                    if (value !== ProbeTypeWithNoneEnum.NONE)
+                      reset({
+                        liveness_probe: {
+                          initial_delay_seconds: 30,
+                          period_seconds: 10,
+                          timeout_seconds: 5,
+                          success_threshold: 1,
+                          failure_threshold: 3,
+                        },
+                      })
                   }}
                   items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
                     label: value,
