@@ -107,45 +107,58 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           content: (
-            <InputSelectSmall
-              className="shrink-0 grow flex-1"
-              data-testid="value"
-              name="readiness_probe.type"
-              defaultValue={typeReadiness}
-              onChange={(value) => {
-                // set default Port
-                // setValue(`readiness_probe.type.${value}.port`, ports?.[0])
-                setTypeReadiness(value as ProbeTypeEnum)
-              }}
-              items={Object.values(ProbeTypeEnum).map((value) => ({
-                label: value,
-                value: value,
-              }))}
+            <Controller
+              name="readiness_probe.currentType"
+              control={control}
+              render={({ field }) => (
+                <InputSelectSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  defaultValue={field.value}
+                  onChange={(value) => {
+                    field.onChange(value)
+                    setTypeReadiness(value as ProbeTypeEnum)
+                  }}
+                  items={Object.values(ProbeTypeEnum).map((value) => ({
+                    label: value,
+                    value: value,
+                  }))}
+                />
+              )}
             />
           ),
         },
         {
           content: (
-            <InputSelectSmall
-              className="shrink-0 grow flex-1"
-              data-testid="value"
-              name="liveness_probe.type"
-              defaultValue={typeLiveness}
-              onChange={(value) => {
-                // set default Port
-                // setValue(`readiness_probe.type.${value}.port`, ports?.[0])
-                setTypeLiveness(value as ProbeTypeWithNoneEnum)
-              }}
-              items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
-                label: value,
-                value: value,
-              }))}
+            <Controller
+              name="liveness_probe.currentType"
+              control={control}
+              render={({ field }) => (
+                <InputSelectSmall
+                  className="shrink-0 grow flex-1"
+                  data-testid="value"
+                  name={field.name}
+                  defaultValue={field.value}
+                  onChange={(value) => {
+                    field.onChange(value)
+                    setTypeLiveness(value as ProbeTypeWithNoneEnum)
+                  }}
+                  items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
+                    label: value,
+                    value: value,
+                  }))}
+                />
+              )}
             />
           ),
         },
       ],
     },
-    {
+  ]
+
+  if (typeReadiness !== ProbeTypeEnum.EXEC || typeReadiness !== ProbeTypeWithNoneEnum.EXEC) {
+    tableBody.push({
       cells: [
         {
           content: (
@@ -204,54 +217,6 @@ export function ApplicationSettingsHealthchecks({
                         }))
                       : []
                   }
-                />
-              )}
-            />
-          ),
-        },
-      ],
-    },
-  ]
-
-  if (typeReadiness === ProbeTypeEnum.TCP || typeLiveness === ProbeTypeWithNoneEnum.TCP) {
-    tableBody.push({
-      cells: [
-        {
-          content: <div className="flex justify-between w-full">Host</div>,
-        },
-        {
-          content: typeReadiness === ProbeTypeEnum.TCP && (
-            <Controller
-              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.host`}
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputTextSmall
-                  className="shrink-0 grow flex-1"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  errorMessagePosition="left"
-                  label={field.name}
-                />
-              )}
-            />
-          ),
-        },
-        {
-          content: typeLiveness === ProbeTypeWithNoneEnum.TCP && (
-            <Controller
-              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.host`}
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputTextSmall
-                  className="shrink-0 grow flex-1"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  errorMessagePosition="left"
-                  label={field.name}
                 />
               )}
             />
@@ -748,7 +713,13 @@ export function ApplicationSettingsHealthchecks({
 
   const table = [...tableHead, ...tableBody]
 
-  return <TableEdition className="bg-element-light-lighter-200 font-medium text-ssm" tableBody={table} />
+  return (
+    <TableEdition
+      key={`${typeLiveness}.${typeReadiness}`}
+      className="bg-element-light-lighter-200 font-medium text-ssm"
+      tableBody={table}
+    />
+  )
 }
 
 export default ApplicationSettingsHealthchecks

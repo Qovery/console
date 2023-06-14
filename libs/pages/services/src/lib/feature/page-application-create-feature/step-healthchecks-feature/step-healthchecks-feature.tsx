@@ -100,8 +100,6 @@ export function StepHealthchecksFeature() {
       return processedData
     }
 
-    console.log(processProbeData(data))
-
     setPortData({
       ports: portData?.ports || [],
       healthchecks: processProbeData(data) as Healthcheck,
