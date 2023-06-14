@@ -15,6 +15,7 @@ import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
+  SERVICES_CREATION_HEALTHCHECKS_URL,
   SERVICES_CREATION_PORTS_URL,
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_URL,
@@ -23,7 +24,7 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
-import { useApplicationContainerCreateContext } from '../page-application-create-feature'
+import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Application')
@@ -50,6 +51,14 @@ export function StepSummaryFeature() {
 
   const gotoPorts = () => {
     navigate(pathCreate + SERVICES_CREATION_PORTS_URL)
+  }
+
+  const onPrevious = () => {
+    if (portData?.ports && portData?.ports.length > 0) {
+      navigate(pathCreate + SERVICES_CREATION_HEALTHCHECKS_URL)
+    } else {
+      gotoPorts()
+    }
   }
 
   useEffect(() => {
@@ -176,7 +185,7 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(4)
+    setCurrentStep(steps.length)
   }, [setCurrentStep])
 
   return (
@@ -186,7 +195,7 @@ export function StepSummaryFeature() {
           isLoadingCreate={loadingCreate}
           isLoadingCreateAndDeploy={loadingCreateAndDeploy}
           onSubmit={onSubmit}
-          onPrevious={gotoPorts}
+          onPrevious={onPrevious}
           generalData={generalData}
           resourcesData={resourcesData}
           portsData={portData}

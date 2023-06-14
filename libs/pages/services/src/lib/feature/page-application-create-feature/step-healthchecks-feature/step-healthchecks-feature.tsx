@@ -2,7 +2,12 @@ import { Healthcheck } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/console-shared'
+import {
+  ProbeTypeEnum,
+  ProbeTypeWithNoneEnum,
+  defaultLivenessProbe,
+  defaultReadinessProbe,
+} from '@qovery/shared/console-shared'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -60,37 +65,46 @@ export function StepHealthchecksFeature() {
   const methods = useForm({
     defaultValues: {
       readiness_probe: {
-        type: {
-          [ProbeTypeEnum.TCP.toLowerCase()]: {
-            port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
+        ...{
+          type: {
+            [ProbeTypeEnum.TCP.toLowerCase()]: {
+              port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
+            },
           },
         },
-        initial_delay_seconds: 30,
-        period_seconds: 10,
-        timeout_seconds: 1,
-        success_threshold: 1,
-        failure_threshold: 3,
+        ...defaultReadinessProbe,
       },
       liveness_probe: {
-        type: {
-          [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
+        ...{
+          type: {
+            [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
+          },
         },
-        initial_delay_seconds: 30,
-        period_seconds: 10,
-        timeout_seconds: 5,
-        success_threshold: 1,
-        failure_threshold: 3,
+        ...defaultLivenessProbe,
       },
     },
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    console.log(data)
+  const onSubmit = methods.handleSubmit((data: Healthcheck) => {
+    function processProbeData(data: Healthcheck): Healthcheck {
+      const processedData: Healthcheck = { ...data }
+
+      if (processedData.liveness_probe && processedData.liveness_probe.type) {
+        const livenessType = processedData.liveness_probe.type
+        if (Object.keys(livenessType).includes('none')) {
+          processedData.liveness_probe = undefined
+        }
+      }
+
+      return processedData
+    }
+
+    console.log(processProbeData(data))
 
     setPortData({
       ports: portData?.ports || [],
-      healthchecks: data as Healthcheck,
+      healthchecks: processProbeData(data) as Healthcheck,
     })
 
     navigate(pathCreate + SERVICES_CREATION_POST_URL)

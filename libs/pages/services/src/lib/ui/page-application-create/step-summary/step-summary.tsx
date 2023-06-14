@@ -1,4 +1,4 @@
-import { BuildModeEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, Probe } from 'qovery-typescript-axios'
 import { isApplication, isContainer } from '@qovery/shared/enums'
 import { ApplicationGeneralData, ApplicationResourcesData, FlowPortData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
@@ -19,6 +19,13 @@ export interface StepSummaryProps {
 }
 
 export function StepSummary(props: StepSummaryProps) {
+  const typeReadiness = props.portsData.healthchecks?.readiness_probe
+    ? Object.keys(((props.portsData.healthchecks?.readiness_probe as Probe).type || '') as string)[0]
+    : null
+  const typeLiveness = props.portsData.healthchecks?.liveness_probe
+    ? Object.keys((props.portsData.healthchecks?.liveness_probe as Probe).type as string)[0]
+    : null
+
   return (
     <div>
       <div className="mb-10">
@@ -130,13 +137,101 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
             <ul className="text-text-400 text-sm">
               {props.portsData.ports && props.portsData.ports.length > 0 ? (
-                props.portsData.ports?.map((port, index) => (
-                  <li key={index}>
-                    Application port: <strong className="font-medium">{port.application_port}</strong> – Public port:{' '}
-                    <strong className="font-medium">{port.external_port}</strong> – Public:{' '}
-                    <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
-                  </li>
-                ))
+                <>
+                  {props.portsData.ports?.map((port, index) => (
+                    <li key={index}>
+                      Application port: <strong className="font-medium">{port.application_port}</strong>{' '}
+                      {port.external_port && (
+                        <>
+                          – Public port: <strong className="font-medium">{port.external_port}</strong>
+                        </>
+                      )}{' '}
+                      – Public: <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
+                    </li>
+                  ))}
+                  {props.portsData.healthchecks && props.portsData.healthchecks?.readiness_probe && (
+                    <>
+                      <li className="flex flex-col mt-1">
+                        <span className="font-bold text-text-600">Readiness</span>
+                        <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                          <li className="pl-5">
+                            Type: <strong className="font-medium">{typeReadiness?.toUpperCase()}</strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Initial Delay:{' '}
+                            <strong className="font-medium">
+                              {props.portsData.healthchecks.readiness_probe.initial_delay_seconds} seconds
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Period:{' '}
+                            <strong className="font-medium">
+                              {props.portsData.healthchecks.readiness_probe.period_seconds} seconds
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Timeout:{' '}
+                            <strong className="font-medium">
+                              {props.portsData.healthchecks.readiness_probe.timeout_seconds} seconds
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Success Threshold:{' '}
+                            <strong className="font-medium">
+                              {props.portsData.healthchecks.readiness_probe.success_threshold}
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Failure Threshold:{' '}
+                            <strong className="font-medium">
+                              {props.portsData.healthchecks.readiness_probe.failure_threshold}
+                            </strong>
+                          </li>
+                        </ul>
+                      </li>
+                      {props.portsData.healthchecks.liveness_probe && (
+                        <li className="flex flex-col mt-1">
+                          <span className="font-bold text-text-600">Liveness</span>
+                          <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                            <li className="pl-5">
+                              Type: <strong className="font-medium">{typeLiveness?.toUpperCase()}</strong>
+                            </li>
+                            <li className="pl-5 mt-1">
+                              Initial Delay:{' '}
+                              <strong className="font-medium">
+                                {props.portsData.healthchecks.liveness_probe.initial_delay_seconds} seconds
+                              </strong>
+                            </li>
+                            <li className="pl-5 mt-1">
+                              Period:{' '}
+                              <strong className="font-medium">
+                                {props.portsData.healthchecks.liveness_probe.period_seconds} seconds
+                              </strong>
+                            </li>
+                            <li className="pl-5 mt-1">
+                              Timeout:{' '}
+                              <strong className="font-medium">
+                                {props.portsData.healthchecks.liveness_probe.timeout_seconds} seconds
+                              </strong>
+                            </li>
+                            <li className="pl-5 mt-1">
+                              Success Threshold:{' '}
+                              <strong className="font-medium">
+                                {props.portsData.healthchecks.liveness_probe.success_threshold}
+                              </strong>
+                            </li>
+                            <li className="pl-5 mt-1">
+                              Failure Threshold:{' '}
+                              <strong className="font-medium">
+                                {props.portsData.healthchecks.liveness_probe.failure_threshold}
+                              </strong>
+                            </li>
+                          </ul>
+                        </li>
+                      )}
+                    </>
+                  )}
+                </>
               ) : (
                 <li>No port declared</li>
               )}

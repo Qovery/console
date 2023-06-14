@@ -5,13 +5,15 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import { ProbeTypeEnum } from '@qovery/shared/console-shared'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/console-shared'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity): ApplicationEntity => {
+  console.log(data)
+
   function probeFormatted(currentData: FieldValues): Probe | undefined {
     if (!currentData['type']) {
       return undefined
@@ -46,7 +48,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity):
     } else {
       dataType = {
         [type]: {
-          command: currentData['type'][type]['command'],
+          command: currentData['type'][type]['command'].split(','),
         },
       }
     }
@@ -65,7 +67,10 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity):
     ...application,
     healthchecks: {
       readiness_probe: probeFormatted(data['readiness_probe']),
-      liveness_probe: probeFormatted(data['liveness_probe']),
+      liveness_probe:
+        ProbeTypeWithNoneEnum.NONE !== Object.keys(data['liveness_probe']['type'])[0].toUpperCase()
+          ? probeFormatted(data['liveness_probe'])
+          : undefined,
     },
   }
 }
@@ -97,8 +102,32 @@ export function PageSettingsHealthchecksFeature() {
   //   application?.healthchecks?.liveness_probe?.type &&
   //   Object.keys(application?.healthchecks?.liveness_probe?.type || '')
 
+  console.log(application?.ports)
+
   const methods = useForm({
     mode: 'onChange',
+    defaultValues: {
+      readiness_probe: {
+        type: {
+          [ProbeTypeEnum.TCP.toLowerCase()]: null,
+        },
+        initial_delay_seconds: 30,
+        period_seconds: 10,
+        timeout_seconds: 1,
+        success_threshold: 1,
+        failure_threshold: 3,
+      },
+      liveness_probe: {
+        type: {
+          [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
+        },
+        initial_delay_seconds: 30,
+        period_seconds: 10,
+        timeout_seconds: 5,
+        success_threshold: 1,
+        failure_threshold: 3,
+      },
+    },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -121,24 +150,24 @@ export function PageSettingsHealthchecksFeature() {
   })
 
   useEffect(() => {
-    // const setProbeValues = (probeName: string, values: Probe) => {
-    //   Object.entries(values).forEach(([field, value]) => {
-    //     if (typeof value === 'object' && value !== null) {
-    //       setProbeValues(`${probeName}.${field}`, value)
-    //     } else {
-    //       methods.setValue(`${probeName}.${field}` as any, value)
-    //     }
-    //   })
-    // }
-
-    if (application?.healthchecks) {
-      console.log(application.healthchecks)
-      methods.reset(application.healthchecks)
-      // if (application?.healthchecks?.liveness_probe)
-      //   setProbeValues('liveness_probe', application?.healthchecks?.liveness_probe)
-      // if (application?.healthchecks?.readiness_probe)
-      //   setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
+    const setProbeValues = (probeName: string, values: Probe) => {
+      Object.entries(values).forEach(([field, value]) => {
+        const probePath = `${probeName}.${field}` as `${keyof Probe}.${string}`
+        if (typeof value === 'object' && value !== null) {
+          setProbeValues(probePath, value)
+        } else {
+          methods.setValue(probePath as any, value)
+        }
+      })
     }
+
+    // if (application?.healthchecks?.readiness_probe || application?.healthchecks?.liveness_probe) {
+    // methods.reset(application.healthchecks)
+    if (application?.healthchecks?.liveness_probe)
+      setProbeValues('liveness_probe', application?.healthchecks?.liveness_probe)
+    if (application?.healthchecks?.readiness_probe)
+      setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
+    // }
   }, [methods, application])
 
   // defaultTypeReadiness={Object.keys(application?.healthchecks?.readiness_probe?.type)}

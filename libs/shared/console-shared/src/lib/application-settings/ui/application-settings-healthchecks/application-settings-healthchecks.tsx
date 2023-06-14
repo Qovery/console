@@ -24,6 +24,22 @@ export const ProbeTypeWithNoneEnum = {
 
 export type ProbeTypeWithNoneEnum = (typeof ProbeTypeWithNoneEnum)[keyof typeof ProbeTypeWithNoneEnum]
 
+export const defaultReadinessProbe = {
+  initial_delay_seconds: 30,
+  period_seconds: 10,
+  timeout_seconds: 1,
+  success_threshold: 1,
+  failure_threshold: 3,
+}
+
+export const defaultLivenessProbe = {
+  initial_delay_seconds: 30,
+  period_seconds: 10,
+  timeout_seconds: 5,
+  success_threshold: 1,
+  failure_threshold: 3,
+}
+
 export interface ApplicationSettingsHealthchecksProps {
   ports?: number[]
   defaultTypeReadiness: ProbeTypeEnum
@@ -35,7 +51,7 @@ export function ApplicationSettingsHealthchecks({
   defaultTypeReadiness,
   defaultTypeLiveness,
 }: ApplicationSettingsHealthchecksProps) {
-  const { control, reset } = useFormContext()
+  const { control } = useFormContext()
 
   const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
   const [typeLiveness, setTypeLiveness] = useState<ProbeTypeWithNoneEnum>(defaultTypeLiveness)
@@ -91,66 +107,39 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           content: (
-            <Controller
+            <InputSelectSmall
+              className="shrink-0 grow flex-1"
+              data-testid="value"
               name="readiness_probe.type"
-              control={control}
-              rules={{ required: 'Please enter a type.' }}
-              render={({ field }) => {
-                console.log(field.value)
-                return (
-                  <InputSelectSmall
-                    className="shrink-0 grow flex-1"
-                    data-testid="value"
-                    name={field.name}
-                    defaultValue={(field.value && Object.keys(field.value)[0].toUpperCase()) || ''}
-                    onChange={(value) => {
-                      setTypeReadiness(value as ProbeTypeEnum)
-                      field.onChange(value)
-                    }}
-                    items={Object.values(ProbeTypeEnum).map((value) => ({
-                      label: value,
-                      value,
-                    }))}
-                  />
-                )
+              defaultValue={typeReadiness}
+              onChange={(value) => {
+                // set default Port
+                // setValue(`readiness_probe.type.${value}.port`, ports?.[0])
+                setTypeReadiness(value as ProbeTypeEnum)
               }}
+              items={Object.values(ProbeTypeEnum).map((value) => ({
+                label: value,
+                value: value,
+              }))}
             />
           ),
         },
         {
           content: (
-            <Controller
+            <InputSelectSmall
+              className="shrink-0 grow flex-1"
+              data-testid="value"
               name="liveness_probe.type"
-              control={control}
-              rules={{ required: 'Please enter a type.' }}
-              render={({ field }) => (
-                <InputSelectSmall
-                  className="shrink-0 grow flex-1"
-                  data-testid="value"
-                  name={field.name}
-                  defaultValue={
-                    (field.value && Object.keys(field.value)[0].toUpperCase()) || ProbeTypeWithNoneEnum.NONE
-                  }
-                  onChange={(value) => {
-                    setTypeLiveness(value as ProbeTypeWithNoneEnum)
-                    field.onChange(value)
-                    if (value !== ProbeTypeWithNoneEnum.NONE)
-                      reset({
-                        liveness_probe: {
-                          initial_delay_seconds: 30,
-                          period_seconds: 10,
-                          timeout_seconds: 5,
-                          success_threshold: 1,
-                          failure_threshold: 3,
-                        },
-                      })
-                  }}
-                  items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
-                    label: value,
-                    value,
-                  }))}
-                />
-              )}
+              defaultValue={typeLiveness}
+              onChange={(value) => {
+                // set default Port
+                // setValue(`readiness_probe.type.${value}.port`, ports?.[0])
+                setTypeLiveness(value as ProbeTypeWithNoneEnum)
+              }}
+              items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
+                label: value,
+                value: value,
+              }))}
             />
           ),
         },

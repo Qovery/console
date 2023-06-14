@@ -20,9 +20,11 @@ export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSetti
       <div className="p-8 max-w-content-with-navigation-left">
         <h2 className="h5 text-text-700 mb-2">Health checks</h2>
         <p className="text-xs text-text-500 mb-8">
-          Automated health checks allow to verify the status of your application and if it’s ready to receive incoming
-          traffic. Kubernetes allows to configure two automatic probes checking the status of your application: Liveness
-          and Readiness probes. Within this section you can specify the configuration for both these probes.
+          Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can
+          receive traffic or needs to be restarted (during the deployment and run phases). These checks are managed by
+          two probes: Liveness and Readiness. If your application has special processing requirements (long start-up
+          phase, re-load operations during the run), you can customize the liveness and readiness probes to match your
+          needs (have a look at the documentation)
         </p>
         <form onSubmit={onSubmit}>
           <div className="relative">
@@ -45,7 +47,7 @@ export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSetti
         links={[
           {
             link: 'https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/',
-            linkLabel: 'How to configure my application',
+            linkLabel: 'How to configure my health checks',
             external: true,
           },
         ]}

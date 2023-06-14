@@ -77,11 +77,6 @@ export function PageSettingsFeature() {
           url: pathSettings + APPLICATION_SETTINGS_DOMAIN_URL,
         },
         {
-          title: 'Health Checks',
-          icon: IconAwesomeEnum.SHIELD_CHECK,
-          url: pathSettings + APPLICATION_SETTINGS_HEALTHCHECKS_URL,
-        },
-        {
           title: 'Port',
           icon: IconAwesomeEnum.PLUG,
           url: pathSettings + APPLICATION_SETTINGS_PORT_URL,
@@ -90,6 +85,11 @@ export function PageSettingsFeature() {
     }
 
     links.push(
+      {
+        title: 'Health Checks',
+        icon: IconAwesomeEnum.SHIELD_CHECK,
+        url: pathSettings + APPLICATION_SETTINGS_HEALTHCHECKS_URL,
+      },
       {
         title: 'Advanced settings',
         icon: IconAwesomeEnum.GEARS,
