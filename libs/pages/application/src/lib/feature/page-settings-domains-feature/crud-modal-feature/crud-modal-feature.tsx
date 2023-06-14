@@ -1,5 +1,5 @@
 import { CustomDomain } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -83,6 +83,13 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
     }
   })
 
+  const defaultLink = useMemo(() => {
+    const links = props.application?.links?.items
+    const defaultLinkItem = links?.find((link) => link.is_qovery_domain && link.is_default)
+
+    return defaultLinkItem?.url?.replace('https://', '') || ''
+  }, [props.application?.links?.items])
+
   return (
     <FormProvider {...methods}>
       <CrudModal
@@ -91,11 +98,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
         onClose={props.onClose}
         loading={loadingStatus === 'loading'}
         isEdit={!!props.customDomain}
-        link={
-          props.application?.links?.items && props.application?.links?.items?.length > 0
-            ? props.application?.links?.items[0].url?.replace('https://', '')
-            : ''
-        }
+        link={defaultLink}
       />
     </FormProvider>
   )
