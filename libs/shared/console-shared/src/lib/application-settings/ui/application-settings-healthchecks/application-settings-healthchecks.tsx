@@ -51,7 +51,7 @@ export function ApplicationSettingsHealthchecks({
   defaultTypeReadiness,
   defaultTypeLiveness,
 }: ApplicationSettingsHealthchecksProps) {
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
 
   const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
   const [typeLiveness, setTypeLiveness] = useState<ProbeTypeWithNoneEnum>(defaultTypeLiveness)

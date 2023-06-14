@@ -157,19 +157,27 @@ export function PageSettingsHealthchecksFeature() {
       })
     }
 
-    if (application?.healthchecks?.readiness_probe) {
-      const defaultType = Object.keys(application?.healthchecks?.readiness_probe?.type as string)[0]
-      methods.setValue('readiness_probe.currentType' as any, defaultType?.toUpperCase())
+    let defaultTypeReadiness: string | undefined = undefined
+    let defaultTypeLiveness: string | undefined = undefined
 
+    if (application?.healthchecks?.readiness_probe) {
+      defaultTypeReadiness = Object.keys(application?.healthchecks?.readiness_probe?.type as string)[0]
       setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
     }
+    if (defaultTypeReadiness)
+      methods.setValue('readiness_probe.currentType' as any, defaultTypeReadiness?.toUpperCase())
 
-    if (application?.healthchecks?.liveness_probe) {
-      const defaultType = Object.keys(application?.healthchecks?.liveness_probe?.type as string)[0]
-      methods.setValue('liveness_probe.currentType' as any, defaultType?.toUpperCase() || ProbeTypeWithNoneEnum.NONE)
-
+    if (application?.healthchecks?.liveness_probe)
       setProbeValues('liveness_probe', application?.healthchecks?.liveness_probe)
-    }
+
+    defaultTypeLiveness =
+      (application?.healthchecks?.liveness_probe &&
+        Object.keys(application?.healthchecks?.liveness_probe?.type as string)[0]) ||
+      ProbeTypeWithNoneEnum.NONE
+    methods.setValue(
+      'liveness_probe.currentType' as any,
+      defaultTypeLiveness?.toUpperCase() || ProbeTypeWithNoneEnum.NONE
+    )
   }, [methods, application])
 
   return (
