@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   IconAwesomeEnum,
@@ -42,19 +42,31 @@ export const defaultLivenessProbe = {
 
 export interface ApplicationSettingsHealthchecksProps {
   ports?: number[]
+  isJob?: boolean
+  jobPort?: number | null
   defaultTypeReadiness: ProbeTypeEnum
   defaultTypeLiveness: ProbeTypeWithNoneEnum
 }
 
 export function ApplicationSettingsHealthchecks({
   ports,
+  jobPort,
   defaultTypeReadiness,
   defaultTypeLiveness,
+  isJob,
 }: ApplicationSettingsHealthchecksProps) {
   const { control } = useFormContext()
 
   const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
   const [typeLiveness, setTypeLiveness] = useState<ProbeTypeWithNoneEnum>(defaultTypeLiveness)
+
+  useEffect(() => {
+    setTypeReadiness(defaultTypeReadiness)
+  }, [defaultTypeReadiness])
+
+  useEffect(() => {
+    setTypeLiveness(defaultTypeLiveness)
+  }, [defaultTypeLiveness])
 
   const tableHead: TableEditionRow[] = [
     {
@@ -157,7 +169,7 @@ export function ApplicationSettingsHealthchecks({
     },
   ]
 
-  if (typeReadiness !== ProbeTypeEnum.EXEC || typeReadiness !== ProbeTypeWithNoneEnum.EXEC) {
+  if (typeReadiness !== ProbeTypeEnum.EXEC || typeLiveness !== ProbeTypeWithNoneEnum.EXEC) {
     tableBody.push({
       cells: [
         {
@@ -173,52 +185,76 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
-          content: (
+          content: typeReadiness !== ProbeTypeEnum.EXEC && (
             <Controller
               key={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
               control={control}
-              render={({ field }) => (
-                <InputSelectSmall
-                  className="shrink-0 grow flex-1"
-                  data-testid="value"
-                  name={field.name}
-                  onChange={field.onChange}
-                  items={
-                    ports
-                      ? ports.map((value) => ({
-                          label: value.toString(),
-                          value: value.toString(),
-                        }))
-                      : []
-                  }
-                />
-              )}
+              render={({ field }) =>
+                isJob ? (
+                  <InputTextSmall
+                    className="shrink-0 grow flex-1"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={jobPort?.toString() || ''}
+                    label={field.name}
+                    disabled
+                  />
+                ) : (
+                  <InputSelectSmall
+                    className="shrink-0 grow flex-1"
+                    data-testid="value"
+                    name={field.name}
+                    defaultValue={field.value}
+                    onChange={field.onChange}
+                    items={
+                      ports
+                        ? ports.map((value) => ({
+                            label: value.toString(),
+                            value: value.toString(),
+                          }))
+                        : []
+                    }
+                  />
+                )
+              }
             />
           ),
         },
         {
-          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && typeLiveness !== ProbeTypeWithNoneEnum.EXEC && (
             <Controller
               key={`liveness_probe.type.${typeLiveness?.toLowerCase()}.port`}
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.port`}
               control={control}
-              render={({ field }) => (
-                <InputSelectSmall
-                  className="shrink-0 grow flex-1"
-                  data-testid="value"
-                  name={field.name}
-                  onChange={field.onChange}
-                  items={
-                    ports
-                      ? ports.map((value) => ({
-                          label: value.toString(),
-                          value: value.toString(),
-                        }))
-                      : []
-                  }
-                />
-              )}
+              render={({ field }) =>
+                isJob ? (
+                  <InputTextSmall
+                    className="shrink-0 grow flex-1"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={jobPort?.toString() || ''}
+                    label={field.name}
+                    disabled
+                  />
+                ) : (
+                  <InputSelectSmall
+                    className="shrink-0 grow flex-1"
+                    data-testid="value"
+                    name={field.name}
+                    defaultValue={field.value}
+                    onChange={field.onChange}
+                    items={
+                      ports
+                        ? ports.map((value) => ({
+                            label: value.toString(),
+                            value: value.toString(),
+                          }))
+                        : []
+                    }
+                  />
+                )
+              }
             />
           ),
         },
@@ -227,107 +263,60 @@ export function ApplicationSettingsHealthchecks({
   }
 
   if (typeReadiness === ProbeTypeEnum.HTTP || typeLiveness === ProbeTypeWithNoneEnum.HTTP) {
-    tableBody.push(
-      {
-        cells: [
-          {
-            content: (
-              <div className="flex justify-between w-full">
-                Path
-                <Tooltip content="Allows to define the path to be used to run the probe check.">
-                  <span>
-                    <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
-                  </span>
-                </Tooltip>
-              </div>
-            ),
-          },
-          {
-            content: typeReadiness === ProbeTypeEnum.HTTP && (
-              <Controller
-                name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <InputTextSmall
-                    className="shrink-0 grow flex-1"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    errorMessagePosition="left"
-                    label={field.name}
-                  />
-                )}
-              />
-            ),
-          },
-          {
-            content: typeLiveness === ProbeTypeWithNoneEnum.HTTP && (
-              <Controller
-                name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.path`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <InputTextSmall
-                    className="shrink-0 grow flex-1"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    errorMessagePosition="left"
-                    label={field.name}
-                  />
-                )}
-              />
-            ),
-          },
-        ],
-      },
-      {
-        cells: [
-          {
-            content: <div className="flex justify-between w-full">Scheme</div>,
-          },
-          {
-            content: typeReadiness === ProbeTypeEnum.HTTP && (
-              <Controller
-                name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.scheme`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <InputTextSmall
-                    className="shrink-0 grow flex-1"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    errorMessagePosition="left"
-                    label={field.name}
-                  />
-                )}
-              />
-            ),
-          },
-          {
-            content: typeLiveness === ProbeTypeWithNoneEnum.HTTP && (
-              <Controller
-                name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.scheme`}
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <InputTextSmall
-                    className="shrink-0 grow flex-1"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                    errorMessagePosition="left"
-                    label={field.name}
-                  />
-                )}
-              />
-            ),
-          },
-        ],
-      }
-    )
+    tableBody.push({
+      cells: [
+        {
+          content: (
+            <div className="flex justify-between w-full">
+              Path
+              <Tooltip content="Allows to define the path to be used to run the probe check.">
+                <span>
+                  <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
+                </span>
+              </Tooltip>
+            </div>
+          ),
+        },
+        {
+          content: typeReadiness === ProbeTypeEnum.HTTP && (
+            <Controller
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+        {
+          content: typeLiveness === ProbeTypeWithNoneEnum.HTTP && (
+            <Controller
+              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.path`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+      ],
+    })
   }
 
   if (typeReadiness === ProbeTypeEnum.EXEC || typeLiveness === ProbeTypeWithNoneEnum.EXEC) {
@@ -346,7 +335,7 @@ export function ApplicationSettingsHealthchecks({
                   className="shrink-0 grow flex-1"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -365,7 +354,7 @@ export function ApplicationSettingsHealthchecks({
                   className="shrink-0 grow flex-1"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}

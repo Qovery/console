@@ -6,13 +6,23 @@ import { HelpSection, StickyActionFormToaster } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: LoadingStatus
-  defaultTypeReadiness?: ProbeTypeEnum
-  defaultTypeLiveness?: ProbeTypeWithNoneEnum
+  defaultTypeReadiness: ProbeTypeEnum
+  defaultTypeLiveness: ProbeTypeWithNoneEnum
+  isJob: boolean
+  jobPort?: number | null
   ports?: ServicePort[]
   onSubmit?: () => void
 }
 
-export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSettingsHealthchecksProps) {
+export function PageSettingsHealthchecks({
+  onSubmit,
+  ports,
+  loading,
+  isJob,
+  jobPort,
+  defaultTypeReadiness,
+  defaultTypeLiveness,
+}: PageSettingsHealthchecksProps) {
   const { formState } = useFormContext()
 
   return (
@@ -29,8 +39,10 @@ export function PageSettingsHealthchecks({ onSubmit, ports, loading }: PageSetti
         <form onSubmit={onSubmit}>
           <div className="relative">
             <ApplicationSettingsHealthchecks
-              defaultTypeReadiness={ProbeTypeEnum.TCP}
-              defaultTypeLiveness={ProbeTypeWithNoneEnum.NONE}
+              isJob={isJob}
+              jobPort={jobPort}
+              defaultTypeReadiness={defaultTypeReadiness}
+              defaultTypeLiveness={defaultTypeLiveness}
               ports={ports?.map((port) => port.internal_port)}
             />
             <StickyActionFormToaster

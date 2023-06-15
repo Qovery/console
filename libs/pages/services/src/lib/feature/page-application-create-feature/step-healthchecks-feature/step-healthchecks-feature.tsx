@@ -1,4 +1,3 @@
-import { Healthcheck } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -7,6 +6,7 @@ import {
   ProbeTypeWithNoneEnum,
   defaultLivenessProbe,
   defaultReadinessProbe,
+  probeFormatted,
 } from '@qovery/shared/console-shared'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -66,6 +66,7 @@ export function StepHealthchecksFeature() {
     defaultValues: {
       readiness_probe: {
         ...{
+          currentType: ProbeTypeEnum.TCP,
           type: {
             [ProbeTypeEnum.TCP.toLowerCase()]: {
               port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
@@ -76,6 +77,7 @@ export function StepHealthchecksFeature() {
       },
       liveness_probe: {
         ...{
+          currentType: 'NONE',
           type: {
             [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
           },
@@ -86,23 +88,28 @@ export function StepHealthchecksFeature() {
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data: Healthcheck) => {
-    function processProbeData(data: Healthcheck): Healthcheck {
-      const processedData: Healthcheck = { ...data }
-
-      if (processedData.liveness_probe && processedData.liveness_probe.type) {
-        const livenessType = processedData.liveness_probe.type
-        if (Object.keys(livenessType).includes('none')) {
-          processedData.liveness_probe = undefined
-        }
-      }
-
-      return processedData
+  useEffect(() => {
+    if (portData?.healthchecks?.item) {
+      methods.reset(portData?.healthchecks?.item as any)
+      methods.setValue('readiness_probe.currentType', portData.healthchecks.typeReadiness as ProbeTypeEnum)
+      methods.setValue('liveness_probe.currentType', portData.healthchecks.typeLiveness as ProbeTypeWithNoneEnum)
     }
+  }, [methods, portData?.healthchecks])
+
+  const onSubmit = methods.handleSubmit((data) => {
+    const typeLiveness = data.liveness_probe.currentType
+    const typeReadiness = data.readiness_probe.currentType
 
     setPortData({
       ports: portData?.ports || [],
-      healthchecks: processProbeData(data) as Healthcheck,
+      healthchecks: {
+        typeLiveness: typeLiveness as string,
+        typeReadiness: typeReadiness as string,
+        item: {
+          liveness_probe: probeFormatted(data.liveness_probe, portData?.ports[0].application_port),
+          readiness_probe: probeFormatted(data.readiness_probe, portData?.ports[0].application_port),
+        },
+      },
     })
 
     navigate(pathCreate + SERVICES_CREATION_POST_URL)
@@ -115,7 +122,15 @@ export function StepHealthchecksFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepHealthchecks ports={portData?.ports} onBack={onBack} onSubmit={onSubmit} />
+        <StepHealthchecks
+          ports={portData?.ports}
+          onBack={onBack}
+          onSubmit={onSubmit}
+          defaultTypeReadiness={(portData?.healthchecks?.typeReadiness as ProbeTypeEnum) || ProbeTypeEnum.TCP}
+          defaultTypeLiveness={
+            (portData?.healthchecks?.typeLiveness as ProbeTypeWithNoneEnum) || ProbeTypeWithNoneEnum.NONE
+          }
+        />
       </FormProvider>
     </FunnelFlowBody>
   )

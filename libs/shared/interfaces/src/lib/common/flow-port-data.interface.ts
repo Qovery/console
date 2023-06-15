@@ -8,5 +8,9 @@ export interface PortData {
 
 export interface FlowPortData {
   ports: PortData[]
-  healthchecks?: Healthcheck
+  healthchecks?: {
+    typeLiveness?: string
+    typeReadiness?: string
+    item?: Healthcheck
+  }
 }

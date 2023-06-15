@@ -7,10 +7,19 @@ import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 export interface StepHealthchecksProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
+  defaultTypeReadiness: ProbeTypeEnum
+  defaultTypeLiveness: ProbeTypeWithNoneEnum
+
   ports?: PortData[]
 }
 
-export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksProps) {
+export function StepHealthchecks({
+  ports,
+  onSubmit,
+  onBack,
+  defaultTypeReadiness,
+  defaultTypeLiveness,
+}: StepHealthchecksProps) {
   const { formState } = useFormContext()
 
   return (
@@ -28,8 +37,8 @@ export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksPr
 
       <form onSubmit={onSubmit}>
         <ApplicationSettingsHealthchecks
-          defaultTypeReadiness={ProbeTypeEnum.TCP}
-          defaultTypeLiveness={ProbeTypeWithNoneEnum.NONE}
+          defaultTypeReadiness={defaultTypeReadiness}
+          defaultTypeLiveness={defaultTypeLiveness}
           ports={ports?.map((port: PortData) => port.application_port || 0)}
         />
 

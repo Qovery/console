@@ -51,7 +51,7 @@ export function PageApplicationCreateFeature() {
 
   const [portData, setPortData] = useState<FlowPortData | undefined>({
     ports: [],
-    healthchecks: {},
+    healthchecks: undefined,
   })
 
   const navigate = useNavigate()

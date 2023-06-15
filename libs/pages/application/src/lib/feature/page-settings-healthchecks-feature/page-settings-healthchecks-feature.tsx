@@ -1,6 +1,6 @@
 import equal from 'fast-deep-equal'
-import { Probe } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { Probe, ProbeType } from 'qovery-typescript-axios'
+import { useEffect, useMemo, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -10,75 +10,26 @@ import {
   ProbeTypeWithNoneEnum,
   defaultLivenessProbe,
   defaultReadinessProbe,
+  probeFormatted,
 } from '@qovery/shared/console-shared'
-import { getServiceType } from '@qovery/shared/enums'
+import { getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity): ApplicationEntity => {
-  function probeFormatted(currentData: FieldValues): Probe | undefined {
-    if (!currentData['currentType']) {
-      return undefined
-    }
-
-    const type = currentData['currentType'].toLowerCase()
-    console.log('currentData: ', currentData)
-    console.log('type: ', type)
-
-    let dataType = null
-
-    if (ProbeTypeEnum.HTTP === type.toUpperCase()) {
-      dataType = {
-        [type]: {
-          port: parseInt(currentData['type'][type]['port'], 10),
-          path: currentData['type'][type]['path'] || null,
-          scheme: currentData['type'][type]['scheme'] || null,
-        },
-      }
-    } else if (ProbeTypeEnum.TCP === type.toUpperCase()) {
-      dataType = {
-        [type]: {
-          port: parseInt(currentData['type'][type]['port'], 10),
-        },
-      }
-    } else if (ProbeTypeEnum.GRPC === type.toUpperCase()) {
-      dataType = {
-        [type]: {
-          port: parseInt(currentData['type'][type]['port'], 10),
-          service: currentData['type'][type]['service'] || null,
-        },
-      }
-    } else {
-      dataType = {
-        [type]: {
-          command: currentData['type'][type]['command'].split(','),
-        },
-      }
-    }
-
-    return {
-      type: dataType,
-      initial_delay_seconds: parseInt(currentData['initial_delay_seconds'], 10),
-      period_seconds: parseInt(currentData['period_seconds'], 10),
-      timeout_seconds: parseInt(currentData['timeout_seconds'], 10),
-      success_threshold: parseInt(currentData['success_threshold'], 10),
-      failure_threshold: parseInt(currentData['failure_threshold'], 10),
-    } as Probe
-  }
+  const defaultPort = application?.ports?.[0]?.internal_port || application.port
 
   const result = {
     ...application,
     healthchecks: {
-      readiness_probe: probeFormatted(data['readiness_probe']),
+      readiness_probe: probeFormatted(data['readiness_probe'], defaultPort),
       liveness_probe:
         ProbeTypeWithNoneEnum.NONE !== data['liveness_probe']['currentType']
-          ? probeFormatted(data['liveness_probe'])
+          ? probeFormatted(data['liveness_probe'], defaultPort)
           : undefined,
     },
   }
-
-  console.log(result.healthchecks)
 
   return result
 }
@@ -109,7 +60,10 @@ export function PageSettingsHealthchecksFeature() {
         ...{
           type: {
             [ProbeTypeEnum.TCP.toLowerCase()]: {
-              port: application?.ports && application?.ports.length > 0 ? application?.ports[0].internal_port : 0,
+              port:
+                application?.ports && application?.ports.length > 0
+                  ? application?.ports[0].internal_port
+                  : application?.port,
             },
           },
         },
@@ -145,6 +99,23 @@ export function PageSettingsHealthchecksFeature() {
     }
   })
 
+  const defaultTypeReadiness = useMemo(() => {
+    const readinessProbeKeys = Object.keys((application?.healthchecks?.readiness_probe?.type as ProbeType) || {})
+    const nonNullKeyReadiness = readinessProbeKeys.find(
+      (key) => (application?.healthchecks?.readiness_probe?.type as any)[key] !== null
+    )
+    return (nonNullKeyReadiness?.toUpperCase() as ProbeTypeEnum) || ProbeTypeEnum.TCP
+  }, [application?.healthchecks?.readiness_probe])
+
+  // Use memo to get the TYPE of liveness probe
+  const defaultTypeLiveness = useMemo(() => {
+    const livenessProbeKeys = Object.keys((application?.healthchecks?.liveness_probe?.type as ProbeType) || {})
+    const nonNullKeyLiveness = livenessProbeKeys.find(
+      (key) => (application?.healthchecks?.liveness_probe?.type as any)[key] !== null
+    )
+    return (nonNullKeyLiveness?.toUpperCase() as ProbeTypeWithNoneEnum) || ProbeTypeWithNoneEnum.NONE
+  }, [application?.healthchecks?.liveness_probe])
+
   useEffect(() => {
     const setProbeValues = (probeName: string, values: Probe) => {
       Object.entries(values).forEach(([field, value]) => {
@@ -157,32 +128,29 @@ export function PageSettingsHealthchecksFeature() {
       })
     }
 
-    let defaultTypeReadiness: string | undefined = undefined
-    let defaultTypeLiveness: string | undefined = undefined
+    methods.setValue('readiness_probe.currentType' as any, defaultTypeReadiness)
+    methods.setValue('liveness_probe.currentType' as any, defaultTypeLiveness)
 
     if (application?.healthchecks?.readiness_probe) {
-      defaultTypeReadiness = Object.keys(application?.healthchecks?.readiness_probe?.type as string)[0]
       setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
     }
-    if (defaultTypeReadiness)
-      methods.setValue('readiness_probe.currentType' as any, defaultTypeReadiness?.toUpperCase())
 
-    if (application?.healthchecks?.liveness_probe)
+    if (application?.healthchecks?.liveness_probe) {
       setProbeValues('liveness_probe', application?.healthchecks?.liveness_probe)
-
-    defaultTypeLiveness =
-      (application?.healthchecks?.liveness_probe &&
-        Object.keys(application?.healthchecks?.liveness_probe?.type as string)[0]) ||
-      ProbeTypeWithNoneEnum.NONE
-    methods.setValue(
-      'liveness_probe.currentType' as any,
-      defaultTypeLiveness?.toUpperCase() || ProbeTypeWithNoneEnum.NONE
-    )
-  }, [methods, application])
+    }
+  }, [methods, application, defaultTypeReadiness, defaultTypeLiveness])
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsHealthchecks ports={application?.ports} onSubmit={onSubmit} loading={loading} />
+      <PageSettingsHealthchecks
+        ports={application?.ports}
+        jobPort={application?.port}
+        isJob={isJob(application)}
+        defaultTypeReadiness={defaultTypeReadiness as ProbeTypeEnum}
+        defaultTypeLiveness={defaultTypeLiveness as ProbeTypeWithNoneEnum}
+        onSubmit={onSubmit}
+        loading={loading}
+      />
     </FormProvider>
   )
 }
