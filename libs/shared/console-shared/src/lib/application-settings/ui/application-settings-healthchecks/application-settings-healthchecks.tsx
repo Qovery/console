@@ -453,6 +453,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <Controller
               name="readiness_probe.initial_delay_seconds"
+              rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -474,6 +475,7 @@ export function ApplicationSettingsHealthchecks({
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.initial_delay_seconds"
+              rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -512,6 +514,7 @@ export function ApplicationSettingsHealthchecks({
             <Controller
               name="readiness_probe.period_seconds"
               control={control}
+              rules={{ required: 'This field is required' }}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
@@ -532,6 +535,7 @@ export function ApplicationSettingsHealthchecks({
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.period_seconds"
+              rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -569,6 +573,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <Controller
               name="readiness_probe.timeout_seconds"
+              rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -590,6 +595,7 @@ export function ApplicationSettingsHealthchecks({
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.timeout_seconds"
+              rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -687,6 +693,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <Controller
               name="readiness_probe.failure_threshold"
+              rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
@@ -708,6 +715,7 @@ export function ApplicationSettingsHealthchecks({
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.failure_threshold"
+              rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
