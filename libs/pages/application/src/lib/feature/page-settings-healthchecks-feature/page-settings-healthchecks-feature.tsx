@@ -14,6 +14,7 @@ import {
 } from '@qovery/shared/console-shared'
 import { getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
@@ -35,7 +36,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity):
 }
 
 export function PageSettingsHealthchecksFeature() {
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const dispatch = useDispatch<AppDispatch>()
   const application = useSelector<RootState, ApplicationEntity | undefined>(
@@ -146,6 +147,12 @@ export function PageSettingsHealthchecksFeature() {
         ports={application?.ports}
         jobPort={application?.port}
         isJob={isJob(application)}
+        linkPortSetting={`${APPLICATION_URL(
+          organizationId,
+          projectId,
+          environmentId,
+          applicationId
+        )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_PORT_URL}`}
         defaultTypeReadiness={defaultTypeReadiness as ProbeTypeEnum}
         defaultTypeLiveness={defaultTypeLiveness as ProbeTypeWithNoneEnum}
         onSubmit={onSubmit}

@@ -2,12 +2,13 @@ import { ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks, ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/console-shared'
 import { LoadingStatus } from '@qovery/shared/interfaces'
-import { HelpSection, StickyActionFormToaster } from '@qovery/shared/ui'
+import { BannerBox, BannerBoxEnum, HelpSection, Link, StickyActionFormToaster } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: LoadingStatus
   defaultTypeReadiness: ProbeTypeEnum
   defaultTypeLiveness: ProbeTypeWithNoneEnum
+  linkPortSetting: string
   isJob: boolean
   jobPort?: number | null
   ports?: ServicePort[]
@@ -20,6 +21,7 @@ export function PageSettingsHealthchecks({
   loading,
   isJob,
   jobPort,
+  linkPortSetting,
   defaultTypeReadiness,
   defaultTypeLiveness,
 }: PageSettingsHealthchecksProps) {
@@ -28,6 +30,24 @@ export function PageSettingsHealthchecks({
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
       <div className="p-8 max-w-content-with-navigation-left">
+        {ports && ports?.length === 0 && (
+          <BannerBox
+            className="mb-2"
+            title="Port configuration required"
+            message={
+              <p>
+                Please configure a port before using any health check types, except for the EXEC type.{' '}
+                <Link
+                  className="link !block text-accent2-500 mt-1"
+                  size="text-xs"
+                  link={linkPortSetting}
+                  linkLabel="Configure a port"
+                />
+              </p>
+            }
+            type={BannerBoxEnum.WARNING}
+          />
+        )}
         <h2 className="h5 text-text-700 mb-2">Health checks</h2>
         <p className="text-xs text-text-500 mb-8">
           Health checks are automatic ways for Kubernetes to check the status of your application and decide if it can

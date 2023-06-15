@@ -80,16 +80,16 @@ export function PageSettingsFeature() {
           title: 'Port',
           icon: IconAwesomeEnum.PLUG,
           url: pathSettings + APPLICATION_SETTINGS_PORT_URL,
+        },
+        {
+          title: 'Health Checks',
+          icon: IconAwesomeEnum.SHIELD_CHECK,
+          url: pathSettings + APPLICATION_SETTINGS_HEALTHCHECKS_URL,
         }
       )
     }
 
     links.push(
-      {
-        title: 'Health Checks',
-        icon: IconAwesomeEnum.SHIELD_CHECK,
-        url: pathSettings + APPLICATION_SETTINGS_HEALTHCHECKS_URL,
-      },
       {
         title: 'Advanced settings',
         icon: IconAwesomeEnum.GEARS,
