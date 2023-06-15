@@ -72,6 +72,7 @@ export function ApplicationSettingsHealthchecks({
     {
       cells: [
         {
+          className: 'pr-10',
           content: 'Settings',
         },
         {
@@ -102,6 +103,8 @@ export function ApplicationSettingsHealthchecks({
     },
   ]
 
+  const rowClassName = '!p-1'
+
   const tableBody: TableEditionRow[] = [
     {
       cells: [
@@ -118,6 +121,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: (
             <Controller
               name="readiness_probe.currentType"
@@ -125,6 +129,7 @@ export function ApplicationSettingsHealthchecks({
               render={({ field }) => (
                 <InputSelectSmall
                   className="shrink-0 grow flex-1"
+                  inputClassName="!bg-white"
                   data-testid="value"
                   name={field.name}
                   defaultValue={field.value}
@@ -142,6 +147,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: (
             <Controller
               name="liveness_probe.currentType"
@@ -149,6 +155,7 @@ export function ApplicationSettingsHealthchecks({
               render={({ field }) => (
                 <InputSelectSmall
                   className="shrink-0 grow flex-1"
+                  inputClassName="!bg-white"
                   data-testid="value"
                   name={field.name}
                   defaultValue={field.value}
@@ -185,6 +192,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeReadiness !== ProbeTypeEnum.EXEC && (
             <Controller
               key={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
@@ -203,6 +211,7 @@ export function ApplicationSettingsHealthchecks({
                 ) : (
                   <InputSelectSmall
                     className="shrink-0 grow flex-1"
+                    inputClassName="!bg-white"
                     data-testid="value"
                     name={field.name}
                     defaultValue={field.value}
@@ -222,6 +231,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && typeLiveness !== ProbeTypeWithNoneEnum.EXEC && (
             <Controller
               key={`liveness_probe.type.${typeLiveness?.toLowerCase()}.port`}
@@ -240,6 +250,7 @@ export function ApplicationSettingsHealthchecks({
                 ) : (
                   <InputSelectSmall
                     className="shrink-0 grow flex-1"
+                    inputClassName="!bg-white"
                     data-testid="value"
                     name={field.name}
                     defaultValue={field.value}
@@ -278,6 +289,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeReadiness === ProbeTypeEnum.HTTP && (
             <Controller
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
@@ -297,6 +309,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness === ProbeTypeWithNoneEnum.HTTP && (
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.path`}
@@ -325,7 +338,9 @@ export function ApplicationSettingsHealthchecks({
         {
           content: <div className="flex justify-between w-full">Command</div>,
         },
+
         {
+          className: rowClassName,
           content: typeReadiness === ProbeTypeEnum.EXEC && (
             <Controller
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.command`}
@@ -345,6 +360,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness === ProbeTypeWithNoneEnum.EXEC && (
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.command`}
@@ -374,6 +390,7 @@ export function ApplicationSettingsHealthchecks({
           content: <div className="flex justify-between w-full">Service</div>,
         },
         {
+          className: rowClassName,
           content: typeReadiness === ProbeTypeEnum.GRPC && (
             <Controller
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.service`}
@@ -393,6 +410,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness === ProbeTypeWithNoneEnum.GRPC && (
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.service`}
@@ -431,6 +449,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: (
             <Controller
               name="readiness_probe.initial_delay_seconds"
@@ -451,6 +470,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.initial_delay_seconds"
@@ -487,6 +507,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: (
             <Controller
               name="readiness_probe.period_seconds"
@@ -507,6 +528,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.period_seconds"
@@ -543,6 +565,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: (
             <Controller
               name="readiness_probe.timeout_seconds"
@@ -563,6 +586,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.timeout_seconds"
@@ -599,6 +623,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: (
             <Controller
               name="readiness_probe.success_threshold"
@@ -620,6 +645,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.success_threshold"
@@ -657,6 +683,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: (
             <Controller
               name="readiness_probe.failure_threshold"
@@ -677,6 +704,7 @@ export function ApplicationSettingsHealthchecks({
           ),
         },
         {
+          className: rowClassName,
           content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
             <Controller
               name="liveness_probe.failure_threshold"
