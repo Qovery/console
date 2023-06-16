@@ -1,11 +1,27 @@
 import { act } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { defaultLivenessProbe, defaultReadinessProbe } from '@qovery/shared/console-shared'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
 import StepHealthchecks, { StepHealthchecksProps } from './step-healthchecks'
 
 const props: StepHealthchecksProps = {
   onBack: jest.fn(),
   onSubmit: jest.fn(),
+  defaultTypeReadiness: ProbeTypeEnum.TCP,
+  defaultTypeLiveness: ProbeTypeWithNoneEnum.NONE,
+  ports: [
+    {
+      application_port: 3000,
+      external_port: 3000,
+      is_public: false,
+    },
+    {
+      application_port: 4000,
+      external_port: 3000,
+      is_public: true,
+    },
+  ],
 }
 
 describe('StepHealthchecks', () => {
@@ -13,9 +29,18 @@ describe('StepHealthchecks', () => {
     const { baseElement } = render(
       wrapWithReactHookForm(<StepHealthchecks {...props} />, {
         defaultValues: {
-          memory: 1024,
-          cpu: [1],
-          instances: [1, 12],
+          ports: [
+            {
+              application_port: 3000,
+              external_port: 3000,
+              is_public: false,
+            },
+            {
+              application_port: 4000,
+              external_port: 3000,
+              is_public: true,
+            },
+          ],
         },
       })
     )
@@ -26,9 +51,38 @@ describe('StepHealthchecks', () => {
     const { getByTestId } = render(
       wrapWithReactHookForm(<StepHealthchecks {...props} />, {
         defaultValues: {
-          memory: 1024,
-          cpu: [1],
-          instances: [1, 12],
+          readiness_probe: {
+            ...{
+              current_type: ProbeTypeEnum.TCP,
+              type: {
+                tcp: {
+                  port: 80,
+                },
+              },
+            },
+            ...defaultReadinessProbe,
+          },
+          liveness_probe: {
+            ...{
+              current_type: ProbeTypeWithNoneEnum.NONE,
+              type: {
+                none: null,
+              },
+            },
+            ...defaultLivenessProbe,
+          },
+          ports: [
+            {
+              application_port: 3000,
+              external_port: 3000,
+              is_public: false,
+            },
+            {
+              application_port: 4000,
+              external_port: 3000,
+              is_public: true,
+            },
+          ],
         },
       })
     )

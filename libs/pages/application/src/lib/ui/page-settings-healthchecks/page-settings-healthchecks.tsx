@@ -34,10 +34,11 @@ export function PageSettingsHealthchecks({
         {ports && ports?.length === 0 && (
           <BannerBox
             className="mb-2"
+            dataTestId="banner-box-port-configuration-required"
             title="Port configuration required"
             type={BannerBoxEnum.WARNING}
             message={
-              <p>
+              <>
                 Please configure a port before using any health check types, except for the EXEC type.{' '}
                 <Link
                   className="link !block text-accent2-500 mt-1"
@@ -45,7 +46,7 @@ export function PageSettingsHealthchecks({
                   link={linkPortSetting}
                   linkLabel="Configure a port"
                 />
-              </p>
+              </>
             }
           />
         )}

@@ -10,7 +10,6 @@ export interface StepHealthchecksProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   defaultTypeReadiness: ProbeTypeEnum
   defaultTypeLiveness: ProbeTypeWithNoneEnum
-
   ports?: PortData[]
 }
 

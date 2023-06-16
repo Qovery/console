@@ -3,6 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
+import { HealthcheckData, ProbeExtended } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -79,13 +80,13 @@ export function StepHealthchecksFeature() {
         },
         ...defaultLivenessProbe,
       },
-    },
+    } as HealthcheckData,
     mode: 'onChange',
   })
 
   useEffect(() => {
     if (portData?.healthchecks?.item) {
-      methods.reset(portData?.healthchecks?.item as any)
+      methods.reset(portData?.healthchecks?.item as HealthcheckData)
       methods.setValue('readiness_probe.current_type', portData.healthchecks.typeReadiness as ProbeTypeEnum)
       methods.setValue('liveness_probe.current_type', portData.healthchecks.typeLiveness as ProbeTypeWithNoneEnum)
     }
@@ -101,8 +102,8 @@ export function StepHealthchecksFeature() {
         typeLiveness: typeLiveness as string,
         typeReadiness: typeReadiness as string,
         item: {
-          liveness_probe: probeFormatted(data.liveness_probe, portData?.ports[0].application_port),
-          readiness_probe: probeFormatted(data.readiness_probe, portData?.ports[0].application_port),
+          liveness_probe: probeFormatted(data.liveness_probe, portData?.ports[0].application_port) as ProbeExtended,
+          readiness_probe: probeFormatted(data.readiness_probe, portData?.ports[0].application_port) as ProbeExtended,
         },
       },
     })

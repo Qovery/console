@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { isApplication, isContainer } from '@qovery/shared/enums'
+import { ProbeTypeWithNoneEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { ApplicationGeneralData, ApplicationResourcesData, FlowPortData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -194,46 +194,47 @@ export function StepSummary({
                           </li>
                         </ul>
                       </li>
-                      {portsData.healthchecks.item.liveness_probe && (
-                        <li className="flex flex-col mt-1">
-                          <span className="font-bold text-text-600">Liveness</span>
-                          <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
-                            <li className="pl-5">
-                              Type: <strong className="font-medium">{portsData.healthchecks.typeLiveness}</strong>
-                            </li>
-                            <li className="pl-5 mt-1">
-                              Initial Delay:{' '}
-                              <strong className="font-medium">
-                                {portsData.healthchecks.item.liveness_probe.initial_delay_seconds} seconds
-                              </strong>
-                            </li>
-                            <li className="pl-5 mt-1">
-                              Period:{' '}
-                              <strong className="font-medium">
-                                {portsData.healthchecks.item.liveness_probe.period_seconds} seconds
-                              </strong>
-                            </li>
-                            <li className="pl-5 mt-1">
-                              Timeout:{' '}
-                              <strong className="font-medium">
-                                {portsData.healthchecks.item.liveness_probe.timeout_seconds} seconds
-                              </strong>
-                            </li>
-                            <li className="pl-5 mt-1">
-                              Success Threshold:{' '}
-                              <strong className="font-medium">
-                                {portsData.healthchecks.item.liveness_probe.success_threshold}
-                              </strong>
-                            </li>
-                            <li className="pl-5 mt-1">
-                              Failure Threshold:{' '}
-                              <strong className="font-medium">
-                                {portsData.healthchecks.item.liveness_probe.failure_threshold}
-                              </strong>
-                            </li>
-                          </ul>
-                        </li>
-                      )}
+                      {portsData.healthchecks.item.liveness_probe &&
+                        portsData.healthchecks.typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+                          <li className="flex flex-col mt-1">
+                            <span className="font-bold text-text-600">Liveness</span>
+                            <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                              <li className="pl-5">
+                                Type: <strong className="font-medium">{portsData.healthchecks.typeLiveness}</strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Initial Delay:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.initial_delay_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Period:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.period_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Timeout:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.timeout_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Success Threshold:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.success_threshold}
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Failure Threshold:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.failure_threshold}
+                                </strong>
+                              </li>
+                            </ul>
+                          </li>
+                        )}
                     </>
                   )}
                 </>
