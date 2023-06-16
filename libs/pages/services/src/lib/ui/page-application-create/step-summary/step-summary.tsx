@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { isApplication, isContainer } from '@qovery/shared/enums'
+import { ProbeTypeWithNoneEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { ApplicationGeneralData, ApplicationResourcesData, FlowPortData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -18,7 +18,19 @@ export interface StepSummaryProps {
   selectedRegistryName?: string
 }
 
-export function StepSummary(props: StepSummaryProps) {
+export function StepSummary({
+  onSubmit,
+  onPrevious,
+  generalData,
+  resourcesData,
+  portsData,
+  gotoGlobalInformation,
+  gotoResources,
+  gotoPorts,
+  isLoadingCreate,
+  isLoadingCreateAndDeploy,
+  selectedRegistryName,
+}: StepSummaryProps) {
   return (
     <div>
       <div className="mb-10">
@@ -38,58 +50,58 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="text-sm text-text-600 font-bold mb-2">General information</div>
             <ul className="text-text-400 text-sm list-none">
               <li>
-                Name: <strong className="font-medium">{props.generalData.name}</strong>
+                Name: <strong className="font-medium">{generalData.name}</strong>
               </li>
-              {isApplication(props.generalData.serviceType) && (
+              {isApplication(generalData.serviceType) && (
                 <>
                   <li>
-                    Repository: <strong className="font-medium">{props.generalData.repository}</strong>
+                    Repository: <strong className="font-medium">{generalData.repository}</strong>
                   </li>
                   <li>
-                    Branch: <strong>{props.generalData.branch}</strong>
+                    Branch: <strong>{generalData.branch}</strong>
                   </li>
                   <li>
-                    Root application path: <strong>{props.generalData.root_path}</strong>
+                    Root application path: <strong>{generalData.root_path}</strong>
                   </li>
                   <li>
-                    Build mode: <strong>{upperCaseFirstLetter(props.generalData.build_mode)}</strong>
+                    Build mode: <strong>{upperCaseFirstLetter(generalData.build_mode)}</strong>
                   </li>
-                  {props.generalData.build_mode === BuildModeEnum.BUILDPACKS && (
+                  {generalData.build_mode === BuildModeEnum.BUILDPACKS && (
                     <li>
-                      Buildpack language: <strong>{props.generalData.buildpack_language}</strong>
+                      Buildpack language: <strong>{generalData.buildpack_language}</strong>
                     </li>
                   )}
-                  {props.generalData.build_mode === BuildModeEnum.DOCKER && (
+                  {generalData.build_mode === BuildModeEnum.DOCKER && (
                     <li>
-                      Dockerfile path: <strong>{props.generalData.dockerfile_path}</strong>
+                      Dockerfile path: <strong>{generalData.dockerfile_path}</strong>
                     </li>
                   )}
                 </>
               )}
-              {isContainer(props.generalData.serviceType) && (
+              {isContainer(generalData.serviceType) && (
                 <>
                   <li>
-                    Registry: <strong className="font-medium">{props.selectedRegistryName}</strong>
+                    Registry: <strong className="font-medium">{selectedRegistryName}</strong>
                   </li>
                   <li>
-                    Image name: <strong>{props.generalData.image_name}</strong>
+                    Image name: <strong>{generalData.image_name}</strong>
                   </li>
                   <li>
-                    Image tag: <strong>{props.generalData.image_tag}</strong>
+                    Image tag: <strong>{generalData.image_tag}</strong>
                   </li>
                 </>
               )}
               <li>
-                Image entrypoint: <strong>{props.generalData.image_entry_point}</strong>
+                Image entrypoint: <strong>{generalData.image_entry_point}</strong>
               </li>
               <li>
-                CMD arguments: <strong>{props.generalData.cmd_arguments}</strong>
+                CMD arguments: <strong>{generalData.cmd_arguments}</strong>
               </li>
             </ul>
           </div>
 
           <ButtonIcon
-            onClick={props.gotoGlobalInformation}
+            onClick={gotoGlobalInformation}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
             className="text-text-500 hover:text-text-700"
@@ -102,22 +114,22 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
             <ul className="text-text-400 text-sm list-none">
               <li>
-                CPU: <strong className="font-medium">{props.resourcesData['cpu']}</strong>
+                CPU: <strong className="font-medium">{resourcesData['cpu']}</strong>
               </li>
               <li>
-                Memory: <strong className="font-medium">{props.resourcesData.memory} MB</strong>
+                Memory: <strong className="font-medium">{resourcesData.memory} MB</strong>
               </li>
               <li>
                 Instances:{' '}
                 <strong className="font-medium">
-                  {props.resourcesData.instances[0]} - {props.resourcesData.instances[1]}
+                  {resourcesData.instances[0]} - {resourcesData.instances[1]}
                 </strong>
               </li>
             </ul>
           </div>
 
           <ButtonIcon
-            onClick={props.gotoResources}
+            onClick={gotoResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
             className="text-text-500 hover:text-text-700"
@@ -129,14 +141,103 @@ export function StepSummary(props: StepSummaryProps) {
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
             <ul className="text-text-400 text-sm">
-              {props.portsData.ports && props.portsData.ports.length > 0 ? (
-                props.portsData.ports?.map((port, index) => (
-                  <li key={index}>
-                    Application port: <strong className="font-medium">{port.application_port}</strong> – Public port:{' '}
-                    <strong className="font-medium">{port.external_port}</strong> – Public:{' '}
-                    <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
-                  </li>
-                ))
+              {portsData.ports && portsData.ports.length > 0 ? (
+                <>
+                  {portsData.ports?.map((port, index) => (
+                    <li key={index}>
+                      Application port: <strong className="font-medium">{port.application_port}</strong>{' '}
+                      {port.external_port && (
+                        <>
+                          – Public port: <strong className="font-medium">{port.external_port}</strong>
+                        </>
+                      )}{' '}
+                      – Public: <strong className="font-medium">{port.is_public ? 'Yes' : 'No'}</strong>
+                    </li>
+                  ))}
+                  {portsData.healthchecks?.item && portsData.healthchecks?.item.readiness_probe && (
+                    <>
+                      <li className="flex flex-col mt-1">
+                        <span className="font-bold text-text-600">Readiness</span>
+                        <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                          <li className="pl-5">
+                            Type: <strong className="font-medium">{portsData.healthchecks.typeReadiness}</strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Initial Delay:{' '}
+                            <strong className="font-medium">
+                              {portsData.healthchecks.item.readiness_probe.initial_delay_seconds} seconds
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Period:{' '}
+                            <strong className="font-medium">
+                              {portsData.healthchecks.item.readiness_probe.period_seconds} seconds
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Timeout:{' '}
+                            <strong className="font-medium">
+                              {portsData.healthchecks.item.readiness_probe.timeout_seconds} seconds
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Success Threshold:{' '}
+                            <strong className="font-medium">
+                              {portsData.healthchecks.item.readiness_probe.success_threshold}
+                            </strong>
+                          </li>
+                          <li className="pl-5 mt-1">
+                            Failure Threshold:{' '}
+                            <strong className="font-medium">
+                              {portsData.healthchecks.item.readiness_probe.failure_threshold}
+                            </strong>
+                          </li>
+                        </ul>
+                      </li>
+                      {portsData.healthchecks.item.liveness_probe &&
+                        portsData.healthchecks.typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+                          <li className="flex flex-col mt-1">
+                            <span className="font-bold text-text-600">Liveness</span>
+                            <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                              <li className="pl-5">
+                                Type: <strong className="font-medium">{portsData.healthchecks.typeLiveness}</strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Initial Delay:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.initial_delay_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Period:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.period_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Timeout:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.timeout_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Success Threshold:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.success_threshold}
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Failure Threshold:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.liveness_probe.failure_threshold}
+                                </strong>
+                              </li>
+                            </ul>
+                          </li>
+                        )}
+                    </>
+                  )}
+                </>
               ) : (
                 <li>No port declared</li>
               )}
@@ -144,7 +245,7 @@ export function StepSummary(props: StepSummaryProps) {
           </div>
 
           <ButtonIcon
-            onClick={props.gotoPorts}
+            onClick={gotoPorts}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
             className="text-text-500 hover:text-text-700"
@@ -154,7 +255,7 @@ export function StepSummary(props: StepSummaryProps) {
 
       <div className="flex justify-between">
         <Button
-          onClick={props.onPrevious}
+          onClick={onPrevious}
           className="btn--no-min-w"
           type="button"
           size={ButtonSize.XLARGE}
@@ -165,8 +266,8 @@ export function StepSummary(props: StepSummaryProps) {
         <div className="flex gap-2">
           <Button
             dataTestId="button-create"
-            loading={props.isLoadingCreate}
-            onClick={() => props.onSubmit(false)}
+            loading={isLoadingCreate}
+            onClick={() => onSubmit(false)}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.STROKED}
             className="btn--no-min-w"
@@ -175,8 +276,8 @@ export function StepSummary(props: StepSummaryProps) {
           </Button>
           <Button
             dataTestId="button-create-deploy"
-            loading={props.isLoadingCreateAndDeploy}
-            onClick={() => props.onSubmit(true)}
+            loading={isLoadingCreateAndDeploy}
+            onClick={() => onSubmit(true)}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.BASIC}
           >

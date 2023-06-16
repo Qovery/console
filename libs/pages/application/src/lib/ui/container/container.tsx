@@ -86,9 +86,6 @@ export function Container(props: ContainerProps) {
 
   const headerButtons = (
     <div className="flex items-start gap-2">
-      {/*<ButtonIcon icon="icon-solid-terminal" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-scroll" style={ButtonIconStyle.STROKED} />*/}
-      {/*<ButtonIcon icon="icon-solid-clock-rotate-left" style={ButtonIconStyle.STROKED} />*/}
       {application?.links && application.links.items && application.links.items.length > 0 && (
         <Menu
           menus={menuLink}
