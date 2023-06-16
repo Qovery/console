@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, ProbeTypeWithNoneEnum, getServiceType, isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, HealthcheckData, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
@@ -72,7 +72,7 @@ export function PageSettingsHealthchecksFeature() {
         },
         ...defaultLivenessProbe,
       },
-    },
+    } as HealthcheckData,
   })
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -94,21 +94,20 @@ export function PageSettingsHealthchecksFeature() {
     }
   })
 
+  // Use memo to get the TYPE of readiness probe
   const defaultTypeReadiness = useMemo(() => {
-    const readinessProbeKeys = Object.keys((application?.healthchecks?.readiness_probe?.type as ProbeType) || {})
-    const nonNullKeyReadiness = readinessProbeKeys.find(
-      (key) => (application?.healthchecks?.readiness_probe?.type as any)[key] !== null
-    )
-    return (nonNullKeyReadiness?.toUpperCase() as ProbeTypeEnum) || ProbeTypeEnum.TCP
+    const types = application?.healthchecks?.readiness_probe?.type as ProbeType
+    const readinessProbeKeys = Object.keys(types || {})
+    const nonNullKeyReadiness = readinessProbeKeys.find((key) => (types as { [key: string]: {} })[key] !== null)
+    return nonNullKeyReadiness?.toUpperCase() || ProbeTypeEnum.TCP
   }, [application?.healthchecks?.readiness_probe])
 
   // Use memo to get the TYPE of liveness probe
   const defaultTypeLiveness = useMemo(() => {
-    const livenessProbeKeys = Object.keys((application?.healthchecks?.liveness_probe?.type as ProbeType) || {})
-    const nonNullKeyLiveness = livenessProbeKeys.find(
-      (key) => (application?.healthchecks?.liveness_probe?.type as any)[key] !== null
-    )
-    return (nonNullKeyLiveness?.toUpperCase() as ProbeTypeWithNoneEnum) || ProbeTypeWithNoneEnum.NONE
+    const types = application?.healthchecks?.liveness_probe?.type as ProbeType
+    const livenessProbeKeys = Object.keys(types || {})
+    const nonNullKeyLiveness = livenessProbeKeys.find((key) => (types as { [key: string]: {} })[key] !== null)
+    return nonNullKeyLiveness?.toUpperCase() || ProbeTypeWithNoneEnum.NONE
   }, [application?.healthchecks?.liveness_probe])
 
   useEffect(() => {
@@ -118,13 +117,14 @@ export function PageSettingsHealthchecksFeature() {
         if (typeof value === 'object' && value !== null) {
           setProbeValues(probePath, value)
         } else {
+          // @todo need to find a better way to set the value and remove the any
           methods.setValue(probePath as any, value)
         }
       })
     }
 
-    methods.setValue('readiness_probe.current_type' as any, defaultTypeReadiness)
-    methods.setValue('liveness_probe.current_type' as any, defaultTypeLiveness)
+    methods.setValue('readiness_probe.current_type', defaultTypeReadiness)
+    methods.setValue('liveness_probe.current_type', defaultTypeLiveness)
 
     if (application?.healthchecks?.readiness_probe) {
       setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)

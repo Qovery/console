@@ -7,7 +7,7 @@ export interface PortData {
 }
 
 export type ProbeExtended = Probe & {
-  current_type: string
+  current_type?: string
 }
 
 export interface HealthcheckData {
