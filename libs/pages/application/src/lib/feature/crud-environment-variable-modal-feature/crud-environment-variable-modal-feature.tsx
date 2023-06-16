@@ -74,6 +74,10 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
   const onSubmit = methods.handleSubmit((data) => {
     if (props.serviceType) {
       const cloneData = { ...data }
+
+      // allow empty variable value
+      if (!cloneData.value) cloneData.value = ''
+
       if (!isFile) {
         delete cloneData.mountPath
       }
