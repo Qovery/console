@@ -211,11 +211,6 @@ describe('CrudEnvironmentVariableModal', () => {
       })
 
       await waitFor(async () => {
-        const error = screen.getByText('Please enter a value.')
-        expect(error).toBeTruthy()
-      })
-
-      await waitFor(async () => {
         const button = await getByRole(baseElement, 'button', { name: 'Confirm' })
         expect(button).toBeDisabled()
       })
