@@ -1,13 +1,8 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import {
-  ProbeTypeEnum,
-  ProbeTypeWithNoneEnum,
-  defaultLivenessProbe,
-  defaultReadinessProbe,
-  probeFormatted,
-} from '@qovery/shared/console-shared'
+import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
@@ -66,7 +61,7 @@ export function StepHealthchecksFeature() {
     defaultValues: {
       readiness_probe: {
         ...{
-          currentType: ProbeTypeEnum.TCP,
+          current_type: ProbeTypeEnum.TCP,
           type: {
             [ProbeTypeEnum.TCP.toLowerCase()]: {
               port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
@@ -77,7 +72,7 @@ export function StepHealthchecksFeature() {
       },
       liveness_probe: {
         ...{
-          currentType: 'NONE',
+          current_type: 'NONE',
           type: {
             [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
           },
@@ -91,14 +86,14 @@ export function StepHealthchecksFeature() {
   useEffect(() => {
     if (portData?.healthchecks?.item) {
       methods.reset(portData?.healthchecks?.item as any)
-      methods.setValue('readiness_probe.currentType', portData.healthchecks.typeReadiness as ProbeTypeEnum)
-      methods.setValue('liveness_probe.currentType', portData.healthchecks.typeLiveness as ProbeTypeWithNoneEnum)
+      methods.setValue('readiness_probe.current_type', portData.healthchecks.typeReadiness as ProbeTypeEnum)
+      methods.setValue('liveness_probe.current_type', portData.healthchecks.typeLiveness as ProbeTypeWithNoneEnum)
     }
   }, [methods, portData?.healthchecks])
 
   const onSubmit = methods.handleSubmit((data) => {
-    const typeLiveness = data.liveness_probe.currentType
-    const typeReadiness = data.readiness_probe.currentType
+    const typeLiveness = data.liveness_probe.current_type
+    const typeReadiness = data.readiness_probe.current_type
 
     setPortData({
       ports: portData?.ports || [],

@@ -1,13 +1,13 @@
 import { Probe } from 'qovery-typescript-axios'
 import { FieldValues } from 'react-hook-form'
-import { ProbeTypeEnum } from '../ui/application-settings-healthchecks/application-settings-healthchecks'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 
 export function probeFormatted(currentData: FieldValues, defaultPort: number | null | undefined): Probe | undefined {
-  if (!currentData['currentType']) {
+  if (!currentData['current_type']) {
     return undefined
   }
 
-  const type = currentData['currentType'].toLowerCase()
+  const type = currentData['current_type'].toLowerCase()
 
   let dataType = null
 

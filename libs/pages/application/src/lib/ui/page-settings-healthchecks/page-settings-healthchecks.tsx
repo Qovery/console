@@ -1,6 +1,7 @@
 import { ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
-import { ApplicationSettingsHealthchecks, ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/console-shared'
+import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { BannerBox, BannerBoxEnum, HelpSection, Link, StickyActionFormToaster } from '@qovery/shared/ui'
 
@@ -34,6 +35,7 @@ export function PageSettingsHealthchecks({
           <BannerBox
             className="mb-2"
             title="Port configuration required"
+            type={BannerBoxEnum.WARNING}
             message={
               <p>
                 Please configure a port before using any health check types, except for the EXEC type.{' '}
@@ -45,7 +47,6 @@ export function PageSettingsHealthchecks({
                 />
               </p>
             }
-            type={BannerBoxEnum.WARNING}
           />
         )}
         <h2 className="h5 text-text-700 mb-2">Health checks</h2>

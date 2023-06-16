@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
 import {
   IconAwesomeEnum,
   IconFa,
@@ -9,20 +10,6 @@ import {
   TableEditionRow,
   Tooltip,
 } from '@qovery/shared/ui'
-
-export enum ProbeTypeEnum {
-  HTTP = 'HTTP',
-  GRPC = 'GRPC',
-  TCP = 'TCP',
-  EXEC = 'EXEC',
-}
-
-export const ProbeTypeWithNoneEnum = {
-  ...ProbeTypeEnum,
-  NONE: 'NONE',
-} as const
-
-export type ProbeTypeWithNoneEnum = (typeof ProbeTypeWithNoneEnum)[keyof typeof ProbeTypeWithNoneEnum]
 
 export const defaultReadinessProbe = {
   initial_delay_seconds: 30,
@@ -55,7 +42,7 @@ export function ApplicationSettingsHealthchecks({
   defaultTypeLiveness,
   isJob,
 }: ApplicationSettingsHealthchecksProps) {
-  const { control } = useFormContext()
+  const { control, trigger } = useFormContext()
 
   const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
   const [typeLiveness, setTypeLiveness] = useState<ProbeTypeWithNoneEnum>(defaultTypeLiveness)
@@ -124,18 +111,19 @@ export function ApplicationSettingsHealthchecks({
           className: rowClassName,
           content: (
             <Controller
-              name="readiness_probe.currentType"
+              name="readiness_probe.current_type"
               control={control}
               render={({ field }) => (
                 <InputSelectSmall
                   className="shrink-0 grow flex-1"
                   inputClassName="!bg-white"
-                  data-testid="value"
+                  data-testid="input-readiness-probe-current-type"
                   name={field.name}
-                  defaultValue={field.value}
+                  defaultValue={field.value || ''}
                   onChange={(value) => {
                     field.onChange(value)
                     setTypeReadiness(value as ProbeTypeEnum)
+                    trigger().then()
                   }}
                   items={Object.values(ProbeTypeEnum).map((value) => ({
                     label: value,
@@ -150,18 +138,19 @@ export function ApplicationSettingsHealthchecks({
           className: rowClassName,
           content: (
             <Controller
-              name="liveness_probe.currentType"
+              name="liveness_probe.current_type"
               control={control}
               render={({ field }) => (
                 <InputSelectSmall
                   className="shrink-0 grow flex-1"
                   inputClassName="!bg-white"
-                  data-testid="value"
+                  data-testid="input-liveness-probe-current-type"
                   name={field.name}
-                  defaultValue={field.value}
+                  defaultValue={field.value || ''}
                   onChange={(value) => {
                     field.onChange(value)
                     setTypeLiveness(value as ProbeTypeWithNoneEnum)
+                    trigger().then()
                   }}
                   items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
                     label: value,
@@ -202,6 +191,7 @@ export function ApplicationSettingsHealthchecks({
                 isJob ? (
                   <InputTextSmall
                     className="shrink-0 grow flex-1"
+                    data-testid="input-job-readiness-probe-port"
                     name={field.name}
                     onChange={field.onChange}
                     value={jobPort?.toString() || ''}
@@ -212,10 +202,13 @@ export function ApplicationSettingsHealthchecks({
                   <InputSelectSmall
                     className="shrink-0 grow flex-1"
                     inputClassName="!bg-white"
-                    data-testid="value"
+                    data-testid="input-readiness-probe-port"
                     name={field.name}
-                    defaultValue={field.value}
-                    onChange={field.onChange}
+                    defaultValue={field.value || ''}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      trigger().then()
+                    }}
                     items={
                       ports
                         ? ports.map((value) => ({
@@ -241,6 +234,7 @@ export function ApplicationSettingsHealthchecks({
                 isJob ? (
                   <InputTextSmall
                     className="shrink-0 grow flex-1"
+                    data-testid="input-job-liveness-probe-port"
                     name={field.name}
                     onChange={field.onChange}
                     value={jobPort?.toString() || ''}
@@ -251,10 +245,13 @@ export function ApplicationSettingsHealthchecks({
                   <InputSelectSmall
                     className="shrink-0 grow flex-1"
                     inputClassName="!bg-white"
-                    data-testid="value"
+                    data-testid="input-liveness-probe-port"
                     name={field.name}
-                    defaultValue={field.value}
-                    onChange={field.onChange}
+                    defaultValue={field.value || ''}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      trigger().then()
+                    }}
                     items={
                       ports
                         ? ports.map((value) => ({
@@ -297,9 +294,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
+                  data-testid="input-readiness-probe-path"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -317,9 +315,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
+                  data-testid="input-liveness-probe-path"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -348,6 +347,7 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
+                  data-testid="input-readiness-probe-command"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -368,6 +368,7 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
+                  data-testid="input-liveness-probe-command"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -398,9 +399,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
+                  data-testid="input-readiness-probe-service"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -418,9 +420,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
+                  data-testid="input-liveness-probe-service"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -458,10 +461,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-readiness-probe-delay"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -480,10 +483,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-liveness-probe-delay"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -518,10 +521,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-readiness-probe-period"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -540,10 +543,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-liveness-probe-period"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -578,10 +581,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-readiness-probe-timeout"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -600,10 +603,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-liveness-probe-timeout"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -638,10 +641,10 @@ export function ApplicationSettingsHealthchecks({
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
                   disabled
-                  data-testid="value"
+                  data-testid="input-readiness-probe-threshold"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -660,10 +663,10 @@ export function ApplicationSettingsHealthchecks({
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
                   disabled
-                  data-testid="value"
+                  data-testid="input-liveness-probe-threshold"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -698,10 +701,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-readiness-probe-fail-threshold"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -720,10 +723,10 @@ export function ApplicationSettingsHealthchecks({
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  data-testid="value"
+                  data-testid="input-liveness-probe-fail-threshold"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value}
+                  value={field.value || ''}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -741,7 +744,7 @@ export function ApplicationSettingsHealthchecks({
   return (
     <TableEdition
       key={`${typeLiveness}.${typeReadiness}`}
-      className="bg-element-light-lighter-200 font-medium text-ssm"
+      className="bg-element-light-lighter-200 font-medium text-ssm mb-5"
       tableBody={table}
     />
   )

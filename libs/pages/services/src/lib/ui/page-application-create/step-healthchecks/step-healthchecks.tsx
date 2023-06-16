@@ -1,6 +1,7 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ApplicationSettingsHealthchecks, ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/console-shared'
+import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
 import { PortData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 

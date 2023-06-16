@@ -5,14 +5,8 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import {
-  ProbeTypeEnum,
-  ProbeTypeWithNoneEnum,
-  defaultLivenessProbe,
-  defaultReadinessProbe,
-  probeFormatted,
-} from '@qovery/shared/console-shared'
-import { getServiceType, isJob } from '@qovery/shared/enums'
+import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
+import { ProbeTypeEnum, ProbeTypeWithNoneEnum, getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -26,7 +20,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity):
     healthchecks: {
       readiness_probe: probeFormatted(data['readiness_probe'], defaultPort),
       liveness_probe:
-        ProbeTypeWithNoneEnum.NONE !== data['liveness_probe']['currentType']
+        ProbeTypeWithNoneEnum.NONE !== data['liveness_probe']['current_type']
           ? probeFormatted(data['liveness_probe'], defaultPort)
           : undefined,
     },
@@ -129,8 +123,8 @@ export function PageSettingsHealthchecksFeature() {
       })
     }
 
-    methods.setValue('readiness_probe.currentType' as any, defaultTypeReadiness)
-    methods.setValue('liveness_probe.currentType' as any, defaultTypeLiveness)
+    methods.setValue('readiness_probe.current_type' as any, defaultTypeReadiness)
+    methods.setValue('liveness_probe.current_type' as any, defaultTypeLiveness)
 
     if (application?.healthchecks?.readiness_probe) {
       setProbeValues('readiness_probe', application?.healthchecks?.readiness_probe)
