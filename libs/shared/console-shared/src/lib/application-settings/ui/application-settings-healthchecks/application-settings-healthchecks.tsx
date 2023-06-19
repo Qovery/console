@@ -172,7 +172,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <div className="flex justify-between w-full">
               Port
-              <Tooltip content="When configuring an HTTP liveness probe, this advanced setting allows you to set the path to access on the HTTP/HTTPS server to perform the health check.">
+              <Tooltip content="When configuring an HTTP probe, this advanced setting allows you to set the path to access on the HTTP/HTTPS server to perform the health check.">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>
@@ -337,7 +337,16 @@ export function ApplicationSettingsHealthchecks({
     tableBody.push({
       cells: [
         {
-          content: <div className="flex justify-between w-full">Command</div>,
+          content: (
+            <div className="flex justify-between w-full">
+              Command
+              <Tooltip content='Allows you to specify the command to run within your container to verify the status of your application. Expected format: ["cat", "/tmp/healthy"].'>
+                <span>
+                  <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
+                </span>
+              </Tooltip>
+            </div>
+          ),
         },
 
         {
@@ -390,7 +399,16 @@ export function ApplicationSettingsHealthchecks({
     tableBody.push({
       cells: [
         {
-          content: <div className="flex justify-between w-full">Service</div>,
+          content: (
+            <div className="flex justify-between w-full">
+              Service
+              <Tooltip content="Allows you to specify a different service name to be used for the health check. This lets you use the same endpoint for different kinds of container health check.">
+                <span>
+                  <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
+                </span>
+              </Tooltip>
+            </div>
+          ),
         },
         {
           className: rowClassName,
@@ -445,7 +463,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <div className="flex justify-between w-full">
               Initial Delay (in seconds)
-              <Tooltip content="Allows you to specify an interval, in seconds, between the application container start and the first liveness check.">
+              <Tooltip content="Allows you to specify an interval, in seconds, between the application container start and the first check.">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>
@@ -565,7 +583,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <div className="flex justify-between w-full">
               Timeout (in seconds)
-              <Tooltip content="Allows you to specify the interval, in seconds, after which the liveness probe times out.">
+              <Tooltip content="Allows you to specify the interval, in seconds, after which the probe times out.">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>
@@ -625,7 +643,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <div className="flex justify-between w-full">
               Success Threshold
-              <Tooltip content="Allows you to specify how many consecutive successes are needed, as a minimum, for the probe to be considered successful after having failed previously.">
+              <Tooltip content="Allows you to specify how many consecutive successes are needed, as a minimum, for the probe to be considered successful after having failed previously. Kubernetes force this value to 1">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>
