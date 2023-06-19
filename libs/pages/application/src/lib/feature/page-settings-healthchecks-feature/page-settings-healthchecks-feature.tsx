@@ -112,11 +112,11 @@ export function PageSettingsHealthchecksFeature() {
     const setProbeValues = (probeName: string, values: Probe) => {
       Object.entries(values).forEach(([field, value]) => {
         const probePath = `${probeName}.${field}`
-        if (typeof value === 'object' && value !== null) {
+        if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
           setProbeValues(probePath, value)
         } else {
           // @todo need to find a better way to set the value and remove the any
-          methods.setValue(probePath as any, value)
+          methods.setValue(probePath as any, Array.isArray(value) ? JSON.stringify(value) : value)
         }
       })
     }

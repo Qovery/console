@@ -36,7 +36,7 @@ export function probeFormatted(currentData: FieldValues, defaultPort: number | n
     dataType = {
       [type]: {
         command: !Array.isArray(currentData?.['type']?.[type]?.['command'])
-          ? currentData?.['type']?.[type]?.['command']?.split(',')
+          ? JSON.parse(currentData?.['type']?.[type]?.['command'])
           : currentData?.['type'][type]['command'],
       },
     }
