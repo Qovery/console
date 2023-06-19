@@ -78,7 +78,7 @@ export function ApplicationSettingsHealthchecks({
           content: (
             <div className="flex justify-between w-full">
               Liveness
-              <Tooltip content="Verifies if the container is operating and it is not in a broken state. If the probe fails, the container is killed and restart.">
+              <Tooltip content="Verifies if the container is operating and it is not in a broken state. If the probe fails, the container is killed and restarted.">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>

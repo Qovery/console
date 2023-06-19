@@ -73,9 +73,11 @@ export function StepHealthchecksFeature() {
       },
       liveness_probe: {
         ...{
-          current_type: ProbeTypeEnum.NONE,
+          current_type: ProbeTypeEnum.TCP,
           type: {
-            [ProbeTypeEnum.NONE.toLowerCase()]: null,
+            [ProbeTypeEnum.TCP.toLowerCase()]: {
+              port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
+            },
           },
         },
         ...defaultLivenessProbe,
@@ -123,7 +125,7 @@ export function StepHealthchecksFeature() {
           onBack={onBack}
           onSubmit={onSubmit}
           defaultTypeReadiness={(portData?.healthchecks?.typeReadiness as ProbeTypeEnum) || ProbeTypeEnum.TCP}
-          defaultTypeLiveness={(portData?.healthchecks?.typeLiveness as ProbeTypeEnum) || ProbeTypeEnum.NONE}
+          defaultTypeLiveness={(portData?.healthchecks?.typeLiveness as ProbeTypeEnum) || ProbeTypeEnum.TCP}
         />
       </FormProvider>
     </FunnelFlowBody>
