@@ -107,7 +107,7 @@ describe('Probe Formatted', () => {
     const currentData = {
       current_type: ProbeTypeEnum.EXEC,
       type: {
-        exec: { command: 'test,test' },
+        exec: { command: '["test","test"]' },
         grpc: { port: '8080', service: 'myservice' },
       },
       initial_delay_seconds: '30',
