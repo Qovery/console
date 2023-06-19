@@ -1,5 +1,5 @@
 import { BuildModeEnum } from 'qovery-typescript-axios'
-import { ProbeTypeWithNoneEnum, isApplication, isContainer } from '@qovery/shared/enums'
+import { ProbeTypeEnum, isApplication, isContainer } from '@qovery/shared/enums'
 import { ApplicationGeneralData, ApplicationResourcesData, FlowPortData } from '@qovery/shared/interfaces'
 import { Button, ButtonIcon, ButtonIconStyle, ButtonSize, ButtonStyle, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -195,7 +195,7 @@ export function StepSummary({
                         </ul>
                       </li>
                       {portsData.healthchecks.item.liveness_probe &&
-                        portsData.healthchecks.typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+                        portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
                           <li className="flex flex-col mt-1">
                             <span className="font-bold text-text-600">Liveness</span>
                             <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import {
   IconAwesomeEnum,
   IconFa,
@@ -32,7 +32,7 @@ export interface ApplicationSettingsHealthchecksProps {
   isJob?: boolean
   jobPort?: number | null
   defaultTypeReadiness: ProbeTypeEnum
-  defaultTypeLiveness: ProbeTypeWithNoneEnum
+  defaultTypeLiveness: ProbeTypeEnum
 }
 
 export function ApplicationSettingsHealthchecks({
@@ -45,7 +45,7 @@ export function ApplicationSettingsHealthchecks({
   const { control, trigger } = useFormContext()
 
   const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
-  const [typeLiveness, setTypeLiveness] = useState<ProbeTypeWithNoneEnum>(defaultTypeLiveness)
+  const [typeLiveness, setTypeLiveness] = useState<ProbeTypeEnum>(defaultTypeLiveness)
 
   useEffect(() => {
     setTypeReadiness(defaultTypeReadiness)
@@ -149,10 +149,10 @@ export function ApplicationSettingsHealthchecks({
                   defaultValue={field.value || ''}
                   onChange={(value) => {
                     field.onChange(value)
-                    setTypeLiveness(value as ProbeTypeWithNoneEnum)
+                    setTypeLiveness(value as ProbeTypeEnum)
                     trigger().then()
                   }}
-                  items={Object.values(ProbeTypeWithNoneEnum).map((value) => ({
+                  items={Object.values(ProbeTypeEnum).map((value) => ({
                     label: value,
                     value: value,
                   }))}
@@ -165,7 +165,7 @@ export function ApplicationSettingsHealthchecks({
     },
   ]
 
-  if (typeReadiness !== ProbeTypeEnum.EXEC || typeLiveness !== ProbeTypeWithNoneEnum.EXEC) {
+  if (typeReadiness !== ProbeTypeEnum.EXEC || typeLiveness !== ProbeTypeEnum.EXEC) {
     tableBody.push({
       cells: [
         {
@@ -182,7 +182,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness !== ProbeTypeEnum.EXEC && (
+          content: typeReadiness !== ProbeTypeEnum.NONE && typeReadiness !== ProbeTypeEnum.EXEC && (
             <Controller
               key={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
@@ -225,7 +225,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && typeLiveness !== ProbeTypeWithNoneEnum.EXEC && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && typeLiveness !== ProbeTypeEnum.EXEC && (
             <Controller
               key={`liveness_probe.type.${typeLiveness?.toLowerCase()}.port`}
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.port`}
@@ -270,7 +270,7 @@ export function ApplicationSettingsHealthchecks({
     })
   }
 
-  if (typeReadiness === ProbeTypeEnum.HTTP || typeLiveness === ProbeTypeWithNoneEnum.HTTP) {
+  if (typeReadiness === ProbeTypeEnum.HTTP || typeLiveness === ProbeTypeEnum.HTTP) {
     tableBody.push({
       cells: [
         {
@@ -291,13 +291,14 @@ export function ApplicationSettingsHealthchecks({
             <Controller
               name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
               control={control}
+              defaultValue="/"
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
                   dataTestId="input-readiness-probe-path"
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value || ''}
+                  value={field.value}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -308,7 +309,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness === ProbeTypeWithNoneEnum.HTTP && (
+          content: typeLiveness === ProbeTypeEnum.HTTP && (
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.path`}
               control={control}
@@ -331,7 +332,7 @@ export function ApplicationSettingsHealthchecks({
     })
   }
 
-  if (typeReadiness === ProbeTypeEnum.EXEC || typeLiveness === ProbeTypeWithNoneEnum.EXEC) {
+  if (typeReadiness === ProbeTypeEnum.EXEC || typeLiveness === ProbeTypeEnum.EXEC) {
     tableBody.push({
       cells: [
         {
@@ -361,7 +362,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness === ProbeTypeWithNoneEnum.EXEC && (
+          content: typeLiveness === ProbeTypeEnum.EXEC && (
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.command`}
               control={control}
@@ -384,7 +385,7 @@ export function ApplicationSettingsHealthchecks({
     })
   }
 
-  if (typeReadiness === ProbeTypeEnum.GRPC || typeLiveness === ProbeTypeWithNoneEnum.GRPC) {
+  if (typeReadiness === ProbeTypeEnum.GRPC || typeLiveness === ProbeTypeEnum.GRPC) {
     tableBody.push({
       cells: [
         {
@@ -413,7 +414,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness === ProbeTypeWithNoneEnum.GRPC && (
+          content: typeLiveness === ProbeTypeEnum.GRPC && (
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.service`}
               control={control}
@@ -453,7 +454,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
               name="readiness_probe.initial_delay_seconds"
               rules={{ required: 'This field is required' }}
@@ -475,7 +476,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
               name="liveness_probe.initial_delay_seconds"
               rules={{ required: 'This field is required' }}
@@ -513,7 +514,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
               name="readiness_probe.period_seconds"
               control={control}
@@ -535,7 +536,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
               name="liveness_probe.period_seconds"
               rules={{ required: 'This field is required' }}
@@ -573,7 +574,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
               name="readiness_probe.timeout_seconds"
               rules={{ required: 'This field is required' }}
@@ -595,7 +596,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
               name="liveness_probe.timeout_seconds"
               rules={{ required: 'This field is required' }}
@@ -633,7 +634,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
               name="readiness_probe.success_threshold"
               control={control}
@@ -655,7 +656,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
               name="liveness_probe.success_threshold"
               control={control}
@@ -693,7 +694,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
               name="readiness_probe.failure_threshold"
               rules={{ required: 'This field is required' }}
@@ -715,7 +716,7 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeWithNoneEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
               name="liveness_probe.failure_threshold"
               rules={{ required: 'This field is required' }}

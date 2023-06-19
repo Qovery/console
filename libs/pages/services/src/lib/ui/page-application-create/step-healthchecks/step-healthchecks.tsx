@@ -1,7 +1,7 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { PortData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
@@ -9,7 +9,7 @@ export interface StepHealthchecksProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   defaultTypeReadiness: ProbeTypeEnum
-  defaultTypeLiveness: ProbeTypeWithNoneEnum
+  defaultTypeLiveness: ProbeTypeEnum
   ports?: PortData[]
 }
 

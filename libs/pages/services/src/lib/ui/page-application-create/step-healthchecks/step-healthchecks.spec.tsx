@@ -2,14 +2,14 @@ import { act } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { defaultLivenessProbe, defaultReadinessProbe } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import StepHealthchecks, { StepHealthchecksProps } from './step-healthchecks'
 
 const props: StepHealthchecksProps = {
   onBack: jest.fn(),
   onSubmit: jest.fn(),
   defaultTypeReadiness: ProbeTypeEnum.TCP,
-  defaultTypeLiveness: ProbeTypeWithNoneEnum.NONE,
+  defaultTypeLiveness: ProbeTypeEnum.NONE,
   ports: [
     {
       application_port: 3000,
@@ -64,7 +64,7 @@ describe('StepHealthchecks', () => {
           },
           liveness_probe: {
             ...{
-              current_type: ProbeTypeWithNoneEnum.NONE,
+              current_type: ProbeTypeEnum.NONE,
               type: {
                 none: null,
               },

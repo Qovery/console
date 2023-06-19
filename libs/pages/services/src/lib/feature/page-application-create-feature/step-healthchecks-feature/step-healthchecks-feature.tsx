@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { HealthcheckData, ProbeExtended } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -75,7 +75,7 @@ export function StepHealthchecksFeature() {
         ...{
           current_type: 'NONE',
           type: {
-            [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
+            [ProbeTypeEnum.NONE.toLowerCase()]: null,
           },
         },
         ...defaultLivenessProbe,
@@ -88,7 +88,7 @@ export function StepHealthchecksFeature() {
     if (portData?.healthchecks?.item) {
       methods.reset(portData?.healthchecks?.item as HealthcheckData)
       methods.setValue('readiness_probe.current_type', portData.healthchecks.typeReadiness as ProbeTypeEnum)
-      methods.setValue('liveness_probe.current_type', portData.healthchecks.typeLiveness as ProbeTypeWithNoneEnum)
+      methods.setValue('liveness_probe.current_type', portData.healthchecks.typeLiveness as ProbeTypeEnum)
     }
   }, [methods, portData?.healthchecks])
 
@@ -123,9 +123,7 @@ export function StepHealthchecksFeature() {
           onBack={onBack}
           onSubmit={onSubmit}
           defaultTypeReadiness={(portData?.healthchecks?.typeReadiness as ProbeTypeEnum) || ProbeTypeEnum.TCP}
-          defaultTypeLiveness={
-            (portData?.healthchecks?.typeLiveness as ProbeTypeWithNoneEnum) || ProbeTypeWithNoneEnum.NONE
-          }
+          defaultTypeLiveness={(portData?.healthchecks?.typeLiveness as ProbeTypeEnum) || ProbeTypeEnum.NONE}
         />
       </FormProvider>
     </FunnelFlowBody>

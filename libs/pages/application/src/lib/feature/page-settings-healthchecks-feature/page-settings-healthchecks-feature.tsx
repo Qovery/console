@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum, getServiceType, isJob } from '@qovery/shared/enums'
+import { ProbeTypeEnum, getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, HealthcheckData, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -18,9 +18,12 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity):
   const result = {
     ...application,
     healthchecks: {
-      readiness_probe: probeFormatted(data['readiness_probe'], defaultPort),
+      readiness_probe:
+        ProbeTypeEnum.NONE !== data['readiness_probe']['current_type']
+          ? probeFormatted(data['readiness_probe'], defaultPort)
+          : undefined,
       liveness_probe:
-        ProbeTypeWithNoneEnum.NONE !== data['liveness_probe']['current_type']
+        ProbeTypeEnum.NONE !== data['liveness_probe']['current_type']
           ? probeFormatted(data['liveness_probe'], defaultPort)
           : undefined,
     },
@@ -54,12 +57,7 @@ export function PageSettingsHealthchecksFeature() {
       readiness_probe: {
         ...{
           type: {
-            [ProbeTypeEnum.TCP.toLowerCase()]: {
-              port:
-                application?.ports && application?.ports.length > 0
-                  ? application?.ports[0].internal_port
-                  : application?.port,
-            },
+            [ProbeTypeEnum.NONE.toLowerCase()]: null,
           },
         },
         ...defaultReadinessProbe,
@@ -67,7 +65,7 @@ export function PageSettingsHealthchecksFeature() {
       liveness_probe: {
         ...{
           type: {
-            [ProbeTypeWithNoneEnum.NONE.toLowerCase()]: null,
+            [ProbeTypeEnum.NONE.toLowerCase()]: null,
           },
         },
         ...defaultLivenessProbe,
@@ -99,7 +97,7 @@ export function PageSettingsHealthchecksFeature() {
     const types = application?.healthchecks?.readiness_probe?.type as ProbeType
     const readinessProbeKeys = Object.keys(types || {})
     const nonNullKeyReadiness = readinessProbeKeys.find((key) => (types as { [key: string]: {} })[key] !== null)
-    return nonNullKeyReadiness?.toUpperCase() || ProbeTypeEnum.TCP
+    return nonNullKeyReadiness?.toUpperCase() || ProbeTypeEnum.NONE
   }, [application?.healthchecks?.readiness_probe])
 
   // Use memo to get the TYPE of liveness probe
@@ -107,7 +105,7 @@ export function PageSettingsHealthchecksFeature() {
     const types = application?.healthchecks?.liveness_probe?.type as ProbeType
     const livenessProbeKeys = Object.keys(types || {})
     const nonNullKeyLiveness = livenessProbeKeys.find((key) => (types as { [key: string]: {} })[key] !== null)
-    return nonNullKeyLiveness?.toUpperCase() || ProbeTypeWithNoneEnum.NONE
+    return nonNullKeyLiveness?.toUpperCase() || ProbeTypeEnum.NONE
   }, [application?.healthchecks?.liveness_probe])
 
   useEffect(() => {
@@ -148,7 +146,7 @@ export function PageSettingsHealthchecksFeature() {
           applicationId
         )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_PORT_URL}`}
         defaultTypeReadiness={defaultTypeReadiness as ProbeTypeEnum}
-        defaultTypeLiveness={defaultTypeLiveness as ProbeTypeWithNoneEnum}
+        defaultTypeLiveness={defaultTypeLiveness as ProbeTypeEnum}
         onSubmit={onSubmit}
         loading={loading}
       />

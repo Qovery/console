@@ -1,4 +1,4 @@
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { probeFormatted } from './probe-formatted'
 
 const defaultPort = 80
@@ -135,7 +135,7 @@ describe('Probe Formatted', () => {
 
   it('should format NONE type correctly', () => {
     const currentData = {
-      currentType: ProbeTypeWithNoneEnum.NONE,
+      currentType: ProbeTypeEnum.NONE,
       type: {
         command: { command: 'hello,world' },
       },

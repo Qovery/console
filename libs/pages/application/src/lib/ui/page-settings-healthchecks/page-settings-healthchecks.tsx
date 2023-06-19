@@ -1,14 +1,14 @@
 import { ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum, ProbeTypeWithNoneEnum } from '@qovery/shared/enums'
+import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import { BannerBox, BannerBoxEnum, HelpSection, Link, StickyActionFormToaster } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
   loading: LoadingStatus
   defaultTypeReadiness: ProbeTypeEnum
-  defaultTypeLiveness: ProbeTypeWithNoneEnum
+  defaultTypeLiveness: ProbeTypeEnum
   linkPortSetting: string
   isJob: boolean
   jobPort?: number | null
