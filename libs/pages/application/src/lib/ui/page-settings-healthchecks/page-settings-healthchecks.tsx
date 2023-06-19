@@ -80,7 +80,7 @@ export function PageSettingsHealthchecks({
         description="Need help? You may find these links useful"
         links={[
           {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/advanced-settings/',
+            link: 'https://hub.qovery.com/docs/using-qovery/configuration/service-health-checks/',
             linkLabel: 'How to configure my health checks',
             external: true,
           },

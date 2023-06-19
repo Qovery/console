@@ -313,6 +313,7 @@ export function ApplicationSettingsHealthchecks({
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.path`}
               control={control}
+              defaultValue="/"
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
