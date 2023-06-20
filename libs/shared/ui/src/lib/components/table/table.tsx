@@ -34,7 +34,8 @@ export interface TableHeadCustomFilterProps<T> {
   key: string
   search?: boolean
   title?: string
-  itemContentCustom?: (data: T, currentFilter: string) => React.ReactNode
+  itemsCustom?: string[]
+  itemContentCustom?: (data: T, currentFilter: string, item?: string) => React.ReactNode
 }
 
 export function Table<T>(props: TableProps<T>) {

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
+import { TableFilterProps } from '@qovery/shared/ui'
 import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
@@ -104,6 +105,15 @@ export function PageGeneralFeature() {
     setIsOpenTimestamp(false)
   }
 
+  const [filter, setFilter] = useState<TableFilterProps>({})
+
+  useEffect(() => {
+    setSearchParams((prev) => {
+      prev.set('origin', filter.value || '')
+      return prev
+    })
+  }, [filter])
+
   return (
     <PageGeneral
       events={eventsData?.events || eventsFactoryMock(30)}
@@ -120,6 +130,7 @@ export function PageGeneralFeature() {
       timestamps={timestamps}
       setIsOpenTimestamp={setIsOpenTimestamp}
       isOpenTimestamp={isOpenTimestamp}
+      setFilter={setFilter}
     />
   )
 }

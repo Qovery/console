@@ -1,5 +1,6 @@
 import { addMonths } from 'date-fns'
-import { OrganizationEventResponse } from 'qovery-typescript-axios'
+import { OrganizationEventOrigin, OrganizationEventResponse } from 'qovery-typescript-axios'
+import { Dispatch, SetStateAction } from 'react'
 import {
   Button,
   ButtonSize,
@@ -10,6 +11,7 @@ import {
   IconAwesomeEnum,
   Pagination,
   Table,
+  TableFilterProps,
   TableHeadProps,
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
@@ -30,6 +32,7 @@ export interface PageGeneralProps {
   previousDisabled?: boolean
   onPageSizeChange?: (pageSize: string) => void
   pageSize?: string
+  setFilter?: Dispatch<SetStateAction<TableFilterProps>>
 }
 
 export function PageGeneral({
@@ -47,6 +50,7 @@ export function PageGeneral({
   isOpenTimestamp,
   setIsOpenTimestamp,
   timestamps,
+  setFilter,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -70,6 +74,13 @@ export function PageGeneral({
     },
     {
       title: 'Tool',
+      filter: [
+        {
+          title: 'Filter by tool',
+          key: 'origin',
+          itemsCustom: Object.keys(OrganizationEventOrigin).map((item) => item),
+        },
+      ],
     },
   ]
 
@@ -130,6 +141,7 @@ export function PageGeneral({
         <Table
           dataHead={dataHead}
           data={events}
+          setFilter={setFilter}
           className="border border-element-light-lighter-400 rounded"
           classNameHead="rounded-t"
           columnsWidth={columnsWidth}
