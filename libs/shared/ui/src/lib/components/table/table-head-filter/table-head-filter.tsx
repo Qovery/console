@@ -79,8 +79,8 @@ export function groupBy<T>(
   setFilter: any,
   dataHeadFilter?: TableHeadCustomFilterProps<T>
 ) {
-  // custom list without datas from array of string
   if (dataHeadFilter?.itemsCustom) {
+    // custom list without datas from array of string
     const result: MenuItemProps[] = dataHeadFilter?.itemsCustom.map((item: string) => ({
       name: upperCaseFirstLetter(item.toLowerCase())?.replace('_', ' ') || '',
       truncateLimit: 20,
@@ -101,7 +101,7 @@ export function groupBy<T>(
               value: item,
             })
         } else {
-          // reset by default filter
+          // reset with default filter
           setCurrentFilter(defaultValue)
           setLocalFilter('')
           setFilter && setFilter({})
@@ -181,7 +181,7 @@ export function groupBy<T>(
               value: key,
             })
         } else {
-          // reset by default filter
+          // reset with default filter
           setCurrentFilter(defaultValue)
           setLocalFilter(ALL)
           setDataFilterNumber(0)
