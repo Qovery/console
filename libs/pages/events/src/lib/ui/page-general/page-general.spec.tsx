@@ -1,8 +1,8 @@
-import { act, fireEvent, getAllByTestId, getByTestId, getNodeText } from '@testing-library/react'
+import { act, fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { OrganizationEventOrigin } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import PageGeneral, { PageGeneralProps } from './page-general'
 
 const props: PageGeneralProps = {
