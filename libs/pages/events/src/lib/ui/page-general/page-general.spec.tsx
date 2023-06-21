@@ -1,5 +1,6 @@
-import { fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
+import { OrganizationEventOrigin } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import PageGeneral, { PageGeneralProps } from './page-general'
@@ -19,6 +20,8 @@ const props: PageGeneralProps = {
   timestamps: [new Date(), new Date()],
   isOpenTimestamp: false,
   setIsOpenTimestamp: jest.fn(),
+  setFilter: jest.fn(),
+  filter: { key: 'origin', value: 'origin-1' },
 }
 
 describe('PageGeneral', () => {
@@ -90,6 +93,19 @@ describe('PageGeneral', () => {
         true,
         false
       )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
+    )
+  })
+
+  it('should render a Tool filter on the table', () => {
+    const { getByText, getAllByTestId } = render(<PageGeneral {...props} />)
+
+    act(() => {
+      getByText('Tool').click()
+    })
+
+    // format uppercase and replace _ by space (auto format by menu component)
+    expect(getAllByTestId('menuItem').map((item) => item.textContent?.toUpperCase())).toEqual(
+      Object.keys(OrganizationEventOrigin).map((item) => item.toUpperCase().replace('_', ' '))
     )
   })
 })

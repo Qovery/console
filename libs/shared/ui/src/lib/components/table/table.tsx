@@ -17,6 +17,7 @@ export interface TableProps<T> {
   setFilter?: Dispatch<SetStateAction<TableFilterProps>>
   setDataSort?: Dispatch<SetStateAction<T[]>>
   defaultSortingKey?: keyof T
+  defaultFilter?: string
 }
 
 export interface TableHeadProps<T> {
@@ -34,8 +35,12 @@ export interface TableHeadCustomFilterProps<T> {
   key: string
   search?: boolean
   title?: string
-  itemContentCustom?: (data: T, currentFilter: string) => React.ReactNode
+  itemsCustom?: string[]
+  itemContentCustom?: (data: T, currentFilter: string, item?: string) => React.ReactNode
+  hideFilterNumber?: boolean
 }
+
+const ALL = 'ALL'
 
 export function Table<T>(props: TableProps<T>) {
   const {
@@ -48,11 +53,16 @@ export function Table<T>(props: TableProps<T>) {
     setFilter,
     setDataSort,
     defaultSortingKey,
+    defaultFilter = ALL,
   } = props
 
-  const ALL = 'ALL'
-  const [currentFilter, setCurrentFilter] = useState(ALL)
+  const [currentFilter, setCurrentFilter] = useState(defaultFilter)
   const [isSorted, setIsSorted] = useState(false)
+
+  // update current filter with a default filter
+  useEffect(() => {
+    setCurrentFilter(defaultFilter)
+  }, [defaultFilter])
 
   useEffect(() => {
     if (!isSorted && defaultSortingKey && data && setDataSort) {
@@ -85,6 +95,7 @@ export function Table<T>(props: TableProps<T>) {
                 setFilter={setFilter}
                 currentFilter={currentFilter}
                 setCurrentFilter={setCurrentFilter}
+                defaultFilter={defaultFilter}
               />
             )}
             {sort && data && (

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
+import { TableFilterProps } from '@qovery/shared/ui'
 import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
@@ -47,6 +48,7 @@ export function PageGeneralFeature() {
   const [pageSize, setPageSize] = useState<string>('30')
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
   const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
+  const [filter, setFilter] = useState<TableFilterProps>({})
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
   useEffect(() => {
@@ -58,9 +60,21 @@ export function PageGeneralFeature() {
         new Date(parseInt(newQueryParams.fromTimestamp, 10) * 1000),
         new Date(parseInt(newQueryParams.toTimestamp, 10) * 1000),
       ])
+    if (newQueryParams.origin) setFilter({ key: 'origin', value: newQueryParams.origin })
 
     setQueryParams(newQueryParams)
   }, [location])
+
+  // set filter if is a query params change
+  useEffect(() => {
+    const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
+
+    if (newQueryParams.origin !== filter.value)
+      setSearchParams((prev) => {
+        prev.set('origin', filter.value || '')
+        return prev
+      })
+  }, [filter])
 
   const onPrevious = () => {
     if (eventsData?.links?.previous) {
@@ -120,6 +134,8 @@ export function PageGeneralFeature() {
       timestamps={timestamps}
       setIsOpenTimestamp={setIsOpenTimestamp}
       isOpenTimestamp={isOpenTimestamp}
+      filter={filter}
+      setFilter={setFilter}
     />
   )
 }

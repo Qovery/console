@@ -82,7 +82,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
-            <span>{upperCaseFirstLetter(event.origin)}</span>
+            <span>{upperCaseFirstLetter(event.origin)?.replace('_', ' ')}</span>
           </Skeleton>
         </div>
       </div>

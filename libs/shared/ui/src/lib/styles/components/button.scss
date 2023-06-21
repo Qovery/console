@@ -1,6 +1,7 @@
 .btn {
   @apply h-9 inline-flex items-center justify-center px-4 rounded cursor-pointer bg-brand-500 hover:bg-brand-600 text-white font-medium text-ssm gap-2;
-  transition: 0.25s all $timing-cubic;
+  transition: 0.25s color $timing-cubic;
+  transition-property: color, background;
 
   &:not(.btn--tiny, .btn-icon, .btn--no-min-w) {
     min-width: 6rem;
@@ -59,19 +60,6 @@
   &:hover {
     color: theme('colors.text.100');
     background-color: theme('colors.element.light.darker.200');
-  }
-}
-
-.btn--tab {
-  @apply bg-element-light-lighter-300 text-text-600 dark:bg-element-light-darker-500 dark:text-text-300 text-xs font-medium px-2;
-
-  &:hover:not(.is-active, .btn--active) {
-    @apply bg-element-light-lighter-400 text-text-700 dark:bg-element-light-darker-600 dark:text-text-300;
-  }
-
-  &.is-active,
-  &.btn--active {
-    @apply bg-brand-500 text-text-100;
   }
 }
 
@@ -184,7 +172,8 @@
 // size
 .btn--tiny {
   height: theme('spacing.7');
-  @apply text-xs px-[10px];
+  padding: 0 theme('spacing.2');
+  @apply text-xs;
 }
 
 .btn--small {
