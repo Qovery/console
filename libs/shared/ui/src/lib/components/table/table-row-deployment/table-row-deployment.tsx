@@ -26,7 +26,7 @@ import TableRow from '../table-row/table-row'
 export interface TableRowDeploymentProps {
   dataHead: TableHeadProps<DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase>[]
   data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
-  filter?: TableFilterProps
+  filter?: TableFilterProps[]
   columnsWidth?: string
   isLoading?: boolean
   startGroup?: boolean

@@ -31,7 +31,7 @@ export function InvoicesList(props: InvoicesListProps) {
       title: 'Charge',
     },
   ]
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
   const columnWidth = '30% 30% 30% 10%'
 
   return (
@@ -56,6 +56,7 @@ export function InvoicesList(props: InvoicesListProps) {
         data={props.invoices}
         columnsWidth={columnWidth}
         setFilter={setFilter}
+        filter={filter}
         className="border border-element-light-lighter-400 rounded overflow-hidden"
       >
         <div>

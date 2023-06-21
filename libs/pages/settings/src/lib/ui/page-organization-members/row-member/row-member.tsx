@@ -24,7 +24,7 @@ export interface RowMemberProps {
   member: Member | InviteMember
   loading: boolean
   columnsWidth: string
-  filter: TableFilterProps
+  filter: TableFilterProps[]
   transferOwnership?: (user: Member) => void
   editMemberRole?: (userId: string, roleId: string) => void
   deleteMember?: (userId: string) => void

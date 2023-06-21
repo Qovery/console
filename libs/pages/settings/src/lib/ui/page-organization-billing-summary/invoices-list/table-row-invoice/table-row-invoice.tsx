@@ -15,7 +15,7 @@ import { costToHuman, dateToFormat } from '@qovery/shared/utils'
 export interface TableRowInvoiceProps {
   dataHead: TableHeadProps<Invoice>[]
   data: Invoice
-  filter?: TableFilterProps
+  filter?: TableFilterProps[]
   columnsWidth?: string
   isLoading?: boolean
   index?: number

@@ -48,7 +48,7 @@ export function PageGeneralFeature() {
   const [pageSize, setPageSize] = useState<string>('30')
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
   const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
   useEffect(() => {
@@ -60,7 +60,9 @@ export function PageGeneralFeature() {
         new Date(parseInt(newQueryParams.fromTimestamp, 10) * 1000),
         new Date(parseInt(newQueryParams.toTimestamp, 10) * 1000),
       ])
-    if (newQueryParams.origin) setFilter({ key: 'origin', value: newQueryParams.origin })
+
+    // if (newQueryParams.origin) setFilter((prev) => [...prev, { key: 'origin', value: newQueryParams.origin }])
+    // if (newQueryParams.eventType) setFilter((prev) => [...prev, { key: 'event_type', value: newQueryParams.eventType }])
 
     setQueryParams(newQueryParams)
   }, [location])
@@ -69,11 +71,20 @@ export function PageGeneralFeature() {
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
-    if (newQueryParams.origin !== filter.value)
+    for (let i = 0; i < filter.length; i++) {
+      const currentFilter: TableFilterProps = filter[i]
+      console.log(currentFilter)
+      console.log(newQueryParams)
+
+      const currentKey = (currentFilter.key || '')
+        .toLowerCase()
+        .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
+
       setSearchParams((prev) => {
-        prev.set('origin', filter.value || '')
+        prev.set(currentKey, currentFilter.value || '')
         return prev
       })
+    }
   }, [filter])
 
   const onPrevious = () => {

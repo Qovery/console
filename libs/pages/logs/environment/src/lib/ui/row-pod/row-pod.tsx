@@ -60,7 +60,7 @@ export const formatVersion = (version: string) => {
 export interface RowPodProps {
   data: Log
   index: number
-  filter?: TableFilterProps
+  filter?: TableFilterProps[]
 }
 
 export function RowPod(props: RowPodProps) {

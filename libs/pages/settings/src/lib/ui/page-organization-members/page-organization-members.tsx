@@ -99,8 +99,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
 
   const columnsWidth = '35% 22% 21% 21%'
 
-  const [filterMembers, setFilterMembers] = useState<TableFilterProps>({})
-  const [filterInviteMembers, setFilterInviteMembers] = useState<TableFilterProps>({})
+  const [filterMembers, setFilterMembers] = useState<TableFilterProps[]>([])
+  const [filterInviteMembers, setFilterInviteMembers] = useState<TableFilterProps[]>([])
 
   useEffect(() => {
     setDataMembers(members)
@@ -133,6 +133,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           dataHead={membersHead}
           data={members}
           setFilter={setFilterMembers}
+          filter={filterMembers}
           setDataSort={setDataMembers}
           columnsWidth={columnsWidth}
         >
@@ -161,6 +162,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             data={members}
             dataHead={inviteMembersHead}
             setFilter={setFilterInviteMembers}
+            filter={filterInviteMembers}
             setDataSort={setDataInviteMembers}
             columnsWidth={columnsWidth}
           >

@@ -13,7 +13,8 @@ export interface TableHeadFilterProps<T> {
   currentFilter: string
   setCurrentFilter: Dispatch<SetStateAction<string>>
   defaultData: T[]
-  setFilter: Dispatch<SetStateAction<TableFilterProps>>
+  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
+  filter: TableFilterProps[]
   defaultFilter?: string
 }
 
@@ -76,7 +77,7 @@ export function groupBy<T>(
   setCurrentFilter: any,
   setLocalFilter: any,
   setDataFilterNumber: any,
-  setFilter: any,
+  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>,
   dataHeadFilter?: TableHeadCustomFilterProps<T>
 ) {
   if (dataHeadFilter?.itemsCustom) {
@@ -96,15 +97,18 @@ export function groupBy<T>(
           setCurrentFilter(item)
           setLocalFilter(item)
           setFilter &&
-            setFilter({
-              key: property,
-              value: item,
-            })
+            setFilter((prev) => [
+              ...prev.filter((currentValue) => currentValue.key !== property),
+              {
+                key: property,
+                value: item,
+              },
+            ])
         } else {
           // reset with default filter
           setCurrentFilter(defaultValue)
           setLocalFilter('')
-          setFilter && setFilter({})
+          setFilter && setFilter([])
         }
       },
     }))
@@ -176,16 +180,19 @@ export function groupBy<T>(
           setLocalFilter(key)
           setDataFilterNumber(currentFilterData.length)
           setFilter &&
-            setFilter({
-              key: property,
-              value: key,
-            })
+            setFilter((prev) => [
+              ...prev.filter((currentValue) => currentValue.key !== property),
+              {
+                key: property,
+                value: key,
+              },
+            ])
         } else {
           // reset with default filter
           setCurrentFilter(defaultValue)
           setLocalFilter(ALL)
           setDataFilterNumber(0)
-          setFilter && setFilter({})
+          setFilter && setFilter((prev) => prev.filter((currentValue) => currentValue.key !== property))
         }
       },
     }))
@@ -194,9 +201,16 @@ export function groupBy<T>(
   }
 }
 
-export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
-  const { title, dataHead, defaultData, setFilter, currentFilter, setCurrentFilter, defaultFilter } = props
-
+export function TableHeadFilter<T>({
+  title,
+  dataHead,
+  defaultData,
+  filter,
+  setFilter,
+  currentFilter,
+  setCurrentFilter,
+  defaultFilter,
+}: TableHeadFilterProps<T>) {
   const [localFilter, setLocalFilter] = useState(defaultFilter || '')
   const [dataFilterNumber, setDataFilterNumber] = useState(0)
   const [isOpen, setOpen] = useState(false)
@@ -211,7 +225,10 @@ export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
     setCurrentFilter(ALL)
     setDataFilterNumber(0)
     // set global data by default
-    defaultData && setFilter && setFilter({})
+    setFilter &&
+      setFilter((prev) => {
+        return prev.filter((currentValue) => currentValue.value !== localFilter)
+      })
   }
 
   const menus = createFilter(
@@ -226,6 +243,7 @@ export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
   )
 
   const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
+  const hasFilter = filter?.some((item) => item.key === dataHead.filter?.[0].key && item.value !== ALL)
 
   return (
     <div className="flex items-center">
@@ -237,7 +255,7 @@ export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
         isFilter
         trigger={
           <div className="flex">
-            {localFilter === currentFilter && localFilter !== ALL ? (
+            {hasFilter ? (
               <Button className="whitespace-nowrap flex btn--active !h-6 !pr-[26px]" size={ButtonSize.TINY}>
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
               </Button>
@@ -254,7 +272,7 @@ export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
           </div>
         }
       />
-      {localFilter === currentFilter && localFilter !== ALL && (
+      {hasFilter && (
         <span
           role="button"
           className="flex items-center h-6 px-2 relative -left-6 text-text-100 text-xs cursor-pointer"

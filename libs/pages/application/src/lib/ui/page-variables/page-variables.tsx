@@ -16,7 +16,7 @@ export function PageVariablesMemo(props: PageVariablesProps) {
   const { setData, tableHead, variables } = props
   const columnsWidth = '30% 20% 22% 13% 15%'
 
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
 
   return (
     <Table
@@ -24,6 +24,7 @@ export function PageVariablesMemo(props: PageVariablesProps) {
       data={variables}
       setDataSort={setData}
       setFilter={setFilter}
+      filter={filter}
       className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
       columnsWidth={columnsWidth}
     >

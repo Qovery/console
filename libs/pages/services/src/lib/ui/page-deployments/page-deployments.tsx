@@ -12,7 +12,7 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
   const { deployments = [], listHelpfulLinks, isLoading } = props
 
   const [data, setData] = useState<DeploymentService[]>([])
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -78,6 +78,7 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
         dataHead={tableHead}
         data={deployments}
         setFilter={setFilter}
+        filter={filter}
         setDataSort={setData}
         className="mt-2 rounded-sm flex-grow overflow-y-auto min-h-0"
       >
