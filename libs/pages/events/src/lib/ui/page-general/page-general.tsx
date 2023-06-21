@@ -33,6 +33,7 @@ export interface PageGeneralProps {
   onPageSizeChange?: (pageSize: string) => void
   pageSize?: string
   setFilter?: Dispatch<SetStateAction<TableFilterProps>>
+  filter?: TableFilterProps
 }
 
 export function PageGeneral({
@@ -51,6 +52,7 @@ export function PageGeneral({
   setIsOpenTimestamp,
   timestamps,
   setFilter,
+  filter,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -79,6 +81,7 @@ export function PageGeneral({
           title: 'Filter by tool',
           key: 'origin',
           itemsCustom: Object.keys(OrganizationEventOrigin).map((item) => item),
+          hideFilterNumber: true,
         },
       ],
     },
@@ -145,6 +148,7 @@ export function PageGeneral({
           className="border border-element-light-lighter-400 rounded"
           classNameHead="rounded-t"
           columnsWidth={columnsWidth}
+          defaultFilter={filter?.value}
         >
           <div>
             {isLoading ? (

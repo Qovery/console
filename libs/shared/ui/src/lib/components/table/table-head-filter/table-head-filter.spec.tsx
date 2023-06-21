@@ -61,6 +61,24 @@ describe('TableHeadFilter', () => {
     expect(items.toString()).toContain(['All', 'Development', 'Production', 'Staging'].toString())
   })
 
+  it('should have function render correct list of menus with custom items', () => {
+    props.dataHead = {
+      title: 'Title',
+      filter: [
+        {
+          key: 'origin',
+          itemsCustom: ['origin-1', 'origin-2'],
+          hideFilterNumber: true,
+        },
+      ],
+    }
+
+    const testCreateFilter = createFilter(props.dataHead, [], 'ALL', '', jest.fn(), jest.fn(), jest.fn(), jest.fn())
+
+    const items = testCreateFilter[0].items.map((item) => item['name'])
+    expect(items.toString()).toContain(['Origin-1', 'Origin-2'].toString())
+  })
+
   it('should have function render correct list of menus with custom item', () => {
     props.dataHead = {
       title: 'Title',

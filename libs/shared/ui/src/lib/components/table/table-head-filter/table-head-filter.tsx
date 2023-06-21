@@ -1,4 +1,4 @@
-import { Dispatch, MouseEvent, SetStateAction, useState } from 'react'
+import { Dispatch, MouseEvent, SetStateAction, useEffect, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
@@ -14,6 +14,7 @@ export interface TableHeadFilterProps<T> {
   setCurrentFilter: Dispatch<SetStateAction<string>>
   defaultData: T[]
   setFilter: Dispatch<SetStateAction<TableFilterProps>>
+  defaultFilter?: string
 }
 
 const ALL = 'ALL'
@@ -78,6 +79,7 @@ export function groupBy<T>(
   setFilter: any,
   dataHeadFilter?: TableHeadCustomFilterProps<T>
 ) {
+  // custom list without datas from array of string
   if (dataHeadFilter?.itemsCustom) {
     const result: MenuItemProps[] = dataHeadFilter?.itemsCustom.map((item: string) => ({
       name: upperCaseFirstLetter(item.toLowerCase())?.replace('_', ' ') || '',
@@ -89,10 +91,8 @@ export function groupBy<T>(
         />
       ),
       onClick: () => {
-        // const currentFilterData = [...dataByKeys[key]]
-
         if (currentFilter !== item) {
-          // set filter when is different of current filter
+          // set filter
           setCurrentFilter(item)
           setLocalFilter(item)
           setFilter &&
@@ -183,7 +183,7 @@ export function groupBy<T>(
         } else {
           // reset by default filter
           setCurrentFilter(defaultValue)
-          setLocalFilter('')
+          setLocalFilter(ALL)
           setDataFilterNumber(0)
           setFilter && setFilter({})
         }
@@ -195,14 +195,19 @@ export function groupBy<T>(
 }
 
 export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
-  const { title, dataHead, defaultData, setFilter, currentFilter, setCurrentFilter } = props
+  const { title, dataHead, defaultData, setFilter, currentFilter, setCurrentFilter, defaultFilter } = props
 
-  const [localFilter, setLocalFilter] = useState('')
+  const [localFilter, setLocalFilter] = useState(defaultFilter || '')
   const [dataFilterNumber, setDataFilterNumber] = useState(0)
   const [isOpen, setOpen] = useState(false)
 
-  function cleanFilter(event?: MouseEvent) {
-    event?.preventDefault()
+  // update current filter with a default filter
+  useEffect(() => {
+    if (defaultFilter) setLocalFilter(defaultFilter)
+  }, [defaultFilter])
+
+  function cleanFilter(event: MouseEvent) {
+    event.preventDefault()
     setCurrentFilter(ALL)
     setDataFilterNumber(0)
     // set global data by default
@@ -220,6 +225,8 @@ export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
     setFilter
   )
 
+  const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
+
   return (
     <div className="flex items-center">
       <Menu
@@ -231,18 +238,14 @@ export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
         trigger={
           <div className="flex">
             {localFilter === currentFilter && localFilter !== ALL ? (
-              <Button
-                className="whitespace-nowrap flex btn--active !h-6"
-                size={ButtonSize.TINY}
-                style={ButtonStyle.TAB}
-              >
-                {title} ({dataFilterNumber})
+              <Button className="whitespace-nowrap flex btn--active !h-6 !pr-[26px]" size={ButtonSize.TINY}>
+                {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
               </Button>
             ) : (
               <Button
                 className="flex !h-6"
                 size={ButtonSize.TINY}
-                style={ButtonStyle.TAB}
+                style={ButtonStyle.STROKED}
                 iconRight={IconAwesomeEnum.ANGLE_DOWN}
               >
                 {title}
@@ -252,11 +255,13 @@ export function TableHeadFilter<T>(props: TableHeadFilterProps<T>) {
         }
       />
       {localFilter === currentFilter && localFilter !== ALL && (
-        <div className="btn btn--tiny btn--tab btn--active !h-6 relative left-[-9px]">
-          <span onClick={(event) => cleanFilter(event)}>
-            <Icon name={IconAwesomeEnum.CIRCLE_XMARK} />
-          </span>
-        </div>
+        <span
+          role="button"
+          className="flex items-center h-6 px-2 relative -left-6 text-text-100 text-xs cursor-pointer"
+          onClick={(event) => cleanFilter(event)}
+        >
+          <Icon name={IconAwesomeEnum.XMARK} />
+        </span>
       )}
     </div>
   )

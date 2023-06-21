@@ -16,7 +16,6 @@ export enum ButtonStyle {
   RAISED = 'raised',
   STROKED = 'stroked',
   FLAT = 'flat',
-  TAB = 'tab',
   ERROR = 'error',
   CONFIRM = 'confirm',
   DARK = 'dark',
