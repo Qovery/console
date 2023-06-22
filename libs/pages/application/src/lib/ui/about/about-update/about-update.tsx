@@ -1,4 +1,5 @@
 import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
 
 export interface AboutUpdateProps {
@@ -15,7 +16,10 @@ export function AboutUpdate(props: AboutUpdateProps) {
       )}
       {props.application?.updated_at && (
         <div>
-          Last edit: <span>{timeAgo(new Date(props.application.updated_at))}</span>
+          Last edit:{' '}
+          <Tooltip content={dateFullFormat(props.application.updated_at)}>
+            <span>{timeAgo(new Date(props.application.updated_at))} ago</span>
+          </Tooltip>
         </div>
       )}
     </div>
