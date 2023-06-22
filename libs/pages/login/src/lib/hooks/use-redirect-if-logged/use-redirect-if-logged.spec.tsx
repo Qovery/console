@@ -16,6 +16,11 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedUsedNavigate,
 }))
 
+jest.mock('@elgorditosalsero/react-gtm-hook', () => ({
+  ...(jest.requireActual('@elgorditosalsero/react-gtm-hook') as any),
+  useGTMDispatch: jest.fn(),
+}))
+
 describe('UseRedirectIfLogged', () => {
   it('should render successfully', () => {
     const { result } = renderHook(useRedirectIfLogged)
