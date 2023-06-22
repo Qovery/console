@@ -1,10 +1,11 @@
+import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { Organization, Project } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
-import { selectUserSignUp } from '@qovery/domains/user'
+import { UserInterface, selectUserSignUp } from '@qovery/domains/user'
 import { useAuth } from '@qovery/shared/auth'
 import {
   ONBOARDING_PERSONALIZE_URL,
@@ -22,9 +23,10 @@ import {
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
-  const { createAuthCookies, checkIsAuthenticated } = useAuth()
+  const { createAuthCookies, checkIsAuthenticated, getCurrentUser } = useAuth()
   const dispatch = useDispatch<AppDispatch>()
   const userSignUp = useSelector(selectUserSignUp)
+  const sendDataToGTM = useGTMDispatch()
 
   useEffect(() => {
     async function fetchData() {
@@ -47,6 +49,9 @@ export function useRedirectIfLogged() {
         if (userSignUp.dx_auth) {
           navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
         } else {
+          const user = await getCurrentUser()
+          sendDataToGTM({ event: 'new_signup', value: (user as UserInterface).email })
+
           navigate(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
         }
       }
