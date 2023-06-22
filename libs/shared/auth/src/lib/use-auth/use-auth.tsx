@@ -1,4 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { UserInterface, userActions } from '@qovery/domains/user'
@@ -6,6 +7,7 @@ import { UserInterface, userActions } from '@qovery/domains/user'
 export function useAuth() {
   const { loginWithRedirect, logout, user, getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0()
   const dispatch = useDispatch()
+  const sendDataToGTM = useGTMDispatch()
 
   const checkIsAuthenticated = useCallback(() => {
     return isAuthenticated
@@ -41,6 +43,8 @@ export function useAuth() {
       const token = await getAccessTokenSilently()
 
       if (user) {
+        sendDataToGTM({ event: 'new_signup', value: user.email })
+
         const userInfos: UserInterface = {
           name: user.name,
           email: user.email,
