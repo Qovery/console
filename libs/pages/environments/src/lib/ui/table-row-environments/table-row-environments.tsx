@@ -13,7 +13,7 @@ import {
   TagMode,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond, timeAgo } from '@qovery/shared/utils'
+import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentsProps {
   data: Environment
@@ -74,7 +74,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
               <p className="flex items-center leading-7 text-text-400 text-sm">
                 <StatusLabel status={status && status.state} />
                 {status?.last_deployment_date && (
-                  <Tooltip content={dateYearMonthDayHourMinuteSecond(new Date(status.last_deployment_date))}>
+                  <Tooltip content={dateFullFormat(status.last_deployment_date)}>
                     <span className="text-xs text-text-300 mx-3 font-medium">
                       {timeAgo(new Date(status.last_deployment_date))} ago
                     </span>
