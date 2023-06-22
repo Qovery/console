@@ -16,9 +16,9 @@ export function AboutUpdate(props: AboutUpdateProps) {
       )}
       {props.application?.updated_at && (
         <div>
-          Last edit:{' '}
+          Last edit:
           <Tooltip content={dateFullFormat(props.application.updated_at)}>
-            <span>{timeAgo(new Date(props.application.updated_at))} ago</span>
+            <span>{timeAgo(new Date(props.application.updated_at))}</span>
           </Tooltip>
         </div>
       )}
