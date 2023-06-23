@@ -10,6 +10,7 @@ export interface TooltipProps {
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'center' | 'start' | 'end'
   delayDuration?: number
+  classNameTrigger?: string
 }
 
 export function Tooltip(props: TooltipProps) {
@@ -22,6 +23,7 @@ export function Tooltip(props: TooltipProps) {
     side = 'top',
     align = 'center',
     delayDuration = 200,
+    classNameTrigger = '',
   } = props
 
   return (
@@ -32,7 +34,9 @@ export function Tooltip(props: TooltipProps) {
         onOpenChange={onOpenChange}
         delayDuration={delayDuration}
       >
-        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Trigger asChild className={classNameTrigger}>
+          {children}
+        </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Content
           className="bg-element-dark-400 text-text-100 dark:bg-element-light-lighter-200 dark:text-text-700 rounded-sm px-2 py-1 text-xs font-medium z-[100]"
           side={side}

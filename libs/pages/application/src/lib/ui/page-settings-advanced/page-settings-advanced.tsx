@@ -62,7 +62,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
           cells: [
             {
               content: (
-                <Tooltip content={key}>
+                <Tooltip classNameTrigger="truncate" content={key}>
                   <div>{key}</div>
                 </Tooltip>
               ),
