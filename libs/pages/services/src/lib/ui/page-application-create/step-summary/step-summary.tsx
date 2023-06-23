@@ -156,44 +156,6 @@ export function StepSummary({
                   ))}
                   {portsData.healthchecks?.item && portsData.healthchecks?.item.readiness_probe && (
                     <>
-                      <li className="flex flex-col mt-1">
-                        <span className="font-bold text-text-600">Readiness</span>
-                        <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
-                          <li className="pl-5">
-                            Type: <strong className="font-medium">{portsData.healthchecks.typeReadiness}</strong>
-                          </li>
-                          <li className="pl-5 mt-1">
-                            Initial Delay:{' '}
-                            <strong className="font-medium">
-                              {portsData.healthchecks.item.readiness_probe.initial_delay_seconds} seconds
-                            </strong>
-                          </li>
-                          <li className="pl-5 mt-1">
-                            Period:{' '}
-                            <strong className="font-medium">
-                              {portsData.healthchecks.item.readiness_probe.period_seconds} seconds
-                            </strong>
-                          </li>
-                          <li className="pl-5 mt-1">
-                            Timeout:{' '}
-                            <strong className="font-medium">
-                              {portsData.healthchecks.item.readiness_probe.timeout_seconds} seconds
-                            </strong>
-                          </li>
-                          <li className="pl-5 mt-1">
-                            Success Threshold:{' '}
-                            <strong className="font-medium">
-                              {portsData.healthchecks.item.readiness_probe.success_threshold}
-                            </strong>
-                          </li>
-                          <li className="pl-5 mt-1">
-                            Failure Threshold:{' '}
-                            <strong className="font-medium">
-                              {portsData.healthchecks.item.readiness_probe.failure_threshold}
-                            </strong>
-                          </li>
-                        </ul>
-                      </li>
                       {portsData.healthchecks.item.liveness_probe &&
                         portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
                           <li className="flex flex-col mt-1">
@@ -230,6 +192,47 @@ export function StepSummary({
                                 Failure Threshold:{' '}
                                 <strong className="font-medium">
                                   {portsData.healthchecks.item.liveness_probe.failure_threshold}
+                                </strong>
+                              </li>
+                            </ul>
+                          </li>
+                        )}
+                      {portsData.healthchecks.item.readiness_probe &&
+                        portsData.healthchecks.typeReadiness !== ProbeTypeEnum.NONE && (
+                          <li className="flex flex-col mt-1">
+                            <span className="font-bold text-text-600">Readiness</span>
+                            <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                              <li className="pl-5">
+                                Type: <strong className="font-medium">{portsData.healthchecks.typeReadiness}</strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Initial Delay:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.readiness_probe.initial_delay_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Period:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.readiness_probe.period_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Timeout:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.readiness_probe.timeout_seconds} seconds
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Success Threshold:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.readiness_probe.success_threshold}
+                                </strong>
+                              </li>
+                              <li className="pl-5 mt-1">
+                                Failure Threshold:{' '}
+                                <strong className="font-medium">
+                                  {portsData.healthchecks.item.readiness_probe.failure_threshold}
                                 </strong>
                               </li>
                             </ul>
