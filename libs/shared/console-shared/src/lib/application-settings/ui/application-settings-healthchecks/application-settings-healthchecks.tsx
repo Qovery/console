@@ -65,8 +65,8 @@ export function ApplicationSettingsHealthchecks({
         {
           content: (
             <div className="flex justify-between w-full">
-              Readiness
-              <Tooltip content="Verifies if the application is ready to receive traffic. If the probe fails, no traffic is sent to the application.">
+              Liveness
+              <Tooltip content="Verifies if the container is operating and it is not in a broken state. If the probe fails, the container is killed and restarted.">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>
@@ -77,8 +77,8 @@ export function ApplicationSettingsHealthchecks({
         {
           content: (
             <div className="flex justify-between w-full">
-              Liveness
-              <Tooltip content="Verifies if the container is operating and it is not in a broken state. If the probe fails, the container is killed and restarted.">
+              Readiness
+              <Tooltip content="Verifies if the application is ready to receive traffic. If the probe fails, no traffic is sent to the application.">
                 <span>
                   <IconFa className="text-text-400" name={IconAwesomeEnum.CIRCLE_INFO} />
                 </span>
@@ -111,18 +111,18 @@ export function ApplicationSettingsHealthchecks({
           className: rowClassName,
           content: (
             <Controller
-              name="readiness_probe.current_type"
+              name="liveness_probe.current_type"
               control={control}
               render={({ field }) => (
                 <InputSelectSmall
                   className="shrink-0 grow flex-1"
                   inputClassName="!bg-white"
-                  dataTestId="input-readiness-probe-current-type"
+                  dataTestId="input-liveness-probe-current-type"
                   name={field.name}
                   defaultValue={field.value || ''}
                   onChange={(value) => {
                     field.onChange(value)
-                    setTypeReadiness(value as ProbeTypeEnum)
+                    setTypeLiveness(value as ProbeTypeEnum)
                     trigger().then()
                   }}
                   items={Object.values(ProbeTypeEnum).map((value) => ({
@@ -138,18 +138,18 @@ export function ApplicationSettingsHealthchecks({
           className: rowClassName,
           content: (
             <Controller
-              name="liveness_probe.current_type"
+              name="readiness_probe.current_type"
               control={control}
               render={({ field }) => (
                 <InputSelectSmall
                   className="shrink-0 grow flex-1"
                   inputClassName="!bg-white"
-                  dataTestId="input-liveness-probe-current-type"
+                  dataTestId="input-readiness-probe-current-type"
                   name={field.name}
                   defaultValue={field.value || ''}
                   onChange={(value) => {
                     field.onChange(value)
-                    setTypeLiveness(value as ProbeTypeEnum)
+                    setTypeReadiness(value as ProbeTypeEnum)
                     trigger().then()
                   }}
                   items={Object.values(ProbeTypeEnum).map((value) => ({
@@ -178,49 +178,6 @@ export function ApplicationSettingsHealthchecks({
                 </span>
               </Tooltip>
             </div>
-          ),
-        },
-        {
-          className: rowClassName,
-          content: typeReadiness !== ProbeTypeEnum.NONE && typeReadiness !== ProbeTypeEnum.EXEC && (
-            <Controller
-              key={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
-              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
-              control={control}
-              render={({ field }) =>
-                isJob ? (
-                  <InputTextSmall
-                    className="shrink-0 grow flex-1"
-                    dataTestId="input-job-readiness-probe-port"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={jobPort?.toString() || ''}
-                    label={field.name}
-                    disabled
-                  />
-                ) : (
-                  <InputSelectSmall
-                    className="shrink-0 grow flex-1"
-                    inputClassName="!bg-white"
-                    dataTestId="input-readiness-probe-port"
-                    name={field.name}
-                    defaultValue={field.value || ''}
-                    onChange={(value) => {
-                      field.onChange(value)
-                      trigger().then()
-                    }}
-                    items={
-                      ports
-                        ? ports.map((value) => ({
-                            label: value.toString(),
-                            value: value.toString(),
-                          }))
-                        : []
-                    }
-                  />
-                )
-              }
-            />
           ),
         },
         {
@@ -266,6 +223,49 @@ export function ApplicationSettingsHealthchecks({
             />
           ),
         },
+        {
+          className: rowClassName,
+          content: typeReadiness !== ProbeTypeEnum.NONE && typeReadiness !== ProbeTypeEnum.EXEC && (
+            <Controller
+              key={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.port`}
+              control={control}
+              render={({ field }) =>
+                isJob ? (
+                  <InputTextSmall
+                    className="shrink-0 grow flex-1"
+                    dataTestId="input-job-readiness-probe-port"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={jobPort?.toString() || ''}
+                    label={field.name}
+                    disabled
+                  />
+                ) : (
+                  <InputSelectSmall
+                    className="shrink-0 grow flex-1"
+                    inputClassName="!bg-white"
+                    dataTestId="input-readiness-probe-port"
+                    name={field.name}
+                    defaultValue={field.value || ''}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      trigger().then()
+                    }}
+                    items={
+                      ports
+                        ? ports.map((value) => ({
+                            label: value.toString(),
+                            value: value.toString(),
+                          }))
+                        : []
+                    }
+                  />
+                )
+              }
+            />
+          ),
+        },
       ],
     })
   }
@@ -287,28 +287,6 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness === ProbeTypeEnum.HTTP && (
-            <Controller
-              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
-              control={control}
-              defaultValue="/"
-              render={({ field, fieldState: { error } }) => (
-                <InputTextSmall
-                  className="shrink-0 grow flex-1"
-                  dataTestId="input-readiness-probe-path"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  errorMessagePosition="left"
-                  label={field.name}
-                />
-              )}
-            />
-          ),
-        },
-        {
-          className: rowClassName,
           content: typeLiveness === ProbeTypeEnum.HTTP && (
             <Controller
               name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.path`}
@@ -321,6 +299,28 @@ export function ApplicationSettingsHealthchecks({
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  label={field.name}
+                />
+              )}
+            />
+          ),
+        },
+        {
+          className: rowClassName,
+          content: typeReadiness === ProbeTypeEnum.HTTP && (
+            <Controller
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.path`}
+              control={control}
+              defaultValue="/"
+              render={({ field, fieldState: { error } }) => (
+                <InputTextSmall
+                  className="shrink-0 grow flex-1"
+                  dataTestId="input-readiness-probe-path"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
                   error={error?.message}
                   errorMessagePosition="left"
                   label={field.name}
@@ -348,17 +348,16 @@ export function ApplicationSettingsHealthchecks({
             </div>
           ),
         },
-
         {
           className: rowClassName,
-          content: typeReadiness === ProbeTypeEnum.EXEC && (
+          content: typeLiveness === ProbeTypeEnum.EXEC && (
             <Controller
-              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.command`}
+              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.command`}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-readiness-probe-command"
+                  dataTestId="input-liveness-probe-command"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -372,14 +371,14 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness === ProbeTypeEnum.EXEC && (
+          content: typeReadiness === ProbeTypeEnum.EXEC && (
             <Controller
-              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.command`}
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.command`}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-liveness-probe-command"
+                  dataTestId="input-readiness-probe-command"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -412,14 +411,14 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness === ProbeTypeEnum.GRPC && (
+          content: typeLiveness === ProbeTypeEnum.GRPC && (
             <Controller
-              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.service`}
+              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.service`}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-readiness-probe-service"
+                  dataTestId="input-liveness-probe-service"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -433,14 +432,14 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness === ProbeTypeEnum.GRPC && (
+          content: typeReadiness === ProbeTypeEnum.GRPC && (
             <Controller
-              name={`liveness_probe.type.${typeLiveness?.toLowerCase()}.service`}
+              name={`readiness_probe.type.${typeReadiness?.toLowerCase()}.service`}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-liveness-probe-service"
+                  dataTestId="input-readiness-probe-service"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -473,15 +472,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness !== ProbeTypeEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="readiness_probe.initial_delay_seconds"
+              name="liveness_probe.initial_delay_seconds"
               rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-readiness-probe-delay"
+                  dataTestId="input-liveness-probe-delay"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -495,15 +494,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeEnum.NONE && (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="liveness_probe.initial_delay_seconds"
+              name="readiness_probe.initial_delay_seconds"
               rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-liveness-probe-delay"
+                  dataTestId="input-readiness-probe-delay"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -533,15 +532,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness !== ProbeTypeEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="readiness_probe.period_seconds"
-              control={control}
+              name="liveness_probe.period_seconds"
               rules={{ required: 'This field is required' }}
+              control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-readiness-probe-period"
+                  dataTestId="input-liveness-probe-period"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -555,15 +554,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeEnum.NONE && (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="liveness_probe.period_seconds"
-              rules={{ required: 'This field is required' }}
+              name="readiness_probe.period_seconds"
               control={control}
+              rules={{ required: 'This field is required' }}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-liveness-probe-period"
+                  dataTestId="input-readiness-probe-period"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -593,15 +592,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness !== ProbeTypeEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="readiness_probe.timeout_seconds"
+              name="liveness_probe.timeout_seconds"
               rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-readiness-probe-timeout"
+                  dataTestId="input-liveness-probe-timeout"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -615,15 +614,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeEnum.NONE && (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="liveness_probe.timeout_seconds"
+              name="readiness_probe.timeout_seconds"
               rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-liveness-probe-timeout"
+                  dataTestId="input-readiness-probe-timeout"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -653,15 +652,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness !== ProbeTypeEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="readiness_probe.success_threshold"
+              name="liveness_probe.success_threshold"
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
                   disabled
-                  dataTestId="input-readiness-probe-threshold"
+                  dataTestId="input-liveness-probe-threshold"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -675,15 +674,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeEnum.NONE && (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="liveness_probe.success_threshold"
+              name="readiness_probe.success_threshold"
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
                   disabled
-                  dataTestId="input-liveness-probe-threshold"
+                  dataTestId="input-readiness-probe-threshold"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -713,15 +712,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeReadiness !== ProbeTypeEnum.NONE && (
+          content: typeLiveness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="readiness_probe.failure_threshold"
+              name="liveness_probe.failure_threshold"
               rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-readiness-probe-fail-threshold"
+                  dataTestId="input-liveness-probe-fail-threshold"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
@@ -735,15 +734,15 @@ export function ApplicationSettingsHealthchecks({
         },
         {
           className: rowClassName,
-          content: typeLiveness !== ProbeTypeEnum.NONE && (
+          content: typeReadiness !== ProbeTypeEnum.NONE && (
             <Controller
-              name="liveness_probe.failure_threshold"
+              name="readiness_probe.failure_threshold"
               rules={{ required: 'This field is required' }}
               control={control}
               render={({ field, fieldState: { error } }) => (
                 <InputTextSmall
                   className="shrink-0 grow flex-1"
-                  dataTestId="input-liveness-probe-fail-threshold"
+                  dataTestId="input-readiness-probe-fail-threshold"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value || ''}
