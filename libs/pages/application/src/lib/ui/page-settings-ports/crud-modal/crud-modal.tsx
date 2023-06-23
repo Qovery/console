@@ -14,8 +14,8 @@ export interface CrudModalProps {
 export function CrudModal(props: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
-  const watchPublicly = watch('publicly_accessible')
-  const watchExternalPort = watch('external_port')
+  const watchPublicly = watch('publicly_accessible') || false
+  const watchExternalPort = watch('external_port') || ''
 
   const pattern = {
     value: /^[0-9]+$/,
@@ -36,6 +36,7 @@ export function CrudModal(props: CrudModalProps) {
     >
       <Controller
         name="internal_port"
+        defaultValue=""
         control={control}
         rules={{
           required: 'Please enter an internal port.',
@@ -56,6 +57,7 @@ export function CrudModal(props: CrudModalProps) {
       <Controller
         key={`port-${watchPublicly}`}
         name="external_port"
+        defaultValue=""
         control={control}
         rules={{
           required: watchPublicly ? 'Please enter a public port.' : undefined,
@@ -84,6 +86,7 @@ export function CrudModal(props: CrudModalProps) {
       <Controller
         name="publicly_accessible"
         control={control}
+        defaultValue={false}
         render={({ field }) => (
           <div
             onClick={() => {

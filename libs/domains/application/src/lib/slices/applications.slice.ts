@@ -440,6 +440,10 @@ export const applicationsSlice = createSlice({
           )
         }
       })
+      .addCase(editApplication.rejected, (state: ApplicationsState, action) => {
+        state.loadingStatus = 'loaded'
+        toastError(action.error)
+      })
       .addCase(deleteApplicationAction.fulfilled, (state: ApplicationsState, action) => {
         if (action.meta.arg.force) {
           applicationsAdapter.removeOne(state, action.meta.arg.applicationId)
@@ -447,11 +451,6 @@ export const applicationsSlice = createSlice({
             ...state.joinEnvApplication,
           })
         }
-      })
-      .addCase(editApplication.rejected, (state: ApplicationsState, action) => {
-        state.loadingStatus = 'error'
-        toastError(action.error)
-        state.error = action.error.message
       })
       // create application
       .addCase(createApplication.pending, (state: ApplicationsState) => {

@@ -18,7 +18,7 @@ export function PageGeneralFeature() {
   const { projectId = '', environmentId = '' } = useParams()
 
   const loadingServices = applicationFactoryMock(3)
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch: AppDispatch = useDispatch<AppDispatch>()
 
   const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environmentId)
