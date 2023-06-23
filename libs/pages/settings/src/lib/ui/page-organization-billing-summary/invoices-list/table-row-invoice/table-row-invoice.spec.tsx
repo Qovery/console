@@ -17,6 +17,7 @@ beforeEach(() => {
       total: 100,
       total_in_cents: 10000,
     },
+    filter: [],
     dataHead: [
       {
         title: 'Date',
