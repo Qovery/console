@@ -14,6 +14,7 @@ describe('RowMember', () => {
     transferOwnership: jest.fn(),
     loading: false,
     columnsWidth: '',
+    filter: [],
     availableRoles: [
       {
         id: '1',
