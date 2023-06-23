@@ -1,5 +1,5 @@
 import { addMonths } from 'date-fns'
-import { OrganizationEventOrigin, OrganizationEventResponse } from 'qovery-typescript-axios'
+import { OrganizationEventOrigin, OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
 import {
   Button,
@@ -32,8 +32,8 @@ export interface PageGeneralProps {
   previousDisabled?: boolean
   onPageSizeChange?: (pageSize: string) => void
   pageSize?: string
-  setFilter?: Dispatch<SetStateAction<TableFilterProps>>
-  filter?: TableFilterProps
+  setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
+  filter?: TableFilterProps[]
 }
 
 export function PageGeneral({
@@ -60,7 +60,15 @@ export function PageGeneral({
       className: 'pl-9',
     },
     {
-      title: 'Event type',
+      title: 'Event',
+      filter: [
+        {
+          title: 'Filter by event',
+          key: 'event_type',
+          itemsCustom: Object.keys(OrganizationEventType).map((item) => item),
+          hideFilterNumber: true,
+        },
+      ],
     },
     {
       title: 'Target type',
@@ -144,11 +152,11 @@ export function PageGeneral({
         <Table
           dataHead={dataHead}
           data={events}
+          filter={filter}
           setFilter={setFilter}
           className="border border-element-light-lighter-400 rounded"
           classNameHead="rounded-t"
           columnsWidth={columnsWidth}
-          defaultFilter={filter?.value}
         >
           <div>
             {isLoading ? (

@@ -12,7 +12,7 @@ export function Deployments(props: PageDeploymentsProps) {
   const { deployments = [], listHelpfulLinks, isLoading = true } = props
 
   const [data, setData] = useState<DeploymentHistoryApplication[]>(deployments)
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
 
   useEffect(() => {
     deployments && setData(deployments)
@@ -60,6 +60,7 @@ export function Deployments(props: PageDeploymentsProps) {
         dataHead={tableHead}
         data={deployments}
         setFilter={setFilter}
+        filter={filter}
         setDataSort={setData}
         className="mt-2 rounded-sm flex-grow overflow-y-auto min-h-0"
       >

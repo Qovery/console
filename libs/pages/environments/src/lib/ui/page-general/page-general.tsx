@@ -37,7 +37,7 @@ export function PageGeneral(props: PageGeneralProps) {
 
   const { openModal, closeModal } = useModal()
   const [data, setData] = useState<Environment[]>([])
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
   const [loading, setLoading] = useState(isLoading)
 
   useEffect(() => {
@@ -90,6 +90,7 @@ export function PageGeneral(props: PageGeneralProps) {
           dataHead={tableHead}
           data={environments}
           setFilter={setFilter}
+          filter={filter}
           setDataSort={setData}
           className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
           columnsWidth={columnWidth}

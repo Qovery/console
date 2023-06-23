@@ -32,7 +32,7 @@ import { dateFullFormat, timeAgo, upperCaseFirstLetter } from '@qovery/shared/ut
 
 export interface TableRowServicesProps<T> {
   data: ApplicationEntity | DatabaseEntity
-  filter: TableFilterProps
+  filter: TableFilterProps[]
   type: ServiceTypeEnum
   environmentMode: string
   dataHead: TableHeadProps<T>[]

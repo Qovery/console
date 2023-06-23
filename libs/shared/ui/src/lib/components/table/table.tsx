@@ -14,10 +14,10 @@ export interface TableProps<T> {
   classNameHead?: string
   columnsWidth?: string
   data?: T[]
-  setFilter?: Dispatch<SetStateAction<TableFilterProps>>
+  setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
+  filter?: TableFilterProps[]
   setDataSort?: Dispatch<SetStateAction<T[]>>
   defaultSortingKey?: keyof T
-  defaultFilter?: string
 }
 
 export interface TableHeadProps<T> {
@@ -40,29 +40,19 @@ export interface TableHeadCustomFilterProps<T> {
   hideFilterNumber?: boolean
 }
 
-const ALL = 'ALL'
-
-export function Table<T>(props: TableProps<T>) {
-  const {
-    dataHead,
-    className = 'bg-white rounded-sm',
-    classNameHead = '',
-    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
-    children,
-    data,
-    setFilter,
-    setDataSort,
-    defaultSortingKey,
-    defaultFilter = ALL,
-  } = props
-
-  const [currentFilter, setCurrentFilter] = useState(defaultFilter)
+export function Table<T>({
+  dataHead,
+  className = 'bg-white rounded-sm',
+  classNameHead = '',
+  columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+  children,
+  data,
+  filter,
+  setFilter,
+  setDataSort,
+  defaultSortingKey,
+}: TableProps<T>) {
   const [isSorted, setIsSorted] = useState(false)
-
-  // update current filter with a default filter
-  useEffect(() => {
-    setCurrentFilter(defaultFilter)
-  }, [defaultFilter])
 
   useEffect(() => {
     if (!isSorted && defaultSortingKey && data && setDataSort) {
@@ -80,35 +70,35 @@ export function Table<T>(props: TableProps<T>) {
         className={`grid items-center border-b-element-light-lighter-400 border-b sticky top-0 bg-white z-10 h-10 ${classNameHead}`}
         style={{ gridTemplateColumns: columnsWidth }}
       >
-        {dataHead.map(({ title, className = 'px-4 py-2', classNameTitle = 'text-text-600 ', filter, sort }, index) => (
-          <div key={index} className={className}>
-            {!sort && !filter && (
-              <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>
-                {title}
-              </span>
-            )}
-            {filter && data && setFilter && (
-              <TableHeadFilter
-                title={title}
-                dataHead={dataHead.filter((head) => head.title === title)[0]}
-                defaultData={data}
-                setFilter={setFilter}
-                currentFilter={currentFilter}
-                setCurrentFilter={setCurrentFilter}
-                defaultFilter={defaultFilter}
-              />
-            )}
-            {sort && data && (
-              <TableHeadSort
-                title={title}
-                currentKey={sort.key}
-                data={data}
-                setData={setDataSort}
-                setIsSorted={setIsSorted}
-              />
-            )}
-          </div>
-        ))}
+        {dataHead.map(
+          ({ title, className = 'px-4 py-2', classNameTitle = 'text-text-600 ', filter: hasFilter, sort }, index) => (
+            <div key={index} className={className}>
+              {!sort && !hasFilter && (
+                <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>
+                  {title}
+                </span>
+              )}
+              {hasFilter && data && filter && setFilter && (
+                <TableHeadFilter
+                  title={title}
+                  dataHead={dataHead.filter((head) => head.title === title)[0]}
+                  defaultData={data}
+                  filter={filter}
+                  setFilter={setFilter}
+                />
+              )}
+              {sort && data && (
+                <TableHeadSort
+                  title={title}
+                  currentKey={sort.key}
+                  data={data}
+                  setData={setDataSort}
+                  setIsSorted={setIsSorted}
+                />
+              )}
+            </div>
+          )
+        )}
       </div>
       <div>{children}</div>
     </div>

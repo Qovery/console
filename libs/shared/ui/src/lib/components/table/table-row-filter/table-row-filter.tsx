@@ -1,23 +1,40 @@
 import React from 'react'
 import { TableFilterProps } from '../table'
+import { ALL } from '../table-head-filter/table-head-filter'
 
 export interface TableRowFilterProps {
   data: any
   children: React.ReactElement
-  filter?: TableFilterProps
+  filter?: TableFilterProps[]
 }
 
-export function TableRowFilter(props: TableRowFilterProps) {
-  const { children, data, filter } = props
+export function TableRowFilter({ children, data, filter }: TableRowFilterProps) {
+  const shouldFilter =
+    filter &&
+    filter.every((tableFilter) => {
+      const filterKey = tableFilter.key || ''
+      const filterValue = tableFilter.value
 
-  if (filter) {
-    if (filter.key?.includes('.')) {
-      // detect children of children
-      const splitProperty = filter.key.split('.')
-      if (data[splitProperty[0]] && data[splitProperty[0]][splitProperty[1]] !== filter?.value) return null
-    } else if (data[filter?.key || ''] !== filter.value) {
-      return null
-    }
+      if (filterValue === ALL) {
+        return true
+      }
+
+      const nestedKeys = filterKey.split('.')
+      let nestedData = data
+
+      for (const key of nestedKeys) {
+        if (nestedData && nestedData.hasOwnProperty(key)) {
+          nestedData = nestedData[key]
+        } else {
+          return false
+        }
+      }
+
+      return nestedData === filterValue
+    })
+
+  if (!shouldFilter) {
+    return null
   }
 
   return children

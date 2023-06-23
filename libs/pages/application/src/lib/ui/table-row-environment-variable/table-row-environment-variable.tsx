@@ -33,7 +33,7 @@ export interface TableRowEnvironmentVariableProps {
   variable: EnvironmentVariableSecretOrPublic
   dataHead: TableHeadProps<EnvironmentVariableEntity>[]
   rowActions: ButtonIconActionElementProps[]
-  filter: TableFilterProps
+  filter: TableFilterProps[]
   columnsWidth?: string
   isLoading: boolean
   defaultShowHidePassword?: boolean

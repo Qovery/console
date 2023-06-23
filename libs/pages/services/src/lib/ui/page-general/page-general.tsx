@@ -17,7 +17,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
   const { organizationId, projectId, environmentId } = useParams()
 
   const [data, setData] = useState<(ApplicationEntity | DatabaseEntity)[]>([])
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
   const [loading, setLoading] = useState(isLoading)
 
   useEffect(() => {
@@ -59,6 +59,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
           dataHead={tableHead}
           data={services}
           setFilter={setFilter}
+          filter={filter}
           setDataSort={setData}
           className="mt-2 bg-white rounded-sm flex-grow overflow-y-auto min-h-0"
           columnsWidth="30% 20% 25% 20%"

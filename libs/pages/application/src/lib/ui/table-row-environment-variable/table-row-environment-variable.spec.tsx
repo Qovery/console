@@ -9,6 +9,7 @@ const props: TableRowEnvironmentVariableProps = {
   rowActions: [],
   isLoading: false,
   dataHead: [],
+  filter: [],
 }
 
 describe('TableRowEnvironmentVariable', () => {

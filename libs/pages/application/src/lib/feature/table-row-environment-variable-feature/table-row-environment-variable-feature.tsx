@@ -31,7 +31,7 @@ import CrudEnvironmentVariableModalFeature, {
 export interface TableRowEnvironmentVariableFeatureProps {
   variable: EnvironmentVariableSecretOrPublic
   dataHead: TableHeadProps<EnvironmentVariableEntity>[]
-  filter: TableFilterProps
+  filter: TableFilterProps[]
   isLoading: boolean
   columnsWidth?: string
   serviceType?: ServiceTypeEnum

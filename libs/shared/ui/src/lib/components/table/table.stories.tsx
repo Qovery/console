@@ -23,17 +23,17 @@ const addRow = (data: Environment[]): Environment[] => {
 
 const Template: Story<TableProps> = (args) => {
   const [data, setData] = useState<Environment[]>(environmentData)
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
 
   return (
     <>
       <Button className="mb-4" onClick={() => setData(addRow(data))}>
         Add Row
       </Button>
-      <Table {...args} data={data} setFilter={setFilter} setDataSort={setData}>
+      <Table {...args} data={data} setFilter={setFilter} filter={filter} setDataSort={setData}>
         <>
           {data.map((currentData, index) => (
-            <TableRow key={index} columnsWidth={args.columnsWidth} data={currentData} filter={filter} link="/">
+            <TableRow key={index} filter={filter} columnsWidth={args.columnsWidth} data={currentData} link="/">
               <>
                 <div className="px-2 text-sm text-text-500">
                   {currentData.name} - {currentData.status?.state}
@@ -98,7 +98,7 @@ Primary.args = {
 
 const TemplateExpand: Story<TableProps> = (args) => {
   const [data, setData] = useState<Environment[]>(environmentData)
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
 
   // Add a new state variable for the expanded row
   const [expandedRow, setExpandedRow] = useState(null)

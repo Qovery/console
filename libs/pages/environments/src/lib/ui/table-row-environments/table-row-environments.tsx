@@ -18,7 +18,7 @@ import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
 export interface TableRowEnvironmentsProps {
   data: Environment
   status?: EnvironmentStatus
-  filter: TableFilterProps
+  filter: TableFilterProps[]
   dataHead: TableHeadProps<Environment>[]
   link: string
   columnsWidth?: string

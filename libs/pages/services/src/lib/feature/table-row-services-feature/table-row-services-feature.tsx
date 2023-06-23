@@ -7,7 +7,7 @@ import TableRowServices from '../../ui/table-row-services/table-row-services'
 
 export interface TableRowServicesFeatureProps<T> {
   data: ApplicationEntity | DatabaseEntity
-  filter: TableFilterProps
+  filter: TableFilterProps[]
   environmentMode: string
   dataHead: TableHeadProps<T>[]
   link: string

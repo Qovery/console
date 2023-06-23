@@ -4,14 +4,13 @@ import TableHeadFilter, { TableHeadFilterProps, createFilter } from './table-hea
 describe('TableHeadFilter', () => {
   const props: TableHeadFilterProps = {
     title: 'Environment',
-    currentFilter: 'ALL',
-    setCurrentFilter: jest.fn(),
     dataHead: {
       title: 'Environment',
       className: 'px-4 py-2',
     },
     defaultData: [],
     setFilter: jest.fn(),
+    filter: [],
   }
 
   it('should render successfully', () => {
@@ -51,7 +50,6 @@ describe('TableHeadFilter', () => {
       props.defaultData,
       defaultValue,
       '',
-      jest.fn(),
       jest.fn(),
       jest.fn(),
       jest.fn()
@@ -112,7 +110,6 @@ describe('TableHeadFilter', () => {
       props.defaultData,
       defaultValue,
       '',
-      jest.fn(),
       jest.fn(),
       jest.fn(),
       jest.fn()

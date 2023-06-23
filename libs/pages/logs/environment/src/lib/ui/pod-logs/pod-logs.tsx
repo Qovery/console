@@ -28,7 +28,7 @@ export function PodLogs(props: PodLogsProps) {
     countNginx,
   } = props
 
-  const [filter, setFilter] = useState<TableFilterProps>({})
+  const [filter, setFilter] = useState<TableFilterProps[]>([])
 
   const tableHead: TableHeadProps<Log>[] = [
     {
@@ -121,6 +121,7 @@ export function PodLogs(props: PodLogsProps) {
         dataHead={tableHead}
         data={logs}
         setFilter={setFilter}
+        filter={filter}
       >
         <div className="pt-1 pb-8">{memoRow}</div>
       </Table>
