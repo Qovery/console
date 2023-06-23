@@ -43,7 +43,7 @@ export function AboutContainer(props: AboutContainerProps) {
         Registry:{' '}
         <Skeleton height={36} width={100} show={!props.currentRegistry}>
           <Button external link={props.currentRegistry?.url} style={ButtonStyle.STROKED} iconLeft={IconEnum.CONTAINER}>
-            {props.currentRegistry?.name}
+            <Truncate truncateLimit={18} text={props.currentRegistry?.name || ''} />
           </Button>
         </Skeleton>
       </div>
