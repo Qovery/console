@@ -225,6 +225,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
 
   const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
   const hasFilter = filter?.some((item) => item.key === dataHead.filter?.[0].key && item.value !== ALL)
+  const isDark = document.documentElement.classList.contains('dark')
 
   return (
     <div className="flex items-center">
@@ -242,7 +243,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
               </Button>
             ) : (
               <Button
-                className="flex !h-6"
+                className={`flex !h-6 ${isDark ? 'btn--dark' : ''}`}
                 size={ButtonSize.TINY}
                 style={ButtonStyle.STROKED}
                 iconRight={IconAwesomeEnum.ANGLE_DOWN}
