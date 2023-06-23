@@ -18,7 +18,6 @@ export interface TableProps<T> {
   filter?: TableFilterProps[]
   setDataSort?: Dispatch<SetStateAction<T[]>>
   defaultSortingKey?: keyof T
-  defaultFilter?: string
 }
 
 export interface TableHeadProps<T> {
