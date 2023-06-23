@@ -10,15 +10,12 @@ import { TableFilterProps, TableHeadCustomFilterProps, TableHeadProps } from '..
 export interface TableHeadFilterProps<T> {
   title: string
   dataHead: TableHeadProps<T>
-  currentFilter: string
-  setCurrentFilter: Dispatch<SetStateAction<string>>
   defaultData: T[]
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
   filter: TableFilterProps[]
-  defaultFilter?: string
 }
 
-const ALL = 'ALL'
+export const ALL = 'ALL'
 
 // create multiple filter
 // need to output the function for testing
@@ -28,7 +25,6 @@ export function createFilter<T>(
   defaultValue = ALL,
   currentFilter: string,
   setCurrentFilter: any,
-  setLocalFilter: any,
   setDataFilterNumber: any,
   setFilter: any
 ) {
@@ -50,7 +46,6 @@ export function createFilter<T>(
         defaultValue,
         currentFilter,
         setCurrentFilter,
-        setLocalFilter,
         setDataFilterNumber,
         setFilter,
         dataHead?.filter?.[i]
@@ -75,14 +70,13 @@ export function groupBy<T>(
   defaultValue = ALL,
   currentFilter: string,
   setCurrentFilter: any,
-  setLocalFilter: any,
   setDataFilterNumber: any,
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>,
   dataHeadFilter?: TableHeadCustomFilterProps<T>
 ) {
   if (dataHeadFilter?.itemsCustom) {
     // custom list without datas from array of string
-    const result: MenuItemProps[] = dataHeadFilter?.itemsCustom.map((item: string) => ({
+    const result: MenuItemProps[] = [defaultValue, ...dataHeadFilter?.itemsCustom].map((item: string) => ({
       name: upperCaseFirstLetter(item.toLowerCase())?.replace('_', ' ') || '',
       truncateLimit: 20,
       contentLeft: (
@@ -95,7 +89,6 @@ export function groupBy<T>(
         if (currentFilter !== item) {
           // set filter
           setCurrentFilter(item)
-          setLocalFilter(item)
           setFilter &&
             setFilter((prev) => [
               ...prev.filter((currentValue) => currentValue.key !== property),
@@ -107,7 +100,6 @@ export function groupBy<T>(
         } else {
           // reset with default filter
           setCurrentFilter(defaultValue)
-          setLocalFilter('')
           setFilter && setFilter([])
         }
       },
@@ -177,7 +169,6 @@ export function groupBy<T>(
         if (currentFilter !== key) {
           // set filter when is different of current filter
           setCurrentFilter(key)
-          setLocalFilter(key)
           setDataFilterNumber(currentFilterData.length)
           setFilter &&
             setFilter((prev) => [
@@ -190,7 +181,6 @@ export function groupBy<T>(
         } else {
           // reset with default filter
           setCurrentFilter(defaultValue)
-          setLocalFilter(ALL)
           setDataFilterNumber(0)
           setFilter && setFilter((prev) => prev.filter((currentValue) => currentValue.key !== property))
         }
@@ -201,24 +191,15 @@ export function groupBy<T>(
   }
 }
 
-export function TableHeadFilter<T>({
-  title,
-  dataHead,
-  defaultData,
-  filter,
-  setFilter,
-  currentFilter,
-  setCurrentFilter,
-  defaultFilter,
-}: TableHeadFilterProps<T>) {
-  const [localFilter, setLocalFilter] = useState(defaultFilter || '')
+export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFilter }: TableHeadFilterProps<T>) {
+  const [currentFilter, setCurrentFilter] = useState(ALL)
   const [dataFilterNumber, setDataFilterNumber] = useState(0)
   const [isOpen, setOpen] = useState(false)
 
-  // update current filter with a default filter
+  const key = dataHead.filter?.[0].key || ''
   useEffect(() => {
-    if (defaultFilter) setLocalFilter(defaultFilter)
-  }, [defaultFilter])
+    filter.find((item) => item.key === key && item.value !== ALL && setCurrentFilter(item.value || ALL))
+  }, [filter])
 
   function cleanFilter(event: MouseEvent) {
     event.preventDefault()
@@ -227,7 +208,8 @@ export function TableHeadFilter<T>({
     // set global data by default
     setFilter &&
       setFilter((prev) => {
-        return prev.filter((currentValue) => currentValue.value !== localFilter)
+        const result = prev.filter((currentValue) => currentValue.key !== key)
+        return [...result, { key: key, value: ALL }]
       })
   }
 
@@ -237,7 +219,6 @@ export function TableHeadFilter<T>({
     ALL,
     currentFilter,
     setCurrentFilter,
-    setLocalFilter,
     setDataFilterNumber,
     setFilter
   )

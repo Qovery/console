@@ -157,7 +157,6 @@ export function PageGeneral({
           className="border border-element-light-lighter-400 rounded"
           classNameHead="rounded-t"
           columnsWidth={columnsWidth}
-          // defaultFilter={filter?.value}
         >
           <div>
             {isLoading ? (

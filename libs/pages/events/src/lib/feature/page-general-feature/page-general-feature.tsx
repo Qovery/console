@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { TableFilterProps } from '@qovery/shared/ui'
+import { ALL, TableFilterProps } from '@qovery/shared/ui'
 import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
@@ -61,27 +61,48 @@ export function PageGeneralFeature() {
         new Date(parseInt(newQueryParams.toTimestamp, 10) * 1000),
       ])
 
-    // if (newQueryParams.origin) setFilter((prev) => [...prev, { key: 'origin', value: newQueryParams.origin }])
-    // if (newQueryParams.eventType) setFilter((prev) => [...prev, { key: 'event_type', value: newQueryParams.eventType }])
+    if (newQueryParams.origin)
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === newQueryParams.origin)
+        if (!isAlreadyPresent) {
+          const updatedFilters = [...prev, { key: 'origin', value: newQueryParams.origin }]
+          return updatedFilters
+        }
+        return prev
+      })
+
+    if (newQueryParams.eventType)
+      setFilter((prev) => {
+        const isAlreadyPresent = prev.some(
+          (item) => item.key === 'event_type' && item.value === newQueryParams.eventType
+        )
+        if (!isAlreadyPresent) {
+          const updatedFilters = [...prev, { key: 'event_type', value: newQueryParams.eventType }]
+          return updatedFilters
+        }
+        return prev
+      })
 
     setQueryParams(newQueryParams)
   }, [location])
 
   // set filter if is a query params change
   useEffect(() => {
-    const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
-
     for (let i = 0; i < filter.length; i++) {
       const currentFilter: TableFilterProps = filter[i]
-      console.log(currentFilter)
-      console.log(newQueryParams)
+      const key = currentFilter.key as keyof EventQueryParams
 
-      const currentKey = (currentFilter.key || '')
+      const currentKey = key
         .toLowerCase()
         .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
 
       setSearchParams((prev) => {
-        prev.set(currentKey, currentFilter.value || '')
+        if (currentFilter.value === ALL) {
+          prev.delete(currentKey)
+        } else {
+          prev.delete(currentKey)
+          prev.set(currentKey, currentFilter.value || '')
+        }
         return prev
       })
     }

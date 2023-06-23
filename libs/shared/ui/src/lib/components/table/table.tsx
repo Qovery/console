@@ -41,8 +41,6 @@ export interface TableHeadCustomFilterProps<T> {
   hideFilterNumber?: boolean
 }
 
-const ALL = 'ALL'
-
 export function Table<T>({
   dataHead,
   className = 'bg-white rounded-sm',
@@ -54,15 +52,8 @@ export function Table<T>({
   setFilter,
   setDataSort,
   defaultSortingKey,
-  defaultFilter = ALL,
 }: TableProps<T>) {
-  const [currentFilter, setCurrentFilter] = useState(defaultFilter)
   const [isSorted, setIsSorted] = useState(false)
-
-  // update current filter with a default filter
-  useEffect(() => {
-    setCurrentFilter(defaultFilter)
-  }, [defaultFilter])
 
   useEffect(() => {
     if (!isSorted && defaultSortingKey && data && setDataSort) {
@@ -95,9 +86,6 @@ export function Table<T>({
                   defaultData={data}
                   filter={filter}
                   setFilter={setFilter}
-                  currentFilter={currentFilter}
-                  setCurrentFilter={setCurrentFilter}
-                  defaultFilter={defaultFilter}
                 />
               )}
               {sort && data && (

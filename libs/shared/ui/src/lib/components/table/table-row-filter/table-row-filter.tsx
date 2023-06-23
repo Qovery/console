@@ -1,5 +1,6 @@
 import React from 'react'
 import { TableFilterProps } from '../table'
+import { ALL } from '../table-head-filter/table-head-filter'
 
 export interface TableRowFilterProps {
   data: any
@@ -13,6 +14,10 @@ export function TableRowFilter({ children, data, filter }: TableRowFilterProps) 
     filter.every((tableFilter) => {
       const filterKey = tableFilter.key || ''
       const filterValue = tableFilter.value
+
+      if (filterValue === ALL) {
+        return true
+      }
 
       const nestedKeys = filterKey.split('.')
       let nestedData = data
