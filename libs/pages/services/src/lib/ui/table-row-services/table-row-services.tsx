@@ -28,7 +28,7 @@ import {
   TagCommit,
   Tooltip,
 } from '@qovery/shared/ui'
-import { timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { dateFullFormat, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface TableRowServicesProps<T> {
   data: ApplicationEntity | DatabaseEntity
@@ -92,9 +92,11 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
               <p className="flex items-center gap-3 leading-7 text-text-400 text-sm">
                 {data.status && data.status.state && <StatusLabel status={data.status && data.status.state} />}
                 {data.status?.last_deployment_date && (
-                  <span className="text-xs text-text-300 font-medium">
-                    {timeAgo(new Date(data.status.last_deployment_date))} ago
-                  </span>
+                  <Tooltip content={dateFullFormat(data.status.last_deployment_date)}>
+                    <span className="text-xs text-text-300 font-medium">
+                      {timeAgo(new Date(data.status.last_deployment_date))} ago
+                    </span>
+                  </Tooltip>
                 )}
               </p>
               {data.name && (
