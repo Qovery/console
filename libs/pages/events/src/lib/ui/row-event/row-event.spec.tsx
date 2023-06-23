@@ -1,5 +1,4 @@
-import { act, getAllByTestId, getByTestId, getByText, queryByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
