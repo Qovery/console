@@ -5,8 +5,8 @@ import TableRowFilter from '../table-row-filter/table-row-filter'
 
 export interface TableRowProps {
   children: React.ReactElement
-  data?: any
-  filter?: TableFilterProps[]
+  data: any
+  filter: TableFilterProps[]
   link?: string
   disabled?: boolean
   columnsWidth?: string
