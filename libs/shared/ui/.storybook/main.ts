@@ -7,13 +7,10 @@ module.exports = {
   addons: ['@storybook/addon-essentials', ...rootMain.addons, '@nrwl/react/plugins/storybook'],
   staticDirs: ['../src/lib'],
   webpackFinal: async (config, { configType }) => {
-    // apply any global webpack configs that might have been specified in .storybook/main.js
+    // apply any global webpack configs that might have been specified in .storybook/main.ts
     if (rootMain.webpackFinal) {
       config = await rootMain.webpackFinal(config, { configType })
     }
-
-    // add your own webpack tweaks if needed
-
     return config
   },
 }

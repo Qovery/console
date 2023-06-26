@@ -1,5 +1,4 @@
-import { act, fireEvent } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
 import * as environmentDomains from '@qovery/domains/environment'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
@@ -36,13 +35,13 @@ describe('StageModalFeature', () => {
   })
 
   it('should submits the form with createEnvironmentDeploymentStage when no stage is provided', async () => {
-    const { getByTestId, getByLabelText } = render(
-      <StageModalFeature onClose={onClose} environmentId={environmentId} />
-    )
-
     useCreateEnvironmentDeploymentStageMockSpy.mockReturnValue({
       mutate: jest.fn(),
     })
+
+    const { getByTestId, getByLabelText } = render(
+      <StageModalFeature onClose={onClose} environmentId={environmentId} />
+    )
 
     const inputName = getByTestId('input-name')
     const inputDescription = getByLabelText(/description/i)
@@ -73,11 +72,11 @@ describe('StageModalFeature', () => {
   })
 
   it('should submits the form with editEnvironmentDeploymentStage when a stage is provided', async () => {
-    const { getByLabelText, getByTestId } = render(<StageModalFeature {...props} />)
-
     useEditEnvironmentDeploymentStageMockSpy.mockReturnValue({
       mutate: jest.fn(),
     })
+
+    const { getByLabelText, getByTestId } = render(<StageModalFeature {...props} />)
 
     const inputName = getByTestId('input-name')
     const inputDescription = getByLabelText(/description/i)

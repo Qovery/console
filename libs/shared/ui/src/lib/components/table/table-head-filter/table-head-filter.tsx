@@ -108,33 +108,41 @@ export function groupBy<T>(
     return result as MenuItemProps[]
   } else {
     const dataByKeys: Record<string, T[]> = data.reduce((acc, obj) => {
-      // create global key for all objects
-      if (!acc[defaultValue]) {
-        acc[defaultValue] = []
-      }
+      const defaultKey = defaultValue as string
 
-      // detect children of children "obj.obj"
+      if (!acc[defaultKey]) {
+        acc[defaultKey] = []
+      }
+      acc[defaultKey].push(obj)
+
       if (property.includes('.')) {
         const splitProperty = property.split('.')
-        // check if the key [splitProperty[1]] exists on obj[splitProperty[0] as keyof T]
-        const key =
-          obj[splitProperty[0] as keyof T] &&
-          splitProperty[1] in obj[splitProperty[0] as keyof T] &&
-          (obj[splitProperty[0] as keyof T] as any)[splitProperty[1]]
+        let nestedObj: any = obj
+        let key: string | undefined
 
-        if (!acc[key]) {
-          acc[key] = []
+        for (const prop of splitProperty) {
+          nestedObj = nestedObj && prop in nestedObj ? nestedObj[prop] : null
+          if (nestedObj === null || nestedObj === undefined) {
+            break
+          }
         }
 
-        acc[defaultValue].push(obj)
-        acc[key].push(obj)
+        if (nestedObj !== null && nestedObj !== undefined) {
+          key = nestedObj as string
+        }
+
+        if (key) {
+          if (!acc[key]) {
+            acc[key] = []
+          }
+          acc[key].push(obj)
+        }
       } else {
         const key: string = obj[property as keyof T] as string
 
         if (!acc[key]) {
           acc[key] = []
         }
-        acc[defaultValue].push(obj)
         acc[key].push(obj)
       }
 
