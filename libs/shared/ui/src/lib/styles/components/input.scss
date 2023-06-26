@@ -50,6 +50,32 @@
   }
 }
 
+.input--filter {
+  min-height: theme('space.9');
+  height: theme('space.9');
+  padding: theme('space.2');
+  background-color: theme('colors.element.light.lighter.300');
+  padding-top: 0;
+  border-color: transparent;
+
+  .input-select__value-container {
+    margin-top: 0;
+    top: 0;
+  }
+
+  .input-select__menu {
+    width: 296px !important;
+    margin-top: theme('space.2') !important;
+  }
+
+  .input-select__placeholder {
+    display: block !important;
+    font-size: theme('fontSize.ssm') !important;
+    color: theme('colors.text.300') !important;
+    font-weight: 400;
+  }
+}
+
 .input--disabled {
   @apply bg-element-light-lighter-200 border-element-light-lighter-500 pointer-events-none;
   box-shadow: none !important;

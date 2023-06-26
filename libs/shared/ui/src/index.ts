@@ -1,3 +1,4 @@
+export * from './lib/components/inputs/input-filter/input-filter'
 export * from './lib/components/pagination/pagination'
 export * from './lib/components/inputs/input-radio-box/input-radio-box'
 export * from './lib/components/scroll-shadow-wrapper/scroll-shadow-wrapper'

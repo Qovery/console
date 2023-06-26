@@ -16,6 +16,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
+import CustomFilter from '../custom-filter/custom-filter'
 
 export interface PageGeneralProps {
   isLoading: boolean
@@ -103,50 +104,53 @@ export function PageGeneral({
         <div className="py-6 flex justify-between">
           <h2 className="h5 text-text-700">Audit Logs</h2>
         </div>
-        <div className="flex items-center mb-4">
+        <div className="flex items-center mb-4 h-9">
           <p className="text-text-400 text-ssm font-medium mr-1.5">Select</p>
-          <DatePicker
-            key={timestamps ? timestamps[0].toString() : 'timestamp'}
-            onChange={onChangeTimestamp}
-            isOpen={isOpenTimestamp}
-            maxDate={new Date()}
-            minDate={addMonths(new Date(), -1)}
-            defaultDates={timestamps}
-            showTimeInput
-          >
-            {!timestamps ? (
-              <Button
-                dataTestId="timeframe-button"
-                className={`${isOpenTimestamp ? 'btn--active' : ''}`}
-                onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-                style={ButtonStyle.STROKED}
-                size={ButtonSize.TINY}
-                iconRight={IconAwesomeEnum.CLOCK}
-              >
-                Timeframe
-              </Button>
-            ) : (
-              <Button
-                dataTestId="timeframe-values"
-                onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-                size={ButtonSize.TINY}
-              >
-                from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
-                {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
-                <span
-                  data-testid="clear-timestamp"
-                  className="px-1 py-1 relative left-1"
-                  role="button"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    onChangeClearTimestamp()
-                  }}
+          <div className="mr-5">
+            <DatePicker
+              key={timestamps ? timestamps[0].toString() : 'timestamp'}
+              onChange={onChangeTimestamp}
+              isOpen={isOpenTimestamp}
+              maxDate={new Date()}
+              minDate={addMonths(new Date(), -1)}
+              defaultDates={timestamps}
+              showTimeInput
+            >
+              {!timestamps ? (
+                <Button
+                  dataTestId="timeframe-button"
+                  className={`${isOpenTimestamp ? 'btn--active' : ''}`}
+                  onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+                  style={ButtonStyle.STROKED}
+                  size={ButtonSize.TINY}
+                  iconRight={IconAwesomeEnum.CLOCK}
                 >
-                  <Icon name={IconAwesomeEnum.CROSS} />
-                </span>
-              </Button>
-            )}
-          </DatePicker>
+                  Timeframe
+                </Button>
+              ) : (
+                <Button
+                  dataTestId="timeframe-values"
+                  onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+                  size={ButtonSize.TINY}
+                >
+                  from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
+                  {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
+                  <span
+                    data-testid="clear-timestamp"
+                    className="px-1 py-1 relative left-1"
+                    role="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      onChangeClearTimestamp()
+                    }}
+                  >
+                    <Icon name={IconAwesomeEnum.CROSS} />
+                  </span>
+                </Button>
+              )}
+            </DatePicker>
+          </div>
+          <CustomFilter />
         </div>
 
         <Table
