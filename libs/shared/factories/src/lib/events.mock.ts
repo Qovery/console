@@ -13,12 +13,7 @@ export const eventsFactoryMock = (howMany: number): OrganizationEventResponse[] 
   Array.from({ length: howMany }).map((_, index) => ({
     id: index.toString(),
     origin: chance.pickone(
-      Object.values([
-        OrganizationEventOrigin.API,
-        OrganizationEventOrigin.CLI,
-        OrganizationEventOrigin.CONSOLE,
-        OrganizationEventOrigin.TERRAFORM_PROVIDER,
-      ])
+      Object.values([OrganizationEventOrigin.API, OrganizationEventOrigin.CLI, OrganizationEventOrigin.CONSOLE])
     ),
     event_type: chance.pickone(
       Object.values([
