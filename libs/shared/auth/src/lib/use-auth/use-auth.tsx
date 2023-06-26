@@ -53,6 +53,8 @@ export function useAuth() {
         dispatch(userActions.add(userInfos))
         return userInfos
       }
+
+      return null
     } catch (error) {
       return error
     }
