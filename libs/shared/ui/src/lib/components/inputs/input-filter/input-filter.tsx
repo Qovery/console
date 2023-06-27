@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Value } from '@qovery/shared/interfaces'
 import Button, { ButtonSize, ButtonStyle } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
@@ -8,13 +8,22 @@ import InputSelect from '../input-select/input-select'
 export interface InputFilterProps {
   name: string
   options: Value[]
-  onChange?: (value: string | string[]) => void
+  onChange: (value?: string | string[]) => void
   defaultValue?: string | string[]
 }
 
 export function InputFilter({ name, options, onChange, defaultValue }: InputFilterProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentValue, setCurrentValue] = useState<string | string[] | undefined>(defaultValue)
+
+  useEffect(() => {
+    if (defaultValue) {
+      setIsOpen(true)
+    } else {
+      setIsOpen(false)
+      setCurrentValue(undefined)
+    }
+  }, [defaultValue])
 
   return (
     <div>
@@ -35,11 +44,11 @@ export function InputFilter({ name, options, onChange, defaultValue }: InputFilt
               isFilter
               autoFocus
               isSearchable
-              placeholder="Type"
+              placeholder={name}
               className="w-[92px]"
               options={options}
               onChange={(value) => {
-                onChange && onChange(value)
+                onChange(value)
                 setCurrentValue(value)
               }}
             />
@@ -52,7 +61,9 @@ export function InputFilter({ name, options, onChange, defaultValue }: InputFilt
                 role="button"
                 onClick={(event) => {
                   event.stopPropagation()
+                  onChange(undefined)
                   setCurrentValue(undefined)
+                  setIsOpen(false)
                 }}
               >
                 <Icon name={IconAwesomeEnum.CROSS} />

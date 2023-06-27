@@ -1,11 +1,6 @@
-import { addMonths } from 'date-fns'
 import { OrganizationEventOrigin, OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
 import {
-  Button,
-  ButtonSize,
-  ButtonStyle,
-  DatePicker,
   HelpSection,
   Icon,
   IconAwesomeEnum,
@@ -14,7 +9,6 @@ import {
   TableFilterProps,
   TableHeadProps,
 } from '@qovery/shared/ui'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 import CustomFilter from '../custom-filter/custom-filter'
 
@@ -26,6 +20,8 @@ export interface PageGeneralProps {
   onPrevious: () => void
   onChangeTimestamp: (startDate: Date, endDate: Date) => void
   onChangeClearTimestamp: () => void
+  onChangeType: (value?: string | string[]) => void
+  handleClearFilter: () => void
   timestamps?: [Date, Date]
   isOpenTimestamp: boolean
   setIsOpenTimestamp: (isOpen: boolean) => void
@@ -49,6 +45,8 @@ export function PageGeneral({
   placeholderEvents,
   onChangeTimestamp,
   onChangeClearTimestamp,
+  onChangeType,
+  handleClearFilter,
   isOpenTimestamp,
   setIsOpenTimestamp,
   timestamps,
@@ -105,52 +103,15 @@ export function PageGeneral({
           <h2 className="h5 text-text-700">Audit Logs</h2>
         </div>
         <div className="flex items-center mb-4 h-9">
-          <p className="text-text-400 text-ssm font-medium mr-1.5">Select</p>
-          <div className="mr-5">
-            <DatePicker
-              key={timestamps ? timestamps[0].toString() : 'timestamp'}
-              onChange={onChangeTimestamp}
-              isOpen={isOpenTimestamp}
-              maxDate={new Date()}
-              minDate={addMonths(new Date(), -1)}
-              defaultDates={timestamps}
-              showTimeInput
-            >
-              {!timestamps ? (
-                <Button
-                  dataTestId="timeframe-button"
-                  className={`${isOpenTimestamp ? 'btn--active' : ''}`}
-                  onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-                  style={ButtonStyle.STROKED}
-                  size={ButtonSize.TINY}
-                  iconRight={IconAwesomeEnum.CLOCK}
-                >
-                  Timeframe
-                </Button>
-              ) : (
-                <Button
-                  dataTestId="timeframe-values"
-                  onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
-                  size={ButtonSize.TINY}
-                >
-                  from: {dateYearMonthDayHourMinuteSecond(timestamps[0], true, false)} - to:{' '}
-                  {dateYearMonthDayHourMinuteSecond(timestamps[1], true, false)}
-                  <span
-                    data-testid="clear-timestamp"
-                    className="px-1 py-1 relative left-1"
-                    role="button"
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      onChangeClearTimestamp()
-                    }}
-                  >
-                    <Icon name={IconAwesomeEnum.CROSS} />
-                  </span>
-                </Button>
-              )}
-            </DatePicker>
-          </div>
-          <CustomFilter />
+          <CustomFilter
+            onChangeTimestamp={onChangeTimestamp}
+            onChangeClearTimestamp={onChangeClearTimestamp}
+            isOpenTimestamp={isOpenTimestamp}
+            setIsOpenTimestamp={setIsOpenTimestamp}
+            timestamps={timestamps}
+            onChangeType={onChangeType}
+            clearFilter={handleClearFilter}
+          />
         </div>
 
         <Table

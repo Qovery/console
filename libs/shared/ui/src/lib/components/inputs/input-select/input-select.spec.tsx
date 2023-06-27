@@ -1,5 +1,4 @@
-import { act, getByDisplayValue, screen } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByDisplayValue, render, screen } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
@@ -137,5 +136,29 @@ describe('InputSelect', () => {
     })
 
     expect(props.menuListButton.onClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders InputSelect component when isFilter is true', async () => {
+    const options = [
+      { value: 'option1', label: 'Option 1' },
+      { value: 'option2', label: 'Option 2' },
+      { value: 'option3', label: 'Option 3' },
+    ]
+    const onChangeMock = jest.fn()
+
+    render(<InputSelect placeholder="Filter" isFilter={true} options={options} onChange={onChangeMock} />)
+    const realSelect = screen.getByText('Filter')
+
+    await act(() => {
+      selectEvent.openMenu(realSelect)
+    })
+
+    const optionElement = screen.getByText('Option 2')
+    await act(() => {
+      optionElement.click()
+    })
+
+    expect(onChangeMock).toHaveBeenCalledWith('option2')
+    expect(screen.getByTestId('select')).toHaveClass('input--filter')
   })
 })

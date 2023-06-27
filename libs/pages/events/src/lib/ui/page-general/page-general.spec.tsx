@@ -2,7 +2,6 @@ import { act, fireEvent, getAllByTestId, getByTestId } from '@testing-library/re
 import { render } from '__tests__/utils/setup-jest'
 import { OrganizationEventOrigin, OrganizationEventType } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import PageGeneral, { PageGeneralProps } from './page-general'
 
 const props: PageGeneralProps = {
@@ -22,6 +21,8 @@ const props: PageGeneralProps = {
   setIsOpenTimestamp: jest.fn(),
   setFilter: jest.fn(),
   filter: [{ key: 'origin', value: 'origin-1' }],
+  onChangeType: jest.fn(),
+  handleClearFilter: jest.fn(),
 }
 
 describe('PageGeneral', () => {
@@ -66,34 +67,6 @@ describe('PageGeneral', () => {
     const { getByTestId } = render(<PageGeneral {...props} />)
     fireEvent.change(getByTestId('select-page-size'), { target: { value: '100' } })
     expect(props.onPageSizeChange).toHaveBeenCalledWith('100')
-  })
-
-  it('should call onChangeClearTimestamp when clearing the timeframe', async () => {
-    props.timestamps = [new Date(), new Date()]
-
-    const { getByTestId } = render(<PageGeneral {...props} />)
-    expect(getByTestId('timeframe-values')).toHaveTextContent(
-      `from: ${dateYearMonthDayHourMinuteSecond(
-        props.timestamps[0],
-        true,
-        false
-      )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
-    )
-    getByTestId('clear-timestamp').click()
-    expect(props.onChangeClearTimestamp).toHaveBeenCalled()
-  })
-
-  it('should render correct timeframe button label if timestamps are provided', () => {
-    props.timestamps = [new Date(), new Date()]
-
-    const { getByTestId } = render(<PageGeneral {...props} />)
-    expect(getByTestId('timeframe-values')).toHaveTextContent(
-      `from: ${dateYearMonthDayHourMinuteSecond(
-        props.timestamps[0],
-        true,
-        false
-      )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
-    )
   })
 
   it('should render a Tool filter on the table', () => {

@@ -253,6 +253,7 @@ export function InputSelect({
           styles={{
             menuPortal: (base) => ({ ...base, zIndex: 50, pointerEvents: 'auto' }),
           }}
+          menuIsOpen={isFilter ? true : undefined}
         />
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
