@@ -187,7 +187,8 @@ export const fetchApplicationLinks = createAsyncThunk<Link[], { applicationId: s
     } else {
       response = await applicationMainCallsApi.listApplicationLinks(data.applicationId)
     }
-    return response.data.results as Link[]
+    // remove useless Qovery links
+    return response.data.results?.filter((link: Link) => !(link.is_default && link.is_qovery_domain)) as Link[]
   }
 )
 
