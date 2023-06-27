@@ -1,4 +1,5 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { DropzoneRootProps } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
@@ -41,6 +42,7 @@ export interface ImportEnvironmentVariableModalProps {
 export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableModalProps) {
   const { control, formState, getValues, trigger } = useFormContext()
   const { keys = [], loading = false, availableScopes = computeAvailableScope(undefined, false) } = props
+  const [localScope, setLocalScope] = useState(APIVariableScopeEnum.ENVIRONMENT)
 
   // write a regex pattern that rejects spaces
   const pattern = /^[^\s]+$/
@@ -79,12 +81,15 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               <p className="font-medium text-text-600 text-ssm">Apply for all</p>
               <div className="flex gap-4">
                 <InputSelectSmall
+                  className="w-32"
                   inputClassName="font-normal bg-white"
                   dataTestId="select-scope-for-all"
                   name="search"
+                  defaultValue={localScope}
                   items={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
                   onChange={(value?: string) => {
                     props.changeScopeForAll(value as APIVariableScopeEnum)
+                    setLocalScope(value as APIVariableScopeEnum)
                     trigger().then()
                   }}
                 />
