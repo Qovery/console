@@ -3,7 +3,6 @@ import { act, findAllByTestId, fireEvent, getByTestId, screen, waitFor } from '@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import React from 'react'
 import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'
 import ImportEnvironmentVariableModal, {
   ImportEnvironmentVariableModalProps,
@@ -125,10 +124,10 @@ describe('ImportEnvironmentVariableModal', () => {
 
       await act(() => {
         const select = screen.getByTestId('select-scope-for-all')
-        fireEvent.change(select, { target: { value: APIVariableScopeEnum.ENVIRONMENT } })
+        fireEvent.change(select, { target: { value: APIVariableScopeEnum.PROJECT } })
       })
 
-      expect(spy).toHaveBeenCalledWith(APIVariableScopeEnum.ENVIRONMENT)
+      expect(spy).toHaveBeenCalledWith(APIVariableScopeEnum.PROJECT)
     })
 
     it('should toggle all on click on secret toggle', async () => {
