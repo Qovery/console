@@ -18,7 +18,7 @@ import Tooltip from '../../tooltip/tooltip'
 
 export interface InputSelectProps {
   className?: string
-  label: string
+  label?: string
   value?: string | string[]
   options: Value[]
   disabled?: boolean
@@ -34,23 +34,29 @@ export interface InputSelectProps {
     onClick: () => void
     icon?: ReactNode
   }
+  isFilter?: boolean
+  autoFocus?: boolean
+  placeholder?: string
 }
 
-export function InputSelect(props: InputSelectProps) {
-  const {
-    className = '',
-    label,
-    value,
-    options,
-    disabled,
-    error = false,
-    onChange,
-    dataTestId,
-    isMulti = undefined,
-    isSearchable = false,
-    isClearable = false,
-    menuListButton,
-  } = props
+export function InputSelect({
+  className = '',
+  label,
+  value,
+  options,
+  disabled,
+  error,
+  portal,
+  onChange,
+  dataTestId,
+  isMulti = undefined,
+  isSearchable = false,
+  isClearable = false,
+  isFilter = false,
+  autoFocus = false,
+  placeholder,
+  menuListButton,
+}: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
   const [selectedValue, setSelectedValue] = useState<string | string[]>([])
@@ -160,7 +166,7 @@ export function InputSelect(props: InputSelectProps) {
   }
 
   const currentIcon = options.find((option) => option.value === selectedValue)
-  const hasIcon = !props.isMulti && currentIcon?.icon
+  const hasIcon = !isMulti && currentIcon?.icon
 
   const inputActions =
     hasFocus && !disabled
@@ -182,7 +188,7 @@ export function InputSelect(props: InputSelectProps) {
       <div
         className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
           disabled ? '!bg-element-light-lighter-200 !border-element-light-lighter-500' : ''
-        }`}
+        } ${isFilter ? 'input--filter' : ''}`}
         data-testid={dataTestId || 'select'}
       >
         {hasIcon && (
@@ -193,16 +199,18 @@ export function InputSelect(props: InputSelectProps) {
             {currentIcon.icon}
           </div>
         )}
-        <label
-          htmlFor={label}
-          className={
-            hasIcon
-              ? `!text-xs !translate-y-0 ${selectedWithIconClassName}`
-              : `${hasLabelUp ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`
-          }
-        >
-          {label}
-        </label>
+        {label && (
+          <label
+            htmlFor={label}
+            className={
+              hasIcon
+                ? `!text-xs !translate-y-0 ${selectedWithIconClassName}`
+                : `${hasLabelUp ? '!text-xs !translate-y-0' : 'text-sm translate-y-2 top-1.5'}`
+            }
+          >
+            {label}
+          </label>
+        )}
         {currentIcon?.onClickEditable && (
           <div
             data-testid="selected-edit-icon"
@@ -216,6 +224,7 @@ export function InputSelect(props: InputSelectProps) {
           </div>
         )}
         <Select
+          autoFocus={autoFocus}
           options={options}
           isMulti={isMulti}
           data-testid="select-react-select"
@@ -234,18 +243,24 @@ export function InputSelect(props: InputSelectProps) {
           classNamePrefix="input-select"
           hideSelectedOptions={false}
           isSearchable={isSearchable}
+          placeholder={placeholder}
           isClearable={isClearable}
           isDisabled={disabled}
           value={selectedItems}
-          menuPortalTarget={props.portal ? document.body : undefined}
+          menuPortalTarget={portal ? document.body : undefined}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          styles={{ menuPortal: (base) => ({ ...base, zIndex: 50, pointerEvents: 'auto' }) }}
+          styles={{
+            menuPortal: (base) => ({ ...base, zIndex: 50, pointerEvents: 'auto' }),
+          }}
+          menuIsOpen={isFilter ? true : undefined}
         />
         <input type="hidden" name={label} value={selectedValue} />
-        <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
-          <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
-        </div>
+        {!isFilter && (
+          <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
+            <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+          </div>
+        )}
       </div>
       {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}
     </div>

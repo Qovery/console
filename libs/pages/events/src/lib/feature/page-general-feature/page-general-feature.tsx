@@ -140,6 +140,17 @@ export function PageGeneralFeature() {
     setIsOpenTimestamp(!isOpenTimestamp)
   }
 
+  const handeChangeType = (value?: string | string[]) => {
+    setSearchParams((prev) => {
+      if (value) {
+        prev.set('targetType', value as string)
+      } else {
+        prev.delete('targetType')
+      }
+      return prev
+    })
+  }
+
   const handleClearTimestamp = () => {
     setSearchParams((prev) => {
       prev.delete('fromTimestamp')
@@ -148,6 +159,19 @@ export function PageGeneralFeature() {
     })
     setTimestamps(undefined)
     setIsOpenTimestamp(false)
+  }
+
+  const handleClearFilter = () => {
+    setSearchParams((prev) => {
+      prev.delete('origin')
+      prev.delete('eventType')
+      prev.delete('targetType')
+      prev.delete('continueToken')
+      prev.delete('stepBackToken')
+      return prev
+    })
+    setFilter([])
+    handleClearTimestamp()
   }
 
   return (
@@ -163,6 +187,8 @@ export function PageGeneralFeature() {
       placeholderEvents={eventsFactoryMock(30)}
       onChangeTimestamp={handleChangeTimestamp}
       onChangeClearTimestamp={handleClearTimestamp}
+      onChangeType={handeChangeType}
+      handleClearFilter={handleClearFilter}
       timestamps={timestamps}
       setIsOpenTimestamp={setIsOpenTimestamp}
       isOpenTimestamp={isOpenTimestamp}
