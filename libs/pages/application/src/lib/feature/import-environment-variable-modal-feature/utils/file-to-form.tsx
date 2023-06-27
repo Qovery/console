@@ -10,7 +10,7 @@ export function parsedToForm(parsed: { [key: string]: string }): { [key: string]
   Object.keys(parsed).forEach((key) => {
     defaultValues[key + '_key'] = key || ''
     defaultValues[key + '_value'] = parsed[key] || ''
-    defaultValues[key + '_scope'] = APIVariableScopeEnum.PROJECT
+    defaultValues[key + '_scope'] = APIVariableScopeEnum.ENVIRONMENT
     defaultValues[key + '_secret'] = ''
   })
 
