@@ -1,6 +1,7 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -12,12 +13,16 @@ import {
   InputText,
   InputTextArea,
   Link,
+  LoaderSpinner,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface PageSettingsGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
+  databaseMode?: DatabaseModeEnum
   publicOptionNotAvailable?: boolean
+  databaseVersionOptions?: Value[]
+  databaseVersionLoading?: boolean
   loading?: boolean
 }
 
@@ -32,8 +37,14 @@ const databasesMode = Object.values(DatabaseModeEnum).map((value) => ({
   value: value,
 }))
 
-export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
-  const { onSubmit, loading, publicOptionNotAvailable } = props
+export function PageSettingsGeneral({
+  onSubmit,
+  loading,
+  publicOptionNotAvailable,
+  databaseVersionOptions,
+  databaseVersionLoading,
+  databaseMode,
+}: PageSettingsGeneralProps) {
   const { control, formState } = useFormContext()
 
   const databasesAccessibility = Object.values(DatabaseAccessibilityEnum).map((value) => ({
@@ -118,21 +129,48 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 </div>
               )}
             />
-            <Controller
-              name="version"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  className="mb-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Version"
-                  error={error?.message}
-                  disabled
-                />
-              )}
-            />
+
+            {databaseMode === DatabaseModeEnum.CONTAINER ? (
+              <Controller
+                name="version"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    className="mb-3"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Version"
+                    error={error?.message}
+                    disabled
+                  />
+                )}
+              />
+            ) : (
+              <>
+                {databaseVersionLoading ? (
+                  <div className="flex justify-center mb-6">
+                    <LoaderSpinner className="w-4" />
+                  </div>
+                ) : (
+                  <Controller
+                    name="version"
+                    control={control}
+                    rules={{ required: 'Please select a database version' }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputSelect
+                        label="Version"
+                        options={databaseVersionOptions || []}
+                        onChange={field.onChange}
+                        value={field.value}
+                        error={error?.message}
+                        className="mb-3"
+                      />
+                    )}
+                  />
+                )}
+              </>
+            )}
             <Controller
               name="accessibility"
               control={control}

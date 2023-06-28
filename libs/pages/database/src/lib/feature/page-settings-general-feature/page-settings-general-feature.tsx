@@ -1,10 +1,11 @@
+import equal from 'fast-deep-equal'
 import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@qovery/domains/database'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { getEnvironmentById, useFetchDatabaseConfiguration, useFetchEnvironments } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -16,6 +17,10 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
   cloneDatabase.description = data['description']
   cloneDatabase.accessibility = data['accessibility']
 
+  if (database.mode === DatabaseModeEnum.MANAGED) {
+    cloneDatabase.version = data['version']
+  }
+
   return cloneDatabase
 }
 
@@ -23,12 +28,24 @@ export function PageSettingsGeneralFeature() {
   const { environmentId = '', projectId = '', databaseId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
 
-  const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, databaseId))
+  const database = useSelector<RootState, DatabaseEntity | undefined>(
+    (state) => selectDatabaseById(state, databaseId),
+    equal
+  )
   const { data: environments } = useFetchEnvironments(projectId)
   const environment = getEnvironmentById(environmentId, environments)
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
   )
+  const { data: databaseConfigurations, isLoading } = useFetchDatabaseConfiguration(projectId, environmentId)
+
+  const databaseVersionOptions = databaseConfigurations
+    ?.find((c) => c.database_type === database?.type)
+    ?.version?.filter((v) => v.supported_mode === DatabaseModeEnum.MANAGED)
+    .map((v) => ({
+      label: v.name || '',
+      value: v.name || '',
+    }))
 
   const publicOptionNotAvailable =
     cluster?.kubernetes === KubernetesEnum.K3_S && database?.mode === DatabaseModeEnum.CONTAINER
@@ -93,7 +110,14 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} loading={loading} publicOptionNotAvailable={publicOptionNotAvailable} />
+      <PageSettingsGeneral
+        onSubmit={onSubmit}
+        loading={loading}
+        publicOptionNotAvailable={publicOptionNotAvailable}
+        databaseVersionLoading={isLoading}
+        databaseVersionOptions={databaseVersionOptions}
+        databaseMode={database?.mode}
+      />
     </FormProvider>
   )
 }

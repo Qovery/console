@@ -4,6 +4,7 @@ import {
   CloudProviderEnum,
   ClusterRequest,
   DatabaseEditRequest,
+  DatabaseModeEnum,
   JobRequest,
   Organization,
   OrganizationCustomRole,
@@ -144,6 +145,8 @@ export function refactoDatabasePayload(database: Partial<DatabaseEntity>) {
     storage: database.storage,
     instance_type: database.instance_type,
   }
+
+  if (database.mode === DatabaseModeEnum.MANAGED) databaseRequestPayload.version = database.version
 
   return databaseRequestPayload
 }
