@@ -28,4 +28,31 @@ describe('EntrypointCmdInputs', () => {
     const result = formattedCmdArguments(stringArray)
     expect(result).toEqual([' element1 ', ' element2 ', ' element3 '])
   })
+
+  it('displays formatted CMD arguments when isContainer is true and inputs have values', () => {
+    jest.mock('react-hook-form', () => ({
+      ...jest.requireActual('react-hook-form'),
+      useFormContext: jest.fn(),
+    }))
+
+    useFormContext.mockReturnValue({
+      control: {},
+      watch: jest.fn().mockReturnValue(''),
+    })
+
+    useFormContext.mockReturnValueOnce({
+      control: {},
+      watch: jest.fn().mockImplementation((field) => {
+        if (field === 'image_name') return 'myapp'
+        if (field === 'image_tag') return 'v1.0'
+        if (field === 'image_entry_point') return 'start'
+        if (field === 'cmd_arguments') return '["-h", "0.0.0.0", "-p", "8080", "string"]'
+        return ''
+      }),
+    })
+
+    render(wrapWithReactHookForm(<EntrypointCmdInputs isContainer={true} />))
+
+    expect(screen.getByText('i.e: docker run -e start myapp:v1.0 -h 0.0.0.0 -p 8080 string')).toBeInTheDocument()
+  })
 })
