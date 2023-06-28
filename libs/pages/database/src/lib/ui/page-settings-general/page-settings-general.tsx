@@ -3,12 +3,15 @@ import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
 import {
+  BannerBox,
+  BannerBoxEnum,
   BlockContent,
   Button,
   ButtonSize,
   ButtonStyle,
   HelpSection,
   Icon,
+  IconAwesomeEnum,
   InputSelect,
   InputText,
   InputTextArea,
@@ -153,21 +156,28 @@ export function PageSettingsGeneral({
                     <LoaderSpinner className="w-4" />
                   </div>
                 ) : (
-                  <Controller
-                    name="version"
-                    control={control}
-                    rules={{ required: 'Please select a database version' }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputSelect
-                        label="Version"
-                        options={databaseVersionOptions || []}
-                        onChange={field.onChange}
-                        value={field.value}
-                        error={error?.message}
-                        className="mb-3"
-                      />
-                    )}
-                  />
+                  <div className="mb-3">
+                    <Controller
+                      name="version"
+                      control={control}
+                      rules={{ required: 'Please select a database version' }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputSelect
+                          label="Version"
+                          options={databaseVersionOptions || []}
+                          onChange={field.onChange}
+                          value={field.value}
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                    <BannerBox
+                      className="mt-3"
+                      message="Upgrading the version might cause service interruption. Have a look at the cloud provider documentation before launching the upgrade."
+                      icon={IconAwesomeEnum.CIRCLE_INFO}
+                      type={BannerBoxEnum.WARNING}
+                    />
+                  </div>
                 )}
               </>
             )}
