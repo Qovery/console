@@ -83,7 +83,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           {isContainer(type) && (
             <BlockContent title="Container settings">
               <GeneralContainerSettings organization={props.organization} />
-              <EntrypointCmdInputs />
+              <EntrypointCmdInputs isContainer />
             </BlockContent>
           )}
           {isApplication(type) && (
