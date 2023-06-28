@@ -117,7 +117,7 @@ export function PodLogs(props: PodLogsProps) {
     >
       <Table
         className="bg-transparent"
-        classNameHead="!flex bg-element-light-darker-400 !border-transparent"
+        classNameHead="!flex !bg-element-light-darker-400 !border-transparent"
         dataHead={tableHead}
         data={logs}
         setFilter={setFilter}
