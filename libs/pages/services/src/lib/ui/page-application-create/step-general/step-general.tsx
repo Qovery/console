@@ -103,7 +103,7 @@ export function StepGeneral(props: StepGeneralProps) {
         {watchServiceType &&
         (isContainer(watchServiceType) ||
           (isApplication(watchServiceType) && watchBuildMode !== BuildModeEnum.BUILDPACKS)) ? (
-          <EntrypointCmdInputs />
+          <EntrypointCmdInputs isContainer={isContainer(watchServiceType)} />
         ) : null}
 
         <div className="flex justify-between">
