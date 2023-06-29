@@ -18,7 +18,7 @@ export interface PageSettingsPortsProps {
   ports?: ServicePort[]
   onAddPort: () => void
   onEdit: (port: ServicePort) => void
-  onDelete: (port: ServicePort) => void
+  onDelete: (port: number | ServicePort) => void
   loading?: LoadingStatus
 }
 
