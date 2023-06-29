@@ -1,4 +1,5 @@
 import { ServicePort } from 'qovery-typescript-axios'
+import { FlowCreatePort } from '@qovery/shared/console-shared'
 import { LoadingStatus } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -16,15 +17,16 @@ import {
 export interface PageSettingsPortsProps {
   ports?: ServicePort[]
   onAddPort: () => void
-  onEdit: (customPort: ServicePort) => void
-  onDelete: (customPort: ServicePort) => void
+  onEdit: (port: ServicePort) => void
+  onDelete: (port: ServicePort) => void
   loading?: LoadingStatus
 }
 
-export function PageSettingsPorts(props: PageSettingsPortsProps) {
+export function PageSettingsPorts({ ports, onAddPort, onEdit, onDelete, loading }: PageSettingsPortsProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8  max-w-content-with-navigation-left">
+        <FlowCreatePort isSetting ports={ports} onAddPort={onAddPort} onRemovePort={onDelete} />
         <div className="flex justify-between mb-8">
           <div>
             <h1 className="h5 text-text-700 mb-2">Port</h1>
@@ -35,23 +37,23 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
             </p>
           </div>
 
-          <Button dataTestId="add-button" onClick={() => props.onAddPort()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+          <Button dataTestId="add-button" onClick={() => onAddPort()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add Port
           </Button>
         </div>
 
-        {(props.loading === 'not loaded' || props.loading === 'loading') && props.ports?.length === 0 ? (
+        {(loading === 'not loaded' || loading === 'loading') && ports?.length === 0 ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
-        ) : props.ports && props.ports.length > 0 ? (
+        ) : ports && ports.length > 0 ? (
           <BlockContent title="Configured ports">
-            {props.ports &&
-              props.ports.map((customPort, i) => (
+            {ports &&
+              ports.map((customPort, i) => (
                 <div
                   key={`port-${customPort.id}`}
                   className={`flex justify-between w-full items-center gap-3 ${
-                    props.ports && props.ports.length !== i + 1 ? 'mb-5' : ''
+                    ports && ports.length !== i + 1 ? 'mb-5' : ''
                   }`}
                   data-testid="form-row"
                 >
@@ -81,13 +83,13 @@ export function PageSettingsPorts(props: PageSettingsPortsProps) {
                   <ButtonIcon
                     className="text-text-500 hover:text-text-700"
                     style={ButtonIconStyle.FLAT}
-                    onClick={() => props.onEdit(customPort)}
+                    onClick={() => onEdit(customPort)}
                     dataTestId="edit-button"
                     icon={IconAwesomeEnum.WHEEL}
                   />
                   <ButtonIcon
                     className="text-text-500"
-                    onClick={() => props.onDelete(customPort)}
+                    onClick={() => onDelete(customPort)}
                     dataTestId="delete-button"
                     icon={IconAwesomeEnum.TRASH}
                     style={ButtonIconStyle.FLAT}

@@ -1,3 +1,4 @@
+import { ServicePort } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FlowPortData, PortData } from '@qovery/shared/interfaces'
@@ -5,14 +6,15 @@ import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 import PortRow from '../port-row/port-row'
 
 export interface FlowCreatePortProps {
-  onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
   onAddPort: () => void
-  onRemovePort: (index: number) => void
-  ports: PortData[]
+  onRemovePort: (port: number | ServicePort) => void
+  ports?: PortData[] | ServicePort[]
+  onBack?: () => void
+  isSetting?: boolean
 }
 
-export function FlowCreatePort(props: FlowCreatePortProps) {
+export function FlowCreatePort({ ports, onSubmit, onAddPort, onRemovePort, isSetting, onBack }: FlowCreatePortProps) {
   const { formState } = useFormContext<FlowPortData>()
 
   return (
@@ -20,7 +22,7 @@ export function FlowCreatePort(props: FlowCreatePortProps) {
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
           <h3 className="text-text-700 text-lg">Set port</h3>
-          <Button size={ButtonSize.TINY} className="btn--no-min-w" onClick={props.onAddPort}>
+          <Button size={ButtonSize.TINY} className="btn--no-min-w" onClick={onAddPort}>
             Add port
           </Button>
         </div>
@@ -32,33 +34,35 @@ export function FlowCreatePort(props: FlowCreatePortProps) {
         </p>
       </div>
 
-      <form onSubmit={props.onSubmit}>
+      <form onSubmit={onSubmit}>
         <div className="mb-10">
-          {props.ports?.map((port, index) => (
-            <PortRow onDelete={props.onRemovePort} key={index} index={index} />
+          {ports?.map((port, index) => (
+            <PortRow onDelete={onRemovePort} key={index} index={index} />
           ))}
         </div>
 
-        <div className="flex justify-between">
-          <Button
-            onClick={props.onBack}
-            className="btn--no-min-w"
-            type="button"
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.STROKED}
-          >
-            Back
-          </Button>
-          <Button
-            dataTestId="button-submit"
-            type="submit"
-            disabled={!formState.isValid}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
-          >
-            Continue
-          </Button>
-        </div>
+        {isSetting && (
+          <div className="flex justify-between">
+            <Button
+              onClick={onBack}
+              className="btn--no-min-w"
+              type="button"
+              size={ButtonSize.XLARGE}
+              style={ButtonStyle.STROKED}
+            >
+              Back
+            </Button>
+            <Button
+              dataTestId="button-submit"
+              type="submit"
+              disabled={!formState.isValid}
+              size={ButtonSize.XLARGE}
+              style={ButtonStyle.BASIC}
+            >
+              Continue
+            </Button>
+          </div>
+        )}
       </form>
     </div>
   )
