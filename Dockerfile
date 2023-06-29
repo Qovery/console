@@ -39,7 +39,6 @@ ENV NX_ONBOARDING $NX_ONBOARDING
 # Cache and Install dependencies
 COPY package.json .
 COPY yarn.lock .
-RUN yarn global add @nrwl/cli
 RUN yarn install --production
 
 # Copy app files
