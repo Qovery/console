@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { CrudModal } from '@qovery/shared/console-shared'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
-import CrudModal from '../../../ui/page-settings-ports/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
   port?: ServicePort

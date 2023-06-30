@@ -1,23 +1,26 @@
+import { ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreatePort } from '@qovery/shared/console-shared'
-import { FlowPortData } from '@qovery/shared/interfaces'
+import { FlowPortData, PortData } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_CREATION_GENERAL_URL,
-  SERVICES_CREATION_HEALTHCHECKS_URL,
-  SERVICES_CREATION_POST_URL,
+  SERVICES_CREATION_GENERAL_URL, // SERVICES_CREATION_HEALTHCHECKS_URL,
+  // SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
+import { FunnelFlowBody, FunnelFlowHelpCard, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
+import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function StepPortFeature() {
   useDocumentTitle('Ports - Create Application')
-  const { setCurrentStep, portData, setPortData, generalData } = useApplicationContainerCreateContext()
+  const { setCurrentStep, portData, generalData } = useApplicationContainerCreateContext()
+  const { openModal, closeModal } = useModal()
+
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`
@@ -62,15 +65,15 @@ export function StepPortFeature() {
     mode: 'onChange',
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    setPortData(data)
+  // const onSubmit = methods.handleSubmit((data) => {
+  //   setPortData(data)
 
-    if (data.ports.length > 0) {
-      navigate(pathCreate + SERVICES_CREATION_HEALTHCHECKS_URL)
-    } else {
-      navigate(pathCreate + SERVICES_CREATION_POST_URL)
-    }
-  })
+  //   if (data.ports.length > 0) {
+  //     navigate(pathCreate + SERVICES_CREATION_HEALTHCHECKS_URL)
+  //   } else {
+  //     navigate(pathCreate + SERVICES_CREATION_POST_URL)
+  //   }
+  // })
 
   const onBack = () => {
     navigate(pathCreate + SERVICES_CREATION_RESOURCES_URL)
@@ -78,35 +81,43 @@ export function StepPortFeature() {
 
   const [ports, setPorts] = useState(methods.getValues().ports)
 
-  const onAddPort = () => {
-    const newPortRow = { application_port: undefined, external_port: 443, is_public: true }
-    if (ports.length) {
-      setPorts([...ports, newPortRow])
-      methods.setValue(`ports.${ports.length}`, newPortRow)
-    } else {
-      setPorts([newPortRow])
-      methods.setValue(`ports.0`, newPortRow)
-    }
-  }
+  // const onAddPort = () => {
+  //   const newPortRow = { application_port: undefined, external_port: 443, is_public: true }
+  //   if (ports.length) {
+  //     setPorts([...ports, newPortRow])
+  //     methods.setValue(`ports.${ports.length}`, newPortRow)
+  //   } else {
+  //     setPorts([newPortRow])
+  //     methods.setValue(`ports.0`, newPortRow)
+  //   }
+  // }
 
-  const removePort = (index: number) => {
-    const newPorts = methods.getValues().ports
-    newPorts.splice(index, 1)
-    setPorts(newPorts)
-    methods.reset({ ports: newPorts })
+  const removePort = (index: number | ServicePort) => {
+    if (typeof index === 'number') {
+      const newPorts = methods.getValues().ports
+      newPorts.splice(index, 1)
+      setPorts(newPorts)
+      methods.reset({ ports: newPorts })
+    }
   }
 
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
-      <FormProvider {...methods}>
-        <FlowCreatePort
-          onBack={onBack}
-          onSubmit={onSubmit}
-          onAddPort={onAddPort}
-          onRemovePort={removePort}
-          ports={ports}
-        />
-      </FormProvider>
+      <FlowCreatePort
+        onBack={onBack}
+        onEdit={(port: PortData) => {
+          openModal({
+            content: <CrudModalFeature onClose={closeModal} port={port} />,
+          })
+        }}
+        onAddPort={() => {
+          openModal({
+            content: <CrudModalFeature onClose={closeModal} />,
+          })
+        }}
+        onRemovePort={removePort}
+        ports={ports}
+      />
     </FunnelFlowBody>
   )
 }

@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { FlowPortData } from '@qovery/shared/interfaces'
-import { ButtonIcon, ButtonIconStyle, Icon, IconAwesomeEnum, InputText, InputToggle, Tooltip } from '@qovery/shared/ui'
+// import { useEffect } from 'react'
+// import { Controller, useFormContext } from 'react-hook-form'
+// import { FlowPortData } from '@qovery/shared/interfaces'
+import { ButtonIcon, ButtonIconStyle, IconAwesomeEnum } from '@qovery/shared/ui'
 
 export interface PortRowProps {
   index: number
@@ -10,18 +10,19 @@ export interface PortRowProps {
 
 export function PortRow(props: PortRowProps) {
   const { index } = props
-  const { control, watch, setValue, resetField } = useFormContext<FlowPortData>()
+  // const { control, watch, setValue, resetField } = useFormContext<FlowPortData>()
 
-  const isPublicWatch = watch(`ports.${index}.is_public`)
-  const externalPortWatch = watch(`ports.${index}.external_port`)
+  // const isPublicWatch = watch(`ports.${index}.is_public`)
+  // const externalPortWatch = watch(`ports.${index}.external_port`)
 
-  useEffect(() => {
-    setValue(`ports.${index}.external_port`, isPublicWatch ? 443 : undefined)
-  }, [isPublicWatch, index, setValue, resetField])
+  // useEffect(() => {
+  //   setValue(`ports.${index}.external_port`, isPublicWatch ? 443 : undefined)
+  // }, [isPublicWatch, index, setValue, resetField])
 
   return (
     <div data-testid={'port-row'} className="flex gap-3 mb-5 w-full items-center">
-      <Controller
+      port
+      {/* <Controller
         name={`ports.${index}.application_port`}
         control={control}
         rules={{
@@ -67,7 +68,7 @@ export function PortRow(props: PortRowProps) {
         render={({ field }) => (
           <InputToggle small onChange={field.onChange} value={field.value} title="Publicly exposed" />
         )}
-      />
+      /> */}
       <ButtonIcon
         dataTestId="delete-port"
         className="text-text-500"

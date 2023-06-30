@@ -102,7 +102,7 @@ export function PageSettingsPortsFeature() {
           content: <CrudModalFeature onClose={closeModal} application={application} port={port} />,
         })
       }}
-      onDelete={(port: ServicePort) => {
+      onDelete={(port: number | ServicePort) => {
         openModalConfirmation({
           title: 'Delete Port',
           isDelete: true,
@@ -110,7 +110,7 @@ export function PageSettingsPortsFeature() {
           name: application?.name,
           action: () => {
             if (application) {
-              const cloneApplication = deletePort(application, port.id)
+              const cloneApplication = deletePort(application, (port as ServicePort).id)
               dispatch(
                 editApplication({
                   applicationId: applicationId,
