@@ -116,7 +116,7 @@
     "babel-loader": "^8.1.0",
     "css-loader": "^6.4.0",
     "cypress": "^9.1.0",
-    "eslint": "8.26.0",
+    "eslint": "8.44.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-cypress": "^2.10.3",
     "eslint-plugin-import": "2.27.5",
