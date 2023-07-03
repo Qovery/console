@@ -45,6 +45,7 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
+            dataTestId="internal-port"
             className="mb-3"
             type="number"
             name={field.name}
@@ -75,7 +76,7 @@ export function CrudModal(props: CrudModalProps) {
             error={error?.message}
             disabled
             rightElement={
-              <Tooltip content="Only HTTP protocol is supported">
+              <Tooltip content="Only HTTP protocol is supported" side="left">
                 <div>
                   <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
                 </div>

@@ -16,7 +16,7 @@ export interface HealthcheckData {
 }
 
 export interface FlowPortData {
-  ports: PortData[]
+  ports?: PortData[]
   healthchecks?: {
     typeLiveness?: string
     typeReadiness?: string

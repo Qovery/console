@@ -1,5 +1,5 @@
 import { ServicePort } from 'qovery-typescript-axios'
-import { LoadingStatus, PortData } from '@qovery/shared/interfaces'
+import { PortData } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -9,19 +9,16 @@ import {
   ButtonStyle,
   EmptyState,
   IconAwesomeEnum,
-  LoaderSpinner,
 } from '@qovery/shared/ui'
-
-// import PortRow from '../port-row/port-row'
 
 export interface FlowCreatePortProps {
   onAddPort: () => void
-  onRemovePort: (port: number | ServicePort) => void
+  onRemovePort: (port: PortData | ServicePort) => void
   ports?: PortData[] | ServicePort[]
   onBack?: () => void
-  onEdit?: () => void
+  onEdit?: (port: PortData | ServicePort) => void
   isSetting?: boolean
-  loading?: LoadingStatus
+  onSubmit?: () => void
 }
 
 export function FlowCreatePort({
@@ -29,9 +26,9 @@ export function FlowCreatePort({
   onAddPort,
   onRemovePort,
   isSetting,
+  onSubmit,
   onBack,
   onEdit,
-  loading,
 }: FlowCreatePortProps) {
   return (
     <div>
@@ -56,11 +53,7 @@ export function FlowCreatePort({
       </div>
 
       <div className="mb-10">
-        {(loading === 'not loaded' || loading === 'loading') && ports?.length === 0 ? (
-          <div className="flex justify-center">
-            <LoaderSpinner className="w-6" />
-          </div>
-        ) : !isSetting || (ports && ports.length > 0) ? (
+        {!isSetting || (ports && ports.length > 0) ? (
           <BlockContent title="Configured ports" classNameContent="">
             {ports &&
               ports.map((customPort, i) => (
@@ -87,28 +80,35 @@ export function FlowCreatePort({
                       {(customPort as ServicePort).publicly_accessible && (
                         <span>Port Name: {(customPort as ServicePort).name}</span>
                       )}
-                      {(customPort as ServicePort).publicly_accessible && (
-                        <span>External Port: {(customPort as ServicePort).external_port}</span>
+                      {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
+                        <span>
+                          External Port:{' '}
+                          {(customPort as ServicePort).external_port || (customPort as PortData).external_port}
+                        </span>
                       )}
                     </p>
                   </div>
                   <div>
-                    <ButtonIcon
-                      className="mr-2 !bg-transparent hover:!bg-element-light-lighter-400"
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonSize.REGULAR}
-                      // onClick={() => onEdit(customPort)}
-                      dataTestId="edit-button"
-                      icon={IconAwesomeEnum.WHEEL}
-                    />
-                    <ButtonIcon
-                      className="!bg-transparent hover:!bg-element-light-lighter-400"
-                      style={ButtonIconStyle.STROKED}
-                      size={ButtonSize.REGULAR}
-                      // onClick={() => onRemovePort(customPort)}
-                      dataTestId="delete-button"
-                      icon={IconAwesomeEnum.TRASH}
-                    />
+                    {onEdit && (
+                      <ButtonIcon
+                        className="mr-2 !bg-transparent hover:!bg-element-light-lighter-400"
+                        style={ButtonIconStyle.STROKED}
+                        size={ButtonSize.REGULAR}
+                        onClick={() => onEdit(customPort)}
+                        dataTestId="edit-button"
+                        icon={IconAwesomeEnum.WHEEL}
+                      />
+                    )}
+                    {onRemovePort && (
+                      <ButtonIcon
+                        className="!bg-transparent hover:!bg-element-light-lighter-400"
+                        style={ButtonIconStyle.STROKED}
+                        size={ButtonSize.REGULAR}
+                        onClick={() => onRemovePort(customPort)}
+                        dataTestId="delete-button"
+                        icon={IconAwesomeEnum.TRASH}
+                      />
+                    )}
                   </div>
                 </div>
               ))}
@@ -143,8 +143,8 @@ export function FlowCreatePort({
           </Button>
           <Button
             dataTestId="button-submit"
-            type="submit"
-            // disabled={!formState.isValid}
+            onClick={onSubmit}
+            disabled={ports?.length === 0}
             size={ButtonSize.XLARGE}
             style={ButtonStyle.BASIC}
           >

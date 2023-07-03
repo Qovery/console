@@ -1,14 +1,9 @@
 import { Probe, ProbeType, ServicePort } from 'qovery-typescript-axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  applicationsLoadingStatus,
-  editApplication,
-  postApplicationActionsRedeploy,
-  selectApplicationById,
-} from '@qovery/domains/application'
+import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
 import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
-import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, PortData } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
@@ -73,8 +68,6 @@ export function PageSettingsPortsFeature() {
     (a, b) => JSON.stringify(a?.ports) === JSON.stringify(b?.ports)
   )
 
-  const customPortsLoadingStatus = useSelector<RootState, LoadingStatus>(applicationsLoadingStatus)
-
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -93,16 +86,15 @@ export function PageSettingsPortsFeature() {
   return (
     <PageSettingsPorts
       ports={application?.ports}
-      loading={customPortsLoadingStatus}
       onAddPort={() => {
         openModal({ content: <CrudModalFeature onClose={closeModal} application={application} /> })
       }}
-      onEdit={(port: ServicePort) => {
+      onEdit={(port: PortData | ServicePort) => {
         openModal({
-          content: <CrudModalFeature onClose={closeModal} application={application} port={port} />,
+          content: <CrudModalFeature onClose={closeModal} application={application} port={port as ServicePort} />,
         })
       }}
-      onDelete={(port: number | ServicePort) => {
+      onDelete={(port: PortData | ServicePort) => {
         openModalConfirmation({
           title: 'Delete Port',
           isDelete: true,

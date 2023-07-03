@@ -47,8 +47,8 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
 
   const methods = useForm({
     defaultValues: {
-      internal_port: props.port ? props.port.internal_port : null,
-      external_port: props.port ? props.port.external_port : null,
+      internal_port: props.port ? props.port.internal_port : undefined,
+      external_port: props.port ? props.port.external_port : undefined,
       publicly_accessible: props.port ? props.port.publicly_accessible : false,
     },
     mode: 'onChange',

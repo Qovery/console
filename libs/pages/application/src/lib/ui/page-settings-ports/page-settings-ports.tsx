@@ -1,21 +1,20 @@
 import { ServicePort } from 'qovery-typescript-axios'
 import { FlowCreatePort } from '@qovery/shared/console-shared'
-import { LoadingStatus } from '@qovery/shared/interfaces'
+import { PortData } from '@qovery/shared/interfaces'
 import { HelpSection } from '@qovery/shared/ui'
 
 export interface PageSettingsPortsProps {
-  ports?: ServicePort[]
   onAddPort: () => void
-  onEdit: (port: ServicePort) => void
-  onDelete: (port: number | ServicePort) => void
-  loading?: LoadingStatus
+  onEdit: (port: PortData | ServicePort) => void
+  onDelete: (port: PortData | ServicePort) => void
+  ports?: ServicePort[]
 }
 
-export function PageSettingsPorts({ ports, onAddPort, onEdit, onDelete, loading }: PageSettingsPortsProps) {
+export function PageSettingsPorts({ ports, onAddPort, onEdit, onDelete }: PageSettingsPortsProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8  max-w-content-with-navigation-left">
-        <FlowCreatePort isSetting ports={ports} onAddPort={onAddPort} onRemovePort={onDelete} />
+        <FlowCreatePort isSetting ports={ports} onAddPort={onAddPort} onRemovePort={onDelete} onEdit={onEdit} />
       </div>
       <HelpSection
         description="Need help? You may find these links useful"
