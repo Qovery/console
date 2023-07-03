@@ -42,8 +42,8 @@ describe('DatePicker', () => {
     const mockOnChange = jest.fn()
     const { getByText } = render(<DatePicker onChange={mockOnChange} isOpen />)
 
-    const expectedStartDate = new Date(2023, 5, 15)
-    const expectedEndDate = new Date(2023, 5, 20)
+    const expectedStartDate = new Date(2023, 6, 15)
+    const expectedEndDate = new Date(2023, 6, 20)
 
     fireEvent.click(getByText('15'))
     fireEvent.click(getByText('20'))
