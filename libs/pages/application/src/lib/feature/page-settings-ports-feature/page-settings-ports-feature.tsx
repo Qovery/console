@@ -91,7 +91,9 @@ export function PageSettingsPortsFeature() {
       }}
       onEdit={(port: PortData | ServicePort) => {
         openModal({
-          content: <CrudModalFeature onClose={closeModal} application={application} port={port as ServicePort} />,
+          content: (
+            <CrudModalFeature isSetting onClose={closeModal} application={application} port={port as ServicePort} />
+          ),
         })
       }}
       onDelete={(port: PortData | ServicePort) => {

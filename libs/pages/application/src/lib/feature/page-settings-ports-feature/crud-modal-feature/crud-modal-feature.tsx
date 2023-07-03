@@ -10,9 +10,10 @@ import { useModal } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 
 export interface CrudModalFeatureProps {
-  port?: ServicePort
-  application?: ApplicationEntity
   onClose: () => void
+  application?: ApplicationEntity
+  port?: ServicePort
+  isSetting?: boolean
 }
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePort) => {
@@ -24,6 +25,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity, 
     internal_port: parseInt(data['internal_port'], 10),
     external_port: parseInt(data['external_port'], 10),
     publicly_accessible: data['publicly_accessible'],
+    name: data['name'],
   }
 
   if (currentPort) {
@@ -50,6 +52,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
       internal_port: props.port ? props.port.internal_port : undefined,
       external_port: props.port ? props.port.external_port : undefined,
       publicly_accessible: props.port ? props.port.publicly_accessible : false,
+      name: props.port ? props.port.name : undefined,
     },
     mode: 'onChange',
   })
@@ -99,6 +102,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   return (
     <FormProvider {...methods}>
       <CrudModal
+        isSetting={props.isSetting}
         port={props.port}
         onSubmit={onSubmit}
         onClose={props.onClose}
