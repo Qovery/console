@@ -152,7 +152,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
             required: 'Please select a value.',
           }}
           render={({ field }) =>
-            props.type === EnvironmentVariableType.ALIAS || props.mode === EnvironmentVariableCrudMode.EDITION ? (
+            props.mode === EnvironmentVariableCrudMode.EDITION ? (
               <InputText
                 className="mb-3"
                 name="Scope"
