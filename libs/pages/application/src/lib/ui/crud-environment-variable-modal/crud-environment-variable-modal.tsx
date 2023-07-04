@@ -1,7 +1,17 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, ButtonStyle, Icon, InputSelect, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import {
+  Button,
+  ButtonStyle,
+  Icon,
+  IconAwesomeEnum,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  InputToggle,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/utils'
 import {
   DataFormEnvironmentVariableInterface,
@@ -141,16 +151,33 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           rules={{
             required: 'Please select a value.',
           }}
-          render={({ field }) => (
-            <InputSelect
-              className="mb-4"
-              portal
-              options={props.availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
-              onChange={field.onChange}
-              value={field.value}
-              label="Scope"
-            />
-          )}
+          render={({ field }) =>
+            props.mode === EnvironmentVariableCrudMode.EDITION ? (
+              <InputText
+                className="mb-3"
+                name="Scope"
+                value={generateScopeLabel(field.value as APIVariableScopeEnum)}
+                label="Scope"
+                rightElement={
+                  <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">
+                    <div>
+                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400 text-sm" />
+                    </div>
+                  </Tooltip>
+                }
+                disabled
+              />
+            ) : (
+              <InputSelect
+                className="mb-4"
+                portal
+                options={props.availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
+                onChange={field.onChange}
+                value={field.value}
+                label="Scope"
+              />
+            )
+          }
         />
 
         {props.mode === EnvironmentVariableCrudMode.CREATION && props.type === EnvironmentVariableType.NORMAL && (
