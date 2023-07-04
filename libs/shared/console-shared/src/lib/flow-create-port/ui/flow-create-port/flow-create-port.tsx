@@ -139,13 +139,7 @@ export function FlowCreatePort({
           >
             Back
           </Button>
-          <Button
-            dataTestId="button-submit"
-            onClick={onSubmit}
-            disabled={ports?.length === 0}
-            size={ButtonSize.XLARGE}
-            style={ButtonStyle.BASIC}
-          >
+          <Button dataTestId="button-submit" onClick={onSubmit} size={ButtonSize.XLARGE} style={ButtonStyle.BASIC}>
             Continue
           </Button>
         </div>
