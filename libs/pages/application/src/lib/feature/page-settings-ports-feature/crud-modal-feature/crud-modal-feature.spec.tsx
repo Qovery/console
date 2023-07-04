@@ -20,13 +20,16 @@ describe('CrudModalFeature', () => {
   })
 
   it('should submit a new port', () => {
-    const app = handleSubmit({ internal_port: '520', external_port: '340', publicly_accessible: false }, application)
+    const app = handleSubmit(
+      { internal_port: '520', external_port: '340', publicly_accessible: false, name: 'p520' },
+      application
+    )
     expect(app.ports).toHaveLength(2)
   })
 
   it('should submit a edit port', () => {
     const app = handleSubmit(
-      { internal_port: '52', external_port: '340', publicly_accessible: false },
+      { internal_port: '52', external_port: '340', publicly_accessible: false, name: 'p520' },
       application,
       application.ports?.[0]
     )

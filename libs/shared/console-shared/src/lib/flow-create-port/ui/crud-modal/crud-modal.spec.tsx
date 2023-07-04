@@ -1,5 +1,4 @@
-import { act, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import CrudModal, { CrudModalProps } from './crud-modal'
 
@@ -31,7 +30,6 @@ describe('CrudModal', () => {
 
     await waitFor(() => {
       getByDisplayValue(99)
-      //getByDisplayValue(420)
       getByDisplayValue('true')
     })
   })

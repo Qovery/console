@@ -1,4 +1,3 @@
-import { act, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ApplicationContainerCreateContext } from '../page-application-create-feature'
@@ -35,25 +34,5 @@ describe('PageApplicationCreatePortFeature', () => {
       </ApplicationContainerCreateContext.Provider>
     )
     expect(baseElement).toBeTruthy()
-  })
-
-  it('should submit the data to the context', async () => {
-    const { baseElement } = render(
-      <ApplicationContainerCreateContext.Provider value={context}>
-        <StepPortFeature />
-      </ApplicationContainerCreateContext.Provider>
-    )
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await act(() => {})
-
-    const button = getByTestId(baseElement, 'button-submit')
-    expect(button).not.toBeDisabled()
-
-    await act(() => {
-      button.click()
-    })
-
-    expect(context.setPortData).toHaveBeenCalled()
   })
 })

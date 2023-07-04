@@ -1,14 +1,16 @@
 import { ServicePort } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { PortData } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
-  port?: ServicePort
+  port?: ServicePort | PortData
   onSubmit: () => void
   onClose: () => void
   loading?: boolean
   isEdit?: boolean
+  isSetting?: boolean
 }
 
 export function CrudModal(props: CrudModalProps) {
@@ -44,42 +46,14 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
-            className="mb-3"
+            dataTestId="internal-port"
+            className="mb-5"
             type="number"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
             label="Application port"
             error={error?.message}
-          />
-        )}
-      />
-      <Controller
-        key={`port-${watchPublicly}`}
-        name="external_port"
-        defaultValue=""
-        control={control}
-        rules={{
-          required: watchPublicly ? 'Please enter a public port.' : undefined,
-          pattern: pattern,
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            className="mb-5"
-            type="number"
-            name={field.name}
-            onChange={field.onChange}
-            value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
-            label="External port"
-            error={error?.message}
-            disabled
-            rightElement={
-              <Tooltip content="Only HTTP protocol is supported">
-                <div>
-                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
-                </div>
-              </Tooltip>
-            }
           />
         )}
       />
@@ -93,13 +67,65 @@ export function CrudModal(props: CrudModalProps) {
               field.onChange(!field.value)
               field.value && setValue('external_port', null)
             }}
-            className="flex items-center mr-4 mb-2"
+            className="flex items-center mr-4 mb-5"
           >
             <InputToggle onChange={field.onChange} value={field.value} title={field.value} small />
             <span className="text-text-600 text-ssm font-medium cursor-pointer">Publicly exposed</span>
           </div>
         )}
       />
+      <Controller
+        key={`port-${watchPublicly}`}
+        name="external_port"
+        defaultValue=""
+        control={control}
+        rules={{
+          required: watchPublicly ? 'Please enter a public port.' : undefined,
+          pattern: pattern,
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            type="number"
+            name={field.name}
+            onChange={field.onChange}
+            value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
+            label="External port"
+            error={error?.message}
+            disabled
+            className="mb-4"
+            rightElement={
+              <Tooltip content="Only HTTP protocol is supported" side="left">
+                <div>
+                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                </div>
+              </Tooltip>
+            }
+          />
+        )}
+      />
+      {props.isSetting && props.isEdit && (
+        <>
+          <Controller
+            name="name"
+            defaultValue=""
+            control={control}
+            rules={{
+              required: 'Please enter a port name.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-1"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Port name"
+                error={error?.message}
+              />
+            )}
+          />
+          <p className="text-text-400 text-xs ml-4 mb-5">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
+        </>
+      )}
     </ModalCrud>
   )
 }

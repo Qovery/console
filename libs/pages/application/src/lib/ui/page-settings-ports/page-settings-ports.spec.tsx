@@ -1,12 +1,5 @@
-import {
-  act,
-  findAllByTestId,
-  findByDisplayValue,
-  findByText,
-  fireEvent,
-  render,
-  waitFor,
-} from '@testing-library/react'
+import { act, findByText, fireEvent, render, waitFor } from '@testing-library/react'
+import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
 import PageSettingsPorts, { PageSettingsPortsProps } from './page-settings-ports'
 
 let props: PageSettingsPortsProps
@@ -23,9 +16,9 @@ describe('PageSettingsPorts', () => {
           internal_port: 80,
           external_port: 433,
           publicly_accessible: true,
+          protocol: PortProtocolEnum.HTTP,
         },
       ],
-      loading: 'loaded',
     }
   })
   it('should render successfully', () => {
@@ -40,12 +33,14 @@ describe('PageSettingsPorts', () => {
         internal_port: 80,
         external_port: 433,
         publicly_accessible: true,
+        protocol: PortProtocolEnum.HTTP,
       },
       {
         id: '2',
         internal_port: 81,
         external_port: 431,
         publicly_accessible: false,
+        protocol: PortProtocolEnum.HTTP,
       },
     ]
     const { findAllByTestId } = render(<PageSettingsPorts {...props} />)
@@ -61,21 +56,27 @@ describe('PageSettingsPorts', () => {
 
     await waitFor(async () => {
       const formRows = await findAllByTestId('form-row')
-      expect(formRows[0].querySelectorAll('input')).toHaveLength(3)
       expect(formRows[0].querySelectorAll('[data-testid="delete-button"]')).toHaveLength(1)
       expect(formRows[0].querySelectorAll('[data-testid="edit-button"]')).toHaveLength(1)
     })
   })
 
-  it('row should initialize with good values', async () => {
-    const { baseElement } = render(<PageSettingsPorts {...props} />)
+  it('displays the correct values in the form rows', () => {
+    props.ports = [
+      {
+        id: '1',
+        internal_port: 8080,
+        external_port: 433,
+        publicly_accessible: true,
+        protocol: PortProtocolEnum.HTTP,
+      },
+    ]
+    const { getByText } = render(<PageSettingsPorts {...props} />)
 
-    await waitFor(async () => {
-      const formRows = await findAllByTestId(baseElement, 'form-row')
-      await findByDisplayValue(formRows[0], '80')
-      await findByDisplayValue(formRows[0], '433')
-      await findByDisplayValue(formRows[0], 'true')
-    })
+    getByText(`Application Port: ${props.ports[0].internal_port}`)
+    getByText(`External Port: ${props.ports[0].external_port}`)
+    getByText(`Public: ${props.ports[0].publicly_accessible ? 'Yes' : 'No'}`)
+    getByText(`Protocol: ${props.ports[0].protocol}`)
   })
 
   it('should have an help section', async () => {

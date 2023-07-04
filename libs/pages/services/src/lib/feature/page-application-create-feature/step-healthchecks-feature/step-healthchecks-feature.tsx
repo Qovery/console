@@ -104,8 +104,8 @@ export function StepHealthchecksFeature() {
         typeLiveness: typeLiveness as string,
         typeReadiness: typeReadiness as string,
         item: {
-          liveness_probe: probeFormatted(data.liveness_probe, portData?.ports[0].application_port) as ProbeExtended,
-          readiness_probe: probeFormatted(data.readiness_probe, portData?.ports[0].application_port) as ProbeExtended,
+          liveness_probe: probeFormatted(data.liveness_probe, portData?.ports?.[0].application_port) as ProbeExtended,
+          readiness_probe: probeFormatted(data.readiness_probe, portData?.ports?.[0].application_port) as ProbeExtended,
         },
       },
     })
