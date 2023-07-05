@@ -95,8 +95,8 @@ export function StepHealthchecksFeature() {
   }, [methods, portData?.healthchecks])
 
   const onSubmit = methods.handleSubmit((data) => {
-    const typeLiveness = data.liveness_probe.current_type
-    const typeReadiness = data.readiness_probe.current_type
+    const typeLiveness = data.liveness_probe ? data.liveness_probe.current_type : ProbeTypeEnum.NONE
+    const typeReadiness = data.readiness_probe ? data.readiness_probe.current_type : ProbeTypeEnum.NONE
 
     setPortData({
       ports: portData?.ports || [],
@@ -104,8 +104,14 @@ export function StepHealthchecksFeature() {
         typeLiveness: typeLiveness as string,
         typeReadiness: typeReadiness as string,
         item: {
-          liveness_probe: probeFormatted(data.liveness_probe, portData?.ports?.[0].application_port) as ProbeExtended,
-          readiness_probe: probeFormatted(data.readiness_probe, portData?.ports?.[0].application_port) as ProbeExtended,
+          liveness_probe:
+            data.liveness_probe && typeLiveness !== ProbeTypeEnum.NONE
+              ? (probeFormatted(data.liveness_probe, portData?.ports?.[0].application_port) as ProbeExtended)
+              : undefined,
+          readiness_probe:
+            data.readiness_probe && typeReadiness !== ProbeTypeEnum.NONE
+              ? (probeFormatted(data.readiness_probe, portData?.ports?.[0].application_port) as ProbeExtended)
+              : undefined,
         },
       },
     })

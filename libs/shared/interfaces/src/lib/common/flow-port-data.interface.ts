@@ -11,8 +11,8 @@ export type ProbeExtended = Probe & {
 }
 
 export interface HealthcheckData {
-  readiness_probe: ProbeExtended
-  liveness_probe: ProbeExtended
+  readiness_probe?: ProbeExtended
+  liveness_probe?: ProbeExtended
 }
 
 export interface FlowPortData {

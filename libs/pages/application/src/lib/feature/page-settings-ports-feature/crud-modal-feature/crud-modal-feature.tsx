@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
-import { CrudModal } from '@qovery/shared/console-shared'
-import { getServiceType } from '@qovery/shared/enums'
+import { CrudModal, defaultLivenessProbe } from '@qovery/shared/console-shared'
+import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
@@ -38,6 +38,20 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity, 
     }) as ServicePort[]
   } else {
     cloneApplication.ports = [...ports, port] as ServicePort[]
+  }
+
+  if (ports.length === 0) {
+    cloneApplication.healthchecks = {
+      liveness_probe: {
+        type: {
+          [ProbeTypeEnum.TCP.toLowerCase()]: {
+            port: port.internal_port,
+            host: null,
+          },
+        },
+        ...defaultLivenessProbe,
+      },
+    }
   }
 
   return cloneApplication
