@@ -1,5 +1,6 @@
 import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { PortProtocolEnum } from 'qovery-typescript-axios'
 import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'
 
 const props: CrudModalFeatureProps = {
@@ -7,6 +8,7 @@ const props: CrudModalFeatureProps = {
     application_port: 80,
     external_port: 444,
     is_public: true,
+    protocol: PortProtocolEnum.HTTP,
   },
   onClose: jest.fn(),
 }
@@ -56,7 +58,9 @@ describe('CrudModalFeature', () => {
     await waitFor(() => {
       fireEvent.click(submitButton)
       expect(setPortDataMock).toHaveBeenCalledWith({
-        ports: [{ application_port: '8080', external_port: undefined, is_public: false }],
+        ports: [
+          { application_port: '8080', external_port: undefined, is_public: false, protocol: PortProtocolEnum.HTTP },
+        ],
         healthchecks: undefined,
       })
     })

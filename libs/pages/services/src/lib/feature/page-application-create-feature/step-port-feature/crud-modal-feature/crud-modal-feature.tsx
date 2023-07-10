@@ -1,4 +1,4 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { CrudModal } from '@qovery/shared/console-shared'
@@ -21,6 +21,7 @@ export function CrudModalFeature({ port, portData, setPortData, onClose }: CrudM
       internal_port: port ? (port as PortData).application_port : undefined,
       external_port: port ? port.external_port : undefined,
       publicly_accessible: port ? (port as PortData).is_public : false,
+      protocol: port ? port.protocol : PortProtocolEnum.HTTP,
     },
     mode: 'onChange',
   })
@@ -32,6 +33,7 @@ export function CrudModalFeature({ port, portData, setPortData, onClose }: CrudM
       application_port: data['internal_port'] || undefined,
       external_port: data['external_port'] || undefined,
       is_public: data['publicly_accessible'] || false,
+      protocol: data['protocol'] || PortProtocolEnum.HTTP,
     }
 
     const fakeLoading = () => {

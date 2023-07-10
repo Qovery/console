@@ -1,4 +1,4 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -21,10 +21,13 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity, 
 
   const ports: ServicePort[] | [] = cloneApplication.ports || []
 
+  console.log(data['protocol'])
+
   const port = {
     internal_port: parseInt(data['internal_port'], 10),
     external_port: parseInt(data['external_port'], 10),
     publicly_accessible: data['publicly_accessible'],
+    protocol: data['protocol'],
     name: data['name'],
   }
 
@@ -66,6 +69,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
       internal_port: props.port ? props.port.internal_port : undefined,
       external_port: props.port ? props.port.external_port : undefined,
       publicly_accessible: props.port ? props.port.publicly_accessible : false,
+      protocol: props.port ? props.port.protocol : PortProtocolEnum.HTTP,
       name: props.port ? props.port.name : undefined,
     },
     mode: 'onChange',
