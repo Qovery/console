@@ -84,7 +84,7 @@ export function StepSummaryFeature() {
               internal_port: port.application_port || 80,
               external_port: port.external_port,
               publicly_accessible: port.is_public,
-              protocol: PortProtocolEnum.HTTP,
+              protocol: port.protocol,
             })) || [],
           cpu: cpu,
           memory: memory,

@@ -1,6 +1,6 @@
 import { act, getByTestId } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { GitProviderEnum } from 'qovery-typescript-axios'
+import { GitProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { RepositoryEntity } from '@qovery/shared/interfaces'
@@ -61,6 +61,7 @@ const mockContext: ApplicationContainerCreateContextInterface = {
         application_port: 80,
         external_port: 443,
         is_public: true,
+        protocol: PortProtocolEnum.HTTP,
       },
     ],
   },
