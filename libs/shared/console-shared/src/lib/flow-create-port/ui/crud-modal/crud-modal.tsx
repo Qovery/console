@@ -145,6 +145,7 @@ export function CrudModal(props: CrudModalProps) {
                 onChange={field.onChange}
                 value={field.value}
                 label="Port name"
+                disabled={!watchPublicly}
                 error={error?.message}
               />
             )}

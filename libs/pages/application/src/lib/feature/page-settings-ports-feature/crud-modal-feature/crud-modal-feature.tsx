@@ -1,4 +1,4 @@
-import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
+import { ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -25,7 +25,7 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity, 
     internal_port: parseInt(data['internal_port'], 10),
     external_port: parseInt(data['external_port'], 10),
     publicly_accessible: data['publicly_accessible'],
-    protocol: data['publicly_accessible'] ? data['protocol'] : PortProtocolEnum.HTTP,
+    protocol: data['protocol'] ? data['protocol'] : currentPort?.protocol,
     name: data['name'],
   }
 
