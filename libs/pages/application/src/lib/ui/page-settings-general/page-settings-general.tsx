@@ -4,10 +4,9 @@ import { Controller, useFormContext } from 'react-hook-form'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
-  GeneralContainerSettings,
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication, isCronJob, isJob } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -79,12 +78,6 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               jobType={isCronJob(type) ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
               organization={props.organization}
             />
-          )}
-          {isContainer(type) && (
-            <BlockContent title="Container settings">
-              <GeneralContainerSettings organization={props.organization} />
-              <EntrypointCmdInputs isContainer />
-            </BlockContent>
           )}
           {isApplication(type) && (
             <>

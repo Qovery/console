@@ -7,7 +7,6 @@ export interface EntrypointCmdInputsProps {
   cmdRequired?: boolean
   imageEntryPointFieldName?: string
   cmdArgumentsFieldName?: string
-  isContainer?: boolean
 }
 
 export const formattedCmdArguments = (stringArray?: string) => {
@@ -32,7 +31,6 @@ export function EntrypointCmdInputs({
   cmdRequired = false,
   imageEntryPointFieldName = 'image_entry_point',
   cmdArgumentsFieldName = 'cmd_arguments',
-  isContainer,
 }: EntrypointCmdInputsProps) {
   const { control, watch } = useFormContext()
 
@@ -75,7 +73,7 @@ export function EntrypointCmdInputs({
       />
       <p className="text-xs ml-4 mt-1 text-text-400">
         Expected format: ["-h", "0.0.0.0", "-p", "8080", "string"]
-        {isContainer && watch(imageEntryPointFieldName) && (
+        {watch(imageEntryPointFieldName) && (
           <span className="block mt-1">
             i.e: docker run --entrypoint {watch(imageEntryPointFieldName)} {watch('image_name')}{' '}
             {formattedCmdArguments(watch(cmdArgumentsFieldName))}
