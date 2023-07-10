@@ -9,6 +9,7 @@ const props: CrudModalFeatureProps = {
     external_port: 444,
     is_public: true,
     protocol: PortProtocolEnum.HTTP,
+    name: 'p80',
   },
   onClose: jest.fn(),
 }
@@ -59,7 +60,13 @@ describe('CrudModalFeature', () => {
       fireEvent.click(submitButton)
       expect(setPortDataMock).toHaveBeenCalledWith({
         ports: [
-          { application_port: '8080', external_port: undefined, is_public: false, protocol: PortProtocolEnum.HTTP },
+          {
+            application_port: '8080',
+            external_port: undefined,
+            is_public: false,
+            protocol: PortProtocolEnum.HTTP,
+            name: 'p8080',
+          },
         ],
         healthchecks: undefined,
       })

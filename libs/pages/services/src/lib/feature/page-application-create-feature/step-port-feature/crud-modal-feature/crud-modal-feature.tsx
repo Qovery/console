@@ -22,6 +22,7 @@ export function CrudModalFeature({ port, portData, setPortData, onClose }: CrudM
       external_port: port ? port.external_port : undefined,
       publicly_accessible: port ? (port as PortData).is_public : false,
       protocol: port ? port.protocol : PortProtocolEnum.HTTP,
+      name: port ? port.name : '',
     },
     mode: 'onChange',
   })
@@ -34,6 +35,7 @@ export function CrudModalFeature({ port, portData, setPortData, onClose }: CrudM
       external_port: data['external_port'] || undefined,
       is_public: data['publicly_accessible'] || false,
       protocol: data['protocol'] || PortProtocolEnum.HTTP,
+      name: data['name'] || `p${data['internal_port']}`,
     }
 
     const fakeLoading = () => {

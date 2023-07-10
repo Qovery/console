@@ -85,6 +85,7 @@ export function StepSummaryFeature() {
               external_port: port.external_port,
               publicly_accessible: port.is_public,
               protocol: port.protocol,
+              name: port.name || `p${port.application_port}`,
             })) || [],
           cpu: cpu,
           memory: memory,

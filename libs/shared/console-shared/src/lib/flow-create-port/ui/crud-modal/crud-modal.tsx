@@ -1,5 +1,5 @@
 import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { FormEvent, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { PortData } from '@qovery/shared/interfaces'
 import {
@@ -27,6 +27,7 @@ export function CrudModal(props: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
   const watchPublicly = watch('publicly_accessible') || false
+  const watchInternalPort = watch('internal_port') || false
   const watchExternalPort = watch('external_port') || ''
 
   const pattern = {
@@ -61,7 +62,10 @@ export function CrudModal(props: CrudModalProps) {
             className="mb-5"
             type="number"
             name={field.name}
-            onChange={field.onChange}
+            onChange={(e: FormEvent<HTMLInputElement>) => {
+              setValue('name', `p${e.currentTarget.value}`)
+              field.onChange(e)
+            }}
             value={field.value}
             label="Application port"
             error={error?.message}
@@ -85,72 +89,72 @@ export function CrudModal(props: CrudModalProps) {
           </div>
         )}
       />
-      <Controller
-        name="protocol"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            label="Select protocol"
-            value={field.value}
-            options={Object.keys(PortProtocolEnum).map((value: string) => ({ label: value, value: value }))}
-            error={error?.message}
-            onChange={field.onChange}
-            disabled={!watchPublicly}
-            className="mb-5"
-          />
-        )}
-      />
-      <Controller
-        key={`port-${watchPublicly}`}
-        name="external_port"
-        defaultValue=""
-        control={control}
-        rules={{
-          required: watchPublicly ? 'Please enter a public port.' : undefined,
-          pattern: pattern,
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            name={field.name}
-            onChange={field.onChange}
-            value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
-            label="External port"
-            error={error?.message}
-            disabled
-            className="mb-4"
-            rightElement={
-              <Tooltip content="Only HTTP protocol is supported" side="left">
-                <div>
-                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
-                </div>
-              </Tooltip>
-            }
-          />
-        )}
-      />
-      {props.isSetting && props.isEdit && (
+      {watchPublicly && (
         <>
           <Controller
-            name="name"
-            defaultValue=""
+            name="protocol"
             control={control}
-            rules={{
-              required: 'Please enter a port name.',
-            }}
             render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="mb-1"
-                name={field.name}
-                onChange={field.onChange}
+              <InputSelect
+                label="Select protocol"
                 value={field.value}
-                label="Port name"
-                disabled={!watchPublicly}
+                options={Object.keys(PortProtocolEnum).map((value: string) => ({ label: value, value: value }))}
                 error={error?.message}
+                onChange={field.onChange}
+                className="mb-5"
               />
             )}
           />
-          <p className="text-text-400 text-xs ml-4 mb-5">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
+          <Controller
+            key={`port-${watchPublicly}`}
+            name="external_port"
+            defaultValue=""
+            control={control}
+            rules={{
+              required: watchPublicly ? 'Please enter a public port.' : undefined,
+              pattern: pattern,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                type="number"
+                name={field.name}
+                onChange={field.onChange}
+                value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
+                label="External port"
+                error={error?.message}
+                disabled
+                className="mb-4"
+                rightElement={
+                  <Tooltip content="You cannot configure the port used externally" side="left">
+                    <div>
+                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                    </div>
+                  </Tooltip>
+                }
+              />
+            )}
+          />
+          <>
+            <Controller
+              name="name"
+              defaultValue={watchInternalPort ? `p${watchInternalPort}` : ''}
+              control={control}
+              rules={{
+                required: 'Please enter a port name.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Port name"
+                  error={error?.message}
+                />
+              )}
+            />
+            <p className="text-text-400 text-xs ml-4 mb-5">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
+          </>
         </>
       )}
       <BannerBox

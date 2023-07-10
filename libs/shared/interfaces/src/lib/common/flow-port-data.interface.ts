@@ -5,6 +5,7 @@ export interface PortData {
   external_port: number | undefined
   is_public: boolean
   protocol: PortProtocolEnum
+  name: string
 }
 
 export type ProbeExtended = Probe & {
