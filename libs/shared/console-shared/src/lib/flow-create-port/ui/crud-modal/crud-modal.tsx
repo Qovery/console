@@ -35,7 +35,8 @@ export function CrudModal(props: CrudModalProps) {
   }
 
   useEffect(() => {
-    setValue(`external_port`, watchPublicly ? 443 : undefined)
+    setValue('external_port', watchPublicly ? 443 : undefined)
+    setValue('protocol', !watchPublicly ? PortProtocolEnum.HTTP : undefined)
   }, [watchPublicly, setValue])
 
   return (
@@ -86,7 +87,6 @@ export function CrudModal(props: CrudModalProps) {
       />
       <Controller
         name="protocol"
-        defaultValue={PortProtocolEnum.HTTP}
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
@@ -95,6 +95,7 @@ export function CrudModal(props: CrudModalProps) {
             options={Object.keys(PortProtocolEnum).map((value: string) => ({ label: value, value: value }))}
             error={error?.message}
             onChange={field.onChange}
+            disabled={!watchPublicly}
             className="mb-5"
           />
         )}
