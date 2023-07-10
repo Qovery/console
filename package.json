@@ -59,7 +59,7 @@
     "msw": "^1.0.1",
     "nx": "^16.4.0",
     "nx-cloud": "16.0.5",
-    "postcss": "8.4.21",
+    "postcss": "8.4.25",
     "posthog-js": "^1.24.0",
     "qovery-typescript-axios": "^1.1.159",
     "react": "18.2.0",
