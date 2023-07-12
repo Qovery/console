@@ -75,7 +75,7 @@ describe('PageSettingsGeneralFeature', () => {
     })
 
     const cloneApplication = handleSubmit(
-      { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE },
+      { name: 'hello', accessibility: DatabaseAccessibilityEnum.PRIVATE, version: '12' },
       mockDatabase
     )
 

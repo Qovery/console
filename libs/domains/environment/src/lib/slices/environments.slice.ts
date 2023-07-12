@@ -245,7 +245,7 @@ export const useCloneEnvironment = (
   )
 }
 
-export const useFetchDatabaseConfiguration = (projectId: string, environmentId: string) => {
+export const useFetchDatabaseConfiguration = (projectId: string, environmentId: string, enabled = true) => {
   return useQuery<DatabaseConfiguration[], Error>(
     ['project', projectId, 'environments', environmentId, 'databaseConfiguration'],
     async () => {
@@ -254,6 +254,7 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
     },
     {
       onError: (err) => toastError(err),
+      enabled: enabled,
     }
   )
 }
