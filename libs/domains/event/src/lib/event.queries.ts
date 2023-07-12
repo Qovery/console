@@ -24,6 +24,17 @@ export interface EventQueryParams {
   stepBackToken?: string
 }
 
+export interface EventTargetsQueryParams {
+  fromTimestamp?: string
+  toTimestamp?: string
+  eventType?: OrganizationEventType
+  targetType?: OrganizationEventTargetType
+  triggeredBy?: string
+  origin?: OrganizationEventOrigin
+  projectId?: string
+  environmentId?: string
+}
+
 export const useFetchEvents = (organizationId: string, queryParams: EventQueryParams) => {
   const {
     pageSize,
@@ -54,6 +65,31 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
         subTargetType,
         triggeredBy,
         origin
+      )
+      return response.data
+    },
+    {
+      onError: (err) => toastError(err),
+    }
+  )
+}
+
+export const useFetchEventTargets = (organizationId: string, queryParams: EventTargetsQueryParams) => {
+  const { eventType, targetType, origin, triggeredBy, toTimestamp, fromTimestamp, projectId, environmentId } =
+    queryParams
+  return useQuery<any, Error>(
+    ['organization', organizationId, 'events', queryParams],
+    async () => {
+      const response = await eventsApi.getOrganizationEventTargets(
+        organizationId,
+        fromTimestamp,
+        toTimestamp,
+        eventType,
+        targetType,
+        triggeredBy,
+        origin,
+        projectId,
+        environmentId
       )
       return response.data
     },

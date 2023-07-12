@@ -1,4 +1,9 @@
-import { OrganizationEventOrigin, OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
+import {
+  OrganizationEventOrigin,
+  OrganizationEventResponse,
+  OrganizationEventType,
+  Project,
+} from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
 import {
   HelpSection,
@@ -20,7 +25,7 @@ export interface PageGeneralProps {
   onPrevious: () => void
   onChangeTimestamp: (startDate: Date, endDate: Date) => void
   onChangeClearTimestamp: () => void
-  onChangeType: (value?: string | string[]) => void
+  onChangeType: (type: string, value?: string | string[]) => void
   handleClearFilter: () => void
   timestamps?: [Date, Date]
   isOpenTimestamp: boolean
@@ -31,6 +36,7 @@ export interface PageGeneralProps {
   pageSize?: string
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
+  projects?: Project[]
 }
 
 export function PageGeneral({
@@ -52,6 +58,7 @@ export function PageGeneral({
   timestamps,
   setFilter,
   filter,
+  projects,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -82,10 +89,10 @@ export function PageGeneral({
       title: 'User',
     },
     {
-      title: 'Tool',
+      title: 'Source',
       filter: [
         {
-          title: 'Filter by tool',
+          title: 'Filter by source',
           key: 'origin',
           itemsCustom: Object.keys(OrganizationEventOrigin).map((item) => item),
           hideFilterNumber: true,
@@ -111,6 +118,7 @@ export function PageGeneral({
             timestamps={timestamps}
             onChangeType={onChangeType}
             clearFilter={handleClearFilter}
+            projects={projects}
           />
         </div>
 

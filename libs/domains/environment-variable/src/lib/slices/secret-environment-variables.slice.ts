@@ -4,9 +4,9 @@ import {
   ApplicationSecretApi,
   ContainerSecretApi,
   EnvironmentSecretApi,
-  EnvironmentVariableRequest,
   JobSecretApi,
   ProjectSecretApi,
+  SecretRequest,
   Value,
 } from 'qovery-typescript-axios'
 import { Key } from 'qovery-typescript-axios/api'
@@ -47,7 +47,7 @@ export const createSecret = createAsyncThunk(
   async (payload: {
     entityId: string
     applicationId: string
-    environmentVariableRequest: EnvironmentVariableRequest
+    environmentVariableRequest: SecretRequest
     scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void
@@ -208,7 +208,7 @@ export const editSecret = createAsyncThunk(
   async (payload: {
     entityId: string
     environmentVariableId: string
-    environmentVariableRequest: EnvironmentVariableRequest
+    environmentVariableRequest: SecretRequest
     scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void

@@ -5,11 +5,14 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
+import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, TableFilterProps } from '@qovery/shared/ui'
 import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
+import { RootState } from '@qovery/store'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export const extractEventQueryParams = (urlString: string): EventQueryParams => {
@@ -50,6 +53,7 @@ export function PageGeneralFeature() {
   const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
+  const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
 
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
@@ -140,15 +144,27 @@ export function PageGeneralFeature() {
     setIsOpenTimestamp(!isOpenTimestamp)
   }
 
-  const handeChangeType = (value?: string | string[]) => {
-    setSearchParams((prev) => {
-      if (value) {
-        prev.set('targetType', value as string)
-      } else {
-        prev.delete('targetType')
-      }
-      return prev
-    })
+  const handeChangeType = (name: string, value?: string | string[]) => {
+    if (name === 'targetType') {
+      setSearchParams((prev) => {
+        if (value) {
+          prev.set('targetType', value as string)
+        } else {
+          prev.delete('targetType')
+          prev.delete('projectId')
+        }
+        return prev
+      })
+    } else if (name === 'project') {
+      setSearchParams((prev) => {
+        if (value) {
+          prev.set('projectId', value as string)
+        } else {
+          prev.delete('projectId')
+        }
+        return prev
+      })
+    }
   }
 
   const handleClearTimestamp = () => {
@@ -194,6 +210,7 @@ export function PageGeneralFeature() {
       isOpenTimestamp={isOpenTimestamp}
       filter={filter}
       setFilter={setFilter}
+      projects={projects}
     />
   )
 }

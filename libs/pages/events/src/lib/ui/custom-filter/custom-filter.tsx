@@ -1,5 +1,5 @@
 import { addMonths } from 'date-fns'
-import { OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { Environment, OrganizationEventTargetType, Project } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -10,9 +10,11 @@ export interface CustomFilterProps {
   onChangeClearTimestamp: () => void
   isOpenTimestamp: boolean
   setIsOpenTimestamp: (isOpen: boolean) => void
-  onChangeType: (value?: string | string[]) => void
+  onChangeType: (type: string, value?: string | string[]) => void
   clearFilter: () => void
   timestamps?: [Date, Date]
+  projects?: Project[]
+  environments?: Environment[]
 }
 
 export function CustomFilter({
@@ -23,8 +25,15 @@ export function CustomFilter({
   isOpenTimestamp,
   timestamps,
   setIsOpenTimestamp,
+  projects = [],
+  environments = [],
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
+
+  console.log(searchParams)
+
+  const targetType = searchParams.get('targetType') as string
+  const projectId = searchParams.get('projectId') as string
 
   return (
     <>
@@ -75,15 +84,42 @@ export function CustomFilter({
       </div>
       <div className="flex items-center relative z-20 text-text-400 text-ssm font-medium">
         <p className=" mr-1.5">Search</p>
-        <InputFilter
-          name="Type"
-          options={Object.keys(OrganizationEventTargetType).map((type) => ({
-            label: upperCaseFirstLetter(type)?.split('_').join(' ') || '',
-            value: type,
-          }))}
-          onChange={onChangeType}
-          defaultValue={searchParams.get('targetType') as string}
-        />
+        <div className="flex items-center gap-2">
+          <InputFilter
+            name="Type"
+            nameKey="targetType"
+            options={Object.keys(OrganizationEventTargetType).map((type) => ({
+              label: upperCaseFirstLetter(type)?.split('_').join(' ') || '',
+              value: type,
+            }))}
+            onChange={onChangeType}
+            defaultValue={targetType}
+          />
+          {targetType && (
+            <InputFilter
+              name="Project"
+              nameKey="projectId"
+              options={projects?.map((project) => ({
+                label: project.name || '',
+                value: project.id,
+              }))}
+              onChange={onChangeType}
+              defaultValue={projectId}
+            />
+          )}
+          {projectId && targetType && (
+            <InputFilter
+              name="Environment"
+              nameKey="environmentId"
+              options={environments?.map((environment) => ({
+                label: environment.name || '',
+                value: environment.id,
+              }))}
+              onChange={onChangeType}
+              defaultValue={projectId}
+            />
+          )}
+        </div>
         {searchParams.toString().length > 0 && (
           <span className="link text-brand-500 cursor-pointer ml-6" onClick={clearFilter}>
             Clear all

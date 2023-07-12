@@ -4,9 +4,9 @@ import {
   ApplicationEnvironmentVariableApi,
   ContainerEnvironmentVariableApi,
   EnvironmentVariableApi,
-  EnvironmentVariableRequest,
   JobEnvironmentVariableApi,
   ProjectEnvironmentVariableApi,
+  SecretRequest,
   Value,
   VariableImport,
   VariableImportRequestVars,
@@ -76,7 +76,7 @@ export const importEnvironmentVariables = createAsyncThunk(
 export const createEnvironmentVariablePayloadCreator = async (payload: {
   entityId: string
   applicationId: string
-  environmentVariableRequest: EnvironmentVariableRequest
+  environmentVariableRequest: SecretRequest
   scope: APIVariableScopeEnum
   serviceType: ServiceTypeEnum
   toasterCallback?: () => void
@@ -249,7 +249,7 @@ export const editEnvironmentVariables = createAsyncThunk(
   async (payload: {
     entityId: string
     environmentVariableId: string
-    environmentVariableRequest: EnvironmentVariableRequest
+    environmentVariableRequest: SecretRequest
     scope: APIVariableScopeEnum
     serviceType: ServiceTypeEnum
     toasterCallback?: () => void

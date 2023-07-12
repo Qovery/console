@@ -7,12 +7,13 @@ import InputSelect from '../input-select/input-select'
 
 export interface InputFilterProps {
   name: string
+  nameKey: string
   options: Value[]
-  onChange: (value?: string | string[]) => void
+  onChange: (type: string, value?: string | string[]) => void
   defaultValue?: string | string[]
 }
 
-export function InputFilter({ name, options, onChange, defaultValue }: InputFilterProps) {
+export function InputFilter({ name, nameKey, options, onChange, defaultValue }: InputFilterProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentValue, setCurrentValue] = useState<string | string[] | undefined>(defaultValue)
 
@@ -48,7 +49,7 @@ export function InputFilter({ name, options, onChange, defaultValue }: InputFilt
               className="w-[92px]"
               options={options}
               onChange={(value) => {
-                onChange(value)
+                onChange(nameKey, value)
                 setCurrentValue(value)
               }}
             />
@@ -61,7 +62,7 @@ export function InputFilter({ name, options, onChange, defaultValue }: InputFilt
                 role="button"
                 onClick={(event) => {
                   event.stopPropagation()
-                  onChange(undefined)
+                  onChange(name, undefined)
                   setCurrentValue(undefined)
                   setIsOpen(false)
                 }}
