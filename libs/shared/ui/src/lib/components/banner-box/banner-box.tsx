@@ -62,7 +62,7 @@ export function BannerBox(props: BannerBoxProps) {
 
       <div>
         {title && <h3 className="text-text-600 font-semibold text-sm mb-1">{title}</h3>}
-        <p className="text-xs text-text-500">{message}</p>
+        <div className="text-xs text-text-500">{message}</div>
       </div>
     </div>
   )

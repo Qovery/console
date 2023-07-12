@@ -21,14 +21,22 @@ export function StepConfigureFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
+  const funnelCardHelpItems =
+    jobType === ServiceTypeEnum.CRON_JOB
+      ? [
+          'You can customize the job behaviour by defining an entrypoint and arguments to be used at running time',
+          'For long running job it is recommended to properly set the max duration and a port to test the job liveness',
+        ]
+      : [
+          'Define if the job shall be triggered when the environment Starts, Stops or is being deleted',
+          'You can customize the job behaviour by defining an entrypoint and arguments to be used at running time',
+          'For long running job it is recommended to properly set the max duration and a port to test the job liveness',
+        ]
+
   const funnelCardHelp = (
     <FunnelFlowHelpCard
       title={`${jobType === ServiceTypeEnum.CRON_JOB ? 'Cron' : 'Lifecycle'} job Information`}
-      items={[
-        'Define if the job shall be triggered when the environment Starts, Stops or is being deleted',
-        'You can customize the job behaviour by defining an entrypoint and arguments to be used at running time',
-        'For long running job it is recommended to properly set the max duration and a port to test the job liveness',
-      ]}
+      items={funnelCardHelpItems}
     />
   )
 

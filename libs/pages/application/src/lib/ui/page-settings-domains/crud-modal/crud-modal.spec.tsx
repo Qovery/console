@@ -1,5 +1,4 @@
-import { act, findByTestId, getByDisplayValue, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, findByTestId, getByDisplayValue, getByText, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import CrudModal, { CrudModalProps } from './crud-modal'
@@ -32,6 +31,19 @@ describe('CrudModal', () => {
     )
     await act(() => {
       getByDisplayValue(baseElement, 'test.qovery.com')
+    })
+  })
+
+  it('renders a section with CNAME value', async () => {
+    const { baseElement } = render(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: { domain: 'test.qovery.com' },
+      })
+    )
+
+    await act(() => {
+      expect(getByText(baseElement, 'test.qovery.com CNAME')).toBeInTheDocument()
+      expect(getByText(baseElement, '*.test.qovery.com CNAME')).toBeInTheDocument()
     })
   })
 

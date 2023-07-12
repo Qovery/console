@@ -1,4 +1,4 @@
-import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { Environment, Link, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -66,17 +66,20 @@ export function Container(props: ContainerProps) {
   const menuLink: MenuData = []
 
   if (application && application.links && application.links.items) {
-    const items: MenuItemProps[] = application.links.items.map((link) => {
-      return {
-        name: link.url || '',
-        link: {
-          url: link.url || '',
-          external: true,
-        },
-        copy: link.url || undefined,
-        copyTooltip: 'Copy the link',
-      }
-    })
+    const items: MenuItemProps[] = application.links.items
+      // remove default Qovery links
+      .filter((link: Link) => !(link.is_default && link.is_qovery_domain))
+      .map((link) => {
+        return {
+          name: link.url || '',
+          link: {
+            url: link.url || '',
+            external: true,
+          },
+          copy: link.url || undefined,
+          copyTooltip: 'Copy the link',
+        }
+      })
 
     menuLink.push({
       title: 'Links',
