@@ -132,54 +132,37 @@ export function PageSettingsGeneral({
                 </div>
               )}
             />
-
-            {databaseMode === DatabaseModeEnum.CONTAINER ? (
-              <Controller
-                name="version"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    className="mb-3"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    label="Version"
-                    error={error?.message}
-                    disabled
-                  />
-                )}
-              />
+            {databaseVersionLoading ? (
+              <div className="flex justify-center mb-6">
+                <LoaderSpinner className="w-4" />
+              </div>
             ) : (
-              <>
-                {databaseVersionLoading ? (
-                  <div className="flex justify-center mb-6">
-                    <LoaderSpinner className="w-4" />
-                  </div>
-                ) : (
-                  <div className="mb-3">
-                    <Controller
-                      name="version"
-                      control={control}
-                      rules={{ required: 'Please select a database version' }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputSelect
-                          label="Version"
-                          options={databaseVersionOptions || []}
-                          onChange={field.onChange}
-                          value={field.value}
-                          error={error?.message}
-                        />
-                      )}
+              <div className="mb-3">
+                <Controller
+                  name="version"
+                  control={control}
+                  rules={{ required: 'Please select a database version' }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputSelect
+                      label="Version"
+                      options={databaseVersionOptions || []}
+                      onChange={field.onChange}
+                      value={field.value}
+                      error={error?.message}
                     />
-                    <BannerBox
-                      className="mt-3"
-                      message="Upgrading the version might cause service interruption. Have a look at the cloud provider documentation before launching the upgrade."
-                      icon={IconAwesomeEnum.CIRCLE_INFO}
-                      type={BannerBoxEnum.WARNING}
-                    />
-                  </div>
-                )}
-              </>
+                  )}
+                />
+                <BannerBox
+                  className="mt-3"
+                  message={`${
+                    databaseMode === DatabaseModeEnum.CONTAINER
+                      ? 'Upgrading the version might cause service interruption. Have a look at the database documentation before launching the upgrade.'
+                      : 'Upgrading the version might cause service interruption. Have a look at the cloud provider documentation before launching the upgrade.'
+                  }`}
+                  icon={IconAwesomeEnum.CIRCLE_INFO}
+                  type={BannerBoxEnum.WARNING}
+                />
+              </div>
             )}
             <Controller
               name="accessibility"

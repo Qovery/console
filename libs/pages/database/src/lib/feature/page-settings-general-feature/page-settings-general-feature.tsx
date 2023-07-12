@@ -37,11 +37,7 @@ export function PageSettingsGeneralFeature() {
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
   )
-  const { data: databaseConfigurations, isLoading } = useFetchDatabaseConfiguration(
-    projectId,
-    environmentId,
-    database?.mode === DatabaseModeEnum.MANAGED
-  )
+  const { data: databaseConfigurations, isLoading } = useFetchDatabaseConfiguration(projectId, environmentId)
 
   const databaseVersionOptions = databaseConfigurations
     ?.find((c) => c.database_type === database?.type)
