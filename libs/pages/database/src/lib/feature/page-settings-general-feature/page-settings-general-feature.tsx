@@ -16,10 +16,7 @@ export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {
   cloneDatabase.name = data['name']
   cloneDatabase.description = data['description']
   cloneDatabase.accessibility = data['accessibility']
-
-  if (database.mode === DatabaseModeEnum.MANAGED) {
-    cloneDatabase.version = data['version']
-  }
+  cloneDatabase.version = data['version']
 
   return cloneDatabase
 }
