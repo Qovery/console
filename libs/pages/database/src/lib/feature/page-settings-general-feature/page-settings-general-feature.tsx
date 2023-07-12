@@ -38,7 +38,7 @@ export function PageSettingsGeneralFeature() {
 
   const databaseVersionOptions = databaseConfigurations
     ?.find((c) => c.database_type === database?.type)
-    ?.version?.filter((v) => v.supported_mode === DatabaseModeEnum.MANAGED)
+    ?.version?.filter((v) => v.supported_mode === database?.mode)
     .map((v) => ({
       label: v.name || '',
       value: v.name || '',
