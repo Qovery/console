@@ -4,9 +4,10 @@ import { Controller, useFormContext } from 'react-hook-form'
 import {
   EditGitRepositorySettingsFeature,
   EntrypointCmdInputs,
+  GeneralContainerSettings,
   JobGeneralSettings,
 } from '@qovery/shared/console-shared'
-import { ServiceTypeEnum, isApplication, isCronJob, isJob } from '@qovery/shared/enums'
+import { ServiceTypeEnum, isApplication, isContainer, isCronJob, isJob } from '@qovery/shared/enums'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -143,6 +144,13 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
               )}
             </>
           )}
+
+          {isContainer(type) && (
+            <BlockContent title="Container Settings">
+              <GeneralContainerSettings organization={props.organization} />
+            </BlockContent>
+          )}
+
           <div className="flex justify-end">
             <Button
               dataTestId="submit-button"
