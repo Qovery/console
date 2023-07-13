@@ -62,7 +62,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue }: 
                 role="button"
                 onClick={(event) => {
                   event.stopPropagation()
-                  onChange(name, undefined)
+                  onChange(nameKey, undefined)
                   setCurrentValue(undefined)
                   setIsOpen(false)
                 }}

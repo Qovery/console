@@ -1,4 +1,8 @@
-import { OrganizationEventApi, OrganizationEventResponseList } from 'qovery-typescript-axios'
+import {
+  OrganizationEventApi,
+  OrganizationEventResponseList,
+  OrganizationEventTargetResponseList,
+} from 'qovery-typescript-axios'
 import {
   OrganizationEventOrigin,
   OrganizationEventSubTargetType,
@@ -77,7 +81,7 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
 export const useFetchEventTargets = (organizationId: string, queryParams: EventTargetsQueryParams) => {
   const { eventType, targetType, origin, triggeredBy, toTimestamp, fromTimestamp, projectId, environmentId } =
     queryParams
-  return useQuery<any, Error>(
+  return useQuery<OrganizationEventTargetResponseList, Error>(
     ['organization', organizationId, 'events', queryParams],
     async () => {
       const response = await eventsApi.getOrganizationEventTargets(

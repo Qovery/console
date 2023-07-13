@@ -30,10 +30,9 @@ export function CustomFilter({
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
 
-  console.log(searchParams)
-
   const targetType = searchParams.get('targetType') as string
   const projectId = searchParams.get('projectId') as string
+  const environmentId = searchParams.get('environmentId') as string
 
   return (
     <>
@@ -116,7 +115,7 @@ export function CustomFilter({
                 value: environment.id,
               }))}
               onChange={onChangeType}
-              defaultValue={projectId}
+              defaultValue={environmentId}
             />
           )}
         </div>

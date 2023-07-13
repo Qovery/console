@@ -7,7 +7,8 @@ import {
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
-import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
+import { useFetchEnvironments } from '@qovery/domains/environment'
+import { EventQueryParams, useFetchEventTargets, useFetchEvents } from '@qovery/domains/event'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, TableFilterProps } from '@qovery/shared/ui'
@@ -46,7 +47,7 @@ export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
   const location = useLocation()
-  const [, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [queryParams, setQueryParams] = useState<EventQueryParams>({})
   const [pageSize, setPageSize] = useState<string>('30')
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
@@ -54,6 +55,13 @@ export function PageGeneralFeature() {
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
+  const { data: environments } = useFetchEnvironments(searchParams.get('projectId') || '')
+  const { data: eventsTargetsData, refetch } = useFetchEventTargets(organizationId, queryParams)
+
+  useEffect(() => {
+    console.log(eventsTargetsData)
+    refetch()
+  }, [searchParams.get('projectId')])
 
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
@@ -155,12 +163,21 @@ export function PageGeneralFeature() {
         }
         return prev
       })
-    } else if (name === 'project') {
+    } else if (name === 'projectId') {
       setSearchParams((prev) => {
         if (value) {
           prev.set('projectId', value as string)
         } else {
           prev.delete('projectId')
+        }
+        return prev
+      })
+    } else if (name === 'environmentId') {
+      setSearchParams((prev) => {
+        if (value) {
+          prev.set('environmentId', value as string)
+        } else {
+          prev.delete('environmentId')
         }
         return prev
       })
@@ -184,6 +201,8 @@ export function PageGeneralFeature() {
       prev.delete('targetType')
       prev.delete('continueToken')
       prev.delete('stepBackToken')
+      prev.delete('projectId')
+      prev.delete('environmentId')
       return prev
     })
     setFilter([])
@@ -211,6 +230,7 @@ export function PageGeneralFeature() {
       filter={filter}
       setFilter={setFilter}
       projects={projects}
+      environments={environments}
     />
   )
 }

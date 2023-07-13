@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import { fireEvent, render } from '__tests__/utils/setup-jest'
 import InputFilter from './input-filter'
 
 describe('InputFilter', () => {
@@ -9,13 +9,13 @@ describe('InputFilter', () => {
   ]
 
   it('renders the button with the provided name', () => {
-    const { getByText } = render(<InputFilter name="Filter" options={options} onChange={() => {}} />)
+    const { getByText } = render(<InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />)
 
     expect(getByText('Filter')).toBeInTheDocument()
   })
 
   it('opens the select input on button click', () => {
-    const { getByText } = render(<InputFilter name="Filter" options={options} onChange={() => {}} />)
+    const { getByText } = render(<InputFilter name="Filter" nameKey="filter" options={options} onChange={() => {}} />)
 
     const button = getByText('Filter')
     fireEvent.click(button)
@@ -25,7 +25,9 @@ describe('InputFilter', () => {
 
   it('selects an option and triggers onChange callback', async () => {
     const handleChange = jest.fn()
-    const { getByText, getByTestId } = render(<InputFilter name="Filter" options={options} onChange={handleChange} />)
+    const { getByText, getByTestId } = render(
+      <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} />
+    )
 
     const button = getByText('Filter')
     fireEvent.click(button)
@@ -33,14 +35,14 @@ describe('InputFilter', () => {
     const option2 = getByText('Option 2')
     fireEvent.click(option2)
 
-    expect(handleChange).toHaveBeenCalledWith('option2')
+    expect(handleChange).toHaveBeenCalledWith('filter', 'option2')
     expect(getByTestId('clear-timestamp')).toBeInTheDocument()
   })
 
   it('clears the selection on clear button click', () => {
     const handleChange = jest.fn()
     const { getByText, getByTestId, queryByTestId } = render(
-      <InputFilter name="Filter" options={options} onChange={handleChange} defaultValue="option1" />
+      <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} defaultValue="option1" />
     )
 
     const button = getByText('Option 1')
@@ -49,7 +51,7 @@ describe('InputFilter', () => {
     const clearButton = getByTestId('clear-timestamp')
     fireEvent.click(clearButton)
 
-    expect(handleChange).toHaveBeenCalledWith(undefined)
+    expect(handleChange).toHaveBeenCalledWith('filter', undefined)
     expect(queryByTestId('clear-timestamp')).not.toBeInTheDocument()
   })
 })

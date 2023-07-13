@@ -1,4 +1,5 @@
 import {
+  Environment,
   OrganizationEventOrigin,
   OrganizationEventResponse,
   OrganizationEventType,
@@ -37,6 +38,7 @@ export interface PageGeneralProps {
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
   projects?: Project[]
+  environments?: Environment[]
 }
 
 export function PageGeneral({
@@ -59,6 +61,7 @@ export function PageGeneral({
   setFilter,
   filter,
   projects,
+  environments,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -119,6 +122,7 @@ export function PageGeneral({
             onChangeType={onChangeType}
             clearFilter={handleClearFilter}
             projects={projects}
+            environments={environments}
           />
         </div>
 
