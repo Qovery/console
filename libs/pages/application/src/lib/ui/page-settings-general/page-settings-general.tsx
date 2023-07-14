@@ -146,9 +146,14 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
           )}
 
           {isContainer(type) && (
-            <BlockContent title="Container Settings">
-              <GeneralContainerSettings organization={props.organization} />
-            </BlockContent>
+            <>
+              <BlockContent title="Container Settings">
+                <GeneralContainerSettings organization={props.organization} />
+              </BlockContent>
+              <BlockContent title="Entrypoint and arguments">
+                <EntrypointCmdInputs />
+              </BlockContent>
+            </>
           )}
 
           <div className="flex justify-end">
