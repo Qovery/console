@@ -58,6 +58,8 @@ export function PageGeneralFeature() {
   const { data: environments } = useFetchEnvironments(searchParams.get('projectId') || '')
   const { data: eventsTargetsData, refetch } = useFetchEventTargets(organizationId, queryParams)
 
+  console.log(queryParams)
+
   useEffect(() => {
     console.log(eventsTargetsData)
     refetch()
