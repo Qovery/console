@@ -1,4 +1,4 @@
-import { getByTestId, screen, waitFor } from '@testing-library/react'
+import { act, getByTestId, screen, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
@@ -12,7 +12,7 @@ describe('PageSettingsGeneral', () => {
     type: ServiceTypeEnum.APPLICATION,
   }
 
-  const defaultValues = (mode = BuildModeEnum.DOCKER) => ({
+  const defaultValuesApplication = (mode = BuildModeEnum.DOCKER) => ({
     name: 'hello-world',
     description: 'desc',
     build_mode: mode,
@@ -24,6 +24,23 @@ describe('PageSettingsGeneral', () => {
     root_path: '/',
   })
 
+  const defaultValuesContainer = () => ({
+    name: 'hello-world',
+    description: 'desc',
+    buildpack_language: BuildPackLanguageEnum.CLOJURE,
+    dockerfile_path: 'Dockerfile',
+    provider: GitProviderEnum.GITHUB,
+    repository: 'qovery/console',
+    branch: 'main',
+    root_path: '/',
+    registry: 'registry',
+    image_name: 'image_name',
+    image_tag: 'image_tag',
+    image_entry_point: 'image_entry_point',
+    image_command: 'image_command',
+    cmd_arguments: 'cmd_arguments',
+  })
+
   it('should render successfully', async () => {
     const { baseElement } = render(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
     expect(baseElement).toBeTruthy()
@@ -32,7 +49,7 @@ describe('PageSettingsGeneral', () => {
   it('should render the form with docker section', async () => {
     render(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValues(),
+        defaultValues: defaultValuesApplication(),
       })
     )
 
@@ -46,7 +63,7 @@ describe('PageSettingsGeneral', () => {
 
     render(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValues(BuildModeEnum.BUILDPACKS),
+        defaultValues: defaultValuesApplication(BuildModeEnum.BUILDPACKS),
       })
     )
 
@@ -55,12 +72,31 @@ describe('PageSettingsGeneral', () => {
     screen.getByText('Clojure')
   })
 
+  it('should render the form with container settings', async () => {
+    props.type = ServiceTypeEnum.CONTAINER
+
+    render(
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
+        defaultValues: defaultValuesContainer(),
+      })
+    )
+
+    await act(() => {
+      screen.getByDisplayValue('hello-world')
+      screen.getByDisplayValue('image_name')
+      screen.getByDisplayValue('image_tag')
+      screen.getByDisplayValue('image_entry_point')
+      screen.getByDisplayValue('cmd_arguments')
+    })
+  })
+
   it('should submit the form', async () => {
+    props.type = ServiceTypeEnum.APPLICATION
     const spy = jest.fn((e) => e.preventDefault())
     props.onSubmit = spy
     const { baseElement } = render(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValues(),
+        defaultValues: defaultValuesApplication(),
       })
     )
 
