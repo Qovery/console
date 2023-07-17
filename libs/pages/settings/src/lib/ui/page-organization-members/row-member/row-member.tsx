@@ -205,7 +205,7 @@ export function RowMember(props: RowMemberProps) {
             : 'border-element-light-ligther-600 text-text-600 cursor-pointer'
         }`}
       >
-        <span className="text-sm">{upperCaseFirstLetter(role)}</span>
+        <span className="text-sm block max-w-[130px] truncate">{upperCaseFirstLetter(role)}</span>
         {!loadingUpdateRole && role?.toUpperCase() !== MemberRoleEnum.OWNER && (member as Member).last_activity_at && (
           <Icon
             name={IconAwesomeEnum.ANGLE_DOWN}
