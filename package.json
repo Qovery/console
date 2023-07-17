@@ -10,7 +10,8 @@
     "build": "npx nx build",
     "test": "nx test",
     "prepare": "husky install",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "totot": "toot"
   },
   "private": true,
   "dependencies": {
