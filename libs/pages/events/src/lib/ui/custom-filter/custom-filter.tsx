@@ -1,5 +1,10 @@
 import { addMonths } from 'date-fns'
-import { Environment, OrganizationEventTargetType, Project } from 'qovery-typescript-axios'
+import {
+  ClusterCloudProviderInfoCredentials,
+  Environment,
+  OrganizationEventTargetType,
+  Project,
+} from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -15,6 +20,7 @@ export interface CustomFilterProps {
   timestamps?: [Date, Date]
   projects?: Project[]
   environments?: Environment[]
+  eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
 }
 
 export function CustomFilter({
@@ -27,12 +33,16 @@ export function CustomFilter({
   setIsOpenTimestamp,
   projects = [],
   environments = [],
+  eventsTargetsData = [],
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
 
   const targetType = searchParams.get('targetType') as string
   const projectId = searchParams.get('projectId') as string
   const environmentId = searchParams.get('environmentId') as string
+  const targetId = searchParams.get('targetId') as string
+
+  console.log(targetType)
 
   return (
     <>
@@ -116,6 +126,18 @@ export function CustomFilter({
               }))}
               onChange={onChangeType}
               defaultValue={environmentId}
+            />
+          )}
+          {projectId && targetType && environmentId && (
+            <InputFilter
+              name="Target"
+              nameKey="targetId"
+              options={eventsTargetsData?.map((target) => ({
+                label: target.name || '',
+                value: target.id || '',
+              }))}
+              onChange={onChangeType}
+              defaultValue={targetId}
             />
           )}
         </div>

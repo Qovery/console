@@ -1,4 +1,5 @@
 import {
+  ClusterCloudProviderInfoCredentials,
   Environment,
   OrganizationEventOrigin,
   OrganizationEventResponse,
@@ -39,6 +40,7 @@ export interface PageGeneralProps {
   filter?: TableFilterProps[]
   projects?: Project[]
   environments?: Environment[]
+  eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
 }
 
 export function PageGeneral({
@@ -62,6 +64,7 @@ export function PageGeneral({
   filter,
   projects,
   environments,
+  eventsTargetsData,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -123,6 +126,7 @@ export function PageGeneral({
             clearFilter={handleClearFilter}
             projects={projects}
             environments={environments}
+            eventsTargetsData={eventsTargetsData}
           />
         </div>
 

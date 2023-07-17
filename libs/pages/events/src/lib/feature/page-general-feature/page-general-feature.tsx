@@ -33,6 +33,8 @@ export const extractEventQueryParams = (urlString: string): EventQueryParams => 
     fromTimestamp: searchParams.get('fromTimestamp') || undefined,
     continueToken: searchParams.get('continueToken') || undefined,
     stepBackToken: searchParams.get('stepBackToken') || undefined,
+    projectId: searchParams.get('projectId') || undefined,
+    environmentId: searchParams.get('environmentId') || undefined,
   }
 
   // remove undefined values with typescript typing
@@ -56,14 +58,7 @@ export function PageGeneralFeature() {
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
   const { data: environments } = useFetchEnvironments(searchParams.get('projectId') || '')
-  const { data: eventsTargetsData, refetch } = useFetchEventTargets(organizationId, queryParams)
-
-  console.log(queryParams)
-
-  useEffect(() => {
-    console.log(eventsTargetsData)
-    refetch()
-  }, [searchParams.get('projectId')])
+  const { data: eventsTargetsData } = useFetchEventTargets(organizationId, queryParams)
 
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
@@ -183,6 +178,15 @@ export function PageGeneralFeature() {
         }
         return prev
       })
+    } else if (name === 'targetId') {
+      setSearchParams((prev) => {
+        if (value) {
+          prev.set('targetId', value as string)
+        } else {
+          prev.delete('targetId')
+        }
+        return prev
+      })
     }
   }
 
@@ -205,6 +209,7 @@ export function PageGeneralFeature() {
       prev.delete('stepBackToken')
       prev.delete('projectId')
       prev.delete('environmentId')
+      prev.delete('targetId')
       return prev
     })
     setFilter([])
@@ -233,6 +238,7 @@ export function PageGeneralFeature() {
       setFilter={setFilter}
       projects={projects}
       environments={environments}
+      eventsTargetsData={eventsTargetsData?.targets || []}
     />
   )
 }
