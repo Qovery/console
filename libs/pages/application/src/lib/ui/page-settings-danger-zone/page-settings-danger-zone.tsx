@@ -20,7 +20,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           modalConfirmation={{
             mode: environmentMode,
             title: 'Delete application',
-            description: 'To confirm the deletion of your application, please type the name of the application:',
             name: application?.name,
           }}
         />

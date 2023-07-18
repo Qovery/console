@@ -48,7 +48,6 @@ export function PageOrganizationContainerRegistriesFeature() {
         openModalConfirmation({
           title: 'Delete container registry',
           isDelete: true,
-          description: 'Are you sure you want to delete this container registry?',
           name: registry?.name,
           action: () => {
             dispatch(

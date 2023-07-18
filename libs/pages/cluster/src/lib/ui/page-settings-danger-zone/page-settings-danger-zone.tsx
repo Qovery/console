@@ -19,7 +19,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           modalConfirmation={{
             mode: EnvironmentModeEnum.PRODUCTION,
             title: 'Uninstall cluster',
-            description: 'To confirm the deletion of your cluster, please type the name of the cluster:',
             name: cluster?.name,
           }}
         />

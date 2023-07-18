@@ -43,7 +43,6 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const removeCluster = (id: string, name?: string) => {
     openModalConfirmation({
       title: `Uninstall cluster`,
-      description: `To confirm the deletion of your cluster, please type the name of the cluster:`,
       name: name,
       isDelete: true,
       action: () => dispatch(deleteClusterAction({ organizationId, clusterId: id })),

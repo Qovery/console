@@ -34,7 +34,6 @@ export function PageProjectDangerZone(props: PageProjectDangerZoneProps) {
           modalConfirmation={{
             mode: EnvironmentModeEnum.PRODUCTION,
             title: 'Delete project',
-            description: 'To confirm the deletion of your project, please type the name of the organization:',
             name: project?.name,
           }}
         />

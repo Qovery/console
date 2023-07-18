@@ -182,7 +182,6 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
           onClick: () => {
             openModalConfirmation({
               title: 'Delete variable',
-              description: 'To confirm the deletion of your variable, please type the name of the variable:',
               name: variable?.key,
               isDelete: true,
               action: () => {

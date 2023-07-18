@@ -46,7 +46,6 @@ export function PageOrganizationBillingFeature() {
   const onDeleteCreditCard = (creditCard: CreditCard) => {
     openModalConfirmation({
       title: 'Delete credit card',
-      description: 'Write the last digits of your credit card to delete it.',
       name: creditCard.last_digit,
       isDelete: true,
       placeholder: 'Enter the last digits',

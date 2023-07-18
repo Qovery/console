@@ -6,7 +6,6 @@ export interface BlockContentDeleteProps {
   title: string
   modalConfirmation: {
     title: string
-    description: string
     name?: string
     mode?: string
   }
@@ -58,7 +57,6 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
               openModalConfirmation({
                 mode: modalConfirmation.mode,
                 title: modalConfirmation.title,
-                description: modalConfirmation.description,
                 name: modalConfirmation.name,
                 action: () => callback && callback(),
                 isDelete: true,

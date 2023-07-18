@@ -31,7 +31,6 @@ export function PageOrganizationWebhooksFeature() {
     openModalConfirmation({
       title: 'Delete webhook',
       isDelete: true,
-      description: 'To confirm the deletion of your webhook, please type the target url of the webhook:',
       name: webhook.target_url || '',
       action: () => {
         deleteWebhooks.mutate({ webhookId: webhook.id })

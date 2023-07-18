@@ -100,8 +100,7 @@ export function PageSettingsPortsFeature() {
         openModalConfirmation({
           title: 'Delete Port',
           isDelete: true,
-          description: 'Are you sure you want to delete this port?',
-          name: application?.name,
+          name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
           action: () => {
             if (application) {
               const cloneApplication = deletePort(application, (port as ServicePort).id)

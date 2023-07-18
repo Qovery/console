@@ -46,8 +46,7 @@ export function PageSettingsStorageFeature() {
       onRemove={(storage: ServiceStorageStorage) => {
         openModalConfirmation({
           title: 'Delete storage',
-          description: 'To confirm the deletion of this storage, please type the name of the application',
-          name: application?.name,
+          name: storage.mount_point,
           isDelete: true,
           action: async () => {
             if (!application) return

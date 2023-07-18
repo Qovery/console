@@ -1,0 +1,209 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModalConfirmation should match confirm mode with description 1`] = `
+<div>
+  <div
+    class="p-6"
+  >
+    <h2
+      class="h4 text-text-600 mb-2 max-w-sm"
+    >
+      my title
+    </h2>
+    <div
+      class="text-text-400 text-sm mb-6"
+    >
+      my description
+      <span
+        class="link inline cursor-pointer text-accent2-500 text-sm ml-1 truncate max-w-[250px]"
+        data-state="closed"
+        data-testid="copy-cta"
+      >
+        staging
+         
+        <span
+          class="icon-solid-copy shrink-0 "
+          role="img"
+        />
+      </span>
+    </div>
+    <form>
+      <div
+        class="mb-6 "
+        data-testid="input-small-wrapper"
+      >
+        <div
+          class="input input--small flex-grow   "
+          data-testid="input"
+        >
+          <label
+            class="hidden"
+          />
+          <input
+            class="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-2 "
+            data-testid="input-value"
+            name="name"
+            placeholder="Enter the current name"
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="flex gap-3 justify-end"
+      >
+        <button
+          class="btn btn--regular btn--stroked btn--no-min-w "
+          data-testid=""
+          type="button"
+        >
+          <span>
+            Cancel
+          </span>
+        </button>
+        <button
+          class="btn btn--regular btn--basic btn--no-min-w "
+          data-testid=""
+          type="submit"
+        >
+          <span>
+            Confirm
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`ModalConfirmation should match delete mode with description 1`] = `
+<div>
+  <div
+    class="p-6"
+  >
+    <h2
+      class="h4 text-text-600 mb-2 max-w-sm"
+    >
+      my title
+    </h2>
+    <div
+      class="text-text-400 text-sm mb-6"
+    >
+      my description
+    </div>
+    <form>
+      <div
+        class="mb-6 "
+        data-testid="input-small-wrapper"
+      >
+        <div
+          class="input input--small flex-grow   "
+          data-testid="input"
+        >
+          <label
+            class="hidden"
+          />
+          <input
+            class="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-2 "
+            data-testid="input-value"
+            name="name"
+            placeholder="Enter "delete""
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="flex gap-3 justify-end"
+      >
+        <button
+          class="btn btn--regular btn--stroked btn--no-min-w "
+          data-testid=""
+          type="button"
+        >
+          <span>
+            Cancel
+          </span>
+        </button>
+        <button
+          class="btn btn--regular btn--error btn--no-min-w "
+          data-testid=""
+          type="submit"
+        >
+          <span>
+            Confirm
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`ModalConfirmation should match delete mode without description 1`] = `
+<div>
+  <div
+    class="p-6"
+  >
+    <h2
+      class="h4 text-text-600 mb-2 max-w-sm"
+    >
+      my title
+    </h2>
+    <div
+      class="text-text-400 text-sm mb-6"
+    >
+      To confirm the deletion of 
+      <strong>
+        staging
+      </strong>
+      , please type "delete"
+    </div>
+    <form>
+      <div
+        class="mb-6 "
+        data-testid="input-small-wrapper"
+      >
+        <div
+          class="input input--small flex-grow   "
+          data-testid="input"
+        >
+          <label
+            class="hidden"
+          />
+          <input
+            class="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-text-400 rounded px-2 "
+            data-testid="input-value"
+            name="name"
+            placeholder="Enter "delete""
+            type="text"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="flex gap-3 justify-end"
+      >
+        <button
+          class="btn btn--regular btn--stroked btn--no-min-w "
+          data-testid=""
+          type="button"
+        >
+          <span>
+            Cancel
+          </span>
+        </button>
+        <button
+          class="btn btn--regular btn--error btn--no-min-w "
+          data-testid=""
+          type="submit"
+        >
+          <span>
+            Confirm
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;

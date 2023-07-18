@@ -27,7 +27,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           modalConfirmation={{
             mode: environment?.mode,
             title: 'Delete environment',
-            description: 'To confirm the deletion of your environment, please type the name of the environment:',
             name: environment?.name,
           }}
         />
