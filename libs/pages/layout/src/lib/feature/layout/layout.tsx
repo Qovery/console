@@ -6,6 +6,7 @@ import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import {
   fetchClusters,
+  fetchClustersStatus,
   fetchOrganization,
   fetchOrganizationById,
   selectClustersEntitiesByOrganizationId,
@@ -73,6 +74,7 @@ export function Layout(props: LayoutProps) {
     if (organizationId) {
       dispatch(fetchProjects({ organizationId }))
       dispatch(fetchClusters({ organizationId }))
+      dispatch(fetchClustersStatus({ organizationId }))
     }
   }, [dispatch, organizationId])
 
