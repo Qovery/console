@@ -45,6 +45,12 @@ export const extractEventQueryParams = (urlString: string): EventQueryParams => 
   return queryParams
 }
 
+export const hasEnvironment = (targetType: string) =>
+  targetType === OrganizationEventTargetType.APPLICATION ||
+  targetType === OrganizationEventTargetType.CONTAINER ||
+  targetType === OrganizationEventTargetType.DATABASE ||
+  targetType === OrganizationEventTargetType.JOB
+
 export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
@@ -58,7 +64,15 @@ export function PageGeneralFeature() {
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
   const { data: environments } = useFetchEnvironments(searchParams.get('projectId') || '')
-  const { data: eventsTargetsData } = useFetchEventTargets(organizationId, queryParams)
+  const targetType = searchParams.get('targetType') || ''
+  const projectId = searchParams.get('projectId')
+  const environmentId = searchParams.get('environmentId')
+
+  const displayEventTargets: boolean = Boolean(
+    (!hasEnvironment(targetType) && targetType) || (projectId && environmentId && targetType)
+  )
+
+  const { data: eventsTargetsData } = useFetchEventTargets(organizationId, queryParams, displayEventTargets)
 
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
@@ -239,6 +253,7 @@ export function PageGeneralFeature() {
       projects={projects}
       environments={environments}
       eventsTargetsData={eventsTargetsData?.targets || []}
+      displayEventTargets={displayEventTargets}
     />
   )
 }

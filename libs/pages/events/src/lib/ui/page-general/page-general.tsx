@@ -41,6 +41,7 @@ export interface PageGeneralProps {
   projects?: Project[]
   environments?: Environment[]
   eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
+  displayEventTargets?: boolean
 }
 
 export function PageGeneral({
@@ -65,6 +66,7 @@ export function PageGeneral({
   projects,
   environments,
   eventsTargetsData,
+  displayEventTargets,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -127,6 +129,7 @@ export function PageGeneral({
             projects={projects}
             environments={environments}
             eventsTargetsData={eventsTargetsData}
+            displayEventTargets={displayEventTargets}
           />
         </div>
 

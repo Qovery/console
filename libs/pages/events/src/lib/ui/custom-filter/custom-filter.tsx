@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
+import { hasEnvironment } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
   onChangeTimestamp: (startDate: Date, endDate: Date) => void
@@ -21,6 +22,7 @@ export interface CustomFilterProps {
   projects?: Project[]
   environments?: Environment[]
   eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
+  displayEventTargets?: boolean
 }
 
 export function CustomFilter({
@@ -34,6 +36,7 @@ export function CustomFilter({
   projects = [],
   environments = [],
   eventsTargetsData = [],
+  displayEventTargets = false,
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
 
@@ -41,8 +44,6 @@ export function CustomFilter({
   const projectId = searchParams.get('projectId') as string
   const environmentId = searchParams.get('environmentId') as string
   const targetId = searchParams.get('targetId') as string
-
-  console.log(targetType)
 
   return (
     <>
@@ -104,7 +105,7 @@ export function CustomFilter({
             onChange={onChangeType}
             defaultValue={targetType}
           />
-          {targetType && (
+          {hasEnvironment(targetType) && (
             <InputFilter
               name="Project"
               nameKey="projectId"
@@ -116,7 +117,7 @@ export function CustomFilter({
               defaultValue={projectId}
             />
           )}
-          {projectId && targetType && (
+          {projectId && hasEnvironment(targetType) && (
             <InputFilter
               name="Environment"
               nameKey="environmentId"
@@ -128,7 +129,7 @@ export function CustomFilter({
               defaultValue={environmentId}
             />
           )}
-          {projectId && targetType && environmentId && (
+          {displayEventTargets && (
             <InputFilter
               name="Target"
               nameKey="targetId"

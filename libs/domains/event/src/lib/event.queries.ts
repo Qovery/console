@@ -69,7 +69,7 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
   )
 }
 
-export const useFetchEventTargets = (organizationId: string, queryParams: EventQueryParams) => {
+export const useFetchEventTargets = (organizationId: string, queryParams: EventQueryParams, enabled?: boolean) => {
   const { eventType, targetType, origin, triggeredBy, toTimestamp, fromTimestamp, projectId, environmentId } =
     queryParams
 
@@ -91,7 +91,7 @@ export const useFetchEventTargets = (organizationId: string, queryParams: EventQ
     },
     {
       onError: (err) => toastError(err),
-      enabled: !!projectId && !!environmentId,
+      enabled: enabled,
     }
   )
 }
