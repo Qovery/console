@@ -91,7 +91,7 @@ export const useFetchEventTargets = (organizationId: string, queryParams: EventQ
     },
     {
       onError: (err) => toastError(err),
-      enabled: enabled,
+      enabled: !!targetType && enabled,
     }
   )
 }

@@ -32,7 +32,7 @@ export function LayoutPage(props: LayoutPageProps) {
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, cluster?.id))
 
-  const clusterIsDeployed = cluster?.extendedStatus?.status?.is_deployed
+  const clusterIsDeployed = cluster?.extendedStatus?.status?.is_deployed || true
 
   const clusterBanner = !matchLogInfraRoute && cluster && displayClusterBanner(cluster.status) && !clusterIsDeployed
 

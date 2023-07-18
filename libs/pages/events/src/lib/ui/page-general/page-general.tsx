@@ -1,12 +1,6 @@
-import {
-  ClusterCloudProviderInfoCredentials,
-  Environment,
-  OrganizationEventOrigin,
-  OrganizationEventResponse,
-  OrganizationEventType,
-  Project,
-} from 'qovery-typescript-axios'
+import { OrganizationEventOrigin, OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
+import { EventQueryParams } from '@qovery/domains/event'
 import {
   HelpSection,
   Icon,
@@ -16,32 +10,23 @@ import {
   TableFilterProps,
   TableHeadProps,
 } from '@qovery/shared/ui'
+import CustomFilterFeature from '../../feature/custom-filter-feature/custom-filter-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
-import CustomFilter from '../custom-filter/custom-filter'
 
 export interface PageGeneralProps {
   isLoading: boolean
+  queryParams: EventQueryParams
+  handleClearFilter: () => void
   events?: OrganizationEventResponse[]
   placeholderEvents?: OrganizationEventResponse[]
   onNext: () => void
   onPrevious: () => void
-  onChangeTimestamp: (startDate: Date, endDate: Date) => void
-  onChangeClearTimestamp: () => void
-  onChangeType: (type: string, value?: string | string[]) => void
-  handleClearFilter: () => void
-  timestamps?: [Date, Date]
-  isOpenTimestamp: boolean
-  setIsOpenTimestamp: (isOpen: boolean) => void
   nextDisabled?: boolean
   previousDisabled?: boolean
   onPageSizeChange?: (pageSize: string) => void
   pageSize?: string
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
-  projects?: Project[]
-  environments?: Environment[]
-  eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
-  displayEventTargets?: boolean
 }
 
 export function PageGeneral({
@@ -54,19 +39,10 @@ export function PageGeneral({
   previousDisabled,
   pageSize,
   placeholderEvents,
-  onChangeTimestamp,
-  onChangeClearTimestamp,
-  onChangeType,
-  handleClearFilter,
-  isOpenTimestamp,
-  setIsOpenTimestamp,
-  timestamps,
   setFilter,
   filter,
-  projects,
-  environments,
-  eventsTargetsData,
-  displayEventTargets,
+  handleClearFilter,
+  queryParams,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -118,19 +94,7 @@ export function PageGeneral({
           <h2 className="h5 text-text-700">Audit Logs</h2>
         </div>
         <div className="flex items-center mb-4 h-9">
-          <CustomFilter
-            onChangeTimestamp={onChangeTimestamp}
-            onChangeClearTimestamp={onChangeClearTimestamp}
-            isOpenTimestamp={isOpenTimestamp}
-            setIsOpenTimestamp={setIsOpenTimestamp}
-            timestamps={timestamps}
-            onChangeType={onChangeType}
-            clearFilter={handleClearFilter}
-            projects={projects}
-            environments={environments}
-            eventsTargetsData={eventsTargetsData}
-            displayEventTargets={displayEventTargets}
-          />
+          <CustomFilterFeature queryParams={queryParams} handleClearFilter={handleClearFilter} />
         </div>
 
         <Table

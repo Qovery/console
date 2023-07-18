@@ -5,15 +5,11 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
-import { useFetchEnvironments } from '@qovery/domains/environment'
-import { EventQueryParams, useFetchEventTargets, useFetchEvents } from '@qovery/domains/event'
-import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
+import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, TableFilterProps } from '@qovery/shared/ui'
-import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export const extractEventQueryParams = (urlString: string): EventQueryParams => {
@@ -55,34 +51,16 @@ export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
   const location = useLocation()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
   const [queryParams, setQueryParams] = useState<EventQueryParams>({})
   const [pageSize, setPageSize] = useState<string>('30')
-  const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
-  const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
-  const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
-  const { data: environments } = useFetchEnvironments(searchParams.get('projectId') || '')
-  const targetType = searchParams.get('targetType') || ''
-  const projectId = searchParams.get('projectId')
-  const environmentId = searchParams.get('environmentId')
-
-  const displayEventTargets: boolean = Boolean(
-    (!hasEnvironment(targetType) && targetType) || (projectId && environmentId && targetType)
-  )
-
-  const { data: eventsTargetsData } = useFetchEventTargets(organizationId, queryParams, displayEventTargets)
 
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
     if (newQueryParams.pageSize) setPageSize(newQueryParams.pageSize.toString())
-    if (newQueryParams.fromTimestamp && newQueryParams.toTimestamp)
-      setTimestamps([
-        new Date(parseInt(newQueryParams.fromTimestamp, 10) * 1000),
-        new Date(parseInt(newQueryParams.toTimestamp, 10) * 1000),
-      ])
 
     if (newQueryParams.origin)
       setFilter((prev) => {
@@ -151,69 +129,6 @@ export function PageGeneralFeature() {
     })
   }
 
-  const handleChangeTimestamp = (startDate: Date, endDate: Date) => {
-    setSearchParams((prev) => {
-      prev.delete('continueToken')
-      prev.delete('stepBackToken')
-      prev.set('fromTimestamp', convertDatetoTimestamp(startDate.toString()).toString())
-      prev.set('toTimestamp', endDate ? convertDatetoTimestamp(endDate.toString()).toString() : '')
-      return prev
-    })
-    setTimestamps([startDate, endDate])
-    setIsOpenTimestamp(!isOpenTimestamp)
-  }
-
-  const handeChangeType = (name: string, value?: string | string[]) => {
-    if (name === 'targetType') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('targetType', value as string)
-        } else {
-          prev.delete('targetType')
-          prev.delete('projectId')
-        }
-        return prev
-      })
-    } else if (name === 'projectId') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('projectId', value as string)
-        } else {
-          prev.delete('projectId')
-        }
-        return prev
-      })
-    } else if (name === 'environmentId') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('environmentId', value as string)
-        } else {
-          prev.delete('environmentId')
-        }
-        return prev
-      })
-    } else if (name === 'targetId') {
-      setSearchParams((prev) => {
-        if (value) {
-          prev.set('targetId', value as string)
-        } else {
-          prev.delete('targetId')
-        }
-        return prev
-      })
-    }
-  }
-
-  const handleClearTimestamp = () => {
-    setSearchParams((prev) => {
-      prev.delete('fromTimestamp')
-      prev.delete('toTimestamp')
-      return prev
-    })
-    setTimestamps(undefined)
-    setIsOpenTimestamp(false)
-  }
-
   const handleClearFilter = () => {
     setSearchParams((prev) => {
       prev.delete('origin')
@@ -224,10 +139,12 @@ export function PageGeneralFeature() {
       prev.delete('projectId')
       prev.delete('environmentId')
       prev.delete('targetId')
+      prev.delete('fromTimestamp')
+      prev.delete('toTimestamp')
       return prev
     })
     setFilter([])
-    handleClearTimestamp()
+    setQueryParams({})
   }
 
   return (
@@ -241,19 +158,10 @@ export function PageGeneralFeature() {
       onPageSizeChange={onPageSizeChange}
       pageSize={pageSize}
       placeholderEvents={eventsFactoryMock(30)}
-      onChangeTimestamp={handleChangeTimestamp}
-      onChangeClearTimestamp={handleClearTimestamp}
-      onChangeType={handeChangeType}
       handleClearFilter={handleClearFilter}
-      timestamps={timestamps}
-      setIsOpenTimestamp={setIsOpenTimestamp}
-      isOpenTimestamp={isOpenTimestamp}
+      queryParams={queryParams}
       filter={filter}
       setFilter={setFilter}
-      projects={projects}
-      environments={environments}
-      eventsTargetsData={eventsTargetsData?.targets || []}
-      displayEventTargets={displayEventTargets}
     />
   )
 }

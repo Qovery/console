@@ -105,11 +105,11 @@ export function CustomFilter({
             onChange={onChangeType}
             defaultValue={targetType}
           />
-          {hasEnvironment(targetType) && (
+          {projects && hasEnvironment(targetType) && (
             <InputFilter
               name="Project"
               nameKey="projectId"
-              options={projects?.map((project) => ({
+              options={projects.map((project) => ({
                 label: project.name || '',
                 value: project.id,
               }))}
@@ -117,11 +117,11 @@ export function CustomFilter({
               defaultValue={projectId}
             />
           )}
-          {projectId && hasEnvironment(targetType) && (
+          {projectId && hasEnvironment(targetType) && environments && (
             <InputFilter
               name="Environment"
               nameKey="environmentId"
-              options={environments?.map((environment) => ({
+              options={environments.map((environment) => ({
                 label: environment.name || '',
                 value: environment.id,
               }))}
@@ -129,11 +129,11 @@ export function CustomFilter({
               defaultValue={environmentId}
             />
           )}
-          {displayEventTargets && (
+          {displayEventTargets && eventsTargetsData && (
             <InputFilter
               name="Target"
               nameKey="targetId"
-              options={eventsTargetsData?.map((target) => ({
+              options={eventsTargetsData.map((target) => ({
                 label: target.name || '',
                 value: target.id || '',
               }))}

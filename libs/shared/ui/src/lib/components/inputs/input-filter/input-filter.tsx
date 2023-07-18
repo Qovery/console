@@ -46,7 +46,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue }: 
               autoFocus
               isSearchable
               placeholder={name}
-              className="w-[92px]"
+              className="w-24"
               options={options}
               onChange={(value) => {
                 onChange(nameKey, value)
