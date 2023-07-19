@@ -1,7 +1,11 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import { addMonths } from 'date-fns'
+import { environmentFactoryMock, projectsFactoryMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import CustomFilter, { CustomFilterProps } from './custom-filter'
+
+const mockProjects = projectsFactoryMock(2)
+const mockEnvironments = environmentFactoryMock(2)
 
 describe('CustomFilter', () => {
   const props: CustomFilterProps = {
@@ -12,6 +16,15 @@ describe('CustomFilter', () => {
     setIsOpenTimestamp: jest.fn(),
     isOpenTimestamp: false,
     timestamps: undefined,
+    projects: mockProjects,
+    environments: mockEnvironments,
+    eventsTargetsData: [
+      {
+        id: '1',
+        name: 'my-target',
+      },
+    ],
+    displayEventTargets: false,
   }
 
   beforeEach(() => {
@@ -72,5 +85,14 @@ describe('CustomFilter', () => {
         false
       )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
     )
+  })
+
+  it('should render targetType, projects, environments and target lists', () => {
+    // props.projects = [
+    //   { id: '1', name: 'project1' },
+    //   { id: '2', name: 'project2' },
+    // ]
+    // render(<CustomFilter {...props} />)
+    // expect(screen.getByTestId('targetType')).toBeInTheDocument()
   })
 })
