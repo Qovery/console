@@ -41,7 +41,7 @@ export const extractEventQueryParams = (urlString: string): EventQueryParams => 
   return queryParams
 }
 
-export const hasEnvironment = (targetType: string) =>
+export const hasEnvironment = (targetType?: string) =>
   targetType === OrganizationEventTargetType.APPLICATION ||
   targetType === OrganizationEventTargetType.CONTAINER ||
   targetType === OrganizationEventTargetType.DATABASE ||

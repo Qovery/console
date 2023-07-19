@@ -31,6 +31,12 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
     targetType && (!hasEnvironment(targetType) || (projectId && environmentId))
   )
 
+  console.log('-------')
+  console.log('targetType', targetType)
+  console.log('projectId', projectId)
+  console.log('environmentId', environmentId)
+  console.log('displayEventTargets', displayEventTargets)
+
   const { data: eventsTargetsData } = useFetchEventTargets(organizationId, queryParams, displayEventTargets)
 
   useEffect(() => {
@@ -67,7 +73,6 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
           prev.set('targetType', value as string)
         } else {
           prev.delete('targetType')
-          prev.delete('projectId')
         }
         return prev
       })
@@ -117,6 +122,9 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
       environments={environments}
       eventsTargetsData={eventsTargetsData?.targets || []}
       displayEventTargets={displayEventTargets}
+      projectId={projectId}
+      environmentId={environmentId}
+      targetType={targetType}
     />
   )
 }

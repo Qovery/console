@@ -23,6 +23,10 @@ export interface CustomFilterProps {
   environments?: Environment[]
   eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
   displayEventTargets?: boolean
+  targetType?: string | null
+  projectId?: string | null
+  environmentId?: string | null
+  targetId?: string | null
 }
 
 export function CustomFilter({
@@ -37,16 +41,12 @@ export function CustomFilter({
   environments = [],
   eventsTargetsData = [],
   displayEventTargets = false,
+  targetType,
+  projectId,
+  environmentId,
+  targetId,
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
-
-  const targetType = searchParams.get('targetType') as string
-  const projectId = searchParams.get('projectId') as string
-  const environmentId = searchParams.get('environmentId') as string
-  const targetId = searchParams.get('targetId') as string
-
-  console.log(projectId)
-  console.log(searchParams.toString())
 
   return (
     <>
@@ -106,9 +106,9 @@ export function CustomFilter({
               value: type,
             }))}
             onChange={onChangeType}
-            defaultValue={targetType}
+            defaultValue={targetType as string}
           />
-          {projects && hasEnvironment(targetType) && (
+          {projects && hasEnvironment(targetType as string) && (
             <InputFilter
               name="Project"
               nameKey="projectId"
@@ -117,10 +117,10 @@ export function CustomFilter({
                 value: project.id,
               }))}
               onChange={onChangeType}
-              defaultValue={projectId}
+              defaultValue={projectId as string}
             />
           )}
-          {projectId && hasEnvironment(targetType) && environments && (
+          {projectId && hasEnvironment(targetType as string) && environments && (
             <InputFilter
               name="Environment"
               nameKey="environmentId"
@@ -129,7 +129,7 @@ export function CustomFilter({
                 value: environment.id,
               }))}
               onChange={onChangeType}
-              defaultValue={environmentId}
+              defaultValue={environmentId as string}
             />
           )}
           {displayEventTargets && eventsTargetsData && (
@@ -141,7 +141,7 @@ export function CustomFilter({
                 value: target.id || '',
               }))}
               onChange={onChangeType}
-              defaultValue={targetId}
+              defaultValue={targetId as string}
             />
           )}
         </div>
