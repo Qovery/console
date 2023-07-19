@@ -54,4 +54,24 @@ describe('InputFilter', () => {
     expect(handleChange).toHaveBeenCalledWith('filter', undefined)
     expect(queryByTestId('clear-timestamp')).not.toBeInTheDocument()
   })
+
+  it('should match input filter without value', () => {
+    const handleChange = jest.fn()
+
+    const { container } = render(
+      <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} />
+    )
+
+    expect(container).toMatchSnapshot()
+  })
+
+  it('should match input filter with value', () => {
+    const handleChange = jest.fn()
+
+    const { container } = render(
+      <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} defaultValue="option1" />
+    )
+
+    expect(container).toMatchSnapshot()
+  })
 })

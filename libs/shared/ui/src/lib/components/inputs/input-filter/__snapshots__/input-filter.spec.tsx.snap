@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputFilter should match input filter with value 1`] = `
+<div>
+  <div>
+    <button
+      class="btn btn--tiny btn--basic "
+      data-testid=""
+      type="button"
+    >
+      <span>
+        Option 1
+        <span
+          class="px-1 py-1 relative left-1"
+          data-testid="clear-timestamp"
+          role="button"
+        >
+          <span
+            class="icon-solid-xmark shrink-0 "
+            role="img"
+          />
+        </span>
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`InputFilter should match input filter without value 1`] = `
+<div>
+  <div>
+    <button
+      class="btn btn--tiny btn--stroked "
+      data-testid=""
+      type="button"
+    >
+      <span>
+        Filter
+      </span>
+      <span
+        class="icon-solid-magnifying-glass shrink-0 "
+        role="img"
+      />
+    </button>
+  </div>
+</div>
+`;
