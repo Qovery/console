@@ -6,13 +6,13 @@ import PageSettingsHealthchecks from './page-settings-healthchecks'
 
 describe('PageSettingsHealthchecks', () => {
   it('should render successfully', () => {
-    const { baseElement, getByTestId } = render(
+    const { baseElement } = render(
       wrapWithReactHookForm(
         <PageSettingsHealthchecks
           onSubmit={jest.fn()}
           defaultTypeLiveness={ProbeTypeEnum.TCP}
           defaultTypeReadiness={ProbeTypeEnum.HTTP}
-          linkPortSetting="/"
+          linkResourcesSetting="/"
           isJob={false}
           loading={'loaded'}
           ports={[]}
@@ -30,6 +30,5 @@ describe('PageSettingsHealthchecks', () => {
       )
     )
     expect(baseElement).toBeTruthy()
-    expect(getByTestId('banner-box-port-configuration-required')).toBeTruthy()
   })
 })
