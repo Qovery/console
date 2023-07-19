@@ -45,6 +45,9 @@ export function CustomFilter({
   const environmentId = searchParams.get('environmentId') as string
   const targetId = searchParams.get('targetId') as string
 
+  console.log(projectId)
+  console.log(searchParams.toString())
+
   return (
     <>
       <p className="text-text-400 text-ssm font-medium mr-1.5">Select</p>
@@ -142,7 +145,7 @@ export function CustomFilter({
             />
           )}
         </div>
-        {searchParams.toString().length > 0 && (
+        {searchParams.toString()?.length > 0 && (
           <span className="link text-brand-500 cursor-pointer ml-6" onClick={clearFilter}>
             Clear all
           </span>

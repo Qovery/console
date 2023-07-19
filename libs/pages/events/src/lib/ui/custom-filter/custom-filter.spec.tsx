@@ -1,11 +1,29 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import { addMonths } from 'date-fns'
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { environmentFactoryMock, projectsFactoryMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import CustomFilter, { CustomFilterProps } from './custom-filter'
 
 const mockProjects = projectsFactoryMock(2)
 const mockEnvironments = environmentFactoryMock(2)
+
+const mockSearchParamsValues: any = {
+  targetType: OrganizationEventTargetType.APPLICATION,
+  projectId: '0',
+  environmentId: '0',
+}
+
+const mockSearchParams = {
+  get: jest.fn((key: string) => mockSearchParamsValues[key]),
+  getAll: jest.fn(),
+  toString: jest.fn(),
+}
+
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as object),
+  useSearchParams: () => [mockSearchParams],
+}))
 
 describe('CustomFilter', () => {
   const props: CustomFilterProps = {
@@ -20,7 +38,7 @@ describe('CustomFilter', () => {
     environments: mockEnvironments,
     eventsTargetsData: [
       {
-        id: '1',
+        id: '0',
         name: 'my-target',
       },
     ],
@@ -62,23 +80,23 @@ describe('CustomFilter', () => {
   it('should call onChangeClearTimestamp when clearing the timeframe', async () => {
     props.timestamps = [new Date(), new Date()]
 
-    const { getByTestId } = render(<CustomFilter {...props} />)
-    expect(getByTestId('timeframe-values')).toHaveTextContent(
+    render(<CustomFilter {...props} />)
+    expect(screen.getByTestId('timeframe-values')).toHaveTextContent(
       `from: ${dateYearMonthDayHourMinuteSecond(
         props.timestamps[0],
         true,
         false
       )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
     )
-    getByTestId('clear-timestamp').click()
+    screen.getByTestId('clear-timestamp').click()
     expect(props.onChangeClearTimestamp).toHaveBeenCalled()
   })
 
   it('should render correct timeframe button label if timestamps are provided', () => {
     props.timestamps = [new Date(), new Date()]
 
-    const { getByTestId } = render(<CustomFilter {...props} />)
-    expect(getByTestId('timeframe-values')).toHaveTextContent(
+    render(<CustomFilter {...props} />)
+    expect(screen.getByTestId('timeframe-values')).toHaveTextContent(
       `from: ${dateYearMonthDayHourMinuteSecond(
         props.timestamps[0],
         true,
@@ -88,11 +106,12 @@ describe('CustomFilter', () => {
   })
 
   it('should render targetType, projects, environments and target lists', () => {
-    // props.projects = [
-    //   { id: '1', name: 'project1' },
-    //   { id: '2', name: 'project2' },
-    // ]
-    // render(<CustomFilter {...props} />)
-    // expect(screen.getByTestId('targetType')).toBeInTheDocument()
+    render(<CustomFilter {...props} />)
+
+    const btnType = screen.getByText('Type')
+    fireEvent.click(btnType)
+
+    const optionApplication = screen.getByText('Application')
+    fireEvent.click(optionApplication)
   })
 })

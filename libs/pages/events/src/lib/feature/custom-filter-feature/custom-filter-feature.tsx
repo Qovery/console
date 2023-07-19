@@ -20,12 +20,12 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
   const [searchParams, setSearchParams] = useSearchParams()
   const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
-  const targetType = searchParams.get('targetType') || ''
-  const projectId = searchParams.get('projectId') || ''
+  const targetType = searchParams.get('targetType')
+  const projectId = searchParams.get('projectId')
   const environmentId = searchParams.get('environmentId')
 
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
-  const { data: environments } = useFetchEnvironments(projectId)
+  const { data: environments } = useFetchEnvironments(projectId || '')
 
   const displayEventTargets: boolean = Boolean(
     targetType && (!hasEnvironment(targetType) || (projectId && environmentId))
