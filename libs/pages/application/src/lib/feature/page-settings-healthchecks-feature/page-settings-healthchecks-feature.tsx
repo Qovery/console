@@ -139,6 +139,7 @@ export function PageSettingsHealthchecksFeature() {
         ports={application?.ports}
         jobPort={application?.port}
         isJob={isJob(application)}
+        maxRunningInstances={application?.max_running_instances}
         linkPortSetting={`${APPLICATION_URL(
           organizationId,
           projectId,

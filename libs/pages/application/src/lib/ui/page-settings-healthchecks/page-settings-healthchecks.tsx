@@ -1,5 +1,7 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
@@ -14,6 +16,7 @@ export interface PageSettingsHealthchecksProps {
   jobPort?: number | null
   ports?: ServicePort[]
   onSubmit?: () => void
+  maxRunningInstances?: number
 }
 
 export function PageSettingsHealthchecks({
@@ -25,8 +28,12 @@ export function PageSettingsHealthchecks({
   linkPortSetting,
   defaultTypeReadiness,
   defaultTypeLiveness,
+  maxRunningInstances,
 }: PageSettingsHealthchecksProps) {
   const { formState } = useFormContext()
+  const { projectId = '', environmentId = '' } = useParams()
+  const { data: environments = [] } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId ?? '', environments)
 
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
@@ -75,6 +82,18 @@ export function PageSettingsHealthchecks({
             />
           </div>
         </form>
+        {environment?.mode === EnvironmentModeEnum.PRODUCTION && maxRunningInstances === 1 && (
+          <BannerBox
+            message={
+              <span>
+                Your service is configured to run with a minimum of one instance, setting the health checks will not
+                ensure the service high availability during a cluster upgrade. Have a look at your instance setup first
+                and increase the minimum instance type.
+              </span>
+            }
+            type={BannerBoxEnum.WARNING}
+          />
+        )}
       </div>
       <HelpSection
         description="Need help? You may find these links useful"
