@@ -72,7 +72,6 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const removeService = (id: string, name?: string, force = false) => {
     openModalConfirmation({
       title: `Delete application`,
-      description: `To confirm the deletion of your application, please type the name of the application:`,
       name: name,
       isDelete: true,
       action: () => {

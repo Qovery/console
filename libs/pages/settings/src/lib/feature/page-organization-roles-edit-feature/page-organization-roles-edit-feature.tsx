@@ -223,7 +223,6 @@ export function PageOrganizationRolesEditFeature() {
           openModalConfirmation({
             title: 'Delete custom role',
             isDelete: true,
-            description: 'Are you sure you want to delete this custom role?',
             name: customRole?.name,
             action: () => {
               dispatch(

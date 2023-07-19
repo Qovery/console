@@ -39,7 +39,6 @@ export function PageOrganizationApiFeature() {
         openModalConfirmation({
           title: 'Delete API token',
           isDelete: true,
-          description: 'Are you sure you want to delete this token?',
           name: token?.name,
           action: () => {
             dispatch(

@@ -5,7 +5,7 @@ import { ModalConfirmation } from '../modal-confirmation'
 
 export interface UseModalConfirmationProps {
   title: string
-  description: string
+  description?: string
   action: () => void
   name?: string
   mode?: EnvironmentModeEnum | string | undefined
@@ -33,6 +33,7 @@ export function useModalConfirmation() {
             warning={modalConfirmation.warning}
             callback={modalConfirmation.action}
             placeholder={modalConfirmation.placeholder}
+            isDelete={modalConfirmation?.isDelete}
           />
         ),
       })

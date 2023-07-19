@@ -95,7 +95,6 @@ export function PageSettingsDeploymentPipelineFeature() {
             openModalConfirmation({
               title: 'Delete this stage',
               isDelete: true,
-              description: 'Are you sure you want to delete this stage?',
               name: stage.name,
               action: () => deleteEnvironmentDeploymentStage.mutate({ stageId: stage.id }),
             }),

@@ -198,8 +198,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   const removeEnvironment = async () => {
     openModalConfirmation({
-      title: 'Delete environment',
-      description: 'To confirm the deletion of your environment, please type the name of the environment:',
+      title: `Delete environment`,
       name: environment?.name,
       isDelete: true,
       action: () => deleteEnvironment.mutate(),

@@ -8,13 +8,14 @@ import { Tooltip } from '../../tooltip/tooltip'
 
 export interface ModalConfirmationProps {
   title: string
-  description: string
-  name: string | undefined
+  description?: string
+  name?: string
   callback: () => void
   warning?: string
   setOpen?: (open: boolean) => void
   placeholder?: string
   ctaButton?: string
+  isDelete?: boolean
 }
 
 export function ModalConfirmation(props: ModalConfirmationProps) {
@@ -25,7 +26,8 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
     callback,
     setOpen,
     warning,
-    placeholder = 'Enter the current name',
+    isDelete = false,
+    placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
     ctaButton = 'Confirm',
   } = props
 
@@ -54,24 +56,38 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
         />
       )}
       <div className="text-text-400 text-sm mb-6">
-        {description}
-        <Tooltip content="Copy">
-          <span
-            data-testid="copy-cta"
-            onClick={copyToClipboard}
-            className="link inline cursor-pointer text-accent2-500 text-sm ml-1 truncate max-w-[250px]"
-          >
-            {name} <Icon name="icon-solid-copy" />
-          </span>
-        </Tooltip>
+        {isDelete ? (
+          description ? (
+            description
+          ) : (
+            <>
+              To confirm the deletion of <strong>{name}</strong>, please type "delete"
+            </>
+          )
+        ) : (
+          <>
+            {description}
+            <Tooltip content="Copy">
+              <span
+                data-testid="copy-cta"
+                onClick={copyToClipboard}
+                className="link inline cursor-pointer text-accent2-500 text-sm ml-1 truncate max-w-[250px]"
+              >
+                {name} <Icon name="icon-solid-copy" />
+              </span>
+            </Tooltip>
+          </>
+        )}
       </div>
       <form onSubmit={onSubmit}>
         <Controller
           name="name"
           control={control}
           rules={{
-            required: 'Please enter a name.',
-            validate: (value) => value === name || 'Please enter the right name.',
+            required: isDelete ? 'Please enter "delete".' : 'Please enter a name.',
+            validate: (value) =>
+              (isDelete ? value === 'delete' : value === name) ||
+              (isDelete ? 'Please confirm by entering "delete".' : 'Please enter the right name.'),
           }}
           defaultValue=""
           render={({ field, fieldState: { error } }) => (
@@ -89,7 +105,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
           <Button className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => setOpen && setOpen(false)}>
             Cancel
           </Button>
-          <Button className="btn--no-min-w" type="submit">
+          <Button className="btn--no-min-w" style={isDelete ? ButtonStyle.ERROR : ButtonStyle.BASIC} type="submit">
             {ctaButton}
           </Button>
         </div>

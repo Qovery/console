@@ -39,7 +39,6 @@ export function PageOrganizationDangerZone(props: PageOrganizationDangerZoneProp
           modalConfirmation={{
             mode: EnvironmentModeEnum.PRODUCTION,
             title: 'Delete organization',
-            description: 'To confirm the deletion of your organization, please type the name of the organization:',
             name: organization?.name,
           }}
         />

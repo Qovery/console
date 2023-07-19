@@ -20,7 +20,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           modalConfirmation={{
             mode: environmentMode,
             title: 'Delete database',
-            description: 'To confirm the deletion of your database, please type the name of the database:',
             name: database?.name,
           }}
         />

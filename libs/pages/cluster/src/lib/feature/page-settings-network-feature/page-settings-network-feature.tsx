@@ -81,7 +81,6 @@ export function PageSettingsNetworkFeature() {
         openModalConfirmation({
           title: 'Delete Network',
           isDelete: true,
-          description: 'Are you sure you want to delete this network?',
           name: route.target,
           action: () => {
             if (cluster?.routingTable?.items && cluster?.routingTable?.items?.length > 0) {

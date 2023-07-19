@@ -63,7 +63,6 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const removeDatabase = (id: string, name?: string, force = false) => {
     openModalConfirmation({
       title: `Delete database`,
-      description: `To confirm the deletion of your database, please type the name of the database:`,
       name: name,
       isDelete: true,
       action: () => {
