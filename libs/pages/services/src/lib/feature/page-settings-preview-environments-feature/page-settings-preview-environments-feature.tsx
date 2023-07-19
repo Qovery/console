@@ -37,7 +37,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
       const cloneEnvironmentDeploymentRules = Object.assign({}, environmentDeploymentRules as EnvironmentDeploymentRule)
       cloneEnvironmentDeploymentRules.auto_preview = data['auto_preview']
       cloneEnvironmentDeploymentRules.on_demand_preview = data['on_demand_preview']
-      cloneEnvironmentDeploymentRules.auto_delete = data['auto_delete']
 
       await editEnvironmentDeploymentRule.mutate({
         environmentId,
@@ -69,7 +68,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
   const toggleAll = (value: boolean) => {
     methods.setValue('on_demand_preview', value)
-    methods.setValue('auto_delete', value)
     //set all preview applications "true" when env preview is true
     if (loadingStatusEnvironmentDeploymentRules) {
       applications?.forEach((application) => methods.setValue(application.id, value, { shouldDirty: true }))
@@ -85,7 +83,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
 
     methods.setValue('on_demand_preview', value)
     methods.setValue('auto_preview', value)
-    methods.setValue('auto_delete', value)
   }
 
   useEffect(() => {
@@ -94,7 +91,6 @@ export function PageSettingsPreviewEnvironmentsFeature() {
       const isApplicationPreviewEnabled = applications ? applications.some((app) => app.auto_preview) : false
       methods.setValue('auto_preview', environmentDeploymentRules.auto_preview || isApplicationPreviewEnabled)
       methods.setValue('on_demand_preview', environmentDeploymentRules.on_demand_preview)
-      methods.setValue('auto_delete', environmentDeploymentRules.auto_delete)
       applications?.forEach((application) => methods.setValue(application.id, application.auto_preview))
     }
   }, [loadingStatusEnvironmentDeploymentRules, methods, environmentDeploymentRules, applications])

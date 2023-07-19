@@ -38,7 +38,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                     field.onChange(value)
                   }}
                   title="Turn on Preview Environments"
-                  description="Use this environment as Blueprint to create a preview environment when a Pull Request is submitted on one of your applications."
+                  description="Use this environment as Blueprint to create a preview environment when a Pull Request is submitted on one of your applications. The environment will be automatically deleted when the PR is merged."
                   forceAlignTop
                   small
                 />
@@ -55,22 +55,6 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
                   onChange={field.onChange}
                   title="Create on demand"
                   description="Trigger the creation of the preview environment only when requested within the Pull Request. Disabling this option will create a preview environment for each Pull Request."
-                  forceAlignTop
-                  small
-                />
-              )}
-            />
-            <Controller
-              name="auto_delete"
-              control={control}
-              render={({ field }) => (
-                <InputToggle
-                  dataTestId="auto-delete"
-                  className="mb-5"
-                  value={field.value}
-                  onChange={field.onChange}
-                  title="Auto-delete"
-                  description="This environment will be automatically deleted when a branch from a related application is merged or deleted."
                   forceAlignTop
                   small
                 />

@@ -33,7 +33,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
     created_at: '2020-01-01T00:00:00Z',
     auto_deploy: true,
     auto_stop: true,
-    auto_delete: true,
     auto_preview: true,
     timezone: 'UTC',
     start_time: '1970-01-01T08:00:00.000Z',
@@ -49,7 +48,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
     useFetchEnvironmentDeploymentRuleSpy.mockReturnValue(
       mockUseQueryResult<EnvironmentDeploymentRule>({
         auto_deploy: true,
-        auto_delete: false,
         auto_stop: true,
         auto_preview: true,
         created_at: '2020-01-01T00:00:00Z',
@@ -82,7 +80,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
     const env = handleSubmit(
       {
         auto_deploy: true,
-        auto_delete: false,
         auto_stop: true,
         weekdays: weekdaysValues.map((weekday) => weekday.value),
         start_time: startTime,
@@ -91,7 +88,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
       environmentDeploymentRules
     )
     expect(env.auto_deploy).toBe(true)
-    expect(env.auto_delete).toBe(false)
     expect(env.auto_stop).toBe(true)
     expect(env.weekdays).toStrictEqual([
       WeekdayEnum.MONDAY,

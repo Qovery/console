@@ -31,7 +31,6 @@ export function PageCreateDeploymentRuleFeature() {
     setValue('stop_time', '19:00')
     setValue('mode', 'PRODUCTION')
     setValue('auto_deploy', false)
-    setValue('auto_delete', false)
     setValue('auto_stop', false)
     setValue('weekdays', weekdaysValues)
   }, [setValue, dispatch, organizationId])

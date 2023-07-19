@@ -12,7 +12,6 @@ export const deploymentRulesFactoryMock = (howMany: number): ProjectDeploymentRu
     description: chance.word({ length: 10 }),
     mode: chance.pickone(Object.values([EnvironmentModeEnum.DEVELOPMENT])),
     cluster_id: chance.guid(),
-    auto_delete: false,
     auto_deploy: false,
     auto_stop: false,
     timezone: 'UTC',

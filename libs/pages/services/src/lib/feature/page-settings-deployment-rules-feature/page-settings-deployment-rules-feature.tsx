@@ -9,8 +9,6 @@ import PageSettingsDeployment from '../../ui/page-settings-deployment-rules/page
 export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: EnvironmentDeploymentRule) => {
   const cloneEnvironmentDeploymentRules = Object.assign({}, environmentDeploymentRules)
   cloneEnvironmentDeploymentRules.auto_deploy = data['auto_deploy']
-  cloneEnvironmentDeploymentRules.auto_delete = data['auto_delete']
-
   cloneEnvironmentDeploymentRules.auto_stop = data['auto_stop']
   cloneEnvironmentDeploymentRules.weekdays = data['weekdays']
   cloneEnvironmentDeploymentRules.start_time = `1970-01-01T${data['start_time']}:00.000Z`
@@ -39,7 +37,6 @@ export function PageSettingsDeploymentRulesFeature() {
     const stopTime = environmentDeploymentRules?.stop_time && dateToHours(environmentDeploymentRules?.stop_time)
 
     methods.setValue('auto_deploy', environmentDeploymentRules?.auto_deploy)
-    methods.setValue('auto_delete', environmentDeploymentRules?.auto_delete)
     methods.setValue('auto_stop', environmentDeploymentRules?.auto_stop)
     methods.setValue('timezone', environmentDeploymentRules?.timezone || 'UTC')
     methods.setValue('start_time', startTime)
