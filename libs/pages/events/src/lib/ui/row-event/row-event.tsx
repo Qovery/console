@@ -1,6 +1,7 @@
-import { OrganizationEventResponse } from 'qovery-typescript-axios'
+import { OrganizationEventOrigin, OrganizationEventResponse } from 'qovery-typescript-axios'
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
+import { IconEnum } from '@qovery/shared/enums'
 import { Icon, IconAwesomeEnum, Skeleton, TagEvent, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 import CopyButton from '../copy-button/copy-button'
@@ -11,6 +12,25 @@ export interface RowEventProps {
   columnsWidth: string
   setExpanded: (expanded: boolean) => void
   isPlaceholder?: boolean
+}
+
+export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
+  switch (origin) {
+    case OrganizationEventOrigin.GIT:
+      return <Icon name={IconAwesomeEnum.CODE_BRANCH} />
+    case OrganizationEventOrigin.CONSOLE:
+      return <Icon name={IconAwesomeEnum.BROWSER} />
+    case OrganizationEventOrigin.QOVERY_INTERNAL:
+      return <Icon name={IconAwesomeEnum.WAVE_PULSE} />
+    case OrganizationEventOrigin.API:
+      return <Icon name={IconAwesomeEnum.CLOUD_ARROW_UP} />
+    case OrganizationEventOrigin.CLI:
+      return <Icon name={IconAwesomeEnum.TERMINAL} />
+    case OrganizationEventOrigin.TERRAFORM_PROVIDER:
+      return <Icon name={IconEnum.TERRAFORM} width="12" />
+    default:
+      return null
+  }
 }
 
 export function RowEvent(props: RowEventProps) {
@@ -31,7 +51,9 @@ export function RowEvent(props: RowEventProps) {
                 name={IconAwesomeEnum.ANGLE_DOWN}
                 className={`text-xs cursor-pointer block ${expanded ? 'rotate-180' : ''}`}
               />
-              {dateYearMonthDayHourMinuteSecond(new Date(event.timestamp || ''))}
+              <Tooltip content={dateYearMonthDayHourMinuteSecond(new Date(event.timestamp || ''))}>
+                <span className="truncate">{dateYearMonthDayHourMinuteSecond(new Date(event.timestamp || ''))}</span>
+              </Tooltip>
             </div>
           </Skeleton>
         </div>
@@ -64,25 +86,28 @@ export function RowEvent(props: RowEventProps) {
                 </div>
               }
             >
-              <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.target_name}</span>
+              <span className="truncate">{event.target_name}</span>
             </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
-            <span>{upperCaseFirstLetter(event.sub_target_type || '')?.replace('_', ' ')}</span>
+            <span className="truncate">{upperCaseFirstLetter(event.sub_target_type || '')?.replace('_', ' ')}</span>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
             <Tooltip content={event.triggered_by || ''}>
-              <span className="whitespace-nowrap overflow-hidden text-ellipsis">{event.triggered_by}</span>
+              <span className="truncate">{event.triggered_by}</span>
             </Tooltip>
           </Skeleton>
         </div>
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
-            <span>{upperCaseFirstLetter(event.origin)?.replace('_', ' ')}</span>
+            <div className="truncate">
+              <span className="inline-block text-text-500 mr-1.5">{getSourceIcon(event.origin)}</span>
+              {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
+            </div>
           </Skeleton>
         </div>
       </div>

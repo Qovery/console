@@ -94,7 +94,7 @@ export function PageGeneral({
     },
   ]
 
-  const columnsWidth = '13% 12% 12% 15% 15% 22% 10%'
+  const columnsWidth = '14% 14% 12% 15% 10% 22% 11%'
 
   return (
     <>
