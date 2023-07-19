@@ -182,21 +182,6 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                       )}
                     />
                   </div>
-                  <div className="flex items-center gap-3 mb-1">
-                    <Controller
-                      name="auto_delete"
-                      control={control}
-                      render={({ field }) => (
-                        <InputToggle
-                          value={field.value}
-                          onChange={field.onChange}
-                          title="Auto-delete"
-                          description="Your environment will be automatically deleted if the associated PR/MR is closed."
-                          small
-                        />
-                      )}
-                    />
-                  </div>
                 </BlockContent>
 
                 <BlockContent title="Setup to apply - Start & stop">
