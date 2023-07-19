@@ -52,7 +52,7 @@ export function TagEvent(props: TagEventProps) {
         return (
           <Tag
             fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6"
+            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6 truncate"
           >
             Trigger Delete <Icon name={IconAwesomeEnum.ERASER} className="ml-1" />
           </Tag>
@@ -61,7 +61,7 @@ export function TagEvent(props: TagEventProps) {
         return (
           <Tag
             fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6"
+            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6 truncate"
           >
             Trigger Deploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>
@@ -70,20 +70,26 @@ export function TagEvent(props: TagEventProps) {
         return (
           <Tag
             fontWeight="font-medium"
-            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6"
+            className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6 truncate"
           >
             Trigger Redeploy <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.TRIGGER_STOP:
         return (
-          <Tag fontWeight="font-medium" className="bg-accent2-50 text-accent2-600 border border-accent2-500 !h-6">
+          <Tag
+            fontWeight="font-medium"
+            className="bg-accent2-50 text-accent2-600 border border-accent2-500 !h-6 truncate"
+          >
             Trigger Stop <Icon name={IconAwesomeEnum.CROSS} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.TRIGGER_RESTART:
         return (
-          <Tag fontWeight="font-medium" className="bg-accent2-50 text-accent2-600 border border-accent2-500 !h-6">
+          <Tag
+            fontWeight="font-medium"
+            className="bg-accent2-50 text-accent2-600 border border-accent2-500 !h-6 truncate"
+          >
             Trigger Restart <Icon name={IconAwesomeEnum.ROTATE_RIGHT} className="ml-1" />
           </Tag>
         )

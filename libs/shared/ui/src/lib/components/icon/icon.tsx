@@ -36,6 +36,7 @@ import RedisIcon from './icons/redis'
 import ScalewayIcon from './icons/scaleway'
 import ScalewayGrayIcon from './icons/scaleway-gray'
 import SlackIcon from './icons/slack'
+import TerraformIcon from './icons/terraform'
 
 export interface IconProps {
   name: IconEnum | IconAwesomeEnum | string
@@ -126,6 +127,8 @@ export function Icon(props: IconProps) {
       return <HammerIcon {...formattedProps} />
     case IconEnum.DOPPLER:
       return <DopplerIcon {...formattedProps} />
+    case IconEnum.TERRAFORM:
+      return <TerraformIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
