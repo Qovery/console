@@ -9,7 +9,7 @@ import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, TableFilterProps } from '@qovery/shared/ui'
-import { convertDatetoTimestamp, useDocumentTitle } from '@qovery/shared/utils'
+import { useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export const extractEventQueryParams = (urlString: string): EventQueryParams => {
@@ -29,6 +29,8 @@ export const extractEventQueryParams = (urlString: string): EventQueryParams => 
     fromTimestamp: searchParams.get('fromTimestamp') || undefined,
     continueToken: searchParams.get('continueToken') || undefined,
     stepBackToken: searchParams.get('stepBackToken') || undefined,
+    projectId: searchParams.get('projectId') || undefined,
+    environmentId: searchParams.get('environmentId') || undefined,
   }
 
   // remove undefined values with typescript typing
@@ -39,6 +41,12 @@ export const extractEventQueryParams = (urlString: string): EventQueryParams => 
   return queryParams
 }
 
+export const hasEnvironment = (targetType?: string) =>
+  targetType === OrganizationEventTargetType.APPLICATION ||
+  targetType === OrganizationEventTargetType.CONTAINER ||
+  targetType === OrganizationEventTargetType.DATABASE ||
+  targetType === OrganizationEventTargetType.JOB
+
 export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
@@ -46,8 +54,6 @@ export function PageGeneralFeature() {
   const [, setSearchParams] = useSearchParams()
   const [queryParams, setQueryParams] = useState<EventQueryParams>({})
   const [pageSize, setPageSize] = useState<string>('30')
-  const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
-  const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
 
@@ -55,11 +61,6 @@ export function PageGeneralFeature() {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
     if (newQueryParams.pageSize) setPageSize(newQueryParams.pageSize.toString())
-    if (newQueryParams.fromTimestamp && newQueryParams.toTimestamp)
-      setTimestamps([
-        new Date(parseInt(newQueryParams.fromTimestamp, 10) * 1000),
-        new Date(parseInt(newQueryParams.toTimestamp, 10) * 1000),
-      ])
 
     if (newQueryParams.origin)
       setFilter((prev) => {
@@ -128,39 +129,6 @@ export function PageGeneralFeature() {
     })
   }
 
-  const handleChangeTimestamp = (startDate: Date, endDate: Date) => {
-    setSearchParams((prev) => {
-      prev.delete('continueToken')
-      prev.delete('stepBackToken')
-      prev.set('fromTimestamp', convertDatetoTimestamp(startDate.toString()).toString())
-      prev.set('toTimestamp', endDate ? convertDatetoTimestamp(endDate.toString()).toString() : '')
-      return prev
-    })
-    setTimestamps([startDate, endDate])
-    setIsOpenTimestamp(!isOpenTimestamp)
-  }
-
-  const handeChangeType = (value?: string | string[]) => {
-    setSearchParams((prev) => {
-      if (value) {
-        prev.set('targetType', value as string)
-      } else {
-        prev.delete('targetType')
-      }
-      return prev
-    })
-  }
-
-  const handleClearTimestamp = () => {
-    setSearchParams((prev) => {
-      prev.delete('fromTimestamp')
-      prev.delete('toTimestamp')
-      return prev
-    })
-    setTimestamps(undefined)
-    setIsOpenTimestamp(false)
-  }
-
   const handleClearFilter = () => {
     setSearchParams((prev) => {
       prev.delete('origin')
@@ -168,10 +136,15 @@ export function PageGeneralFeature() {
       prev.delete('targetType')
       prev.delete('continueToken')
       prev.delete('stepBackToken')
+      prev.delete('projectId')
+      prev.delete('environmentId')
+      prev.delete('targetId')
+      prev.delete('fromTimestamp')
+      prev.delete('toTimestamp')
       return prev
     })
     setFilter([])
-    handleClearTimestamp()
+    setQueryParams({})
   }
 
   return (
@@ -185,13 +158,7 @@ export function PageGeneralFeature() {
       onPageSizeChange={onPageSizeChange}
       pageSize={pageSize}
       placeholderEvents={eventsFactoryMock(30)}
-      onChangeTimestamp={handleChangeTimestamp}
-      onChangeClearTimestamp={handleClearTimestamp}
-      onChangeType={handeChangeType}
       handleClearFilter={handleClearFilter}
-      timestamps={timestamps}
-      setIsOpenTimestamp={setIsOpenTimestamp}
-      isOpenTimestamp={isOpenTimestamp}
       filter={filter}
       setFilter={setFilter}
     />

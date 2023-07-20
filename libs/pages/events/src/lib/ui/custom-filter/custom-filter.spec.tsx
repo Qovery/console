@@ -1,7 +1,12 @@
 import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import { addMonths } from 'date-fns'
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { environmentFactoryMock, projectsFactoryMock } from '@qovery/shared/factories'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
 import CustomFilter, { CustomFilterProps } from './custom-filter'
+
+const mockProjects = projectsFactoryMock(2)
+const mockEnvironments = environmentFactoryMock(2)
 
 describe('CustomFilter', () => {
   const props: CustomFilterProps = {
@@ -12,6 +17,19 @@ describe('CustomFilter', () => {
     setIsOpenTimestamp: jest.fn(),
     isOpenTimestamp: false,
     timestamps: undefined,
+    projects: mockProjects,
+    environments: mockEnvironments,
+    eventsTargetsData: [
+      {
+        id: '0',
+        name: 'my-target',
+      },
+    ],
+    displayEventTargets: true,
+    targetType: OrganizationEventTargetType.APPLICATION,
+    projectId: mockProjects[0].id,
+    environmentId: mockEnvironments[0].id,
+    targetId: '0',
   }
 
   beforeEach(() => {
@@ -49,28 +67,37 @@ describe('CustomFilter', () => {
   it('should call onChangeClearTimestamp when clearing the timeframe', async () => {
     props.timestamps = [new Date(), new Date()]
 
-    const { getByTestId } = render(<CustomFilter {...props} />)
-    expect(getByTestId('timeframe-values')).toHaveTextContent(
+    render(<CustomFilter {...props} />)
+    expect(screen.getByTestId('timeframe-values')).toHaveTextContent(
       `from: ${dateYearMonthDayHourMinuteSecond(
         props.timestamps[0],
         true,
         false
       )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
     )
-    getByTestId('clear-timestamp').click()
+    screen.getByTestId('clear-timestamp').click()
     expect(props.onChangeClearTimestamp).toHaveBeenCalled()
   })
 
   it('should render correct timeframe button label if timestamps are provided', () => {
     props.timestamps = [new Date(), new Date()]
 
-    const { getByTestId } = render(<CustomFilter {...props} />)
-    expect(getByTestId('timeframe-values')).toHaveTextContent(
+    render(<CustomFilter {...props} />)
+    expect(screen.getByTestId('timeframe-values')).toHaveTextContent(
       `from: ${dateYearMonthDayHourMinuteSecond(
         props.timestamps[0],
         true,
         false
       )} - to: ${dateYearMonthDayHourMinuteSecond(props.timestamps[1], true, false)}`
     )
+  })
+
+  it('should render targetType, projects, environments and target with values', () => {
+    render(<CustomFilter {...props} />)
+
+    screen.getByText('Application')
+    screen.getByText(mockProjects[0].name)
+    screen.getByText(mockEnvironments[0].name)
+    screen.getByText('my-target')
   })
 })

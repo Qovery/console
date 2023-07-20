@@ -9,22 +9,16 @@ import {
   TableFilterProps,
   TableHeadProps,
 } from '@qovery/shared/ui'
+import CustomFilterFeature from '../../feature/custom-filter-feature/custom-filter-feature'
 import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
-import CustomFilter from '../custom-filter/custom-filter'
 
 export interface PageGeneralProps {
   isLoading: boolean
+  handleClearFilter: () => void
   events?: OrganizationEventResponse[]
   placeholderEvents?: OrganizationEventResponse[]
   onNext: () => void
   onPrevious: () => void
-  onChangeTimestamp: (startDate: Date, endDate: Date) => void
-  onChangeClearTimestamp: () => void
-  onChangeType: (value?: string | string[]) => void
-  handleClearFilter: () => void
-  timestamps?: [Date, Date]
-  isOpenTimestamp: boolean
-  setIsOpenTimestamp: (isOpen: boolean) => void
   nextDisabled?: boolean
   previousDisabled?: boolean
   onPageSizeChange?: (pageSize: string) => void
@@ -43,15 +37,9 @@ export function PageGeneral({
   previousDisabled,
   pageSize,
   placeholderEvents,
-  onChangeTimestamp,
-  onChangeClearTimestamp,
-  onChangeType,
-  handleClearFilter,
-  isOpenTimestamp,
-  setIsOpenTimestamp,
-  timestamps,
   setFilter,
   filter,
+  handleClearFilter,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -82,10 +70,10 @@ export function PageGeneral({
       title: 'User',
     },
     {
-      title: 'Tool',
+      title: 'Source',
       filter: [
         {
-          title: 'Filter by tool',
+          title: 'Filter by source',
           key: 'origin',
           itemsCustom: Object.keys(OrganizationEventOrigin).map((item) => item),
           hideFilterNumber: true,
@@ -103,15 +91,7 @@ export function PageGeneral({
           <h2 className="h5 text-text-700">Audit Logs</h2>
         </div>
         <div className="flex items-center mb-4 h-9">
-          <CustomFilter
-            onChangeTimestamp={onChangeTimestamp}
-            onChangeClearTimestamp={onChangeClearTimestamp}
-            isOpenTimestamp={isOpenTimestamp}
-            setIsOpenTimestamp={setIsOpenTimestamp}
-            timestamps={timestamps}
-            onChangeType={onChangeType}
-            clearFilter={handleClearFilter}
-          />
+          <CustomFilterFeature handleClearFilter={handleClearFilter} />
         </div>
 
         <Table

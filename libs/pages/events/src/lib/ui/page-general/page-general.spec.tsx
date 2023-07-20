@@ -6,7 +6,9 @@ import PageGeneral, { PageGeneralProps } from './page-general'
 
 const props: PageGeneralProps = {
   placeholderEvents: eventsFactoryMock(5),
+  queryParams: {},
   pageSize: '10',
+  handleClearFilter: jest.fn(),
   nextDisabled: false,
   previousDisabled: false,
   isLoading: false,
@@ -14,15 +16,8 @@ const props: PageGeneralProps = {
   onPrevious: jest.fn(),
   onPageSizeChange: jest.fn(),
   events: eventsFactoryMock(10),
-  onChangeTimestamp: jest.fn(),
-  onChangeClearTimestamp: jest.fn(),
-  timestamps: [new Date(), new Date()],
-  isOpenTimestamp: false,
-  setIsOpenTimestamp: jest.fn(),
   setFilter: jest.fn(),
   filter: [{ key: 'origin', value: 'origin-1' }],
-  onChangeType: jest.fn(),
-  handleClearFilter: jest.fn(),
 }
 
 describe('PageGeneral', () => {
@@ -73,7 +68,7 @@ describe('PageGeneral', () => {
     const { getByText, getAllByTestId } = render(<PageGeneral {...props} />)
 
     act(() => {
-      getByText('Tool').click()
+      getByText('Source').click()
     })
 
     // format uppercase and replace _ by space (auto format by menu component)

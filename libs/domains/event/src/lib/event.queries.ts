@@ -1,4 +1,8 @@
-import { OrganizationEventApi, OrganizationEventResponseList } from 'qovery-typescript-axios'
+import {
+  OrganizationEventApi,
+  OrganizationEventResponseList,
+  OrganizationEventTargetResponseList,
+} from 'qovery-typescript-axios'
 import {
   OrganizationEventOrigin,
   OrganizationEventSubTargetType,
@@ -22,6 +26,8 @@ export interface EventQueryParams {
   origin?: OrganizationEventOrigin
   continueToken?: string
   stepBackToken?: string
+  projectId?: string
+  environmentId?: string
 }
 
 export const useFetchEvents = (organizationId: string, queryParams: EventQueryParams) => {
@@ -59,6 +65,33 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
     },
     {
       onError: (err) => toastError(err),
+    }
+  )
+}
+
+export const useFetchEventTargets = (organizationId: string, queryParams: EventQueryParams, enabled?: boolean) => {
+  const { eventType, targetType, origin, triggeredBy, toTimestamp, fromTimestamp, projectId, environmentId } =
+    queryParams
+
+  return useQuery<OrganizationEventTargetResponseList, Error>(
+    ['organization', organizationId, 'events-targets', queryParams],
+    async () => {
+      const response = await eventsApi.getOrganizationEventTargets(
+        organizationId,
+        fromTimestamp,
+        toTimestamp,
+        eventType,
+        targetType,
+        triggeredBy,
+        origin,
+        projectId,
+        environmentId
+      )
+      return response.data
+    },
+    {
+      onError: (err) => toastError(err),
+      enabled: enabled,
     }
   )
 }
