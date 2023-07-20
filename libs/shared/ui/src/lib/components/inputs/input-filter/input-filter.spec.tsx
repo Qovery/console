@@ -36,7 +36,7 @@ describe('InputFilter', () => {
     fireEvent.click(option2)
 
     expect(handleChange).toHaveBeenCalledWith('filter', 'option2')
-    expect(getByTestId('clear-timestamp')).toBeInTheDocument()
+    expect(getByTestId('clear-btn')).toBeInTheDocument()
   })
 
   it('clears the selection on clear button click', () => {
@@ -48,11 +48,11 @@ describe('InputFilter', () => {
     const button = getByText('Option 1')
     fireEvent.click(button)
 
-    const clearButton = getByTestId('clear-timestamp')
+    const clearButton = getByTestId('clear-btn')
     fireEvent.click(clearButton)
 
     expect(handleChange).toHaveBeenCalledWith('filter', undefined)
-    expect(queryByTestId('clear-timestamp')).not.toBeInTheDocument()
+    expect(queryByTestId('clear-btn')).not.toBeInTheDocument()
   })
 
   it('should match input filter without value', () => {
@@ -70,6 +70,23 @@ describe('InputFilter', () => {
 
     const { container } = render(
       <InputFilter name="Filter" nameKey="filter" options={options} onChange={handleChange} defaultValue="option1" />
+    )
+
+    expect(container).toMatchSnapshot()
+  })
+
+  it('should match input filter with loading', () => {
+    const handleChange = jest.fn()
+
+    const { container } = render(
+      <InputFilter
+        name="Filter"
+        nameKey="filter"
+        options={options}
+        onChange={handleChange}
+        defaultValue="option1"
+        isLoading={true}
+      />
     )
 
     expect(container).toMatchSnapshot()

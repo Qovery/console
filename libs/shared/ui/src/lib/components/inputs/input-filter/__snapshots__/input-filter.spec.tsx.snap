@@ -1,5 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`InputFilter should match input filter with loading 1`] = `
+<div>
+  <div>
+    <button
+      class="btn btn--tiny btn--basic "
+      data-testid=""
+      type="button"
+    >
+      <span>
+        <div
+          class="flex justify-center w-12"
+        >
+          <div
+            class="aspect-square border-2  rounded-full border-solid border-element-light-lighter-700 border-r-element-light-lighter-100 animate-spin w-4 "
+            data-testid="spinner"
+          />
+        </div>
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
 exports[`InputFilter should match input filter with value 1`] = `
 <div>
   <div>
@@ -12,7 +35,7 @@ exports[`InputFilter should match input filter with value 1`] = `
         Option 1
         <span
           class="px-1 py-1 relative left-1"
-          data-testid="clear-timestamp"
+          data-testid="clear-btn"
           role="button"
         >
           <span
