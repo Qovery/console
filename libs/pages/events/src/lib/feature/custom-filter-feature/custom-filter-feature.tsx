@@ -78,7 +78,6 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
       })
     } else if (name === 'projectId') {
       setSearchParams((prev) => {
-        console.log(value)
         if (value) {
           prev.set('projectId', value as string)
         } else {
