@@ -11,7 +11,7 @@ import {
   useDeleteEnvironment,
 } from '@qovery/domains/environment'
 import {
-  AUDIT_LOGS_DATABASE_PARAMS_URL,
+  AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
@@ -241,7 +241,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
               contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
               onClick: () =>
                 navigate(
-                  AUDIT_LOGS_DATABASE_PARAMS_URL(organizationId, {
+                  AUDIT_LOGS_PARAMS_URL(organizationId, {
                     targetType: OrganizationEventTargetType.ENVIRONMENT,
                     projectId,
                     targetId: environment.id,

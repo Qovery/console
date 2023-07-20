@@ -13,7 +13,7 @@ import {
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {
-  AUDIT_LOGS_DATABASE_PARAMS_URL,
+  AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
@@ -228,7 +228,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
             contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
             onClick: () =>
               navigate(
-                AUDIT_LOGS_DATABASE_PARAMS_URL(organizationId, {
+                AUDIT_LOGS_PARAMS_URL(organizationId, {
                   targetType: OrganizationEventTargetType.DATABASE,
                   projectId,
                   environmentId,

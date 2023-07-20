@@ -25,7 +25,7 @@ import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
-  AUDIT_LOGS_DATABASE_PARAMS_URL,
+  AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
@@ -332,7 +332,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
               onClick: () =>
                 navigate(
-                  AUDIT_LOGS_DATABASE_PARAMS_URL(organizationId, {
+                  AUDIT_LOGS_PARAMS_URL(organizationId, {
                     targetType: getTargetType(serviceType),
                     projectId,
                     environmentId,

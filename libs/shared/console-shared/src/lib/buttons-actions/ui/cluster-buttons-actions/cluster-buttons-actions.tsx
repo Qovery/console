@@ -5,12 +5,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteClusterAction, postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import {
-  AUDIT_LOGS_DATABASE_PARAMS_URL,
-  CLUSTER_SETTINGS_URL,
-  CLUSTER_URL,
-  INFRA_LOGS_URL,
-} from '@qovery/shared/routes'
+import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import {
   ButtonIconAction,
   ButtonIconActionElementProps,
@@ -174,7 +169,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
               contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
               onClick: () =>
                 navigate(
-                  AUDIT_LOGS_DATABASE_PARAMS_URL(organizationId, {
+                  AUDIT_LOGS_PARAMS_URL(organizationId, {
                     targetType: OrganizationEventTargetType.CLUSTER,
                     targetId: cluster.id,
                   })
