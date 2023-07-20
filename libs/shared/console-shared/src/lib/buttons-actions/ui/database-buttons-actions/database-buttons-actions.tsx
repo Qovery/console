@@ -27,6 +27,7 @@ import {
   IconAwesomeEnum,
   MenuData,
   MenuItemProps,
+  useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import {
@@ -39,6 +40,7 @@ import {
   isStopAvailable,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
+import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 
 export interface DatabaseButtonsActionsProps {
   database: DatabaseEntity
@@ -47,6 +49,7 @@ export interface DatabaseButtonsActionsProps {
 
 export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const { database, environmentMode } = props
+  const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const navigate = useNavigate()
@@ -240,6 +243,22 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
             name: 'Copy identifiers',
             contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,
             onClick: () => copyToClipboard(copyContent),
+          },
+          {
+            name: 'Clone',
+            contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
+            onClick: () =>
+              openModal({
+                content: (
+                  <CloneServiceModalFeature
+                    environmentId={environmentId}
+                    onClose={closeModal}
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    serviceToClone={database}
+                  />
+                ),
+              }),
           },
         ],
       },
