@@ -8,7 +8,7 @@ import { editApplication, getApplicationsState, postApplicationActionsRedeploy }
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, HealthcheckData, LoadingStatus } from '@qovery/shared/interfaces'
-import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
@@ -139,12 +139,13 @@ export function PageSettingsHealthchecksFeature() {
         ports={application?.ports}
         jobPort={application?.port}
         isJob={isJob(application)}
-        linkPortSetting={`${APPLICATION_URL(
+        maxRunningInstances={application?.max_running_instances}
+        linkResourcesSetting={`${APPLICATION_URL(
           organizationId,
           projectId,
           environmentId,
           applicationId
-        )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_PORT_URL}`}
+        )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_RESOURCES_URL}`}
         defaultTypeReadiness={defaultTypeReadiness as ProbeTypeEnum}
         defaultTypeLiveness={defaultTypeLiveness as ProbeTypeEnum}
         onSubmit={onSubmit}

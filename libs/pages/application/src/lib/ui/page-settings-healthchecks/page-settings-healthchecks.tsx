@@ -1,5 +1,7 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
+import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
@@ -9,11 +11,12 @@ export interface PageSettingsHealthchecksProps {
   loading: LoadingStatus
   defaultTypeReadiness: ProbeTypeEnum
   defaultTypeLiveness: ProbeTypeEnum
-  linkPortSetting: string
+  linkResourcesSetting: string
   isJob: boolean
   jobPort?: number | null
   ports?: ServicePort[]
   onSubmit?: () => void
+  maxRunningInstances?: number
 }
 
 export function PageSettingsHealthchecks({
@@ -22,32 +25,36 @@ export function PageSettingsHealthchecks({
   loading,
   isJob,
   jobPort,
-  linkPortSetting,
+  linkResourcesSetting,
   defaultTypeReadiness,
   defaultTypeLiveness,
+  maxRunningInstances,
 }: PageSettingsHealthchecksProps) {
   const { formState } = useFormContext()
+  const { projectId = '', environmentId = '' } = useParams()
+  const { data: environments = [] } = useFetchEnvironments(projectId)
+  const environment = getEnvironmentById(environmentId ?? '', environments)
 
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
       <div className="p-8 max-w-content-with-navigation-left">
-        {ports && ports?.length === 0 && (
+        {environment?.mode === EnvironmentModeEnum.PRODUCTION && maxRunningInstances === 1 && (
           <BannerBox
             className="mb-2"
-            dataTestId="banner-box-port-configuration-required"
-            title="Port configuration required"
-            type={BannerBoxEnum.WARNING}
             message={
-              <>
-                Please configure a port before using any health check types, except for the EXEC type.{' '}
+              <span>
+                Your service is configured to run with a minimum of one instance, setting the health checks will not
+                ensure the service high availability during a cluster upgrade. Have a look at your{' '}
                 <Link
-                  className="link !block text-accent2-500 mt-1"
+                  className="link text-accent2-500"
                   size="text-xs"
-                  link={linkPortSetting}
-                  linkLabel="Configure a port"
-                />
-              </>
+                  link={linkResourcesSetting}
+                  linkLabel="instance setup"
+                />{' '}
+                first and increase the minimum instance type.
+              </span>
             }
+            type={BannerBoxEnum.WARNING}
           />
         )}
         <h2 className="h5 text-text-700 mb-2">Health checks</h2>
