@@ -42,6 +42,7 @@ describe('ApplicationButtonsActionsFeature', () => {
     getByText(baseElement, 'Restart Service')
 
     getByText(baseElement, 'Edit code')
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Open settings')
     getByText(baseElement, 'Delete service')
@@ -56,6 +57,7 @@ describe('ApplicationButtonsActionsFeature', () => {
 
     getByText(baseElement, 'Edit code')
     getByText(baseElement, 'Copy identifiers')
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Open settings')
     getByText(baseElement, 'Delete service')
     getByText(baseElement, 'Deploy other version')
@@ -68,6 +70,7 @@ describe('ApplicationButtonsActionsFeature', () => {
     getByText(baseElement, 'Edit code')
     getByText(baseElement, 'Logs')
     getByText(baseElement, 'Deploy other version')
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Cancel delete')
     getByText(baseElement, 'Open settings')

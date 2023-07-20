@@ -37,6 +37,7 @@ describe('EnvironmentButtonsActions', () => {
 
     getByText(baseElement, 'Deploy')
 
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Clone')
     getByText(baseElement, 'Delete environment')
