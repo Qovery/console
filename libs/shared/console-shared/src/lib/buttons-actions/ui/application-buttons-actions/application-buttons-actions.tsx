@@ -1,5 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { StateEnum } from 'qovery-typescript-axios'
+import { OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -11,12 +11,21 @@ import {
   postApplicationActionsStop,
 } from '@qovery/domains/application'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
-import { getServiceType, isApplication, isContainer, isContainerJob, isGitJob, isJob } from '@qovery/shared/enums'
+import {
+  ServiceTypeEnum,
+  getServiceType,
+  isApplication,
+  isContainer,
+  isContainerJob,
+  isGitJob,
+  isJob,
+} from '@qovery/shared/enums'
 import { ApplicationEntity, GitApplicationEntity, JobApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
+  AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
@@ -63,6 +72,25 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const location = useLocation()
 
+  const serviceType = getServiceType(application)
+
+  const getTargetType = (serviceType: ServiceTypeEnum): OrganizationEventTargetType => {
+    switch (serviceType) {
+      case ServiceTypeEnum.APPLICATION:
+        return OrganizationEventTargetType.APPLICATION
+      case ServiceTypeEnum.DATABASE:
+        return OrganizationEventTargetType.DATABASE
+      case ServiceTypeEnum.CRON_JOB:
+        return OrganizationEventTargetType.JOB
+      case ServiceTypeEnum.LIFECYCLE_JOB:
+        return OrganizationEventTargetType.JOB
+      case ServiceTypeEnum.CONTAINER:
+        return OrganizationEventTargetType.CONTAINER
+      default:
+        return OrganizationEventTargetType.APPLICATION
+    }
+  }
+
   const actionCancelEnvironment = useActionCancelEnvironment(
     projectId,
     environmentId,
@@ -75,9 +103,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       name: name,
       isDelete: true,
       action: () => {
-        dispatch(
-          deleteApplicationAction({ environmentId, applicationId: id, serviceType: getServiceType(application), force })
-        )
+        dispatch(deleteApplicationAction({ environmentId, applicationId: id, serviceType: serviceType, force }))
         navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       },
     })
@@ -92,7 +118,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           postApplicationActionsDeploy({
             environmentId,
             applicationId: application.id,
-            serviceType: getServiceType(application),
+            serviceType: serviceType,
           })
         ),
     }
@@ -118,7 +144,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               postApplicationActionsRedeploy({
                 environmentId,
                 applicationId: application.id,
-                serviceType: getServiceType(application),
+                serviceType: serviceType,
               })
             )
           },
@@ -136,7 +162,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
           postApplicationActionsReboot({
             environmentId,
             applicationId: application.id,
-            serviceType: getServiceType(application),
+            serviceType: serviceType,
           })
         )
       },
@@ -165,7 +191,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               postApplicationActionsStop({
                 environmentId,
                 applicationId: application.id,
-                serviceType: getServiceType(application),
+                serviceType: serviceType,
               })
             )
           },
@@ -300,6 +326,19 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                   external: true,
                 },
               }),
+            },
+            {
+              name: 'See audit logs',
+              contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+              onClick: () =>
+                navigate(
+                  AUDIT_LOGS_PARAMS_URL(organizationId, {
+                    targetType: getTargetType(serviceType),
+                    projectId,
+                    environmentId,
+                    targetId: application.id,
+                  })
+                ),
             },
             {
               name: 'Copy identifiers',

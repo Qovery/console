@@ -38,7 +38,7 @@ describe('DatabaseButtonsActionsFeature', () => {
     getByText(baseElement, 'Redeploy')
     getByText(baseElement, 'Stop')
     getByText(baseElement, 'Restart Database')
-
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Delete database')
   })
@@ -48,7 +48,7 @@ describe('DatabaseButtonsActionsFeature', () => {
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
     getByText(baseElement, 'Deploy')
-
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Delete database')
   })
@@ -57,6 +57,7 @@ describe('DatabaseButtonsActionsFeature', () => {
     mockDatabase.status.state = StateEnum.DELETING
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifiers')
     getByText(baseElement, 'Cancel delete')
   })

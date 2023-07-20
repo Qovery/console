@@ -30,7 +30,7 @@ describe('ClusterButtonsActionsFeature', () => {
 
     getByText(baseElement, 'Update')
     getByText(baseElement, 'Stop')
-
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifier')
     getByText(baseElement, 'Delete cluster')
   })
@@ -47,6 +47,7 @@ describe('ClusterButtonsActionsFeature', () => {
     const { baseElement } = render(<ClusterButtonsActions {...props} />)
 
     getByText(baseElement, 'Deploy')
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifier')
     getByText(baseElement, 'Delete cluster')
   })
@@ -63,6 +64,7 @@ describe('ClusterButtonsActionsFeature', () => {
     const { baseElement } = render(<ClusterButtonsActions {...props} />)
 
     getByText(baseElement, 'Install')
+    getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifier')
     getByText(baseElement, 'Delete cluster')
   })

@@ -1,5 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -13,6 +13,7 @@ import {
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {
+  AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
@@ -222,6 +223,19 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     menus: [
       {
         items: [
+          {
+            name: 'See audit logs',
+            contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+            onClick: () =>
+              navigate(
+                AUDIT_LOGS_PARAMS_URL(organizationId, {
+                  targetType: OrganizationEventTargetType.DATABASE,
+                  projectId,
+                  environmentId,
+                  targetId: database.id,
+                })
+              ),
+          },
           {
             name: 'Copy identifiers',
             contentLeft: <Icon name="icon-solid-copy" className="text-sm text-brand-400" />,

@@ -113,7 +113,7 @@ export function PageGeneral({
                 <div>
                   <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
                   <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-result">
-                    No events found. <br /> Try to change your filters.
+                    No events found, we retain logs for a maximum of 30 days <br /> Try to change your filters.
                   </p>
                 </div>
               </div>

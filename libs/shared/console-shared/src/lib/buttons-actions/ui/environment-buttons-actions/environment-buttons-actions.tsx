@@ -1,5 +1,5 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { Environment, EnvironmentStatus, StateEnum } from 'qovery-typescript-axios'
+import { Environment, EnvironmentStatus, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -11,6 +11,7 @@ import {
   useDeleteEnvironment,
 } from '@qovery/domains/environment'
 import {
+  AUDIT_LOGS_PARAMS_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
@@ -35,8 +36,8 @@ import {
   isStopAvailable,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
-import CreateCloneEnvironmentModalFeature from '../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
-import UpdateAllModalFeature from '../../update-all-modal/feature/update-all-modal-feature'
+import CreateCloneEnvironmentModalFeature from '../../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
+import UpdateAllModalFeature from '../../../update-all-modal/feature/update-all-modal-feature'
 
 export interface EnvironmentButtonsActionsProps {
   environment: Environment
@@ -234,6 +235,18 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
               name: 'Logs',
               contentLeft: <Icon name={IconAwesomeEnum.SCROLL} className="text-sm text-brand-400" />,
               onClick: () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id)),
+            },
+            {
+              name: 'See audit logs',
+              contentLeft: <Icon name={IconAwesomeEnum.CLOCK_ROTATE_LEFT} className="text-sm text-brand-400" />,
+              onClick: () =>
+                navigate(
+                  AUDIT_LOGS_PARAMS_URL(organizationId, {
+                    targetType: OrganizationEventTargetType.ENVIRONMENT,
+                    projectId,
+                    targetId: environment.id,
+                  })
+                ),
             },
             {
               name: 'Copy identifiers',
