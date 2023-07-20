@@ -46,7 +46,7 @@ export function PageSettingsHealthchecks({
                 Your service is configured to run with a minimum of one instance, setting the health checks will not
                 ensure the service high availability during a cluster upgrade. Have a look at your{' '}
                 <Link
-                  className="link text-accent2-500 mt-1"
+                  className="link text-accent2-500"
                   size="text-xs"
                   link={linkResourcesSetting}
                   linkLabel="instance setup"
