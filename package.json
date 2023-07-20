@@ -8,7 +8,7 @@
     "storybook": "nx storybook shared-ui",
     "build-storybook": "nx run shared-ui:build-storybook",
     "build": "npx nx build",
-    "test": "nx test",
+    "test": "nx run-many --all --target=test",
     "prepare": "husky install",
     "semantic-release": "semantic-release"
   },
