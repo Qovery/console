@@ -8,23 +8,6 @@ import CustomFilter, { CustomFilterProps } from './custom-filter'
 const mockProjects = projectsFactoryMock(2)
 const mockEnvironments = environmentFactoryMock(2)
 
-const mockSearchParamsValues: any = {
-  targetType: OrganizationEventTargetType.APPLICATION,
-  projectId: '0',
-  environmentId: '0',
-}
-
-const mockSearchParams = {
-  get: jest.fn((key: string) => mockSearchParamsValues[key]),
-  getAll: jest.fn(),
-  toString: jest.fn(),
-}
-
-jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as object),
-  useSearchParams: () => [mockSearchParams],
-}))
-
 describe('CustomFilter', () => {
   const props: CustomFilterProps = {
     onChangeType: jest.fn(),
@@ -42,7 +25,11 @@ describe('CustomFilter', () => {
         name: 'my-target',
       },
     ],
-    displayEventTargets: false,
+    displayEventTargets: true,
+    targetType: OrganizationEventTargetType.APPLICATION,
+    projectId: mockProjects[0].id,
+    environmentId: mockEnvironments[0].id,
+    targetId: '0',
   }
 
   beforeEach(() => {
@@ -105,13 +92,12 @@ describe('CustomFilter', () => {
     )
   })
 
-  it('should render targetType, projects, environments and target lists', () => {
+  it('should render targetType, projects, environments and target with values', () => {
     render(<CustomFilter {...props} />)
 
-    const btnType = screen.getByText('Type')
-    fireEvent.click(btnType)
-
-    const optionApplication = screen.getByText('Application')
-    fireEvent.click(optionApplication)
+    screen.getByText('Application')
+    screen.getByText(mockProjects[0].name)
+    screen.getByText(mockEnvironments[0].name)
+    screen.getByText('my-target')
   })
 })

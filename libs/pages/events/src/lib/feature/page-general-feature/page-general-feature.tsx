@@ -159,7 +159,6 @@ export function PageGeneralFeature() {
       pageSize={pageSize}
       placeholderEvents={eventsFactoryMock(30)}
       handleClearFilter={handleClearFilter}
-      queryParams={queryParams}
       filter={filter}
       setFilter={setFilter}
     />

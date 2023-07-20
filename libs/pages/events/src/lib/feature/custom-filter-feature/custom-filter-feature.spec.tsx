@@ -3,7 +3,6 @@ import CustomFilterFeature, { CustomFilterFeatureProps } from './custom-filter-f
 
 describe('CustomFilterFeature', () => {
   const props: CustomFilterFeatureProps = {
-    queryParams: {},
     handleClearFilter: jest.fn(),
   }
 

@@ -1,6 +1,5 @@
 import { OrganizationEventOrigin, OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
-import { EventQueryParams } from '@qovery/domains/event'
 import {
   HelpSection,
   Icon,
@@ -15,7 +14,6 @@ import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
   isLoading: boolean
-  queryParams: EventQueryParams
   handleClearFilter: () => void
   events?: OrganizationEventResponse[]
   placeholderEvents?: OrganizationEventResponse[]
@@ -42,7 +40,6 @@ export function PageGeneral({
   setFilter,
   filter,
   handleClearFilter,
-  queryParams,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -94,7 +91,7 @@ export function PageGeneral({
           <h2 className="h5 text-text-700">Audit Logs</h2>
         </div>
         <div className="flex items-center mb-4 h-9">
-          <CustomFilterFeature queryParams={queryParams} handleClearFilter={handleClearFilter} />
+          <CustomFilterFeature handleClearFilter={handleClearFilter} />
         </div>
 
         <Table

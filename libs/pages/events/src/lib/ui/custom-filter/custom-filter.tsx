@@ -22,6 +22,7 @@ export interface CustomFilterProps {
   projects?: Project[]
   environments?: Environment[]
   eventsTargetsData?: ClusterCloudProviderInfoCredentials[]
+  isLoadingEventsTargetsData?: boolean
   displayEventTargets?: boolean
   targetType?: string | null
   projectId?: string | null
@@ -40,6 +41,7 @@ export function CustomFilter({
   projects = [],
   environments = [],
   eventsTargetsData = [],
+  isLoadingEventsTargetsData = false,
   displayEventTargets = false,
   targetType,
   projectId,
@@ -142,6 +144,7 @@ export function CustomFilter({
               }))}
               onChange={onChangeType}
               defaultValue={targetId as string}
+              isLoading={isLoadingEventsTargetsData}
             />
           )}
         </div>

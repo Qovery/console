@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useFetchEnvironments } from '@qovery/domains/environment'
@@ -10,19 +10,18 @@ import CustomFilter from '../../ui/custom-filter/custom-filter'
 import { extractEventQueryParams, hasEnvironment } from '../page-general-feature/page-general-feature'
 
 export interface CustomFilterFeatureProps {
-  queryParams: EventQueryParams
   handleClearFilter: () => void
 }
 
-export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFilterFeatureProps) {
+export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeatureProps) {
   const location = useLocation()
   const { organizationId = '' } = useParams()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
   const [timestamps, setTimestamps] = useState<[Date, Date] | undefined>()
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
-  const targetType = searchParams.get('targetType')
-  const projectId = searchParams.get('projectId')
-  const environmentId = searchParams.get('environmentId')
+
+  const queryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
+  const { environmentId, projectId, targetType, targetId } = queryParams
 
   const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
   const { data: environments } = useFetchEnvironments(projectId || '')
@@ -31,13 +30,11 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
     targetType && (!hasEnvironment(targetType) || (projectId && environmentId))
   )
 
-  console.log('-------')
-  console.log('targetType', targetType)
-  console.log('projectId', projectId)
-  console.log('environmentId', environmentId)
-  console.log('displayEventTargets', displayEventTargets)
-
-  const { data: eventsTargetsData } = useFetchEventTargets(organizationId, queryParams, displayEventTargets)
+  const { data: eventsTargetsData, isLoading: isLoadingEventsTargetsData } = useFetchEventTargets(
+    organizationId,
+    queryParams,
+    displayEventTargets
+  )
 
   useEffect(() => {
     const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
@@ -73,15 +70,21 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
           prev.set('targetType', value as string)
         } else {
           prev.delete('targetType')
+          prev.delete('projectId')
+          prev.delete('environmentId')
+          prev.delete('targetId')
         }
         return prev
       })
     } else if (name === 'projectId') {
       setSearchParams((prev) => {
+        console.log(value)
         if (value) {
           prev.set('projectId', value as string)
         } else {
           prev.delete('projectId')
+          prev.delete('environmentId')
+          prev.delete('targetId')
         }
         return prev
       })
@@ -91,6 +94,7 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
           prev.set('environmentId', value as string)
         } else {
           prev.delete('environmentId')
+          prev.delete('targetId')
         }
         return prev
       })
@@ -120,13 +124,15 @@ export function CustomFilterFeature({ handleClearFilter, queryParams }: CustomFi
       }}
       projects={projects}
       environments={environments}
-      eventsTargetsData={eventsTargetsData?.targets || []}
-      displayEventTargets={displayEventTargets}
+      eventsTargetsData={eventsTargetsData?.targets}
+      isLoadingEventsTargetsData={isLoadingEventsTargetsData}
       projectId={projectId}
       environmentId={environmentId}
       targetType={targetType}
+      targetId={targetId}
+      displayEventTargets={displayEventTargets}
     />
   )
 }
 
-export default CustomFilterFeature
+export default React.memo(CustomFilterFeature)
