@@ -81,7 +81,6 @@
     "@semantic-release/github": "^8.0.6",
     "@storybook/addon-essentials": "7.0.23",
     "@storybook/addon-knobs": "^7.0.2",
-    "@storybook/addon-knobs": "^7.0.2",
     "@storybook/addons": "^7.0.23",
     "@storybook/core-server": "7.0.23",
     "@storybook/react": "7.0.23",
