@@ -1,9 +1,6 @@
 {
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file",
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": true
-  },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
