@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "nrwl.angular-console",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "firsttris.vscode-jest-runner",
+    "csstools.postcss",
+    "bradlc.vscode-tailwindcss",
+    "Orta.vscode-twoslash-queries",
+    "mattpocock.ts-error-translator",
+    "eamodio.gitlens",
+    "figma.figma-vscode-extension",
+    "wix.vscode-import-cost"
+  ]
+}
