@@ -39,15 +39,15 @@
   "generators": {
     "@nrwl/react": {
       "application": {
-        "style": "scss",
+        "style": "none",
         "linter": "eslint",
         "babel": true
       },
       "component": {
-        "style": "scss"
+        "style": "none"
       },
       "library": {
-        "style": "scss",
+        "style": "none",
         "linter": "eslint",
         "unitTestRunner": "jest"
       }

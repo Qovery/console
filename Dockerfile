@@ -39,7 +39,7 @@ ENV NX_ONBOARDING $NX_ONBOARDING
 # Cache and Install dependencies
 COPY package.json .
 COPY yarn.lock .
-RUN yarn install --production
+RUN yarn install --frozen-lockfile
 
 # Copy app files
 COPY . .
