@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
+import { QueryParamProvider } from 'use-query-params'
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
 import { ModalProvider, ToastBehavior } from '@qovery/shared/ui'
 import { store } from '@qovery/store'
@@ -42,10 +44,12 @@ root.render(
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <BrowserRouter>
-            <ModalProvider>
-              <App />
-              <ToastBehavior />
-            </ModalProvider>
+            <QueryParamProvider adapter={ReactRouter6Adapter}>
+              <ModalProvider>
+                <App />
+                <ToastBehavior />
+              </ModalProvider>
+            </QueryParamProvider>
           </BrowserRouter>
         </Provider>
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}

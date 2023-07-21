@@ -5,7 +5,8 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useLocation, useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
+import { NumberParam, StringParam, useQueryParams } from 'use-query-params'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, TableFilterProps } from '@qovery/shared/ui'
@@ -50,42 +51,56 @@ export const hasEnvironment = (targetType?: string) =>
 export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
-  const location = useLocation()
+  // const location = useLocation()
   const [, setSearchParams] = useSearchParams()
-  const [queryParams, setQueryParams] = useState<EventQueryParams>({})
+  const [queryParams, setQueryParams] = useQueryParams({
+    pageSize: NumberParam,
+    origin: StringParam,
+    subTargetType: StringParam,
+    triggeredBy: StringParam,
+    targetId: StringParam,
+    targetType: StringParam,
+    eventType: StringParam,
+    toTimestamp: StringParam,
+    fromTimestamp: StringParam,
+    continueToken: StringParam,
+    stepBackToken: StringParam,
+    projectId: StringParam,
+    environmentId: StringParam,
+  })
   const [pageSize, setPageSize] = useState<string>('30')
   const [filter, setFilter] = useState<TableFilterProps[]>([])
-  const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
+  const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams as EventQueryParams)
 
   useEffect(() => {
-    const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
+    // const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
 
-    if (newQueryParams.pageSize) setPageSize(newQueryParams.pageSize.toString())
+    console.log(queryParams)
 
-    if (newQueryParams.origin)
+    if (queryParams.pageSize) setPageSize(queryParams.pageSize.toString())
+
+    if (queryParams.origin)
       setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === newQueryParams.origin)
+        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === queryParams.origin)
         if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'origin', value: newQueryParams.origin }]
+          const updatedFilters = [...prev, { key: 'origin', value: queryParams.origin }]
           return updatedFilters
         }
         return prev
       })
 
-    if (newQueryParams.eventType)
+    if (queryParams.eventType)
       setFilter((prev) => {
-        const isAlreadyPresent = prev.some(
-          (item) => item.key === 'event_type' && item.value === newQueryParams.eventType
-        )
+        const isAlreadyPresent = prev.some((item) => item.key === 'event_type' && item.value === queryParams.eventType)
         if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'event_type', value: newQueryParams.eventType }]
+          const updatedFilters = [...prev, { key: 'event_type', value: queryParams.eventType }]
           return updatedFilters
         }
         return prev
       })
 
-    setQueryParams(newQueryParams)
-  }, [location])
+    // setQueryParams(queryParams)
+  }, [queryParams])
 
   // set filter if is a query params change
   useEffect(() => {
