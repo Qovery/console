@@ -6,7 +6,7 @@ import { Route, Routes, useLocation, useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -22,10 +22,8 @@ export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
   const dispatch = useDispatch<AppDispatch>()
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
-  const { data: environments } = useFetchEnvironments(projectId)
-
-  const environment = getEnvironmentById(environmentId, environments)
   const location = useLocation()
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)

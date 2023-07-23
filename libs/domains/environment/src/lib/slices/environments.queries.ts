@@ -28,10 +28,13 @@ const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const databasesApi = new DatabasesApi()
 
-export const useFetchEnvironments = (projectId: string, noRefetchStatus = false) => {
+export const useFetchEnvironments = <TData = Environment[]>(
+  projectId: string,
+  select?: (data: Environment[]) => TData
+) => {
   const queryClient = useQueryClient()
 
-  return useQuery<Environment[], Error>(
+  return useQuery(
     ['project', projectId, 'environments'],
     async () => {
       const response = await environmentsApi.listEnvironment(projectId)
@@ -39,20 +42,20 @@ export const useFetchEnvironments = (projectId: string, noRefetchStatus = false)
     },
     {
       onSuccess: () => {
-        if (!noRefetchStatus) {
-          // refetch environmentsStatus requests
-          queryClient.invalidateQueries(['environmentsStatus', projectId])
-        }
+        // refetch environmentsStatus requests
+        queryClient.invalidateQueries(['environmentsStatus', projectId])
       },
-      onError: (err) => toastError(err),
+      onError: (err) => toastError(err as Error),
       enabled: projectId !== '',
+      select,
     }
   )
 }
 
-export const getEnvironmentById = (environmentId: string, environments?: Environment[]) => {
-  return environments?.find((environment) => environment.id === environmentId)
-}
+export const useFetchEnvironment = (projectId: string, environmentId: string) =>
+  useFetchEnvironments(projectId, (environments) =>
+    environments.find((environment) => environment.id === environmentId)
+  )
 
 export const useFetchEnvironmentsStatus = (projectId: string, refetchInterval = 3000) => {
   return useQuery<EnvironmentStatus[], Error>(

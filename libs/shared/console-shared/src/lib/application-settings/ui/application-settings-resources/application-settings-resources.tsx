@@ -1,7 +1,6 @@
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
@@ -13,14 +12,13 @@ export interface ApplicationSettingsResourcesProps {
   minInstances?: number
   maxInstances?: number
   clusterId?: string
+  environmentMode?: EnvironmentModeEnum
 }
 
 export function ApplicationSettingsResources(props: ApplicationSettingsResourcesProps) {
-  const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, clusterId = '' } = props
+  const { displayWarningCpu, application, minInstances = 1, maxInstances = 50, clusterId = '', environmentMode } = props
   const { control, watch } = useFormContext()
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: environments = [] } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId ?? '', environments)
+  const { organizationId = '' } = useParams()
 
   let maxMemoryBySize = application?.maximum_memory
 
@@ -128,21 +126,19 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
             CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
           </p>
-          {environment?.mode === EnvironmentModeEnum.PRODUCTION &&
-            watchInstances[0] === 1 &&
-            watchInstances[1] === 1 && (
-              <BannerBox
-                className="mt-3"
-                message={
-                  <span>
-                    We strongly discourage running your production environment with only one instance. This setup might
-                    create service downtime in case of cluster upgrades. Set a minimum of 2 instances for your service
-                    to ensure high availability.
-                  </span>
-                }
-                type={BannerBoxEnum.WARNING}
-              />
-            )}
+          {environmentMode === EnvironmentModeEnum.PRODUCTION && watchInstances[0] === 1 && watchInstances[1] === 1 && (
+            <BannerBox
+              className="mt-3"
+              message={
+                <span>
+                  We strongly discourage running your production environment with only one instance. This setup might
+                  create service downtime in case of cluster upgrades. Set a minimum of 2 instances for your service to
+                  ensure high availability.
+                </span>
+              }
+              type={BannerBoxEnum.WARNING}
+            />
+          )}
         </BlockContent>
       )}
     </div>

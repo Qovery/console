@@ -1,7 +1,5 @@
 import { EnvironmentModeEnum, ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { LoadingStatus } from '@qovery/shared/interfaces'
@@ -17,6 +15,7 @@ export interface PageSettingsHealthchecksProps {
   ports?: ServicePort[]
   onSubmit?: () => void
   maxRunningInstances?: number
+  environmentMode?: EnvironmentModeEnum
 }
 
 export function PageSettingsHealthchecks({
@@ -29,16 +28,14 @@ export function PageSettingsHealthchecks({
   defaultTypeReadiness,
   defaultTypeLiveness,
   maxRunningInstances,
+  environmentMode,
 }: PageSettingsHealthchecksProps) {
   const { formState } = useFormContext()
-  const { projectId = '', environmentId = '' } = useParams()
-  const { data: environments = [] } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId ?? '', environments)
 
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
       <div className="p-8 max-w-content-with-navigation-left">
-        {environment?.mode === EnvironmentModeEnum.PRODUCTION && maxRunningInstances === 1 && (
+        {environmentMode === EnvironmentModeEnum.PRODUCTION && maxRunningInstances === 1 && (
           <BannerBox
             className="mb-2"
             message={

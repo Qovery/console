@@ -3,7 +3,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, postApplicationActionsRedeploy, selectApplicationById } from '@qovery/domains/application'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -38,8 +38,7 @@ export function PageSettingsResourcesFeature() {
       JSON.stringify(a?.instances) === JSON.stringify(b?.instances)
   )
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const methods = useForm({
     mode: 'onChange',
@@ -95,6 +94,7 @@ export function PageSettingsResourcesFeature() {
         application={application}
         displayWarningCpu={displayWarningCpu}
         clusterId={environment?.cluster_id}
+        environmentMode={environment?.mode}
       />
     </FormProvider>
   )

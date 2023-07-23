@@ -10,7 +10,7 @@ import {
   fetchApplicationStatus,
   selectApplicationById,
 } from '@qovery/domains/application'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -21,8 +21,7 @@ import Container from './ui/container/container'
 
 export function PageApplication() {
   const { applicationId = '', environmentId = '', organizationId = '', projectId = '' } = useParams()
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),

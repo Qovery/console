@@ -7,7 +7,7 @@ import {
   fetchApplications,
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
-import { getEnvironmentById, useActionDeployAllEnvironment, useFetchEnvironments } from '@qovery/domains/environment'
+import { useActionDeployAllEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isApplication, isGitJob, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
@@ -22,8 +22,7 @@ export interface UpdateAllModalFeatureProps {
 export function UpdateAllModalFeature(props: UpdateAllModalFeatureProps) {
   const { environmentId, projectId } = props
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const { closeModal } = useModal()
   const dispatch: AppDispatch = useDispatch()

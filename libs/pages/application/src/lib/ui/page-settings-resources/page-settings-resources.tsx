@@ -1,3 +1,4 @@
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
@@ -8,12 +9,13 @@ export interface PageSettingsResourcesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   displayWarningCpu: boolean
   application?: ApplicationEntity
+  environmentMode?: EnvironmentModeEnum
   loading?: boolean
   clusterId?: string
 }
 
 export function PageSettingsResources(props: PageSettingsResourcesProps) {
-  const { onSubmit, loading, application, clusterId, displayWarningCpu } = props
+  const { onSubmit, loading, application, clusterId, displayWarningCpu, environmentMode } = props
   const { formState } = useFormContext()
 
   if (!application) return null
@@ -30,6 +32,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
             displayWarningCpu={displayWarningCpu}
             application={application}
             clusterId={clusterId}
+            environmentMode={environmentMode}
           />
           <div className="flex justify-end">
             <Button

@@ -10,7 +10,7 @@ import {
   fetchDatabasesStatus,
   selectDatabaseById,
 } from '@qovery/domains/database'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -19,8 +19,7 @@ import Container from './ui/container/container'
 
 export function PageDatabase() {
   const { databaseId = '', environmentId = '', projectId = '' } = useParams()
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const database = useSelector<RootState, DatabaseEntity | undefined>(
     (state) => selectDatabaseById(state, databaseId),
