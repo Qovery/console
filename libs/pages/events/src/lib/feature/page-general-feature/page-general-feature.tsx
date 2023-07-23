@@ -1,46 +1,12 @@
-import {
-  OrganizationEventOrigin,
-  OrganizationEventSubTargetType,
-  OrganizationEventTargetType,
-  OrganizationEventType,
-} from 'qovery-typescript-axios'
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
-import { NumberParam, StringParam, useQueryParams } from 'use-query-params'
+import { useParams } from 'react-router-dom'
+import { NumberParam, StringParam, useQueryParams, withDefault } from 'use-query-params'
 import { EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import PageGeneral from '../../ui/page-general/page-general'
-
-export const extractEventQueryParams = (urlString: string): EventQueryParams => {
-  const url = new URL(urlString, window.location.origin) // add the base URL to properly parse the relative URL
-  const searchParams = new URLSearchParams(url.search)
-
-  const queryParams: EventQueryParams = {
-    // parse other query parameters as needed
-    pageSize: searchParams.get('pageSize') ? parseInt(searchParams.get('pageSize') as string, 10) : undefined,
-    origin: (searchParams.get('origin') as OrganizationEventOrigin) || undefined,
-    subTargetType: (searchParams.get('subTargetType') as OrganizationEventSubTargetType) || undefined,
-    triggeredBy: searchParams.get('triggeredBy') || undefined,
-    targetId: searchParams.get('targetId') || undefined,
-    targetType: (searchParams.get('targetType') as OrganizationEventTargetType) || undefined,
-    eventType: (searchParams.get('eventType') as OrganizationEventType) || undefined,
-    toTimestamp: searchParams.get('toTimestamp') || undefined,
-    fromTimestamp: searchParams.get('fromTimestamp') || undefined,
-    continueToken: searchParams.get('continueToken') || undefined,
-    stepBackToken: searchParams.get('stepBackToken') || undefined,
-    projectId: searchParams.get('projectId') || undefined,
-    environmentId: searchParams.get('environmentId') || undefined,
-  }
-
-  // remove undefined values with typescript typing
-  Object.keys(queryParams).forEach(
-    (key) =>
-      queryParams[key as keyof EventQueryParams] === undefined && delete queryParams[key as keyof EventQueryParams]
-  )
-  return queryParams
-}
 
 export const hasEnvironment = (targetType?: string) =>
   targetType === OrganizationEventTargetType.APPLICATION ||
@@ -48,42 +14,42 @@ export const hasEnvironment = (targetType?: string) =>
   targetType === OrganizationEventTargetType.DATABASE ||
   targetType === OrganizationEventTargetType.JOB
 
+export const queryParamsValues = {
+  pageSize: withDefault(NumberParam, 30),
+  origin: StringParam,
+  subTargetType: StringParam,
+  triggeredBy: StringParam,
+  targetId: StringParam,
+  targetType: StringParam,
+  eventType: StringParam,
+  toTimestamp: StringParam,
+  fromTimestamp: StringParam,
+  continueToken: StringParam,
+  stepBackToken: StringParam,
+  projectId: StringParam,
+  environmentId: StringParam,
+  name: StringParam,
+}
+
 export function PageGeneralFeature() {
   useDocumentTitle('Audit Logs - Qovery')
   const { organizationId = '' } = useParams()
-  // const location = useLocation()
-  const [, setSearchParams] = useSearchParams()
-  const [queryParams, setQueryParams] = useQueryParams({
-    pageSize: NumberParam,
-    origin: StringParam,
-    subTargetType: StringParam,
-    triggeredBy: StringParam,
-    targetId: StringParam,
-    targetType: StringParam,
-    eventType: StringParam,
-    toTimestamp: StringParam,
-    fromTimestamp: StringParam,
-    continueToken: StringParam,
-    stepBackToken: StringParam,
-    projectId: StringParam,
-    environmentId: StringParam,
-  })
-  const [pageSize, setPageSize] = useState<string>('30')
+  // const [, setSearchParams] = useSearchParams()
+
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
+
+  // const [pageSize, setPageSize] = useState<number>(30)
   const [filter, setFilter] = useState<TableFilterProps[]>([])
-  const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams as EventQueryParams)
+  const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams as any)
 
   useEffect(() => {
-    // const newQueryParams: EventQueryParams = extractEventQueryParams(location.pathname + location.search)
-
-    console.log(queryParams)
-
-    if (queryParams.pageSize) setPageSize(queryParams.pageSize.toString())
+    // if (queryParams.pageSize) setQueryParams({ pageSize: queryParams.pageSize }, 'pushIn')
 
     if (queryParams.origin)
       setFilter((prev) => {
         const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === queryParams.origin)
         if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'origin', value: queryParams.origin }]
+          const updatedFilters = [...prev, { key: 'origin', value: queryParams.origin || '' }]
           return updatedFilters
         }
         return prev
@@ -93,13 +59,11 @@ export function PageGeneralFeature() {
       setFilter((prev) => {
         const isAlreadyPresent = prev.some((item) => item.key === 'event_type' && item.value === queryParams.eventType)
         if (!isAlreadyPresent) {
-          const updatedFilters = [...prev, { key: 'event_type', value: queryParams.eventType }]
+          const updatedFilters = [...prev, { key: 'event_type', value: queryParams.eventType || '' }]
           return updatedFilters
         }
         return prev
       })
-
-    // setQueryParams(queryParams)
   }, [queryParams])
 
   // set filter if is a query params change
@@ -112,54 +76,57 @@ export function PageGeneralFeature() {
         .toLowerCase()
         .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
 
-      setSearchParams((prev) => {
+      setQueryParams((prev) => {
+        console.log(prev)
         if (currentFilter.value === ALL) {
-          prev.delete(currentKey)
-        } else {
-          prev.delete(currentKey)
-          prev.set(currentKey, currentFilter.value || '')
+          return { [currentKey]: undefined, ...prev }
         }
+
         return prev
-      })
+      }, 'pushIn')
     }
   }, [filter])
 
   const onPrevious = () => {
     if (eventsData?.links?.previous) {
-      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.previous))))
+      setQueryParams({ stepBackToken: eventsData.links.previous }, 'pushIn')
+      // setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.previous))))
     }
   }
 
   const onNext = () => {
     if (eventsData?.links?.next) {
-      setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.next))))
+      setQueryParams({ continueToken: eventsData.links.next }, 'pushIn')
+      // setSearchParams(JSON.parse(JSON.stringify(extractEventQueryParams(eventsData.links.next))))
     }
   }
 
   const onPageSizeChange = (pageSize: string) => {
-    setPageSize(pageSize)
-    setSearchParams((prev) => {
-      prev.set('pageSize', pageSize)
-      return prev
-    })
+    setQueryParams({ pageSize: parseInt(pageSize, 10) }, 'pushIn')
+    // setPageSize(pageSize)
+    // setSearchParams((prev) => {
+    //   prev.set('pageSize', pageSize)
+    //   return prev
+    // })
   }
 
   const handleClearFilter = () => {
-    setSearchParams((prev) => {
-      prev.delete('origin')
-      prev.delete('eventType')
-      prev.delete('targetType')
-      prev.delete('continueToken')
-      prev.delete('stepBackToken')
-      prev.delete('projectId')
-      prev.delete('environmentId')
-      prev.delete('targetId')
-      prev.delete('fromTimestamp')
-      prev.delete('toTimestamp')
-      return prev
-    })
-    setFilter([])
-    setQueryParams({})
+    setQueryParams({}, 'push')
+    // setSearchParams((prev) => {
+    //   prev.delete('origin')
+    //   prev.delete('eventType')
+    //   prev.delete('targetType')
+    //   prev.delete('continueToken')
+    //   prev.delete('stepBackToken')
+    //   prev.delete('projectId')
+    //   prev.delete('environmentId')
+    //   prev.delete('targetId')
+    //   prev.delete('fromTimestamp')
+    //   prev.delete('toTimestamp')
+    //   return prev
+    // })
+    // setFilter([])
+    // setQueryParams({})
   }
 
   return (
@@ -171,7 +138,7 @@ export function PageGeneralFeature() {
       previousDisabled={!eventsData?.links?.previous}
       nextDisabled={!eventsData?.links?.next}
       onPageSizeChange={onPageSizeChange}
-      pageSize={pageSize}
+      pageSize={queryParams.pageSize.toString()}
       placeholderEvents={eventsFactoryMock(30)}
       handleClearFilter={handleClearFilter}
       filter={filter}
