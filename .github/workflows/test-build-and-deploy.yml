@@ -76,8 +76,9 @@ jobs:
         with:
           directory: ./coverage/coverage
           flags: unittests # optional
-          fail_ci_if_error: false # optional (default = false)
+          fail_ci_if_error: true # optional (default = false)
           verbose: true # optional (default = false)
+          range: 40..80
 
   deploy:
     name: Deploy to Qovery
