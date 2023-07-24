@@ -14,7 +14,7 @@ export interface PageSettingsHealthchecksProps {
   jobPort?: number | null
   ports?: ServicePort[]
   onSubmit?: () => void
-  maxRunningInstances?: number
+  minRunningInstances?: number
   environmentMode?: EnvironmentModeEnum
 }
 
@@ -27,7 +27,7 @@ export function PageSettingsHealthchecks({
   linkResourcesSetting,
   defaultTypeReadiness,
   defaultTypeLiveness,
-  maxRunningInstances,
+  minRunningInstances,
   environmentMode,
 }: PageSettingsHealthchecksProps) {
   const { formState } = useFormContext()
@@ -35,7 +35,7 @@ export function PageSettingsHealthchecks({
   return (
     <div className="flex flex-col justify-between w-full text-ssm">
       <div className="p-8 max-w-content-with-navigation-left">
-        {environmentMode === EnvironmentModeEnum.PRODUCTION && maxRunningInstances === 1 && (
+        {environmentMode === EnvironmentModeEnum.PRODUCTION && minRunningInstances === 1 && (
           <BannerBox
             className="mb-2"
             message={
