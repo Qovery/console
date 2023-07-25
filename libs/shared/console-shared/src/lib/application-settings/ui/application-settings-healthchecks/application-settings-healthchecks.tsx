@@ -35,8 +35,8 @@ export interface ApplicationSettingsHealthchecksProps {
 export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: ApplicationSettingsHealthchecksProps) {
   const { control, watch } = useFormContext()
 
-  const typeReadiness = watch('readiness_probe.current_type')
-  const typeLiveness = watch('liveness_probe.current_type')
+  const typeReadiness = watch('readiness_probe.current_type') || ProbeTypeEnum.NONE
+  const typeLiveness = watch('liveness_probe.current_type') || ProbeTypeEnum.NONE
 
   const tableHead: TableEditionRow[] = [
     {

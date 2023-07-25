@@ -62,9 +62,9 @@ export function StepHealthchecksFeature() {
     defaultValues: {
       readiness_probe: {
         ...{
-          current_type: ProbeTypeEnum.TCP,
+          current_type: portData?.healthchecks?.typeReadiness || ProbeTypeEnum.TCP,
           type: {
-            [ProbeTypeEnum.TCP.toLowerCase()]: {
+            [portData?.healthchecks?.typeReadiness || ProbeTypeEnum.TCP.toLowerCase()]: {
               port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
             },
           },
@@ -73,9 +73,9 @@ export function StepHealthchecksFeature() {
       },
       liveness_probe: {
         ...{
-          current_type: ProbeTypeEnum.TCP,
+          current_type: portData?.healthchecks?.typeLiveness || ProbeTypeEnum.TCP,
           type: {
-            [ProbeTypeEnum.TCP.toLowerCase()]: {
+            [portData?.healthchecks?.typeLiveness || ProbeTypeEnum.TCP]: {
               port: portData?.ports && portData?.ports.length > 0 ? portData?.ports[0].application_port : 0,
             },
           },
