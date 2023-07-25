@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useFetchDatabaseInstanceTypes } from '@qovery/domains/database'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { RootState } from '@qovery/store'
@@ -20,8 +20,7 @@ export function SettingsResourcesInstanceTypesFeature({
 }: SettingsResourcesInstanceTypesFeatureProps) {
   const { projectId = '', environmentId = '' } = useParams()
 
-  const { data: environments } = useFetchEnvironments(projectId, true)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
   )

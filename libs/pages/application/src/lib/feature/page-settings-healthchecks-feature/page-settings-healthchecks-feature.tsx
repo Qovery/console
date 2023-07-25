@@ -5,6 +5,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editApplication, getApplicationsState, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, HealthcheckData, LoadingStatus } from '@qovery/shared/interfaces'
@@ -36,6 +37,8 @@ export function PageSettingsHealthchecksFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const dispatch = useDispatch<AppDispatch>()
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => getApplicationsState(state).entities[applicationId],
     equal
@@ -150,6 +153,7 @@ export function PageSettingsHealthchecksFeature() {
         defaultTypeLiveness={defaultTypeLiveness as ProbeTypeEnum}
         onSubmit={onSubmit}
         loading={loading}
+        environmentMode={environment?.mode}
       />
     </FormProvider>
   )

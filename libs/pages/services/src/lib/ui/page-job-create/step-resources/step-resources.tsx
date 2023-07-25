@@ -1,3 +1,4 @@
+import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsResources } from '@qovery/shared/console-shared'
@@ -7,9 +8,10 @@ import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 export interface StepResourcesProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
+  environmentMode?: EnvironmentModeEnum
 }
 
-export function StepResources({ onBack, onSubmit }: StepResourcesProps) {
+export function StepResources({ onBack, environmentMode, onSubmit }: StepResourcesProps) {
   const { formState } = useFormContext<ApplicationResourcesData>()
 
   return (
@@ -20,7 +22,7 @@ export function StepResources({ onBack, onSubmit }: StepResourcesProps) {
       </div>
 
       <form onSubmit={onSubmit}>
-        <ApplicationSettingsResources displayWarningCpu={false} />
+        <ApplicationSettingsResources displayWarningCpu={false} environmentMode={environmentMode} />
 
         <div className="flex justify-between">
           <Button

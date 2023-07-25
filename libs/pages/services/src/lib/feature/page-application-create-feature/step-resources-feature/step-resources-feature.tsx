@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ApplicationResourcesData, ClusterEntity } from '@qovery/shared/interfaces'
 import {
@@ -25,8 +25,7 @@ export function StepResourcesFeature() {
   const navigate = useNavigate()
   const [maxInstances, setMaxInstance] = useState(50)
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state) =>
     selectClusterById(state, environment?.cluster_id || '')
@@ -93,7 +92,12 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepResources maximumInstances={maxInstances} onBack={onBack} onSubmit={onSubmit} />
+        <StepResources
+          maximumInstances={maxInstances}
+          onBack={onBack}
+          onSubmit={onSubmit}
+          environmentMode={environment?.mode}
+        />
       </FormProvider>
     </FunnelFlowBody>
   )

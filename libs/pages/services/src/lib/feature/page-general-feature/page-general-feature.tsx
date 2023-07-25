@@ -7,7 +7,7 @@ import {
   selectApplicationsEntitiesByEnvId,
 } from '@qovery/domains/application'
 import { fetchDatabasesStatus, getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
@@ -28,8 +28,7 @@ export function PageGeneralFeature() {
     selectDatabasesEntitiesByEnvId(state, environmentId)
   )
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const applicationsLoadingStatus = useSelector<RootState, LoadingStatus>(
     (state) => getApplicationsState(state).loadingStatus

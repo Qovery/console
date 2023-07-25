@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getEnvironmentById, useEnvironmentDeploymentHistory, useFetchEnvironments } from '@qovery/domains/environment'
+import { useEnvironmentDeploymentHistory, useFetchEnvironment } from '@qovery/domains/environment'
 import { deploymentMock } from '@qovery/shared/factories'
 import { DeploymentService } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
@@ -10,8 +10,7 @@ import PageDeployments from '../../ui/page-deployments/page-deployments'
 export function PageDeploymentsFeature() {
   const { projectId = '', environmentId = '' } = useParams()
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
   const {
     refetch,
     isLoading: loadingStatusDeployments,

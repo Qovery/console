@@ -6,11 +6,10 @@ import { useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import {
-  getEnvironmentById,
   useAddServiceToDeploymentStage,
   useDeleteEnvironmentDeploymentStage,
   useFetchDeploymentStageList,
-  useFetchEnvironments,
+  useFetchEnvironment,
 } from '@qovery/domains/environment'
 import { Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { RootState } from '@qovery/store'
@@ -26,8 +25,7 @@ export interface StageRequest {
 export function PageSettingsDeploymentPipelineFeature() {
   const { projectId = '', environmentId = '' } = useParams()
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const applications = useSelector(
     (state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId),

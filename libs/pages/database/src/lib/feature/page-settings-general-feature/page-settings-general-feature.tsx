@@ -5,7 +5,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@qovery/domains/database'
-import { getEnvironmentById, useFetchDatabaseConfiguration, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -29,8 +29,8 @@ export function PageSettingsGeneralFeature() {
     (state) => selectDatabaseById(state, databaseId),
     equal
   )
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
+
   const cluster = useSelector<RootState, ClusterEntity | undefined>((state: RootState) =>
     selectClusterById(state, environment?.cluster_id || '')
   )

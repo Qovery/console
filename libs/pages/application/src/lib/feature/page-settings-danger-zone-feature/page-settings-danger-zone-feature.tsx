@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteApplicationAction, selectApplicationById } from '@qovery/domains/application'
-import { getEnvironmentById, useFetchEnvironments } from '@qovery/domains/environment'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
@@ -12,8 +12,7 @@ export function PageSettingsDangerZoneFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, applicationId)

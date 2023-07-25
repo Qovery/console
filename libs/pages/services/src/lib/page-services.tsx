@@ -2,10 +2,9 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  getEnvironmentById,
   getEnvironmentStatusById,
   useEnvironmentRunningStatus,
-  useFetchEnvironments,
+  useFetchEnvironment,
   useFetchEnvironmentsStatus,
 } from '@qovery/domains/environment'
 import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
@@ -20,8 +19,7 @@ export function PageServices() {
   const location = useLocation()
   const navigate = useNavigate()
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
   const environmentsStatus = useFetchEnvironmentsStatus(projectId)
   const environmentRunningStatus = useEnvironmentRunningStatus(environmentId)
 

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { getEnvironmentById, useEditEnvironment, useFetchEnvironments } from '@qovery/domains/environment'
+import { useEditEnvironment, useFetchEnvironment } from '@qovery/domains/environment'
 import { fetchClusters, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/store'
@@ -21,8 +21,7 @@ export function PageSettingsGeneralFeature() {
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
 
-  const { data: environments } = useFetchEnvironments(projectId)
-  const environment = getEnvironmentById(environmentId, environments)
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
   const editEnvironment = useEditEnvironment(projectId, () => setLoading(false))
 
   const [loading, setLoading] = useState(false)
