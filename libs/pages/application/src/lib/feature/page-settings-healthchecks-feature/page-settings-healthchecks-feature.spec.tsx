@@ -80,17 +80,19 @@ describe('PageSettingsHealthchecksFeature', () => {
         }),
     }))
 
-    const { getByTestId } = render(<PageSettingsHealthchecksFeature />)
+    const { getByTestId, getByText } = render(<PageSettingsHealthchecksFeature />)
 
     await act(() => {
       const input = getByTestId('input-readiness-probe-service')
       fireEvent.input(input, { target: { value: 'my-service' } })
     })
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    const btnSave = getByText('Save')
+
+    expect(btnSave).not.toBeDisabled()
 
     await act(() => {
-      getByTestId('submit-button').click()
+      btnSave.click()
     })
 
     expect(editApplicationSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
