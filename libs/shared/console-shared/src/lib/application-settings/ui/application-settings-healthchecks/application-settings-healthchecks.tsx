@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import {
@@ -31,29 +30,13 @@ export interface ApplicationSettingsHealthchecksProps {
   ports?: number[]
   isJob?: boolean
   jobPort?: number | null
-  defaultTypeReadiness: ProbeTypeEnum
-  defaultTypeLiveness: ProbeTypeEnum
 }
 
-export function ApplicationSettingsHealthchecks({
-  ports,
-  jobPort,
-  defaultTypeReadiness,
-  defaultTypeLiveness,
-  isJob,
-}: ApplicationSettingsHealthchecksProps) {
-  const { control, trigger } = useFormContext()
+export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: ApplicationSettingsHealthchecksProps) {
+  const { control, watch } = useFormContext()
 
-  const [typeReadiness, setTypeReadiness] = useState<ProbeTypeEnum>(defaultTypeReadiness)
-  const [typeLiveness, setTypeLiveness] = useState<ProbeTypeEnum>(defaultTypeLiveness)
-
-  useEffect(() => {
-    setTypeReadiness(defaultTypeReadiness)
-  }, [defaultTypeReadiness])
-
-  useEffect(() => {
-    setTypeLiveness(defaultTypeLiveness)
-  }, [defaultTypeLiveness])
+  const typeReadiness = watch('readiness_probe.current_type')
+  const typeLiveness = watch('liveness_probe.current_type')
 
   const tableHead: TableEditionRow[] = [
     {
@@ -120,11 +103,7 @@ export function ApplicationSettingsHealthchecks({
                   dataTestId="input-liveness-probe-current-type"
                   name={field.name}
                   defaultValue={field.value || ''}
-                  onChange={(value) => {
-                    field.onChange(value)
-                    setTypeLiveness(value as ProbeTypeEnum)
-                    trigger().then()
-                  }}
+                  onChange={field.onChange}
                   items={Object.values(ProbeTypeEnum).map((value) => ({
                     label: value,
                     value: value,
@@ -147,11 +126,7 @@ export function ApplicationSettingsHealthchecks({
                   dataTestId="input-readiness-probe-current-type"
                   name={field.name}
                   defaultValue={field.value || ''}
-                  onChange={(value) => {
-                    field.onChange(value)
-                    setTypeReadiness(value as ProbeTypeEnum)
-                    trigger().then()
-                  }}
+                  onChange={field.onChange}
                   items={Object.values(ProbeTypeEnum).map((value) => ({
                     label: value,
                     value: value,
@@ -207,7 +182,6 @@ export function ApplicationSettingsHealthchecks({
                     defaultValue={field.value || ''}
                     onChange={(value) => {
                       field.onChange(value)
-                      trigger().then()
                     }}
                     items={
                       ports
@@ -250,7 +224,6 @@ export function ApplicationSettingsHealthchecks({
                     defaultValue={field.value || ''}
                     onChange={(value) => {
                       field.onChange(value)
-                      trigger().then()
                     }}
                     items={
                       ports

@@ -126,13 +126,7 @@ export function StepHealthchecksFeature() {
   return (
     <FunnelFlowBody helpSection={funnelCardHelp}>
       <FormProvider {...methods}>
-        <StepHealthchecks
-          ports={portData?.ports}
-          onBack={onBack}
-          onSubmit={onSubmit}
-          defaultTypeReadiness={(portData?.healthchecks?.typeReadiness as ProbeTypeEnum) || ProbeTypeEnum.TCP}
-          defaultTypeLiveness={(portData?.healthchecks?.typeLiveness as ProbeTypeEnum) || ProbeTypeEnum.TCP}
-        />
+        <StepHealthchecks ports={portData?.ports} onBack={onBack} onSubmit={onSubmit} />
       </FormProvider>
     </FunnelFlowBody>
   )

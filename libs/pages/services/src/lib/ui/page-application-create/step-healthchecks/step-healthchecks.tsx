@@ -1,25 +1,16 @@
 import { FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { PortData } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '@qovery/shared/ui'
 
 export interface StepHealthchecksProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
-  defaultTypeReadiness: ProbeTypeEnum
-  defaultTypeLiveness: ProbeTypeEnum
   ports?: PortData[]
 }
 
-export function StepHealthchecks({
-  ports,
-  onSubmit,
-  onBack,
-  defaultTypeReadiness,
-  defaultTypeLiveness,
-}: StepHealthchecksProps) {
+export function StepHealthchecks({ ports, onSubmit, onBack }: StepHealthchecksProps) {
   const { formState } = useFormContext()
 
   return (
@@ -36,11 +27,7 @@ export function StepHealthchecks({
       </div>
 
       <form onSubmit={onSubmit}>
-        <ApplicationSettingsHealthchecks
-          defaultTypeReadiness={defaultTypeReadiness}
-          defaultTypeLiveness={defaultTypeLiveness}
-          ports={ports?.map((port: PortData) => port.application_port || 0)}
-        />
+        <ApplicationSettingsHealthchecks ports={ports?.map((port: PortData) => port.application_port || 0)} />
 
         <div className="flex justify-between mt-10">
           <Button

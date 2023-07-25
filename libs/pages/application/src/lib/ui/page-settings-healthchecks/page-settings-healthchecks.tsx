@@ -1,14 +1,10 @@
 import { EnvironmentModeEnum, ServicePort } from 'qovery-typescript-axios'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationSettingsHealthchecks } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum } from '@qovery/shared/enums'
-import { LoadingStatus } from '@qovery/shared/interfaces'
-import { BannerBox, BannerBoxEnum, HelpSection, Link, StickyActionFormToaster } from '@qovery/shared/ui'
+import { BannerBox, BannerBoxEnum, Button, ButtonSize, ButtonStyle, HelpSection, Link } from '@qovery/shared/ui'
 
 export interface PageSettingsHealthchecksProps {
-  loading: LoadingStatus
-  defaultTypeReadiness: ProbeTypeEnum
-  defaultTypeLiveness: ProbeTypeEnum
+  loading: boolean
   linkResourcesSetting: string
   isJob: boolean
   jobPort?: number | null
@@ -25,8 +21,6 @@ export function PageSettingsHealthchecks({
   isJob,
   jobPort,
   linkResourcesSetting,
-  defaultTypeReadiness,
-  defaultTypeLiveness,
   minRunningInstances,
   environmentMode,
 }: PageSettingsHealthchecksProps) {
@@ -67,16 +61,20 @@ export function PageSettingsHealthchecks({
             <ApplicationSettingsHealthchecks
               isJob={isJob}
               jobPort={jobPort}
-              defaultTypeReadiness={defaultTypeReadiness}
-              defaultTypeLiveness={defaultTypeLiveness}
               ports={ports?.map((port) => port.internal_port)}
             />
-            <StickyActionFormToaster
-              visible={formState.isDirty}
-              onSubmit={onSubmit}
-              disabledValidation={!formState.isValid}
-              loading={loading === 'loading'}
-            />
+            <div className="flex justify-end">
+              <Button
+                className="mb-6 btn--no-min-w"
+                disabled={!formState.isValid}
+                size={ButtonSize.LARGE}
+                style={ButtonStyle.BASIC}
+                loading={loading}
+                type="submit"
+              >
+                Save
+              </Button>
+            </div>
           </div>
         </form>
       </div>
