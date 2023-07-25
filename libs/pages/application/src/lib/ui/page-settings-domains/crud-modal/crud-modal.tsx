@@ -14,6 +14,8 @@ export interface CrudModalProps {
 export function CrudModal(props: CrudModalProps) {
   const { control, watch } = useFormContext()
 
+  const watchDomain = watch('domain')
+
   return (
     <ModalCrud
       title={props.isEdit ? `Domain: ${props.customDomain?.domain}` : 'Set custom DNS name'}
@@ -47,17 +49,19 @@ export function CrudModal(props: CrudModalProps) {
           </div>
           <div className="font-code bg-neutral-darken-400 px-3 pt-1.5 pb-3">
             <div className="mb-2">
-              <span className="block text-violet-400 text-xs">{watch('domain')} CNAME</span>
+              <span className="block text-violet-400 text-xs">{watchDomain} CNAME</span>
               <span className="block text-purple-300 text-xs">
                 {props.customDomain?.validation_domain || props.link}
               </span>
             </div>
-            <div>
-              <span className="block text-violet-400 text-xs">*.{watch('domain')} CNAME</span>
-              <span className="block text-purple-300 text-xs">
-                {props.customDomain?.validation_domain || props.link}
-              </span>
-            </div>
+            {!watchDomain.includes('*') && (
+              <div>
+                <span className="block text-violet-400 text-xs">*.{watchDomain} CNAME</span>
+                <span className="block text-purple-300 text-xs">
+                  {props.customDomain?.validation_domain || props.link}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}

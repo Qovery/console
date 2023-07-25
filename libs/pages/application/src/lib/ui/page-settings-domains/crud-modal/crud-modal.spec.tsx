@@ -47,6 +47,18 @@ describe('CrudModal', () => {
     })
   })
 
+  it('renders a section with one CNAME value', async () => {
+    const { baseElement } = render(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: { domain: '*.qovery.com' },
+      })
+    )
+
+    await act(() => {
+      expect(getByText(baseElement, '*.qovery.com CNAME')).toBeInTheDocument()
+    })
+  })
+
   it('should submit the form', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
