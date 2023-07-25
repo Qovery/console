@@ -15,6 +15,7 @@ export function CrudModal(props: CrudModalProps) {
   const { control, watch } = useFormContext()
 
   const watchDomain = watch('domain')
+  const hideDomain = !watchDomain?.includes('*')
 
   return (
     <ModalCrud
@@ -47,14 +48,14 @@ export function CrudModal(props: CrudModalProps) {
           <div className="flex items-center h-7 text-xs text-text-200 bg-neutral-darken-500 px-3">
             CNAME configuration
           </div>
-          <div className="font-code bg-neutral-darken-400 px-3 pt-1.5 pb-3">
+          <div className={`font-code bg-neutral-darken-400 px-3 pt-1.5 ${hideDomain ? 'pb-3' : 'pb-1'}`}>
             <div className="mb-2">
               <span className="block text-violet-400 text-xs">{watchDomain} CNAME</span>
               <span className="block text-purple-300 text-xs">
                 {props.customDomain?.validation_domain || props.link}
               </span>
             </div>
-            {!watchDomain?.includes('*') && (
+            {hideDomain && (
               <div>
                 <span className="block text-violet-400 text-xs">*.{watchDomain} CNAME</span>
                 <span className="block text-purple-300 text-xs">
