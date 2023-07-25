@@ -54,7 +54,7 @@ export function CrudModal(props: CrudModalProps) {
                 {props.customDomain?.validation_domain || props.link}
               </span>
             </div>
-            {!watchDomain.includes('*') && (
+            {!watchDomain?.includes('*') && (
               <div>
                 <span className="block text-violet-400 text-xs">*.{watchDomain} CNAME</span>
                 <span className="block text-purple-300 text-xs">
