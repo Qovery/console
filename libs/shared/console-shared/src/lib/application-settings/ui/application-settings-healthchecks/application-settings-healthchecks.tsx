@@ -180,9 +180,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
                     dataTestId="input-liveness-probe-port"
                     name={field.name}
                     defaultValue={field.value || ''}
-                    onChange={(value) => {
-                      field.onChange(value)
-                    }}
+                    onChange={field.onChange}
                     items={
                       ports
                         ? ports.map((value) => ({
@@ -222,9 +220,7 @@ export function ApplicationSettingsHealthchecks({ ports, jobPort, isJob }: Appli
                     dataTestId="input-readiness-probe-port"
                     name={field.name}
                     defaultValue={field.value || ''}
-                    onChange={(value) => {
-                      field.onChange(value)
-                    }}
+                    onChange={field.onChange}
                     items={
                       ports
                         ? ports.map((value) => ({
