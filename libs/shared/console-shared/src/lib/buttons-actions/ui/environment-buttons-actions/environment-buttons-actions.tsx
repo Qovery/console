@@ -254,6 +254,11 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
               onClick: () => copyToClipboard(copyContent),
             },
             {
+              name: 'Export as Terraform',
+              contentLeft: <Icon name={IconAwesomeEnum.FILE_EXPORT} className="text-sm text-brand-400" />,
+              onClick: () => {}, // TODO export as terraform by calling https://api-doc.qovery.com/#tag/Environment-Export/operation/exportEnvironmentConfigurationIntoTerraform
+            },
+            {
               name: 'Clone',
               contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
               onClick: () =>
