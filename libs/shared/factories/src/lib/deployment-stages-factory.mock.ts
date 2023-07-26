@@ -1,7 +1,7 @@
 import { Chance } from 'chance'
 import { DeploymentStageResponse } from 'qovery-typescript-axios'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const deploymentStagesFactoryMock = (howMany: number): DeploymentStageResponse[] =>
   Array.from({ length: howMany }).map((_, index) => ({

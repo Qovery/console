@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const clusterFactoryMock = (howMany: number, customCloudProvider?: CloudProviderEnum): ClusterEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({

@@ -1,14 +1,14 @@
 import { screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-import { ButtonIcon, ButtonIconProps, ButtonIconStyle } from './button-icon'
-import { ButtonSize } from '../button/button'
 import { Chance } from 'chance'
+import { ButtonSize } from '../button/button'
+import { ButtonIcon, ButtonIconProps, ButtonIconStyle } from './button-icon'
 
 const props: ButtonIconProps = {
   icon: 'icon-solid-star',
 }
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 describe('ButtonIcon', () => {
   it('should render successfully', () => {

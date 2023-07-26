@@ -1,7 +1,7 @@
 import { Chance } from 'chance'
 import { Credentials } from 'qovery-typescript-axios'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const databaseMasterCredentialsFactoryMock = (howMany: number): Credentials[] =>
   Array.from({ length: howMany }).map((_, index) => ({

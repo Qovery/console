@@ -7,7 +7,7 @@ import Button, { ButtonProps, ButtonSize, ButtonStyle } from './button'
 describe('Button', () => {
   let props: ButtonProps
 
-  const chance = new Chance()
+  const chance = new Chance('123')
 
   beforeEach(() => {
     props = {

@@ -15,7 +15,7 @@ import {
 } from 'qovery-typescript-axios'
 import { ClusterCredentialsEntity, OrganizationEntity } from '@qovery/shared/interfaces'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const organizationFactoryMock = (howMany: number): OrganizationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({

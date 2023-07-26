@@ -1,7 +1,7 @@
 import { Chance } from 'chance'
 import { GitAuthProvider, GitProviderEnum } from 'qovery-typescript-axios'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const authProviderFactoryMock = (howMany: number): GitAuthProvider[] =>
   Array.from({ length: howMany }).map((_, index) => ({

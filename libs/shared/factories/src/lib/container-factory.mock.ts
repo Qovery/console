@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { PortProtocolEnum, ServiceDeploymentStatusEnum, StateEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const containerFactoryMock = (howMany: number): ContainerApplicationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({

@@ -1,7 +1,7 @@
 import { Chance } from 'chance'
 import { EnvironmentModeEnum, ProjectDeploymentRule } from 'qovery-typescript-axios'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const deploymentRulesFactoryMock = (howMany: number): ProjectDeploymentRule[] =>
   Array.from({ length: howMany }).map((_, index) => ({
