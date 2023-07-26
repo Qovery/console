@@ -126,7 +126,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
             Application auto-scaling is based on real-time CPU consumption. When your app goes above 60% (default) of
             CPU consumption for 5 minutes, your app will be auto-scaled and more instances will be added.
           </p>
-          {environmentMode === EnvironmentModeEnum.PRODUCTION && watchInstances[0] === 1 && watchInstances[1] === 1 && (
+          {environmentMode === EnvironmentModeEnum.PRODUCTION && watchInstances[0] === 1 && (
             <BannerBox
               className="mt-3"
               message={
