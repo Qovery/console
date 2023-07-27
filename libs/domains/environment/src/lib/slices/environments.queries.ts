@@ -10,6 +10,7 @@ import {
   EnvironmentDeploymentRule,
   EnvironmentDeploymentRuleApi,
   EnvironmentEditRequest,
+  EnvironmentExportApi,
   EnvironmentMainCallsApi,
   EnvironmentStatus,
   EnvironmentsApi,
@@ -26,6 +27,7 @@ const environmentsActionsApi = new EnvironmentActionsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const environmentDeploymentsApi = new EnvironmentDeploymentHistoryApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
+const environmentExport = new EnvironmentExportApi()
 const databasesApi = new DatabasesApi()
 
 export const useFetchEnvironments = <TData = Environment[]>(
@@ -258,6 +260,19 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
     {
       onError: (err) => toastError(err),
       enabled: enabled,
+    }
+  )
+}
+
+export const useFetchEnvironmentExportTerraform = (projectId: string, environmentId: string) => {
+  return useMutation(
+    ['project', projectId, 'environments', environmentId, 'terraformExport'],
+    async () => {
+      const response = await environmentExport.exportEnvironmentConfigurationIntoTerraform(environmentId)
+      return response.data
+    },
+    {
+      onError: (err) => toastError(err as Error),
     }
   )
 }

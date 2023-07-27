@@ -40,3 +40,4 @@ export * from './lib/database-settings-resources/ui/database-settings-resources/
 export * from './lib/application-settings/ui/application-settings-resources/application-settings-resources'
 export * from './lib/application-settings/ui/application-settings-healthchecks/application-settings-healthchecks'
 export * from './lib/application-settings/utils/probe-formatted'
+export * from './lib/terraform-export-modal/feature/terraform-export-modal-feature'
