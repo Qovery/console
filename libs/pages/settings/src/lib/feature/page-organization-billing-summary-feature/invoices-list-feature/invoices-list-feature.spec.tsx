@@ -8,7 +8,7 @@ import InvoicesListFeature, { getListOfYears } from './invoices-list-feature'
 import SpyInstance = jest.SpyInstance
 
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router'),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
 }))
 

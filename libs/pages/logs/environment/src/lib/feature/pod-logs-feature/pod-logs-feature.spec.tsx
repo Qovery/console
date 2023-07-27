@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import PodLogsFeature, { PodLogsFeatureProps } from './pod-logs-feature'
 
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router'),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3', serviceId: '4' }),
 }))
 

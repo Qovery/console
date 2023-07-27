@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import PageApplication from './page-application'
 
 jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router'),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3', applicationId: '4' }),
 }))
 
