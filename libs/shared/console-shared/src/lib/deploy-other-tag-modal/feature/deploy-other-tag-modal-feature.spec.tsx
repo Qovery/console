@@ -8,7 +8,7 @@ import DeployOtherTagModalFeature, { DeployOtherTagModalFeatureProps } from './d
 import SpyInstance = jest.SpyInstance
 
 jest.mock('react-redux', () => ({
-  ...(jest.requireActual('react-redux') as any),
+  ...jest.requireActual('react-redux'),
   useDispatch: () =>
     jest.fn().mockImplementation(() =>
       Promise.resolve({
@@ -22,7 +22,7 @@ jest.mock('react-redux', () => ({
 
 const mockApplication = applicationFactoryMock(1)[0]
 jest.mock('@qovery/domains/application', () => ({
-  ...(jest.requireActual('@qovery/domains/application') as any),
+  ...jest.requireActual('@qovery/domains/application'),
   selectApplicationById: () => mockApplication,
   postApplicationActionsDeployByTag: jest.fn(),
 }))

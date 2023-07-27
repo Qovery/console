@@ -20,7 +20,7 @@ jest.mock('@qovery/domains/organization', () => ({
 }))
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ projectId: '1', organizationId: '0' }),
 }))
 

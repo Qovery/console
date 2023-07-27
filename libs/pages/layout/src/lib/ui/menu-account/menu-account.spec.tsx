@@ -11,7 +11,7 @@ const mockOrganizations: OrganizationEntity[] = organizationFactoryMock(2)
 const mockUser: SignUp = userSignUpFactoryMock()
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }))
 

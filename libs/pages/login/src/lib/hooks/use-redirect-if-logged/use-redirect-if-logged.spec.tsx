@@ -12,12 +12,12 @@ jest.mock('./utils/utils')
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockedUsedNavigate,
 }))
 
 jest.mock('@elgorditosalsero/react-gtm-hook', () => ({
-  ...(jest.requireActual('@elgorditosalsero/react-gtm-hook') as any),
+  ...jest.requireActual('@elgorditosalsero/react-gtm-hook'),
   useGTMDispatch: jest.fn(),
 }))
 

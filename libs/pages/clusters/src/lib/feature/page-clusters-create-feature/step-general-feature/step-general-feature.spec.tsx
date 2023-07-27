@@ -11,7 +11,7 @@ const mockNavigate = jest.fn()
 const mockOrganization: OrganizationEntity = organizationFactoryMock(1)[0]
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
   useNavigate: () => mockNavigate,
 }))
