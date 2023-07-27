@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { ClusterLogs, ClusterLogsStepEnum } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const clusterLogFactoryMock = (howMany: number, withError?: boolean): ClusterLogs[] =>
   Array.from({ length: howMany }).map(() => ({

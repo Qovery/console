@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { EnvironmentLogs } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const deploymentLogFactoryMock = (howMany: number, withError?: boolean): EnvironmentLogs[] =>
   Array.from({ length: howMany }).map(() => ({

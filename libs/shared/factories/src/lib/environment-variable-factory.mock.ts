@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { APIVariableScopeEnum, APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { EnvironmentVariableEntity, SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const mockEnvironmentVariable = (isAlias = false, isOverride = false): EnvironmentVariableEntity => ({
   id: chance.integer().toString(),

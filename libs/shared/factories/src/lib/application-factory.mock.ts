@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { BuildModeEnum, BuildPackLanguageEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const applicationFactoryMock = (howMany: number): ApplicationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({

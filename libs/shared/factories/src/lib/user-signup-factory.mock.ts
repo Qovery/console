@@ -1,7 +1,7 @@
 import { Chance } from 'chance'
 import { SignUp, TypeOfUseEnum } from 'qovery-typescript-axios'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const userSignUpFactoryMock = (): SignUp => ({
   id: chance.guid(),

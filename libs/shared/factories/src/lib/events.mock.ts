@@ -7,7 +7,7 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const eventsFactoryMock = (howMany: number): OrganizationEventResponse[] =>
   Array.from({ length: howMany }).map((_, index) => ({

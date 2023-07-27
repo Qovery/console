@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const databaseFactoryMock = (howMany: number, mode = DatabaseModeEnum.CONTAINER): DatabaseEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({

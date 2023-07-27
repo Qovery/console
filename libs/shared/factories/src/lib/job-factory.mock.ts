@@ -2,7 +2,7 @@ import { Chance } from 'chance'
 import { GitProviderEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { JobApplicationEntity } from '@qovery/shared/interfaces'
 
-const chance = new Chance()
+const chance = new Chance('123')
 
 export const cronjobFactoryMock = (howMany: number, withContainer = false): JobApplicationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => {
