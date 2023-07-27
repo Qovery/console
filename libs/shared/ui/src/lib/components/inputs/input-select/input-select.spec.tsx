@@ -1,4 +1,4 @@
-import { act, getByDisplayValue, render, screen } from '__tests__/utils/setup-jest'
+import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
@@ -50,8 +50,8 @@ describe('InputSelect', () => {
     render(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
-    await act(() => {
-      selectEvent.select(realSelect, 'Test 2')
+    await selectEvent.select(realSelect, 'Test 2', {
+      container: document.body,
     })
 
     screen.getByTestId('selected-icon')
@@ -61,23 +61,20 @@ describe('InputSelect', () => {
     render(<InputSelect {...props} isMulti />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
-    await act(() => {
-      selectEvent.select(realSelect, 'Test 2')
-    })
+    await selectEvent.select(realSelect, 'Test 2')
 
     expect(screen.queryByTestId('selected-icon')).not.toBeTruthy()
   })
 
   it('should select second item and first item in a multiple select', async () => {
-    const { baseElement } = render(<InputSelect isMulti={true} {...props} />)
+    render(<InputSelect isMulti={true} {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
-    await act(() => {
-      selectEvent.openMenu(realSelect)
-      selectEvent.select(realSelect, ['Test 2', 'Test 1'])
-    })
+    await selectEvent.select(realSelect, ['Test 2', 'Test 1'])
 
-    getByDisplayValue(baseElement, 'test2,test1')
+    waitFor(() => {
+      screen.getByDisplayValue('test2,test2')
+    })
   })
 
   it('should be disabled', () => {
@@ -107,14 +104,11 @@ describe('InputSelect', () => {
     const { getByTestId } = render(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
-    await act(() => {
-      selectEvent.select(realSelect, ['Test 2', 'Test 1'])
-    })
+    selectEvent.openMenu(realSelect)
+    await selectEvent.select(realSelect, ['Test 2', 'Test 1'])
 
-    await act(() => {
-      const editIcon = getByTestId('selected-edit-icon')
-      editIcon.click()
-    })
+    const editIcon = getByTestId('selected-edit-icon')
+    await editIcon.click()
 
     expect(mockAction).toHaveBeenCalledTimes(1)
   })
