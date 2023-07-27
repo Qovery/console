@@ -53,12 +53,14 @@ describe('WebhookCrudModalFeature', () => {
 
     await act(() => {
       fireEvent.change(url, { target: { value: 'https://test.com' } })
+      selectEvent.openMenu(kind)
       selectEvent.select(kind, ['Standard'], {
         container: document.body,
       })
       fireEvent.change(description, { target: { value: 'description' } })
       fireEvent.change(secret, { target: { value: 'secret' } })
 
+      selectEvent.openMenu(events)
       selectEvent.select(events, ['DEPLOYMENT_STARTED'], {
         container: document.body,
       })
@@ -66,6 +68,7 @@ describe('WebhookCrudModalFeature', () => {
       fireEvent.input(tags, { target: { value: 'test' } })
       fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
 
+      selectEvent.openMenu(envType)
       selectEvent.select(envType, ['STAGING'], {
         container: document.body,
       })
@@ -104,6 +107,7 @@ describe('WebhookCrudModalFeature', () => {
 
     await act(() => {
       fireEvent.change(url, { target: { value: 'https://test.com' } })
+      selectEvent.openMenu(kind)
       selectEvent.select(kind, ['Standard'], {
         container: document.body,
       })
@@ -113,7 +117,8 @@ describe('WebhookCrudModalFeature', () => {
       fireEvent.input(tags, { target: { value: 'test' } })
       fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
 
-      selectEvent.select(envType, ['STAGING'], {
+      selectEvent.openMenu(envType)
+      selectEvent.select(envType, [...(mockWebhook.environment_types_filter || []), 'STAGING'], {
         container: document.body,
       })
     })

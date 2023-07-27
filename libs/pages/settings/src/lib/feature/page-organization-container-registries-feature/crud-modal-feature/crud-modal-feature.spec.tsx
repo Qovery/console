@@ -126,7 +126,9 @@ describe('CrudModalFeature', () => {
       const inputName = getByTestId('input-name')
       fireEvent.input(inputName, { target: { value: 'my-registry' } })
 
-      selectEvent.select(getByLabelText('Type'), ContainerRegistryKindEnum.DOCKER_HUB, { container: document.body })
+      const selectType = getByLabelText('Type')
+      selectEvent.openMenu(selectType)
+      selectEvent.select(selectType, ContainerRegistryKindEnum.DOCKER_HUB, { container: document.body })
     })
 
     await act(() => {

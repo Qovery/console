@@ -124,10 +124,9 @@ describe('PageSettingsResourcesFeature', () => {
 
     const realSelect = getByLabelText('Instance type')
 
-    await act(() => {
-      selectEvent.select(realSelect, 'db.t3.medium', {
-        container: document.body,
-      })
+    selectEvent.openMenu(realSelect)
+    await selectEvent.select(realSelect, 'db.t3.medium', {
+      container: document.body,
     })
 
     await act(() => {
