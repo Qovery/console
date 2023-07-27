@@ -1,4 +1,4 @@
-import { fireEvent, getByTestId, screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import Button from '../buttons/button/button'
 import Modal, { ModalProps } from './modal'

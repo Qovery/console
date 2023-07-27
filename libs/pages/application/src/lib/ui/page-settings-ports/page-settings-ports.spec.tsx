@@ -1,5 +1,5 @@
 import { act, findByText, fireEvent, render, waitFor } from '@testing-library/react'
-import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
+import { PortProtocolEnum } from 'qovery-typescript-axios'
 import PageSettingsPorts, { PageSettingsPortsProps } from './page-settings-ports'
 
 let props: PageSettingsPortsProps

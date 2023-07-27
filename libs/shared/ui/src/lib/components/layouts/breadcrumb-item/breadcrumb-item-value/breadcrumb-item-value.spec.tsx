@@ -1,4 +1,4 @@
-import { getByDisplayValue, getByTestId, getByText } from '@testing-library/react'
+import { getByTestId, getByText } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import BreadcrumbItemValue, { BreadcrumbItemValueProps } from './breadcrumb-item-value'
 

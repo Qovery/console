@@ -28,8 +28,6 @@ Time.args = {
   type: 'time',
 }
 
-const TemplateWithRightElement: Story<InputTextProps> = (args) => <InputText {...args} />
-
 export const WithRightElement = Template.bind({})
 WithRightElement.args = {
   ...defaultProps,

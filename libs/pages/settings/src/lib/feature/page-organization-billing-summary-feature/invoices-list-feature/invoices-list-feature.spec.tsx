@@ -95,9 +95,6 @@ describe('InvoicesListFeature', () => {
       loadingStatus: undefined,
       items: invoices,
     }
-    const fetchOrganizationByIdSpy: SpyInstance = jest
-      .spyOn(storeOrganization, 'selectOrganizationById')
-      .mockReturnValue(mockOrganization)
 
     render(<InvoicesListFeature />)
     expect(fetchBillingInfoSpy).toHaveBeenCalledWith({
