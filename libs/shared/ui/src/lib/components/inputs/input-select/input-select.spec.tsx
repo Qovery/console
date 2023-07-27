@@ -73,6 +73,7 @@ describe('InputSelect', () => {
     const realSelect = screen.getByLabelText('Select Multiple')
 
     await act(() => {
+      selectEvent.openMenu(realSelect)
       selectEvent.select(realSelect, ['Test 2', 'Test 1'])
     })
 
