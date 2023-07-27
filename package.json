@@ -7,8 +7,12 @@
     "start": "nx serve",
     "storybook": "nx storybook shared-ui",
     "build-storybook": "nx run shared-ui:build-storybook",
-    "build": "npx nx build",
+    "format": "nx format:write",
+    "format:write": "nx format:write",
+    "format:check": "nx format:check",
+    "build": "nx run-many --all --target=build --parallel",
     "test": "nx run-many --all --target=test --parallel",
+    "lint": "nx run-many --all --target=lint --parallel",
     "prepare": "husky install",
     "semantic-release": "semantic-release"
   },
