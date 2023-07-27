@@ -99,8 +99,7 @@ describe('StepFeaturesFeature', () => {
     })
 
     const selectMenu = getByLabelText('VPC Subnet address')
-    selectEvent.openMenu(selectMenu)
-    await selectEvent.select(getByLabelText('VPC Subnet address'), mockFeatures[0].accepted_values[0], {
+    await selectEvent.select(selectMenu, mockFeatures[0].accepted_values[0], {
       container: document.body,
     })
 

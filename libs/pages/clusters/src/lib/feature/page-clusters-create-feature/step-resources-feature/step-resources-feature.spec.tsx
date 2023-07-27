@@ -111,8 +111,7 @@ describe('StepResourcesFeature', () => {
     )
 
     const select = getByLabelText(baseElement, 'Instance type')
-    selectEvent.openMenu(select)
-    selectEvent.select(select, 't2.small (1CPU - 2GB RAM - arm64)', {
+    await selectEvent.select(select, 't2.small (1CPU - 2GB RAM - arm64)', {
       container: document.body,
     })
 

@@ -51,27 +51,22 @@ describe('WebhookCrudModalFeature', () => {
     const tags = getByTestId(baseElement, 'input-tags-field')
     const envType = getByLabelText(baseElement, 'Environment type filter')
 
-    await act(() => {
-      fireEvent.change(url, { target: { value: 'https://test.com' } })
-      selectEvent.openMenu(kind)
-      selectEvent.select(kind, ['Standard'], {
-        container: document.body,
-      })
-      fireEvent.change(description, { target: { value: 'description' } })
-      fireEvent.change(secret, { target: { value: 'secret' } })
+    fireEvent.change(url, { target: { value: 'https://test.com' } })
+    await selectEvent.select(kind, ['Standard'], {
+      container: document.body,
+    })
+    fireEvent.change(description, { target: { value: 'description' } })
+    fireEvent.change(secret, { target: { value: 'secret' } })
 
-      selectEvent.openMenu(events)
-      selectEvent.select(events, ['DEPLOYMENT_STARTED'], {
-        container: document.body,
-      })
+    await selectEvent.select(events, ['DEPLOYMENT_STARTED'], {
+      container: document.body,
+    })
 
-      fireEvent.input(tags, { target: { value: 'test' } })
-      fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
+    fireEvent.input(tags, { target: { value: 'test' } })
+    fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
 
-      selectEvent.openMenu(envType)
-      selectEvent.select(envType, ['STAGING'], {
-        container: document.body,
-      })
+    await selectEvent.select(envType, ['STAGING'], {
+      container: document.body,
     })
 
     const button = getByTestId(baseElement, 'submit-button')
@@ -105,22 +100,18 @@ describe('WebhookCrudModalFeature', () => {
     const tags = getByTestId(baseElement, 'input-tags-field')
     const envType = getByLabelText(baseElement, 'Environment type filter')
 
-    await act(() => {
-      fireEvent.change(url, { target: { value: 'https://test.com' } })
-      selectEvent.openMenu(kind)
-      selectEvent.select(kind, ['Standard'], {
-        container: document.body,
-      })
-      fireEvent.change(description, { target: { value: 'description' } })
-      fireEvent.change(secret, { target: { value: 'secret' } })
+    fireEvent.change(url, { target: { value: 'https://test.com' } })
+    await selectEvent.select(kind, ['Standard'], {
+      container: document.body,
+    })
+    fireEvent.change(description, { target: { value: 'description' } })
+    fireEvent.change(secret, { target: { value: 'secret' } })
 
-      fireEvent.input(tags, { target: { value: 'test' } })
-      fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
+    fireEvent.input(tags, { target: { value: 'test' } })
+    fireEvent.keyDown(tags, { key: 'Enter', keyCode: 13 })
 
-      selectEvent.openMenu(envType)
-      selectEvent.select(envType, [...(mockWebhook.environment_types_filter || []), 'STAGING'], {
-        container: document.body,
-      })
+    await selectEvent.select(envType, ['STAGING'], {
+      container: document.body,
     })
 
     const button = getByTestId(baseElement, 'submit-button')

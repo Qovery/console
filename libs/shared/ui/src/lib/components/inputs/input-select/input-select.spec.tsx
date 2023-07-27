@@ -104,7 +104,6 @@ describe('InputSelect', () => {
     const { getByTestId } = render(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
-    selectEvent.openMenu(realSelect)
     await selectEvent.select(realSelect, ['Test 2', 'Test 1'])
 
     const editIcon = getByTestId('selected-edit-icon')
@@ -119,11 +118,9 @@ describe('InputSelect', () => {
       onClick: jest.fn(),
     }
     const { getByTestId } = render(<InputSelect {...props} />)
-    const realSelect = screen.getByLabelText('Select Multiple')
 
-    await act(() => {
-      selectEvent.openMenu(realSelect)
-    })
+    const realSelect = screen.getByLabelText('Select Multiple')
+    selectEvent.openMenu(realSelect)
 
     await act(() => {
       const input = getByTestId('input-menu-list-button')
@@ -144,9 +141,7 @@ describe('InputSelect', () => {
     render(<InputSelect placeholder="Filter" isFilter={true} options={options} onChange={onChangeMock} />)
     const realSelect = screen.getByText('Filter')
 
-    await act(() => {
-      selectEvent.openMenu(realSelect)
-    })
+    selectEvent.openMenu(realSelect)
 
     const optionElement = screen.getByText('Option 2')
     await act(() => {

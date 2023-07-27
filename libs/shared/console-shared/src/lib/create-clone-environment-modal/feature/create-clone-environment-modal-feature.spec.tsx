@@ -53,15 +53,11 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         fireEvent.input(input, { target: { value: 'test' } })
       })
 
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
-          container: document.body,
-        })
+      await selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
+        container: document.body,
       })
 
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
-      })
+      await selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
 
       const submitButton = getByTestId(baseElement, 'submit-button')
       await act(async () => {
@@ -94,15 +90,11 @@ describe('CreateCloneEnvironmentModalFeature', () => {
         fireEvent.input(inputs[1], { target: { value: 'test' } })
       })
 
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
-          container: document.body,
-        })
+      await selectEvent.select(getByLabelText(baseElement, 'Cluster'), mockClusters[2].name, {
+        container: document.body,
       })
 
-      await act(() => {
-        selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
-      })
+      await selectEvent.select(getByLabelText(baseElement, 'Type'), 'Staging', { container: document.body })
 
       const submitButton = getByTestId(baseElement, 'submit-button')
       await act(async () => {
