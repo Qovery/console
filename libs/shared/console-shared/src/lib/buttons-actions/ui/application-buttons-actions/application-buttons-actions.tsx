@@ -353,7 +353,6 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                 openModal({
                   content: (
                     <CloneServiceModalFeature
-                      environmentId={environmentId}
                       onClose={closeModal}
                       organizationId={organizationId}
                       projectId={projectId}

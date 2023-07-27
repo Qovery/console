@@ -12,6 +12,7 @@ let props: CloneServiceModalFeatureProps
 const useCloneServiceMockSpy = jest.spyOn(servicesDomains, 'useCloneService') as jest.Mock
 
 const mockEnvironments = environmentFactoryMock(3)
+const mockNavigate = jest.fn()
 
 jest.mock('@qovery/domains/environment', () => ({
   ...jest.requireActual('@qovery/domains/organization'),
@@ -21,6 +22,7 @@ jest.mock('@qovery/domains/environment', () => ({
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
   useParams: () => ({ projectId: '1', organizationId: '0' }),
+  useNavigate: () => mockNavigate,
 }))
 
 const serviceToClone = applicationFactoryMock(1)[0]
@@ -32,7 +34,6 @@ describe('CloneServiceModalFeature', () => {
       serviceToClone,
       organizationId: '0',
       projectId: '1',
-      environmentId: '1',
     }
   })
 
@@ -71,5 +72,8 @@ describe('CloneServiceModalFeature', () => {
         name: 'test',
       },
     })
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/organization/0/project/1/environment/2951580907208704/application/1/general'
+    )
   })
 })

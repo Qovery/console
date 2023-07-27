@@ -13,7 +13,6 @@ import { AppDispatch } from '@qovery/store'
 import CloneServiceModal from '../ui/clone-service-modal'
 
 export interface CloneServiceModalFeatureProps {
-  environmentId: string
   onClose: () => void
   organizationId: string
   projectId: string
@@ -21,7 +20,6 @@ export interface CloneServiceModalFeatureProps {
 }
 
 export function CloneServiceModalFeature({
-  environmentId,
   onClose,
   organizationId,
   projectId,
@@ -44,10 +42,10 @@ export function CloneServiceModalFeature({
 
   const navigate = useNavigate()
 
-  const onSubmit = methods.handleSubmit(async (data) => {
+  const onSubmit = methods.handleSubmit(async ({ name, environment: environmentId }) => {
     const cloneRequest = {
-      name: data.name,
-      environment_id: data.environment,
+      name,
+      environment_id: environmentId,
     }
 
     const serviceType = getServiceType(serviceToClone)
