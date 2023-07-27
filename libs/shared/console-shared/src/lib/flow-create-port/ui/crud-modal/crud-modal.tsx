@@ -73,6 +73,20 @@ export function CrudModal(props: CrudModalProps) {
         )}
       />
       <Controller
+        name="protocol"
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            label="Select protocol"
+            value={field.value}
+            options={Object.keys(PortProtocolEnum).map((value: string) => ({ label: value, value: value }))}
+            error={error?.message}
+            onChange={field.onChange}
+            className="mb-5"
+          />
+        )}
+      />
+      <Controller
         name="publicly_accessible"
         control={control}
         defaultValue={false}
@@ -91,20 +105,6 @@ export function CrudModal(props: CrudModalProps) {
       />
       {watchPublicly && (
         <>
-          <Controller
-            name="protocol"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                label="Select protocol"
-                value={field.value}
-                options={Object.keys(PortProtocolEnum).map((value: string) => ({ label: value, value: value }))}
-                error={error?.message}
-                onChange={field.onChange}
-                className="mb-5"
-              />
-            )}
-          />
           <Controller
             key={`port-${watchPublicly}`}
             name="external_port"
