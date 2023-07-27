@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { RunningStatus } from '@qovery/shared/enums'
 import { ServiceRunningStatus } from '../domain/service-running-status.interface'
 

@@ -1,5 +1,6 @@
 import { DeployAllRequest, Environment, EnvironmentActionsApi, EnvironmentMainCallsApi } from 'qovery-typescript-axios'
 import { useMutation, useQueryClient } from 'react-query'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 
 const environmentActionApi = new EnvironmentActionsApi()
