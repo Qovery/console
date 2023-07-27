@@ -3,13 +3,13 @@ import userEvent from '@testing-library/user-event'
 import { render } from '__tests__/utils/setup-jest'
 import { act } from 'react-dom/test-utils'
 import selectEvent from 'react-select-event'
-import * as applicationDomains from '@qovery/domains/application'
+import * as servicesDomains from '@qovery/domains/services'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import CloneServiceModalFeature, { CloneServiceModalFeatureProps } from './clone-service-modal-feature'
 
 let props: CloneServiceModalFeatureProps
 
-const useCloneServiceMockSpy = jest.spyOn(applicationDomains, 'useCloneService') as jest.Mock
+const useCloneServiceMockSpy = jest.spyOn(servicesDomains, 'useCloneService') as jest.Mock
 
 const mockEnvironments = environmentFactoryMock(3)
 
