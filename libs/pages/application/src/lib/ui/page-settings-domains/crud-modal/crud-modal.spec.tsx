@@ -41,10 +41,8 @@ describe('CrudModal', () => {
       })
     )
 
-    await act(() => {
-      expect(getByText(baseElement, 'test.qovery.com CNAME')).toBeInTheDocument()
-      expect(getByText(baseElement, '*.test.qovery.com CNAME')).toBeInTheDocument()
-    })
+    expect(getByText(baseElement, 'test.qovery.com CNAME')).toBeInTheDocument()
+    expect(getByText(baseElement, '*.test.qovery.com CNAME')).toBeInTheDocument()
   })
 
   it('renders a section with one CNAME value', async () => {
@@ -54,9 +52,7 @@ describe('CrudModal', () => {
       })
     )
 
-    await act(() => {
-      expect(getByText(baseElement, '*.qovery.com CNAME')).toBeInTheDocument()
-    })
+    expect(getByText(baseElement, '*.qovery.com CNAME')).toBeInTheDocument()
   })
 
   it('should submit the form', async () => {
