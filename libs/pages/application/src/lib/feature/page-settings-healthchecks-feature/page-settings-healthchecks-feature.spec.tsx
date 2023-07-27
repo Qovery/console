@@ -1,4 +1,5 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import userEvent from '@testing-library/user-event'
+import { act, fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import { Healthcheck } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { applicationFactoryMock } from '@qovery/shared/factories'
@@ -80,20 +81,17 @@ describe('PageSettingsHealthchecksFeature', () => {
         }),
     }))
 
-    const { getByTestId, getByText } = render(<PageSettingsHealthchecksFeature />)
+    render(<PageSettingsHealthchecksFeature />)
 
     await act(() => {
-      const input = getByTestId('input-readiness-probe-service')
+      const input = screen.getByTestId('input-readiness-probe-service')
       fireEvent.input(input, { target: { value: 'my-service' } })
     })
 
-    const btnSave = getByText('Save')
-
+    const btnSave = screen.getByRole('button', { name: /save/i })
     expect(btnSave).not.toBeDisabled()
 
-    await act(() => {
-      btnSave.click()
-    })
+    await userEvent.click(btnSave)
 
     expect(editApplicationSpy.mock.calls[0][0].applicationId).toBe(mockApplication.id)
     expect(editApplicationSpy.mock.calls[0][0].data)

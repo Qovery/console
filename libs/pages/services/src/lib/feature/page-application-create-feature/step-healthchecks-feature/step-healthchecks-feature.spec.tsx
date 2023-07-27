@@ -66,7 +66,7 @@ describe('PageApplicationCreateHealthchecksFeature', () => {
   })
 
   it('should submit the data to the context', async () => {
-    const { debug, baseElement } = render(
+    const { baseElement } = render(
       <ApplicationContainerCreateContext.Provider value={context}>
         <StepHealthchecksFeature />
       </ApplicationContainerCreateContext.Provider>
@@ -74,8 +74,6 @@ describe('PageApplicationCreateHealthchecksFeature', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     await act(() => {})
-
-    debug(baseElement, 100000)
 
     const button = getByTestId(baseElement, 'button-submit')
     expect(button).not.toBeDisabled()

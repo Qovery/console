@@ -52,7 +52,7 @@ export function PageSettingsHealthchecksFeature() {
     }
   }
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState(false)
 
   const methods = useForm({
     mode: 'onChange',
