@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react'
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react'
 import { Wrapper } from '__tests__/utils/providers'
 import { useLocation } from 'react-router-dom'
 import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/routes'

@@ -1,6 +1,6 @@
-import { renderHook } from '@testing-library/react-hooks'
-import { useAuthInterceptor } from './auth-interceptor'
+import { renderHook } from '@testing-library/react'
 import axios from 'axios'
+import { useAuthInterceptor } from './auth-interceptor'
 
 jest.mock('@auth0/auth0-react', () => ({
   useAuth0: () => {

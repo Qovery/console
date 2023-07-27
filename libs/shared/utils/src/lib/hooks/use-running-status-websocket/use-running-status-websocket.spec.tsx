@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from '@testing-library/react'
 import useRunningStatusWebsocket from './use-running-status-websocket'
 
 describe('Running Status Websocket Provider', () => {

@@ -1,5 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
-
+import { renderHook } from '@testing-library/react'
 import useDocumentTitle from './use-document-title'
 
 describe('UseDocumentTitle', () => {
