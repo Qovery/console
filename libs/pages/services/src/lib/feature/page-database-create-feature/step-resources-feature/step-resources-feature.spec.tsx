@@ -141,10 +141,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
     )
 
     const realSelect = getByLabelText('Instance type')
-
-    await act(() => {
-      selectEvent.select(realSelect, 'db.t3.medium')
-    })
+    await selectEvent.select(realSelect, 'db.t3.medium')
 
     expect(getByText('db.t3.medium')).toBeInTheDocument()
 
