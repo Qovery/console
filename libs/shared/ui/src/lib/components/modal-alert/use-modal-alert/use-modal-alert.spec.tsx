@@ -1,5 +1,5 @@
-import { render, renderHook } from '@testing-library/react'
-import UseModalAlert, { useModalAlert } from './use-modal-alert'
+import { renderHook } from '@testing-library/react'
+import { useModalAlert } from './use-modal-alert'
 
 const mockSetOpenModal = jest.fn()
 const mockSetContentModal = jest.fn()

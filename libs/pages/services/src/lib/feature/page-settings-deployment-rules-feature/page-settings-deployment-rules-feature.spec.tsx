@@ -24,7 +24,6 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsDeploymentRulesFeature', () => {
-  let useDispatchSpy: SpyInstance
   let useSelectorSpy: SpyInstance
 
   const customDeployment = {
@@ -41,7 +40,6 @@ describe('PageSettingsDeploymentRulesFeature', () => {
   }
 
   beforeEach(() => {
-    useDispatchSpy = jest.spyOn(redux, 'useDispatch').mockReturnValue(jest.fn())
     useSelectorSpy = jest.spyOn(redux, 'useSelector')
     useSelectorSpy.mockReturnValue(environmentDeploymentRules).mockReturnValue(customDeployment)
 

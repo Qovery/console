@@ -54,7 +54,6 @@ jest.mock('@qovery/domains/application', () => {
 })
 
 describe('PageSettingsAdvancedFeature', () => {
-  let useDispatchSpy: SpyInstance
   const setState = jest.fn()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const useStateMock: any = (initState: any) => [initState, setState]

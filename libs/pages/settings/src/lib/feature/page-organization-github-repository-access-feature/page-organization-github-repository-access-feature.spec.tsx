@@ -84,7 +84,7 @@ describe('PageOrganizationGithubRepositoryAccessFeature', () => {
   })
 
   it('should fetch token silently at page init', () => {
-    const { baseElement } = render(<PageOrganizationGithubRepositoryAccessFeature />)
+    render(<PageOrganizationGithubRepositoryAccessFeature />)
     expect(mockGetTokenSilently).toHaveBeenCalledWith({ ignoreCache: true })
   })
 
