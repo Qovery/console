@@ -2,6 +2,7 @@
   "root": true,
   "ignorePatterns": ["**/*"],
   "plugins": ["@nrwl/nx"],
+  "extends": ["plugin:storybook/recommended"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -39,6 +40,5 @@
       "extends": ["plugin:@nrwl/nx/javascript"],
       "rules": {}
     }
-  ],
-  "extends": [null, "plugin:storybook/recommended"]
+  ]
 }
