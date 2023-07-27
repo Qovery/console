@@ -1,4 +1,4 @@
-import { renderHook, RenderResult } from '@testing-library/react-hooks'
+import { RenderResult, renderHook } from '@testing-library/react'
 import { Wrapper } from '__tests__/utils/providers'
 import useAuth from './use-auth'
 

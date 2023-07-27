@@ -43,12 +43,9 @@ describe('ClusterCredentialsSettingsFeature', () => {
     )
 
     const realSelect = getByLabelText('Credentials')
-
-    await act(() => {
-      selectEvent.select(realSelect, [
-        (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || '',
-      ])
-    })
+    await selectEvent.select(realSelect, [
+      (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || '',
+    ])
 
     getByTestId('input-credentials')
     // using getAllByDisplay because we have two inputs on the input-select when we use the search

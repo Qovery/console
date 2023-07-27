@@ -1,5 +1,4 @@
-import { fireEvent, getByLabelText, getByTestId, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { fireEvent, getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'
 import selectEvent from 'react-select-event'
@@ -63,7 +62,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         setGeneralData: jest.fn(),
         setResourcesData: mockSetResourceData,
         resourcesData: {
-          instance_type: 't3.medium',
+          instance_type: 't2.medium',
           disk_size: 50,
           cluster_type: 'MANAGED',
           nodes: [1, 3],
@@ -80,30 +79,18 @@ const ContextWrapper = (props: { children: ReactNode }) => {
 }
 
 describe('StepResourcesFeature', () => {
-  it('should render successfully', () => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          results: [...mockInstanceType],
-        }),
-    }))
-
-    const { baseElement } = render(
-      <ContextWrapper>
-        <StepResourcesFeature />
-      </ContextWrapper>
-    )
-    expect(baseElement).toBeTruthy()
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
-  it('should submit form and navigate', async () => {
-    mockDispatch.mockImplementation(() => ({
-      unwrap: () =>
-        Promise.resolve({
-          results: [...mockInstanceType],
-        }),
-    }))
+  mockDispatch.mockImplementation(() => ({
+    unwrap: () =>
+      Promise.resolve({
+        results: [...mockInstanceType],
+      }),
+  }))
 
+  it('should submit form and navigate', async () => {
     const { baseElement } = render(
       <ContextWrapper>
         <StepResourcesFeature />
@@ -111,16 +98,17 @@ describe('StepResourcesFeature', () => {
     )
 
     const select = getByLabelText(baseElement, 'Instance type')
-    selectEvent.select(select, 't2.small (1CPU - 2GB RAM - arm64)', {
+    await selectEvent.select(select, 't2.small (1CPU - 2GB RAM - arm64)', {
       container: document.body,
     })
 
     const diskSize = getByLabelText(baseElement, 'Disk size (GB)')
     fireEvent.input(diskSize, { target: { value: '22' } })
 
+    const button = getByTestId(baseElement, 'button-submit')
+    button.click()
+
     await waitFor(() => {
-      const button = getByTestId(baseElement, 'button-submit')
-      button.click()
       expect(button).not.toBeDisabled()
       expect(mockSetResourceData).toBeCalledWith({
         instance_type: 't2.small',

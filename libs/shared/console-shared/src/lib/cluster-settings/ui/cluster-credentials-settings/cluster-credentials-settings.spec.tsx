@@ -1,4 +1,4 @@
-import { act, render } from '__tests__/utils/setup-jest'
+import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import selectEvent from 'react-select-event'
 import { organizationFactoryMock } from '@qovery/shared/factories'
@@ -36,14 +36,12 @@ describe('ClusterCredentialsSettings', () => {
     )
 
     const realSelect = getByLabelText('Credentials')
+    const value = mockOrganization.credentials?.items?.[1].name || ''
+    await selectEvent.select(realSelect, value)
 
-    await act(() => {
-      selectEvent.select(realSelect, [
-        (mockOrganization.credentials?.items && mockOrganization.credentials?.items[1].name) || '',
-      ])
+    await waitFor(() => {
+      getByTestId('input-credentials')
+      getAllByDisplayValue('1')
     })
-
-    getByTestId('input-credentials')
-    getAllByDisplayValue('1')
   })
 })

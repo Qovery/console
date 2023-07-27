@@ -98,10 +98,9 @@ describe('StepFeaturesFeature', () => {
       feature.click()
     })
 
-    await act(() => {
-      selectEvent.select(getByLabelText('VPC Subnet address'), mockFeatures[0].accepted_values[0], {
-        container: document.body,
-      })
+    const selectMenu = getByLabelText('VPC Subnet address')
+    await selectEvent.select(selectMenu, mockFeatures[0].accepted_values[0], {
+      container: document.body,
     })
 
     const button = getByTestId('button-submit')

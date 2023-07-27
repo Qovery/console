@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react-hooks'
 import { Wrapper } from '__tests__/utils/providers'
+import { renderHook } from '__tests__/utils/setup-jest'
 import { OVERVIEW_URL } from '@qovery/shared/routes'
 import { useRedirectIfLogged } from './use-redirect-if-logged'
 import {
@@ -23,7 +23,7 @@ jest.mock('@elgorditosalsero/react-gtm-hook', () => ({
 
 describe('UseRedirectIfLogged', () => {
   it('should render successfully', () => {
-    const { result } = renderHook(useRedirectIfLogged)
+    const { result } = renderHook(useRedirectIfLogged, { wrapper: Wrapper })
     expect(result).toBeTruthy()
   })
 
