@@ -9,7 +9,7 @@ const mockSetGeneralData = jest.fn()
 const mockNavigate = jest.fn()
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
   useNavigate: () => mockNavigate,
 }))

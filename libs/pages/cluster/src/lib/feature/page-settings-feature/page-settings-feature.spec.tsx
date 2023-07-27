@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import { Route, Routes } from 'react-router'
+import { Route, Routes } from 'react-router-dom'
 import PageSettingsFeature from './page-settings-feature'
 
 describe('PageSettingsFeature', () => {

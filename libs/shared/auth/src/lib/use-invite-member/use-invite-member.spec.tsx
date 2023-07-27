@@ -8,7 +8,7 @@ import { useInviteMember } from './use-invite-member'
 // mock useNavigate
 const mockedUseNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockedUseNavigate,
   useLocation: jest.fn(),
 }))

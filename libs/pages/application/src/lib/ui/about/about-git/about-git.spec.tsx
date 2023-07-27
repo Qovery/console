@@ -29,7 +29,7 @@ const props: AboutGitProps = {
 }
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ applicationId: mockApplication.id }),
 }))
 

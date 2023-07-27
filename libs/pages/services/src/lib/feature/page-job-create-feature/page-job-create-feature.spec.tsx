@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-import { Route, Routes } from 'react-router'
+import { Route, Routes } from 'react-router-dom'
 import PageJobCreateFeature from './page-job-create-feature'
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1', projectId: '2', environmentId: '3' }),
 }))
 

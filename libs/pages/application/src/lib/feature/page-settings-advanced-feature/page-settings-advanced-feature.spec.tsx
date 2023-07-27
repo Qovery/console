@@ -22,7 +22,7 @@ jest.mock('./init-form-values/init-form-values', () => ({
 }))
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ applicationId: mockApplication.id }),
 }))
 

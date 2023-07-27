@@ -26,7 +26,7 @@ jest.mock('@qovery/shared/ui', () => ({
 }))
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ applicationId: '1' }),
 }))
 

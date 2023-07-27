@@ -12,7 +12,7 @@ const useEditWebhooksMockSpy = jest.spyOn(organizationDomain, 'useEditWebhook') 
 const mockWebhooks = webhookFactoryMock(3)
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
 }))
 

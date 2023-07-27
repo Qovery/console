@@ -16,7 +16,7 @@ import DeployOtherCommitModalFeature, { DeployOtherCommitModalFeatureProps } fro
 import SpyInstance = jest.SpyInstance
 
 jest.mock('react-redux', () => ({
-  ...(jest.requireActual('react-redux') as any),
+  ...jest.requireActual('react-redux'),
   useDispatch: () =>
     jest.fn().mockImplementation(() =>
       Promise.resolve({
@@ -31,7 +31,7 @@ jest.mock('react-redux', () => ({
 const mockApplication = applicationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/application', () => ({
-  ...(jest.requireActual('@qovery/domains/application') as any),
+  ...jest.requireActual('@qovery/domains/application'),
   fetchApplicationCommits: () => jest.fn(),
   getCommitsGroupedByDate: () => ({
     '2021-09-01': [

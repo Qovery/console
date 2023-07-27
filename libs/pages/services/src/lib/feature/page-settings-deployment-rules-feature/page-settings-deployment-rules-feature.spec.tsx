@@ -19,7 +19,7 @@ jest.mock('react-redux', () => ({
 }))
 
 jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+  ...jest.requireActual('react-router-dom'),
   useParams: () => ({ environmentId: '1' }),
 }))
 
