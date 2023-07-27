@@ -14,7 +14,6 @@
         "index": "apps/console/src/index.html",
         "baseHref": "/",
         "main": "apps/console/src/main.tsx",
-        "polyfills": "apps/console/src/polyfills.ts",
         "tsConfig": "apps/console/tsconfig.app.json",
         "assets": [
           "apps/console/src/favicon.ico",
