@@ -8831,7 +8831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.25.4, core-js@npm:^3.29.0, core-js@npm:^3.6.5":
+"core-js@npm:^3.25.4, core-js@npm:^3.29.0":
   version: 3.31.0
   resolution: "core-js@npm:3.31.0"
   checksum: f7cf9b3010f7ca99c026d95b61743baca1a85512742ed2b67e8f65a72ac4f4fe0b90b00057783e886bdd39d3a295f42f845d33e7cba3973ed263df978343ab79
@@ -17298,7 +17298,6 @@ __metadata:
     babel-jest: 29.4.3
     babel-loader: ^8.1.0
     chance: ^1.1.8
-    core-js: ^3.6.5
     cronstrue: ^2.21.0
     css-loader: ^6.4.0
     cypress: ^9.1.0
@@ -17346,7 +17345,6 @@ __metadata:
     react-syntax-highlighter: ^15.5.0
     react-use-intercom: ^1.5.2
     react-use-websocket: ^4.2.0
-    regenerator-runtime: 0.13.7
     semantic-release: ^19.0.5
     storybook-tailwind-dark-mode: ^1.0.22
     style-loader: ^3.3.0
@@ -18171,13 +18169,6 @@ __metadata:
   version: 1.4.2
   resolution: "regenerate@npm:1.4.2"
   checksum: 3317a09b2f802da8db09aa276e469b57a6c0dd818347e05b8862959c6193408242f150db5de83c12c3fa99091ad95fb42a6db2c3329bfaa12a0ea4cbbeb30cb0
-  languageName: node
-  linkType: hard
-
-"regenerator-runtime@npm:0.13.7":
-  version: 0.13.7
-  resolution: "regenerator-runtime@npm:0.13.7"
-  checksum: 52b66e6669152c0b1bccd95c8e11aabbfe67bb97bdf00e223bdf723b0f0052d4da5c02001d4c4bef576bdc5bcdc38a20496d1b5363b65c950c8434ed5071d9e0
   languageName: node
   linkType: hard
 
