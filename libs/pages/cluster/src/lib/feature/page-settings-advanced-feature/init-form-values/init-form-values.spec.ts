@@ -1,7 +1,6 @@
 import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
-import { getServiceType } from '@qovery/shared/enums'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { ApplicationEntity, ClusterEntity } from '@qovery/shared/interfaces'
 import { initFormValues } from './init-form-values'
 
 const mockCluster: ApplicationEntity = applicationFactoryMock(1)[0]
@@ -26,7 +25,7 @@ describe('InitFormValues', () => {
           'aws.iam.admin_group',
           'cloud_provider.container_registry.tags',
         ],
-        mockCluster
+        mockCluster as ClusterEntity
       )
     ).toStrictEqual({
       'registry.image_retention_time': '60',

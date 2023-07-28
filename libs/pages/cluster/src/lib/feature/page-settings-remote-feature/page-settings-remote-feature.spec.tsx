@@ -1,4 +1,3 @@
-import { getByLabelText } from '@testing-library/react'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
