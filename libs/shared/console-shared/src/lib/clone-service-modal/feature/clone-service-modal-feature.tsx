@@ -1,15 +1,17 @@
+import { Environment } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
 import { fetchDatabases } from '@qovery/domains/database'
 import { useFetchEnvironments } from '@qovery/domains/environment'
+import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { useCloneService } from '@qovery/domains/services'
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/store'
 import CloneServiceModal from '../ui/clone-service-modal'
 
 export interface CloneServiceModalFeatureProps {
@@ -28,21 +30,29 @@ export function CloneServiceModalFeature({
   const dispatch: AppDispatch = useDispatch()
   const { enableAlertClickOutside } = useModal()
   const { mutateAsync, isLoading: isCloneServiceLoading } = useCloneService()
-  const { data: environments, isLoading: isFetchEnvironmentsLoading } = useFetchEnvironments(projectId)
+  const projects = useSelector((state: RootState) => selectProjectsEntitiesByOrgId(state, organizationId))
 
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
       name: serviceToClone.name + '-clone',
       environment: serviceToClone.environment?.id as string,
+      project: projectId,
     },
   })
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
+  const selectedProjectId = methods.watch('project')
+  const environments: Environment[] = []
+  const { data = [], isLoading: isFetchEnvironmentsLoading } = useFetchEnvironments(selectedProjectId)
+  // Avoid array ref mutation to prevent re-rendering
+  environments.splice(0, environments.length)
+  environments.push(...data)
+
   const navigate = useNavigate()
 
-  const onSubmit = methods.handleSubmit(async ({ name, environment: environmentId }) => {
+  const onSubmit = methods.handleSubmit(async ({ name, environment: environmentId, project: projectId }) => {
     const cloneRequest = {
       name,
       environment_id: environmentId,
@@ -73,11 +83,12 @@ export function CloneServiceModalFeature({
   return (
     <FormProvider {...methods}>
       <CloneServiceModal
-        serviceToClone={serviceToClone}
-        loading={isCloneServiceLoading || isFetchEnvironmentsLoading}
         closeModal={onClose}
-        onSubmit={onSubmit}
         environments={environments}
+        loading={isCloneServiceLoading || isFetchEnvironmentsLoading}
+        onSubmit={onSubmit}
+        projects={projects}
+        serviceToClone={serviceToClone}
       />
     </FormProvider>
   )
