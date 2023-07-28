@@ -48,7 +48,7 @@ jobs:
         npx nx-cloud record -- npx nx format:check
       parallel-commands-on-agents: |
         npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --code-coverage --coverageReporters=lcov --silent
-        npx nx build --parallel=3
+        npx nx affected --target=build --parallel=3
       artifacts-path: |
         dist/
         coverage
