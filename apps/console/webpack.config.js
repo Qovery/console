@@ -1,11 +1,9 @@
-const { composePlugins, withNx } = require('@nrwl/webpack')
-const { withReact } = require('@nrwl/react')
+const { composePlugins, withNx } = require('@nx/webpack')
+const { withReact } = require('@nx/react')
 
 // Nx plugins for webpack.
-module.exports = composePlugins(withNx(), withReact(), (config, { options, context }) => {
+module.exports = composePlugins(withNx(), withReact(), (config) => {
   // Update the webpack config as needed here.
-  // e.g. config.plugins.push(new MyPlugin())
-  // For more information on webpack config and Nx see:
-  // https://nx.dev/packages/webpack/documents/webpack-config-setup
+  // e.g. `config.plugins.push(new MyPlugin())`
   return config
 })
