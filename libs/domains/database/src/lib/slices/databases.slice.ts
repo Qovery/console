@@ -105,7 +105,11 @@ export const fetchDatabaseDeployments = createAsyncThunk<
   { databaseId: string; silently?: boolean }
 >('database/deployments', async (data) => {
   // @todo remove response any update documentation
-  const response: any = await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)
+  const response = (await databaseDeploymentsApi.listDatabaseDeploymentHistory(data.databaseId)) as AxiosResponse<{
+    page: number
+    page_size: number
+    results: DeploymentHistoryDatabase[]
+  }>
   return response.data.results as DeploymentHistoryDatabase[]
 })
 

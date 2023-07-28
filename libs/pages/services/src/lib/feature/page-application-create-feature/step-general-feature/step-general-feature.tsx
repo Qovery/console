@@ -67,8 +67,8 @@ export function StepGeneralFeature() {
     if (data.cmd_arguments) {
       try {
         cloneData.cmd = eval(data.cmd_arguments)
-      } catch (e: any) {
-        toastError(e, 'Invalid CMD array')
+      } catch (e: unknown) {
+        toastError(e as Error, 'Invalid CMD array')
         return
       }
     }

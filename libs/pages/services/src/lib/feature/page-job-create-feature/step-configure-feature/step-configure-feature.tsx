@@ -72,8 +72,8 @@ export function StepConfigureFeature() {
       if (data.cmd_arguments) {
         try {
           cloneData.cmd = eval(data.cmd_arguments)
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
           return
         }
       }
@@ -83,8 +83,8 @@ export function StepConfigureFeature() {
       if (cloneData.on_start?.enabled && cloneData.on_start?.arguments_string) {
         try {
           cloneData.on_start.arguments = eval(cloneData.on_start.arguments_string)
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
           return
         }
       }
@@ -92,8 +92,8 @@ export function StepConfigureFeature() {
       if (cloneData.on_stop?.enabled && cloneData.on_stop?.arguments_string) {
         try {
           cloneData.on_stop.arguments = eval(cloneData.on_stop.arguments_string)
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
           return
         }
       }
@@ -101,8 +101,8 @@ export function StepConfigureFeature() {
       if (cloneData.on_delete?.enabled && cloneData.on_delete?.arguments_string) {
         try {
           cloneData.on_delete.arguments = eval(cloneData.on_delete.arguments_string)
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
           return
         }
       }

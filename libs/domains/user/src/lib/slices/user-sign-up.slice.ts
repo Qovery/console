@@ -11,9 +11,9 @@ export const fetchUserSignUp = createAsyncThunk<SignUp>('userSignUp/get', async 
   return response.data
 })
 
-export const postUserSignUp = createAsyncThunk<any, SignUpRequest>(
+export const postUserSignUp = createAsyncThunk(
   'userSignUp/post',
-  async (data: SignUpRequest, { rejectWithValue }) => {
+  async (data: SignUpRequest & { created_at: string; id: string }, { rejectWithValue }) => {
     try {
       const result = await userSignUpApi.createUserSignUp(data)
 

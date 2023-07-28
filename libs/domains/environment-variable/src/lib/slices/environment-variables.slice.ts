@@ -1,8 +1,9 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import {
   APIVariableScopeEnum,
   ApplicationEnvironmentVariableApi,
   ContainerEnvironmentVariableApi,
+  EnvironmentVariable,
   EnvironmentVariableApi,
   JobEnvironmentVariableApi,
   ProjectEnvironmentVariableApi,
@@ -508,7 +509,10 @@ export const environmentVariablesSlice = createSlice({
   },
 })
 
-export const addVariableToStore = (state: EnvironmentVariablesState, action: any) => {
+export const addVariableToStore = (
+  state: EnvironmentVariablesState,
+  action: PayloadAction<EnvironmentVariable, string, { arg?: { applicationId: string } }, never>
+) => {
   if (!action.payload || !action.meta.arg) return
 
   const extendedEnv: EnvironmentVariableEntity = {

@@ -10,8 +10,8 @@ export interface PageOrganizationMembersProps {
   deleteInviteMember: (inviteId: string) => void
   resendInvite: (inviteId: string, data: InviteMemberRequest) => void
   transferOwnership: (user: Member) => void
-  setDataMembers: Dispatch<SetStateAction<Member[] | any | undefined>>
-  setDataInviteMembers: Dispatch<SetStateAction<InviteMember[] | any | undefined>>
+  setDataMembers: Dispatch<SetStateAction<Member[]>>
+  setDataInviteMembers: Dispatch<SetStateAction<InviteMember[]>>
   loadingInviteMembers: boolean
   loadingUpdateRole: { userId: string; loading: boolean }
   loadingMembers: boolean
@@ -78,8 +78,8 @@ const inviteMembersHead = [
 
 export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
   const {
-    members,
-    inviteMembers,
+    members = [],
+    inviteMembers = [],
     dataMembers,
     setDataMembers,
     dataInviteMembers,

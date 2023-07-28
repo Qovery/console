@@ -8,215 +8,233 @@ const applicationActionApi = new ApplicationActionsApi()
 const containerActionApi = new ContainerActionsApi()
 const jobActionApi = new JobActionsApi()
 
-export const postApplicationActionsRedeploy = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
->('applicationActions/redeploy', async (data, { dispatch }) => {
-  try {
-    let response
-    if (isContainer(data.serviceType)) {
-      response = await containerActionApi.redeployContainer(data.applicationId)
-    } else if (isJob(data.serviceType)) {
-      response = await jobActionApi.redeployJob(data.applicationId)
-    } else {
-      response = await applicationActionApi.redeployApplication(data.applicationId)
-    }
+export const postApplicationActionsRedeploy = createAsyncThunk(
+  'applicationActions/redeploy',
+  async (
+    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    { dispatch }
+  ) => {
+    try {
+      let response
+      if (isContainer(data.serviceType)) {
+        response = await containerActionApi.redeployContainer(data.applicationId)
+      } else if (isJob(data.serviceType)) {
+        response = await jobActionApi.redeployJob(data.applicationId)
+      } else {
+        response = await applicationActionApi.redeployApplication(data.applicationId)
+      }
 
-    if (response.status === 202) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // refetch deployments after update
-      if (data.withDeployments)
-        await dispatch(
-          fetchApplicationDeployments({
-            applicationId: data.applicationId,
-            serviceType: data.serviceType,
-            silently: true,
-          })
-        )
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your application is redeploying')
-    }
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        if (data.withDeployments)
+          await dispatch(
+            fetchApplicationDeployments({
+              applicationId: data.applicationId,
+              serviceType: data.serviceType,
+              silently: true,
+            })
+          )
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is redeploying')
+      }
 
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Redeploying error', (err as Error).message)
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Redeploying error', (err as Error).message)
+    }
   }
-})
+)
 
-export const postApplicationActionsReboot = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
->('applicationActions/reboot', async (data, { dispatch }) => {
-  try {
-    let response
-    if (isContainer(data.serviceType)) {
-      response = await containerActionApi.rebootContainer(data.applicationId)
-    } else {
-      response = await applicationActionApi.rebootApplication(data.applicationId)
+export const postApplicationActionsReboot = createAsyncThunk(
+  'applicationActions/reboot',
+  async (
+    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    { dispatch }
+  ) => {
+    try {
+      let response
+      if (isContainer(data.serviceType)) {
+        response = await containerActionApi.rebootContainer(data.applicationId)
+      } else {
+        response = await applicationActionApi.rebootApplication(data.applicationId)
+      }
+
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        if (data.withDeployments)
+          await dispatch(
+            fetchApplicationDeployments({
+              applicationId: data.applicationId,
+              serviceType: data.serviceType,
+              silently: true,
+            })
+          )
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is restarting')
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Restarting error', (err as Error).message)
     }
-
-    if (response.status === 202) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // refetch deployments after update
-      if (data.withDeployments)
-        await dispatch(
-          fetchApplicationDeployments({
-            applicationId: data.applicationId,
-            serviceType: data.serviceType,
-            silently: true,
-          })
-        )
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your application is restarting')
-    }
-
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Restarting error', (err as Error).message)
   }
-})
+)
 
-export const postApplicationActionsDeploy = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
->('applicationActions/deploy', async (data, { dispatch }) => {
-  try {
-    let response
-    if (isContainer(data.serviceType)) {
-      response = await containerActionApi.redeployContainer(data.applicationId)
-    } else if (isJob(data.serviceType)) {
-      response = await jobActionApi.redeployJob(data.applicationId)
-    } else {
-      response = await applicationActionApi.redeployApplication(data.applicationId)
+export const postApplicationActionsDeploy = createAsyncThunk(
+  'applicationActions/deploy',
+  async (
+    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    { dispatch }
+  ) => {
+    try {
+      let response
+      if (isContainer(data.serviceType)) {
+        response = await containerActionApi.redeployContainer(data.applicationId)
+      } else if (isJob(data.serviceType)) {
+        response = await jobActionApi.redeployJob(data.applicationId)
+      } else {
+        response = await applicationActionApi.redeployApplication(data.applicationId)
+      }
+
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        if (data.withDeployments)
+          await dispatch(
+            fetchApplicationDeployments({
+              applicationId: data.applicationId,
+              serviceType: data.serviceType,
+              silently: true,
+            })
+          )
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is deploying')
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
     }
-
-    if (response.status === 202) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // refetch deployments after update
-      if (data.withDeployments)
-        await dispatch(
-          fetchApplicationDeployments({
-            applicationId: data.applicationId,
-            serviceType: data.serviceType,
-            silently: true,
-          })
-        )
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your application is deploying')
-    }
-
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
   }
-})
+)
 
-export const postApplicationActionsDeployByCommitId = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; git_commit_id: string; serviceType: ServiceTypeEnum }
->('applicationActions/deploy', async (data, { dispatch }) => {
-  try {
-    let response
+export const postApplicationActionsDeployByCommitId = createAsyncThunk(
+  'applicationActions/deploy',
+  async (
+    data: { environmentId: string; applicationId: string; git_commit_id: string; serviceType: ServiceTypeEnum },
+    { dispatch }
+  ) => {
+    try {
+      let response
 
-    if (isApplication(data.serviceType)) {
-      response = await applicationActionApi.deployApplication(data.applicationId, {
-        git_commit_id: data.git_commit_id,
-      })
-    } else {
-      response = await jobActionApi.deployJob(data.applicationId, undefined, {
-        git_commit_id: data.git_commit_id,
-      })
+      if (isApplication(data.serviceType)) {
+        response = await applicationActionApi.deployApplication(data.applicationId, {
+          git_commit_id: data.git_commit_id,
+        })
+      } else {
+        response = await jobActionApi.deployJob(data.applicationId, undefined, {
+          git_commit_id: data.git_commit_id,
+        })
+      }
+
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        toast(ToastEnum.SUCCESS, 'Your application is deploying')
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
     }
-
-    if (response.status === 202) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      toast(ToastEnum.SUCCESS, 'Your application is deploying')
-    }
-
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
   }
-})
+)
 
-export const postApplicationActionsDeployByTag = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; tag: string; serviceType: ServiceTypeEnum }
->('applicationActions/deploy', async (data, { dispatch }) => {
-  try {
-    let response
+export const postApplicationActionsDeployByTag = createAsyncThunk(
+  'applicationActions/deploy',
+  async (
+    data: { environmentId: string; applicationId: string; tag: string; serviceType: ServiceTypeEnum },
+    { dispatch }
+  ) => {
+    try {
+      let response
 
-    if (isContainer(data.serviceType)) {
-      response = await containerActionApi.deployContainer(data.applicationId, {
-        image_tag: data.tag,
-      })
-    } else {
-      response = await jobActionApi.deployJob(data.applicationId, undefined, {
-        image_tag: data.tag,
-      })
+      if (isContainer(data.serviceType)) {
+        response = await containerActionApi.deployContainer(data.applicationId, {
+          image_tag: data.tag,
+        })
+      } else {
+        response = await jobActionApi.deployJob(data.applicationId, undefined, {
+          image_tag: data.tag,
+        })
+      }
+
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        toast(ToastEnum.SUCCESS, `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`)
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
     }
-
-    if (response.status === 202) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      toast(ToastEnum.SUCCESS, `Your ${isJob(data.serviceType) ? 'job' : 'application'} is deploying`)
-    }
-
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Deploying error', (err as Error).message)
   }
-})
+)
 
-export const postApplicationActionsStop = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean }
->('applicationActions/stop', async (data, { dispatch }) => {
-  try {
-    let response
-    if (isContainer(data.serviceType)) {
-      response = await containerActionApi.stopContainer(data.applicationId)
-    } else if (isJob(data.serviceType)) {
-      response = await jobActionApi.stopJob(data.applicationId)
-    } else {
-      response = await applicationActionApi.stopApplication(data.applicationId)
+export const postApplicationActionsStop = createAsyncThunk(
+  'applicationActions/stop',
+  async (
+    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; withDeployments?: boolean },
+    { dispatch }
+  ) => {
+    try {
+      let response
+      if (isContainer(data.serviceType)) {
+        response = await containerActionApi.stopContainer(data.applicationId)
+      } else if (isJob(data.serviceType)) {
+        response = await jobActionApi.stopJob(data.applicationId)
+      } else {
+        response = await applicationActionApi.stopApplication(data.applicationId)
+      }
+
+      if (response.status === 202) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // refetch deployments after update
+        if (data.withDeployments)
+          await dispatch(
+            fetchApplicationDeployments({
+              applicationId: data.applicationId,
+              serviceType: data.serviceType,
+              silently: true,
+            })
+          )
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is stopping')
+      }
+
+      return response
+    } catch (err) {
+      // error message
+      return toast(ToastEnum.ERROR, 'Stopping error', (err as Error).message)
     }
-
-    if (response.status === 202) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // refetch deployments after update
-      if (data.withDeployments)
-        await dispatch(
-          fetchApplicationDeployments({
-            applicationId: data.applicationId,
-            serviceType: data.serviceType,
-            silently: true,
-          })
-        )
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your application is stopping')
-    }
-
-    return response
-  } catch (err) {
-    // error message
-    return toast(ToastEnum.ERROR, 'Stopping error', (err as Error).message)
   }
-})
+)
 
-export const forceRunJob = createAsyncThunk<any, { applicationId: string; jobForceEvent: JobForceEvent }>(
+export const forceRunJob = createAsyncThunk(
   'applicationActions/delete',
-  async (data, { dispatch }) => {
+  async (data: { applicationId: string; jobForceEvent: JobForceEvent }, { dispatch }) => {
     try {
       const response = await jobActionApi.deployJob(data.applicationId, data.jobForceEvent)
 

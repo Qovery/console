@@ -4,7 +4,10 @@ import { Button, ButtonSize, ButtonStyle, IconAwesomeEnum, InputText } from '@qo
 
 export interface StepProjectProps {
   onSubmit: () => void
-  control: Control<any, any>
+  control: Control<{
+    organization_name: string
+    project_name: string
+  }>
   authLogout: () => void
   backButton?: boolean
 }

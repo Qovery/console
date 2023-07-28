@@ -6,6 +6,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
+import { AxiosResponse } from 'axios'
 import {
   ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
@@ -23,7 +24,8 @@ import {
   ContainerMetricsApi,
   ContainerRequest,
   ContainersApi,
-  DeploymentHistoryApplication,
+  DeploymentHistory,
+  DeploymentHistoryPaginatedResponseList,
   Instance,
   JobAdvancedSettings,
   JobConfigurationApi,
@@ -220,18 +222,22 @@ export const fetchApplicationCommits = createAsyncThunk<
 })
 
 export const fetchApplicationDeployments = createAsyncThunk<
-  DeploymentHistoryApplication[],
+  DeploymentHistory[],
   { applicationId: string; serviceType?: ServiceTypeEnum; silently?: boolean }
 >('application/deployments', async (data) => {
   let response
   if (isContainer(data.serviceType)) {
-    response = (await containerDeploymentsApi.listContainerDeploymentHistory(data.applicationId)) as any
+    response = (await containerDeploymentsApi.listContainerDeploymentHistory(
+      data.applicationId
+    )) as AxiosResponse<DeploymentHistoryPaginatedResponseList>
   } else if (isJob(data.serviceType)) {
-    response = await jobDeploymentsApi.listJobDeploymentHistory(data.applicationId)
+    response = (await jobDeploymentsApi.listJobDeploymentHistory(
+      data.applicationId
+    )) as AxiosResponse<DeploymentHistoryPaginatedResponseList>
   } else {
     response = await applicationDeploymentsApi.listApplicationDeploymentHistory(data.applicationId)
   }
-  return response.data.results
+  return response.data.results as DeploymentHistory[]
 })
 
 export const fetchApplicationStatus = createAsyncThunk<
@@ -312,34 +318,37 @@ export const fetchDefaultApplicationAdvancedSettings = createAsyncThunk<
   return response.data
 })
 
-export const deleteApplicationAction = createAsyncThunk<
-  any,
-  { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; force?: boolean }
->('applicationActions/delete', async (data, { dispatch }) => {
-  try {
-    let response
-    if (isContainer(data.serviceType)) {
-      response = await containerMainCallsApi.deleteContainer(data.applicationId)
-    } else if (isJob(data.serviceType)) {
-      response = await jobMainCallsApi.deleteJob(data.applicationId)
-    } else {
-      response = await applicationMainCallsApi.deleteApplication(data.applicationId)
-    }
+export const deleteApplicationAction = createAsyncThunk(
+  'applicationActions/delete',
+  async (
+    data: { environmentId: string; applicationId: string; serviceType?: ServiceTypeEnum; force?: boolean },
+    { dispatch }
+  ) => {
+    try {
+      let response
+      if (isContainer(data.serviceType)) {
+        response = await containerMainCallsApi.deleteContainer(data.applicationId)
+      } else if (isJob(data.serviceType)) {
+        response = await jobMainCallsApi.deleteJob(data.applicationId)
+      } else {
+        response = await applicationMainCallsApi.deleteApplication(data.applicationId)
+      }
 
-    if (response.status === 204) {
-      // refetch status after update
-      await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your application is being deleted')
-    }
+      if (response.status === 204) {
+        // refetch status after update
+        await dispatch(fetchApplicationsStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your application is being deleted')
+      }
 
-    return response
-  } catch (err) {
-    // error message
-    toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
-    return
+      return response
+    } catch (err) {
+      // error message
+      toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
+      return
+    }
   }
-})
+)
 
 export const initialApplicationsState: ApplicationsState = applicationsAdapter.getInitialState({
   loadingStatus: 'not loaded',

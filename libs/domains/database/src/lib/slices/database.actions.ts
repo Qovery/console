@@ -5,9 +5,9 @@ import { fetchDatabasesStatus } from './databases.slice'
 
 const databaseActionApi = new DatabaseActionsApi()
 
-export const postDatabaseActionsRedeploy = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
+export const postDatabaseActionsRedeploy = createAsyncThunk(
   'databaseActions/redeploy',
-  async (data, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
     try {
       const response = await databaseActionApi.redeployDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
@@ -25,9 +25,9 @@ export const postDatabaseActionsRedeploy = createAsyncThunk<any, { environmentId
   }
 )
 
-export const postDatabaseActionsReboot = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
+export const postDatabaseActionsReboot = createAsyncThunk(
   'databaseActions/reboot',
-  async (data, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
     try {
       const response = await databaseActionApi.rebootDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
@@ -45,9 +45,9 @@ export const postDatabaseActionsReboot = createAsyncThunk<any, { environmentId: 
   }
 )
 
-export const postDatabaseActionsDeploy = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
+export const postDatabaseActionsDeploy = createAsyncThunk(
   'databaseActions/deploy',
-  async (data, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
     try {
       const response = await databaseActionApi.deployDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
@@ -65,9 +65,9 @@ export const postDatabaseActionsDeploy = createAsyncThunk<any, { environmentId: 
   }
 )
 
-export const postDatabaseActionsStop = createAsyncThunk<any, { environmentId: string; databaseId: string }>(
+export const postDatabaseActionsStop = createAsyncThunk(
   'databaseActions/stop',
-  async (data, { dispatch }) => {
+  async (data: { environmentId: string; databaseId: string }, { dispatch }) => {
     try {
       const response = await databaseActionApi.stopDatabase(data.databaseId)
       if (response.status === 202 || response.status === 200) {
