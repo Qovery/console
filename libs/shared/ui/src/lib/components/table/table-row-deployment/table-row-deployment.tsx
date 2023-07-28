@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ContainerApplicationEntity, DeploymentService } from '@qovery/shared/interfaces'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,

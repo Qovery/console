@@ -14,7 +14,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { getEnvironmentStatusById } from '@qovery/domains/environment'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { APPLICATION_LOGS_URL, DEPLOYMENT_LOGS_URL } from '@qovery/shared/routes'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
