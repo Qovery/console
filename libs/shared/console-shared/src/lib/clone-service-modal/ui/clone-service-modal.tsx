@@ -1,4 +1,4 @@
-import { Environment } from 'qovery-typescript-axios'
+import { Environment, Project } from 'qovery-typescript-axios'
 import { FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
@@ -9,6 +9,7 @@ export interface CloneServiceModalProps {
   environments: Environment[]
   loading: boolean
   onSubmit: () => void
+  projects: Project[]
   serviceToClone: ApplicationEntity | DatabaseEntity
 }
 
@@ -17,9 +18,10 @@ export function CloneServiceModal({
   environments,
   loading,
   onSubmit,
+  projects,
   serviceToClone,
 }: CloneServiceModalProps) {
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
 
   return (
     <ModalCrud
@@ -57,8 +59,29 @@ export function CloneServiceModal({
         )}
       />
       <Controller
+        name="project"
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            dataTestId="input-select-project"
+            className="mb-6"
+            onChange={(...args) => {
+              setValue('environment', '')
+              field.onChange(...args)
+            }}
+            value={field.value}
+            label="Project"
+            error={error?.message}
+            options={projects.map((c) => ({ value: c.id, label: c.name }))}
+            portal={true}
+          />
+        )}
+      />
+
+      <Controller
         name="environment"
         control={control}
+        rules={{ required: true }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             dataTestId="input-select-environment"

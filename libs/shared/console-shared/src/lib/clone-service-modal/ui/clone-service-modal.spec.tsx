@@ -2,9 +2,15 @@ import { getByDisplayValue, getByLabelText, getByRole, getByTestId, screen } fro
 import userEvent from '@testing-library/user-event'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { applicationFactoryMock, databaseFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
+import {
+  applicationFactoryMock,
+  databaseFactoryMock,
+  environmentFactoryMock,
+  projectsFactoryMock,
+} from '@qovery/shared/factories'
 import CloneEnvironmentModal, { CloneServiceModalProps } from './clone-service-modal'
 
+const mockProjects = projectsFactoryMock(3)
 const mockEnvironments = environmentFactoryMock(3)
 
 const props: CloneServiceModalProps = {
@@ -12,6 +18,7 @@ const props: CloneServiceModalProps = {
   environments: mockEnvironments,
   loading: false,
   onSubmit: jest.fn(),
+  projects: mockProjects,
   serviceToClone: applicationFactoryMock(1)[0],
 }
 
@@ -70,11 +77,12 @@ describe('CloneEnvironmentModal', () => {
   })
 
   describe('with application', () => {
-    it('should render 2 input and 1 selects with default values', () => {
+    it('should render 2 input and 2 selects with default values', () => {
       const { baseElement } = render(wrapWithReactHookForm(<CloneEnvironmentModal {...props} />))
 
       const inputs = screen.getAllByRole('textbox')
       getByTestId(baseElement, 'input-select-environment')
+      getByTestId(baseElement, 'input-select-project')
 
       expect(inputs).toHaveLength(2)
       if (props.serviceToClone) getByDisplayValue(baseElement, props.serviceToClone?.name)
@@ -104,6 +112,7 @@ describe('CloneEnvironmentModal', () => {
 
       const inputs = screen.getAllByRole('textbox')
       getByTestId(baseElement, 'input-select-environment')
+      getByTestId(baseElement, 'input-select-project')
 
       expect(inputs).toHaveLength(2)
       if (propsUpdated.serviceToClone) getByDisplayValue(baseElement, propsUpdated.serviceToClone?.name)
