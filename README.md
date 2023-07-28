@@ -40,11 +40,11 @@ Start Storybook on http://localhost:4400
 
 Generate a library
 
-    nx g @nrwl/react:lib my-lib
+    nx g @nx/react:lib my-lib
 
 Generate a component
 
-    nx g @nrwl/react:component my-component
+    nx g @nx/react:component my-component
 
 Run unit tests with Jest
 
