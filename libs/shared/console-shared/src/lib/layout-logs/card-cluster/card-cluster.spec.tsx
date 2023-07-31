@@ -1,6 +1,6 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum, StateEnum } from 'qovery-typescript-axios'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { clusterFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
 import CardCluster, { CardClusterProps, splitId } from './card-cluster'
 

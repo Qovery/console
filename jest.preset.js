@@ -1,4 +1,4 @@
-const nxPreset = require('@nrwl/jest/preset').default
+const nxPreset = require('@nx/jest/preset').default
 
 module.exports = {
   setupFilesAfterEnv: ['./__tests__/mocks.ts'],
@@ -7,7 +7,7 @@ module.exports = {
   testPathIgnorePatterns: ['./node_modules/', './.next/', './__tests__/utils/setup-jest.tsx'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': ['babel-jest', { presets: ['@nrwl/react/babel'] }],
+    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': ['babel-jest', { presets: ['@nx/react/babel'] }],
     '^.+\\.scss$': 'jest-scss-transform',
   },
   transformIgnorePatterns: [

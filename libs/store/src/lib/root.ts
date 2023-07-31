@@ -1,21 +1,21 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   applications,
   customDomainReducer,
   initialApplicationsState,
   initialCustomDomainState,
 } from '@qovery/domains/application'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { databases, initialDatabasesState } from '@qovery/domains/database'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   environmentVariables,
   initialEnvironmentVariablesState,
   initialSecretEnvironmentVariablesState,
   secretEnvironmentVariables,
 } from '@qovery/domains/environment-variable'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   authProviderReducer,
   clusterReducer,
@@ -28,14 +28,14 @@ import {
   organization,
   repositoryReducer,
 } from '@qovery/domains/organization'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   deploymentRulesReducer,
   initialDeploymentRulesState,
   initialProjectsState,
   projects,
 } from '@qovery/domains/projects'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { initialUserSignUpState, initialUserState, user, userSignUp } from '@qovery/domains/user'
 
 export const organizationReducer = combineReducers({

@@ -1,6 +1,6 @@
 import { act, fireEvent, screen } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import TableHeadSort, { TableHeadSortProps, sortTable } from './table-head-sort'
 

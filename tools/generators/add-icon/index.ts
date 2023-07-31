@@ -1,4 +1,4 @@
-import { Tree } from '@nrwl/devkit'
+import { Tree } from '@nx/devkit'
 
 export default async function (tree: Tree, schema: any) {
   updateIconScss(tree, schema)
