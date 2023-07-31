@@ -19,7 +19,7 @@ export function PageGeneral(props: PageGeneralProps) {
   const { database, listHelpfulLinks, loadingStatus } = props
 
   let items: {
-    created_at: string
+    created_at?: string
     name: string
     cpu?: DatabaseCurrentMetricCpu
     memory?: DatabaseCurrentMetricMemory
