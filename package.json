@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "setup": ". ./s.sh",
-    "start": "nx serve",
+    "start": "nx serve console",
     "storybook": "nx storybook shared-ui",
     "build-storybook": "nx run shared-ui:build-storybook",
     "format": "nx format:write",
