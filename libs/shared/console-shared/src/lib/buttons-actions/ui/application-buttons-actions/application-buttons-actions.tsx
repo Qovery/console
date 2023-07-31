@@ -53,6 +53,7 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
+import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import DeployOtherTagModalFeature from '../../../deploy-other-tag-modal/feature/deploy-other-tag-modal-feature'
 import ForceRunModalFeature from '../../../force-run-modal/feature/force-run-modal-feature'
@@ -67,7 +68,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const { environmentId = '', projectId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
-  const { openModal } = useModal()
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const location = useLocation()
@@ -344,6 +345,21 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
               name: 'Copy identifiers',
               contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
               onClick: () => copyToClipboard(copyContent),
+            },
+            {
+              name: 'Clone',
+              contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
+              onClick: () =>
+                openModal({
+                  content: (
+                    <CloneServiceModalFeature
+                      onClose={closeModal}
+                      organizationId={organizationId}
+                      projectId={projectId}
+                      serviceToClone={application}
+                    />
+                  ),
+                }),
             },
             {
               name: 'Open settings',

@@ -48,9 +48,10 @@ const deploymentRules = {
   weekdays: [chance.pickone(Object.values(WeekdayEnum))],
 }
 
-export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): Environment[] =>
-  Array.from({ length: howMany }).map((_, index) => ({
-    id: `${(index + 1) * Math.random()}`,
+export const environmentFactoryMock = (howMany: number, noStatus = false, noDeployments = false): Environment[] => {
+  const ids = chance.unique(chance.integer, howMany, { min: 0 })
+  return Array.from({ length: howMany }).map((_, index) => ({
+    id: `${ids[index]}`,
     created_at: chance.date().toString(),
     updated_at: chance.date().toString(),
     name: chance.name(),
@@ -74,3 +75,4 @@ export const environmentFactoryMock = (howMany: number, noStatus = false, noDepl
     deployments: !noDeployments ? [deploymentMock, deploymentMock, deploymentMock] : undefined,
     deploymentRules: deploymentRules,
   }))
+}
