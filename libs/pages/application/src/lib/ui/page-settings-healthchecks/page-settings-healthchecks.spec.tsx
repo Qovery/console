@@ -1,7 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { defaultLivenessProbe, defaultReadinessProbe } from '@qovery/shared/console-shared'
-import { ProbeTypeEnum } from '@qovery/shared/enums'
 import PageSettingsHealthchecks from './page-settings-healthchecks'
 
 describe('PageSettingsHealthchecks', () => {
@@ -10,11 +9,9 @@ describe('PageSettingsHealthchecks', () => {
       wrapWithReactHookForm(
         <PageSettingsHealthchecks
           onSubmit={jest.fn()}
-          defaultTypeLiveness={ProbeTypeEnum.TCP}
-          defaultTypeReadiness={ProbeTypeEnum.HTTP}
           linkResourcesSetting="/"
           isJob={false}
-          loading={'loaded'}
+          loading={false}
           ports={[]}
         />,
         {

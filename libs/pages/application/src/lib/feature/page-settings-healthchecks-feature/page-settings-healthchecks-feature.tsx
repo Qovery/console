@@ -8,7 +8,7 @@ import { editApplication, getApplicationsState, postApplicationActionsRedeploy }
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, getServiceType, isJob } from '@qovery/shared/enums'
-import { ApplicationEntity, HealthcheckData, LoadingStatus } from '@qovery/shared/interfaces'
+import { ApplicationEntity, HealthcheckData } from '@qovery/shared/interfaces'
 import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { AppDispatch, RootState } from '@qovery/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
@@ -52,7 +52,7 @@ export function PageSettingsHealthchecksFeature() {
     }
   }
 
-  const [loading, setLoading] = useState<LoadingStatus>('not loaded')
+  const [loading, setLoading] = useState(false)
 
   const methods = useForm({
     mode: 'onChange',
@@ -78,7 +78,7 @@ export function PageSettingsHealthchecksFeature() {
 
   const onSubmit = methods.handleSubmit((data) => {
     if (application) {
-      setLoading('loading')
+      setLoading(true)
       const cloneApplication = handleSubmit(data, application)
 
       dispatch(
@@ -91,7 +91,7 @@ export function PageSettingsHealthchecksFeature() {
       )
         .unwrap()
         .catch((error) => console.error(error))
-        .finally(() => setLoading('loaded'))
+        .finally(() => setLoading(false))
     }
   })
 
@@ -149,8 +149,6 @@ export function PageSettingsHealthchecksFeature() {
           environmentId,
           applicationId
         )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_RESOURCES_URL}`}
-        defaultTypeReadiness={defaultTypeReadiness as ProbeTypeEnum}
-        defaultTypeLiveness={defaultTypeLiveness as ProbeTypeEnum}
         onSubmit={onSubmit}
         loading={loading}
         environmentMode={environment?.mode}
