@@ -121,25 +121,25 @@ export const fetchDatabaseMasterCredentials = createAsyncThunk<Credentials, { da
   }
 )
 
-export const deleteDatabaseAction = createAsyncThunk<
-  any,
-  { environmentId: string; databaseId: string; force?: boolean }
->('databaseActions/delete', async (data, { dispatch }) => {
-  try {
-    const response = await databaseMainCallsApi.deleteDatabase(data.databaseId)
-    if (response.status === 204 || response.status === 200) {
-      // refetch status after update
-      await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
-      // success message
-      toast(ToastEnum.SUCCESS, 'Your database is being deleted')
-    }
+export const deleteDatabaseAction = createAsyncThunk(
+  'databaseActions/delete',
+  async (data: { environmentId: string; databaseId: string; force?: boolean }, { dispatch }) => {
+    try {
+      const response = await databaseMainCallsApi.deleteDatabase(data.databaseId)
+      if (response.status === 204 || response.status === 200) {
+        // refetch status after update
+        await dispatch(fetchDatabasesStatus({ environmentId: data.environmentId }))
+        // success message
+        toast(ToastEnum.SUCCESS, 'Your database is being deleted')
+      }
 
-    return response
-  } catch (err) {
-    toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
-    return
+      return response
+    } catch (err) {
+      toast(ToastEnum.ERROR, 'Deleting error', (err as Error).message)
+      return
+    }
   }
-})
+)
 
 export const fetchDatabaseInstanceTypes = createAsyncThunk<
   ManagedDatabaseInstanceTypeResponseList,
