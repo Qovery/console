@@ -15,14 +15,15 @@ export function TerraformExportModalFeature({ closeModal, environmentId }: Terra
 
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: {
-      exportSecrets: false,
-    },
   })
 
   const onSubmit = methods.handleSubmit(async ({ exportSecrets }) => {
-    const result = await mutateAsync({ exportSecrets: exportSecrets })
-    if (result) closeModal()
+    try {
+      const result = await mutateAsync({ exportSecrets: exportSecrets })
+      if (result) closeModal()
+    } catch (error) {
+      console.error(error)
+    }
   })
 
   return (

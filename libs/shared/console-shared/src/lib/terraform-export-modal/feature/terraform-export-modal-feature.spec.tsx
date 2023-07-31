@@ -40,12 +40,12 @@ describe('TerraformExportModalFeature', () => {
 
     render(<TerraformExportModalFeature {...props} />)
 
-    const submitButton = screen.getByRole('button', { name: /export/i })
-    await userEvent.click(submitButton)
-
     const toggle = screen.getByTestId('input-toggle-button')
     await userEvent.click(toggle)
     screen.getByDisplayValue('true')
+
+    const submitButton = screen.getByRole('button', { name: /export/i })
+    await userEvent.click(submitButton)
 
     expect(useFetchEnvironmentExportTerraformSpy).toHaveBeenCalledWith('project-id', 'environment-id')
     expect(useFetchEnvironmentExportTerraformSpy('project-id', 'environment-id').mutateAsync).toHaveBeenCalledWith({
