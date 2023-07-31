@@ -1,7 +1,14 @@
+const { createGlobPatternsForDependencies } = require('@nx/react/tailwind')
+const { join } = require('path')
+const sharedTailwindConfig = require('../../../tailwind-workspace-preset.js')
+
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-  presets: [require('../../../tailwind-workspace-preset.js')],
-  content: ['libs/shared/ui/src/**/*.{js,jsx,ts,tsx}'],
-  mode: 'jit',
+  presets: [sharedTailwindConfig],
+  content: [
+    join(__dirname, 'src/**/*!(*.stories|*.spec).{ts,tsx,html}'),
+    ...createGlobPatternsForDependencies(__dirname),
+  ],
   theme: {
     extend: {},
   },
