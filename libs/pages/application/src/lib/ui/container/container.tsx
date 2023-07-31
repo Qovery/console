@@ -110,8 +110,8 @@ export function Container(props: ContainerProps) {
             <>
               <ApplicationButtonsActions
                 application={application}
-                clusterId={environment.cluster_id}
                 environmentMode={environment.mode}
+                clusterId={environment.cluster_id}
               />
               <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
             </>
