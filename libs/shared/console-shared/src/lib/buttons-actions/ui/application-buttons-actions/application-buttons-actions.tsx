@@ -61,10 +61,11 @@ import ForceRunModalFeature from '../../../force-run-modal/feature/force-run-mod
 export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
   environmentMode: string
+  clusterId: string
 }
 
 export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps) {
-  const { application, environmentMode } = props
+  const { application, environmentMode, clusterId } = props
   const { environmentId = '', projectId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
@@ -281,10 +282,12 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     location.pathname,
     organizationId,
     projectId,
+    actionCancelEnvironment,
+    serviceType,
   ])
 
   const canDelete = application.status && isDeleteAvailable(application.status.state)
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${application.id}`
+  const copyContent = `Cluster ID: ${clusterId}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${application.id}`
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {

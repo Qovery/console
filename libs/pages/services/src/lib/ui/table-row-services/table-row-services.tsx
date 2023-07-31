@@ -35,6 +35,7 @@ export interface TableRowServicesProps<T> {
   filter: TableFilterProps[]
   type: ServiceTypeEnum
   environmentMode: string
+  clusterId: string
   dataHead: TableHeadProps<T>[]
   link: string
   columnsWidth?: string
@@ -52,6 +53,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
     link,
     environmentMode,
     isLoading,
+    clusterId,
   } = props
 
   const dataDatabase = data as DatabaseEntity
@@ -105,10 +107,15 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                     <ApplicationButtonsActions
                       application={data as ApplicationEntity}
                       environmentMode={environmentMode}
+                      clusterId={clusterId}
                     />
                   )}
                   {isDatabase(type) && (
-                    <DatabaseButtonsActions database={data as DatabaseEntity} environmentMode="environmentMode" />
+                    <DatabaseButtonsActions
+                      database={data as DatabaseEntity}
+                      environmentMode={environmentMode}
+                      clusterId={clusterId}
+                    />
                   )}
                 </>
               )}

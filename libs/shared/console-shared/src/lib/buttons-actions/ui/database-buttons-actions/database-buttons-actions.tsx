@@ -45,10 +45,11 @@ import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone
 export interface DatabaseButtonsActionsProps {
   database: DatabaseEntity
   environmentMode: string
+  clusterId: string
 }
 
 export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
-  const { database, environmentMode } = props
+  const { database, environmentMode, clusterId } = props
   const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
@@ -195,11 +196,12 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     dispatch,
     openModalConfirmation,
     location.pathname,
+    actionCancelEnvironment,
   ])
 
   const canDelete = database.status && isDeleteAvailable(database.status.state)
 
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${database.id}`
+  const copyContent = `Cluster ID: ${clusterId}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${database.id}`
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {

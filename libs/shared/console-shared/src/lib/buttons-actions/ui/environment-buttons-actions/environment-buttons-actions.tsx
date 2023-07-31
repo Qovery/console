@@ -58,7 +58,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
+  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
   const { mutate: actionRedeployEnvironmentMutate } = useActionRedeployEnvironment(
     projectId,

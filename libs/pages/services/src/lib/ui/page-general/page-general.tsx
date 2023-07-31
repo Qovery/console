@@ -10,10 +10,11 @@ export interface PageGeneralProps {
   environmentMode: string
   services: (ApplicationEntity | DatabaseEntity)[]
   listHelpfulLinks: BaseLink[]
+  clusterId: string
 }
 
 function PageGeneralMemo(props: PageGeneralProps) {
-  const { environmentMode, services, listHelpfulLinks, isLoading } = props
+  const { environmentMode, services, listHelpfulLinks, isLoading, clusterId } = props
   const { organizationId, projectId, environmentId } = useParams()
 
   const [data, setData] = useState<(ApplicationEntity | DatabaseEntity)[]>([])
@@ -81,6 +82,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
                       : APPLICATION_URL(organizationId, projectId, environmentId, currentData.id) + SERVICES_GENERAL_URL
                   }
                   environmentMode={environmentMode}
+                  clusterId={clusterId}
                 />
               )
             })}

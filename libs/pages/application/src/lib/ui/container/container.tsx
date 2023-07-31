@@ -108,7 +108,11 @@ export function Container(props: ContainerProps) {
         <div className="flex">
           {environment && application && application?.status && (
             <>
-              <ApplicationButtonsActions application={application} environmentMode={environment.mode} />
+              <ApplicationButtonsActions
+                application={application}
+                clusterId={environment.cluster_id}
+                environmentMode={environment.mode}
+              />
               <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
             </>
           )}
