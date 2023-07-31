@@ -1,17 +1,18 @@
-import { select } from '@storybook/addon-knobs'
-import { Meta, Story } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import { OrganizationEventType } from 'qovery-typescript-axios'
-import { TagEvent, TagEventProps } from './tag-event'
+import { TagEvent } from './tag-event'
 
-export default {
+const meta: Meta<typeof TagEvent> = {
   component: TagEvent,
   title: 'Tag/TagEvent',
-} as Meta
+}
 
-const Template: Story<TagEventProps> = (args) => <TagEvent {...args} />
+export default meta
 
-export const Primary = Template.bind({})
+type Story = StoryObj<typeof TagEvent>
 
-Primary.args = {
-  eventType: select('Type', OrganizationEventType, OrganizationEventType.CREATE),
+export const Primary: Story = {
+  args: {
+    eventType: OrganizationEventType.CREATE,
+  },
 }

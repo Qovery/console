@@ -1,13 +1,16 @@
-import { select } from '@storybook/addon-knobs'
-import { Meta, Story } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import Button from '../buttons/button/button'
 import Icon from '../icon/icon'
-import { Menu, MenuAlign, MenuData, MenuDirection, MenuProps } from './menu'
+import { Menu, MenuAlign, MenuData, MenuDirection } from './menu'
 
-export default {
+const meta: Meta<typeof Menu> = {
   component: Menu,
   title: 'Menu',
-} as Meta
+}
+
+export default meta
+
+type Story = StoryObj<typeof Menu>
 
 const menus: MenuData = [
   {
@@ -44,13 +47,12 @@ const menus: MenuData = [
   },
 ]
 
-const Template: Story<MenuProps> = (args) => (
-  <Menu {...args} open={true} menus={menus} trigger={<Button>Trigger</Button>}></Menu>
-)
-
-export const Primary = Template.bind({})
-
-Primary.args = {
-  direction: select('Size', MenuDirection, MenuDirection.RIGHT),
-  arrowAlign: select('Type', MenuAlign, MenuAlign.CENTER),
+export const Primary: Story = {
+  args: {
+    open: true,
+    menus,
+    trigger: <Button>Trigger</Button>,
+    direction: MenuDirection.RIGHT,
+    arrowAlign: MenuAlign.CENTER,
+  },
 }

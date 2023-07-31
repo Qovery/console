@@ -1,18 +1,19 @@
-import { select } from '@storybook/addon-knobs'
-import { Meta, Story } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { TagClusterType, TagClusterTypeProps } from './tag-cluster-type'
+import { TagClusterType } from './tag-cluster-type'
 
-export default {
+const meta: Meta<typeof TagClusterType> = {
   component: TagClusterType,
   title: 'Tag/TagClusterType',
-} as Meta
+}
 
-const Template: Story<TagClusterTypeProps> = (args) => <TagClusterType {...args} />
+export default meta
 
-export const Primary = Template.bind({})
+type Story = StoryObj<typeof TagClusterType>
 
-Primary.args = {
-  cloud_provider: select('Cloud Provider', CloudProviderEnum, CloudProviderEnum.AWS),
-  kubernetes: select('Kubernetes', KubernetesEnum, KubernetesEnum.MANAGED),
+export const Primary: Story = {
+  args: {
+    cloudProvider: CloudProviderEnum.AWS,
+    kubernetes: KubernetesEnum.MANAGED,
+  },
 }
