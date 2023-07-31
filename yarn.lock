@@ -4443,7 +4443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addons@npm:7.0.23, @storybook/addons@npm:^7.0.23":
+"@storybook/addons@npm:7.0.23":
   version: 7.0.23
   resolution: "@storybook/addons@npm:7.0.23"
   dependencies:
@@ -17744,9 +17744,9 @@ __metadata:
     "@reduxjs/toolkit": 1.9.3
     "@semantic-release/github": ^8.0.6
     "@storybook/addon-essentials": 7.0.23
-    "@storybook/addons": ^7.0.23
+    "@storybook/addons": 7.0.23
+    "@storybook/core-common": 7.0.23
     "@storybook/core-server": 7.0.23
-    "@storybook/react": 7.0.23
     "@storybook/react-webpack5": 7.0.23
     "@svgr/webpack": 8.0.1
     "@swc/cli": ~0.1.62
