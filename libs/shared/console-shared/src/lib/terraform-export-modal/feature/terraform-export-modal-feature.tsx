@@ -11,16 +11,18 @@ export interface TerraformExportModalFeatureProps {
 export function TerraformExportModalFeature({ closeModal, environmentId }: TerraformExportModalFeatureProps) {
   const { projectId = '' } = useParams()
 
-  const { mutate, isLoading, isSuccess } = useFetchEnvironmentExportTerraform(projectId, environmentId)
+  const { mutateAsync, isLoading } = useFetchEnvironmentExportTerraform(projectId, environmentId)
 
   const methods = useForm({
     mode: 'onChange',
+    defaultValues: {
+      exportSecrets: false,
+    },
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
-    const exportSecrets = data['exportSecrets'] || false
-    mutate({ exportSecrets: exportSecrets })
-    if (isSuccess) closeModal()
+  const onSubmit = methods.handleSubmit(async ({ exportSecrets }) => {
+    const result = await mutateAsync({ exportSecrets: exportSecrets })
+    if (result) closeModal()
   })
 
   return (

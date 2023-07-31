@@ -13,7 +13,7 @@ export function TerraformExportModal({ closeModal, onSubmit, isLoading }: Terraf
   return (
     <ModalCrud
       title="Export as Terraform"
-      description="Export full environment & resources into Terraform manifests."
+      description="Export full environment & resources into Terraform manifests (only for Admin)."
       onClose={closeModal}
       onSubmit={onSubmit}
       submitLabel="Export"

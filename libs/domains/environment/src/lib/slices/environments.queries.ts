@@ -267,7 +267,7 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
 export const useFetchEnvironmentExportTerraform = (projectId: string, environmentId: string) => {
   return useMutation(
     ['project', projectId, 'environments', environmentId, 'terraformExport'],
-    async ({ exportSecrets }: { exportSecrets?: boolean }) => {
+    async ({ exportSecrets }: { exportSecrets: boolean }) => {
       const response = await environmentExport.exportEnvironmentConfigurationIntoTerraform(
         environmentId,
         exportSecrets,
