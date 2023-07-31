@@ -1,9 +1,9 @@
 import {
   type ChangeEvent,
-  type FocusEvent,
+  type ChangeEventHandler,
+  type FocusEventHandler,
   type FormEvent,
-  type KeyboardEvent,
-  type MouseEvent,
+  type KeyboardEventHandler,
   useEffect,
   useRef,
   useState,
@@ -61,10 +61,10 @@ export function InputCreditCard(props: InputCreditCardProps) {
     name: string
     placeholder: string
     type: string
-    onBlur: MouseEvent<HTMLInputElement>
-    onChange: ChangeEvent<HTMLInputElement>
-    onFocus: FocusEvent<HTMLInputElement>
-    onKeyPress: KeyboardEvent<HTMLInputElement>
+    onBlur: FocusEventHandler<HTMLInputElement>
+    onChange: ChangeEventHandler<HTMLInputElement>
+    onFocus: FocusEventHandler<HTMLInputElement>
+    onKeyPress: KeyboardEventHandler<HTMLInputElement>
   }>()
 
   useEffect(() => {
