@@ -6,7 +6,6 @@ import {
 } from 'qovery-typescript-axios'
 
 export interface InstancesTableProps {
-  /** @TODO Same reason as page-general */
   instances?: {
     name: string
     memory?: DatabaseCurrentMetricMemory
