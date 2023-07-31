@@ -1,17 +1,18 @@
+import { Meta, StoryObj } from '@storybook/react'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { Meta, Story } from '@storybook/react'
-import { select } from '@storybook/addon-knobs'
-import { TagMode, TagModeProps } from './tag-mode'
+import { TagMode } from './tag-mode'
 
-export default {
+const meta: Meta<typeof TagMode> = {
   component: TagMode,
   title: 'Tag/TagMode',
-} as Meta
+}
 
-const Template: Story<TagModeProps> = (args) => <TagMode {...args} />
+export default meta
 
-export const Primary = Template.bind({})
+type Story = StoryObj<typeof TagMode>
 
-Primary.args = {
-  status: select('Type', EnvironmentModeEnum, EnvironmentModeEnum.PREVIEW),
+export const Primary: Story = {
+  args: {
+    status: EnvironmentModeEnum.PREVIEW,
+  },
 }

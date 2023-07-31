@@ -4350,38 +4350,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-knobs@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "@storybook/addon-knobs@npm:7.0.2"
-  dependencies:
-    copy-to-clipboard: ^3.3.3
-    core-js: ^3.29.0
-    escape-html: ^1.0.3
-    fast-deep-equal: ^3.1.3
-    global: ^4.4.0
-    lodash: ^4.17.21
-    prop-types: ^15.8.1
-    qs: ^6.11.1
-    react-colorful: ^5.6.1
-    react-lifecycles-compat: ^3.0.4
-    react-select: ^5.7.0
-  peerDependencies:
-    "@storybook/addons": ^7.0.0
-    "@storybook/api": ^7.0.0
-    "@storybook/components": ^7.0.0
-    "@storybook/core-events": ^7.0.0
-    "@storybook/theming": ^7.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: a28a61bb18d4c07edd3b031abbc9c81b48cf1c2b7d0707177f383c70f01b1e91d6f364969e42cdb34a7b761bc68e7603b53136c01887e56e24b408eb843d36fe
-  languageName: node
-  linkType: hard
-
 "@storybook/addon-measure@npm:7.0.23":
   version: 7.0.23
   resolution: "@storybook/addon-measure@npm:7.0.23"
@@ -4475,7 +4443,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addons@npm:7.0.23, @storybook/addons@npm:^7.0.23":
+"@storybook/addons@npm:7.0.23":
   version: 7.0.23
   resolution: "@storybook/addons@npm:7.0.23"
   dependencies:
@@ -9084,15 +9052,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-to-clipboard@npm:^3.3.3":
-  version: 3.3.3
-  resolution: "copy-to-clipboard@npm:3.3.3"
-  dependencies:
-    toggle-selection: ^1.0.6
-  checksum: e0a325e39b7615108e6c1c8ac110ae7b829cdc4ee3278b1df6a0e4228c490442cc86444cd643e2da344fbc424b3aab8909e2fec82f8bc75e7e5b190b7c24eecf
-  languageName: node
-  linkType: hard
-
 "copy-webpack-plugin@npm:^10.2.4":
   version: 10.2.4
   resolution: "copy-webpack-plugin@npm:10.2.4"
@@ -9125,7 +9084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.25.4, core-js@npm:^3.29.0":
+"core-js@npm:^3.25.4":
   version: 3.31.0
   resolution: "core-js@npm:3.31.0"
   checksum: f7cf9b3010f7ca99c026d95b61743baca1a85512742ed2b67e8f65a72ac4f4fe0b90b00057783e886bdd39d3a295f42f845d33e7cba3973ed263df978343ab79
@@ -10037,13 +9996,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-walk@npm:^0.1.0":
-  version: 0.1.2
-  resolution: "dom-walk@npm:0.1.2"
-  checksum: 19eb0ce9c6de39d5e231530685248545d9cd2bd97b2cb3486e0bfc0f2a393a9addddfd5557463a932b52fdfcf68ad2a619020cd2c74a5fe46fbecaa8e80872f3
-  languageName: node
-  linkType: hard
-
 "domelementtype@npm:^2.0.1, domelementtype@npm:^2.2.0, domelementtype@npm:^2.3.0":
   version: 2.3.0
   resolution: "domelementtype@npm:2.3.0"
@@ -10568,7 +10520,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-html@npm:^1.0.3, escape-html@npm:~1.0.3":
+"escape-html@npm:~1.0.3":
   version: 1.0.3
   resolution: "escape-html@npm:1.0.3"
   checksum: 6213ca9ae00d0ab8bccb6d8d4e0a98e76237b2410302cf7df70aaa6591d509a2a37ce8998008cbecae8fc8ffaadf3fb0229535e6a145f3ce0b211d060decbb24
@@ -12061,16 +12013,6 @@ __metadata:
   dependencies:
     ini: 2.0.0
   checksum: 70147b80261601fd40ac02a104581432325c1c47329706acd773f3a6ce99bb36d1d996038c85ccacd482ad22258ec233c586b6a91535b1a116b89663d49d6438
-  languageName: node
-  linkType: hard
-
-"global@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "global@npm:4.4.0"
-  dependencies:
-    min-document: ^2.19.0
-    process: ^0.11.10
-  checksum: 9c057557c8f5a5bcfbeb9378ba4fe2255d04679452be504608dd5f13b54edf79f7be1db1031ea06a4ec6edd3b9f5f17d2d172fb47e6c69dae57fd84b7e72b77f
   languageName: node
   linkType: hard
 
@@ -15307,15 +15249,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"min-document@npm:^2.19.0":
-  version: 2.19.0
-  resolution: "min-document@npm:2.19.0"
-  dependencies:
-    dom-walk: ^0.1.0
-  checksum: da6437562ea2228041542a2384528e74e22d1daa1a4ec439c165abf0b9d8a63e17e3b8a6dc6e0c731845e85301198730426932a0e813d23f932ca668340c9623
-  languageName: node
-  linkType: hard
-
 "min-indent@npm:^1.0.0":
   version: 1.0.1
   resolution: "min-indent@npm:1.0.1"
@@ -17811,10 +17744,9 @@ __metadata:
     "@reduxjs/toolkit": 1.9.3
     "@semantic-release/github": ^8.0.6
     "@storybook/addon-essentials": 7.0.23
-    "@storybook/addon-knobs": ^7.0.2
-    "@storybook/addons": ^7.0.23
+    "@storybook/addons": 7.0.23
+    "@storybook/core-common": 7.0.23
     "@storybook/core-server": 7.0.23
-    "@storybook/react": 7.0.23
     "@storybook/react-webpack5": 7.0.23
     "@svgr/webpack": 8.0.1
     "@swc/cli": ~0.1.62
@@ -17935,7 +17867,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.10.0, qs@npm:^6.11.1, qs@npm:^6.4.0":
+"qs@npm:^6.10.0, qs@npm:^6.4.0":
   version: 6.11.2
   resolution: "qs@npm:6.11.2"
   dependencies:
@@ -18055,7 +17987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-colorful@npm:^5.1.2, react-colorful@npm:^5.6.1":
+"react-colorful@npm:^5.1.2":
   version: 5.6.1
   resolution: "react-colorful@npm:5.6.1"
   peerDependencies:
@@ -18221,13 +18153,6 @@ __metadata:
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
   checksum: e72d0ba81b5922759e4aff17e0252bd29988f9642ed817f56b25a3e217e13eea8a7f2322af99a06edb779da12d5d636e9fda473d620df9a3da0df2a74141d53e
-  languageName: node
-  linkType: hard
-
-"react-lifecycles-compat@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "react-lifecycles-compat@npm:3.0.4"
-  checksum: a904b0fc0a8eeb15a148c9feb7bc17cec7ef96e71188280061fc340043fd6d8ee3ff233381f0e8f95c1cf926210b2c4a31f38182c8f35ac55057e453d6df204f
   languageName: node
   linkType: hard
 
@@ -18418,7 +18343,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-select@npm:^5.3.2, react-select@npm:^5.7.0":
+"react-select@npm:^5.3.2":
   version: 5.7.3
   resolution: "react-select@npm:5.7.3"
   dependencies:
@@ -20606,13 +20531,6 @@ __metadata:
   dependencies:
     is-number: ^7.0.0
   checksum: f76fa01b3d5be85db6a2a143e24df9f60dd047d151062d0ba3df62953f2f697b16fe5dad9b0ac6191c7efc7b1d9dcaa4b768174b7b29da89d4428e64bc0a20ed
-  languageName: node
-  linkType: hard
-
-"toggle-selection@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "toggle-selection@npm:1.0.6"
-  checksum: a90dc80ed1e7b18db8f4e16e86a5574f87632dc729cfc07d9ea3ced50021ad42bb4e08f22c0913e0b98e3837b0b717e0a51613c65f30418e21eb99da6556a74c
   languageName: node
   linkType: hard
 

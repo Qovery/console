@@ -1,16 +1,17 @@
-const rootMain = require('../../../../.storybook/main')
+import type { StorybookConfig } from '@storybook/react-webpack5'
 
-module.exports = {
-  ...rootMain,
-  core: { ...rootMain.core, builder: 'webpack5' },
-  stories: ['../src/**/**/*.stories.mdx', '../src/**/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: ['@storybook/addon-essentials', ...rootMain.addons, '@nx/react/plugins/storybook'],
-  staticDirs: ['../src/lib'],
-  webpackFinal: async (config, { configType }) => {
-    // apply any global webpack configs that might have been specified in .storybook/main.ts
-    if (rootMain.webpackFinal) {
-      config = await rootMain.webpackFinal(config, { configType })
-    }
-    return config
+const config: StorybookConfig = {
+  stories: ['../src/lib/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
+  addons: ['@storybook/addon-essentials', 'storybook-tailwind-dark-mode', '@nx/react/plugins/storybook'],
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {},
   },
+  staticDirs: ['../src/lib'],
 }
+
+export default config
+
+// To customize your webpack configuration you can use the webpackFinal field.
+// Check https://storybook.js.org/docs/react/builders/webpack#extending-storybooks-webpack-config
+// and https://nx.dev/packages/storybook/documents/custom-builder-configs
