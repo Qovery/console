@@ -5,25 +5,27 @@ import TerraformExportModal from '../ui/terraform-export-modal'
 
 export interface TerraformExportModalFeatureProps {
   closeModal: () => void
+  environmentId: string
 }
 
-export function TerraformExportModalFeature({ closeModal }: TerraformExportModalFeatureProps) {
-  const { projectId = '', environmentId = '' } = useParams()
+export function TerraformExportModalFeature({ closeModal, environmentId }: TerraformExportModalFeatureProps) {
+  const { projectId = '' } = useParams()
 
-  const { mutate } = useFetchEnvironmentExportTerraform(projectId, environmentId)
+  const { mutate, isLoading, isSuccess } = useFetchEnvironmentExportTerraform(projectId, environmentId)
 
   const methods = useForm({
     mode: 'onChange',
   })
 
-  const onSubmit = () => {
-    console.log('onSubmit')
-    mutate()
-  }
+  const onSubmit = methods.handleSubmit((data) => {
+    const exportSecrets = data['exportSecrets'] || false
+    mutate({ exportSecrets: exportSecrets })
+    if (isSuccess) closeModal()
+  })
 
   return (
     <FormProvider {...methods}>
-      <TerraformExportModal closeModal={closeModal} onSubmit={onSubmit} />
+      <TerraformExportModal closeModal={closeModal} onSubmit={onSubmit} isLoading={isLoading} />
     </FormProvider>
   )
 }

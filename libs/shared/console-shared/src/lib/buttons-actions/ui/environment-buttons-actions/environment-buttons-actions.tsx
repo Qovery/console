@@ -259,7 +259,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
               contentLeft: <Icon name={IconAwesomeEnum.FILE_EXPORT} className="text-sm text-brand-400" />,
               onClick: () => {
                 openModal({
-                  content: <TerraformExportModalFeature closeModal={closeModal} />,
+                  content: <TerraformExportModalFeature closeModal={closeModal} environmentId={environment.id} />,
                 })
               },
             },

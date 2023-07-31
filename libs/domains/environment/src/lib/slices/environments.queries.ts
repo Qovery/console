@@ -267,11 +267,26 @@ export const useFetchDatabaseConfiguration = (projectId: string, environmentId: 
 export const useFetchEnvironmentExportTerraform = (projectId: string, environmentId: string) => {
   return useMutation(
     ['project', projectId, 'environments', environmentId, 'terraformExport'],
-    async () => {
-      const response = await environmentExport.exportEnvironmentConfigurationIntoTerraform(environmentId)
+    async ({ exportSecrets }: { exportSecrets?: boolean }) => {
+      const response = await environmentExport.exportEnvironmentConfigurationIntoTerraform(
+        environmentId,
+        exportSecrets,
+        {
+          responseType: 'blob',
+        }
+      )
       return response.data
     },
     {
+      onSuccess: (data) => {
+        const url = window.URL.createObjectURL(new Blob([data], { type: 'application/zip' }))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', `terraform-manifest-${environmentId}.zip`)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+      },
       onError: (err) => toastError(err as Error),
     }
   )
