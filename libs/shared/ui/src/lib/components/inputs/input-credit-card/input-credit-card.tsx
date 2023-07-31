@@ -1,4 +1,13 @@
-import { type ChangeEvent, type FormEvent, useEffect, useRef, useState } from 'react'
+import {
+  type ChangeEvent,
+  type FocusEvent,
+  type FormEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { usePaymentInputs } from 'react-payment-inputs'
 import { CardImages } from 'react-payment-inputs/images'
 import {
@@ -52,10 +61,10 @@ export function InputCreditCard(props: InputCreditCardProps) {
     name: string
     placeholder: string
     type: string
-    onBlur: any
-    onChange: any
-    onFocus: any
-    onKeyPress: any
+    onBlur: MouseEvent<HTMLInputElement>
+    onChange: ChangeEvent<HTMLInputElement>
+    onFocus: FocusEvent<HTMLInputElement>
+    onKeyPress: KeyboardEvent<HTMLInputElement>
   }>()
 
   useEffect(() => {
