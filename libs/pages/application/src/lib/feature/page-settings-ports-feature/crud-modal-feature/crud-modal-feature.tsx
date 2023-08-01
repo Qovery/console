@@ -1,4 +1,4 @@
-import { CloudProviderEnum, ServicePort } from 'qovery-typescript-axios'
+import { CloudProviderEnum, PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -17,17 +17,30 @@ export interface CrudModalFeatureProps {
   port?: ServicePort
 }
 
-export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePort) => {
+export const handleSubmit = (
+  { internal_port, external_port, publicly_accessible, protocol, name }: FieldValues,
+  application: ApplicationEntity,
+  currentPort?: ServicePort
+) => {
   const cloneApplication = Object.assign({}, application)
 
   const ports: ServicePort[] | [] = cloneApplication.ports || []
 
+  const currentProtocol = protocol ? protocol : currentPort?.protocol
+
   const port = {
-    internal_port: parseInt(data['internal_port'], 10),
-    external_port: parseInt(data['external_port'], 10),
-    publicly_accessible: data['publicly_accessible'],
-    protocol: data['protocol'] ? data['protocol'] : currentPort?.protocol,
-    name: data['name'],
+    internal_port: parseInt(internal_port, 10),
+    external_port: publicly_accessible
+      ? parseInt(
+          currentProtocol === PortProtocolEnum.TCP || currentProtocol === PortProtocolEnum.UDP
+            ? internal_port
+            : external_port,
+          10
+        )
+      : undefined,
+    publicly_accessible: publicly_accessible,
+    protocol: currentProtocol,
+    name: name,
   }
 
   if (currentPort) {

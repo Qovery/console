@@ -1,5 +1,5 @@
 import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
-import { FormEvent, useEffect } from 'react'
+import { FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   BannerBox,
@@ -34,10 +34,21 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
     message: 'Please enter a number.',
   }
 
-  useEffect(() => {
-    setValue('external_port', watchPublicly ? 443 : undefined)
-    setValue('protocol', !watchPublicly ? PortProtocolEnum.HTTP : undefined)
-  }, [watchPublicly, setValue])
+  watch(({ internal_port, protocol, publicly_accessible }, { name }) => {
+    if (name === 'publicly_accessible' || name === 'protocol') {
+      if (publicly_accessible) {
+        setValue(
+          'external_port',
+          protocol === PortProtocolEnum.TCP || protocol === PortProtocolEnum.UDP ? internal_port : 443
+        )
+      } else {
+        setValue(
+          'external_port',
+          protocol === PortProtocolEnum.TCP || protocol === PortProtocolEnum.UDP ? undefined : 443
+        )
+      }
+    }
+  })
 
   const protocolOptions = Object.keys(PortProtocolEnum)
     .map((value: string) => ({ label: value, value: value }))
@@ -108,35 +119,36 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
       />
       {watchPublicly && (
         <>
-          <Controller
-            key={`port-${watchPublicly}`}
-            name="external_port"
-            defaultValue=""
-            control={control}
-            rules={{
-              required: watchPublicly ? 'Please enter a public port.' : undefined,
-              pattern: pattern,
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                type="number"
-                name={field.name}
-                onChange={field.onChange}
-                value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
-                label="External port"
-                error={error?.message}
-                disabled
-                className="mb-4"
-                rightElement={
-                  <Tooltip content="You cannot configure the port used externally" side="left">
-                    <div>
-                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
-                    </div>
-                  </Tooltip>
-                }
-              />
-            )}
-          />
+          {watchProtocol !== PortProtocolEnum.TCP && watchProtocol !== PortProtocolEnum.UDP && (
+            <Controller
+              key={`port-${watchPublicly}`}
+              name="external_port"
+              control={control}
+              rules={{
+                required: watchPublicly ? 'Please enter a public port.' : undefined,
+                pattern: pattern,
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  type="number"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
+                  label="External port"
+                  error={error?.message}
+                  disabled
+                  className="mb-4"
+                  rightElement={
+                    <Tooltip content="You cannot configure the port used externally" side="left">
+                      <div>
+                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                      </div>
+                    </Tooltip>
+                  }
+                />
+              )}
+            />
+          )}
           <>
             <Controller
               name="name"
@@ -165,7 +177,7 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
           className="mt-4"
           icon={IconAwesomeEnum.CIRCLE_INFO}
           type={BannerBoxEnum.WARNING}
-          message="Activating this feature will add an extra cost to your cloud provider bill (a NLB will be created)."
+          message="Activating this feature will add an extra cost to your cloud provider bill (a Network Load Balancer will be created)."
         />
       )}
       <BannerBox
