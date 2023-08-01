@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { DatabaseModeEnum, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -77,7 +77,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     })
   }
 
-  useEffect(() => {
+  useMemo(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
