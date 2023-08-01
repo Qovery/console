@@ -85,7 +85,8 @@ export function CloneServiceModalFeature({
       <CloneServiceModal
         closeModal={onClose}
         environments={environments}
-        loading={isCloneServiceLoading || isFetchEnvironmentsLoading}
+        loading={isCloneServiceLoading}
+        isFetchEnvironmentsLoading={isFetchEnvironmentsLoading}
         onSubmit={onSubmit}
         projects={projects}
         serviceToClone={serviceToClone}

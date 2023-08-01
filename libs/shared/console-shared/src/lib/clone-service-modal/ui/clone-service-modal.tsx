@@ -2,12 +2,13 @@ import { Environment, Project } from 'qovery-typescript-axios'
 import { FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 
 export interface CloneServiceModalProps {
   closeModal: () => void
   environments: Environment[]
   loading: boolean
+  isFetchEnvironmentsLoading: boolean
   onSubmit: () => void
   projects: Project[]
   serviceToClone: ApplicationEntity | DatabaseEntity
@@ -17,6 +18,7 @@ export function CloneServiceModal({
   closeModal,
   environments,
   loading,
+  isFetchEnvironmentsLoading,
   onSubmit,
   projects,
   serviceToClone,
@@ -83,16 +85,24 @@ export function CloneServiceModal({
         control={control}
         rules={{ required: true }}
         render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId="input-select-environment"
-            className="mb-6"
-            onChange={field.onChange}
-            value={field.value}
-            label="Environment"
-            error={error?.message}
-            options={environments.map((c) => ({ value: c.id, label: c.name }))}
-            portal={true}
-          />
+          <>
+            {isFetchEnvironmentsLoading ? (
+              <div className="flex justify-center">
+                <LoaderSpinner />
+              </div>
+            ) : (
+              <InputSelect
+                dataTestId="input-select-environment"
+                className="mb-6"
+                onChange={field.onChange}
+                value={field.value}
+                label="Environment"
+                error={error?.message}
+                options={environments.map((c) => ({ value: c.id, label: c.name }))}
+                portal={true}
+              />
+            )}
+          </>
         )}
       />
     </ModalCrud>
