@@ -1,3 +1,4 @@
+import download from 'downloadjs'
 import {
   CloneRequest,
   CreateEnvironmentRequest,
@@ -279,13 +280,7 @@ export const useFetchEnvironmentExportTerraform = (projectId: string, environmen
     },
     {
       onSuccess: (data) => {
-        const url = window.URL.createObjectURL(new Blob([data], { type: 'application/zip' }))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', `terraform-manifest-${environmentId}.zip`)
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
+        download(data, `terraform-manifest-${environmentId}.zip`, 'application/zip')
       },
       onError: (err) => toastError(err as Error),
     }
