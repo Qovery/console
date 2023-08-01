@@ -23,7 +23,7 @@ describe('TerraformExportModal', () => {
 
     const submitButton = screen.getByRole('button', { name: /export/i })
 
-    const toggle = screen.getByTestId('input-toggle-button')
+    const toggle = screen.getByText(/export secrets/i)
     await userEvent.click(toggle)
 
     await userEvent.click(submitButton)

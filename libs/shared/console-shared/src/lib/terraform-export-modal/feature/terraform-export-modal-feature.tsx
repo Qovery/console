@@ -18,6 +18,7 @@ export function TerraformExportModalFeature({ closeModal, environmentId }: Terra
   })
 
   const onSubmit = methods.handleSubmit(async ({ exportSecrets }) => {
+    // Add try catch to avoid 401 error if user is not autorized (waiting a back-end fix)
     try {
       const result = await mutateAsync({ exportSecrets: exportSecrets })
       if (result) closeModal()
