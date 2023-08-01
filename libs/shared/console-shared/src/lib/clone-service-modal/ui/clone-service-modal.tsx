@@ -1,14 +1,16 @@
-import { Environment } from 'qovery-typescript-axios'
+import { Environment, Project } from 'qovery-typescript-axios'
 import { FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 
 export interface CloneServiceModalProps {
   closeModal: () => void
   environments: Environment[]
   loading: boolean
+  isFetchEnvironmentsLoading: boolean
   onSubmit: () => void
+  projects: Project[]
   serviceToClone: ApplicationEntity | DatabaseEntity
 }
 
@@ -16,10 +18,12 @@ export function CloneServiceModal({
   closeModal,
   environments,
   loading,
+  isFetchEnvironmentsLoading,
   onSubmit,
+  projects,
   serviceToClone,
 }: CloneServiceModalProps) {
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
 
   return (
     <ModalCrud
@@ -57,19 +61,48 @@ export function CloneServiceModal({
         )}
       />
       <Controller
-        name="environment"
+        name="project"
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
-            dataTestId="input-select-environment"
+            dataTestId="input-select-project"
             className="mb-6"
-            onChange={field.onChange}
+            onChange={(...args) => {
+              setValue('environment', '')
+              field.onChange(...args)
+            }}
             value={field.value}
-            label="Environment"
+            label="Project"
             error={error?.message}
-            options={environments.map((c) => ({ value: c.id, label: c.name }))}
+            options={projects.map((c) => ({ value: c.id, label: c.name }))}
             portal={true}
           />
+        )}
+      />
+
+      <Controller
+        name="environment"
+        control={control}
+        rules={{ required: true }}
+        render={({ field, fieldState: { error } }) => (
+          <>
+            {isFetchEnvironmentsLoading ? (
+              <div className="flex justify-center">
+                <LoaderSpinner />
+              </div>
+            ) : (
+              <InputSelect
+                dataTestId="input-select-environment"
+                className="mb-6"
+                onChange={field.onChange}
+                value={field.value}
+                label="Environment"
+                error={error?.message}
+                options={environments.map((c) => ({ value: c.id, label: c.name }))}
+                portal={true}
+              />
+            )}
+          </>
         )}
       />
     </ModalCrud>
