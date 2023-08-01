@@ -278,9 +278,6 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     dispatch,
     openModal,
     openModalConfirmation,
-    location.pathname,
-    organizationId,
-    projectId,
     serviceType,
   ])
 

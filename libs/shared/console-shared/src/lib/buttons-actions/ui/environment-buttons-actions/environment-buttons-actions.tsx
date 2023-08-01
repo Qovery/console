@@ -1,7 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { Environment, EnvironmentStatus, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   useActionCancelEnvironment,
@@ -34,7 +33,6 @@ import {
   isRedeployAvailable,
   isStopAvailable,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
 import CreateCloneEnvironmentModalFeature from '../../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
 import { TerraformExportModalFeature } from '../../../terraform-export-modal/feature/terraform-export-modal-feature'
 import UpdateAllModalFeature from '../../../update-all-modal/feature/update-all-modal-feature'
@@ -53,8 +51,6 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   const { openModal, closeModal } = useModal()
 
   const { openModalConfirmation } = useModalConfirmation()
-
-  const dispatch = useDispatch<AppDispatch>()
 
   const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
@@ -176,11 +172,8 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     return [{ items: topItems }, { items: bottomItems }]
   }, [
     environment,
-    dispatch,
     openModalConfirmation,
-    organizationId,
     projectId,
-    location.pathname,
     openModal,
     status?.state,
     actionCancelEnvironmentMutate,

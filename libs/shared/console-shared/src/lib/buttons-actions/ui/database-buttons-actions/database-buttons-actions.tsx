@@ -185,17 +185,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     }
 
     return [{ items: topItems }, { items: bottomItems }]
-  }, [
-    actionCancelEnvironment,
-    database,
-    environmentMode,
-    organizationId,
-    projectId,
-    environmentId,
-    dispatch,
-    openModalConfirmation,
-    location.pathname,
-  ])
+  }, [actionCancelEnvironment, database, environmentMode, environmentId, dispatch, openModalConfirmation])
 
   const canDelete = database.status && isDeleteAvailable(database.status.state)
 
