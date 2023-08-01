@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { Environment, EnvironmentStatus, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -22,7 +22,6 @@ import {
   ButtonIconAction,
   Icon,
   IconAwesomeEnum,
-  MenuData,
   MenuItemProps,
   useModal,
   useModalConfirmation,
@@ -52,7 +51,6 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   const location = useLocation()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
-  const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
 
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -84,7 +82,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
   )
 
-  useEffect(() => {
+  const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -175,7 +173,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       bottomItems.push(updateAllButton)
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    return [{ items: topItems }, { items: bottomItems }]
   }, [
     environment,
     dispatch,

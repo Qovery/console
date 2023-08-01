@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -37,7 +37,6 @@ import {
   ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuData,
   MenuItemProps,
   useModal,
   useModalConfirmation,
@@ -71,7 +70,6 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const location = useLocation()
 
   const serviceType = getServiceType(application)
@@ -111,7 +109,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     })
   }
 
-  useMemo(() => {
+  const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -271,11 +269,10 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       }
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
-    // loop with actionCancelEnvironment if added
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return [{ items: topItems }, { items: bottomItems }]
   }, [
     application,
+    actionCancelEnvironment,
     environmentMode,
     environmentId,
     dispatch,

@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { DatabaseModeEnum, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -25,7 +25,6 @@ import {
   ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuData,
   MenuItemProps,
   useModal,
   useModalConfirmation,
@@ -52,7 +51,6 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
   const { database, environmentMode, clusterId } = props
   const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const navigate = useNavigate()
 
   const { openModalConfirmation } = useModalConfirmation()
@@ -77,7 +75,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     })
   }
 
-  useMemo(() => {
+  const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -186,10 +184,9 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       }
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
-    // loop with actionCancelEnvironment if added
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return [{ items: topItems }, { items: bottomItems }]
   }, [
+    actionCancelEnvironment,
     database,
     environmentMode,
     organizationId,
