@@ -282,8 +282,6 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     location.pathname,
     organizationId,
     projectId,
-    actionCancelEnvironment,
-    serviceType,
   ])
 
   const canDelete = application.status && isDeleteAvailable(application.status.state)

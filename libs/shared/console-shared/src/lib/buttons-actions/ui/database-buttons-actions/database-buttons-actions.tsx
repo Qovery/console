@@ -196,7 +196,6 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     dispatch,
     openModalConfirmation,
     location.pathname,
-    actionCancelEnvironment,
   ])
 
   const canDelete = database.status && isDeleteAvailable(database.status.state)
