@@ -40,7 +40,7 @@ describe('TerraformExportModalFeature', () => {
 
     render(<TerraformExportModalFeature {...props} />)
 
-    const toggle = screen.getByTestId('input-toggle-button')
+    const toggle = screen.getByText(/export secrets/i)
     await userEvent.click(toggle)
     screen.getByDisplayValue('true')
 
