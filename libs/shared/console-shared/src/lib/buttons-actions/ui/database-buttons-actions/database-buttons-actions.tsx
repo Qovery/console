@@ -187,6 +187,8 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    // loop with actionCancelEnvironment if added
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     database,
     environmentMode,

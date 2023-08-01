@@ -272,6 +272,8 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     }
 
     setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    // loop with actionCancelEnvironment if added
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     application,
     environmentMode,
@@ -282,6 +284,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     location.pathname,
     organizationId,
     projectId,
+    serviceType,
   ])
 
   const canDelete = application.status && isDeleteAvailable(application.status.state)
