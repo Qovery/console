@@ -1,24 +1,54 @@
-import { act, render, waitFor } from '__tests__/utils/setup-jest'
+import { render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { PortProtocolEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import CrudModal, { CrudModalProps } from './crud-modal'
 
 const props: CrudModalProps = {
   loading: false,
   onSubmit: jest.fn(),
   onClose: jest.fn(),
-  port: {
-    internal_port: 80,
-    external_port: 433,
-    publicly_accessible: false,
-    protocol: PortProtocolEnum.HTTP,
-  },
+  cloudProvider: CloudProviderEnum.AWS,
+  isEdit: false,
 }
 
 describe('CrudModal', () => {
   it('should render successfully', () => {
     const { baseElement } = render(wrapWithReactHookForm(<CrudModal {...props} />))
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should render the form for AWS provider with correct options', () => {
+    render(wrapWithReactHookForm(<CrudModal {...props} />))
+
+    const protocolSelect = screen.getByRole('combobox', {
+      name: /protocol/i,
+    })
+    selectEvent.openMenu(protocolSelect)
+
+    waitFor(() => {
+      screen.getByLabelText('HTTP')
+      screen.getByLabelText('UDP')
+      screen.getByLabelText('TCP')
+      screen.getByLabelText('GRPC')
+    })
+  })
+
+  it('should render the form for SCW provider with correct options', () => {
+    props.cloudProvider = CloudProviderEnum.SCW
+    render(wrapWithReactHookForm(<CrudModal {...props} />))
+
+    const protocolSelect = screen.getByRole('combobox', {
+      name: /protocol/i,
+    })
+    selectEvent.openMenu(protocolSelect)
+
+    waitFor(() => {
+      expect(screen.queryByLabelText('UDP')).toBe(null)
+      screen.getByLabelText('HTTP')
+      screen.getByLabelText('TCP')
+      screen.getByLabelText('GRPC')
+    })
   })
 
   it('should render the form', async () => {
@@ -32,8 +62,6 @@ describe('CrudModal', () => {
         },
       })
     )
-
-    await act(jest.fn)
 
     await waitFor(() => {
       getByDisplayValue(99)

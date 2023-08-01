@@ -1,8 +1,9 @@
-import { ServicePort } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editApplication, postApplicationActionsRedeploy } from '@qovery/domains/application'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { CrudModal, defaultLivenessProbe } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
@@ -11,9 +12,9 @@ import { AppDispatch } from '@qovery/store'
 
 export interface CrudModalFeatureProps {
   onClose: () => void
+  projectId: string
   application?: ApplicationEntity
   port?: ServicePort
-  isSetting?: boolean
 }
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity, currentPort?: ServicePort) => {
@@ -58,52 +59,53 @@ export const handleSubmit = (data: FieldValues, application: ApplicationEntity, 
   return cloneApplication
 }
 
-export function CrudModalFeature(props: CrudModalFeatureProps) {
+export function CrudModalFeature({ application, onClose, projectId, port }: CrudModalFeatureProps) {
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
+  const { data: environment } = useFetchEnvironment(projectId, application?.environment?.id || '')
 
   const methods = useForm({
     defaultValues: {
-      internal_port: props.port ? props.port.internal_port : undefined,
-      external_port: props.port ? props.port.external_port : undefined,
-      publicly_accessible: props.port ? props.port.publicly_accessible : false,
-      protocol: props.port ? props.port.protocol : undefined,
-      name: props.port ? props.port.name : undefined,
+      internal_port: port ? port.internal_port : undefined,
+      external_port: port ? port.external_port : undefined,
+      publicly_accessible: port ? port.publicly_accessible : false,
+      protocol: port ? port.protocol : undefined,
+      name: port ? port.name : undefined,
     },
     mode: 'onChange',
   })
   const dispatch = useDispatch<AppDispatch>()
 
   const toasterCallback = () => {
-    if (props.application) {
+    if (application) {
       dispatch(
         postApplicationActionsRedeploy({
-          applicationId: props.application?.id || '',
-          environmentId: props.application?.environment?.id || '',
-          serviceType: getServiceType(props.application),
+          applicationId: application?.id || '',
+          environmentId: application?.environment?.id || '',
+          serviceType: getServiceType(application),
         })
       )
     }
   }
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (!props.application) return
+    if (!application) return
 
     setLoading(true)
-    const cloneApplication = handleSubmit(data, props.application, props.port)
+    const cloneApplication = handleSubmit(data, application, port)
 
     dispatch(
       editApplication({
-        applicationId: props.application.id,
+        applicationId: application.id,
         data: cloneApplication,
-        serviceType: getServiceType(props.application),
+        serviceType: getServiceType(application),
         toasterCallback,
       })
     )
       .unwrap()
       .then(() => {
         setLoading(false)
-        props.onClose()
+        onClose()
       })
       .catch((e) => {
         setLoading(false)
@@ -118,12 +120,11 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
   return (
     <FormProvider {...methods}>
       <CrudModal
-        isSetting={props.isSetting}
-        port={props.port}
         onSubmit={onSubmit}
-        onClose={props.onClose}
+        onClose={onClose}
         loading={loading}
-        isEdit={!!props.port}
+        cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
+        isEdit={!!port}
       />
     </FormProvider>
   )

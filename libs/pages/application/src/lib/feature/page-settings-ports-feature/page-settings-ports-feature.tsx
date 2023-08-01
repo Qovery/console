@@ -61,7 +61,7 @@ export const deletePort = (application?: ApplicationEntity, portId?: string) => 
 export function PageSettingsPortsFeature() {
   const dispatch = useDispatch<AppDispatch>()
 
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { projectId = '', applicationId = '', environmentId = '' } = useParams()
 
   const application = useSelector<RootState, ApplicationEntity | undefined>(
     (state) => selectApplicationById(state, applicationId),
@@ -87,12 +87,19 @@ export function PageSettingsPortsFeature() {
     <PageSettingsPorts
       ports={application?.ports}
       onAddPort={() => {
-        openModal({ content: <CrudModalFeature onClose={closeModal} application={application} /> })
+        openModal({
+          content: <CrudModalFeature onClose={closeModal} application={application} projectId={projectId} />,
+        })
       }}
       onEdit={(port: PortData | ServicePort) => {
         openModal({
           content: (
-            <CrudModalFeature isSetting onClose={closeModal} application={application} port={port as ServicePort} />
+            <CrudModalFeature
+              onClose={closeModal}
+              application={application}
+              port={port as ServicePort}
+              projectId={projectId}
+            />
           ),
         })
       }}
