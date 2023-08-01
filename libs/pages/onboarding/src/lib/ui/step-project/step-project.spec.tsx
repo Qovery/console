@@ -1,37 +1,21 @@
-import { useForm } from 'react-hook-form'
 import { render } from '__tests__/utils/setup-jest'
-
+import { useForm } from 'react-hook-form'
 import StepProject, { StepProjectProps } from './step-project'
 
+const Wrapper = (props: Omit<StepProjectProps, 'control'>) => {
+  const { control } = useForm<{
+    organization_name: string
+    project_name: string
+  }>()
+
+  return <StepProject control={control} {...props} />
+}
+
 describe('StepProject', () => {
-  let props: StepProjectProps
-  let Wrapper: React.FC
-
-  beforeEach(() => {
-    props = {
-      onSubmit: jest.fn(),
-      authLogout: jest.fn(),
-      control: null as any,
-    }
-
-    Wrapper = () => {
-      const { control } = useForm<{
-        first_name: string
-        last_name: string
-        user_email: string
-        type_of_use: string
-      }>()
-
-      props.control = control
-
-      return <StepProject {...props} />
-    }
-
-    render(<Wrapper />)
-  })
-
   it('should render successfully', () => {
-    const { baseElement } = render(<StepProject {...props} />)
+    const authLogout = jest.fn()
+    const onSubmit = jest.fn()
+    const { baseElement } = render(<Wrapper authLogout={authLogout} onSubmit={onSubmit} />)
 
     expect(baseElement).toBeTruthy()
   })

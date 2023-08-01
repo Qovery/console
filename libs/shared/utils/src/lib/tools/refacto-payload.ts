@@ -20,7 +20,9 @@ import {
   JobApplicationEntity,
 } from '@qovery/shared/interfaces'
 
-export function refactoPayload(response: any) {
+export function refactoPayload<T extends { id?: string; created_at?: string; updated_at?: string }>(
+  response: T
+): Omit<T, 'id' | 'created_at' | 'updated_at'> {
   delete response['id']
   delete response['created_at']
   delete response['updated_at']

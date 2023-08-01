@@ -1,4 +1,3 @@
-import { configureStore } from '@reduxjs/toolkit'
 import {
   APIVariableScopeEnum,
   ApplicationEnvironmentVariableApi,
@@ -298,19 +297,6 @@ describe('create override at any scope', () => {
 })
 
 describe('create alias at any scope', () => {
-  beforeAll(() => {
-    const store = configureStore({
-      reducer: function (state = '', action) {
-        switch (action.type) {
-          case 'returns ID/fulfilled':
-            return action.payload
-          default:
-            return state
-        }
-      },
-    })
-  })
-
   it('should handle create override at environment scope', async () => {
     const createEnvironmentEnvironmentVariableMock = jest
       .spyOn(EnvironmentVariableApi.prototype, 'createEnvironmentEnvironmentVariableOverride')

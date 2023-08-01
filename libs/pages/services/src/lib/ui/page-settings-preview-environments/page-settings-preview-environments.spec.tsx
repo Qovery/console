@@ -15,7 +15,7 @@ const props: PageSettingsPreviewEnvironmentsProps = {
 }
 
 describe('PageSettingsPreviewEnvironments', () => {
-  const defaultValues: any = {
+  const defaultValues = {
     auto_preview: false,
     on_demand_preview: false,
     0: true,

@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 
 export interface ApplicationGeneralData {

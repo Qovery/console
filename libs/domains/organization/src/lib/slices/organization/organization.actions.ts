@@ -23,9 +23,9 @@ export const editMemberRole = createAsyncThunk(
       }
 
       return result
-    } catch (err: any) {
+    } catch (err: unknown) {
       // error message
-      return toast(ToastEnum.ERROR, 'Member role error', err.message)
+      return toast(ToastEnum.ERROR, 'Member role error', (err as Error).message)
     }
   }
 )
@@ -40,9 +40,9 @@ export const transferOwnershipMemberRole = createAsyncThunk(
       })
       if (result.status === 200) toast(ToastEnum.SUCCESS, 'Ownership transferred successfully')
       return result
-    } catch (err: any) {
+    } catch (err: unknown) {
       // error message
-      return toast(ToastEnum.ERROR, 'Ownership transfer error', err.message)
+      return toast(ToastEnum.ERROR, 'Ownership transfer error', (err as Error).message)
     }
   }
 )

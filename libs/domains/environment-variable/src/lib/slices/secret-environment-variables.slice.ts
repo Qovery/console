@@ -1,4 +1,4 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createEntityAdapter, createSelector, createSlice } from '@reduxjs/toolkit'
 import {
   APIVariableScopeEnum,
   ApplicationSecretApi,
@@ -6,6 +6,7 @@ import {
   EnvironmentSecretApi,
   JobSecretApi,
   ProjectSecretApi,
+  Secret,
   SecretRequest,
   Value,
 } from 'qovery-typescript-axios'
@@ -435,7 +436,10 @@ export const secretEnvironmentVariablesSlice = createSlice({
   },
 })
 
-const addSecretToStore = (state: SecretEnvironmentVariablesState, action: any) => {
+const addSecretToStore = (
+  state: SecretEnvironmentVariablesState,
+  action: PayloadAction<Secret, string, { arg: { applicationId: string } }>
+) => {
   if (!action.payload) return
 
   const extendedEnv: SecretEnvironmentVariableEntity = {

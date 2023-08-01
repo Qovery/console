@@ -15,7 +15,7 @@ export function OnboardingProject() {
 
   const navigate = useNavigate()
   const { authLogout } = useAuth()
-  const { handleSubmit, control, setValue } = useForm()
+  const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
   const dispatch = useDispatch<AppDispatch>()
   const organizations = useSelector(selectAllOrganization)
   const [backButton, setBackButton] = useState<boolean | undefined>()

@@ -5,9 +5,9 @@ import { fetchClusterStatus } from './cluster.slice'
 
 const clusterApi = new ClustersApi()
 
-export const postClusterActionsUpdate = createAsyncThunk<any, { organizationId: string; clusterId: string }>(
+export const postClusterActionsUpdate = createAsyncThunk(
   'clusterActions/update',
-  async (data, { dispatch }) => {
+  async (data: { organizationId: string; clusterId: string }, { dispatch }) => {
     try {
       const response = await clusterApi.editCluster(data.organizationId, data.clusterId)
       if (response.status === 202 || response.status === 200) {
@@ -25,9 +25,9 @@ export const postClusterActionsUpdate = createAsyncThunk<any, { organizationId: 
   }
 )
 
-export const postClusterActionsDeploy = createAsyncThunk<any, { organizationId: string; clusterId: string }>(
+export const postClusterActionsDeploy = createAsyncThunk(
   'clusterActions/deploy',
-  async (data, { dispatch }) => {
+  async (data: { organizationId: string; clusterId: string }, { dispatch }) => {
     try {
       const response = await clusterApi.deployCluster(data.organizationId, data.clusterId)
       if (response.status === 202 || response.status === 200) {
@@ -45,9 +45,9 @@ export const postClusterActionsDeploy = createAsyncThunk<any, { organizationId: 
   }
 )
 
-export const postClusterActionsStop = createAsyncThunk<any, { organizationId: string; clusterId: string }>(
+export const postClusterActionsStop = createAsyncThunk(
   'clusterActions/stop',
-  async (data, { dispatch }) => {
+  async (data: { organizationId: string; clusterId: string }, { dispatch }) => {
     try {
       const response = await clusterApi.stopCluster(data.organizationId, data.clusterId)
       if (response.status === 202 || response.status === 200) {
@@ -64,9 +64,9 @@ export const postClusterActionsStop = createAsyncThunk<any, { organizationId: st
   }
 )
 
-export const deleteClusterAction = createAsyncThunk<any, { organizationId: string; clusterId: string }>(
+export const deleteClusterAction = createAsyncThunk(
   'clusterActions/delete',
-  async (data, { dispatch }) => {
+  async (data: { organizationId: string; clusterId: string }, { dispatch }) => {
     try {
       const response = await clusterApi.deleteCluster(data.organizationId, data.clusterId)
       if (response.status === 204 || response.status === 200) {

@@ -52,24 +52,19 @@ describe('ImportEnvironmentVariableModal', () => {
   })
 
   describe('with only one entry', () => {
-    let defaultValues: any
-    let baseElement: any
+    const json = JSON.stringify({
+      key1: 'value1',
+    })
+    const defaultValues = jsonToForm(json)
 
     beforeEach(() => {
-      baseElement = null
-      const json = JSON.stringify({
-        key1: 'value1',
-      })
-      defaultValues = jsonToForm(json)
       props.keys = Object.keys(JSON.parse(json))
     })
 
     it('should render row with correct form inputs', async () => {
-      await act(() => {
-        baseElement = render(
-          wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues })
-        ).baseElement
-      })
+      const { baseElement } = render(
+        wrapWithReactHookForm(<ImportEnvironmentVariableModal {...props} />, { defaultValues })
+      )
 
       await waitFor(async () => {
         const formRows = await findAllByTestId(baseElement, 'form-row')

@@ -1,3 +1,8 @@
+import {
+  OrganizationCustomRoleClusterPermission,
+  ServiceDeploymentStatusEnum,
+  StateEnum,
+} from 'qovery-typescript-axios'
 import { CloudProviderEnum, DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
@@ -15,8 +20,8 @@ describe('testing payload refactoring', () => {
   it('should remove default values (id, created_at and updated_at)', () => {
     const response = {
       id: '1',
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: '2022-07-21T09:59:42.01426Z',
+      updated_at: '2022-07-21T09:59:42.014261Z',
       name: 'hello',
       description: 'test',
     }
@@ -25,12 +30,15 @@ describe('testing payload refactoring', () => {
   })
 
   it('should remove useless application values', () => {
-    const response: any = {
+    const response = {
       id: '1',
       created_at: '',
       updated_at: '',
-      environment: '',
-      status: '',
+      status: {
+        id: '',
+        state: StateEnum.BUILDING,
+        service_deployment_status: ServiceDeploymentStatusEnum.NEVER_DEPLOYED,
+      },
       storage: [
         {
           id: '1',
@@ -39,7 +47,6 @@ describe('testing payload refactoring', () => {
           type: StorageTypeEnum.FAST_SSD,
         },
       ],
-      running_status: '',
       maximum_cpu: 10,
       maximum_memory: 10,
       git_repository: {
@@ -49,9 +56,6 @@ describe('testing payload refactoring', () => {
       },
       name: 'hello-2',
       test: 'test',
-      commits: [],
-      links: [],
-      instances: [],
     }
 
     expect(refactoGitApplicationPayload(response)).toEqual({
@@ -156,7 +160,7 @@ describe('testing payload refactoring', () => {
   })
 
   it('should remove useless organization values', () => {
-    const response: any = {
+    const response = {
       id: '1',
       created_at: '',
       updated_at: '',
@@ -177,7 +181,7 @@ describe('testing payload refactoring', () => {
   })
 
   it('should remove useless organization custom roles values', () => {
-    const response: any = {
+    const response = {
       id: '1',
       name: 'hello',
       description: 'hello world',
@@ -185,7 +189,7 @@ describe('testing payload refactoring', () => {
         {
           cluster_name: 'my cluster',
           cluster_id: '1',
-          permission: [],
+          permission: OrganizationCustomRoleClusterPermission.VIEWER,
         },
       ],
       project_permissions: [
@@ -204,7 +208,7 @@ describe('testing payload refactoring', () => {
       cluster_permissions: [
         {
           cluster_id: '1',
-          permission: [],
+          permission: OrganizationCustomRoleClusterPermission.VIEWER,
         },
       ],
       project_permissions: [
@@ -218,7 +222,7 @@ describe('testing payload refactoring', () => {
   })
 
   it('should remove useless cluster values', () => {
-    const response: any = {
+    const response = {
       id: '1',
       created_at: '',
       updated_at: '',

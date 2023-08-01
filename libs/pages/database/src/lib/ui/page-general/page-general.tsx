@@ -1,4 +1,9 @@
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import {
+  type DatabaseCurrentMetricCpu,
+  type DatabaseCurrentMetricMemory,
+  type DatabaseCurrentMetricStorage,
+  DatabaseModeEnum,
+} from 'qovery-typescript-axios'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
 import About from '../about/about'
@@ -13,14 +18,13 @@ export interface PageGeneralProps {
 export function PageGeneral(props: PageGeneralProps) {
   const { database, listHelpfulLinks, loadingStatus } = props
 
-  /**
-   * @TODO Have to type to any since the InstancesTable component does not support anything else than Instance
-   * Which are not the same model as the instances returned for the databases that do not have names and have storage
-   * thanks to the fetchCurrentMetric call
-   *
-   * There might be something to do with the API doc here
-   */
-  let items: any[]
+  let items: {
+    created_at?: string
+    name: string
+    cpu?: DatabaseCurrentMetricCpu
+    memory?: DatabaseCurrentMetricMemory
+    storage?: DatabaseCurrentMetricStorage
+  }[]
 
   if (database?.mode === DatabaseModeEnum.MANAGED) {
     items = [

@@ -61,6 +61,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
 
   const removeBaseUrl = (url = '') => {
     if (!url) return ''
+    // eslint-disable-next-line no-useless-escape
     const matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i)
     const domain = (matches && matches[0]) as string
     return url.replace(domain, '/')

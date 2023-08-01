@@ -1,4 +1,4 @@
-import { JSXElementConstructor, ReactElement } from 'react'
+import { ReactElement } from 'react'
 import { PageApplication } from '@qovery/pages/application'
 import { PagesCluster } from '@qovery/pages/cluster'
 import { PageClusters } from '@qovery/pages/clusters'
@@ -33,7 +33,7 @@ import RedirectOverview from '../components/redirect-overview'
 
 interface RouterProps {
   path: string
-  component: ReactElement<any, string | JSXElementConstructor<any>>
+  component: ReactElement
   protected: boolean
   layout: boolean
   darkMode?: boolean

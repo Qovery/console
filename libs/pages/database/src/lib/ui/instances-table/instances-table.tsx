@@ -1,8 +1,17 @@
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import {
+  type DatabaseCurrentMetricCpu,
+  type DatabaseCurrentMetricMemory,
+  type DatabaseCurrentMetricStorage,
+  DatabaseModeEnum,
+} from 'qovery-typescript-axios'
 
 export interface InstancesTableProps {
-  /** @TODO Same reason as page-general */
-  instances?: any[]
+  instances?: {
+    name: string
+    memory?: DatabaseCurrentMetricMemory
+    cpu?: DatabaseCurrentMetricCpu
+    storage?: DatabaseCurrentMetricStorage
+  }[]
   mode?: DatabaseModeEnum
 }
 

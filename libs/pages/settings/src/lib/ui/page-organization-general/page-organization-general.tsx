@@ -77,6 +77,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               control={control}
               rules={{
                 pattern: {
+                  // eslint-disable-next-line no-useless-escape
                   value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
                   message: 'The url is not valid',
                 },
