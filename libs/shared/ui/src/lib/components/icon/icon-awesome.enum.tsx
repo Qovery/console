@@ -68,6 +68,7 @@ export enum IconAwesomeEnum {
   HARD_DRIVE = 'icon-solid-hard-drive',
   CHART_BULLET = 'icon-solid-chart-bullet',
   FILE_ARROW_DOWN = 'icon-solid-file-arrow-down',
+  FILE_EXPORT = 'icon-solid-file-export',
   FILE_ARROW_UP = 'icon-solid-file-arrow-up',
   CROSS = 'icon-solid-xmark',
   PEOPLE = 'icon-solid-people',

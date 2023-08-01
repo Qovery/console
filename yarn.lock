@@ -5699,6 +5699,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/downloadjs@npm:^1.4.3":
+  version: 1.4.3
+  resolution: "@types/downloadjs@npm:1.4.3"
+  checksum: d5b5e29399fdbb415f351fee64e7f7b3ddef0f251d2375ddaa0c16cd5c026f4a8dce1b4c76d05e019bc65c96f589d70f13512b44e54d568063fdefa0dbfd40c8
+  languageName: node
+  linkType: hard
+
 "@types/ejs@npm:^3.1.1":
   version: 3.1.2
   resolution: "@types/ejs@npm:3.1.2"
@@ -10089,6 +10096,13 @@ __metadata:
   version: 10.0.0
   resolution: "dotenv@npm:10.0.0"
   checksum: f412c5fe8c24fbe313d302d2500e247ba8a1946492db405a4de4d30dd0eb186a88a43f13c958c5a7de303938949c4231c56994f97d05c4bc1f22478d631b4005
+  languageName: node
+  linkType: hard
+
+"downloadjs@npm:^1.4.7":
+  version: 1.4.7
+  resolution: "downloadjs@npm:1.4.7"
+  checksum: 4c546a28e7adcb1c290685f923add84e89582549f93502fa1b028194492522f716abb95a70f6ae464067a767e967806970d2a03e6262f8ccbcf3dd68e950d1da
   languageName: node
   linkType: hard
 
@@ -17758,6 +17772,7 @@ __metadata:
     "@testing-library/user-event": ^14.4.3
     "@trivago/prettier-plugin-sort-imports": ^3.3.0
     "@types/chance": ^1.1.3
+    "@types/downloadjs": ^1.4.3
     "@types/jest": 29.4.4
     "@types/node": 18.14.2
     "@types/react": 18.2.13
@@ -17781,6 +17796,7 @@ __metadata:
     cypress: ^9.1.0
     date-fns: ^2.29.3
     date-fns-tz: ^1.3.7
+    downloadjs: ^1.4.7
     eslint: 8.26.0
     eslint-config-prettier: 8.5.0
     eslint-plugin-cypress: ^2.10.3

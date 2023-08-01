@@ -37,6 +37,7 @@ import {
 } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/store'
 import CreateCloneEnvironmentModalFeature from '../../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
+import { TerraformExportModalFeature } from '../../../terraform-export-modal/feature/terraform-export-modal-feature'
 import UpdateAllModalFeature from '../../../update-all-modal/feature/update-all-modal-feature'
 
 export interface EnvironmentButtonsActionsProps {
@@ -252,6 +253,15 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
               name: 'Copy identifiers',
               contentLeft: <Icon name={IconAwesomeEnum.COPY} className="text-sm text-brand-400" />,
               onClick: () => copyToClipboard(copyContent),
+            },
+            {
+              name: 'Export as Terraform',
+              contentLeft: <Icon name={IconAwesomeEnum.FILE_EXPORT} className="text-sm text-brand-400" />,
+              onClick: () => {
+                openModal({
+                  content: <TerraformExportModalFeature closeModal={closeModal} environmentId={environment.id} />,
+                })
+              },
             },
             {
               name: 'Clone',

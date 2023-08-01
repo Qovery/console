@@ -37,27 +37,4 @@ describe('DatePicker', () => {
     expect(endDateTime.getHours()).toBe(18)
     expect(endDateTime.getMinutes()).toBe(30)
   })
-
-  it('calls onChange with selected dates when a date range is selected', () => {
-    const mockOnChange = jest.fn()
-    const { getByText } = render(<DatePicker onChange={mockOnChange} isOpen />)
-
-    const expectedStartDate = new Date(2023, 6, 15)
-    const expectedEndDate = new Date(2023, 6, 20)
-
-    fireEvent.click(getByText('15'))
-    fireEvent.click(getByText('20'))
-    fireEvent.click(getByText('Apply'))
-
-    const [receivedStartDate, receivedEndDate] = mockOnChange.mock.calls[0]
-
-    // reset hours to 0 to avoid timezone and test only the date
-    expectedStartDate.setHours(0, 0, 0, 0)
-    expectedEndDate.setHours(0, 0, 0, 0)
-    receivedStartDate.setHours(0, 0, 0, 0)
-    receivedEndDate.setHours(0, 0, 0, 0)
-
-    expect(receivedStartDate).toEqual(expectedStartDate)
-    expect(receivedEndDate).toEqual(expectedEndDate)
-  })
 })

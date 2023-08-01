@@ -63,6 +63,7 @@ export function OnboardingMore() {
     setValue('user_questions', userSignUp?.user_questions || undefined)
     setValue('qovery_usage', userSignUp?.qovery_usage || undefined)
     setValue('qovery_usage_other', userSignUp?.qovery_usage_other || undefined)
+    setValue('where_to_deploy', userSignUp?.qovery_usage_other || undefined)
   }, [setValue, userSignUp])
 
   const onSubmit = handleSubmit(async (data) => {

@@ -39,6 +39,7 @@ describe('EnvironmentButtonsActions', () => {
 
     getByText(baseElement, 'See audit logs')
     getByText(baseElement, 'Copy identifiers')
+    getByText(baseElement, 'Export as Terraform')
     getByText(baseElement, 'Clone')
     getByText(baseElement, 'Delete environment')
   })
@@ -52,6 +53,7 @@ describe('EnvironmentButtonsActions', () => {
     getByText(baseElement, 'Stop')
 
     getByText(baseElement, 'Copy identifiers')
+    getByText(baseElement, 'Export as Terraform')
     getByText(baseElement, 'Clone')
     getByText(baseElement, 'Delete environment')
   })
@@ -62,6 +64,7 @@ describe('EnvironmentButtonsActions', () => {
 
     getByText(baseElement, 'Logs')
     getByText(baseElement, 'Copy identifiers')
+    getByText(baseElement, 'Export as Terraform')
     getByText(baseElement, 'Clone')
     getByText(baseElement, 'Cancel delete')
   })
