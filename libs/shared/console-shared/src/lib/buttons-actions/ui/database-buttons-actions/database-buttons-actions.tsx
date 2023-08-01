@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { DatabaseModeEnum, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -25,7 +25,6 @@ import {
   ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuData,
   MenuItemProps,
   useModal,
   useModalConfirmation,
@@ -45,13 +44,13 @@ import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone
 export interface DatabaseButtonsActionsProps {
   database: DatabaseEntity
   environmentMode: string
+  clusterId: string
 }
 
 export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
-  const { database, environmentMode } = props
+  const { database, environmentMode, clusterId } = props
   const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const navigate = useNavigate()
 
   const { openModalConfirmation } = useModalConfirmation()
@@ -76,7 +75,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     })
   }
 
-  useEffect(() => {
+  const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -185,21 +184,12 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
       }
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
-  }, [
-    database,
-    environmentMode,
-    organizationId,
-    projectId,
-    environmentId,
-    dispatch,
-    openModalConfirmation,
-    location.pathname,
-  ])
+    return [{ items: topItems }, { items: bottomItems }]
+  }, [actionCancelEnvironment, database, environmentMode, environmentId, dispatch, openModalConfirmation])
 
   const canDelete = database.status && isDeleteAvailable(database.status.state)
 
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${database.id}`
+  const copyContent = `Cluster ID: ${clusterId}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${database.id}`
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {

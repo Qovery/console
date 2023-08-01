@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { EnvironmentModeEnum, OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteClusterAction, postClusterActionsDeploy, postClusterActionsStop } from '@qovery/domains/organization'
@@ -11,7 +11,6 @@ import {
   ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuData,
   MenuItemProps,
   useModalConfirmation,
 } from '@qovery/shared/ui'
@@ -33,7 +32,6 @@ export interface ClusterButtonsActionsProps {
 export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
   const { cluster, noSettings } = props
   const { organizationId = '' } = useParams()
-  const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const navigate = useNavigate()
 
   const { openModalConfirmation } = useModalConfirmation()
@@ -49,7 +47,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
     })
   }
 
-  useEffect(() => {
+  const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
       name: `${!cluster.extendedStatus?.status?.is_deployed ? 'Install' : 'Deploy'}`,
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -123,7 +121,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
       }
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    return [{ items: topItems }, { items: bottomItems }]
   }, [cluster, dispatch, openModalConfirmation, organizationId])
 
   const canDelete = cluster.extendedStatus?.status?.status && isDeleteAvailable(cluster.extendedStatus?.status?.status)

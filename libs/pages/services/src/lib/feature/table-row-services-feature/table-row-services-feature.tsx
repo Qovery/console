@@ -11,11 +11,12 @@ export interface TableRowServicesFeatureProps<T> {
   environmentMode: string
   dataHead: TableHeadProps<T>[]
   link: string
+  clusterId: string
   isLoading?: boolean
 }
 
 export function TableRowServicesFeature<T>(props: TableRowServicesFeatureProps<T>) {
-  const { data, filter, environmentMode, dataHead } = props
+  const { data, filter, environmentMode, dataHead, clusterId } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 
   const type = getServiceType(data)
@@ -34,6 +35,7 @@ export function TableRowServicesFeature<T>(props: TableRowServicesFeatureProps<T
       link={link}
       columnsWidth="25% 25% 25% 20%"
       isLoading={props.isLoading}
+      clusterId={clusterId}
     />
   )
 }

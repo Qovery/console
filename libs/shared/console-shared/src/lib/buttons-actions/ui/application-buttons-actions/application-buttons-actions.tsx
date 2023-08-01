@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -37,7 +37,6 @@ import {
   ButtonIconActionElementProps,
   Icon,
   IconAwesomeEnum,
-  MenuData,
   MenuItemProps,
   useModal,
   useModalConfirmation,
@@ -61,16 +60,16 @@ import ForceRunModalFeature from '../../../force-run-modal/feature/force-run-mod
 export interface ApplicationButtonsActionsProps {
   application: ApplicationEntity
   environmentMode: string
+  clusterId: string
 }
 
 export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps) {
-  const { application, environmentMode } = props
+  const { application, environmentMode, clusterId } = props
   const { environmentId = '', projectId = '', organizationId = '' } = useParams()
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
   const location = useLocation()
 
   const serviceType = getServiceType(application)
@@ -110,7 +109,7 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
     })
   }
 
-  useEffect(() => {
+  const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -270,21 +269,20 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
       }
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    return [{ items: topItems }, { items: bottomItems }]
   }, [
     application,
+    actionCancelEnvironment,
     environmentMode,
     environmentId,
     dispatch,
     openModal,
     openModalConfirmation,
-    location.pathname,
-    organizationId,
-    projectId,
+    serviceType,
   ])
 
   const canDelete = application.status && isDeleteAvailable(application.status.state)
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${application.id}`
+  const copyContent = `Cluster ID: ${clusterId}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${application.id}`
 
   const buttonActionsDefault: ButtonIconActionElementProps[] = [
     {

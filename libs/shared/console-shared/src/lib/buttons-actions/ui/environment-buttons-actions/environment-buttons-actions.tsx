@@ -1,7 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { Environment, EnvironmentStatus, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   useActionCancelEnvironment,
@@ -22,7 +21,6 @@ import {
   ButtonIconAction,
   Icon,
   IconAwesomeEnum,
-  MenuData,
   MenuItemProps,
   useModal,
   useModalConfirmation,
@@ -35,7 +33,6 @@ import {
   isRedeployAvailable,
   isStopAvailable,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
 import CreateCloneEnvironmentModalFeature from '../../../create-clone-environment-modal/feature/create-clone-environment-modal-feature'
 import { TerraformExportModalFeature } from '../../../terraform-export-modal/feature/terraform-export-modal-feature'
 import UpdateAllModalFeature from '../../../update-all-modal/feature/update-all-modal-feature'
@@ -52,13 +49,10 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
   const location = useLocation()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
-  const [buttonStatusActions, setButtonStatusActions] = useState<MenuData>([])
 
   const { openModalConfirmation } = useModalConfirmation()
 
-  const dispatch = useDispatch<AppDispatch>()
-
-  const copyContent = `Organization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
+  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environment.id}`
 
   const { mutate: actionRedeployEnvironmentMutate } = useActionRedeployEnvironment(
     projectId,
@@ -84,7 +78,7 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
     location.pathname === SERVICES_URL(organizationId, projectId, environment.id) + SERVICES_DEPLOYMENTS_URL
   )
 
-  useEffect(() => {
+  const buttonStatusActions = useMemo(() => {
     const deployButton: MenuItemProps = {
       name: 'Deploy',
       contentLeft: <Icon name={IconAwesomeEnum.PLAY} className="text-sm text-brand-400" />,
@@ -175,14 +169,11 @@ export function EnvironmentButtonsActions(props: EnvironmentButtonsActionsProps)
       bottomItems.push(updateAllButton)
     }
 
-    setButtonStatusActions([{ items: topItems }, { items: bottomItems }])
+    return [{ items: topItems }, { items: bottomItems }]
   }, [
     environment,
-    dispatch,
     openModalConfirmation,
-    organizationId,
     projectId,
-    location.pathname,
     openModal,
     status?.state,
     actionCancelEnvironmentMutate,

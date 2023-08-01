@@ -64,6 +64,7 @@ export function PageGeneralFeature() {
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading()}
+      clusterId={environment?.cluster_id || ''}
     />
   )
 }

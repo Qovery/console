@@ -39,7 +39,11 @@ export function Container(props: ContainerProps) {
         <div className="flex">
           {environment && database && database?.status && (
             <>
-              <DatabaseButtonsActions database={database} environmentMode={environment.mode} />
+              <DatabaseButtonsActions
+                database={database}
+                environmentMode={environment.mode}
+                clusterId={environment.cluster_id}
+              />
               <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-element-light-lighter-400"></span>
             </>
           )}
