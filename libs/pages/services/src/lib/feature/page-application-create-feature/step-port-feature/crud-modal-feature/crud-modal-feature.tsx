@@ -1,20 +1,31 @@
-import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
+import { CloudProviderEnum, PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { useFetchEnvironment } from '@qovery/domains/environment'
 import { CrudModal } from '@qovery/shared/console-shared'
 import { FlowPortData, PortData } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
 
 export interface CrudModalFeatureProps {
+  projectId: string
+  environmentId: string
   port?: PortData | ServicePort
   portData?: FlowPortData
   setPortData?: (portData: FlowPortData) => void
   onClose: () => void
 }
 
-export function CrudModalFeature({ port, portData, setPortData, onClose }: CrudModalFeatureProps) {
+export function CrudModalFeature({
+  port,
+  portData,
+  setPortData,
+  onClose,
+  projectId,
+  environmentId,
+}: CrudModalFeatureProps) {
   const [loading, setLoading] = useState(false)
   const { enableAlertClickOutside } = useModal()
+  const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
   const methods = useForm({
     defaultValues: {
@@ -92,7 +103,13 @@ export function CrudModalFeature({ port, portData, setPortData, onClose }: CrudM
 
   return (
     <FormProvider {...methods}>
-      <CrudModal port={port} onSubmit={onSubmit} onClose={onClose} loading={loading} isEdit={!!port} />
+      <CrudModal
+        onSubmit={onSubmit}
+        onClose={onClose}
+        loading={loading}
+        isEdit={!!port}
+        cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
+      />
     </FormProvider>
   )
 }

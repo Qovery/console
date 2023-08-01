@@ -74,9 +74,7 @@ export function FlowCreatePort({
                           ? 'Yes'
                           : 'No'}
                       </span>
-                      {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
-                        <span>Protocol: {(customPort as ServicePort).protocol}</span>
-                      )}
+                      <span>Protocol: {(customPort as ServicePort).protocol}</span>
                       {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
                         <span>Port Name: {(customPort as ServicePort).name}</span>
                       )}

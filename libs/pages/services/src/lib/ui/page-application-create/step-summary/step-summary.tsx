@@ -145,12 +145,8 @@ export function StepSummary({
                 <>
                   {portsData.ports?.map((port, index) => (
                     <li key={index}>
-                      Application port: <strong className="font-medium">{port.application_port}</strong>{' '}
-                      {port.is_public && (
-                        <>
-                          – Protocol: <strong className="font-medium">{port.protocol}</strong>
-                        </>
-                      )}
+                      Application port: <strong className="font-medium">{port.application_port}</strong>– Protocol:{' '}
+                      <strong className="font-medium">{port.protocol}</strong>
                       {port.is_public && (
                         <>
                           – Public port: <strong className="font-medium">{port.external_port}</strong>

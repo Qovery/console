@@ -86,13 +86,28 @@ export function StepPortFeature() {
         onEdit={(port: PortData | ServicePort) => {
           openModal({
             content: (
-              <CrudModalFeature onClose={closeModal} port={port} portData={portData} setPortData={setPortData} />
+              <CrudModalFeature
+                onClose={closeModal}
+                port={port}
+                portData={portData}
+                setPortData={setPortData}
+                projectId={projectId}
+                environmentId={environmentId}
+              />
             ),
           })
         }}
         onAddPort={() => {
           openModal({
-            content: <CrudModalFeature onClose={closeModal} portData={portData} setPortData={setPortData} />,
+            content: (
+              <CrudModalFeature
+                onClose={closeModal}
+                portData={portData}
+                setPortData={setPortData}
+                projectId={projectId}
+                environmentId={environmentId}
+              />
+            ),
           })
         }}
         onRemovePort={removePort}

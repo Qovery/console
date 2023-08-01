@@ -1,7 +1,6 @@
-import { PortProtocolEnum, ServicePort } from 'qovery-typescript-axios'
+import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import { FormEvent, useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { PortData } from '@qovery/shared/interfaces'
 import {
   BannerBox,
   BannerBoxEnum,
@@ -15,17 +14,17 @@ import {
 } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
-  port?: ServicePort | PortData
   onSubmit: () => void
   onClose: () => void
+  cloudProvider?: CloudProviderEnum
   loading?: boolean
   isEdit?: boolean
-  isSetting?: boolean
 }
 
-export function CrudModal(props: CrudModalProps) {
+export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
+  const watchProtocol = watch('protocol')
   const watchPublicly = watch('publicly_accessible') || false
   const watchInternalPort = watch('internal_port') || false
   const watchExternalPort = watch('external_port') || ''
@@ -40,13 +39,17 @@ export function CrudModal(props: CrudModalProps) {
     setValue('protocol', !watchPublicly ? PortProtocolEnum.HTTP : undefined)
   }, [watchPublicly, setValue])
 
+  const protocolOptions = Object.keys(PortProtocolEnum)
+    .map((value: string) => ({ label: value, value: value }))
+    .filter((option) => (cloudProvider === CloudProviderEnum.SCW ? option.value !== PortProtocolEnum.UDP : true))
+
   return (
     <ModalCrud
-      title={props.isEdit ? 'Edit port' : 'Set port'}
-      onSubmit={props.onSubmit}
-      onClose={props.onClose}
-      loading={props.loading}
-      isEdit={props.isEdit}
+      title={isEdit ? 'Edit port' : 'Set port'}
+      onSubmit={onSubmit}
+      onClose={onClose}
+      loading={loading}
+      isEdit={isEdit}
     >
       <Controller
         name="internal_port"
@@ -73,6 +76,20 @@ export function CrudModal(props: CrudModalProps) {
         )}
       />
       <Controller
+        name="protocol"
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            label="Select protocol"
+            value={field.value}
+            options={protocolOptions}
+            error={error?.message}
+            onChange={field.onChange}
+            className="mb-5"
+          />
+        )}
+      />
+      <Controller
         name="publicly_accessible"
         control={control}
         defaultValue={false}
@@ -91,20 +108,6 @@ export function CrudModal(props: CrudModalProps) {
       />
       {watchPublicly && (
         <>
-          <Controller
-            name="protocol"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                label="Select protocol"
-                value={field.value}
-                options={Object.keys(PortProtocolEnum).map((value: string) => ({ label: value, value: value }))}
-                error={error?.message}
-                onChange={field.onChange}
-                className="mb-5"
-              />
-            )}
-          />
           <Controller
             key={`port-${watchPublicly}`}
             name="external_port"
@@ -157,8 +160,16 @@ export function CrudModal(props: CrudModalProps) {
           </>
         </>
       )}
+      {(watchProtocol === PortProtocolEnum.TCP || watchProtocol === PortProtocolEnum.UDP) && watchPublicly && (
+        <BannerBox
+          className="mt-4"
+          icon={IconAwesomeEnum.CIRCLE_INFO}
+          type={BannerBoxEnum.WARNING}
+          message="Activating this feature will add an extra cost to your cloud provider bill (a NLB will be created)."
+        />
+      )}
       <BannerBox
-        className="mt-10"
+        className="mt-4"
         icon={IconAwesomeEnum.CIRCLE_INFO}
         type={BannerBoxEnum.INFO}
         title="How to config"
