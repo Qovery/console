@@ -86,6 +86,7 @@ export function PageSettingsPortsFeature() {
   return (
     <PageSettingsPorts
       ports={application?.ports}
+      healthchecks={application?.healthchecks}
       onAddPort={() => {
         openModal({
           content: <CrudModalFeature onClose={closeModal} application={application} projectId={projectId} />,

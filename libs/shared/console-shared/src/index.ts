@@ -22,6 +22,7 @@ export * from './lib/buttons-actions/ui/cluster-buttons-actions/cluster-buttons-
 export * from './lib/create-clone-environment-modal/feature/create-clone-environment-modal-feature'
 export * from './lib/flow-create-port/ui/flow-create-port/flow-create-port'
 export * from './lib/flow-create-port/ui/crud-modal/crud-modal'
+export * from './lib/flow-create-port/utils/port-healthcheck'
 export * from './lib/flow-create-variable/ui/flow-create-variable/flow-create-variable'
 export * from './lib/create-general-git-application/ui/create-general-git-application'
 export * from './lib/git-repository-settings/feature/edit-git-repository-settings-feature/edit-git-repository-settings-feature'
