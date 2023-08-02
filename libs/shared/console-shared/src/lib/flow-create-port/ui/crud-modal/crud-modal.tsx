@@ -192,7 +192,7 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
         icon={IconAwesomeEnum.CIRCLE_INFO}
         type={BannerBoxEnum.INFO}
         title="How to config"
-        message="Select the port used by your application. You can expose publicly your service via a specific protocol, a dedicated domain will be automatically assigned by Qovery. Ports are always exposed on the port 443, if multiple ports are exposed publicly the traffic redirection is done based on the called subdomain (configured via the Port Name field)."
+        message="Select the port used by your application. You can expose publicly your service via a specific protocol, a dedicated domain will be automatically assigned by Qovery. HTTP/gRPC public Ports are always exposed on the port 443 and if multiple ports are exposed publicly, the traffic redirection is done based on the subdomain (assigned via the Port Name field)."
       />
     </ModalCrud>
   )
