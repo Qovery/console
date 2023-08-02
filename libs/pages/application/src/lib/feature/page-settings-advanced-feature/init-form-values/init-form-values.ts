@@ -15,7 +15,6 @@ export function initFormValues(
       if (currentSettings) {
         const value = currentSettings[key as keyof ApplicationAdvancedSettings]
         values[key] = (typeof value === 'object' ? JSON.stringify(value) : value?.toString()) || ''
-        console.log(values[key])
       }
     } else if (isJob(serviceType)) {
       const currentSettings = application?.advanced_settings?.current_settings
