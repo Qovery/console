@@ -2,9 +2,7 @@ coverage:
   status:
     project:
       default:
-        informational: false
-        if_ci_failed: 'success'
+        threshold: 1%
     patch:
       default:
-        informational: false
-        if_ci_failed: 'success'
+        target: 0%
