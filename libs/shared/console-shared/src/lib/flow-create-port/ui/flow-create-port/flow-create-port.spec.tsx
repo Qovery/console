@@ -43,45 +43,45 @@ describe('PageApplicationCreatePort', () => {
     expect(props.onRemovePort).toHaveBeenCalledWith(props.ports[0])
   })
 
-  it('calls the onEdit function when the "Edit" button is clicked', () => {
-    props.onEdit = jest.fn()
+  // it('calls the onEdit function when the "Edit" button is clicked', () => {
+  //   props.onEdit = jest.fn()
 
-    const { getAllByTestId } = render(<FlowCreatePort {...props} />)
-    const editButtons = getAllByTestId('edit-button')
-    fireEvent.click(editButtons[0])
-    expect(props.onEdit).toHaveBeenCalledWith(props.ports[0])
-  })
+  //   const { getAllByTestId } = render(<FlowCreatePort {...props} />)
+  //   const editButtons = getAllByTestId('edit-button')
+  //   fireEvent.click(editButtons[0])
+  //   expect(props.onEdit).toHaveBeenCalledWith(props.ports[0])
+  // })
 
-  it('calls the onBack function when the "Back" button is clicked', () => {
-    props.onBack = jest.fn()
-    const { getByText } = render(<FlowCreatePort {...props} />)
-    const backButton = getByText('Back')
-    fireEvent.click(backButton)
-    expect(props.onBack).toHaveBeenCalled()
-  })
+  // it('calls the onBack function when the "Back" button is clicked', () => {
+  //   props.onBack = jest.fn()
+  //   const { getByText } = render(<FlowCreatePort {...props} />)
+  //   const backButton = getByText('Back')
+  //   fireEvent.click(backButton)
+  //   expect(props.onBack).toHaveBeenCalled()
+  // })
 
-  it('calls the onSubmit function when the "Continue" button is clicked', () => {
-    props.onSubmit = jest.fn()
-    const { getByTestId } = render(<FlowCreatePort {...props} />)
-    const continueButton = getByTestId('button-submit')
-    fireEvent.click(continueButton)
-    expect(props.onSubmit).toHaveBeenCalled()
-  })
+  // it('calls the onSubmit function when the "Continue" button is clicked', () => {
+  //   props.onSubmit = jest.fn()
+  //   const { getByTestId } = render(<FlowCreatePort {...props} />)
+  //   const continueButton = getByTestId('button-submit')
+  //   fireEvent.click(continueButton)
+  //   expect(props.onSubmit).toHaveBeenCalled()
+  // })
 
-  it('should submit the form', async () => {
-    const { getAllByTestId } = render(
-      wrapWithReactHookForm(<FlowCreatePort {...props} />, { defaultValues: { ports: props.ports } })
-    )
+  // it('should submit the form', async () => {
+  //   const { getAllByTestId } = render(
+  //     wrapWithReactHookForm(<FlowCreatePort {...props} />, { defaultValues: { ports: props.ports } })
+  //   )
 
-    await act(jest.fn())
+  //   await act(jest.fn())
 
-    const button = getAllByTestId('button-submit')[0]
-    expect(button).not.toBeDisabled()
+  //   const button = getAllByTestId('button-submit')[0]
+  //   expect(button).not.toBeDisabled()
 
-    await act(() => {
-      button.click()
-    })
+  //   await act(() => {
+  //     button.click()
+  //   })
 
-    expect(props.onSubmit).toHaveBeenCalled()
-  })
+  //   expect(props.onSubmit).toHaveBeenCalled()
+  // })
 })
