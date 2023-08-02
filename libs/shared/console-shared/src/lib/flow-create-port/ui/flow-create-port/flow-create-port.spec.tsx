@@ -1,24 +1,28 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { PortProtocolEnum, type ServicePort } from 'qovery-typescript-axios'
 import FlowCreatePort, { FlowCreatePortProps } from './flow-create-port'
 
+const ports: ServicePort[] = [
+  {
+    internal_port: 3000,
+    external_port: 3000,
+    publicly_accessible: false,
+    protocol: PortProtocolEnum.HTTP,
+  },
+  {
+    internal_port: 4000,
+    external_port: 3000,
+    publicly_accessible: false,
+    protocol: PortProtocolEnum.HTTP,
+  },
+]
 const props: FlowCreatePortProps = {
   onSubmit: jest.fn(),
   onBack: jest.fn(),
   onAddPort: jest.fn(),
   onRemovePort: jest.fn(),
-  ports: [
-    {
-      application_port: 3000,
-      external_port: 3000,
-      is_public: false,
-    },
-    {
-      application_port: 4000,
-      external_port: 3000,
-      is_public: true,
-    },
-  ],
+  ports,
 }
 
 describe('PageApplicationCreatePort', () => {
@@ -40,7 +44,11 @@ describe('PageApplicationCreatePort', () => {
     const { getAllByTestId } = render(<FlowCreatePort {...props} />)
     const deleteButtons = getAllByTestId('delete-button')
     fireEvent.click(deleteButtons[0])
-    expect(props.onRemovePort).toHaveBeenCalledWith(props.ports[0])
+
+    waitFor(() => {
+      expect(props.onRemovePort).toHaveBeenCalledTimes(1)
+      expect(props.onRemovePort).toHaveBeenCalledWith(ports[0])
+    })
   })
 
   it('calls the onEdit function when the "Edit" button is clicked', () => {
@@ -49,7 +57,7 @@ describe('PageApplicationCreatePort', () => {
     const { getAllByTestId } = render(<FlowCreatePort {...props} />)
     const editButtons = getAllByTestId('edit-button')
     fireEvent.click(editButtons[0])
-    expect(props.onEdit).toHaveBeenCalledWith(props.ports[0])
+    expect(props.onEdit).toHaveBeenCalledWith(ports[0])
   })
 
   it('calls the onBack function when the "Back" button is clicked', () => {
@@ -73,14 +81,10 @@ describe('PageApplicationCreatePort', () => {
       wrapWithReactHookForm(<FlowCreatePort {...props} />, { defaultValues: { ports: props.ports } })
     )
 
-    await act(jest.fn())
-
     const button = getAllByTestId('button-submit')[0]
     expect(button).not.toBeDisabled()
 
-    await act(() => {
-      button.click()
-    })
+    button.click()
 
     expect(props.onSubmit).toHaveBeenCalled()
   })
