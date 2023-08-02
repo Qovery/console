@@ -7,6 +7,7 @@ import { useContext, useState } from 'react'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { ServiceStageIdsContext } from '../../feature/service-stage-ids-context/service-stage-ids-context'
+import SidebarHistoryFeature from '../../feature/sidebar-history-feature/sidebar-history-feature'
 import SidebarPipeline from '../sidebar-pipeline/sidebar-pipeline'
 import SidebarStatus from '../sidebar-status/sidebar-status'
 
@@ -31,6 +32,7 @@ export function Sidebar(props: SidebarProps) {
       ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
+        <SidebarHistoryFeature />
         <SidebarStatus environmentStatus={environmentStatus} />
         <SidebarPipeline services={services} serviceId={serviceId} statusStages={statusStages} />
       </div>
