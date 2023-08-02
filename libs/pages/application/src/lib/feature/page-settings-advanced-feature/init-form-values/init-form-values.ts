@@ -13,12 +13,15 @@ export function initFormValues(
     if (isApplication(serviceType) || isContainer(serviceType)) {
       const currentSettings = (application as GitApplicationEntity)?.advanced_settings?.current_settings
       if (currentSettings) {
-        values[key] = currentSettings[key as keyof ApplicationAdvancedSettings]?.toString() || ''
+        const value = currentSettings[key as keyof ApplicationAdvancedSettings]
+        values[key] = (typeof value === 'object' ? JSON.stringify(value) : value?.toString()) || ''
+        console.log(values[key])
       }
     } else if (isJob(serviceType)) {
       const currentSettings = application?.advanced_settings?.current_settings
       if (currentSettings) {
-        values[key] = currentSettings[key as keyof JobAdvancedSettings]?.toString() || ''
+        const value = currentSettings[key as keyof JobAdvancedSettings]
+        values[key] = (typeof value === 'object' ? JSON.stringify(value) : value?.toString()) || ''
       }
     }
   })
