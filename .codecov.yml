@@ -3,6 +3,8 @@ coverage:
     project:
       default:
         informational: false
+        if_ci_failed: 'success'
     patch:
       default:
         informational: false
+        if_ci_failed: 'success'
