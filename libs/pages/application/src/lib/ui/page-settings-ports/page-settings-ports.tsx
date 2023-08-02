@@ -6,7 +6,7 @@ import { HelpSection } from '@qovery/shared/ui'
 export interface PageSettingsPortsProps {
   onAddPort: () => void
   onEdit: (port: PortData | ServicePort) => void
-  onDelete: (port: PortData | ServicePort) => void
+  onDelete: (port: PortData | ServicePort, warning?: string) => void
   ports?: ServicePort[]
   healthchecks?: Healthcheck
 }

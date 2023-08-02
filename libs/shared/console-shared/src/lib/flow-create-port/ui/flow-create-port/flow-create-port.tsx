@@ -16,7 +16,7 @@ import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
 
 export interface FlowCreatePortProps {
   onAddPort: () => void
-  onRemovePort: (port: PortData | ServicePort) => void
+  onRemovePort: (port: PortData | ServicePort, warning?: string) => void
   ports?: PortData[] | ServicePort[]
   healthchecks?: Healthcheck
   onBack?: () => void
@@ -126,7 +126,15 @@ export function FlowCreatePort({
                         className="!bg-transparent hover:!bg-element-light-lighter-400"
                         style={ButtonIconStyle.STROKED}
                         size={ButtonSize.REGULAR}
-                        onClick={() => onRemovePort(customPort)}
+                        onClick={() =>
+                          onRemovePort(
+                            customPort,
+                            isMatchingHealthCheck(customPort, livenessType) ||
+                              isMatchingHealthCheck(customPort, readinessType)
+                              ? 'The health check pointing to this port will be deleted as well.'
+                              : undefined
+                          )
+                        }
                         dataTestId="delete-button"
                         icon={IconAwesomeEnum.TRASH}
                       />

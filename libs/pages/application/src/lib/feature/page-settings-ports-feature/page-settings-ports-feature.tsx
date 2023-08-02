@@ -104,11 +104,12 @@ export function PageSettingsPortsFeature() {
           ),
         })
       }}
-      onDelete={(port: PortData | ServicePort) => {
+      onDelete={(port: PortData | ServicePort, warning) => {
         openModalConfirmation({
           title: 'Delete Port',
           isDelete: true,
           name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
+          warning,
           action: () => {
             if (application) {
               const cloneApplication = deletePort(application, (port as ServicePort).id)
