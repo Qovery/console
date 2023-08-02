@@ -48,6 +48,12 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
         )
       }
     }
+
+    if (name === 'internal_port') {
+      if ((publicly_accessible && protocol === PortProtocolEnum.TCP) || protocol === PortProtocolEnum.UDP) {
+        setValue('external_port', internal_port)
+      }
+    }
   })
 
   const protocolOptions = Object.keys(PortProtocolEnum)
@@ -119,36 +125,37 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
       />
       {watchPublicly && (
         <>
-          {watchProtocol !== PortProtocolEnum.TCP && watchProtocol !== PortProtocolEnum.UDP && (
-            <Controller
-              key={`port-${watchPublicly}`}
-              name="external_port"
-              control={control}
-              rules={{
-                required: watchPublicly ? 'Please enter a public port.' : undefined,
-                pattern: pattern,
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  type="number"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
-                  label="External port"
-                  error={error?.message}
-                  disabled
-                  className="mb-4"
-                  rightElement={
+          <Controller
+            key={`port-${watchPublicly}`}
+            name="external_port"
+            control={control}
+            rules={{
+              required: watchPublicly ? 'Please enter a public port.' : undefined,
+              pattern: pattern,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                type="number"
+                name={field.name}
+                onChange={field.onChange}
+                value={watchExternalPort} // passing a watch here because setValue with undefined does not work: https://github.com/react-hook-form/react-hook-form/issues/8133
+                label="External port"
+                error={error?.message}
+                disabled
+                className="mb-4"
+                rightElement={
+                  watchProtocol !== PortProtocolEnum.TCP &&
+                  watchProtocol !== PortProtocolEnum.UDP && (
                     <Tooltip content="You cannot configure the port used externally" side="left">
                       <div>
                         <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
                       </div>
                     </Tooltip>
-                  }
-                />
-              )}
-            />
-          )}
+                  )
+                }
+              />
+            )}
+          />
           <>
             <Controller
               name="name"
