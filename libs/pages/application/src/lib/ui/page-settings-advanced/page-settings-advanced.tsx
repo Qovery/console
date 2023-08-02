@@ -69,36 +69,38 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
               className: 'font-medium vis',
             },
             {
-              content: (
-                <>
-                  <Tooltip
-                    content={
-                      (props.defaultAdvancedSettings &&
-                        props.defaultAdvancedSettings[
-                          key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
-                        ]?.toString()) ||
-                      ''
-                    }
-                  >
-                    <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">
-                      {props.defaultAdvancedSettings &&
-                        props.defaultAdvancedSettings[
-                          key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
-                        ]?.toString()}
-                    </div>
-                  </Tooltip>
-                  <CopyToClipboard
-                    className="ml-2 text-text-300 invisible group-hover:visible"
-                    content={
-                      (props.defaultAdvancedSettings &&
-                        props.defaultAdvancedSettings[
-                          key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
-                        ]?.toString()) ||
-                      ''
-                    }
-                  />
-                </>
-              ),
+              content: () => {
+                const value =
+                  props.defaultAdvancedSettings &&
+                  props.defaultAdvancedSettings[key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)]
+                const displayValue = (typeof value === 'object' ? JSON.stringify(value) : value?.toString()) || ''
+
+                return (
+                  <>
+                    <Tooltip
+                      content={
+                        (props.defaultAdvancedSettings &&
+                          props.defaultAdvancedSettings[
+                            key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+                          ]?.toString()) ||
+                        ''
+                      }
+                    >
+                      <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">{displayValue}</div>
+                    </Tooltip>
+                    <CopyToClipboard
+                      className="ml-2 text-text-300 invisible group-hover:visible"
+                      content={
+                        (props.defaultAdvancedSettings &&
+                          props.defaultAdvancedSettings[
+                            key as keyof (ApplicationAdvancedSettings | JobAdvancedSettings)
+                          ]?.toString()) ||
+                        ''
+                      }
+                    />
+                  </>
+                )
+              },
               className: 'group',
             },
             {
