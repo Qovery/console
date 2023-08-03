@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from '__tests__/utils/setup-jest'
+import userEvent from '@testing-library/user-event'
+import { render, screen } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
@@ -26,12 +27,10 @@ describe('CrudModal', () => {
     })
     selectEvent.openMenu(protocolSelect)
 
-    waitFor(() => {
-      screen.getByLabelText('HTTP')
-      screen.getByLabelText('UDP')
-      screen.getByLabelText('TCP')
-      screen.getByLabelText('GRPC')
-    })
+    screen.getByLabelText('HTTP')
+    screen.getByLabelText('UDP')
+    screen.getByLabelText('TCP')
+    screen.getByLabelText('GRPC')
   })
 
   it('should render the form for SCW provider with correct options', () => {
@@ -43,16 +42,14 @@ describe('CrudModal', () => {
     })
     selectEvent.openMenu(protocolSelect)
 
-    waitFor(() => {
-      expect(screen.queryByLabelText('UDP')).toBe(null)
-      screen.getByLabelText('HTTP')
-      screen.getByLabelText('TCP')
-      screen.getByLabelText('GRPC')
-    })
+    expect(screen.queryByLabelText('UDP')).toBeNull()
+    screen.getByLabelText('HTTP')
+    screen.getByLabelText('TCP')
+    screen.getByLabelText('GRPC')
   })
 
   it('should render the form', async () => {
-    const { getByDisplayValue } = render(
+    render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           internal_port: 99,
@@ -63,16 +60,16 @@ describe('CrudModal', () => {
       })
     )
 
-    await waitFor(() => {
-      getByDisplayValue(99)
-      getByDisplayValue('true')
-    })
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /create/i })).toBeInTheDocument()
+    screen.getByDisplayValue(99)
+    screen.getByDisplayValue('true')
   })
 
   it('should submit the form', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
-    const { findByTestId } = render(
+    render(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           internal_port: 99,
@@ -83,12 +80,55 @@ describe('CrudModal', () => {
       })
     )
 
-    const button = await findByTestId('submit-button')
+    const button = await screen.findByTestId('submit-button')
 
-    await waitFor(() => {
-      button.click()
-      expect(button).not.toBeDisabled()
-      expect(spy).toHaveBeenCalled()
+    await userEvent.click(button)
+    expect(button).not.toBeDisabled()
+    expect(spy).toHaveBeenCalled()
+  })
+
+  it('should warn when port is used as healthcheck', async () => {
+    render(
+      wrapWithReactHookForm(
+        <CrudModal {...props} currentProtocol={PortProtocolEnum.HTTP} isMatchingHealthCheck={true} />,
+        {
+          defaultValues: {
+            internal_port: 99,
+            external_port: 420,
+            publicly_accessible: true,
+            protocol: PortProtocolEnum.HTTP,
+          },
+        }
+      )
+    )
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /create/i })).toBeInTheDocument()
+    screen.getByText('The health check will be updated to use the new port value.')
+  })
+
+  it('should warn when port is used as healthcheck and protocol change', async () => {
+    render(
+      wrapWithReactHookForm(
+        <CrudModal {...props} currentProtocol={PortProtocolEnum.HTTP} isMatchingHealthCheck={true} />,
+        {
+          defaultValues: {
+            internal_port: 99,
+            external_port: 420,
+            publicly_accessible: true,
+            protocol: PortProtocolEnum.HTTP,
+          },
+        }
+      )
+    )
+
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /create/i })).toBeInTheDocument()
+
+    const protocolSelect = screen.getByRole('combobox', {
+      name: /protocol/i,
     })
+    await selectEvent.select(protocolSelect, 'TCP')
+
+    screen.getByText('Please verify the health check configuration.')
   })
 })
