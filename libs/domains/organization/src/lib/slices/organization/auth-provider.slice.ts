@@ -54,7 +54,7 @@ export const authProviderSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchAuthProvider.fulfilled, (state: AuthProviderState, action: PayloadAction<GitAuthProvider[]>) => {
-        // API return same ids if we have a Github app associated, we need to overide it, because our store get a single id by object (we didn't have the same)
+        // API return same ids if we have a Github app associated, we need to overide it, because our store gets a single id by object (we didn't have the same)
         const newGithubAuthProvider: GitAuthProvider[] = action.payload.map((authProvider, index) => ({
           ...authProvider,
           id: `${authProvider.id}-${index}`,
