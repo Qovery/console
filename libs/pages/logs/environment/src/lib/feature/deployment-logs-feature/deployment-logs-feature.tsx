@@ -1,4 +1,4 @@
-import { DeploymentStageWithServicesStatuses, Environment, EnvironmentLogs, Status } from 'qovery-typescript-axios'
+import { DeploymentStageWithServicesStatuses, Environment, EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -57,9 +57,9 @@ export function getServiceStatuesById(services?: DeploymentStageWithServicesStat
 }
 
 export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
-  const { environment, statusStages } = props
+  const { environment } = props
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
-  const { stageId, updateServiceId } = useContext(ServiceStageIdsContext)
+  const { stageId, updateServiceId, updateVersionId } = useContext(ServiceStageIdsContext)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
@@ -135,10 +135,11 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
   // const hideDeploymentLogsBoolean = !(getServiceStatuesById(statusStages, serviceId) as Status)?.is_part_last_deployment
   const hideDeploymentLogsBoolean = false
 
-  // reset deployment logs by serviceId
+  // reset deployment logs by serviceId and versionId
   useEffect(() => {
     updateServiceId(serviceId)
-  }, [updateServiceId, serviceId])
+    updateVersionId(versionId)
+  }, [updateServiceId, serviceId, updateVersionId, versionId])
 
   // deployment logs by serviceId and stageId
   // display when name is delete or stageId is empty
@@ -166,7 +167,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
       serviceRunningStatus={application?.running_status || database?.running_status}
-      serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
+      // serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
     />
   )

@@ -19,10 +19,8 @@ export interface SidebarProps {
   clusterBanner?: boolean
 }
 
-export function Sidebar(props: SidebarProps) {
-  const { services, statusStages, environmentStatus, clusterBanner } = props
-
-  const { serviceId } = useContext(ServiceStageIdsContext)
+export function Sidebar({ services, statusStages, environmentStatus, clusterBanner }: SidebarProps) {
+  const { serviceId, versionId } = useContext(ServiceStageIdsContext)
 
   const [openSidebar, setOpenSidebar] = useState(true)
 
@@ -34,7 +32,7 @@ export function Sidebar(props: SidebarProps) {
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>
         <SidebarHistoryFeature />
         <SidebarStatus environmentStatus={environmentStatus} />
-        <SidebarPipeline services={services} serviceId={serviceId} statusStages={statusStages} />
+        <SidebarPipeline services={services} versionId={versionId} serviceId={serviceId} statusStages={statusStages} />
       </div>
       <div
         data-testid="sidebar-resize-button"

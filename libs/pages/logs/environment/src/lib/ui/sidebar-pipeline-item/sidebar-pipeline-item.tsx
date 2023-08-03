@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { RunningStatus, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { BadgeDeploymentOrder, BadgeService, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
 import { ServiceStageIdsContext } from '../../feature/service-stage-ids-context/service-stage-ids-context'
 
@@ -15,13 +15,13 @@ export function mergeServices(applications?: Status[], databases?: Status[], con
 
 export interface SidebarPipelineItemProps {
   serviceId: string
+  versionId: string
   index: number
   services: Array<ApplicationEntity | DatabaseEntity>
   currentStage: DeploymentStageWithServicesStatuses
 }
 
-export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
-  const { currentStage, index, serviceId, services } = props
+export function SidebarPipelineItem({ currentStage, index, serviceId, versionId, services }: SidebarPipelineItemProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { updateStageId } = useContext(ServiceStageIdsContext)
 
@@ -69,7 +69,8 @@ export function SidebarPipelineItem(props: SidebarPipelineItemProps) {
                   <Link
                     key={service.id}
                     to={
-                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)
+                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                      DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId)
                     }
                     className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-text-100 rounded-[3px] ${
                       serviceId === service.id

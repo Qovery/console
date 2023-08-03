@@ -90,7 +90,7 @@ export function PageEnvironmentLogs() {
             path={DEPLOYMENT_LOGS_VERSION_URL()}
             element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
           />
-          <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id || ''} />} />
+          <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
         </Routes>
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||

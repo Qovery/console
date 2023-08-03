@@ -37,6 +37,8 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
     [logs]
   )
 
+  console.log('serviceDeploymentStatus: ', serviceDeploymentStatus)
+
   const displayPlaceholder = (serviceDeploymentStatus?: ServiceDeploymentStatusEnum) => {
     switch (serviceDeploymentStatus) {
       case ServiceDeploymentStatusEnum.NEVER_DEPLOYED:
@@ -47,7 +49,7 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
             No Deployment Logs available for this service.
             <p>
               Deployment Logs are available only for services deployed during the last deployment execution (
-              <a className="text-brand-400">in purple</a> within the list on the left).
+              <span className="text-brand-400">in purple</span> within the list on the left).
             </p>
             <p>
               You can still access the application logs from the{' '}
