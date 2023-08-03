@@ -14,7 +14,9 @@ export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
 const authProviderApi = new OrganizationAccountGitRepositoriesApi()
 const githubAppApi = new GithubAppApi()
 
-export const authProviderAdapter = createEntityAdapter<GitAuthProvider>()
+export const authProviderAdapter = createEntityAdapter<GitAuthProvider>({
+  selectId: (authProvider: GitAuthProvider) => `${authProvider.name}-${authProvider.id}`,
+})
 
 export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (payload: { organizationId: string }) => {
   const response = await authProviderApi.getOrganizationGitProviderAccount(payload.organizationId)
@@ -62,7 +64,7 @@ export const authProviderSlice = createSlice({
         state.error = action.error.message
         toastError(action.error)
       })
-      .addCase(disconnectGithubApp.fulfilled, (state: AuthProviderState) => {
+      .addCase(disconnectGithubApp.fulfilled, () => {
         toast(ToastEnum.SUCCESS, `Github App disconnected successfully`)
       })
   },
