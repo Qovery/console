@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useId, useState } from 'react'
 import Select, {
   GroupBase,
   MenuListProps,
@@ -106,7 +106,7 @@ export function InputSelect({
 
   const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => (
     <components.MenuList {...props}>
-      {props.children}
+      <div role="listbox">{props.children}</div>
       {menuListButton && (
         <button
           data-testid="input-menu-list-button"
@@ -124,24 +124,29 @@ export function InputSelect({
     </components.MenuList>
   )
 
-  const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => (
-    <components.Option {...props}>
-      {isMulti ? (
-        <span className="input-select__checkbox">
-          {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
-        </span>
-      ) : props.isSelected ? (
-        <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />
-      ) : props.data.icon ? (
-        <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
-      ) : (
-        <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
-      )}
-      <Tooltip content={props.label}>
-        <label className="ml-2 truncate">{props.label}</label>
-      </Tooltip>
-    </components.Option>
-  )
+  const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => {
+    const id = useId()
+    return (
+      <components.Option {...props}>
+        <div role="option" aria-labelledby={id}>
+          {isMulti ? (
+            <span className="input-select__checkbox">
+              {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
+            </span>
+          ) : props.isSelected ? (
+            <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />
+          ) : props.data.icon ? (
+            <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
+          ) : (
+            <Icon name={IconAwesomeEnum.CHECK} className="opacity-0" />
+          )}
+          <label id={id} className="ml-2 truncate">
+            {props.label}
+          </label>
+        </div>
+      </components.Option>
+    )
+  }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
     <span className="text-sm text-text-600 mr-1">
