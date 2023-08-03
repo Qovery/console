@@ -14,7 +14,9 @@ export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
 const authProviderApi = new OrganizationAccountGitRepositoriesApi()
 const githubAppApi = new GithubAppApi()
 
-export const authProviderAdapter = createEntityAdapter<GitAuthProvider>()
+export const authProviderAdapter = createEntityAdapter<GitAuthProvider>({
+  selectId: (authProvider: GitAuthProvider) => `${authProvider.name}-${authProvider.id}`,
+})
 
 export const fetchAuthProvider = createAsyncThunk('authProvider/fetch', async (payload: { organizationId: string }) => {
   const response = await authProviderApi.getOrganizationGitProviderAccount(payload.organizationId)
@@ -54,12 +56,7 @@ export const authProviderSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchAuthProvider.fulfilled, (state: AuthProviderState, action: PayloadAction<GitAuthProvider[]>) => {
-        // API return same ids if we have a Github app associated, we need to override it, because our store gets a single id by object (we didn't have the same)
-        const newGithubAuthProvider: GitAuthProvider[] = action.payload.map((authProvider, index) => ({
-          ...authProvider,
-          id: `${authProvider.id}-${index}`,
-        }))
-        authProviderAdapter.setAll(state, newGithubAuthProvider)
+        authProviderAdapter.setAll(state, action.payload)
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchAuthProvider.rejected, (state: AuthProviderState, action) => {
