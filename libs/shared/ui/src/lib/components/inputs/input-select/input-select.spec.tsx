@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
@@ -39,9 +39,7 @@ describe('InputSelect', () => {
     render(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
-    await act(() => {
-      selectEvent.select(realSelect, 'Test 2')
-    })
+    await selectEvent.select(realSelect, 'Test 2')
 
     expect(screen.getByText('Test 2')).toBeInTheDocument()
   })
@@ -50,9 +48,7 @@ describe('InputSelect', () => {
     render(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
-    await selectEvent.select(realSelect, 'Test 2', {
-      container: document.body,
-    })
+    await selectEvent.select(realSelect, 'Test 2')
 
     screen.getByTestId('selected-icon')
   })
@@ -72,9 +68,7 @@ describe('InputSelect', () => {
 
     await selectEvent.select(realSelect, ['Test 2', 'Test 1'])
 
-    waitFor(() => {
-      screen.getByDisplayValue('test2,test2')
-    })
+    screen.getByDisplayValue('test2,test1')
   })
 
   it('should be disabled', () => {
@@ -107,7 +101,7 @@ describe('InputSelect', () => {
     await selectEvent.select(realSelect, ['Test 2', 'Test 1'])
 
     const editIcon = getByTestId('selected-edit-icon')
-    await editIcon.click()
+    editIcon.click()
 
     expect(mockAction).toHaveBeenCalledTimes(1)
   })
@@ -122,10 +116,8 @@ describe('InputSelect', () => {
     const realSelect = screen.getByLabelText('Select Multiple')
     selectEvent.openMenu(realSelect)
 
-    await act(() => {
-      const input = getByTestId('input-menu-list-button')
-      input.click()
-    })
+    const input = getByTestId('input-menu-list-button')
+    input.click()
 
     expect(props.menuListButton.onClick).toHaveBeenCalledTimes(1)
   })
@@ -141,12 +133,7 @@ describe('InputSelect', () => {
     render(<InputSelect placeholder="Filter" isFilter={true} options={options} onChange={onChangeMock} />)
     const realSelect = screen.getByText('Filter')
 
-    selectEvent.openMenu(realSelect)
-
-    const optionElement = screen.getByText('Option 2')
-    await act(() => {
-      optionElement.click()
-    })
+    await selectEvent.select(realSelect, 'Option 2')
 
     expect(onChangeMock).toHaveBeenCalledWith('option2')
     expect(screen.getByTestId('select')).toHaveClass('input--filter')
