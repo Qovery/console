@@ -7,8 +7,8 @@ const chance = new Chance('123')
 export const applicationFactoryMock = (howMany: number): ApplicationEntity[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
-    created_at: new Date().toString(),
-    updated_at: new Date().toString(),
+    created_at: chance.date({ year: 2023, string: true }).toString(),
+    updated_at: chance.date({ year: 2024, string: true }).toString(),
     storage: [
       {
         id: chance.guid(),
