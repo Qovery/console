@@ -1,8 +1,8 @@
 import { PortProtocolEnum, Probe } from 'qovery-typescript-axios'
 
 export interface PortData {
-  application_port: number | undefined
-  external_port: number | undefined
+  application_port?: number
+  external_port?: number
   is_public: boolean
   protocol: PortProtocolEnum
   name: string
