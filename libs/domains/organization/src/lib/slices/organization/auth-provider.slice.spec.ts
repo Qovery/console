@@ -27,7 +27,7 @@ describe('authProvider reducer', () => {
       expect.objectContaining({
         loadingStatus: 'loaded',
         error: null,
-        entities: { 1: { id: 1 } },
+        entities: { '1-0': { id: '1-0' } },
       })
     )
 
@@ -37,7 +37,7 @@ describe('authProvider reducer', () => {
       expect.objectContaining({
         loadingStatus: 'error',
         error: 'Uh oh',
-        entities: { 1: { id: 1 } },
+        entities: { '1-0': { id: '1-0' } },
       })
     )
   })
