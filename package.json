@@ -108,7 +108,7 @@
     "@types/redux-mock-store": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
-    "babel-jest": "29.4.3",
+    "babel-jest": "29.5.0",
     "babel-loader": "^8.1.0",
     "chance": "^1.1.8",
     "css-loader": "^6.4.0",

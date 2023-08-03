@@ -2386,7 +2386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/transform@npm:^29.3.1, @jest/transform@npm:^29.4.3, @jest/transform@npm:^29.5.0":
+"@jest/transform@npm:^29.3.1, @jest/transform@npm:^29.5.0":
   version: 29.5.0
   resolution: "@jest/transform@npm:29.5.0"
   dependencies:
@@ -7573,24 +7573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-jest@npm:29.4.3":
-  version: 29.4.3
-  resolution: "babel-jest@npm:29.4.3"
-  dependencies:
-    "@jest/transform": ^29.4.3
-    "@types/babel__core": ^7.1.14
-    babel-plugin-istanbul: ^6.1.1
-    babel-preset-jest: ^29.4.3
-    chalk: ^4.0.0
-    graceful-fs: ^4.2.9
-    slash: ^3.0.0
-  peerDependencies:
-    "@babel/core": ^7.8.0
-  checksum: a1a95937adb5e717dbffc2eb9e583fa6d26c7e5d5b07bb492a2d7f68631510a363e9ff097eafb642ad642dfac9dc2b13872b584f680e166a4f0922c98ea95853
-  languageName: node
-  linkType: hard
-
-"babel-jest@npm:^29.5.0":
+"babel-jest@npm:29.5.0, babel-jest@npm:^29.5.0":
   version: 29.5.0
   resolution: "babel-jest@npm:29.5.0"
   dependencies:
@@ -7802,7 +7785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-preset-jest@npm:^29.4.3, babel-preset-jest@npm:^29.5.0":
+"babel-preset-jest@npm:^29.5.0":
   version: 29.5.0
   resolution: "babel-preset-jest@npm:29.5.0"
   dependencies:
@@ -17777,7 +17760,7 @@ __metadata:
     ansi-to-react: ^6.1.6
     autoprefixer: 10.4.13
     axios: ^0.27.2
-    babel-jest: 29.4.3
+    babel-jest: 29.5.0
     babel-loader: ^8.1.0
     chance: ^1.1.8
     cronstrue: ^2.21.0
