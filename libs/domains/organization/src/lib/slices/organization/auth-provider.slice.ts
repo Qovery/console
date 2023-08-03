@@ -54,7 +54,12 @@ export const authProviderSlice = createSlice({
         state.loadingStatus = 'loading'
       })
       .addCase(fetchAuthProvider.fulfilled, (state: AuthProviderState, action: PayloadAction<GitAuthProvider[]>) => {
-        authProviderAdapter.setAll(state, action.payload)
+        // API return same ids if we have a Github app associated, we need to overide it, because our store get a single id by object (we didn't have the same)
+        const newGithubAuthProvider: GitAuthProvider[] = action.payload.map((authProvider, index) => ({
+          ...authProvider,
+          id: `${authProvider.id}-${index}`,
+        }))
+        authProviderAdapter.setAll(state, newGithubAuthProvider)
         state.loadingStatus = 'loaded'
       })
       .addCase(fetchAuthProvider.rejected, (state: AuthProviderState, action) => {
@@ -62,7 +67,7 @@ export const authProviderSlice = createSlice({
         state.error = action.error.message
         toastError(action.error)
       })
-      .addCase(disconnectGithubApp.fulfilled, (state: AuthProviderState) => {
+      .addCase(disconnectGithubApp.fulfilled, () => {
         toast(ToastEnum.SUCCESS, `Github App disconnected successfully`)
       })
   },
