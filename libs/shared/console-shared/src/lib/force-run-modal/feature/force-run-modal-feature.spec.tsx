@@ -29,41 +29,41 @@ describe('ForceRunModalFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  // it('should render no radio box if it is a cron', () => {
-  //   const selectApplicationByIdSpy: SpyInstance = jest.spyOn(storeApplication, 'selectApplicationById')
-  //   selectApplicationByIdSpy.mockReturnValue(cronjobFactoryMock(1)[0])
-  //   const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
-  //   expect(queryAllByTestId(baseElement, 'input-radio-box')).toHaveLength(0)
+  it('should render no radio box if it is a cron', () => {
+    const selectApplicationByIdSpy: SpyInstance = jest.spyOn(storeApplication, 'selectApplicationById')
+    selectApplicationByIdSpy.mockReturnValue(cronjobFactoryMock(1)[0])
+    const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
+    expect(queryAllByTestId(baseElement, 'input-radio-box')).toHaveLength(0)
 
-  //   expect(baseElement).toBeTruthy()
-  // })
+    expect(baseElement).toBeTruthy()
+  })
 
-  // it('should dispatch forceRunJob with the good payload', async () => {
-  //   const selectApplicationByIdSpy: SpyInstance = jest.spyOn(storeApplication, 'selectApplicationById')
-  //   const lifecycle = lifecycleJobFactoryMock(1)[0]
+  it('should dispatch forceRunJob with the good payload', async () => {
+    const selectApplicationByIdSpy: SpyInstance = jest.spyOn(storeApplication, 'selectApplicationById')
+    const lifecycle = lifecycleJobFactoryMock(1)[0]
 
-  //   selectApplicationByIdSpy.mockReturnValue(lifecycle)
+    selectApplicationByIdSpy.mockReturnValue(lifecycle)
 
-  //   const forceRunJobSpy: SpyInstance = jest.spyOn(storeApplication, 'forceRunJob')
-  //   const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
+    const forceRunJobSpy: SpyInstance = jest.spyOn(storeApplication, 'forceRunJob')
+    const { baseElement } = render(<ForceRunModalFeature applicationId="123" />)
 
-  //   const radioBoxe = getByLabelText(baseElement, 'Start')
-  //   await act(() => {
-  //     radioBoxe.click()
-  //   })
+    const radioBoxe = getByLabelText(baseElement, 'Start')
+    await act(() => {
+      radioBoxe.click()
+    })
 
-  //   const submit = getByTestId(baseElement, 'submit-button')
+    const submit = getByTestId(baseElement, 'submit-button')
 
-  //   expect(submit).not.toBeDisabled()
+    expect(submit).not.toBeDisabled()
 
-  //   await act(() => {
-  //     submit.click()
-  //   })
-  //   expect(forceRunJobSpy).toHaveBeenCalled()
+    await act(() => {
+      submit.click()
+    })
+    expect(forceRunJobSpy).toHaveBeenCalled()
 
-  //   expect(forceRunJobSpy).toHaveBeenCalledWith({
-  //     applicationId: '123',
-  //     jobForceEvent: JobForceEvent.START,
-  //   })
-  // })
+    expect(forceRunJobSpy).toHaveBeenCalledWith({
+      applicationId: '123',
+      jobForceEvent: JobForceEvent.START,
+    })
+  })
 })
