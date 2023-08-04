@@ -2,11 +2,10 @@
 import { queries, render, within } from '@testing-library/react'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import userEvent from '@testing-library/user-event'
-import * as customQueries from './custom-queries'
 
 const allQueries = {
   ...queries,
-  ...customQueries,
+  // TODO: add custom queries here
 }
 
 const customScreen = within(document.body, allQueries)
