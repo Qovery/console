@@ -28,7 +28,8 @@ const environmentScopes = (serviceType?: ServiceTypeEnum) => [
 export const computeAvailableScope = (
   scope?: APIVariableScopeEnum,
   includeBuiltIn?: boolean,
-  serviceType?: ServiceTypeEnum
+  serviceType?: ServiceTypeEnum,
+  excludeCurrentScope: boolean = false
 ): APIVariableScopeEnum[] => {
   if (!scope) {
     const scopeToReturn = []
@@ -56,6 +57,7 @@ export const computeAvailableScope = (
       return scope.hierarchy >= (theScope?.hierarchy || -1) && scope.hierarchy >= 0
     })
     .map((scope) => scope.name)
+    .filter((s) => (excludeCurrentScope ? s !== scope : true))
 }
 
 export function getScopeHierarchy(scope?: APIVariableScopeEnum, serviceType?: ServiceTypeEnum): number {

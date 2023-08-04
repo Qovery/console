@@ -30,6 +30,14 @@ describe('computeAvailableEnvironmentVariableScope', () => {
       expect(scopes).toEqual([APIVariableScopeEnum.ENVIRONMENT, APIVariableScopeEnum.APPLICATION])
     })
   })
+
+  describe('when the scope is set and currentScope is excluded', () => {
+    const scope = APIVariableScopeEnum.ENVIRONMENT
+    it('should return all scope at the same level and below Environment', () => {
+      const scopes = computeAvailableScope(scope, false, undefined, true)
+      expect(scopes).toEqual([APIVariableScopeEnum.APPLICATION])
+    })
+  })
 })
 
 describe('getScopeHierarchy', () => {

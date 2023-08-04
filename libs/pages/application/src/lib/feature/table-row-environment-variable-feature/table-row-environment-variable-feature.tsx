@@ -70,6 +70,11 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
 
   const createOverride = {
     name: 'Create override',
+    disabled: variable.scope === APIVariableScopeEnum.APPLICATION,
+    tooltip:
+      variable.scope === APIVariableScopeEnum.APPLICATION
+        ? 'You can’t override variables on the application scope'
+        : undefined,
     onClick: () => {
       openModal({
         content: (

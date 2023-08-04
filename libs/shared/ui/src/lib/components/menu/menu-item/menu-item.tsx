@@ -1,14 +1,15 @@
 import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
-import React from 'react'
+import { type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Tooltip } from '@qovery/shared/ui'
 import { CopyToClipboard } from '../../copy-to-clipboard/copy-to-clipboard'
 import { Truncate } from '../../truncate/truncate'
 
 export interface MenuItemProps {
   name?: string
   link?: { url: string; external?: boolean }
-  contentLeft?: React.ReactNode
-  contentRight?: React.ReactNode
+  contentLeft?: ReactNode
+  contentRight?: ReactNode
   onClick?: (e: ClickEvent) => void
   copy?: string
   copyTooltip?: string
@@ -18,7 +19,8 @@ export interface MenuItemProps {
   isActive?: boolean
   truncateLimit?: number
   disabled?: boolean
-  itemContentCustom?: React.ReactNode
+  itemContentCustom?: ReactNode
+  tooltip?: string
 }
 
 export function MenuItem(props: MenuItemProps) {
@@ -37,6 +39,7 @@ export function MenuItem(props: MenuItemProps) {
     truncateLimit = 34,
     disabled = false,
     itemContentCustom,
+    tooltip,
   } = props
 
   const navigate = useNavigate()
@@ -72,40 +75,40 @@ export function MenuItem(props: MenuItemProps) {
     </>
   )
 
-  if (link?.external) {
-    return (
-      <Item
-        className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}
-        href={link.url}
-        data-testid="menuItem"
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={(e: ClickEvent) => {
-          e.syntheticEvent.stopPropagation()
+  const item = link?.external ? (
+    <Item
+      className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}
+      href={link.url}
+      data-testid="menuItem"
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(e: ClickEvent) => {
+        e.syntheticEvent.stopPropagation()
+        onClick && onClick(e)
+      }}
+    >
+      {itemContent}
+    </Item>
+  ) : (
+    <Item
+      className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName} ${disabledClassName}`}
+      data-testid="menuItem"
+      defaultValue="prod"
+      onClick={(e: ClickEvent) => {
+        e.syntheticEvent.preventDefault()
+        if (!disabled) {
+          link?.url && navigate(link?.url)
           onClick && onClick(e)
-        }}
-      >
-        {itemContent}
-      </Item>
-    )
-  } else {
-    return (
-      <Item
-        className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName} ${disabledClassName}`}
-        data-testid="menuItem"
-        defaultValue="prod"
-        onClick={(e: ClickEvent) => {
-          e.syntheticEvent.preventDefault()
-          if (!disabled) {
-            link?.url && navigate(link?.url)
-            onClick && onClick(e)
-          }
-        }}
-      >
-        {itemContent}
-      </Item>
-    )
-  }
+        }
+      }}
+    >
+      {itemContent}
+    </Item>
+  )
+
+  const result = tooltip ? <Tooltip content={tooltip}>{item}</Tooltip> : item
+
+  return result
 }
 
 export default MenuItem
