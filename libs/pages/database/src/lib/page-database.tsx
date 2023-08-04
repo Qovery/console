@@ -1,5 +1,5 @@
 import equal from 'fast-deep-equal'
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Route, Routes, useParams } from 'react-router-dom'
@@ -32,8 +32,10 @@ export function PageDatabase() {
 
   const dispatch = useDispatch<AppDispatch>()
 
+  const isDeployed = database && database?.status?.state === StateEnum.DEPLOYED
+
   useEffect(() => {
-    if (database && database.mode !== DatabaseModeEnum.MANAGED && databaseId && loadingStatus === 'loaded') {
+    if (isDeployed && database.mode !== DatabaseModeEnum.MANAGED && databaseId && loadingStatus === 'loaded') {
       database?.metrics?.loadingStatus !== 'loaded' &&
         database?.metrics?.loadingStatus !== 'error' &&
         dispatch(fetchDatabaseMetrics({ databaseId }))
@@ -49,7 +51,7 @@ export function PageDatabase() {
     )
 
     return () => clearInterval(fetchDatabaseStatusByInterval)
-  }, [databaseId, loadingStatus, environmentId, database, dispatch])
+  }, [databaseId, loadingStatus, environmentId, database, isDeployed, dispatch])
 
   return (
     <Container database={database} environment={environment}>
