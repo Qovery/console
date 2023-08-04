@@ -60,10 +60,18 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])
 
+  const availableScopes = computeAvailableScope(variable?.scope, false, props.serviceType, true)
+  const defaultScope =
+    variable?.scope === APIVariableScopeEnum.BUILT_IN
+      ? undefined
+      : mode === EnvironmentVariableCrudMode.CREATION && type === EnvironmentVariableType.OVERRIDE
+      ? availableScopes[0]
+      : variable?.scope
+
   const methods = useForm<DataFormEnvironmentVariableInterface>({
     defaultValues: {
       key: variable?.key,
-      scope: variable?.scope === APIVariableScopeEnum.BUILT_IN ? undefined : variable?.scope,
+      scope: defaultScope,
       value: (variable as EnvironmentVariableEntity)?.value,
       isSecret: variable?.variable_kind === 'secret',
       mountPath: getEnvironmentVariableFileMountPath(variable),
@@ -133,7 +141,7 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
         onSubmit={onSubmit}
         closeModal={props.closeModal}
         type={props.type}
-        availableScopes={computeAvailableScope(variable?.scope, false, props.serviceType)}
+        availableScopes={availableScopes}
         loading={loading}
         parentVariableName={variable?.key}
         isFile={isFile}
