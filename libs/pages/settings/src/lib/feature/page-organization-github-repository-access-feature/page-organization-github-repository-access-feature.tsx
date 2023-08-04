@@ -103,7 +103,7 @@ export function PageOrganizationGithubRepositoryAccessFeature() {
       .catch((error) => {
         setForceLoading(false)
 
-        if (error.name === 'Bad Request' && error.code === '400' && error.message.includes('This git provider is')) {
+        if ((error.name === 'Bad Request' || error.code === '400') && error.message.includes('This git provider is')) {
           onDisconnectWithModal()
         }
       })
