@@ -105,30 +105,32 @@ export function InputSelect({
   }, [value, isMulti, options])
 
   const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => (
-    <components.MenuList {...props}>
-      <div role="listbox">{props.children}</div>
-      {menuListButton && (
-        <button
-          data-testid="input-menu-list-button"
-          type="button"
-          tabIndex={-1}
-          className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-element-light-lighter-300 before:absolute before:-top-2 before:left-0"
-          onClick={menuListButton.onClick}
-        >
-          <div className="w-4 h-full flex items-center justify-center">{menuListButton.icon}</div>
-          <Tooltip content={menuListButton.label}>
-            <label className="ml-2 truncate">{menuListButton.label}</label>
-          </Tooltip>
-        </button>
-      )}
-    </components.MenuList>
+    <div role="listbox">
+      <components.MenuList {...props}>
+        {props.children}
+        {menuListButton && (
+          <button
+            data-testid="input-menu-list-button"
+            type="button"
+            tabIndex={-1}
+            className="input-select__button w-full mt-4 relative before:content-[''] before:w-full before:h-[1px] before:block before:bg-element-light-lighter-300 before:absolute before:-top-2 before:left-0"
+            onClick={menuListButton.onClick}
+          >
+            <div className="w-4 h-full flex items-center justify-center">{menuListButton.icon}</div>
+            <Tooltip content={menuListButton.label}>
+              <label className="ml-2 truncate">{menuListButton.label}</label>
+            </Tooltip>
+          </button>
+        )}
+      </components.MenuList>
+    </div>
   )
 
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => {
     const id = useId()
     return (
-      <components.Option {...props}>
-        <div role="option" aria-labelledby={id}>
+      <div role="option" aria-labelledby={id}>
+        <components.Option {...props}>
           {isMulti ? (
             <span className="input-select__checkbox">
               {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
@@ -143,8 +145,8 @@ export function InputSelect({
           <label id={id} className="ml-2 truncate">
             {props.label}
           </label>
-        </div>
-      </components.Option>
+        </components.Option>
+      </div>
     )
   }
 
