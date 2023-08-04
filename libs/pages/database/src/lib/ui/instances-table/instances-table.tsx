@@ -32,26 +32,32 @@ export function InstancesTable(props: InstancesTableProps) {
           return (
             <tr className="text-xs text-text-500 font-medium" key={instance.name}>
               <td className="border border-element-light-lighter-400 px-6 py-4">
-                {mode && mode === DatabaseModeEnum.CONTAINER ? (instance.name ? instance.name : '-') : 'N / A'}
+                {
+                  mode && mode === DatabaseModeEnum.CONTAINER
+                    ? instance.name
+                      ? instance.name
+                      : '-'
+                    : 'N / A' /** TODO: implem real metrics **/
+                }
               </td>
               <td className="border border-element-light-lighter-400 px-6 py-4">
                 {mode && mode === DatabaseModeEnum.CONTAINER
-                  ? instance.memory?.consumed_in_percent
-                    ? `${Math.round((instance.memory?.consumed_in_percent || 0) * 10) / 10}%`
+                  ? Number.isFinite(instance.memory?.consumed_in_percent)
+                    ? `${Math.round((instance.memory?.consumed_in_percent ?? 0) * 10) / 10}%`
                     : '-'
                   : 'N / A'}
               </td>
               <td className="border border-element-light-lighter-400 px-6 py-4">
                 {mode && mode === DatabaseModeEnum.CONTAINER
-                  ? instance.cpu?.consumed_in_percent
-                    ? `${Math.round((instance.cpu?.consumed_in_percent || 0) * 10) / 10}%`
+                  ? Number.isFinite(instance.cpu?.consumed_in_percent)
+                    ? `${Math.round((instance.cpu?.consumed_in_percent ?? 0) * 10) / 10}%`
                     : '-'
                   : 'N / A'}
               </td>
               <td className="border border-element-light-lighter-400 px-6 py-4">
                 {mode && mode === DatabaseModeEnum.CONTAINER
-                  ? instance.storage?.consumed_in_percent
-                    ? `${Math.round((instance.storage?.consumed_in_percent || 0) * 10) / 10}%`
+                  ? Number.isFinite(instance.storage?.consumed_in_percent)
+                    ? `${Math.round((instance.storage?.consumed_in_percent ?? 0) * 10) / 10}%`
                     : '-'
                   : 'N / A'}
               </td>
