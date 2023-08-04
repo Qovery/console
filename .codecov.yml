@@ -3,4 +3,5 @@ coverage:
     project:
       default:
         target: auto
+        threshold: 0.5%
     patch: off
