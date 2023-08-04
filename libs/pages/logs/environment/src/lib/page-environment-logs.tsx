@@ -9,12 +9,7 @@ import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/do
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import {
-  DEPLOYMENT_LOGS_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-  SERVICE_LOGS_URL,
-} from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/state/store'
@@ -82,10 +77,10 @@ export function PageEnvironmentLogs() {
           environmentStatus={environmentStatus}
         />
         <Routes>
-          <Route
+          {/* <Route
             path={DEPLOYMENT_LOGS_URL()}
             element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
-          />
+          /> */}
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
             element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}

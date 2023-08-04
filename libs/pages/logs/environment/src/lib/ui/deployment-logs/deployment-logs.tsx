@@ -37,8 +37,6 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
     [logs]
   )
 
-  console.log('serviceDeploymentStatus: ', serviceDeploymentStatus)
-
   const displayPlaceholder = (serviceDeploymentStatus?: ServiceDeploymentStatusEnum) => {
     switch (serviceDeploymentStatus) {
       case ServiceDeploymentStatusEnum.NEVER_DEPLOYED:

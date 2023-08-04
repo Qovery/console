@@ -1,4 +1,4 @@
-import { DeploymentStageWithServicesStatuses, Environment, EnvironmentLogs } from 'qovery-typescript-axios'
+import { DeploymentStageWithServicesStatuses, Environment, EnvironmentLogs, Status } from 'qovery-typescript-axios'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -56,8 +56,7 @@ export function getServiceStatuesById(services?: DeploymentStageWithServicesStat
   return null
 }
 
-export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
-  const { environment } = props
+export function DeploymentLogsFeature({ environment, statusStages }: DeploymentLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
   const { stageId, updateServiceId, updateVersionId } = useContext(ServiceStageIdsContext)
 
@@ -167,7 +166,7 @@ export function DeploymentLogsFeature(props: DeploymentLogsFeatureProps) {
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
       serviceRunningStatus={application?.running_status || database?.running_status}
-      // serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
+      serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
     />
   )
