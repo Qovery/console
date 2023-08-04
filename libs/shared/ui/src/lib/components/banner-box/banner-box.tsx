@@ -60,7 +60,7 @@ export function BannerBox(props: BannerBoxProps) {
         />
       </div>
 
-      <div>
+      <div className="flex flex-col justify-center">
         {title && <h3 className="text-text-600 font-semibold text-sm mb-1">{title}</h3>}
         <div className="text-xs text-text-500">{message}</div>
       </div>

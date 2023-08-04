@@ -1,5 +1,5 @@
-import { ServicePort } from 'qovery-typescript-axios'
-import { PortData } from '@qovery/shared/interfaces'
+import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
+import { type PortData } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -8,13 +8,17 @@ import {
   ButtonSize,
   ButtonStyle,
   EmptyState,
+  Icon,
   IconAwesomeEnum,
+  Tooltip,
 } from '@qovery/shared/ui'
+import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
 
 export interface FlowCreatePortProps {
   onAddPort: () => void
-  onRemovePort: (port: PortData | ServicePort) => void
+  onRemovePort: (port: PortData | ServicePort, warning?: string) => void
   ports?: PortData[] | ServicePort[]
+  healthchecks?: Healthcheck
   onBack?: () => void
   onEdit?: (port: PortData | ServicePort) => void
   isSetting?: boolean
@@ -23,6 +27,7 @@ export interface FlowCreatePortProps {
 
 export function FlowCreatePort({
   ports,
+  healthchecks,
   onAddPort,
   onRemovePort,
   isSetting,
@@ -30,6 +35,9 @@ export function FlowCreatePort({
   onBack,
   onEdit,
 }: FlowCreatePortProps) {
+  const livenessType = healthchecks?.liveness_probe?.type
+  const readinessType = healthchecks?.readiness_probe?.type
+
   return (
     <div>
       <div className="flex justify-between mb-10">
@@ -62,29 +70,45 @@ export function FlowCreatePort({
                   className="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-element-light-lighter-500 last:border-0"
                   data-testid="form-row"
                 >
-                  <div className="text-xs">
-                    <span className="text-text-600 font-medium">
-                      Application Port:{' '}
-                      {(customPort as PortData).application_port || (customPort as ServicePort).internal_port}
-                    </span>
-                    <p className="flex gap-3 text-text-400 mt-1">
-                      <span>
-                        Public:{' '}
-                        {(customPort as PortData).is_public || (customPort as ServicePort).publicly_accessible
-                          ? 'Yes'
-                          : 'No'}
+                  <div className="flex flex-row">
+                    {healthchecks &&
+                      (isMatchingHealthCheck(customPort, livenessType) ||
+                      isMatchingHealthCheck(customPort, readinessType) ? (
+                        <Tooltip side="top" content="A health check is running on this port">
+                          <div className="mr-4 inline-flex items-center">
+                            <Icon
+                              name={IconAwesomeEnum.SHIELD_CHECK}
+                              className="flex justify-center w-5 text-success-500 hover:text-success-700"
+                            />
+                          </div>
+                        </Tooltip>
+                      ) : (
+                        <div className="w-9"></div>
+                      ))}
+                    <div className="text-xs">
+                      <span className="text-text-600 font-medium">
+                        Application Port:{' '}
+                        {(customPort as PortData).application_port || (customPort as ServicePort).internal_port}
                       </span>
-                      <span>Protocol: {(customPort as ServicePort).protocol}</span>
-                      {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
-                        <span>Port Name: {(customPort as ServicePort).name}</span>
-                      )}
-                      {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
+                      <p className="flex gap-3 text-text-400 mt-1">
                         <span>
-                          External Port:{' '}
-                          {(customPort as ServicePort).external_port || (customPort as PortData).external_port}
+                          Public:{' '}
+                          {(customPort as PortData).is_public || (customPort as ServicePort).publicly_accessible
+                            ? 'Yes'
+                            : 'No'}
                         </span>
-                      )}
-                    </p>
+                        <span>Protocol: {(customPort as ServicePort).protocol}</span>
+                        {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
+                          <span>Port Name: {(customPort as ServicePort).name}</span>
+                        )}
+                        {((customPort as ServicePort).publicly_accessible || (customPort as PortData).is_public) && (
+                          <span>
+                            External Port:{' '}
+                            {(customPort as ServicePort).external_port || (customPort as PortData).external_port}
+                          </span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                   <div>
                     {onEdit && (
@@ -102,7 +126,15 @@ export function FlowCreatePort({
                         className="!bg-transparent hover:!bg-element-light-lighter-400"
                         style={ButtonIconStyle.STROKED}
                         size={ButtonSize.REGULAR}
-                        onClick={() => onRemovePort(customPort)}
+                        onClick={() =>
+                          onRemovePort(
+                            customPort,
+                            isMatchingHealthCheck(customPort, livenessType) ||
+                              isMatchingHealthCheck(customPort, readinessType)
+                              ? 'The health check pointing to this port will be deleted as well.'
+                              : undefined
+                          )
+                        }
                         dataTestId="delete-button"
                         icon={IconAwesomeEnum.TRASH}
                       />

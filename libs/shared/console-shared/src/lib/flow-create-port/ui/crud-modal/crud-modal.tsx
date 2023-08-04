@@ -14,14 +14,24 @@ import {
 } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
-  onSubmit: () => void
-  onClose: () => void
   cloudProvider?: CloudProviderEnum
-  loading?: boolean
+  currentProtocol?: PortProtocolEnum
   isEdit?: boolean
+  isMatchingHealthCheck?: boolean
+  loading?: boolean
+  onClose: () => void
+  onSubmit: () => void
 }
 
-export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }: CrudModalProps) {
+export function CrudModal({
+  cloudProvider,
+  currentProtocol,
+  isEdit,
+  isMatchingHealthCheck = false,
+  loading,
+  onClose,
+  onSubmit,
+}: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
   const watchProtocol = watch('protocol')
@@ -89,6 +99,15 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
             value={field.value}
             label="Application port"
             error={error?.message}
+            rightElement={
+              isMatchingHealthCheck && (
+                <Tooltip side="left" content="A health check is running on this port">
+                  <div>
+                    <Icon name={IconAwesomeEnum.SHIELD_CHECK} className="text-success-500 hover:text-success-700" />
+                  </div>
+                </Tooltip>
+              )
+            }
           />
         )}
       />
@@ -185,6 +204,22 @@ export function CrudModal({ onSubmit, onClose, cloudProvider, loading, isEdit }:
           icon={IconAwesomeEnum.CIRCLE_INFO}
           type={BannerBoxEnum.WARNING}
           message="Activating this feature will add an extra cost to your cloud provider bill (a Network Load Balancer will be created)."
+        />
+      )}
+      {isMatchingHealthCheck && currentProtocol === watchProtocol && (
+        <BannerBox
+          className="mt-4"
+          icon={IconAwesomeEnum.CIRCLE_INFO}
+          type={BannerBoxEnum.WARNING}
+          message="The health check will be updated to use the new port value."
+        />
+      )}
+      {isMatchingHealthCheck && currentProtocol !== watchProtocol && (
+        <BannerBox
+          className="mt-4"
+          icon={IconAwesomeEnum.CIRCLE_INFO}
+          type={BannerBoxEnum.WARNING}
+          message="Please verify the health check configuration."
         />
       )}
       <BannerBox
