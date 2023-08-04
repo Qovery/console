@@ -2485,7 +2485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@juggle/resize-observer@npm:^3.3.1":
+"@juggle/resize-observer@npm:^3.3.1, @juggle/resize-observer@npm:^3.4.0":
   version: 3.4.0
   resolution: "@juggle/resize-observer@npm:3.4.0"
   checksum: 2505028c05cc2e17639fcad06218b1c4b60f932a4ebb4b41ab546ef8c157031ae377e3f560903801f6d01706dbefd4943b6c4704bf19ed86dfa1c62f1473a570
@@ -17711,6 +17711,7 @@ __metadata:
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": ^7.12.13
     "@elgorditosalsero/react-gtm-hook": ^2.6.0
+    "@juggle/resize-observer": ^3.4.0
     "@nx/cypress": 16.4.0
     "@nx/devkit": 16.4.0
     "@nx/eslint-plugin": 16.4.0
@@ -17799,6 +17800,7 @@ __metadata:
     react-datepicker: ^4.12.0
     react-dom: 18.2.0
     react-dropzone: ^14.2.2
+    react-flat-providers: ^2.2.0
     react-hook-form: ^7.43.2
     react-hot-toast: ^2.4.0
     react-payment-inputs: ^1.1.9
@@ -18083,6 +18085,15 @@ __metadata:
   version: 3.2.2
   resolution: "react-fast-compare@npm:3.2.2"
   checksum: 2071415b4f76a3e6b55c84611c4d24dcb12ffc85811a2840b5a3f1ff2d1a99be1020d9437ee7c6e024c9f4cbb84ceb35e48cf84f28fcb00265ad2dfdd3947704
+  languageName: node
+  linkType: hard
+
+"react-flat-providers@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "react-flat-providers@npm:2.2.0"
+  peerDependencies:
+    react: ">= 17.0.0"
+  checksum: fa66f7acf1ceae00c50aa135bf956591bd2f19cb92b3c318d3a2cfe14af899e4e3f44316928bf681a50e12b681716512b9c549d684bd9e8c262ace922ee217e6
   languageName: node
   linkType: hard
 
