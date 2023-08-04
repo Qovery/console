@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import SidebarHistory from '../../ui/sidebar-history/sidebar-history'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
 export function SidebarHistoryFeature() {
@@ -20,28 +21,9 @@ export function SidebarHistoryFeature() {
     }
   }, [navigate, serviceId, versionId, updateVersionId, data, pathLogs])
 
-  const currentIndex = (data?.findIndex((item) => item.id === versionId) || 0) + 1
+  if (!data) return
 
-  return (
-    <div className="flex justify-center border-b border-element-light-darker-100 px-4 py-3">
-      <div>
-        <div className="text-text-100 text-xs font-medium">Deployment - {currentIndex}/10</div>
-        <div>
-          {data?.map((item, index) => (
-            <div
-              key={item.id}
-              className={`py-2 text-xs ${item.id === versionId ? 'text-brand-400' : 'text-text-100'}`}
-              onClick={() => {
-                navigate(pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, item.id))
-              }}
-            >
-              {index + 1}/{data.length} {item.id}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
+  return <SidebarHistory data={data} versionId={versionId} serviceId={serviceId} pathLogs={pathLogs} />
 }
 
 export default SidebarHistoryFeature
