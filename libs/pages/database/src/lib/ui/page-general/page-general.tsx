@@ -3,6 +3,7 @@ import {
   type DatabaseCurrentMetricMemory,
   type DatabaseCurrentMetricStorage,
   DatabaseModeEnum,
+  StateEnum,
 } from 'qovery-typescript-axios'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Skeleton } from '@qovery/shared/ui'
@@ -59,14 +60,16 @@ export function PageGeneral(props: PageGeneralProps) {
             <div className="flex-1 border-r border-element-light-lighter-400 p-5">
               <Skeleton height={16} width={48} show={false}>
                 <div className="text-text-600 font-bold">
-                  {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '1 / 1'}
+                  {database?.mode === DatabaseModeEnum.MANAGED
+                    ? 'N / A'
+                    : `${database?.status?.state === StateEnum.DEPLOYED ? 1 : 0} / 1`}
                 </div>
               </Skeleton>
               <span className="text-xs text-text-400 font-medium">Running instances</span>
             </div>
             <div className="flex-1 p-5">
               <div className="text-text-600 font-bold">
-                {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '-'}
+                {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '-' /** TODO: implem real metrics **/}
               </div>
               <span className="text-xs text-text-400 font-medium">Service restart</span>
             </div>
