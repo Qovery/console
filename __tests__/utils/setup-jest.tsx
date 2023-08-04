@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import { RenderOptions, render } from '@testing-library/react'
 import { ReactElement } from 'react'
 import { Props, Wrapper } from './providers'

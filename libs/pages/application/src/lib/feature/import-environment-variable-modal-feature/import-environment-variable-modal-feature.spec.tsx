@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom/extend-expect'
 import { act, findAllByTestId, fireEvent, screen, waitFor } from '@testing-library/react'
 import { render } from '__tests__/utils/setup-jest'
 import ImportEnvironmentVariableModalFeature, {

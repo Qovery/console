@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom'
+
 jest.mock('@auth0/auth0-react', () => ({
   Auth0Provider: ({ children }) => children,
   withAuthenticationRequired: (component, _) => component,
