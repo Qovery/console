@@ -1,10 +1,11 @@
 import { Organization, PlanEnum, Project } from 'qovery-typescript-axios'
 import { useContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { postOrganization } from '@qovery/domains/organization'
 import { postProject } from '@qovery/domains/projects'
+import { selectUser } from '@qovery/domains/user'
 import { useAuth } from '@qovery/shared/auth'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -70,7 +71,8 @@ export function OnboardingPricing() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const { showNewMessages } = useIntercom()
-  const { organization_name, project_name } = useContext(ContextOnboarding)
+  const user = useSelector(selectUser)
+  const { organization_name, project_name, admin_email } = useContext(ContextOnboarding)
   const { createAuthCookies, getAccessTokenSilently } = useAuth()
   const [loading, setLoading] = useState('')
 
@@ -81,6 +83,7 @@ export function OnboardingPricing() {
       postOrganization({
         name: organization_name,
         plan: plan,
+        admin_emails: admin_email ? [admin_email] : user && user.email ? [user.email] : [],
       })
     )
       .then(async (result) => {
