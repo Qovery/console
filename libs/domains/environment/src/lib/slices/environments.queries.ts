@@ -18,7 +18,7 @@ import {
 } from 'qovery-typescript-axios'
 import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import { WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoPayload } from '@qovery/shared/utils'
 
