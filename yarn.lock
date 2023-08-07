@@ -2386,7 +2386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/transform@npm:^29.3.1, @jest/transform@npm:^29.4.3, @jest/transform@npm:^29.5.0":
+"@jest/transform@npm:^29.3.1, @jest/transform@npm:^29.5.0":
   version: 29.5.0
   resolution: "@jest/transform@npm:29.5.0"
   dependencies:
@@ -2485,7 +2485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@juggle/resize-observer@npm:^3.3.1":
+"@juggle/resize-observer@npm:^3.3.1, @juggle/resize-observer@npm:^3.4.0":
   version: 3.4.0
   resolution: "@juggle/resize-observer@npm:3.4.0"
   checksum: 2505028c05cc2e17639fcad06218b1c4b60f932a4ebb4b41ab546ef8c157031ae377e3f560903801f6d01706dbefd4943b6c4704bf19ed86dfa1c62f1473a570
@@ -6154,7 +6154,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16":
+"@types/react@npm:*, @types/react@npm:18.2.14, @types/react@npm:>=16":
   version: 18.2.14
   resolution: "@types/react@npm:18.2.14"
   dependencies:
@@ -6162,17 +6162,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: a6a5e8cc78f486b9020d1ad009aa6c56943c68c7c6376e0f8399e9cbcd950b7b8f5d73f00200f5379f5e58d31d57d8aed24357f301d8e86108cd438ce6c8b3dd
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.2.13":
-  version: 18.2.13
-  resolution: "@types/react@npm:18.2.13"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: f7c15f19c164a29262993ea2aae2085fa38cddd9b8359fd8fefabfced91010b515a3abe2042b2b7f2f86e6b38a25b191415aa9313a9027175e3a000883c858cc
   languageName: node
   linkType: hard
 
@@ -7584,24 +7573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-jest@npm:29.4.3":
-  version: 29.4.3
-  resolution: "babel-jest@npm:29.4.3"
-  dependencies:
-    "@jest/transform": ^29.4.3
-    "@types/babel__core": ^7.1.14
-    babel-plugin-istanbul: ^6.1.1
-    babel-preset-jest: ^29.4.3
-    chalk: ^4.0.0
-    graceful-fs: ^4.2.9
-    slash: ^3.0.0
-  peerDependencies:
-    "@babel/core": ^7.8.0
-  checksum: a1a95937adb5e717dbffc2eb9e583fa6d26c7e5d5b07bb492a2d7f68631510a363e9ff097eafb642ad642dfac9dc2b13872b584f680e166a4f0922c98ea95853
-  languageName: node
-  linkType: hard
-
-"babel-jest@npm:^29.5.0":
+"babel-jest@npm:29.5.0, babel-jest@npm:^29.5.0":
   version: 29.5.0
   resolution: "babel-jest@npm:29.5.0"
   dependencies:
@@ -7813,7 +7785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-preset-jest@npm:^29.4.3, babel-preset-jest@npm:^29.5.0":
+"babel-preset-jest@npm:^29.5.0":
   version: 29.5.0
   resolution: "babel-preset-jest@npm:29.5.0"
   dependencies:
@@ -17739,6 +17711,7 @@ __metadata:
     "@babel/preset-react": ^7.14.5
     "@babel/preset-typescript": ^7.12.13
     "@elgorditosalsero/react-gtm-hook": ^2.6.0
+    "@juggle/resize-observer": ^3.4.0
     "@nx/cypress": 16.4.0
     "@nx/devkit": 16.4.0
     "@nx/eslint-plugin": 16.4.0
@@ -17775,7 +17748,7 @@ __metadata:
     "@types/downloadjs": ^1.4.3
     "@types/jest": 29.4.4
     "@types/node": 18.14.2
-    "@types/react": 18.2.13
+    "@types/react": 18.2.14
     "@types/react-beautiful-dnd": ^13.1.2
     "@types/react-datepicker": ^4.11.2
     "@types/react-dom": 18.2.6
@@ -17788,7 +17761,7 @@ __metadata:
     ansi-to-react: ^6.1.6
     autoprefixer: 10.4.13
     axios: ^0.27.2
-    babel-jest: 29.4.3
+    babel-jest: 29.5.0
     babel-loader: ^8.1.0
     chance: ^1.1.8
     cronstrue: ^2.21.0
@@ -17827,6 +17800,7 @@ __metadata:
     react-datepicker: ^4.12.0
     react-dom: 18.2.0
     react-dropzone: ^14.2.2
+    react-flat-providers: ^2.2.0
     react-hook-form: ^7.43.2
     react-hot-toast: ^2.4.0
     react-payment-inputs: ^1.1.9
@@ -18111,6 +18085,15 @@ __metadata:
   version: 3.2.2
   resolution: "react-fast-compare@npm:3.2.2"
   checksum: 2071415b4f76a3e6b55c84611c4d24dcb12ffc85811a2840b5a3f1ff2d1a99be1020d9437ee7c6e024c9f4cbb84ceb35e48cf84f28fcb00265ad2dfdd3947704
+  languageName: node
+  linkType: hard
+
+"react-flat-providers@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "react-flat-providers@npm:2.2.0"
+  peerDependencies:
+    react: ">= 17.0.0"
+  checksum: fa66f7acf1ceae00c50aa135bf956591bd2f19cb92b3c318d3a2cfe14af899e4e3f44316928bf681a50e12b681716512b9c549d684bd9e8c262ace922ee217e6
   languageName: node
   linkType: hard
 

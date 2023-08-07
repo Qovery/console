@@ -1,5 +1,4 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import {
   CloudProviderEnum,
   DatabaseModeEnum,
@@ -10,6 +9,7 @@ import selectEvent from 'react-select-event'
 import * as storeDatabase from '@qovery/domains/database'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsResourcesFeature, { handleSubmit } from './page-settings-resources-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -60,8 +60,11 @@ describe('PageSettingsResourcesFeature', () => {
     )
   })
 
-  it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsResourcesFeature />)
+  it('should render successfully', async () => {
+    const { baseElement } = renderWithProviders(<PageSettingsResourcesFeature />)
+
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
     expect(baseElement).toBeTruthy()
   })
 
@@ -85,18 +88,19 @@ describe('PageSettingsResourcesFeature', () => {
         }),
     }))
 
-    const { getByTestId } = render(<PageSettingsResourcesFeature />)
+    const { userEvent } = renderWithProviders(<PageSettingsResourcesFeature />)
 
-    await act(() => {
-      fireEvent.input(getByTestId('input-memory-memory'), { target: { value: 512 } })
-      fireEvent.input(getByTestId('input-memory-storage'), { target: { value: 512 } })
-    })
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    const submitButton = await screen.findByRole('button', { name: /save/i })
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    await userEvent.clear(screen.getByTestId('input-memory-memory'))
+    await userEvent.type(screen.getByTestId('input-memory-memory'), '512')
+    await userEvent.clear(screen.getByTestId('input-memory-storage'))
+    await userEvent.type(screen.getByTestId('input-memory-storage'), '512')
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    expect(submitButton).not.toBeDisabled()
+
+    await userEvent.click(submitButton)
 
     expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
     expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
@@ -120,33 +124,31 @@ describe('PageSettingsResourcesFeature', () => {
         }),
     }))
 
-    const { getByTestId, getByLabelText } = render(<PageSettingsResourcesFeature />)
+    const { userEvent } = renderWithProviders(<PageSettingsResourcesFeature />)
 
-    const realSelect = getByLabelText('Instance type')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    const submitButton = await screen.findByRole('button', { name: /save/i })
+
+    const realSelect = screen.getByLabelText('Instance type')
     await selectEvent.select(realSelect, 'db.t3.medium', {
       container: document.body,
     })
 
-    await act(() => {
-      fireEvent.input(getByTestId('input-memory-storage'), { target: { value: 510 } })
-    })
+    await userEvent.clear(screen.getByTestId('input-memory-storage'))
+    await userEvent.type(screen.getByTestId('input-memory-storage'), '510')
 
-    expect(getByTestId('submit-button')).not.toBeDisabled()
+    expect(submitButton).not.toBeDisabled()
 
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    await userEvent.click(submitButton)
 
-    await act(() => {
-      expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
-      expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
-        ...mockDatabase,
-        ...{
-          storage: 510,
-          instance_type: 'db.t3.medium',
-          mode: DatabaseModeEnum.MANAGED,
-        },
-      })
+    expect(editDatabaseSpy.mock.calls[0][0].databaseId).toBe(mockDatabase.id)
+    expect(editDatabaseSpy.mock.calls[0][0].data).toStrictEqual({
+      ...mockDatabase,
+      ...{
+        storage: 510,
+        instance_type: 'db.t3.medium',
+        mode: DatabaseModeEnum.MANAGED,
+      },
     })
   })
 })

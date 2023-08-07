@@ -33,7 +33,54 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nx/typescript"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "react",
+                "importNames": ["default"],
+                "message": "React should be destructured.",
+                "allowTypeImports": false
+              },
+              {
+                "name": "@testing-library/react",
+                "importNames": ["render", "screen"],
+                "message": "Use `renderWithProviders`, `render` and `screen` from the `@qovery/shared/util-tests` package.",
+                "allowTypeImports": false
+              },
+              {
+                "name": "@testing-library/user-event",
+                "importNames": ["default"],
+                "message": "Destructure `userEvent` exposed by the `renderWithProviders` function from the `@qovery/shared/util-tests` package."
+              }
+            ]
+          }
+        ],
+        "no-restricted-imports": [
+          "warn",
+          {
+            "paths": [
+              {
+                "name": "__tests__/utils/setup-jest",
+                "importNames": ["render", "screen"],
+                "message": "Use `renderWithProviders`, `render` and `screen` from the `@qovery/shared/util-tests` package."
+              },
+              {
+                "name": "@testing-library/react",
+                "importNames": ["fireEvent"],
+                "message": "Prefer `userEvent` exposed by the `renderWithProviders` function from the `@qovery/shared/util-tests` package."
+              },
+              {
+                "name": "__tests__/utils/setup-jest",
+                "importNames": ["fireEvent"],
+                "message": "Prefer `userEvent` exposed by the `renderWithProviders` function from the `@qovery/shared/util-tests` package."
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "files": ["*.js", "*.jsx"],
