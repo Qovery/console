@@ -1,4 +1,4 @@
-import { act, getAllByTestId, getByLabelText, getByTestId, queryAllByTestId } from '@testing-library/react'
+import { act, getAllByTestId, getByLabelText, getByTestId, queryAllByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { JobForceEvent } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'

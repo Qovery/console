@@ -1,4 +1,4 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import PageSettingsNetwork, { PageSettingsNetworkProps } from './page-settings-network'
 
 let props: PageSettingsNetworkProps

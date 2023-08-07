@@ -1,4 +1,4 @@
-import { getByTestId, waitFor } from '@testing-library/react'
+import { getByTestId, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import DarkModeEnabler from './dark-mode-enabler'
 

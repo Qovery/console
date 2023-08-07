@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import ModalProvider from '../../../modal/modal-root'
 import useModalConfirmation, { UseModalConfirmationProps } from './use-modal-confirmation'

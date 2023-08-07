@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import InputSizeUnit, { InputSizeUnitProps } from './input-size-unit'
 

@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ProbeTypeEnum } from '@qovery/shared/enums'

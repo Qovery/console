@@ -1,4 +1,4 @@
-import { act, fireEvent, getAllByTestId, getByRole, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getAllByTestId, getByRole, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
 import InvoicesList, { InvoicesListProps } from './invoices-list'

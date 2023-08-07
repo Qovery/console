@@ -1,4 +1,4 @@
-import { act, getByTestId } from '@testing-library/react'
+import { act, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { GitProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'

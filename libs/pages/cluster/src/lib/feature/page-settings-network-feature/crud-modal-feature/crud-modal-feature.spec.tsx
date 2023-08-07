@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'

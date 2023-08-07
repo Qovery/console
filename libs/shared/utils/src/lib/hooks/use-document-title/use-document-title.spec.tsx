@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react'
+import { renderHook } from '__tests__/utils/setup-jest'
 import useDocumentTitle from './use-document-title'
 
 describe('UseDocumentTitle', () => {

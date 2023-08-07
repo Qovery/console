@@ -1,4 +1,4 @@
-import { fireEvent, getByRole, getByTestId, queryByTestId, render, waitFor } from '@testing-library/react'
+import { fireEvent, getByRole, getByTestId, queryByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { useEffect } from 'react'
 import ModalRoot from './modal-root'
 import useModal from './use-modal/use-modal'

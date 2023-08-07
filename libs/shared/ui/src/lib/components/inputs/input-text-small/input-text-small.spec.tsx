@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import InputTextSmall, { InputTextSmallProps } from './input-text-small'
 

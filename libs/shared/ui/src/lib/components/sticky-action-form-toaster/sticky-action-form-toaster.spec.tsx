@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import StickyActionFormToaster, { StickyActionFormToasterProps } from './sticky-action-form-toaster'
 

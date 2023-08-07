@@ -1,4 +1,4 @@
-import { act, getByTestId, getByText } from '@testing-library/react'
+import { act, getByTestId, getByText } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { GitProviderEnum } from 'qovery-typescript-axios'
 import PageOrganizationGithubRepositoryAccess, {

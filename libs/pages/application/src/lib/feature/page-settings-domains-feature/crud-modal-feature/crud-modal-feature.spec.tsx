@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'

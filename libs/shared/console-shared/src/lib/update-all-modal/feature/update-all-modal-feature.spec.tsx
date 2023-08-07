@@ -1,4 +1,4 @@
-import { act, getAllByTestId, getByTestId } from '@testing-library/react'
+import { act, getAllByTestId, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { Commit } from 'qovery-typescript-axios'
 import * as environmentDomains from '@qovery/domains/environment'

@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react'
+import { act } from '__tests__/utils/setup-jest'
 import { getByTestId, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { ReactNode } from 'react'

@@ -1,4 +1,4 @@
-import { getByRole, render } from '@testing-library/react'
+import { getByRole, render } from '__tests__/utils/setup-jest'
 import BannerBox, { BannerBoxEnum, BannerBoxProps } from './banner-box'
 
 describe('BannerBox', () => {

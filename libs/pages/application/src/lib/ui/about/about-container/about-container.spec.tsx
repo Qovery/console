@@ -1,4 +1,4 @@
-import { getByText, render } from '@testing-library/react'
+import { getByText, render } from '__tests__/utils/setup-jest'
 import { containerFactoryMock, containerRegistriesMock } from '@qovery/shared/factories'
 import AboutContainer, { AboutContainerProps } from './about-container'
 

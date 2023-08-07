@@ -1,4 +1,4 @@
-import { act, findByText, getByDisplayValue, getByRole, getByTestId, queryByTestId } from '@testing-library/react'
+import { act, findByText, getByDisplayValue, getByRole, getByTestId, queryByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'

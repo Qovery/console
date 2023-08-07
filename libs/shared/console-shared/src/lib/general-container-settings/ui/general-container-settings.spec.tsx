@@ -1,4 +1,4 @@
-import { getByTestId } from '@testing-library/react'
+import { getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import GeneralContainerSettings from './general-container-settings'

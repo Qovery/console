@@ -1,4 +1,4 @@
-import { act, fireEvent, getByLabelText, getByTestId, waitFor } from '@testing-library/react'
+import { act, fireEvent, getByLabelText, getByTestId, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
 import * as organizationDomain from '@qovery/domains/organization'

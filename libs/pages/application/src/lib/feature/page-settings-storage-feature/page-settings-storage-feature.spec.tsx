@@ -1,4 +1,4 @@
-import { findByTestId, waitFor } from '@testing-library/react'
+import { findByTestId, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import * as redux from 'react-redux'
 import { applicationFactoryMock } from '@qovery/shared/factories'

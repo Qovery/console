@@ -1,4 +1,4 @@
-import { act, getAllByTestId } from '@testing-library/react'
+import { act, getAllByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { Invoice, InvoiceStatusEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'

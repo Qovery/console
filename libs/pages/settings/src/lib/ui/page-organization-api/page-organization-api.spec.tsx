@@ -1,4 +1,4 @@
-import { act, getByRole, getByTestId, getByText, render } from '@testing-library/react'
+import { act, getByRole, getByTestId, getByText, render } from '__tests__/utils/setup-jest'
 import { OrganizationApiTokenScope } from 'qovery-typescript-axios'
 import { PageOrganizationApi, PageOrganizationApiProps } from './page-organization-api'
 

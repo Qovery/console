@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react'
+import { act, fireEvent, screen } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { environmentFactoryMock } from '@qovery/shared/factories'

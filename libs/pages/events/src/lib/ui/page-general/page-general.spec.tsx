@@ -1,4 +1,4 @@
-import { act, fireEvent, getAllByTestId, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getAllByTestId, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { OrganizationEventOrigin, OrganizationEventType } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'

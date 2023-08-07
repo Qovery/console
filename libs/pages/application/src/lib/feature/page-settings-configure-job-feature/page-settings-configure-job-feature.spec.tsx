@@ -1,4 +1,4 @@
-import { act, fireEvent, getAllByLabelText, getByLabelText, getByTestId, waitFor } from '@testing-library/react'
+import { act, fireEvent, getAllByLabelText, getByLabelText, getByTestId, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'

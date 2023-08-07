@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { IconEnum } from '@qovery/shared/enums'
 import { Avatar, AvatarProps } from './avatar'

@@ -1,4 +1,4 @@
-import { fireEvent, getByRole, render } from '@testing-library/react'
+import { fireEvent, getByRole, render } from '__tests__/utils/setup-jest'
 import { useContext } from 'react'
 import { UpdateTimeContext } from './update-time-context'
 

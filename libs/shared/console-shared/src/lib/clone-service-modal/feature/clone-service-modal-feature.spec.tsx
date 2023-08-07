@@ -1,5 +1,5 @@
-import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { screen } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { act } from 'react-dom/test-utils'
 import selectEvent from 'react-select-event'

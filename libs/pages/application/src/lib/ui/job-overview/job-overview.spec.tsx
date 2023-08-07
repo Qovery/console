@@ -1,4 +1,4 @@
-import { getAllByTestId, getByText } from '@testing-library/react'
+import { getAllByTestId, getByText } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import JobOverview, { JobOverviewProps } from './job-overview'

@@ -1,4 +1,4 @@
-import { queryByTestId, waitFor } from '@testing-library/react'
+import { queryByTestId, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { AuthEnum } from '@qovery/shared/auth'
 import Login, { ILoginProps } from './login'

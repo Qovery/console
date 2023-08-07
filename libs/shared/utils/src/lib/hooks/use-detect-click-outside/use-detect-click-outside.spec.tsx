@@ -1,6 +1,6 @@
-import { act, screen } from '@testing-library/react'
-import React from 'react'
+import { act, screen } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
+import React from 'react'
 import DetectClickOutside, { UseDetectOutsideProps } from './use-detect-click-outside'
 
 describe('UseDetectOutside', () => {

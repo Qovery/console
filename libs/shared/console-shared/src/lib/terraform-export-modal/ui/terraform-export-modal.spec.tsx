@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { render, screen } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import TerraformExportModal, { TerraformExportModalProps } from './terraform-export-modal'
 

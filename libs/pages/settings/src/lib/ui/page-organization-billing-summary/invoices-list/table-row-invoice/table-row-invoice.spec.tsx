@@ -1,4 +1,4 @@
-import { getByTestId, getByText } from '@testing-library/react'
+import { getByTestId, getByText } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { InvoiceStatusEnum } from 'qovery-typescript-axios'
 import { dateToFormat } from '@qovery/shared/utils'

@@ -6,7 +6,7 @@ import {
   getByLabelText,
   getByRole,
   getByTestId,
-} from '@testing-library/react'
+} from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'

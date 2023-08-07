@@ -1,4 +1,4 @@
-import { getByLabelText, getByTestId } from '@testing-library/react'
+import { getByLabelText, getByTestId } from '__tests__/utils/setup-jest'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { ReactNode } from 'react'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'

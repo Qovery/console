@@ -1,4 +1,4 @@
-import { act, fireEvent, getByTestId, getByText, waitFor } from '@testing-library/react'
+import { act, fireEvent, getByTestId, getByText, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import ScrollShadowWrapper, { ScrollShadowWrapperProps } from './scroll-shadow-wrapper'
 

@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import React from 'react'

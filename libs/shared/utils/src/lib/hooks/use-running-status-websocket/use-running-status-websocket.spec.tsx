@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react'
 import { Wrapper } from '__tests__/utils/providers'
+import { renderHook } from '__tests__/utils/setup-jest'
 import useRunningStatusWebsocket from './use-running-status-websocket'
 
 describe('Running Status Websocket Provider', () => {

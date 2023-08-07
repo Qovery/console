@@ -1,4 +1,4 @@
-import { act, fireEvent, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import Pagination, { PaginationProps } from './pagination'
 

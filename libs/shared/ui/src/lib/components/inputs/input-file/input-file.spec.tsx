@@ -1,4 +1,4 @@
-import { act, fireEvent, waitFor } from '@testing-library/react'
+import { act, fireEvent, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import InputFile, { InputFileProps } from './input-file'
 

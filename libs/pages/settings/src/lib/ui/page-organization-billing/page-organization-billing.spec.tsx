@@ -1,4 +1,4 @@
-import { getAllByTestId, getByTestId } from '@testing-library/react'
+import { getAllByTestId, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { creditCardsFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationBilling, { PageOrganizationBillingProps } from './page-organization-billing'

@@ -1,7 +1,7 @@
-import { useForm } from 'react-hook-form'
 import { render } from '__tests__/utils/setup-jest'
+import { fireEvent, screen } from '__tests__/utils/setup-jest'
+import { useForm } from 'react-hook-form'
 import StepPersonalize, { StepPersonalizeProps } from './step-personalize'
-import { fireEvent, screen } from '@testing-library/react'
 
 describe('StepPersonalize', () => {
   let props: StepPersonalizeProps

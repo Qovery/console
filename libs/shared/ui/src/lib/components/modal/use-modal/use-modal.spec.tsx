@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook } from '__tests__/utils/setup-jest'
 import ModalProvider from '../../modal/modal-root'
 import useModal, { UseModalProps } from './use-modal'
 

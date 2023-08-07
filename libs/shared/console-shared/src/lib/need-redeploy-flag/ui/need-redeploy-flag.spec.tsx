@@ -1,4 +1,4 @@
-import { act, fireEvent, getByRole } from '@testing-library/react'
+import { act, fireEvent, getByRole } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'

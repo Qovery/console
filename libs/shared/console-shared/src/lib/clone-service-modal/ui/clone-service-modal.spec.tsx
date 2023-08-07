@@ -1,5 +1,5 @@
-import { getByDisplayValue, getByLabelText, getByRole, getByTestId, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { getByDisplayValue, getByLabelText, getByRole, getByTestId, screen } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {

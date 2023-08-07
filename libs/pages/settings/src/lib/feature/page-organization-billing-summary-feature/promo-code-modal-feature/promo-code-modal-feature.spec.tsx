@@ -1,4 +1,4 @@
-import { act, fireEvent, getByLabelText, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getByLabelText, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import * as organizationDomains from '@qovery/domains/organization'
 import PromoCodeModalFeature, { PromocodeModalFeatureProps } from './promo-code-modal-feature'

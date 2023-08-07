@@ -1,4 +1,4 @@
-import { getByText } from '@testing-library/react'
+import { getByText } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { StateEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'

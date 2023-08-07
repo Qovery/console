@@ -1,5 +1,4 @@
-import { render } from '@testing-library/react'
-
+import { render } from '__tests__/utils/setup-jest'
 import HelpSidebar from './help-sidebar'
 
 describe('HelpSidebar', () => {

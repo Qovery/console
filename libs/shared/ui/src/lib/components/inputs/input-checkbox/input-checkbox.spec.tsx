@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import InputCheckbox, { InputCheckboxProps } from './input-checkbox'
 
 const props: InputCheckboxProps = {

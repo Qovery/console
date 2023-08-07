@@ -1,4 +1,4 @@
-import { getByLabelText } from '@testing-library/react'
+import { getByLabelText } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import CreditCardForm, { CreditCardFormValues } from './credit-card-form'

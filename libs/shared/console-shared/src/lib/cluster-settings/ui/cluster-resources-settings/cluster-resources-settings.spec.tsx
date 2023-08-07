@@ -1,4 +1,4 @@
-import { getByLabelText, getByTestId, getByText, queryByTestId, waitFor } from '@testing-library/react'
+import { getByLabelText, getByTestId, getByText, queryByTestId, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'

@@ -1,4 +1,4 @@
-import { findByText, queryByTestId, queryByText } from '@testing-library/react'
+import { findByText, queryByTestId, queryByText } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import EmptyState, { EmptyStateProps } from './empty-state'
 

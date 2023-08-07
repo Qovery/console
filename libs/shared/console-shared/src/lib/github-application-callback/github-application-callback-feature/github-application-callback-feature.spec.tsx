@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { useLocation } from 'react-router-dom'
 import { SETTINGS_GIT_REPOSITORY_ACCESS_URL, SETTINGS_URL } from '@qovery/shared/routes'

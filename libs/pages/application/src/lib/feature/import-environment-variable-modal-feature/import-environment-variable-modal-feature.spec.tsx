@@ -1,4 +1,4 @@
-import { act, findAllByTestId, fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, findAllByTestId, fireEvent, screen, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import ImportEnvironmentVariableModalFeature, {
   ImportEnvironmentVariableModalFeatureProps,

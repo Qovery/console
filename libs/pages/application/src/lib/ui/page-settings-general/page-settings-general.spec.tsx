@@ -1,4 +1,4 @@
-import { act, getByTestId, screen, waitFor } from '@testing-library/react'
+import { act, getByTestId, screen, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'

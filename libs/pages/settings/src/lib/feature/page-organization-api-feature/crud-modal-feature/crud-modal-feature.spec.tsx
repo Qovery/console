@@ -1,4 +1,4 @@
-import { act, fireEvent, getAllByRole, getByTestId } from '@testing-library/react'
+import { act, fireEvent, getAllByRole, getByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
 import { CrudModalFeature, CrudModalFeatureProps } from './crud-modal-feature'

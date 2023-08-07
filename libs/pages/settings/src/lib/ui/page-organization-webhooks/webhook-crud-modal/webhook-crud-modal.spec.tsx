@@ -1,4 +1,4 @@
-import { act, fireEvent, getByLabelText, getByText } from '@testing-library/react'
+import { act, fireEvent, getByLabelText, getByText } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {

@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { OrganizationCustomRoleClusterPermission } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'

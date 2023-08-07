@@ -1,4 +1,4 @@
-import { getAllByTestId, queryAllByTestId } from '@testing-library/react'
+import { getAllByTestId, queryAllByTestId } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { lifecycleJobFactoryMock } from '@qovery/shared/factories'

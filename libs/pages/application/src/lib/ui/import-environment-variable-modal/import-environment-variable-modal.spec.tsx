@@ -1,4 +1,4 @@
-import { act, findAllByTestId, fireEvent, getByTestId, screen, waitFor } from '@testing-library/react'
+import { act, findAllByTestId, fireEvent, getByTestId, screen, waitFor } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
