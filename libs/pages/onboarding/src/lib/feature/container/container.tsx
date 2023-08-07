@@ -8,12 +8,14 @@ import OnboardingRightContent from '../../ui/onboarding-right-content/onboarding
 interface DefaultContextProps {
   organization_name: string
   project_name: string
-  setContextValue?: (data: { organization_name: string; project_name: string }) => void
+  admin_email: string
+  setContextValue?: (data: { organization_name: string; project_name: string; admin_email: string }) => void
 }
 
 const defaultContext = {
   organization_name: '',
   project_name: '',
+  admin_email: '',
 }
 
 export const ContextOnboarding = createContext<DefaultContextProps>(defaultContext)

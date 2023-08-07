@@ -70,7 +70,7 @@ export function OnboardingPricing() {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const { showNewMessages } = useIntercom()
-  const { organization_name, project_name } = useContext(ContextOnboarding)
+  const { organization_name, project_name, admin_email } = useContext(ContextOnboarding)
   const { createAuthCookies, getAccessTokenSilently } = useAuth()
   const [loading, setLoading] = useState('')
 
@@ -81,6 +81,7 @@ export function OnboardingPricing() {
       postOrganization({
         name: organization_name,
         plan: plan,
+        admin_emails: [admin_email],
       })
     )
       .then(async (result) => {

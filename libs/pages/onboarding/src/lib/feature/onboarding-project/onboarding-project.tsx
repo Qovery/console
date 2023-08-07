@@ -20,7 +20,7 @@ export function OnboardingProject() {
   const organizations = useSelector(selectAllOrganization)
   const [backButton, setBackButton] = useState<boolean | undefined>()
 
-  const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
+  const { organization_name, project_name, admin_email, setContextValue } = useContext(ContextOnboarding)
 
   useEffect(() => {
     async function fetchOrganizations() {
@@ -44,8 +44,9 @@ export function OnboardingProject() {
   const onSubmit = handleSubmit((data) => {
     if (data) {
       const currentData = {
-        organization_name: data['organization_name'],
-        project_name: data['project_name'],
+        organization_name: data.organization_name,
+        project_name: data.project_name,
+        admin_email,
       }
       setContextValue && setContextValue(currentData)
       navigate(`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`)

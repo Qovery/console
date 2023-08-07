@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -7,6 +7,7 @@ import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { AppDispatch } from '@qovery/store'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
+import { ContextOnboarding } from '../container/container'
 
 const dataTypes = [
   {
@@ -35,6 +36,7 @@ export function FormUser(props: FormUserProps) {
   const dispatch = useDispatch<AppDispatch>()
   const { authLogout } = useAuth()
   const { handleSubmit, control, setValue } = useForm()
+  const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
 
   useEffect(() => {
     const { email, name } = user
@@ -68,6 +70,13 @@ export function FormUser(props: FormUserProps) {
           company_size: undefined,
           user_role: undefined,
         }
+
+        setContextValue &&
+          setContextValue({
+            organization_name,
+            project_name,
+            admin_email: data['user_email'],
+          })
 
         await dispatch(postUserSignUp({ ...userSignUp, ...data, ...resetCompany }))
       }
