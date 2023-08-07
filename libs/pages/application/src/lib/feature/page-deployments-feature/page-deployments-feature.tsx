@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -35,7 +35,7 @@ export function PageDeploymentsFeature() {
     },
   ]
 
-  const serviceType = useMemo(() => getServiceType(application as ApplicationEntity), [application])
+  const serviceType = getServiceType(application as ApplicationEntity)
 
   useEffect(() => {
     if (loadingStatus === 'loaded') {
