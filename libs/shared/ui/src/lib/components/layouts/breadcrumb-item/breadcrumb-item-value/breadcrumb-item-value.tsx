@@ -1,10 +1,11 @@
+import { type ReactElement } from 'react'
 import { Link } from 'react-router-dom'
 import Truncate from '../../../truncate/truncate'
 
 export interface BreadcrumbItemValueProps {
   className?: string
   name: string
-  logo?: React.ReactElement
+  logo?: ReactElement
   active?: boolean
   link: string
 }

@@ -1,5 +1,5 @@
 import { ControlledMenu, MenuCloseEvent } from '@szhsin/react-menu'
-import React, { ReactNode, useEffect, useRef, useState } from 'react'
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 import Tooltip from '../tooltip/tooltip'
 import MenuGroup from './menu-group/menu-group'
 import { MenuItemProps } from './menu-item/menu-item'
@@ -30,16 +30,16 @@ export type MenuData = {
 }[]
 
 export interface MenuProps {
-  trigger: React.ReactElement
+  trigger: ReactNode
   menus: MenuData
-  children?: React.ReactNode
+  children?: ReactNode
   direction?: MenuDirection
   open?: boolean
   arrowAlign?: MenuAlign
   triggerTooltip?: string
   className?: string
-  header?: React.ReactNode
-  onClose?: (e: MenuCloseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  header?: ReactNode
+  onClose?: (e: MenuCloseEvent | MouseEvent<HTMLDivElement, MouseEvent>) => void
   width?: number
   paddingMenuY?: number
   paddingMenuX?: number

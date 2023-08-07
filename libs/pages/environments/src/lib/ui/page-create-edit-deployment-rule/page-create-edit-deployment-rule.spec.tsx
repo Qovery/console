@@ -5,7 +5,6 @@ import PageCreateEditDeploymentRule, { PageCreateEditDeploymentRuleProps } from 
 
 describe('PageCreateEditDeploymentRule', () => {
   let props: PageCreateEditDeploymentRuleProps
-  let Wrapper: React.FC
 
   beforeEach(() => {
     props = {
@@ -16,7 +15,7 @@ describe('PageCreateEditDeploymentRule', () => {
       clusters: clusterFactoryMock(2),
     }
 
-    Wrapper = () => {
+    const Wrapper = () => {
       const { control } = useForm<{
         id: string
         name: string

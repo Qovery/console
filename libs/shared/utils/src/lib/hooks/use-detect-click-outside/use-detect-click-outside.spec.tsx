@@ -1,6 +1,6 @@
 import { act, screen } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
-import React from 'react'
+import { createElement } from 'react'
 import DetectClickOutside, { UseDetectOutsideProps } from './use-detect-click-outside'
 
 describe('UseDetectOutside', () => {
@@ -9,7 +9,7 @@ describe('UseDetectOutside', () => {
   beforeEach(() => {
     props = {
       callback: jest.fn(),
-      children: React.createElement('div'),
+      children: createElement('div'),
     }
   })
 

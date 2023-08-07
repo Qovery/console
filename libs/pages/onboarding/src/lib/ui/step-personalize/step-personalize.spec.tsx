@@ -5,7 +5,6 @@ import StepPersonalize, { StepPersonalizeProps } from './step-personalize'
 
 describe('StepPersonalize', () => {
   let props: StepPersonalizeProps
-  let Wrapper: React.FC
 
   beforeEach(() => {
     props = {
@@ -15,7 +14,7 @@ describe('StepPersonalize', () => {
       control: null as any,
     }
 
-    Wrapper = () => {
+    const Wrapper = () => {
       const { control } = useForm<{
         first_name: string
         last_name: string

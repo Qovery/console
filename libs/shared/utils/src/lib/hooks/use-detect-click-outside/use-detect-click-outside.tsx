@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, RefObject } from 'react'
+import { type ReactNode, RefObject, useEffect, useRef } from 'react'
 
 export interface UseDetectOutsideProps {
   callback: () => void
-  children: React.ReactElement
+  children: ReactNode
   event?: string
   className?: string
 }

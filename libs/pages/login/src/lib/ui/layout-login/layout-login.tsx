@@ -1,10 +1,7 @@
+import { type PropsWithChildren } from 'react'
 import { Navbar } from '@qovery/shared/ui'
 
-interface LayoutLoginProps {
-  children: React.ReactElement
-}
-
-export function LayoutLogin(props: LayoutLoginProps) {
+export function LayoutLogin(props: PropsWithChildren) {
   const { children } = props
 
   return (

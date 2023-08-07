@@ -1,9 +1,9 @@
-import { type ReactNode, RefObject, useEffect, useRef, useState } from 'react'
+import { type CSSProperties, type ReactNode, type RefObject, type WheelEvent, useEffect, useRef, useState } from 'react'
 
 export interface ScrollShadowWrapperProps {
   children: ReactNode
   className?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 
 export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
@@ -13,7 +13,7 @@ export function ScrollShadowWrapper(props: ScrollShadowWrapperProps) {
   const [scrollHeight, setScrollHeight] = useState(0)
   const [clientHeight, setClientHeight] = useState(0)
 
-  const onScrollHandler = (event: React.WheelEvent<HTMLDivElement>) => {
+  const onScrollHandler = (event: WheelEvent<HTMLDivElement>) => {
     setScrollTop(event.currentTarget.scrollTop)
     setScrollHeight(event.currentTarget.scrollHeight)
     setClientHeight(event.currentTarget.clientHeight)

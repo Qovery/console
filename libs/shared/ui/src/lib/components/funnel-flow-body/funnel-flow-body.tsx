@@ -1,11 +1,12 @@
+import { type PropsWithChildren, type ReactNode } from 'react'
+
 export interface FunnelFlowBodyProps {
-  children: React.ReactNode
   helpSectionClassName?: string
-  helpSection?: React.ReactNode
+  helpSection?: ReactNode
   customContentWidth?: string
 }
 
-export function FunnelFlowBody(props: FunnelFlowBodyProps) {
+export function FunnelFlowBody(props: PropsWithChildren<FunnelFlowBodyProps>) {
   return (
     <>
       {props.helpSection && (

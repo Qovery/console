@@ -1,6 +1,7 @@
 import { act, fireEvent } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { ClusterAdvancedSettings } from 'qovery-typescript-axios'
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import React from 'react'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'

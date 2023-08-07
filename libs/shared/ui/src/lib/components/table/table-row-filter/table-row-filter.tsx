@@ -1,14 +1,13 @@
-import React from 'react'
+import { type PropsWithChildren } from 'react'
 import { TableFilterProps } from '../table'
 import { ALL } from '../table-head-filter/table-head-filter'
 
 export interface TableRowFilterProps {
   data: any
-  children: React.ReactElement
   filter?: TableFilterProps[]
 }
 
-export function TableRowFilter({ children, data, filter }: TableRowFilterProps) {
+export function TableRowFilter({ children, data, filter }: PropsWithChildren<TableRowFilterProps>) {
   const shouldFilter =
     filter &&
     filter.every((tableFilter) => {

@@ -1,4 +1,5 @@
 import { Environment, EnvironmentStatus, StateEnum } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
@@ -44,10 +45,9 @@ export interface ContainerProps {
   environment?: Environment
   environmentStatus?: EnvironmentStatus
   environmentRunningStatus?: WebsocketRunningStatusInterface
-  children?: React.ReactNode
 }
 
-export function Container(props: ContainerProps) {
+export function Container(props: PropsWithChildren<ContainerProps>) {
   const { environment, environmentStatus, environmentRunningStatus, children } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()

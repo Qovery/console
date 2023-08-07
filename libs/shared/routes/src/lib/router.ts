@@ -1,3 +1,5 @@
+import { type ReactElement } from 'react'
+
 export * from './sub-router/application.router'
 export * from './sub-router/database.router'
 export * from './sub-router/services.router'
@@ -21,6 +23,6 @@ export const ORGANIZATION_AUDIT_LOGS_URL = '/audit-logs'
 export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
   `/organization/${organizationId}/project/${projectId}/overview`
 export interface Route {
-  component: React.ReactElement
+  component: ReactElement
   path: string
 }

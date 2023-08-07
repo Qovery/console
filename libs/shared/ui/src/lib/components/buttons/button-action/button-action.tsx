@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { type PropsWithChildren, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
@@ -13,7 +13,6 @@ export enum ButtonActionStyle {
 }
 
 export interface ButtonActionProps {
-  children: React.ReactNode
   style?: ButtonActionStyle
   iconRight?: IconEnum | string
   link?: string
@@ -26,7 +25,7 @@ export interface ButtonActionProps {
   size?: ButtonSize
 }
 
-export function ButtonAction(props: ButtonActionProps) {
+export function ButtonAction(props: PropsWithChildren<ButtonActionProps>) {
   const {
     children,
     style = ButtonActionStyle.BASIC,

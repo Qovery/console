@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { type ReactElement, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
@@ -7,7 +7,7 @@ export interface InputSearchProps {
   className?: string
   onChange?: (value: string) => void
   isEmpty?: boolean
-  emptyContent?: React.ReactElement
+  emptyContent?: ReactElement
   autofocus?: boolean
   customSize?: string
 }

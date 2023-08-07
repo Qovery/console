@@ -1,4 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ClusterEntity, OrganizationEntity } from '@qovery/shared/interfaces'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
@@ -7,7 +8,6 @@ import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 
 export interface LayoutPageProps {
-  children?: React.ReactElement
   topBar?: boolean
   organization?: OrganizationEntity
   cluster?: ClusterEntity
@@ -23,7 +23,7 @@ export const displayClusterBanner = (status?: StateEnum): boolean => {
   }
 }
 
-export function LayoutPage(props: LayoutPageProps) {
+export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { children, topBar = true, cluster } = props
 
   const { organizationId = '' } = useParams()

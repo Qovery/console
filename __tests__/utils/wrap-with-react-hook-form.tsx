@@ -1,4 +1,4 @@
-import React from 'react'
+import { type ReactNode } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 
 /**
@@ -9,10 +9,10 @@ import { FormProvider, useForm } from 'react-hook-form'
  * React Hook Form, which you can then assert against
  */
 export function wrapWithReactHookForm<T extends { [x: string]: any } | undefined>(
-  ui: React.ReactElement,
+  ui: ReactNode,
   { defaultValues }: { defaultValues?: T } = {}
 ) {
-  const Wrapper = ({ children }: { children: React.ReactElement }) => {
+  const Wrapper = ({ children }: { children: ReactNode }) => {
     const methods = useForm({ defaultValues, mode: 'all' })
     return <FormProvider {...methods}>{children}</FormProvider>
   }

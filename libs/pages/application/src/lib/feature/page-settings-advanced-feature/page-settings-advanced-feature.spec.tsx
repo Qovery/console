@@ -1,6 +1,7 @@
 import { act, fireEvent } from '__tests__/utils/setup-jest'
 import { render } from '__tests__/utils/setup-jest'
 import { JobAdvancedSettings } from 'qovery-typescript-axios'
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import React from 'react'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock } from '@qovery/shared/factories'

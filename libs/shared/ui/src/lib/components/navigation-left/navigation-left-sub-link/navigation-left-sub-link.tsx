@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Icon from '../../icon/icon'
 import { NavigationLeftLinkProps } from '../navigation-left'
 
 export interface NavigationLeftSubLinkProps {
-  linkContent: (link: NavigationLeftLinkProps) => React.ReactNode
+  linkContent: (link: NavigationLeftLinkProps) => ReactNode
   link: NavigationLeftLinkProps
   linkClassName: (pathname: string, url?: string, badge?: string) => string
 }

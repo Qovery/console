@@ -1,5 +1,5 @@
 import { Cluster } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { type PropsWithChildren, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { redirect, useParams } from 'react-router-dom'
 import { fetchApplications } from '@qovery/domains/application'
@@ -21,11 +21,10 @@ import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 
 export interface LayoutProps {
-  children: React.ReactElement
   topBar?: boolean
 }
 
-export function Layout(props: LayoutProps) {
+export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
 

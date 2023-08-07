@@ -1,5 +1,6 @@
+import { type PropsWithChildren } from 'react'
+
 export interface BlockContentProps {
-  children: React.ReactNode
   title: string
   customWidth?: string
   className?: string
@@ -7,7 +8,7 @@ export interface BlockContentProps {
   dataTestId?: string
 }
 
-export function BlockContent(props: BlockContentProps) {
+export function BlockContent(props: PropsWithChildren<BlockContentProps>) {
   const {
     children,
     className = '',

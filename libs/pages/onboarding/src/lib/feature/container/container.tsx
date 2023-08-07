@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react'
+import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
 import { Params, useNavigate } from 'react-router-dom'
 import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, Route } from '@qovery/shared/routes'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
@@ -21,12 +21,11 @@ const defaultContext = {
 export const ContextOnboarding = createContext<DefaultContextProps>(defaultContext)
 
 export interface ContainerProps {
-  children: React.ReactElement
   params: Readonly<Params<string>>
   firstStep: boolean
 }
 
-export function Container(props: ContainerProps) {
+export function Container(props: PropsWithChildren<ContainerProps>) {
   const { children, params, firstStep } = props
 
   const navigate = useNavigate()

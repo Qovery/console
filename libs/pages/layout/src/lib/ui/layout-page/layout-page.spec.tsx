@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import React from 'react'
+import { createElement } from 'react'
 import { userSignUpFactoryMock } from '@qovery/shared/factories'
 import LayoutPage, { LayoutPageProps } from './layout-page'
 
@@ -8,7 +8,7 @@ describe('LayoutPage', () => {
 
   beforeEach(() => {
     props = {
-      children: React.createElement('div'),
+      children: createElement('div'),
       user: userSignUpFactoryMock(),
     }
   })

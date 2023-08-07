@@ -1,11 +1,9 @@
-import { useForm } from 'react-hook-form'
 import { render } from '__tests__/utils/setup-jest'
-
+import { useForm } from 'react-hook-form'
 import StepMore, { StepMoreProps } from './step-more'
 
 describe('StepMore', () => {
   let props: StepMoreProps
-  let Wrapper: React.FC
 
   beforeEach(() => {
     props = {
@@ -15,7 +13,7 @@ describe('StepMore', () => {
       displayQoveryUsageOther: false,
     }
 
-    Wrapper = () => {
+    const Wrapper = () => {
       const { control } = useForm<{
         qovery_usage: string
         qovery_usage_other: string

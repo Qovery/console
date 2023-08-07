@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { type MouseEvent, useEffect, useState } from 'react'
 import Icon from '../icon/icon'
 import Tag from '../tag/tag'
 import Tooltip from '../tooltip/tooltip'
@@ -16,7 +16,7 @@ export function TagCommit(props: TagCommitProps) {
 
   let displayCopy: ReturnType<typeof setTimeout> | undefined = undefined
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: MouseEvent) => {
     e.preventDefault()
     setCopied(true)
     if (navigator.clipboard) navigator.clipboard.writeText(commitId)

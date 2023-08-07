@@ -1,9 +1,9 @@
+import { type PropsWithChildren } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import Button, { ButtonSize, ButtonStyle } from '../buttons/button/button'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
 export interface BannerProps {
-  children: React.ReactNode
   bannerStyle?: BannerStyle
   buttonLabel?: string
   buttonIconRight?: IconAwesomeEnum | IconEnum | string
@@ -15,7 +15,7 @@ export enum BannerStyle {
   PRIMARY = 'PRIMARY',
 }
 
-export function Banner(props: BannerProps) {
+export function Banner(props: PropsWithChildren<BannerProps>) {
   const { children, bannerStyle = BannerStyle.WARNING } = props
 
   let classNameStyle: string

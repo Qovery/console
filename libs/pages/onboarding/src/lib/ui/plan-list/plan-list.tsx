@@ -1,9 +1,10 @@
+import { type ReactNode } from 'react'
 import { IconFa } from '@qovery/shared/ui'
 
 export interface PlanListProps {
   title: string
   description: string
-  lists: Array<React.ReactElement>
+  lists: ReactNode[]
   infos?: string
 }
 

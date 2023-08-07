@@ -1,5 +1,5 @@
 import { Environment, Link, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
-import { createContext, useState } from 'react'
+import { type PropsWithChildren, createContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
@@ -35,10 +35,9 @@ export const ApplicationContext = createContext<{
 export interface ContainerProps {
   application?: ApplicationEntity
   environment?: Environment
-  children?: React.ReactNode
 }
 
-export function Container(props: ContainerProps) {
+export function Container(props: PropsWithChildren<ContainerProps>) {
   const { application, environment, children } = props
   const { environmentId = '', applicationId = '' } = useParams()
   const [showHideAllEnvironmentVariablesValues, setShowHideAllEnvironmentVariablesValues] = useState<boolean>(false)

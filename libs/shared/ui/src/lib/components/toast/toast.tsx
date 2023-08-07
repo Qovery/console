@@ -1,3 +1,4 @@
+import { type MouseEvent } from 'react'
 import { Toast, Toaster, toast as toastAction } from 'react-hot-toast'
 import { ToastEnum } from '../../utils/toast'
 import { Icon } from '../icon/icon'
@@ -23,7 +24,7 @@ export const ToastContent = (
   labelAction?: string,
   externalLink?: string
 ) => {
-  const onLabelClick = (e: React.MouseEvent<HTMLElement>) => {
+  const onLabelClick = (e: MouseEvent<HTMLElement>) => {
     e.preventDefault()
 
     if (callback) {

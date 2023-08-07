@@ -1,11 +1,9 @@
-import { useForm } from 'react-hook-form'
 import { render } from '__tests__/utils/setup-jest'
-
+import { useForm } from 'react-hook-form'
 import StepCompany, { StepCompanyProps } from './step-company'
 
 describe('StepCompany', () => {
   let props: StepCompanyProps
-  let Wrapper: React.FC
 
   beforeEach(() => {
     props = {
@@ -16,7 +14,7 @@ describe('StepCompany', () => {
       setStepCompany: jest.fn(),
     }
 
-    Wrapper = () => {
+    const Wrapper = () => {
       const { control } = useForm<{
         company_name: string
         company_size: number

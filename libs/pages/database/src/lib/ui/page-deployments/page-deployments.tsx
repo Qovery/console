@@ -1,5 +1,5 @@
 import { DeploymentHistoryDatabase } from 'qovery-typescript-axios'
-import React, { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { BaseLink, HelpSection, Table, TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
@@ -81,7 +81,7 @@ export function Deployments(props: PageDeploymentsProps) {
   )
 }
 
-export const PageDeployments = React.memo(Deployments, (prevProps, nextProps) => {
+export const PageDeployments = memo(Deployments, (prevProps, nextProps) => {
   const prevDeploymentIds = prevProps.deployments?.map((deployment) => deployment.id)
   const nextDeploymentIds = nextProps.deployments?.map((deployment) => deployment.id)
 

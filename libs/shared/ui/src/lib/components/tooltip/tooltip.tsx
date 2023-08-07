@@ -1,9 +1,8 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-import React from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 
 export interface TooltipProps {
-  children: React.ReactElement
-  content: React.ReactElement | string
+  content: ReactNode
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
@@ -13,7 +12,7 @@ export interface TooltipProps {
   classNameTrigger?: string
 }
 
-export function Tooltip(props: TooltipProps) {
+export function Tooltip(props: PropsWithChildren<TooltipProps>) {
   const {
     children,
     content,

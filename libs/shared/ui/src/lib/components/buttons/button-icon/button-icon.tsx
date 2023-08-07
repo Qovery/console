@@ -1,3 +1,4 @@
+import { type MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
@@ -20,7 +21,7 @@ export interface ButtonIconProps {
   link?: string
   disabled?: boolean
   className?: string
-  onClick?: (e: React.MouseEvent) => void
+  onClick?: (e: MouseEvent) => void
   loading?: boolean
   notification?: boolean
   active?: boolean

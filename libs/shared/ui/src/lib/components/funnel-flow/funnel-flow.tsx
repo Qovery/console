@@ -1,14 +1,13 @@
-import React from 'react'
+import { type PropsWithChildren } from 'react'
 import { createPortal } from 'react-dom'
 import Button, { ButtonStyle } from '../buttons/button/button'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
-export interface FunnelFlowProps {
+export interface FunnelFlowProps extends PropsWithChildren {
   totalSteps: number
   currentStep: number
   currentTitle: string
-  children: React.ReactNode
   exitTo?: string
   onExit?: () => void
   portal?: boolean
