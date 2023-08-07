@@ -9,7 +9,7 @@ import {
   StateEnum,
   Status,
 } from 'qovery-typescript-axios'
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
+import { MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { getEnvironmentStatusById } from '@qovery/domains/environment'
 import { IconEnum, RunningStatus } from '@qovery/shared/enums'

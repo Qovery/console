@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
 import { NavigationLeft, NavigationLeftLinkProps, useModal } from '@qovery/shared/ui'

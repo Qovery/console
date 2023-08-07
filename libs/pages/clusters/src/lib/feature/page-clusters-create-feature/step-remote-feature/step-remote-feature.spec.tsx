@@ -1,6 +1,6 @@
 import { getByLabelText, getByTestId } from '__tests__/utils/setup-jest'
 import { act, fireEvent, render } from '__tests__/utils/setup-jest'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepRemoteFeature from './step-remote-feature'
 

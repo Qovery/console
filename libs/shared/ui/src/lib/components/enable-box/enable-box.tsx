@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode, useEffect, useState } from 'react'
+import { FormEvent, type ReactNode, useEffect, useState } from 'react'
 import InputCheckbox from '../inputs/input-checkbox/input-checkbox'
 
 export interface EnableBoxProps {

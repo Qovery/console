@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { NavigationLeft, NavigationLeftLinkProps } from '@qovery/shared/ui'
 
 export interface PageSettingsProps {

@@ -6,7 +6,7 @@ import {
   EnvironmentLogsError,
   Log,
 } from 'qovery-typescript-axios'
-import { ReactNode, useRef, useState } from 'react'
+import { type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { RunningStatus } from '@qovery/shared/enums'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'

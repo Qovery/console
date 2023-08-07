@@ -1,4 +1,4 @@
-import { FormEventHandler, ReactNode, useEffect } from 'react'
+import { FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle } from '../../buttons/button/button'

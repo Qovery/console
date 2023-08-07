@@ -1,7 +1,7 @@
 import { act } from '__tests__/utils/setup-jest'
 import { getByTestId, render } from '__tests__/utils/setup-jest'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepGeneralFeature from './step-general-feature'
 

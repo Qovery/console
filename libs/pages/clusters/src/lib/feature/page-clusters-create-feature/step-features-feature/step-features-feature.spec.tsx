@@ -1,6 +1,6 @@
 import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepFeaturesFeature from './step-features-feature'

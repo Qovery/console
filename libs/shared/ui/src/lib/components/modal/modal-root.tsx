@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useState } from 'react'
+import { type ReactNode, createContext, useState } from 'react'
 import ModalAlert from '../modal-alert/modal-alert'
 import Modal from './modal'
 

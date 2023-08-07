@@ -8,7 +8,7 @@ import {
   DatabaseTypeEnum,
   ManagedDatabaseInstanceTypeResponse,
 } from 'qovery-typescript-axios'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepResourcesFeature from './step-resources-feature'

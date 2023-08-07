@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode, RefObject, useEffect, useRef, useState } from 'react'
+import { FormEvent, type ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
