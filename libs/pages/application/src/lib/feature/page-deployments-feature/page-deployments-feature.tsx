@@ -35,23 +35,13 @@ export function PageDeploymentsFeature() {
     },
   ]
 
+  const serviceType = getServiceType(application as ApplicationEntity)
+
   useEffect(() => {
-    if (
-      application &&
-      (!application.deployments?.loadingStatus || application.deployments.loadingStatus === 'not loaded')
-    ) {
-      dispatch(fetchApplicationDeployments({ applicationId, serviceType: getServiceType(application) }))
+    if (loadingStatus === 'loaded') {
+      dispatch(fetchApplicationDeployments({ applicationId, serviceType }))
     }
-
-    const pullDeployments = setInterval(() => {
-      if (application)
-        dispatch(
-          fetchApplicationDeployments({ applicationId, serviceType: getServiceType(application), silently: true })
-        )
-    }, 2500)
-
-    return () => clearInterval(pullDeployments)
-  }, [dispatch, applicationId, application])
+  }, [dispatch, applicationId, loadingStatus, serviceType])
 
   return (
     <PageDeployments
