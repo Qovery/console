@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
-import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import { Link } from '@qovery/shared/ui'
 import RowDeployment from '../row-deployment/row-deployment'
 
@@ -30,7 +30,7 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
     loadingStatus,
   } = props
 
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
 
   const memoRow = useMemo(
     () => logs?.map((log: EnvironmentLogs, index: number) => <RowDeployment key={index} index={index} data={log} />),
@@ -54,7 +54,10 @@ export function DeploymentLogs(props: DeploymentLogsProps) {
               <Link
                 className="link text-accent2-500 mr-1"
                 size="text-base"
-                link={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)}
+                link={
+                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                  SERVICE_LOGS_VERSION_URL(serviceId, versionId)
+                }
                 linkLabel="Live logs"
               />
               tab.

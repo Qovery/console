@@ -11,7 +11,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { RunningStatus } from '@qovery/shared/enums'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
@@ -69,7 +69,9 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
   const refScrollSection = useRef<HTMLDivElement>(null)
   const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
 
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
+
+  console.log(versionId)
 
   const scrollToError = () => {
     const section = refScrollSection.current
@@ -116,7 +118,8 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
         <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-element-light-darker-200 bg-element-light-darker-700">
           {LinkNavigation(
             'Deployment logs',
-            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId),
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+              DEPLOYMENT_LOGS_VERSION_URL(serviceId, versionId),
             undefined,
             false
           )}
