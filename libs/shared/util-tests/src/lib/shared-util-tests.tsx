@@ -6,6 +6,7 @@
 import { Auth0Provider } from '@auth0/auth0-react'
 import { ResizeObserver } from '@juggle/resize-observer'
 import { type PreloadedState } from '@reduxjs/toolkit'
+import '@testing-library/jest-dom'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { type RenderOptions, queries, render, within } from '@testing-library/react'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
