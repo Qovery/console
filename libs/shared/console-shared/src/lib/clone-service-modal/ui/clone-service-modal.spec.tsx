@@ -20,6 +20,7 @@ const props: CloneServiceModalProps = {
   onSubmit: jest.fn(),
   projects: mockProjects,
   serviceToClone: applicationFactoryMock(1)[0],
+  isFetchEnvironmentsLoading: false,
 }
 
 describe('CloneEnvironmentModal', () => {
@@ -42,19 +43,6 @@ describe('CloneEnvironmentModal', () => {
       })
     )
     expect(baseElement).toBeTruthy()
-  })
-
-  it('should reformat name by replacing special char by hyphens', async () => {
-    const { baseElement } = render(
-      wrapWithReactHookForm(<CloneEnvironmentModal {...props} />, {
-        defaultValues,
-      })
-    )
-
-    const input = screen.getByLabelText('New service name')
-    await userEvent.type(input, 'ben et remi')
-
-    getByDisplayValue(baseElement, 'ben-et-remi')
   })
 
   it('should submit form on click on button', async () => {

@@ -1,5 +1,4 @@
 import { Environment, Project } from 'qovery-typescript-axios'
-import { FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
@@ -46,14 +45,7 @@ export function CloneServiceModal({
           <InputText
             className="mb-6"
             name={field.name}
-            onChange={(event: FormEvent<HTMLInputElement>) => {
-              field.onChange(
-                event.currentTarget.value
-                  .replace(/[^\w\s\\/]/g, '-') // remove special chars but keep / and \
-                  .toLowerCase()
-                  .replace(/ /g, '-')
-              )
-            }}
+            onChange={field.onChange}
             value={field.value}
             label="New service name"
             error={error?.message}
