@@ -70,7 +70,6 @@ export enum IconAwesomeEnum {
   FILE_ARROW_DOWN = 'icon-solid-file-arrow-down',
   FILE_EXPORT = 'icon-solid-file-export',
   FILE_ARROW_UP = 'icon-solid-file-arrow-up',
-  CROSS = 'icon-solid-xmark',
   PEOPLE = 'icon-solid-people',
   ROAD = 'icon-solid-road',
   CODE = 'icon-solid-code',

@@ -91,7 +91,7 @@ export function CustomFilter({
                   onChangeClearTimestamp()
                 }}
               >
-                <Icon name={IconAwesomeEnum.CROSS} />
+                <Icon name={IconAwesomeEnum.XMARK} />
               </span>
             </Button>
           )}

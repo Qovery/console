@@ -289,7 +289,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       {(locationIsApplicationLogs || locationIsDeploymentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
           <ButtonIcon
-            icon={IconAwesomeEnum.CROSS}
+            icon={IconAwesomeEnum.XMARK}
             style={ButtonIconStyle.DARK}
             size={ButtonSize.LARGE}
             link={linkToCloseLogs}
