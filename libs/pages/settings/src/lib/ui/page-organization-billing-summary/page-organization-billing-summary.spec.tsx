@@ -91,6 +91,7 @@ describe('PageOrganizationBillingSummary', () => {
   it('should display not display the payment method box', () => {
     const organization = { ...mockOrganization }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     organization.currentCost.value.plan = PlanEnum.FREE
 
