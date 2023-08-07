@@ -16,7 +16,7 @@ describe('DarkModeEnabler', () => {
   })
 
   it('should add dark class on root element', async () => {
-    const { baseElement, debug } = render(
+    const { baseElement } = render(
       <DarkModeEnabler isDarkMode={true}>
         <p data-testid="root">Hey</p>
       </DarkModeEnabler>

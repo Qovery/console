@@ -1,6 +1,5 @@
-import userEvent from '@testing-library/user-event'
-import { render, screen } from '__tests__/utils/setup-jest'
 import * as environmentDomains from '@qovery/domains/environment'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import TerraformExportModalFeature from './terraform-export-modal-feature'
 
 jest.mock('react-router-dom', () => ({
@@ -20,12 +19,12 @@ const props = {
 
 describe('TerraformExportModalFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<TerraformExportModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<TerraformExportModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should call useFetchEnvironmentExportTerraform without secret', async () => {
-    render(<TerraformExportModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<TerraformExportModalFeature {...props} />)
 
     const submitButton = screen.getByRole('button', { name: /export/i })
     await userEvent.click(submitButton)
@@ -38,7 +37,7 @@ describe('TerraformExportModalFeature', () => {
       mutateAsync: jest.fn(),
     })
 
-    render(<TerraformExportModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<TerraformExportModalFeature {...props} />)
 
     const toggle = screen.getByText(/export secrets/i)
     await userEvent.click(toggle)

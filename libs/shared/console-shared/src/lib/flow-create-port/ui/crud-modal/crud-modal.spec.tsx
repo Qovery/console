@@ -1,8 +1,8 @@
-import userEvent from '@testing-library/user-event'
 import { render, screen } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import CrudModal, { CrudModalProps } from './crud-modal'
 
 const props: CrudModalProps = {
@@ -69,7 +69,7 @@ describe('CrudModal', () => {
   it('should submit the form', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
-    render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<CrudModal {...props} />, {
         defaultValues: {
           internal_port: 99,
