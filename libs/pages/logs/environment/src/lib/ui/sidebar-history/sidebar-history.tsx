@@ -1,8 +1,8 @@
 import { DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, StatusChip } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/utils'
+import { Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { dateFullFormat, trimId } from '@qovery/shared/utils'
 
 export interface SidebarHistoryProps {
   data: DeploymentHistoryEnvironment[]
@@ -22,11 +22,16 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
           itemContentCustom: (
             <div
               className={`flex justify-between w-full py-2 text-xs ${
-                item.id === versionId ? 'text-brand-400' : 'text-text-100'
+                item.id === versionId ? 'text-brand-400' : 'text-text-300'
               }`}
             >
-              <StatusChip status={item.status} />
-              {item.id}
+              <div className="flex">
+                <StatusChip className="mr-3" status={item.status} />
+                <Tooltip content={item.id}>
+                  <p className="font-medium text-brand-300">{trimId(item.id)}</p>
+                </Tooltip>
+              </div>
+              <div>{dateFullFormat(item.created_at)}</div>
             </div>
           ),
           link: {
@@ -42,6 +47,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
     <div className="flex justify-center border-b border-element-light-darker-100 px-4 py-3">
       <div>
         <Menu
+          width={300}
           menus={menuHistory}
           arrowAlign={MenuAlign.CENTER}
           onOpen={(isOpen) => setOpen(isOpen)}
