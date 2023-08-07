@@ -1,10 +1,7 @@
-import userEvent from '@testing-library/user-event'
-import { screen } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
-import { act } from 'react-dom/test-utils'
 import selectEvent from 'react-select-event'
 import * as servicesDomains from '@qovery/domains/services'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CloneServiceModalFeature, { CloneServiceModalFeatureProps } from './clone-service-modal-feature'
 
 let props: CloneServiceModalFeatureProps
@@ -38,7 +35,7 @@ describe('CloneServiceModalFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<CloneServiceModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<CloneServiceModalFeature {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -49,16 +46,14 @@ describe('CloneServiceModalFeature', () => {
       })),
     })
 
-    render(<CloneServiceModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<CloneServiceModalFeature {...props} />)
 
     const input = screen.getByRole('textbox', { name: /new service name/i })
     await userEvent.clear(input)
     await userEvent.type(input, 'test')
 
-    await act(() => {
-      selectEvent.select(screen.getByLabelText(/environment/i), mockEnvironments[2].name, {
-        container: document.body,
-      })
+    await selectEvent.select(screen.getByLabelText(/environment/i), mockEnvironments[2].name, {
+      container: document.body,
     })
 
     const submitButton = screen.getByRole('button', { name: /clone/i })
