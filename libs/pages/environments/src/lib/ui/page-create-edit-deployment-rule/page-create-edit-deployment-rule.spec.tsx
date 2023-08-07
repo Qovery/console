@@ -4,14 +4,13 @@ import { clusterFactoryMock } from '@qovery/shared/factories'
 import PageCreateEditDeploymentRule, { PageCreateEditDeploymentRuleProps } from './page-create-edit-deployment-rule'
 
 describe('PageCreateEditDeploymentRule', () => {
-  let props: PageCreateEditDeploymentRuleProps
+  let props: Partial<PageCreateEditDeploymentRuleProps>
 
   beforeEach(() => {
     props = {
       title: 'Create rule',
       btnLabel: 'Create',
       onSubmit: jest.fn(),
-      control: null as any,
       clusters: clusterFactoryMock(2),
     }
 
@@ -31,14 +30,14 @@ describe('PageCreateEditDeploymentRule', () => {
 
       props.control = control
 
-      return <PageCreateEditDeploymentRule {...props} />
+      return <PageCreateEditDeploymentRule {...(props as PageCreateEditDeploymentRuleProps)} />
     }
 
     render(<Wrapper />)
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageCreateEditDeploymentRule {...props} />)
+    const { baseElement } = render(<PageCreateEditDeploymentRule {...(props as PageCreateEditDeploymentRuleProps)} />)
 
     expect(baseElement).toBeTruthy()
   })

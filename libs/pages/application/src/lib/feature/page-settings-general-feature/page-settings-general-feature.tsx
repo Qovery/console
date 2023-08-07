@@ -136,8 +136,8 @@ export function PageSettingsGeneralFeature() {
       } else {
         try {
           cloneApplication = handleContainerSubmit(data, application)
-        } catch (e: any) {
-          toastError(e, 'Invalid CMD array')
+        } catch (e: unknown) {
+          toastError(e as Error, 'Invalid CMD array')
           return
         }
       }

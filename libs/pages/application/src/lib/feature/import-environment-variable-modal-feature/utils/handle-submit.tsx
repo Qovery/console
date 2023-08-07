@@ -27,6 +27,7 @@ export function handleSubmit(
   data: { [key: string]: string },
   applicationId: string,
   keys: string[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatch: ThunkDispatch<RootState, any, any>,
   closeModal: () => void,
   overwriteEnabled = false,

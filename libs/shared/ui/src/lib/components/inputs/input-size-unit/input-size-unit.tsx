@@ -13,7 +13,7 @@ export interface InputSizeUnitProps {
   minSize?: number
   currentSize?: number
   getUnit?: (value: string | MemorySizeEnum) => void
-  onChange?: (...event: any[]) => void
+  onChange?: (size: string) => void
   error?: FieldError
   showConsumption?: boolean
 }
@@ -37,7 +37,7 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
 
     if (size !== memorySize) {
       const currentSizeByUnit = getSizeUnit(size, value)
-      onChange && onChange(currentSizeByUnit)
+      onChange && onChange(`${currentSizeByUnit}`)
     }
   }
 
@@ -48,7 +48,7 @@ export function InputSizeUnit(props: InputSizeUnitProps) {
           type="number"
           dataTestId={`input-memory-${name}`}
           name={name}
-          onChange={onChange}
+          onChange={(e) => onChange && onChange(e.target.value)}
           value={value}
           label="Size"
           error={

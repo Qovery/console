@@ -1,4 +1,4 @@
-import { type ReactNode, createContext, useState } from 'react'
+import { type Dispatch, type ReactNode, type SetStateAction, createContext, useState } from 'react'
 import ModalAlert from '../modal-alert/modal-alert'
 import Modal from './modal'
 
@@ -9,7 +9,7 @@ interface ModalOptions {
 interface DefaultContextProps {
   openModal: boolean
   setOpenModal: (openModal: boolean) => void
-  setContentModal: any
+  setContentModal: Dispatch<SetStateAction<JSX.Element>>
   setOptionsModal: (optionsModal: ModalOptions) => void
   optionsModal: ModalOptions
   alertClickOutside: boolean

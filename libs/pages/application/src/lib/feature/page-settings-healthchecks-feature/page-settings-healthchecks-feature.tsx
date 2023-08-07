@@ -118,7 +118,8 @@ export function PageSettingsHealthchecksFeature() {
         if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
           setProbeValues(probePath, value)
         } else {
-          // @todo need to find a better way to set the value and remove the any
+          // TODO: need to find a better way to set the value and remove the any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           methods.setValue(probePath as any, Array.isArray(value) ? JSON.stringify(value) : value)
         }
       })

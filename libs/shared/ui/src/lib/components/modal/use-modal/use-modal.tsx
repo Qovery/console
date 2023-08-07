@@ -16,7 +16,7 @@ export function useModal() {
     if (modal) {
       setOpenModal(true)
       if (modal.options) setOptionsModal(modal.options)
-      setContentModal(modal.content)
+      setContentModal(<>{modal.content}</>)
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 
