@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -35,23 +35,13 @@ export function PageDeploymentsFeature() {
     },
   ]
 
+  const serviceType = useMemo(() => getServiceType(application as ApplicationEntity), [application])
+
   useEffect(() => {
-    if (
-      application &&
-      (!application.deployments?.loadingStatus || application.deployments.loadingStatus === 'not loaded')
-    ) {
-      dispatch(fetchApplicationDeployments({ applicationId, serviceType: getServiceType(application) }))
+    if (loadingStatus === 'loaded') {
+      dispatch(fetchApplicationDeployments({ applicationId, serviceType }))
     }
-
-    const pullDeployments = setInterval(() => {
-      if (application)
-        dispatch(
-          fetchApplicationDeployments({ applicationId, serviceType: getServiceType(application), silently: true })
-        )
-    }, 2500)
-
-    return () => clearInterval(pullDeployments)
-  }, [dispatch, applicationId, application])
+  }, [dispatch, applicationId, loadingStatus, serviceType])
 
   return (
     <PageDeployments

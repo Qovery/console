@@ -34,14 +34,10 @@ export function PageDeploymentsFeature() {
   ]
 
   useEffect(() => {
-    if (database && (!database.deployments?.loadingStatus || database.deployments.loadingStatus === 'not loaded')) {
+    if (loadingStatus === 'loaded') {
       dispatch(fetchDatabaseDeployments({ databaseId }))
     }
-
-    const pullDeployments = setInterval(() => dispatch(fetchDatabaseDeployments({ databaseId, silently: true })), 2500)
-
-    return () => clearInterval(pullDeployments)
-  }, [dispatch, databaseId, database])
+  }, [dispatch, loadingStatus, databaseId])
 
   return (
     <PageDeployments
