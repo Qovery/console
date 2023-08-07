@@ -1,7 +1,8 @@
 import { DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { DEPLOYMENT_LOGS_VERSION_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, Menu, MenuData, StatusChip } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, StatusChip } from '@qovery/shared/ui'
+import { dateFullFormat } from '@qovery/shared/utils'
 
 export interface SidebarHistoryProps {
   data: DeploymentHistoryEnvironment[]
@@ -31,7 +32,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
           link: {
             url: pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, item.id),
           },
-        })) || [],
+        })) ?? [],
     },
   ]
 
@@ -42,6 +43,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
       <div>
         <Menu
           menus={menuHistory}
+          arrowAlign={MenuAlign.CENTER}
           onOpen={(isOpen) => setOpen(isOpen)}
           trigger={
             <div
@@ -50,9 +52,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
                 open ? 'text-brand-400' : 'text-text-100'
               }`}
             >
-              <span className="inline-block mr-1">
-                Deployment - {currentIndex}/{data.length}
-              </span>{' '}
+              <span className="inline-block mr-1">Deployment - {dateFullFormat(data?.[currentIndex].created_at)}</span>
               <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
             </div>
           }
