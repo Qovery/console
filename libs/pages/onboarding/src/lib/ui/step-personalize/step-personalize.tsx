@@ -1,11 +1,17 @@
-import { Control, Controller } from 'react-hook-form'
+import { type TypeOfUseEnum } from 'qovery-typescript-axios'
+import { type Control, Controller } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
 import { Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface StepPersonalizeProps {
   dataTypes: Array<Value>
   onSubmit: () => void
-  control: Control<any, any>
+  control: Control<{
+    first_name: string
+    last_name: string
+    user_email: string
+    type_of_use: TypeOfUseEnum
+  }>
   authLogout: () => void
 }
 

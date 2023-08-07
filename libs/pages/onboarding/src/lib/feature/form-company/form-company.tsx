@@ -1,3 +1,4 @@
+import { CompanySizeEnum } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -91,7 +92,11 @@ export function FormCompany(props: FormCompanyProps) {
   const navigate = useNavigate()
   const dispatch = useDispatch<AppDispatch>()
   const userSignUp = useSelector(selectUserSignUp)
-  const { handleSubmit, control, setValue } = useForm()
+  const { handleSubmit, control, setValue } = useForm<{
+    company_name?: string
+    company_size?: CompanySizeEnum
+    user_role?: string
+  }>()
 
   useEffect(() => {
     setValue('company_name', userSignUp?.company_name || undefined)
