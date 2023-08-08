@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function objectFlattener(ob: any): { [key: string]: string } {
   const toReturn: { [key: string]: string } = {}
 
