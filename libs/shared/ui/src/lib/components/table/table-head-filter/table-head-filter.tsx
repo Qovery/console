@@ -24,9 +24,9 @@ export function createFilter<T>(
   defaultData: T[] | undefined,
   defaultValue = ALL,
   currentFilter: string,
-  setCurrentFilter: any,
-  setDataFilterNumber: any,
-  setFilter: any
+  setCurrentFilter: Dispatch<SetStateAction<string>>,
+  setDataFilterNumber: Dispatch<SetStateAction<number>>,
+  setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
 ) {
   const keys: string[] = []
   const menus = []
@@ -69,14 +69,14 @@ export function groupBy<T>(
   property: string,
   defaultValue = ALL,
   currentFilter: string,
-  setCurrentFilter: any,
-  setDataFilterNumber: any,
+  setCurrentFilter: Dispatch<SetStateAction<string>>,
+  setDataFilterNumber: Dispatch<SetStateAction<number>>,
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>,
   dataHeadFilter?: TableHeadCustomFilterProps<T>
 ) {
   if (dataHeadFilter?.itemsCustom) {
     // custom list without datas from array of string
-    const result: MenuItemProps[] = [defaultValue, ...dataHeadFilter?.itemsCustom].map((item: string) => ({
+    const result: MenuItemProps[] = [defaultValue, ...(dataHeadFilter?.itemsCustom ?? {})].map((item: string) => ({
       name: upperCaseFirstLetter(item.toLowerCase())?.replace('_', ' ') || '',
       truncateLimit: 20,
       contentLeft: (
@@ -117,10 +117,12 @@ export function groupBy<T>(
 
       if (property.includes('.')) {
         const splitProperty = property.split('.')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let nestedObj: any = obj
         let key: string | undefined
 
         for (const prop of splitProperty) {
+          // TODO: `in` looks fishy because that's not the way to use this keyword in js
           nestedObj = nestedObj && prop in nestedObj ? nestedObj[prop] : null
           if (nestedObj === null || nestedObj === undefined) {
             break

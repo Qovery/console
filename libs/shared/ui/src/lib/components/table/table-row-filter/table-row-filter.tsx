@@ -3,6 +3,7 @@ import { TableFilterProps } from '../table'
 import { ALL } from '../table-head-filter/table-head-filter'
 
 export interface TableRowFilterProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any
   filter?: TableFilterProps[]
 }
@@ -22,7 +23,7 @@ export function TableRowFilter({ children, data, filter }: PropsWithChildren<Tab
       let nestedData = data
 
       for (const key of nestedKeys) {
-        if (nestedData && nestedData.hasOwnProperty(key)) {
+        if (nestedData && Object.prototype.hasOwnProperty.call(nestedData, key)) {
           nestedData = nestedData[key]
         } else {
           return false

@@ -75,7 +75,7 @@ const dataHead = [
         search: true,
         title: 'Filter by environment type',
         key: 'mode',
-        itemContentCustom: (data: any, currentFilter: string) => {
+        itemContentCustom: (data: { mode: string; status: { state: string } }, currentFilter: string) => {
           const isActive = currentFilter === data.mode
           return (
             <p>

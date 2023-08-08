@@ -4,6 +4,7 @@ import { TableFilterProps } from '../table'
 import TableRowFilter from '../table-row-filter/table-row-filter'
 
 export interface TableRowProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any
   filter?: TableFilterProps[]
   link?: string
