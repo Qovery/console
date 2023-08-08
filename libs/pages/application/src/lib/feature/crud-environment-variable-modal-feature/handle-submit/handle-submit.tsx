@@ -14,6 +14,7 @@ import {
 } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
+import { type AppDispatch } from '@qovery/store'
 import {
   CrudEnvironmentVariableModalFeatureProps,
   DataFormEnvironmentVariableInterface,
@@ -25,7 +26,7 @@ export function handleSubmitForEnvSecretCreation(
   data: DataFormEnvironmentVariableInterface,
   setLoading: (b: boolean) => void,
   props: CrudEnvironmentVariableModalFeatureProps,
-  dispatch: any,
+  dispatch: AppDispatch,
   setClosing: (b: boolean) => void,
   serviceType: ServiceTypeEnum,
   actionRedeployEnvironment: () => void

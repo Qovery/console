@@ -1,4 +1,3 @@
-import { ThunkDispatch } from '@reduxjs/toolkit'
 import { APIVariableScopeEnum, VariableImportRequestVars } from 'qovery-typescript-axios'
 import {
   fetchEnvironmentVariables,
@@ -6,7 +5,7 @@ import {
   importEnvironmentVariables,
 } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { RootState } from '@qovery/store'
+import { type AppDispatch } from '@qovery/store'
 
 export function formatData(data: { [key: string]: string }, keys: string[]) {
   const vars: VariableImportRequestVars[] = []
@@ -27,8 +26,7 @@ export function handleSubmit(
   data: { [key: string]: string },
   applicationId: string,
   keys: string[],
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<RootState, any, any>,
+  dispatch: AppDispatch,
   closeModal: () => void,
   overwriteEnabled = false,
   serviceType?: ServiceTypeEnum
