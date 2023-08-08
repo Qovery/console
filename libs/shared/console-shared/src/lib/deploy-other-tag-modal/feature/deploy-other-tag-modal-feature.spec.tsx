@@ -15,7 +15,7 @@ jest.mock('react-redux', () => ({
         data: {},
       })
     ),
-  useSelector: (a: any) => {
+  useSelector: (a: () => void) => {
     return a()
   },
 }))
