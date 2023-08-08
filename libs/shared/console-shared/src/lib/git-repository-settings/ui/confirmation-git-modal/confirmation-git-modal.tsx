@@ -48,7 +48,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
             props.onClose()
           }}
         >
-          I understood
+          I understand
         </Button>
       </div>
     </div>
