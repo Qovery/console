@@ -13,24 +13,30 @@ export function SidebarHistoryFeature() {
   const { data } = useEnvironmentDeploymentHistory(projectId, environmentId)
   const { serviceId, versionId, updateVersionId } = useContext(ServiceStageIdsContext)
   const navigate = useNavigate()
-
   const applications = useSelector((state: RootState) => selectApplicationsEntitiesByEnvId(state, environmentId))
 
   const pathLogs = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
   useEffect(() => {
-    if (!versionId && serviceId !== '') {
+    if (!versionId) {
       const firstVersionId = data?.[0]?.id || ''
+      // adding the first versionId if not defined
       updateVersionId(firstVersionId)
-      navigate(pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, firstVersionId))
+      // navigate to deployment logs view
+      if (serviceId) {
+        navigate(
+          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+            DEPLOYMENT_LOGS_VERSION_URL(serviceId, firstVersionId)
+        )
+      }
     }
-  }, [navigate, serviceId, versionId, updateVersionId, data, pathLogs])
+  }, [organizationId, projectId, environmentId, serviceId, versionId, navigate, updateVersionId, data])
 
   if (!data) return
 
-  return (
-    <SidebarHistory data={data} versionId={versionId} serviceId={serviceId || applications[0].id} pathLogs={pathLogs} />
-  )
+  const defaultServiceId = serviceId || applications[0]?.id || ''
+
+  return <SidebarHistory data={data} versionId={versionId} serviceId={defaultServiceId} pathLogs={pathLogs} />
 }
 
 export default SidebarHistoryFeature

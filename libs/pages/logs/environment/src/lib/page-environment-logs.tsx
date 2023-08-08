@@ -77,10 +77,6 @@ export function PageEnvironmentLogs() {
           environmentStatus={environmentStatus}
         />
         <Routes>
-          {/* <Route
-            path={DEPLOYMENT_LOGS_URL()}
-            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
-          /> */}
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
             element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}

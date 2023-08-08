@@ -11,10 +11,10 @@ export const ENVIRONMENT_LOGS_URL = (
 
 export const SERVICE_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/live-logs`
 
-export const SERVICE_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
+export const SERVICE_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId?') =>
   `/${serviceId}/live-logs/${versionId}`
 
 export const DEPLOYMENT_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/deployment-logs`
 
-export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
+export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId?') =>
   `/${serviceId}/deployment-logs/${versionId}`

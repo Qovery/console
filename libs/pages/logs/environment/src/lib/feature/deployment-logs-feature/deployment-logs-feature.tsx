@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { selectApplicationById } from '@qovery/domains/application'
 import { selectDatabaseById } from '@qovery/domains/database'
+import { useEnvironmentDeploymentHistory } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
@@ -64,6 +65,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     selectApplicationById(state, serviceId)
   )
   const database = useSelector<RootState, DatabaseEntity | undefined>((state) => selectDatabaseById(state, serviceId))
+  const { data: dataDeploymentHistory } = useEnvironmentDeploymentHistory(projectId, environmentId)
 
   const [logs, setLogs] = useState<EnvironmentLogs[]>([])
   const [loadingStatusDeploymentLogs, setLoadingStatusDeploymentLogs] = useState<LoadingStatus>('not loaded')
@@ -131,8 +133,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     }
   }, [messageChunks, pauseStatusLogs])
 
-  // const hideDeploymentLogsBoolean = !(getServiceStatuesById(statusStages, serviceId) as Status)?.is_part_last_deployment
-  const hideDeploymentLogsBoolean = false
+  const hideDeploymentLogsBoolean = !(getServiceStatuesById(statusStages, serviceId) as Status)?.is_part_last_deployment
 
   // reset deployment logs by serviceId and versionId
   useEffect(() => {
@@ -167,7 +168,9 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       setPauseStatusLogs={setPauseStatusLogs}
       serviceRunningStatus={application?.running_status || database?.running_status}
       serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
+      serviceName={application?.name || database?.name}
       hideDeploymentLogs={hideDeploymentLogsBoolean}
+      dataDeploymentHistory={dataDeploymentHistory}
     />
   )
 }

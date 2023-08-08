@@ -11,7 +11,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { RunningStatus } from '@qovery/shared/enums'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_VERSION_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
@@ -71,8 +71,6 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
 
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
 
-  console.log(versionId)
-
   const scrollToError = () => {
     const section = refScrollSection.current
     if (!section) return
@@ -125,23 +123,19 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
           )}
           {LinkNavigation(
             'Live logs',
-            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+              SERVICE_LOGS_VERSION_URL(serviceId, versionId),
             serviceRunningStatus
           )}
         </div>
       )}
       {!data || data.items?.length === 0 || data?.loadingStatus === 'not loaded' ? (
-        <div data-testid="loading-screen" className="mt-[100px] w-full flex justify-center text-center">
+        <div data-testid="loading-screen" className="mt-[88px] w-full flex justify-center text-center">
           {data?.loadingStatus === 'not loaded' || !data ? (
             <LoaderSpinner className="w-6 h-6" theme="dark" />
           ) : (
             <div className="flex flex-col items-center">
-              <img
-                className="w-40 pointer-events-none user-none"
-                src="/assets/images/event-placeholder-dark.svg"
-                alt="Event placeholder"
-              />
-              <div className="mt-5 text-text-100 font-medium text-center">{placeholderDescription}</div>
+              <div className="text-text-100 font-medium text-center">{placeholderDescription}</div>
             </div>
           )}
         </div>
@@ -190,7 +184,8 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
             </div>
             <div className="flex">
               {location.pathname.includes(
-                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)
+                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                  SERVICE_LOGS_VERSION_URL(serviceId, versionId)
               ) && (
                 <MenuTimeFormat
                   updateTimeContextValue={updateTimeContextValue}
