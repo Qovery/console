@@ -15,7 +15,7 @@ export function SidebarStatus(props: SidebarStatusProps) {
         Deployment status:
         <StatusChip status={environmentStatus?.last_deployment_state || environmentStatus?.state} />
       </div>
-      <p className="flex items-center justify-between text-text-300 text-xs mb-2">
+      <div className="flex items-center justify-between text-text-300 text-xs mb-2">
         Deployment Execution id:
         <Tooltip content={environmentStatus?.last_deployment_id || ''}>
           <span className="text-brand-400">
@@ -27,7 +27,7 @@ export function SidebarStatus(props: SidebarStatusProps) {
               : environmentStatus?.last_deployment_id}
           </span>
         </Tooltip>
-      </p>
+      </div>
       {environmentStatus?.last_deployment_date && (
         <p className="flex items-center justify-between text-text-300 text-xs">
           Deployment start time:
