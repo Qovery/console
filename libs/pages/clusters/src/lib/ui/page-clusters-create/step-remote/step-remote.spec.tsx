@@ -1,5 +1,4 @@
-import { getByDisplayValue, getByTestId, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { getByDisplayValue, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ClusterRemoteData } from '@qovery/shared/interfaces'
 import StepRemote, { StepRemoteProps } from './step-remote'

@@ -1,5 +1,4 @@
-import { act, findAllByTestId, fireEvent, screen, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, findAllByTestId, fireEvent, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import ImportEnvironmentVariableModalFeature, {
   ImportEnvironmentVariableModalFeatureProps,
 } from './import-environment-variable-modal-feature'

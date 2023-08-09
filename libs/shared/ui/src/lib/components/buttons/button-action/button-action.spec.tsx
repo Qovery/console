@@ -1,5 +1,4 @@
-import { screen } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import Icon from '../../icon/icon'
 import ButtonAction, { ButtonActionProps } from './button-action'
 

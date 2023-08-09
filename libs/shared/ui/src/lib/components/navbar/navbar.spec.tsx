@@ -1,5 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
-import { screen } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import Navbar, { NavbarProps } from './navbar'
 
 describe('Navbar', () => {

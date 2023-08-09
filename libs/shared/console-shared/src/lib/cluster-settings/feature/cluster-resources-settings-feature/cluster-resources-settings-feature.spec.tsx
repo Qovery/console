@@ -1,5 +1,4 @@
-import { act, getByLabelText, getByText } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'

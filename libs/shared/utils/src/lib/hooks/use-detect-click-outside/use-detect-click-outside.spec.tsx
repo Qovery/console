@@ -1,5 +1,4 @@
-import { act, screen } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, render, screen } from '__tests__/utils/setup-jest'
 import { createElement } from 'react'
 import DetectClickOutside, { UseDetectOutsideProps } from './use-detect-click-outside'
 

@@ -5,9 +5,9 @@ import {
   getByLabelText,
   getByTestId,
   getByText,
+  render,
   waitFor,
 } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'

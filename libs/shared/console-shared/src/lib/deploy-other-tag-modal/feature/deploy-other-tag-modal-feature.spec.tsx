@@ -1,5 +1,4 @@
-import { act, fireEvent, getByLabelText, getByTestId } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { applicationFactoryMock } from '@qovery/shared/factories'

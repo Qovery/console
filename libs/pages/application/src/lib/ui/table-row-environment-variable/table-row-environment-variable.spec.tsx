@@ -1,5 +1,4 @@
-import { getByText } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { getByText, render } from '__tests__/utils/setup-jest'
 import { APIVariableTypeEnum } from 'qovery-typescript-axios'
 import { mockEnvironmentVariable, mockSecretEnvironmentVariable } from '@qovery/shared/factories'
 import TableRowEnvironmentVariable, { TableRowEnvironmentVariableProps } from './table-row-environment-variable'

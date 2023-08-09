@@ -1,5 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
-import { fireEvent, screen } from '__tests__/utils/setup-jest'
+import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import Accordion, { AccordionProps } from './accordion'
 
 let props: AccordionProps

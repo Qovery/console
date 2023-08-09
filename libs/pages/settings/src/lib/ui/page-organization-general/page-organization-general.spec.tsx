@@ -1,5 +1,4 @@
-import { act, fireEvent, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import PageOrganizationGeneral, { PageOrganizationGeneralProps } from './page-organization-general'
 

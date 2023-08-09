@@ -1,6 +1,5 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import { act, fireEvent, getByTestId, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { OrganizationEventResponseList } from 'qovery-typescript-axios'
 import { EventQueryParams } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'

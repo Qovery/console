@@ -1,5 +1,4 @@
-import { act, getByTestId, getByText, queryByText } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { creditCardsFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationBillingSummary, {

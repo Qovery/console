@@ -1,5 +1,4 @@
-import { act, fireEvent } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import InputTags, { InputTagsProps } from './input-tags'
 
 describe('InputTags', () => {

@@ -1,5 +1,4 @@
-import { act } from '__tests__/utils/setup-jest'
-import { getByTestId, render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import * as storeCluster from '@qovery/domains/organization'

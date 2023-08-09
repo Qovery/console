@@ -1,5 +1,4 @@
-import { fireEvent, screen } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import InputRadio, { InputRadioProps } from './input-radio'
 
 describe('InputRadio', () => {

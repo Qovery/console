@@ -1,5 +1,4 @@
-import { getByTestId, getByText, queryByTestId } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
 import { type ReactNode } from 'react'
 import FunnelFlowBody from './funnel-flow-body'
 

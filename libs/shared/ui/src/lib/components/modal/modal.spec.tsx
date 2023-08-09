@@ -1,5 +1,4 @@
-import { fireEvent, screen } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import Button from '../buttons/button/button'
 import Modal, { ModalProps } from './modal'
 

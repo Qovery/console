@@ -1,5 +1,4 @@
-import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as environmentDomains from '@qovery/domains/environment'

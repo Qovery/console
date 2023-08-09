@@ -1,6 +1,5 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import { act, waitFor } from '__tests__/utils/setup-jest'
-import { getByTestId, render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import {
   CloudProviderEnum,
   DatabaseAccessibilityEnum,

@@ -1,5 +1,4 @@
-import { act, fireEvent, getByDisplayValue, getByTestId, screen } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getByDisplayValue, getByTestId, render, screen } from '__tests__/utils/setup-jest'
 import InputCreditCard, { InputCreditCardProps } from './input-credit-card'
 
 describe('InputCreditCard', () => {

@@ -1,5 +1,4 @@
-import { getAllByTestId, getByTestId } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { creditCardsFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationBilling, { PageOrganizationBillingProps } from './page-organization-billing'
 

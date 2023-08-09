@@ -1,5 +1,4 @@
-import { act, fireEvent, getByLabelText, getByTestId, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
 import * as organizationDomain from '@qovery/domains/organization'
 import { webhookFactoryMock } from '@qovery/shared/factories'

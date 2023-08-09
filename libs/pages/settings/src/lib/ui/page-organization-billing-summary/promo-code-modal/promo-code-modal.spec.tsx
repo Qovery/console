@@ -1,5 +1,4 @@
-import { act, getByTestId } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import PromoCodeModal, { PromoCodeModalProps } from './promo-code-modal'
 

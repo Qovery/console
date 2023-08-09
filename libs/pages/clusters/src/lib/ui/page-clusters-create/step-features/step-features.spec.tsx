@@ -1,5 +1,4 @@
-import { act } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import StepFeatures, { StepFeaturesProps } from './step-features'

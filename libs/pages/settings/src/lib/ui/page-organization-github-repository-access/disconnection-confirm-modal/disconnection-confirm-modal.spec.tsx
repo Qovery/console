@@ -1,5 +1,4 @@
-import { act, getByTestId } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, render } from '__tests__/utils/setup-jest'
 import DisconnectionConfirmModal from './disconnection-confirm-modal'
 
 const mockOnClose = jest.fn()

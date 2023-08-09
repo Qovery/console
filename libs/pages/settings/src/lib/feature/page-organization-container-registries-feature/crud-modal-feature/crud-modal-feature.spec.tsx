@@ -1,5 +1,4 @@
-import { act, fireEvent } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as storeOrganization from '@qovery/domains/organization'

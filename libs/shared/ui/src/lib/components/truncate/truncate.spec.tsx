@@ -1,7 +1,5 @@
-import { screen, render } from '__tests__/utils/setup-jest'
-import { truncateText } from './truncate'
-
-import Truncate from './truncate'
+import { render, screen } from '__tests__/utils/setup-jest'
+import Truncate, { truncateText } from './truncate'
 
 describe('Truncate', () => {
   const props = {

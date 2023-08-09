@@ -1,5 +1,4 @@
-import { getByDisplayValue, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { getByDisplayValue, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ClusterRemoteData } from '@qovery/shared/interfaces'
 import PageSettingsRemote, { PageSettingsRemoteProps } from './page-settings-remote'

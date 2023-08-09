@@ -6,8 +6,8 @@ import {
   getByLabelText,
   getByRole,
   getByTestId,
+  render,
 } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'

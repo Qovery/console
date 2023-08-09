@@ -1,5 +1,4 @@
-import { useParams } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { ENVIRONMENTS_URL } from '@qovery/shared/routes'
 
 export function Overview() {

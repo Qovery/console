@@ -1,5 +1,4 @@
-import { screen, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { render, screen, waitFor } from '__tests__/utils/setup-jest'
 import Table, { TableProps } from './table'
 
 describe('Table', () => {

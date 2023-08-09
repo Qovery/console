@@ -1,5 +1,4 @@
-import { act, fireEvent, getByTestId } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getByTestId, render } from '__tests__/utils/setup-jest'
 import Pagination, { PaginationProps } from './pagination'
 
 const props: PaginationProps = {

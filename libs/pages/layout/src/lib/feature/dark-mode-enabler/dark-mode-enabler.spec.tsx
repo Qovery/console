@@ -1,5 +1,4 @@
-import { getByTestId, waitFor } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import DarkModeEnabler from './dark-mode-enabler'
 
 describe('DarkModeEnabler', () => {

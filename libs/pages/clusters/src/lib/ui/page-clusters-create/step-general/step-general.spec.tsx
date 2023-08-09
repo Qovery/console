@@ -1,5 +1,4 @@
-import { act, fireEvent } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import StepGeneral, { StepGeneralProps } from './step-general'

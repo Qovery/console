@@ -1,5 +1,4 @@
-import { getByText } from '__tests__/utils/setup-jest'
-import { render } from '__tests__/utils/setup-jest'
+import { getByText, render } from '__tests__/utils/setup-jest'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import AboutGit, { AboutGitProps } from './about-git'
 
