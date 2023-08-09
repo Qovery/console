@@ -70,7 +70,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                     key={service.id}
                     to={
                       ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                      DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId === ':versionId' ? '' : versionId)
+                      DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId ? versionId : '')
                     }
                     className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-text-100 rounded-[3px] ${
                       serviceId === service.id

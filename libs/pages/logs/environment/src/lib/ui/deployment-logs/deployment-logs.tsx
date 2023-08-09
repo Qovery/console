@@ -41,8 +41,8 @@ export function DeploymentLogs({
   )
 
   const displayPlaceholder = (serviceDeploymentStatus?: ServiceDeploymentStatusEnum) => {
-    switch (serviceDeploymentStatus) {
-      case ServiceDeploymentStatusEnum.NEVER_DEPLOYED:
+    if (hideDeploymentLogs) {
+      if (serviceDeploymentStatus === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         return (
           <div>
             <p className="mb-1">
@@ -53,7 +53,9 @@ export function DeploymentLogs({
             </p>
           </div>
         )
-      case ServiceDeploymentStatusEnum.OUT_OF_DATE:
+      } else if (logs.length === 0 && loadingStatus !== 'not loaded' && !serviceDeploymentStatus) {
+        return <LoaderSpinner className="w-6 h-6" theme="dark" />
+      } else {
         return (
           <div className="flex items-center flex-col">
             <div>
@@ -93,16 +95,17 @@ export function DeploymentLogs({
             </div>
           </div>
         )
-      default:
-        return <LoaderSpinner className="w-6 h-6" theme="dark" />
+      }
     }
+
+    return <LoaderSpinner className="w-6 h-6" theme="dark" />
   }
 
   return (
     <LayoutLogs
       data={{
         items: hideDeploymentLogs ? [] : logs,
-        loadingStatus: hideDeploymentLogs ? 'loaded' : loadingStatus,
+        loadingStatus,
       }}
       placeholderDescription={displayPlaceholder(serviceDeploymentStatus)}
       pauseLogs={pauseStatusLogs}
