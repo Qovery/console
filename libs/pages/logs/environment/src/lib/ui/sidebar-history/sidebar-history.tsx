@@ -37,7 +37,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
           link: {
             url: pathLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, item.id),
           },
-        })) ?? [],
+        })) || [],
     },
   ]
 

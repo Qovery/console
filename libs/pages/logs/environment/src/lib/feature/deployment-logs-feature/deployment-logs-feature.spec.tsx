@@ -52,18 +52,13 @@ describe('DeploymentLogsFeature', () => {
       },
     ],
     statusStages: services,
-    pauseStatusLogs: false,
-    loadingStatus: 'loaded',
-    setPauseStatusLogs: jest.fn(),
   }
 
   it('should render successfully', () => {
-    console.warn = jest.fn()
-
     const { baseElement } = render(
       <Routes location="/organization/1/project/2/environment/3/logs/">
         <Route
-          path="/organization/1/project/2/environment/3/logs/4/deployment"
+          path="/organization/1/project/2/environment/3/logs/4/deployment-logs"
           element={<DeploymentLogsFeature {...props} />}
         />
       </Routes>
