@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { LoaderSpinner } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/utils'
 import RowDeployment from '../row-deployment/row-deployment'
 
@@ -52,9 +53,9 @@ export function DeploymentLogs({
             </p>
           </div>
         )
-      default:
+      case ServiceDeploymentStatusEnum.OUT_OF_DATE:
         return (
-          <div className="flex justify-center flex-col">
+          <div className="flex items-center flex-col">
             <div>
               <p className="mb-1">
                 <span className="text-brand-400">{serviceName}</span> service was not deployed within this deployment
@@ -92,6 +93,8 @@ export function DeploymentLogs({
             </div>
           </div>
         )
+      default:
+        return <LoaderSpinner className="w-6 h-6" theme="dark" />
     }
   }
 
