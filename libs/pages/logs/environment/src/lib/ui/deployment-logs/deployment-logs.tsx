@@ -4,8 +4,8 @@ import { Link, useParams } from 'react-router-dom'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { LoaderSpinner } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/utils'
+import { LoaderSpinner, StatusChip } from '@qovery/shared/ui'
+import { dateFullFormat, trimId } from '@qovery/shared/utils'
 import RowDeployment from '../row-deployment/row-deployment'
 
 export interface DeploymentLogsProps {
@@ -81,7 +81,8 @@ export function DeploymentLogs({
                         DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentHistory.id)
                       }
                     >
-                      <span className="text-brand-300 text-ssm">{deploymentHistory.id}</span>
+                      <StatusChip className="mr-3" status={deploymentHistory.status} />
+                      <span className="text-brand-300 text-ssm">{trimId(deploymentHistory.id)}</span>
                       <span className="text-text-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
                     </Link>
                   </div>

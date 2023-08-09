@@ -105,7 +105,7 @@ export function RowPod(props: RowPodProps) {
           )}
         </div>
         <div data-testid="cell-date" className="px-4 pt-0.5 text-element-light-lighter-700 whitespace-nowrap">
-          {dateFullFormat(data.created_at, utc ? 'UTC' : undefined)}
+          {dateFullFormat(data.created_at, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
         </div>
         <div data-testid="cell-msg" className="select-text pr-6 pt-0.5 text-text-100 relative w-full">
           <span className="whitespace-pre-wrap break-all">{convertToAnsi(data.message)}</span>
