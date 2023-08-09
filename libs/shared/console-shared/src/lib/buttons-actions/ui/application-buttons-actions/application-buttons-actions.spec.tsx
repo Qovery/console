@@ -1,5 +1,4 @@
-import { getByText, queryByText } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { RunningStatus } from '@qovery/shared/enums'
 import { applicationFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'

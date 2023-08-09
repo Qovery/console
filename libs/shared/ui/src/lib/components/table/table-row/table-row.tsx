@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { type PropsWithChildren, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { TableFilterProps } from '../table'
 import TableRowFilter from '../table-row-filter/table-row-filter'
 
 export interface TableRowProps {
-  children: React.ReactElement
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any
   filter?: TableFilterProps[]
   link?: string
@@ -14,7 +14,7 @@ export interface TableRowProps {
   isNew?: boolean
 }
 
-export function TableRow(props: TableRowProps) {
+export function TableRow(props: PropsWithChildren<TableRowProps>) {
   const { children, link, className = '', columnsWidth, disabled, data, filter, isNew } = props
   const [highlighted, setHighlighted] = useState(false)
 

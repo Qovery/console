@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useFetchEnvironments } from '@qovery/domains/environment'
@@ -134,4 +134,4 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
   )
 }
 
-export default React.memo(CustomFilterFeature)
+export default memo(CustomFilterFeature)

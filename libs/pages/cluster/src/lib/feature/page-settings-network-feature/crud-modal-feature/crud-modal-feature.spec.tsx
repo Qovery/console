@@ -1,5 +1,4 @@
-import { act, fireEvent } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as storeOrganization from '@qovery/domains/organization'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import CrudModalFeature, { CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'

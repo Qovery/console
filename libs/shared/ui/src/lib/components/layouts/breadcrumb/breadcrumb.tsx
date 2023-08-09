@@ -1,6 +1,6 @@
 import equal from 'fast-deep-equal'
 import { Cluster, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
-import React, { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { getEnvironmentStatusById, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
@@ -289,7 +289,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
       {(locationIsApplicationLogs || locationIsDeploymentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
           <ButtonIcon
-            icon={IconAwesomeEnum.CROSS}
+            icon={IconAwesomeEnum.XMARK}
             style={ButtonIconStyle.DARK}
             size={ButtonSize.LARGE}
             link={linkToCloseLogs}
@@ -300,6 +300,6 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
   )
 }
 
-export const Breadcrumb = React.memo(BreadcrumbMemo, (prevProps, nextProps) => {
+export const Breadcrumb = memo(BreadcrumbMemo, (prevProps, nextProps) => {
   return equal(prevProps, nextProps)
 })

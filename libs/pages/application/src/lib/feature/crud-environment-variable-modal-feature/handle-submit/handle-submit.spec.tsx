@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/react'
+import { waitFor } from '__tests__/utils/setup-jest'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { mockEnvironmentVariable } from '@qovery/shared/factories'
 import {

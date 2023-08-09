@@ -1,5 +1,4 @@
-import { getAllByTestId, getByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'

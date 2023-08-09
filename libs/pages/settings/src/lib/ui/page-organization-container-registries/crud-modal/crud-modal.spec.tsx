@@ -1,5 +1,4 @@
-import { act, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import CrudModal, { CrudModalProps, getOptionsContainerRegistry } from './crud-modal'

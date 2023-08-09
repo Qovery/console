@@ -1,14 +1,13 @@
-import React from 'react'
+import { type PropsWithChildren } from 'react'
 import { createPortal } from 'react-dom'
 import Button, { ButtonStyle } from '../buttons/button/button'
 import Icon from '../icon/icon'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 
-export interface FunnelFlowProps {
+export interface FunnelFlowProps extends PropsWithChildren {
   totalSteps: number
   currentStep: number
   currentTitle: string
-  children: React.ReactNode
   exitTo?: string
   onExit?: () => void
   portal?: boolean
@@ -32,7 +31,7 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
         {props.onExit && (
           <div className="border-l border-l-element-light-lighter-400 pl-5 h-full flex items-center">
             <Button onClick={props.onExit} style={ButtonStyle.STROKED} className="btn--no-min-w">
-              Close <Icon name={IconAwesomeEnum.CROSS} className="ml-2" />
+              Close <Icon name={IconAwesomeEnum.XMARK} className="ml-2" />
             </Button>
           </div>
         )}

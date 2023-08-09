@@ -1,3 +1,4 @@
+import { CompanySizeEnum } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction } from 'react'
 import { Control, Controller } from 'react-hook-form'
 import { Value } from '@qovery/shared/interfaces'
@@ -7,7 +8,11 @@ export interface StepCompanyProps {
   dataSize: Array<Value>
   dataRole: Array<Value>
   onSubmit: () => void
-  control: Control<any, any>
+  control: Control<{
+    company_name?: string
+    company_size?: CompanySizeEnum
+    user_role?: string
+  }>
   setStepCompany: Dispatch<SetStateAction<boolean>>
 }
 

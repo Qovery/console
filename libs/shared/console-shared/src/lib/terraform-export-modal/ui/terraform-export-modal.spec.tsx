@@ -1,6 +1,5 @@
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import TerraformExportModal, { TerraformExportModalProps } from './terraform-export-modal'
 
 const props: TerraformExportModalProps = {
@@ -11,7 +10,7 @@ const props: TerraformExportModalProps = {
 
 describe('TerraformExportModal', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<TerraformExportModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<TerraformExportModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
@@ -19,7 +18,7 @@ describe('TerraformExportModal', () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
 
-    render(wrapWithReactHookForm(<TerraformExportModal {...props} />))
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<TerraformExportModal {...props} />))
 
     const submitButton = screen.getByRole('button', { name: /export/i })
 

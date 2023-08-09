@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ClusterRemoteData } from '@qovery/shared/interfaces'
 import { BlockContent, InputTextArea } from '@qovery/shared/ui'

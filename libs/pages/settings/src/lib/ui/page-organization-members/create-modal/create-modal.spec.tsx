@@ -1,5 +1,4 @@
-import { act, fireEvent, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import selectEvent from 'react-select-event'
 import CreateModal, { CreateModalProps } from './create-modal'

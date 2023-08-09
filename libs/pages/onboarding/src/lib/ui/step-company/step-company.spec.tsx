@@ -1,38 +1,36 @@
-import { useForm } from 'react-hook-form'
 import { render } from '__tests__/utils/setup-jest'
-
+import { CompanySizeEnum } from 'qovery-typescript-axios'
+import { useForm } from 'react-hook-form'
 import StepCompany, { StepCompanyProps } from './step-company'
 
 describe('StepCompany', () => {
-  let props: StepCompanyProps
-  let Wrapper: React.FC
+  let props: Partial<StepCompanyProps>
 
   beforeEach(() => {
     props = {
       dataRole: [{ label: 'some-label', value: 'some-value' }],
       dataSize: [{ label: 'some-label', value: 'some-value' }],
       onSubmit: jest.fn(),
-      control: null as any,
       setStepCompany: jest.fn(),
     }
 
-    Wrapper = () => {
+    const Wrapper = () => {
       const { control } = useForm<{
-        company_name: string
-        company_size: number
-        user_role: string
+        company_name?: string
+        company_size?: CompanySizeEnum
+        user_role?: string
       }>()
 
       props.control = control
 
-      return <StepCompany {...props} />
+      return <StepCompany {...(props as StepCompanyProps)} />
     }
 
     render(<Wrapper />)
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<StepCompany {...props} />)
+    const { baseElement } = render(<StepCompany {...(props as StepCompanyProps)} />)
     expect(baseElement).toBeTruthy()
   })
 })

@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { act, render } from '__tests__/utils/setup-jest'
 import { SignUp } from 'qovery-typescript-axios'
 import { organizationFactoryMock, userSignUpFactoryMock } from '@qovery/shared/factories'
 import { OrganizationEntity } from '@qovery/shared/interfaces'

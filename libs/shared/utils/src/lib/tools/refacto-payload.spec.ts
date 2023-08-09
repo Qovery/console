@@ -1,9 +1,11 @@
 import {
+  CloudProviderEnum,
+  DatabaseAccessibilityEnum,
   OrganizationCustomRoleClusterPermission,
   ServiceDeploymentStatusEnum,
   StateEnum,
+  StorageTypeEnum,
 } from 'qovery-typescript-axios'
-import { CloudProviderEnum, DatabaseAccessibilityEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { ContainerApplicationEntity } from '@qovery/shared/interfaces'
 import {

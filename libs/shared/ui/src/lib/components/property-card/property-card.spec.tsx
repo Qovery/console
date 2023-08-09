@@ -1,5 +1,4 @@
-import { act } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import PropertyCard, { PropertyCardProps } from './property-card'
 
 const props: PropertyCardProps = {

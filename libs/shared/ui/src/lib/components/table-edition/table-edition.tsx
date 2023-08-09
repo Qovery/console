@@ -1,5 +1,7 @@
+import { type ReactNode } from 'react'
+
 export interface TableEditionCell {
-  content?: React.ReactNode | (() => React.ReactNode)
+  content?: ReactNode | (() => ReactNode)
   className?: string
 }
 

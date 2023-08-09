@@ -1,5 +1,4 @@
-import { act, fireEvent, getByRole, getByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getByRole, getByTestId, render } from '__tests__/utils/setup-jest'
 import Banner, { BannerStyle } from './banner'
 
 describe('Banner', () => {

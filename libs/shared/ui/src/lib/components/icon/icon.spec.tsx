@@ -1,8 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
-import { screen } from '@testing-library/react'
-
-import Icon from './icon'
-import { IconProps } from './icon'
+import { render, screen } from '__tests__/utils/setup-jest'
+import Icon, { IconProps } from './icon'
 
 describe('Icon', () => {
   let props: IconProps

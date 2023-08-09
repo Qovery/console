@@ -45,7 +45,7 @@ export function TagEvent(props: TagEventProps) {
             fontWeight="font-medium"
             className="bg-element-light-lighter-200 text-element-light-lighter-700 border border-element-light-lighter-500 !h-6"
           >
-            Trigger Cancel <Icon name={IconAwesomeEnum.CROSS} className="ml-1" />
+            Trigger Cancel <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.TRIGGER_DELETE:
@@ -81,7 +81,7 @@ export function TagEvent(props: TagEventProps) {
             fontWeight="font-medium"
             className="bg-accent2-50 text-accent2-600 border border-accent2-500 !h-6 truncate"
           >
-            Trigger Stop <Icon name={IconAwesomeEnum.CROSS} className="ml-1" />
+            Trigger Stop <Icon name={IconAwesomeEnum.XMARK} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.TRIGGER_RESTART:

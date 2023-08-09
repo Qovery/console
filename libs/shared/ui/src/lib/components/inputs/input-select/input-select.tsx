@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useId, useState } from 'react'
+import { type ReactNode, useEffect, useId, useState } from 'react'
 import Select, {
   GroupBase,
   MenuListProps,

@@ -1,5 +1,5 @@
 import { DeploymentHistoryApplication, DeploymentHistoryDatabase } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { type MouseEvent, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ContainerApplicationEntity, DeploymentService } from '@qovery/shared/interfaces'
@@ -58,7 +58,7 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
     },
   ]
 
-  const handleCopy = (e: React.MouseEvent) => {
+  const handleCopy = (e: MouseEvent) => {
     e.preventDefault()
     setHoverId(true)
     navigator.clipboard.writeText((data as DeploymentService).execution_id || data?.id || '')

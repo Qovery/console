@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, type ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { TableHeadFilter } from './table-head-filter/table-head-filter'
 import TableHeadSort from './table-head-sort/table-head-sort'
 
@@ -8,7 +8,7 @@ export interface TableFilterProps {
 }
 
 export interface TableProps<T> {
-  children: React.ReactElement
+  children: ReactNode
   dataHead: TableHeadProps<T>[]
   className?: string
   classNameHead?: string
@@ -36,7 +36,7 @@ export interface TableHeadCustomFilterProps<T> {
   search?: boolean
   title?: string
   itemsCustom?: string[]
-  itemContentCustom?: (data: T, currentFilter: string, item?: string) => React.ReactNode
+  itemContentCustom?: (data: T, currentFilter: string, item?: string) => ReactNode
   hideFilterNumber?: boolean
 }
 

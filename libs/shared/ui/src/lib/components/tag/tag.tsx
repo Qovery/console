@@ -1,3 +1,5 @@
+import { type PropsWithChildren } from 'react'
+
 export enum TagSize {
   NORMAL = 'normal',
   BIG = 'big',
@@ -5,7 +7,6 @@ export enum TagSize {
 }
 
 export interface TagProps {
-  children: React.ReactNode
   className?: string
   size?: TagSize
   dataTestId?: string
@@ -18,7 +19,7 @@ export function Tag({
   size = TagSize.NORMAL,
   fontWeight = 'font-bold',
   dataTestId = 'tag',
-}: TagProps) {
+}: PropsWithChildren<TagProps>) {
   const normalClassName = size === TagSize.NORMAL ? 'h-7 px-2' : ''
   const bigClassName = size === TagSize.BIG ? 'h-8 px-3' : ''
   const smallClassName = size === TagSize.SMALL ? 'h-5 px-1.5' : ''

@@ -1,5 +1,4 @@
-import { act, getByTestId, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import InputRadioBox, { InputRadioBoxProps } from './input-radio-box'
 
 const props: InputRadioBoxProps = {

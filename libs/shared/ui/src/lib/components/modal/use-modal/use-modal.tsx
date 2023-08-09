@@ -1,4 +1,4 @@
-import { ReactNode, useContext, useEffect, useState } from 'react'
+import { type ReactNode, useContext, useEffect, useState } from 'react'
 import { ModalContext } from '../modal-root'
 
 export interface UseModalProps {
@@ -16,7 +16,7 @@ export function useModal() {
     if (modal) {
       setOpenModal(true)
       if (modal.options) setOptionsModal(modal.options)
-      setContentModal(modal.content)
+      setContentModal(<>{modal.content}</>)
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 

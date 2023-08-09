@@ -1,5 +1,4 @@
-import { act, fireEvent, getByLabelText, getByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, fireEvent, getByLabelText, getByTestId, render } from '__tests__/utils/setup-jest'
 import * as storeApplication from '@qovery/domains/application'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { applicationFactoryMock } from '@qovery/shared/factories'
@@ -15,7 +14,7 @@ jest.mock('react-redux', () => ({
         data: {},
       })
     ),
-  useSelector: (a: any) => {
+  useSelector: (a: () => void) => {
     return a()
   },
 }))

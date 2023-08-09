@@ -7,8 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
 import { Button, ButtonSize, ButtonStyle, DatePicker, Icon, IconAwesomeEnum, InputFilter } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/utils'
+import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 import { hasEnvironment } from '../../feature/page-general-feature/page-general-feature'
 
 export interface CustomFilterProps {
@@ -91,7 +90,7 @@ export function CustomFilter({
                   onChangeClearTimestamp()
                 }}
               >
-                <Icon name={IconAwesomeEnum.CROSS} />
+                <Icon name={IconAwesomeEnum.XMARK} />
               </span>
             </Button>
           )}

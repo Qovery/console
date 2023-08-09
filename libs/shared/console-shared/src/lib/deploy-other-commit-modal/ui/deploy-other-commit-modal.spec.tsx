@@ -1,5 +1,4 @@
-import { getAllByTestId, getByTestId, getByText } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { getAllByTestId, getByTestId, getByText, render } from '__tests__/utils/setup-jest'
 import DeployOtherCommitModal, { DeployOtherCommitModalProps } from './deploy-other-commit-modal'
 
 const props: DeployOtherCommitModalProps = {

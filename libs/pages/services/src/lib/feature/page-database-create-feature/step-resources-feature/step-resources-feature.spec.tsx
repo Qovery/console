@@ -1,6 +1,5 @@
-import { act, waitFor } from '@testing-library/react'
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
-import { getByTestId, render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import {
   CloudProviderEnum,
   DatabaseAccessibilityEnum,
@@ -8,7 +7,7 @@ import {
   DatabaseTypeEnum,
   ManagedDatabaseInstanceTypeResponse,
 } from 'qovery-typescript-axios'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepResourcesFeature from './step-resources-feature'

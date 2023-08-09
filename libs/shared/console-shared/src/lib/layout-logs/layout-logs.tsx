@@ -6,7 +6,7 @@ import {
   EnvironmentLogsError,
   Log,
 } from 'qovery-typescript-axios'
-import { ReactNode, useRef, useState } from 'react'
+import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { RunningStatus } from '@qovery/shared/enums'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
@@ -25,7 +25,6 @@ export interface LayoutLogsDataProps {
 }
 
 export interface LayoutLogsProps {
-  children: ReactNode
   data?: LayoutLogsDataProps
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
@@ -48,7 +47,7 @@ export interface ErrorLogsProps {
   step?: ClusterLogsStepEnum
 }
 
-export function LayoutLogs(props: LayoutLogsProps) {
+export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
   const {
     data,
     tabInformation,

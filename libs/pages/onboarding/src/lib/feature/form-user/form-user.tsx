@@ -1,3 +1,4 @@
+import { type SignUpRequest } from 'qovery-typescript-axios'
 import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,7 +36,8 @@ export function FormUser(props: FormUserProps) {
   const userSignUp = useSelector(selectUserSignUp)
   const dispatch = useDispatch<AppDispatch>()
   const { authLogout } = useAuth()
-  const { handleSubmit, control, setValue } = useForm()
+  const { handleSubmit, control, setValue } =
+    useForm<Pick<SignUpRequest, 'first_name' | 'last_name' | 'user_email' | 'type_of_use'>>()
   const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export function FormUser(props: FormUserProps) {
 
   const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      const checkIfCompany = data['type_of_use'] === 'work'
+      const checkIfCompany = data['type_of_use'].toLowerCase() === 'work'
       if (checkIfCompany) {
         setStepCompany(true)
 

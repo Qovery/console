@@ -7,7 +7,7 @@ import {
   fireEvent,
   render,
   waitFor,
-} from '@testing-library/react'
+} from '__tests__/utils/setup-jest'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import { PageSettingsStorage, PageSettingsStorageProps } from './page-settings-storage'
 

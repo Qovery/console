@@ -1,18 +1,18 @@
-import React from 'react'
+import { type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 export interface TabsItem {
-  name: string | React.ReactNode
+  name: string | ReactNode
   link?: string
   onClick?: () => void
   active?: boolean
   external?: boolean
-  icon?: React.ReactNode
+  icon?: ReactNode
 }
 
 export interface TabsProps {
   items: TabsItem[]
-  contentRight?: React.ReactNode
+  contentRight?: ReactNode
   className?: string
   classNameBtn?: string
   fullWidth?: boolean

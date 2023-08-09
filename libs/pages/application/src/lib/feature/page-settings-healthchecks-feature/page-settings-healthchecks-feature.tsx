@@ -99,7 +99,7 @@ export function PageSettingsHealthchecksFeature() {
   const defaultTypeReadiness = useMemo(() => {
     const types = application?.healthchecks?.readiness_probe?.type as ProbeType
     const readinessProbeKeys = Object.keys(types || {})
-    const nonNullKeyReadiness = readinessProbeKeys.find((key) => (types as { [key: string]: {} })[key] !== null)
+    const nonNullKeyReadiness = readinessProbeKeys.find((key) => (types as { [key: string]: unknown })[key] !== null)
     return nonNullKeyReadiness?.toUpperCase() || ProbeTypeEnum.NONE
   }, [application?.healthchecks?.readiness_probe])
 
@@ -107,7 +107,7 @@ export function PageSettingsHealthchecksFeature() {
   const defaultTypeLiveness = useMemo(() => {
     const types = application?.healthchecks?.liveness_probe?.type as ProbeType
     const livenessProbeKeys = Object.keys(types || {})
-    const nonNullKeyLiveness = livenessProbeKeys.find((key) => (types as { [key: string]: {} })[key] !== null)
+    const nonNullKeyLiveness = livenessProbeKeys.find((key) => (types as { [key: string]: unknown })[key] !== null)
     return nonNullKeyLiveness?.toUpperCase() || ProbeTypeEnum.NONE
   }, [application?.healthchecks?.liveness_probe])
 
@@ -118,7 +118,8 @@ export function PageSettingsHealthchecksFeature() {
         if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
           setProbeValues(probePath, value)
         } else {
-          // @todo need to find a better way to set the value and remove the any
+          // TODO: need to find a better way to set the value and remove the any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           methods.setValue(probePath as any, Array.isArray(value) ? JSON.stringify(value) : value)
         }
       })

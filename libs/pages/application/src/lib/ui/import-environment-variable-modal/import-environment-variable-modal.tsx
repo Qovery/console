@@ -190,7 +190,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
                 <div className="flex items-center h-full w-full grow">
                   <ButtonIcon
-                    icon={IconAwesomeEnum.CROSS}
+                    icon={IconAwesomeEnum.XMARK}
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => props.deleteKey(key)}

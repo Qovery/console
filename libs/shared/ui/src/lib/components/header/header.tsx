@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'
@@ -7,10 +8,10 @@ export interface HeaderProps {
   title?: string
   icon?: IconEnum | string
   iconClassName?: string
-  buttons?: React.ReactNode
+  buttons?: ReactNode
   copyTitle?: boolean
   copyContent?: string
-  actions?: React.ReactNode
+  actions?: ReactNode
 }
 
 export function Header(props: HeaderProps) {

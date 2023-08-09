@@ -5,8 +5,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
 import { OVERVIEW_URL, SETTINGS_GENERAL_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { ToastEnum, toast } from '@qovery/shared/ui'
-import { LoadingScreen } from '@qovery/shared/ui'
+import { LoadingScreen, ToastEnum, toast } from '@qovery/shared/ui'
 import { AppDispatch } from '@qovery/store'
 
 export function RedirectOverview() {

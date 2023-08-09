@@ -8,7 +8,7 @@ import {
   render,
   screen,
   waitFor,
-} from '@testing-library/react'
+} from '__tests__/utils/setup-jest'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import {

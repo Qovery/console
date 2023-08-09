@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react'
+import { renderHook } from '__tests__/utils/setup-jest'
 import axios from 'axios'
 import { useAuthInterceptor } from './auth-interceptor'
 

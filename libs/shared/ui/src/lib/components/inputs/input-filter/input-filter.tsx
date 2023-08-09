@@ -75,7 +75,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
                       setIsOpen(false)
                     }}
                   >
-                    <Icon name={IconAwesomeEnum.CROSS} />
+                    <Icon name={IconAwesomeEnum.XMARK} />
                   </span>
                 </>
               )}

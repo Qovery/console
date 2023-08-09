@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
@@ -106,7 +106,7 @@ function PageGeneralMemo(props: PageGeneralProps) {
   )
 }
 
-export const PageGeneral = React.memo(PageGeneralMemo, (prevProps, nextProps) => {
+export const PageGeneral = memo(PageGeneralMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
   const isEqual =
     JSON.stringify(

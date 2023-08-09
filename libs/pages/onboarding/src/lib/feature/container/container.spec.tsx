@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import React from 'react'
+import { createElement } from 'react'
 import Container, { ContainerProps } from './container'
 
 describe('Container', () => {
@@ -7,7 +7,7 @@ describe('Container', () => {
 
   beforeEach(() => {
     props = {
-      children: React.createElement('div'),
+      children: createElement('div'),
       params: {
         '*': 'some-value',
       },

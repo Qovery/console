@@ -1,5 +1,4 @@
-import { act, findAllByTestId, fireEvent, getByTestId, screen, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, findAllByTestId, fireEvent, getByTestId, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { jsonToForm } from '../../feature/import-environment-variable-modal-feature/utils/file-to-form'

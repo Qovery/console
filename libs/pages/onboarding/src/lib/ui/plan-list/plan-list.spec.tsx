@@ -1,5 +1,5 @@
-import React from 'react'
 import { render } from '__tests__/utils/setup-jest'
+import { createElement } from 'react'
 import PlanList, { PlanListProps } from './plan-list'
 
 describe('PlanList', () => {
@@ -9,7 +9,7 @@ describe('PlanList', () => {
     props = {
       title: 'some-title',
       description: 'some-desc',
-      lists: [React.createElement('div')],
+      lists: [createElement('div')],
       infos: 'some-infos',
     }
   })

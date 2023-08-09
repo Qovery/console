@@ -1,5 +1,4 @@
-import { getByLabelText, getByTestId, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { BillingInfo } from 'qovery-typescript-axios'
 import * as storeOrganization from '@qovery/domains/organization'
 import { organizationFactoryMock } from '@qovery/shared/factories'

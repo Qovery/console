@@ -1,5 +1,12 @@
-import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, getByText } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import {
+  act,
+  fireEvent,
+  getAllByTestId,
+  getByLabelText,
+  getByTestId,
+  getByText,
+  render,
+} from '__tests__/utils/setup-jest'
 import { webhookFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationWebhooks, { PageOrganizationWebhooksProps } from './page-organization-webhooks'
 

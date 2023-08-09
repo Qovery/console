@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { DeploymentService } from '@qovery/shared/interfaces'
 import { BaseLink, HelpSection, Table, TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
@@ -103,7 +103,7 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
   )
 }
 
-export const PageDeployments = React.memo(PageDeploymentsMemo, (prevProps, nextProps) => {
+export const PageDeployments = memo(PageDeploymentsMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior
   return (
     JSON.stringify(

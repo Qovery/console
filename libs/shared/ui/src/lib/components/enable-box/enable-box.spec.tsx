@@ -1,5 +1,4 @@
-import { act, getByTestId, getByText, queryByText } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import EnableBox, { EnableBoxProps } from './enable-box'
 
 const props: EnableBoxProps = {

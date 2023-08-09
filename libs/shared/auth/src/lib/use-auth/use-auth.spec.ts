@@ -1,5 +1,5 @@
-import { RenderResult, renderHook } from '@testing-library/react'
 import { Wrapper } from '__tests__/utils/providers'
+import { RenderResult, renderHook } from '__tests__/utils/setup-jest'
 import useAuth from './use-auth'
 
 describe('useAuth', () => {

@@ -1,9 +1,8 @@
-import userEvent from '@testing-library/user-event'
-import { act, fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import { Healthcheck } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsHealthchecksFeature from './page-settings-healthchecks-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -68,7 +67,7 @@ jest.mock('@qovery/domains/application', () => {
 
 describe('PageSettingsHealthchecksFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsHealthchecksFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsHealthchecksFeature />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -81,12 +80,10 @@ describe('PageSettingsHealthchecksFeature', () => {
         }),
     }))
 
-    render(<PageSettingsHealthchecksFeature />)
+    const { userEvent } = renderWithProviders(<PageSettingsHealthchecksFeature />)
 
-    await act(() => {
-      const input = screen.getByTestId('input-readiness-probe-service')
-      fireEvent.input(input, { target: { value: 'my-service' } })
-    })
+    const input = screen.getByTestId('input-readiness-probe-service')
+    await userEvent.type(input, 'my-service')
 
     const btnSave = screen.getByRole('button', { name: /save/i })
     expect(btnSave).not.toBeDisabled()

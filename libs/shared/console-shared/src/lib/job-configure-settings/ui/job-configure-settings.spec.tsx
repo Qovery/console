@@ -1,4 +1,12 @@
-import { act, fireEvent, getAllByTestId, getByLabelText, getByTestId, getByText, render } from '@testing-library/react'
+import {
+  act,
+  fireEvent,
+  getAllByTestId,
+  getByLabelText,
+  getByTestId,
+  getByText,
+  render,
+} from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { JobConfigureData } from '@qovery/shared/interfaces'

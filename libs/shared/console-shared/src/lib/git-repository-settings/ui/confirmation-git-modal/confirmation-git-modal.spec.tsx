@@ -1,5 +1,4 @@
-import { findByTestId, waitFor } from '@testing-library/react'
-import { render, screen } from '__tests__/utils/setup-jest'
+import { findByTestId, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import ConfirmationGitModal, { ConfirmationGitModalProps } from './confirmation-git-modal'
 
 const props: ConfirmationGitModalProps = {

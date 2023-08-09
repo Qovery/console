@@ -17,10 +17,8 @@ const props: CrudEnvironmentVariableModalFeatureProps = {
 }
 
 describe('CrudEnvironmentVariableModalFeature', () => {
-  let baseElement: any
-
   it('should render successfully', () => {
-    baseElement = render(<CrudEnvironmentVariableModalFeature {...props} />)
+    const { baseElement } = render(<CrudEnvironmentVariableModalFeature {...props} />)
 
     expect(baseElement).toBeTruthy()
   })

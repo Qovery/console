@@ -1,7 +1,6 @@
-import React from 'react'
+import { type PropsWithChildren } from 'react'
 
 export interface SkeletonProps {
-  children: React.ReactElement
   width?: number
   height?: number
   show?: boolean
@@ -11,7 +10,7 @@ export interface SkeletonProps {
   className?: string
 }
 
-export function Skeleton(props: SkeletonProps) {
+export function Skeleton(props: PropsWithChildren<SkeletonProps>) {
   const { children, show = true, width, height, rounded, square, truncate, className = '' } = props
 
   return (

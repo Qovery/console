@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, memo, useState } from 'react'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { EnvironmentVariableEntity, EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import { HelpSection, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
@@ -58,7 +58,7 @@ export function PageVariablesMemo(props: PageVariablesProps) {
   )
 }
 
-export const PageVariables = React.memo(PageVariablesMemo, (prevProps, nextProps) => {
+export const PageVariables = memo(PageVariablesMemo, (prevProps, nextProps) => {
   // Stringify is necessary to avoid Redux selector behavior and so many value are necessary because updated_at is not
   // updated during an import... Problem from backend.
   const prevPropsIds = prevProps.variables.map((envVariables) => ({

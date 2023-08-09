@@ -1,5 +1,4 @@
-import { screen } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import { Chance } from 'chance'
 import { ButtonSize } from '../button/button'
 import { ButtonIcon, ButtonIconProps, ButtonIconStyle } from './button-icon'

@@ -1,5 +1,4 @@
-import { act } from '@testing-library/react'
-import { render, screen } from '__tests__/utils/setup-jest'
+import { act, render, screen } from '__tests__/utils/setup-jest'
 import { ToastEnum } from '../../utils/toast'
 import ToastBehavior, { ToastContent, ToastProps } from './toast'
 

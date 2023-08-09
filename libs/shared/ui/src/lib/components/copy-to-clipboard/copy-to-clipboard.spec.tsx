@@ -1,5 +1,4 @@
-import { act } from '@testing-library/react'
-import { render, screen } from '__tests__/utils/setup-jest'
+import { act, render, screen } from '__tests__/utils/setup-jest'
 import CopyToClipboard, { CopyToClipboardProps } from './copy-to-clipboard'
 
 let props: CopyToClipboardProps

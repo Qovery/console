@@ -1,7 +1,6 @@
-import { screen } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import { Chance } from 'chance'
-import React from 'react'
+import { createElement } from 'react'
 import Button, { ButtonProps, ButtonSize, ButtonStyle } from './button'
 
 describe('Button', () => {
@@ -11,7 +10,7 @@ describe('Button', () => {
 
   beforeEach(() => {
     props = {
-      children: React.createElement('div'),
+      children: createElement('div'),
     }
   })
 

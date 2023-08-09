@@ -1,5 +1,4 @@
-import { act, getAllByTestId, getByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { Commit } from 'qovery-typescript-axios'
 import * as environmentDomains from '@qovery/domains/environment'
 import { applicationFactoryMock } from '@qovery/shared/factories'

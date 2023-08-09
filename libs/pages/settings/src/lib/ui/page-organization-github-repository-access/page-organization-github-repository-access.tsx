@@ -67,7 +67,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
                     style={ButtonStyle.STROKED}
                     size={ButtonSize.SMALL}
                     dataTestId="disconnect-button"
-                    iconRight={IconAwesomeEnum.CROSS}
+                    iconRight={IconAwesomeEnum.XMARK}
                     onClick={() => props.onDisconnect && props.onDisconnect(false)}
                   >
                     Disconnect

@@ -1,9 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
 import posthog from 'posthog-js'
-import React from 'react'
+import { type ReactNode } from 'react'
 import PageLogoutFeature from './page-logout-feature'
 
-const PostHogWrapper = ({ children }: { children: React.ReactElement }) => {
+const PostHogWrapper = ({ children }: { children: ReactNode }) => {
   posthog.init('__test__posthog__token', {
     api_host: '__test__environment__posthog__apihost',
   })

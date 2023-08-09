@@ -6,7 +6,12 @@ import { Button, ButtonSize, ButtonStyle, InputSelect, InputTextArea } from '@qo
 export interface StepMoreProps {
   dataQuestions: Array<Value>
   onSubmit: () => void
-  control: Control<any, any>
+  control: Control<{
+    user_questions?: string
+    qovery_usage: string
+    qovery_usage_other?: string
+    where_to_deploy?: string
+  }>
   displayQoveryUsageOther: boolean
 }
 

@@ -1,5 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
 import InputTextArea, { InputTextAreaProps } from './input-text-area'
 
 describe('InputTextAreaArea', () => {

@@ -1,4 +1,5 @@
 import { Project } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { CreateCloneEnvironmentModalFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
@@ -10,12 +11,11 @@ import {
 import { Button, ButtonSize, Header, Icon, IconAwesomeEnum, Tabs, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
-  children: React.ReactNode
   project?: Project
   clusterAvailable?: boolean
 }
 
-export function Container(props: ContainerProps) {
+export function Container(props: PropsWithChildren<ContainerProps>) {
   const { children, project, clusterAvailable } = props
   const { organizationId = '', projectId = '' } = useParams()
   const { pathname } = useLocation()

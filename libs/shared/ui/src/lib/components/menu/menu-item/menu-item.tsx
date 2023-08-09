@@ -1,8 +1,8 @@
 import { ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import { type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Tooltip } from '@qovery/shared/ui'
 import { CopyToClipboard } from '../../copy-to-clipboard/copy-to-clipboard'
+import { Tooltip } from '../../tooltip/tooltip'
 import { Truncate } from '../../truncate/truncate'
 
 export interface MenuItemProps {

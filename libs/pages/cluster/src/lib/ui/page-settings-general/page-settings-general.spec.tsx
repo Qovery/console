@@ -1,5 +1,4 @@
-import { waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import PageSettingsGeneral, { PageSettingsGeneralProps } from './page-settings-general'
 

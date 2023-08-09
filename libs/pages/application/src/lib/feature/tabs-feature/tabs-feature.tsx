@@ -1,6 +1,6 @@
 import { ClickEvent } from '@szhsin/react-menu'
 import { StateEnum } from 'qovery-typescript-axios'
-import { ReactNode, useContext } from 'react'
+import { type ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { getApplicationsState } from '@qovery/domains/application'

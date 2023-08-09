@@ -1,5 +1,5 @@
 import { render } from '__tests__/utils/setup-jest'
-import React from 'react'
+import { createElement } from 'react'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 import Layout, { LayoutProps } from './layout'
 
@@ -10,7 +10,7 @@ describe('Layout', () => {
 
   beforeEach(() => {
     props = {
-      children: React.createElement('div'),
+      children: createElement('div'),
     }
   })
 

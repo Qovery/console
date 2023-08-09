@@ -1,6 +1,3 @@
-import { getByDisplayValue, getByLabelText, getByRole, getByTestId, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {
   applicationFactoryMock,
@@ -8,6 +5,7 @@ import {
   environmentFactoryMock,
   projectsFactoryMock,
 } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CloneEnvironmentModal, { CloneServiceModalProps } from './clone-service-modal'
 
 const mockProjects = projectsFactoryMock(3)
@@ -37,7 +35,7 @@ describe('CloneEnvironmentModal', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<CloneEnvironmentModal {...props} />, {
         defaultValues,
       })
@@ -48,7 +46,7 @@ describe('CloneEnvironmentModal', () => {
   it('should submit form on click on button', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
-    render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<CloneEnvironmentModal {...props} />, {
         defaultValues,
       })
@@ -66,26 +64,26 @@ describe('CloneEnvironmentModal', () => {
 
   describe('with application', () => {
     it('should render 2 input and 2 selects with default values', () => {
-      const { baseElement } = render(wrapWithReactHookForm(<CloneEnvironmentModal {...props} />))
+      renderWithProviders(wrapWithReactHookForm(<CloneEnvironmentModal {...props} />))
 
       const inputs = screen.getAllByRole('textbox')
-      getByTestId(baseElement, 'input-select-environment')
-      getByTestId(baseElement, 'input-select-project')
+      screen.getByTestId('input-select-environment')
+      screen.getByTestId('input-select-project')
 
       expect(inputs).toHaveLength(2)
-      if (props.serviceToClone) getByDisplayValue(baseElement, props.serviceToClone?.name)
+      if (props.serviceToClone) screen.getByDisplayValue(props.serviceToClone?.name)
     })
 
     it('should render input with a specific label for clone', () => {
-      const { baseElement } = render(wrapWithReactHookForm(<CloneEnvironmentModal {...props} />))
+      renderWithProviders(wrapWithReactHookForm(<CloneEnvironmentModal {...props} />))
 
-      getByLabelText(baseElement, 'New service name')
+      screen.getByLabelText('New service name')
     })
 
     it('should render confirm button with Clone', () => {
-      const { baseElement } = render(wrapWithReactHookForm(<CloneEnvironmentModal {...props} />))
+      renderWithProviders(wrapWithReactHookForm(<CloneEnvironmentModal {...props} />))
 
-      getByRole(baseElement, 'button', { name: 'Clone' })
+      screen.getByRole('button', { name: 'Clone' })
     })
   })
 
@@ -96,26 +94,26 @@ describe('CloneEnvironmentModal', () => {
     }
 
     it('should render 2 input and 2 selects with default values', () => {
-      const { baseElement } = render(wrapWithReactHookForm(<CloneEnvironmentModal {...propsUpdated} />))
+      renderWithProviders(wrapWithReactHookForm(<CloneEnvironmentModal {...propsUpdated} />))
 
       const inputs = screen.getAllByRole('textbox')
-      getByTestId(baseElement, 'input-select-environment')
-      getByTestId(baseElement, 'input-select-project')
+      screen.getByTestId('input-select-environment')
+      screen.getByTestId('input-select-project')
 
       expect(inputs).toHaveLength(2)
-      if (propsUpdated.serviceToClone) getByDisplayValue(baseElement, propsUpdated.serviceToClone?.name)
+      if (propsUpdated.serviceToClone) screen.getByDisplayValue(propsUpdated.serviceToClone?.name)
     })
 
     it('should render input with a specif label for clone', () => {
-      const { baseElement } = render(wrapWithReactHookForm(<CloneEnvironmentModal {...propsUpdated} />))
+      renderWithProviders(wrapWithReactHookForm(<CloneEnvironmentModal {...propsUpdated} />))
 
-      getByLabelText(baseElement, 'New service name')
+      screen.getByLabelText('New service name')
     })
 
     it('should render confirm button with Clone', () => {
-      const { baseElement } = render(wrapWithReactHookForm(<CloneEnvironmentModal {...propsUpdated} />))
+      renderWithProviders(wrapWithReactHookForm(<CloneEnvironmentModal {...propsUpdated} />))
 
-      getByRole(baseElement, 'button', { name: 'Clone' })
+      screen.getByRole('button', { name: 'Clone' })
     })
   })
 })

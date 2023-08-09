@@ -1,5 +1,4 @@
-import { findByLabelText, findByTestId, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { findByLabelText, findByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { StorageTypeEnum } from 'qovery-typescript-axios'
 import StorageModal, { StorageModalProps } from './storage-modal'

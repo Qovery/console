@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode, RefObject, useEffect, useRef, useState } from 'react'
+import { ChangeEventHandler, type ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 
@@ -8,7 +8,7 @@ export interface InputTextProps {
   value?: string | number | undefined
   type?: 'text' | 'number' | 'password' | 'email' | 'date' | 'datetime' | 'time'
   className?: string
-  onChange?: (e: FormEvent<HTMLInputElement>) => void
+  onChange?: ChangeEventHandler<HTMLInputElement>
   error?: string
   disabled?: boolean
   dataTestId?: string
@@ -51,8 +51,8 @@ export function InputText(props: InputTextProps) {
   const isDisabled = disabled ? 'input--disabled !border-element-light-lighter-500' : ''
 
   const displayPicker = () => {
-    const input: any = inputRef.current?.querySelector('input')
-    if (!disabled) input.showPicker()
+    const input = inputRef.current?.querySelector('input')
+    if (!disabled && input) input.showPicker()
   }
 
   const isInputDate = type === 'time' || type === 'date' || type === 'datetime'

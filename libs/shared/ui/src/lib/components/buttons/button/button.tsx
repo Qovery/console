@@ -1,3 +1,4 @@
+import { type PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { IconEnum } from '@qovery/shared/enums'
 import Icon from '../../icon/icon'
@@ -22,7 +23,6 @@ export enum ButtonStyle {
 }
 
 export interface ButtonProps {
-  children: React.ReactNode
   size?: ButtonSize
   style?: ButtonStyle
   iconLeft?: IconEnum | string
@@ -39,7 +39,7 @@ export interface ButtonProps {
   dataTestId?: string
 }
 
-export function Button(props: ButtonProps) {
+export function Button(props: PropsWithChildren<ButtonProps>) {
   const {
     children,
     size = ButtonSize.REGULAR,

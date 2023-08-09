@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit'
 import { SignUp, SignUpRequest, TypeOfUseEnum, UserSignUpApi } from 'qovery-typescript-axios'
 import { UserSignUpState } from '@qovery/shared/interfaces'
+import { type RootState } from '@qovery/store'
 
 export const USER_SIGNUP_KEY = 'userSignUp'
 
@@ -83,7 +84,7 @@ export const userSignUp = userSignUpSlice.reducer
 
 export const userSignUpActions = userSignUpSlice.actions
 
-export const getUserSignUpState = (rootState: any): UserSignUpState => {
+export const getUserSignUpState = (rootState: RootState): UserSignUpState => {
   return rootState[USER_SIGNUP_KEY]
 }
 

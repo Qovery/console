@@ -51,7 +51,12 @@ const dataQuestions: Value[] = [
 
 export function OnboardingMore() {
   useDocumentTitle('Onboarding Tell us more - Qovery')
-  const { handleSubmit, control, setValue, watch } = useForm()
+  const { handleSubmit, control, setValue, watch } = useForm<{
+    user_questions?: string
+    qovery_usage: string
+    qovery_usage_other?: string
+    where_to_deploy?: string
+  }>()
   const userSignUp = useSelector(selectUserSignUp)
   const dispatch = useDispatch<AppDispatch>()
 
@@ -61,7 +66,7 @@ export function OnboardingMore() {
 
   useEffect(() => {
     setValue('user_questions', userSignUp?.user_questions || undefined)
-    setValue('qovery_usage', userSignUp?.qovery_usage || undefined)
+    setValue('qovery_usage', userSignUp.qovery_usage)
     setValue('qovery_usage_other', userSignUp?.qovery_usage_other || undefined)
     setValue('where_to_deploy', userSignUp?.qovery_usage_other || undefined)
   }, [setValue, userSignUp])
@@ -70,7 +75,7 @@ export function OnboardingMore() {
     if (data) {
       // reset qovery usage other
       if (data['qovery_usage'] !== 'other') {
-        data['qovery_usage_other'] = null
+        delete data['qovery_usage_other']
       }
 
       await dispatch(postUserSignUp({ ...userSignUp, ...data }))

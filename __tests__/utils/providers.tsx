@@ -1,6 +1,6 @@
 import { Auth0Provider } from '@auth0/auth0-react'
 import { configureStore } from '@reduxjs/toolkit'
-import React, { ComponentType, ReactNode } from 'react'
+import { type ComponentType, type ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
@@ -21,7 +21,7 @@ export type Props = {
 
 const queryClient = new QueryClient()
 
-export const Wrapper: React.FC<Props> = ({ children, reduxState = initialRootState(), route = '/' }) => {
+export const Wrapper = ({ children, reduxState = initialRootState(), route = '/' }: Props) => {
   window.history.pushState({}, 'Test page', route)
   window.ResizeObserver = ResizeObserver
 

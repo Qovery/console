@@ -1,5 +1,4 @@
-import { act, getAllByTestId, getByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getAllByTestId, getByTestId, render } from '__tests__/utils/setup-jest'
 import { Commit } from 'qovery-typescript-axios'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import UpdateAllModal, { UpdateAllModalProps } from './update-all-modal'

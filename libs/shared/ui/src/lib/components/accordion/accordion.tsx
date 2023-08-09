@@ -1,15 +1,15 @@
 import * as AccordionComponent from '@radix-ui/react-accordion'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import Icon from '../icon/icon'
 
 export interface AccordionProps {
-  header: React.ReactNode
-  children: React.ReactNode
+  header: ReactNode
   open?: boolean
   disabled?: boolean
   className?: string
 }
 
-export function Accordion(props: AccordionProps) {
+export function Accordion(props: PropsWithChildren<AccordionProps>) {
   const { header, children, open = false, disabled = false, className = '' } = props
 
   return (

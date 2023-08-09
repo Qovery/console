@@ -1,3 +1,4 @@
+import { type JobResponseAllOfSchedule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
@@ -73,7 +74,7 @@ export function PageSettingsConfigureJobFeature() {
     job.port = data.port
 
     if (isCronJob(application)) {
-      const schedule: any = {}
+      const schedule: JobResponseAllOfSchedule = {}
       if (job.schedule?.cronjob) {
         schedule.cronjob = {
           scheduled_at: data.schedule || '',
@@ -82,8 +83,8 @@ export function PageSettingsConfigureJobFeature() {
         if (data.cmd_arguments) {
           try {
             schedule.cronjob.arguments = eval(data.cmd_arguments)
-          } catch (e: any) {
-            toastError(e, 'Invalid CMD array')
+          } catch (e: unknown) {
+            toastError(e as Error, 'Invalid CMD array')
             return
           }
         } else {
@@ -95,7 +96,7 @@ export function PageSettingsConfigureJobFeature() {
     }
 
     if (isLifeCycleJob(application)) {
-      const schedule: any = {}
+      const schedule: JobResponseAllOfSchedule = {}
       if (data.on_start?.enabled) {
         schedule.on_start = {
           entrypoint: data.on_start.entrypoint,
@@ -105,8 +106,8 @@ export function PageSettingsConfigureJobFeature() {
         if (data.on_start?.arguments_string && data.on_start?.arguments_string.length > 0) {
           try {
             schedule.on_start.arguments = eval(data.on_start.arguments_string)
-          } catch (e: any) {
-            toastError(e, 'Invalid CMD array')
+          } catch (e: unknown) {
+            toastError(e as Error, 'Invalid CMD array')
             return
           }
         }
@@ -121,8 +122,8 @@ export function PageSettingsConfigureJobFeature() {
         if (data.on_stop?.arguments_string && data.on_stop?.arguments_string.length > 0) {
           try {
             schedule.on_stop.arguments = eval(data.on_stop.arguments_string)
-          } catch (e: any) {
-            toastError(e, 'Invalid CMD array')
+          } catch (e: unknown) {
+            toastError(e as Error, 'Invalid CMD array')
             return
           }
         }
@@ -137,8 +138,8 @@ export function PageSettingsConfigureJobFeature() {
         if (data.on_delete?.arguments_string && data.on_delete?.arguments_string.length > 0) {
           try {
             schedule.on_delete.arguments = eval(data.on_delete.arguments_string)
-          } catch (e: any) {
-            toastError(e, 'Invalid CMD array')
+          } catch (e: unknown) {
+            toastError(e as Error, 'Invalid CMD array')
             return
           }
         }

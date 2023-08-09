@@ -1,5 +1,5 @@
 import { ClusterLogsError } from 'qovery-typescript-axios'
-import { ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   Button,

@@ -1,5 +1,4 @@
-import { act, getAllByTestId, getByLabelText, getByTestId, queryAllByTestId } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getAllByTestId, getByLabelText, getByTestId, queryAllByTestId, render } from '__tests__/utils/setup-jest'
 import { JobForceEvent } from 'qovery-typescript-axios'
 import * as storeApplication from '@qovery/domains/application'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'

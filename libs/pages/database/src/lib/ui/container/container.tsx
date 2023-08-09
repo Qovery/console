@@ -1,4 +1,5 @@
 import { Environment, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
@@ -18,10 +19,9 @@ import { AppDispatch, RootState } from '@qovery/store'
 export interface ContainerProps {
   database?: DatabaseEntity
   environment?: Environment
-  children?: React.ReactNode
 }
 
-export function Container(props: ContainerProps) {
+export function Container(props: PropsWithChildren<ContainerProps>) {
   const { database, environment, children } = props
 
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()

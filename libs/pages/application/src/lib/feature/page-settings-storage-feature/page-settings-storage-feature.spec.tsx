@@ -1,5 +1,4 @@
-import { findByTestId, waitFor } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { findByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import * as redux from 'react-redux'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import PageSettingsStorageFeature from './page-settings-storage-feature'

@@ -1,9 +1,11 @@
+import { type ReactElement } from 'react'
 import { Link } from 'react-router-dom'
+
 interface NavbarProps {
   className?: string
   logoUrl?: string
   progress?: number
-  contentLeft?: React.ReactElement
+  contentLeft?: ReactElement
 }
 
 export function Navbar(props: NavbarProps) {

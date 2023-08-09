@@ -1,5 +1,4 @@
-import { act, getByTestId, getByText, queryByText } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, getByTestId, getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { creditCardsFactoryMock, organizationFactoryMock } from '@qovery/shared/factories'
 import PageOrganizationBillingSummary, {
@@ -91,6 +90,7 @@ describe('PageOrganizationBillingSummary', () => {
   it('should display not display the payment method box', () => {
     const organization = { ...mockOrganization }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     organization.currentCost.value.plan = PlanEnum.FREE
 

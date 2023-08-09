@@ -1,5 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
-import { screen } from '@testing-library/react'
+import { render, screen } from '__tests__/utils/setup-jest'
 import Skeleton, { SkeletonProps } from './skeleton'
 
 describe('Skeleton', () => {

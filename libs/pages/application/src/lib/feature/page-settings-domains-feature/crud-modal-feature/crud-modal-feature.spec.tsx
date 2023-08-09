@@ -1,5 +1,4 @@
-import { act } from '@testing-library/react'
-import { render } from '__tests__/utils/setup-jest'
+import { act, render } from '__tests__/utils/setup-jest'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import CrudModalFeature, { CrudModalFeatureProps } from './crud-modal-feature'

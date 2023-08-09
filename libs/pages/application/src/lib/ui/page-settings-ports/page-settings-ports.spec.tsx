@@ -1,4 +1,4 @@
-import { act, findByText, fireEvent, render, waitFor } from '@testing-library/react'
+import { act, findByText, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { PortProtocolEnum } from 'qovery-typescript-axios'
 import PageSettingsPorts, { PageSettingsPortsProps } from './page-settings-ports'
 
