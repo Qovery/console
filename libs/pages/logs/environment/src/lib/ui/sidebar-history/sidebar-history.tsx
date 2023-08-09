@@ -17,12 +17,12 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
   const menuHistory: MenuData = [
     {
       items:
-        data?.map((item) => ({
+        data?.map((item, index) => ({
           name: item.id,
           itemContentCustom: (
             <div
               className={`flex justify-between w-full py-2 text-xs ${
-                item.id === versionId ? 'text-brand-400' : 'text-text-300'
+                item.id === versionId || (!versionId && index === 0) ? 'text-brand-400' : 'text-text-300'
               }`}
             >
               <div className="flex">
