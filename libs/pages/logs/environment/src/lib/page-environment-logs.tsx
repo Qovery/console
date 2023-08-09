@@ -74,13 +74,15 @@ export function PageEnvironmentLogs() {
   const { getAccessTokenSilently } = useAuth()
 
   const deploymentStatusUrl: () => Promise<string> = useCallback(async () => {
-    const url = `wss://ws.qovery.com/deployment/status?organization=${organizationId}&cluster=${environment?.cluster_id}&project=${projectId}&environment=${environmentId}`
+    const url = `wss://ws.qovery.com/deployment/status?organization=${organizationId}&cluster=${
+      environment?.cluster_id
+    }&project=${projectId}&environment=${environmentId}${versionId ? `&version=${versionId}` : ''}`
     const token = await getAccessTokenSilently()
 
     return new Promise((resolve) => {
       environment?.cluster_id && resolve(url + `&bearer_token=${token}`)
     })
-  }, [organizationId, environment?.cluster_id, projectId, environmentId, getAccessTokenSilently])
+  }, [organizationId, environment?.cluster_id, projectId, environmentId, getAccessTokenSilently, versionId])
 
   useWebSocket(deploymentStatusUrl, {
     onMessage: (message) => {

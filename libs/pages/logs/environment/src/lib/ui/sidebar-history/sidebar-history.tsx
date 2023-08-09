@@ -41,7 +41,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
     },
   ]
 
-  const currentIndex = (data?.findIndex((item) => item.id === versionId) || 0) + 1
+  const currentIndex = data?.findIndex((item) => item.id === versionId)
 
   return (
     <div className="flex justify-center border-b border-element-light-darker-100 px-4 py-3">
@@ -58,7 +58,9 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
                 open ? 'text-brand-400' : 'text-text-100'
               }`}
             >
-              <span className="inline-block mr-1">Deployment - {dateFullFormat(data?.[currentIndex].created_at)}</span>
+              <span className="inline-block mr-1">
+                Deployment - {dateFullFormat(data?.[currentIndex === -1 ? 0 : currentIndex]?.created_at)}
+              </span>
               <Icon name={IconAwesomeEnum.ANGLE_DOWN} />
             </div>
           }
