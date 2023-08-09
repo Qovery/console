@@ -83,9 +83,7 @@ describe('DeploymentLogs', () => {
       },
     ]
 
-    const { debug } = render(<DeploymentLogs {...props} />)
-
-    debug()
+    render(<DeploymentLogs {...props} />)
 
     screen.getByText(
       (content, element) => element?.textContent === 'my-app service was not deployed within this deployment execution.'
