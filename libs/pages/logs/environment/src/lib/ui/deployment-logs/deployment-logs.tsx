@@ -40,9 +40,16 @@ export function DeploymentLogs({
     [logs]
   )
 
+  const deploymentsByServiceId = mergeDeploymentServices(dataDeploymentHistory).filter(
+    (deploymentHistory) => deploymentHistory.id === serviceId
+  )
+
   const displayPlaceholder = (serviceDeploymentStatus?: ServiceDeploymentStatusEnum) => {
     if (hideDeploymentLogs) {
-      if (serviceDeploymentStatus === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+      if (
+        serviceDeploymentStatus === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ||
+        deploymentsByServiceId.length === 0
+      ) {
         return (
           <div>
             <p className="mb-1">
@@ -72,33 +79,25 @@ export function DeploymentLogs({
                 Last deployment logs
               </div>
               <div className="overflow-y-auto max-h-96 p-2">
-                {mergeDeploymentServices(dataDeploymentHistory)?.map(
-                  (deploymentHistory: DeploymentService) =>
-                    deploymentHistory.id === serviceId && (
-                      <div
-                        key={`${deploymentHistory.id}-${deploymentHistory.id}`}
-                        className="flex items-center pb-2 last:pb-0"
-                      >
-                        <Link
-                          className={`flex justify-between transition bg-element-light-darker-200 hover:bg-element-light-darker-300 w-full p-3 rounded ${
-                            versionId === deploymentHistory.execution_id ? 'bg-element-light-darker-300' : ''
-                          }`}
-                          to={
-                            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                            DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentHistory.execution_id)
-                          }
-                        >
-                          <span className="flex">
-                            <StatusChip className="mr-3 relative top-[2px]" status={deploymentHistory.status} />
-                            <span className="text-brand-300 text-ssm">
-                              {trimId(deploymentHistory.execution_id || '')}
-                            </span>
-                          </span>
-                          <span className="text-text-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
-                        </Link>
-                      </div>
-                    )
-                )}
+                {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
+                  <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
+                    <Link
+                      className={`flex justify-between transition bg-element-light-darker-200 hover:bg-element-light-darker-300 w-full p-3 rounded ${
+                        versionId === deploymentHistory.execution_id ? 'bg-element-light-darker-300' : ''
+                      }`}
+                      to={
+                        ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                        DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentHistory.execution_id)
+                      }
+                    >
+                      <span className="flex">
+                        <StatusChip className="mr-3 relative top-[2px]" status={deploymentHistory.status} />
+                        <span className="text-brand-300 text-ssm">{trimId(deploymentHistory.execution_id || '')}</span>
+                      </span>
+                      <span className="text-text-300 text-ssm">{dateFullFormat(deploymentHistory.created_at)}</span>
+                    </Link>
+                  </div>
+                ))}
               </div>
               <div className="flex items-center justify-center bg-element-light-darker-300 h-9 border-t border-element-light-darker-100">
                 <p className="text-text-400 text-xs font-normal">

@@ -41,13 +41,13 @@ describe('DeploymentLogs', () => {
   it('should render successfully', () => {
     const { getByText, baseElement } = render(<DeploymentLogs {...props} />)
     expect(baseElement).toBeTruthy()
-    expect(getByText('Log 1')).toBeInTheDocument()
+    getByText('Log 1')
   })
 
   it('should renders placeholder message when logs are hidden', () => {
     props.hideDeploymentLogs = true
     const { getByText } = render(<DeploymentLogs {...props} />)
 
-    expect(getByText('This service has never been deployed and thus no logs are available.')).toBeInTheDocument()
+    getByText('This service was deployed more than 30 days and thus no deployment logs are available.')
   })
 })
