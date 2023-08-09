@@ -64,7 +64,7 @@ export function PageEnvironmentLogs() {
     const fetchServicesStatusByInterval = setInterval(() => {
       if (applications.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
       if (databases.length > 0) dispatch(fetchDatabasesStatus({ environmentId }))
-    }, 2000)
+    }, 10000)
     return () => clearInterval(fetchServicesStatusByInterval)
   }, [dispatch, environmentId, applications.length, databases.length])
 
