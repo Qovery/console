@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/state/util-queries/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:state", "type:util"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
