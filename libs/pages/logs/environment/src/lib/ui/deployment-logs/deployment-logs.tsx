@@ -48,18 +48,23 @@ export function DeploymentLogs({
               No logs on this execution for <span className="text-brand-400">{serviceName}</span>.
             </p>
             <p className="text-text-300 font-normal text-sm">
-              This service has never been deployed and thus no Deployment logs are available.
+              This service was deployed more than 30 days and thus no deployment logs are available.
             </p>
           </div>
         )
       default:
         return (
-          <div>
-            <p className="mb-10">
-              <span className="text-brand-400">{serviceName}</span> service was not deployed within this deployment
-              execution.
-            </p>
-            <div className="bg-element-light-darker-500 border border-element-light-darker-100 rounded-lg overflow-hidden">
+          <div className="flex justify-center flex-col">
+            <div>
+              <p className="mb-1">
+                <span className="text-brand-400">{serviceName}</span> service was not deployed within this deployment
+                execution.
+              </p>
+              <p className="text-text-300 font-normal text-sm mb-10">
+                Below the list of executions where this service was deployed.
+              </p>
+            </div>
+            <div className="bg-element-light-darker-500 border border-element-light-darker-100 rounded-lg overflow-hidden w-[484px]">
               <div className="py-3 bg-element-light-darker-300 border-b border-element-light-darker-100">
                 Last deployment logs
               </div>
@@ -80,7 +85,9 @@ export function DeploymentLogs({
                 ))}
               </div>
               <div className="flex items-center justify-center bg-element-light-darker-300 h-9 border-t border-element-light-darker-100">
-                <p className="text-text-400 text-xs font-normal">You have reached the deployment history limit</p>
+                <p className="text-text-400 text-xs font-normal">
+                  Only the last 20 deployments of the environment over the last 30 days are available.
+                </p>
               </div>
             </div>
           </div>
