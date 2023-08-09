@@ -8,7 +8,7 @@ export interface SidebarHistoryProps {
   data: DeploymentHistoryEnvironment[]
   pathLogs: string
   serviceId: string
-  versionId: string
+  versionId?: string
 }
 
 export function SidebarHistory({ data, serviceId, versionId, pathLogs }: SidebarHistoryProps) {

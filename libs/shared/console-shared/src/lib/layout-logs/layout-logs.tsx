@@ -11,7 +11,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { RunningStatus } from '@qovery/shared/enums'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_VERSION_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
@@ -117,14 +117,13 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-              DEPLOYMENT_LOGS_VERSION_URL(serviceId, versionId),
+              DEPLOYMENT_LOGS_VERSION_URL(serviceId, versionId !== ':versionId' ? '' : versionId),
             undefined,
             false
           )}
           {LinkNavigation(
             'Live logs',
-            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-              SERVICE_LOGS_VERSION_URL(serviceId, versionId),
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
             serviceRunningStatus
           )}
         </div>
@@ -184,8 +183,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
             </div>
             <div className="flex">
               {location.pathname.includes(
-                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                  SERVICE_LOGS_VERSION_URL(serviceId, versionId)
+                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)
               ) && (
                 <MenuTimeFormat
                   updateTimeContextValue={updateTimeContextValue}

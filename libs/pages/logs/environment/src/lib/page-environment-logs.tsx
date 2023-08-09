@@ -2,14 +2,19 @@ import equal from 'fast-deep-equal'
 import { DeploymentStageWithServicesStatuses, EnvironmentStatus } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Routes, useLocation, useParams } from 'react-router-dom'
+import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
 import { fetchApplicationsStatus, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { fetchDatabasesStatus, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_VERSION_URL } from '@qovery/shared/routes'
+import {
+  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
+  ENVIRONMENT_LOGS_URL,
+  SERVICE_LOGS_URL,
+} from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/state/store'
@@ -24,9 +29,27 @@ export function PageEnvironmentLogs() {
   const dispatch = useDispatch<AppDispatch>()
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
 
-  const location = useLocation()
-
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
+
+  const location = useLocation()
+  const matchDeployment = matchPath<'serviceId', string>(
+    ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(),
+    location.pathname
+  )
+  const matchDeploymentVersion = matchPath<'versionId' | 'serviceId', string>(
+    ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
+    location.pathname
+  )
+  const matchServiceLogs = matchPath<'serviceId', string>(
+    ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(),
+    location.pathname
+  )
+
+  const versionId =
+    matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
+
+  const matchServiceId = matchDeploymentVersion || matchServiceLogs || matchDeployment
+  const serviceId = matchServiceId?.params.serviceId !== ':serviceId' ? matchServiceId?.params.serviceId : undefined
 
   const applications = useSelector<RootState, ApplicationEntity[]>(
     (state) => selectApplicationsEntitiesByEnvId(state, environmentId),
@@ -75,13 +98,19 @@ export function PageEnvironmentLogs() {
           services={[...applications, ...databases]}
           statusStages={statusStages}
           environmentStatus={environmentStatus}
+          versionId={versionId}
+          serviceId={serviceId}
         />
         <Routes>
+          <Route
+            path={DEPLOYMENT_LOGS_URL()}
+            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
+          />
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
             element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
           />
-          <Route path={SERVICE_LOGS_VERSION_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
+          <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
         </Routes>
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||

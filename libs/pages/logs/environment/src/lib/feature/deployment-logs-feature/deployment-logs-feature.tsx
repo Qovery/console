@@ -59,7 +59,7 @@ export function getServiceStatuesById(services?: DeploymentStageWithServicesStat
 
 export function DeploymentLogsFeature({ environment, statusStages }: DeploymentLogsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
-  const { stageId, updateServiceId, updateVersionId } = useContext(ServiceStageIdsContext)
+  const { stageId } = useContext(ServiceStageIdsContext)
 
   const application = useSelector<RootState, ApplicationEntity | undefined>((state) =>
     selectApplicationById(state, serviceId)
@@ -134,12 +134,6 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   }, [messageChunks, pauseStatusLogs])
 
   const hideDeploymentLogsBoolean = !(getServiceStatuesById(statusStages, serviceId) as Status)?.is_part_last_deployment
-
-  // reset deployment logs by serviceId and versionId
-  useEffect(() => {
-    updateServiceId(serviceId)
-    updateVersionId(versionId)
-  }, [updateServiceId, serviceId, updateVersionId, versionId])
 
   // deployment logs by serviceId and stageId
   // display when name is delete or stageId is empty
