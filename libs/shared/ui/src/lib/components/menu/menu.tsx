@@ -144,10 +144,10 @@ export function Menu(props: MenuProps) {
         onClose={(e) => handleClick(e)}
         anchorRef={ref}
         align={arrowAlign}
-        className="menu z-20"
-        menuClassName={`rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] p-0 ${className} menu__container menu__container--${direction} menu__container--${
+        className="menu z-30"
+        menuClassName={`rounded-md shadow-[0_0_32px_rgba(0,0,0,0.08)] p-0 menu__container menu__container--${direction} menu__container--${
           isOpen ? 'open' : 'closed'
-        } menu__container--${arrowAlign}`}
+        } menu__container--${arrowAlign} dark:bg-element-light-darker-500`}
         portal
       >
         {children}

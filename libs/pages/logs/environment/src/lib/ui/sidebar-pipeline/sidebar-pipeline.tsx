@@ -4,13 +4,12 @@ import SidebarPipelineItem from '../sidebar-pipeline-item/sidebar-pipeline-item'
 
 export interface SidebarPipelineProps {
   services: Array<ApplicationEntity | DatabaseEntity>
-  serviceId: string
+  serviceId?: string
+  versionId?: string
   statusStages?: DeploymentStageWithServicesStatuses[]
 }
 
-export function SidebarPipeline(props: SidebarPipelineProps) {
-  const { serviceId, services, statusStages } = props
-
+export function SidebarPipeline({ services, versionId, serviceId, statusStages }: SidebarPipelineProps) {
   return (
     <div className="p-5">
       <p className="text-text-100 text-xs mb-4 font-medium">Pipeline</p>
@@ -18,6 +17,7 @@ export function SidebarPipeline(props: SidebarPipelineProps) {
         <SidebarPipelineItem
           key={index}
           index={index}
+          versionId={versionId}
           serviceId={serviceId}
           currentStage={currentStage}
           services={services}

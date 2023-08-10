@@ -44,7 +44,7 @@ export function RowDeployment(props: RowDeploymentProps) {
         <div className="text-right w-10 h-6 py-1 px-2 font-code">{index + 1}</div>
       </div>
       <div data-testid="cell-date" className={`py-1 pl-2 pr-3 font-code shrink-0 w-[158px] ${colorsCellClassName()}`}>
-        {dateFullFormat(data.timestamp, utc ? 'UTC' : undefined)}
+        {dateFullFormat(data.timestamp, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss:SS')}
       </div>
       <div
         data-testid="cell-msg"

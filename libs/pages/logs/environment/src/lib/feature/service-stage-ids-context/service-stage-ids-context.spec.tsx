@@ -3,37 +3,6 @@ import { useContext } from 'react'
 import { ServiceStageIdsContext, ServiceStageIdsProvider } from './service-stage-ids-context'
 
 describe('ServiceStageIdsContext', () => {
-  it('should provide the initial service state', () => {
-    const TestComponent = () => {
-      const { serviceId, updateServiceId } = useContext(ServiceStageIdsContext)
-      return (
-        <div>
-          <p data-testid="service">{serviceId}</p>
-          <button data-testid="set-service" onClick={() => updateServiceId('id')}>
-            Set Service
-          </button>
-        </div>
-      )
-    }
-
-    const { getByTestId } = render(
-      <ServiceStageIdsProvider>
-        <TestComponent />
-      </ServiceStageIdsProvider>
-    )
-
-    const service = getByTestId('service')
-    const setServiceButton = getByTestId('set-service')
-
-    act(() => {
-      setServiceButton.click()
-    })
-
-    waitFor(() => {
-      expect(service.textContent).toBe('id')
-    })
-  })
-
   it('should provide the initial stage state', () => {
     const TestComponent = () => {
       const { stageId, updateStageId } = useContext(ServiceStageIdsContext)

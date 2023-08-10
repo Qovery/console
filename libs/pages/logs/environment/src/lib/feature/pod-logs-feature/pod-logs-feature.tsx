@@ -1,5 +1,5 @@
 import { Log } from 'qovery-typescript-axios'
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
@@ -10,7 +10,6 @@ import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/state/store'
 import PodLogs from '../../ui/pod-logs/pod-logs'
-import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
 export interface PodLogsFeatureProps {
   clusterId: string
@@ -19,7 +18,6 @@ export interface PodLogsFeatureProps {
 export function PodLogsFeature(props: PodLogsFeatureProps) {
   const { clusterId } = props
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
-  const { updateServiceId } = useContext(ServiceStageIdsContext)
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('not loaded')
   const [messageChunks, setMessageChunks] = useState<Log[][]>([])
@@ -116,11 +114,6 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
       clearTimeout(timerId)
     }
   }, [messageNGINXChunks, pauseStatusLogs, debounceTime])
-
-  // update serviceId
-  useEffect(() => {
-    updateServiceId(serviceId)
-  }, [updateServiceId, serviceId])
 
   // reset pod logs
   useEffect(() => {

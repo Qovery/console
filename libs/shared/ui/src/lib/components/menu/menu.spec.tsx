@@ -88,17 +88,6 @@ describe('Menu', () => {
     expect(menu.classList.contains('szh-menu--dir-right')).toBe(true)
   })
 
-  it('should have accurate classname', () => {
-    props.open = true
-    props.className = 'some-class-name'
-
-    render(<Menu {...props} />)
-
-    const menu = screen.getByRole('menu')
-
-    expect(menu.classList.contains('some-class-name')).toBe(true)
-  })
-
   it('should an item have an icon', () => {
     props.menus = [
       {
