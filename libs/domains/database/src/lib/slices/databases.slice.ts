@@ -33,7 +33,7 @@ import {
   shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const DATABASES_FEATURE_KEY = 'databases'
 

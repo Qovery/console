@@ -5,7 +5,7 @@ import { useFetchEnvironments } from '@qovery/domains/environment'
 import { EventQueryParams, useFetchEventTargets } from '@qovery/domains/event'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { convertDatetoTimestamp } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
 import { extractEventQueryParams, hasEnvironment } from '../page-general-feature/page-general-feature'
 

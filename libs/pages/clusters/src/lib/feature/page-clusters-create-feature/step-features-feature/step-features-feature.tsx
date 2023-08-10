@@ -15,7 +15,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 

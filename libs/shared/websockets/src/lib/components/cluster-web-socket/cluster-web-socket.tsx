@@ -8,7 +8,7 @@ import { applicationsActions, applicationsLoadingStatus } from '@qovery/domains/
 import { databasesActions, databasesLoadingStatus } from '@qovery/domains/database'
 import { updateEnvironmentsRunningStatus, useFetchEnvironments } from '@qovery/domains/environment'
 import { ServiceRunningStatus, WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 
 export interface ClusterWebSocketProps {
   url: string

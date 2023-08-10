@@ -12,7 +12,7 @@ import { AddCreditCardModalFeature, CreditCardFormValues } from '@qovery/shared/
 import { CreditCard } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageOrganizationBilling from '../../ui/page-organization-billing/page-organization-billing'
 
 export function PageOrganizationBillingFeature() {

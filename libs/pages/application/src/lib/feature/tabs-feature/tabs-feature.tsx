@@ -28,7 +28,7 @@ import {
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import CrudEnvironmentVariableModalFeature, {
   EnvironmentVariableCrudMode,

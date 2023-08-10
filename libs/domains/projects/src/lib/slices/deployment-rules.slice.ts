@@ -3,7 +3,7 @@ import { ProjectDeploymentRule, ProjectDeploymentRuleApi, ProjectDeploymentRuleR
 import { DeploymentRuleState, LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const DEPLOYMENT_RULES_FEATURE_KEY = 'deploymentRules'
 

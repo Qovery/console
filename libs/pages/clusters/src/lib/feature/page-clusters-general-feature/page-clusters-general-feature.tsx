@@ -8,7 +8,7 @@ import {
   selectClustersStatusLoadingStatus,
 } from '@qovery/domains/organization'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageClustersGeneral from '../../ui/page-clusters-general/page-clusters-general'
 
 export function PageClustersGeneralFeature() {

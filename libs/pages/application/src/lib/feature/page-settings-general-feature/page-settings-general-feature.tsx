@@ -9,7 +9,7 @@ import { ServiceTypeEnum, getServiceType, isApplication, isContainer, isJob } fr
 import { ApplicationEntity, OrganizationEntity } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (data: FieldValues, application: ApplicationEntity) => {

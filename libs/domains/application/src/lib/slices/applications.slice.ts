@@ -58,7 +58,7 @@ import {
   shortToLongId,
   sortByKey,
 } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const APPLICATIONS_FEATURE_KEY = 'applications'
 

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { deleteApiToken, fetchApiTokens, selectOrganizationById } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageOrganizationApi from '../../ui/page-organization-api/page-organization-api'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 

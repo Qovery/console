@@ -9,7 +9,7 @@ import { JobGeneralData, OrganizationEntity } from '@qovery/shared/interfaces'
 import { SERVICES_JOB_CREATION_CONFIGURE_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 

@@ -8,7 +8,7 @@ import { ApplicationGeneralData, OrganizationEntity } from '@qovery/shared/inter
 import { SERVICES_APPLICATION_CREATION_URL, SERVICES_CREATION_RESOURCES_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { fetchInvoiceUrl, fetchInvoices, selectOrganizationById } from '@qovery/domains/organization'
 import { Value } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import InvoicesList from '../../../ui/page-organization-billing-summary/invoices-list/invoices-list'
 
 export const getListOfYears = (invoices: Invoice[]) => {

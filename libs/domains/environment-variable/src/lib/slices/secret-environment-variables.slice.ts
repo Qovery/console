@@ -15,7 +15,7 @@ import { ServiceTypeEnum, isContainer, isJob } from '@qovery/shared/enums'
 import { SecretEnvironmentVariableEntity, SecretEnvironmentVariablesState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const SECRET_ENVIRONMENT_VARIABLES_FEATURE_KEY = 'secret'
 

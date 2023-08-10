@@ -29,7 +29,7 @@ import { ClusterInstanceTypeResponseListResults } from 'qovery-typescript-axios/
 import { AdvancedSettings, ClusterEntity, ClustersState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, refactoClusterPayload, sortByKey } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const CLUSTER_FEATURE_KEY = 'cluster'
 

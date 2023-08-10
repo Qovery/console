@@ -10,7 +10,7 @@ import { getServiceType } from '@qovery/shared/enums'
 import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {

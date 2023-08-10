@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { fetchClusterStatus, selectClusterById } from '@qovery/domains/organization'
 import { CardCluster } from '@qovery/shared/console-shared'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 
 export function CardClusterFeature() {
   const { organizationId = '', clusterId = '' } = useParams()

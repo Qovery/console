@@ -11,7 +11,7 @@ import {
 } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsNetwork from '../../ui/page-settings-network/page-settings-network'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 

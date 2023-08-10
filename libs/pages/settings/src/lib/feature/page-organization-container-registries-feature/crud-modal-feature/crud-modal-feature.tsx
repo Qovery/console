@@ -9,7 +9,7 @@ import {
   selectAvailableContainerRegistry,
   selectAvailableContainerRegistryLoadingStatus,
 } from '@qovery/domains/organization'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-organization-container-registries/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {

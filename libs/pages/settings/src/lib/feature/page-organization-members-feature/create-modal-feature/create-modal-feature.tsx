@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { postInviteMember } from '@qovery/domains/organization'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import CreateModal from '../../../ui/page-organization-members/create-modal/create-modal'
 
 export interface CreateModalFeatureProps {

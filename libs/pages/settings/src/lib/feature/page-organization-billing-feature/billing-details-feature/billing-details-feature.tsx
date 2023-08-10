@@ -7,7 +7,7 @@ import { editBillingInfo, fetchBillingInfo, selectOrganizationById } from '@qove
 import { LoadingStatus, OrganizationEntity, Value } from '@qovery/shared/interfaces'
 import { IconFlag } from '@qovery/shared/ui'
 import { countries } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import BillingDetails from '../../../ui/page-organization-billing/billing-details/billing-details'
 
 export function BillingDetailsFeature() {

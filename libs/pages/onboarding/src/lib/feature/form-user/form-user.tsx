@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_MORE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import { StepPersonalize } from '../../ui/step-personalize/step-personalize'
 import { ContextOnboarding } from '../container/container'
 

@@ -8,7 +8,7 @@ import { editDatabase, postDatabaseActionsRedeploy, selectDatabaseById } from '@
 import { useFetchDatabaseConfiguration, useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, database: DatabaseEntity) => {

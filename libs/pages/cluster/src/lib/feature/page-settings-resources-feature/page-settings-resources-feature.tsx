@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity, ClusterResourcesData } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
 export const handleSubmit = (data: FieldValues, cluster: ClusterEntity): Partial<ClusterEntity> => {

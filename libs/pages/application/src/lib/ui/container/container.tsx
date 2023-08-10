@@ -21,7 +21,7 @@ import {
   TagMode,
   TagSize,
 } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export const ApplicationContext = createContext<{

@@ -17,7 +17,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Provider as ReduxProvider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { ModalProvider } from '@qovery/shared/ui'
-import { AppStore, type RootState, setupStore } from '@qovery/store'
+import { AppStore, type RootState, setupStore } from '@qovery/state/store'
 
 const allQueries = {
   ...queries,

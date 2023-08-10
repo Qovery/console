@@ -14,7 +14,7 @@ import {
   DATABASE_URL,
 } from '@qovery/shared/routes'
 import { Header, Icon, Skeleton, StatusChip, Tabs, Tag, TagMode, TagSize } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
   database?: DatabaseEntity

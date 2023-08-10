@@ -17,7 +17,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { computeAvailableScope, parseEnvText } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import ImportEnvironmentVariableModal from '../../ui/import-environment-variable-modal/import-environment-variable-modal'
 import { changeScopeForAll } from './utils/change-scope-all'
 import { deleteEntry } from './utils/delete-entry'

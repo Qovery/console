@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { connectGithubApp } from '@qovery/domains/organization'
 import { SETTINGS_GIT_REPOSITORY_ACCESS_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { ToastEnum, toast } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 
 export function GithubApplicationCallbackFeature() {
   const { search } = useLocation()

@@ -13,7 +13,7 @@ import {
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import { ROUTER_DATABASE } from './router/router'
 import Container from './ui/container/container'
 

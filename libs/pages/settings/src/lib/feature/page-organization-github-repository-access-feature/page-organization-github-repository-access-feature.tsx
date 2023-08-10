@@ -16,7 +16,7 @@ import { useAuth } from '@qovery/shared/auth'
 import { LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import DisconnectionConfirmModal from '../../ui/page-organization-github-repository-access/disconnection-confirm-modal/disconnection-confirm-modal'
 import PageOrganizationGithubRepositoryAccess from '../../ui/page-organization-github-repository-access/page-organization-github-repository-access'
 

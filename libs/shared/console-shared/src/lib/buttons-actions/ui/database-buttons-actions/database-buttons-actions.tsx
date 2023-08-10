@@ -38,7 +38,7 @@ import {
   isRestartAvailable,
   isStopAvailable,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 
 export interface DatabaseButtonsActionsProps {

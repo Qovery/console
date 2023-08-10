@@ -11,7 +11,7 @@ import { useActionDeployAllEnvironment, useFetchEnvironment } from '@qovery/doma
 import { getServiceType, isApplication, isGitJob, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import UpdateAllModal from '../ui/update-all-modal'
 
 export interface UpdateAllModalFeatureProps {

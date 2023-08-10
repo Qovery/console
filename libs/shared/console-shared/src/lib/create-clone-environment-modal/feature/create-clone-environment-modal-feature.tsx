@@ -14,7 +14,7 @@ import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organiza
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import CreateCloneEnvironmentModal from '../ui/create-clone-environment-modal'
 
 export interface CreateCloneEnvironmentModalFeatureProps {

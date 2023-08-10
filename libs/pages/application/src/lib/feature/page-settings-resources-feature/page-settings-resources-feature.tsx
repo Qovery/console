@@ -6,7 +6,7 @@ import { editApplication, postApplicationActionsRedeploy, selectApplicationById 
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity) => {

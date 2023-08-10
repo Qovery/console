@@ -4,7 +4,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { deleteCredentials, editCredentials, postCredentials } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
 
 export interface CreateEditCredentialsModalFeatureProps {

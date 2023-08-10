@@ -16,7 +16,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { buildGitRepoUrl, useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 

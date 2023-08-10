@@ -51,7 +51,7 @@ import {
   isStopAvailable,
   urlCodeEditor,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import CloneServiceModalFeature from '../../../clone-service-modal/feature/clone-service-modal-feature'
 import DeployOtherCommitModalFeature from '../../../deploy-other-commit-modal/feature/deploy-other-commit-modal-feature'
 import DeployOtherTagModalFeature from '../../../deploy-other-tag-modal/feature/deploy-other-tag-modal-feature'
