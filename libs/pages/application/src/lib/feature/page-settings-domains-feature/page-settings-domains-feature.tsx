@@ -13,7 +13,7 @@ import {
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 

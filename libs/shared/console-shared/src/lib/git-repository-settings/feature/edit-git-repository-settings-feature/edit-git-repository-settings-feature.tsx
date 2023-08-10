@@ -17,7 +17,7 @@ import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus, RepositoryEntity } from '@qovery/shared/interfaces'
 import { Icon } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 import { authProvidersValues } from '../../utils/auth-providers-values'
 

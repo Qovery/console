@@ -8,7 +8,7 @@ import { selectDatabaseById } from '@qovery/domains/database'
 import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import PodLogs from '../../ui/pod-logs/pod-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 

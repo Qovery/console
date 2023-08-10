@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { postApiToken } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-organization-api/crud-modal/crud-modal'
 import ValueModal from '../../../ui/page-organization-api/value-modal/value-modal'
 

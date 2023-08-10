@@ -7,7 +7,7 @@ import { ClusterCredentialsEntity, ClusterGeneralData } from '@qovery/shared/int
 import { CLUSTERS_CREATION_RESOURCES_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-clusters-create/step-general/step-general'
 import { useClusterContainerCreateContext } from '../page-clusters-create-feature'
 

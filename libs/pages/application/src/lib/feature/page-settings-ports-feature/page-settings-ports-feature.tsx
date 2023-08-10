@@ -5,7 +5,7 @@ import { editApplication, postApplicationActionsRedeploy, selectApplicationById 
 import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, PortData } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 

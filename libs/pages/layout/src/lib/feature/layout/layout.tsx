@@ -16,7 +16,7 @@ import { fetchUserSignUp } from '@qovery/domains/user'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { WebsocketContainer } from '@qovery/shared/websockets'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage } from '../../utils/utils'
 

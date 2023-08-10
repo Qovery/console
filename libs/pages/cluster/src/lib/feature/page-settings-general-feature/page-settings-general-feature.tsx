@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { editCluster, postClusterActionsDeploy, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, cluster: ClusterEntity) => {

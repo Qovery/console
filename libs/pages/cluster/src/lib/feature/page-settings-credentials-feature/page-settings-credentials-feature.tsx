@@ -13,7 +13,7 @@ import {
 } from '@qovery/domains/organization'
 import { ClusterCredentialsEntity, ClusterEntity } from '@qovery/shared/interfaces'
 import { ToastEnum, toast } from '@qovery/shared/toast'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsCredentials from '../../ui/page-settings-credentials/page-settings-credentials'
 
 export const handleSubmit = (data: FieldValues, credentials?: ClusterCredentialsEntity[], cluster?: ClusterEntity) => {

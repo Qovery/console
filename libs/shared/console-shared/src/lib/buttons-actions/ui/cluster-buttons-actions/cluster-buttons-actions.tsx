@@ -22,7 +22,7 @@ import {
   isStopAvailable,
   isUpdateAvailable,
 } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 
 export interface ClusterButtonsActionsProps {
   cluster: ClusterEntity

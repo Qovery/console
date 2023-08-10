@@ -5,7 +5,7 @@ import {
   importEnvironmentVariables,
 } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { type AppDispatch } from '@qovery/store'
+import { type AppDispatch } from '@qovery/state/store'
 
 export function formatData(data: { [key: string]: string }, keys: string[]) {
   const vars: VariableImportRequestVars[] = []

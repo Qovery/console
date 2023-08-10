@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { useAuth } from '@qovery/shared/auth'
 import { useRunningStatusWebsocket } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import { ClusterWebSocket } from '../cluster-web-socket/cluster-web-socket'
 
 export function WebsocketContainer() {

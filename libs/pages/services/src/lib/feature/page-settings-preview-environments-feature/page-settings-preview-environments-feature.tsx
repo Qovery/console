@@ -7,7 +7,7 @@ import { editApplication, selectApplicationsEntitiesByEnvId } from '@qovery/doma
 import { useEditEnvironmentDeploymentRule, useFetchEnvironmentDeploymentRule } from '@qovery/domains/environment'
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function PageSettingsPreviewEnvironmentsFeature() {

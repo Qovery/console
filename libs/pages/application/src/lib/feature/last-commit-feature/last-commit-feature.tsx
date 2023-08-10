@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { getApplicationsState, getCountNewCommitsToDeploy } from '@qovery/domains/application'
 import { isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import LastCommit from '../../ui/last-commit/last-commit'
 
 export function LastCommitFeature() {

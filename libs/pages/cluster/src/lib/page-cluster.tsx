@@ -4,7 +4,7 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { fetchClusterStatus, selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import { ROUTER_CLUSTER } from './router/router'
 import Container from './ui/container/container'
 

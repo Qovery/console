@@ -39,7 +39,7 @@ import {
   TagMode,
   TagSize,
 } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
   environment?: Environment

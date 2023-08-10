@@ -1,0 +1,24 @@
+{
+  "name": "state-store",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/state/store/src",
+  "projectType": "library",
+  "tags": ["root-store"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/state/store/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/state/store"],
+      "options": {
+        "jestConfig": "libs/state/store/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

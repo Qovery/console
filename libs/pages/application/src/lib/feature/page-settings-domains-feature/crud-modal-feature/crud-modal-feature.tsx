@@ -12,7 +12,7 @@ import {
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {

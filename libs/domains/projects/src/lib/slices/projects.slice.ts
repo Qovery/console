@@ -10,7 +10,7 @@ import { Project, ProjectMainCallsApi, ProjectRequest, ProjectsApi } from 'qover
 import { ProjectsState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { addOneToManyRelation, getEntitiesByIds, sortByKey } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const PROJECTS_FEATURE_KEY = 'projects'
 

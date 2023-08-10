@@ -9,7 +9,7 @@ import { selectUser } from '@qovery/domains/user'
 import { useAuth } from '@qovery/shared/auth'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import { StepPricing } from '../../ui/step-pricing/step-pricing'
 import { ContextOnboarding } from '../container/container'
 

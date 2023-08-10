@@ -17,7 +17,7 @@ import { selectUser } from '@qovery/domains/user'
 import { membersMock } from '@qovery/shared/factories'
 import { ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 

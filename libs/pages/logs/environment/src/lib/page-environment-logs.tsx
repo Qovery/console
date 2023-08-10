@@ -12,7 +12,7 @@ import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import { ServiceStageIdsProvider } from './feature/service-stage-ids-context/service-stage-ids-context'

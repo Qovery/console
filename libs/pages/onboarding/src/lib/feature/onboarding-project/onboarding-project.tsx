@@ -6,7 +6,7 @@ import { fetchOrganization, selectAllOrganization } from '@qovery/domains/organi
 import { useAuth } from '@qovery/shared/auth'
 import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import { StepProject } from '../../ui/step-project/step-project'
 import { ContextOnboarding } from '../container/container'
 

@@ -6,7 +6,7 @@ import { useFetchDatabaseInstanceTypes } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { selectClusterById } from '@qovery/domains/organization'
 import { ClusterEntity } from '@qovery/shared/interfaces'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import SettingsResourcesInstanceTypes from '../../ui/settings-resources-instance-types/setting-resources-instance-types'
 
 export interface SettingsResourcesInstanceTypesFeatureProps {

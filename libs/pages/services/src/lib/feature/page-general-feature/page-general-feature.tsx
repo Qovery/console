@@ -11,7 +11,7 @@ import { useFetchEnvironment } from '@qovery/domains/environment'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

@@ -14,7 +14,7 @@ import {
 } from '@qovery/domains/environment-variable'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { SecretEnvironmentVariableEntity } from '@qovery/shared/interfaces'
-import { type AppDispatch } from '@qovery/store'
+import { type AppDispatch } from '@qovery/state/store'
 import {
   CrudEnvironmentVariableModalFeatureProps,
   DataFormEnvironmentVariableInterface,

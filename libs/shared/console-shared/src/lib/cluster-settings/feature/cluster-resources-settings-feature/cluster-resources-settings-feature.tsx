@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchAvailableInstanceTypes, selectInstancesTypes } from '@qovery/domains/organization'
 import { ClusterResourcesData, Value } from '@qovery/shared/interfaces'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import ClusterResourcesSettings from '../../ui/cluster-resources-settings/cluster-resources-settings'
 import { listInstanceTypeFormatter } from './utils/list-instance-type-formatter'
 

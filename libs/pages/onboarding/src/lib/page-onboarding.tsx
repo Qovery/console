@@ -5,7 +5,7 @@ import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { fetchUserSignUp } from '@qovery/domains/user'
 import { ONBOARDING_PERSONALIZE_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import { Container } from './feature/container/container'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from './router/router'
 

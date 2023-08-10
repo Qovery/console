@@ -7,7 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { AuthProviderState, LoadingStatus } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const AUTH_PROVIDER_FEATURE_KEY = 'authProvider'
 

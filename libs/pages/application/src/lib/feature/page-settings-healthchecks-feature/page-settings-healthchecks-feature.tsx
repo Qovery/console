@@ -10,7 +10,7 @@ import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qo
 import { ProbeTypeEnum, getServiceType, isJob } from '@qovery/shared/enums'
 import { ApplicationEntity, HealthcheckData } from '@qovery/shared/interfaces'
 import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
 export const handleSubmit = (data: FieldValues, application: ApplicationEntity): ApplicationEntity => {

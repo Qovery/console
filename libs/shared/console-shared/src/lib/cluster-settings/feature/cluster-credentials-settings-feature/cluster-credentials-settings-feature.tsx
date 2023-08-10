@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import { fetchCredentialsList, selectOrganizationById } from '@qovery/domains/organization'
 import { ClusterCredentialsEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import ClusterCredentialsSettings from '../../ui/cluster-credentials-settings/cluster-credentials-settings'
 import CreateEditCredentialsModalFeature from '../create-edit-credentials-modal-feature/create-edit-credentials-modal-feature'
 

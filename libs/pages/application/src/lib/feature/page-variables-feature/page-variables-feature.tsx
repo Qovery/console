@@ -21,7 +21,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { TableHeadProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import { ApplicationContext } from '../../ui/container/container'
 import PageVariables from '../../ui/page-variables/page-variables'
 import { sortVariable } from './utils/sort-variable'

@@ -14,7 +14,7 @@ import {
   ORGANIZATION_URL,
   OVERVIEW_URL,
 } from '@qovery/shared/routes'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,

@@ -6,7 +6,7 @@ import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organiza
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { BaseLink } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import { PageGeneral } from '../../ui/page-general/page-general'
 
 export function PageGeneralFeature() {

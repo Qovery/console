@@ -4,7 +4,7 @@ import { FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { editClusterRoutingTable, postClusterActionsDeploy } from '@qovery/domains/organization'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import CrudModal from '../../../ui/page-settings-network/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {

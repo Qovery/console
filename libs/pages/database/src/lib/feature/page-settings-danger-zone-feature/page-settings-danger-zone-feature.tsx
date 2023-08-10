@@ -4,7 +4,7 @@ import { deleteDatabaseAction, selectDatabaseById } from '@qovery/domains/databa
 import { useFetchEnvironment } from '@qovery/domains/environment'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import { SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsDangerZone from '../../ui/page-settings-danger-zone/page-settings-danger-zone'
 
 export function PageSettingsDangerZoneFeature() {

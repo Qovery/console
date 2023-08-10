@@ -10,7 +10,7 @@ import {
 import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import DeployOtherCommitModal from '../ui/deploy-other-commit-modal'
 
 export interface DeployOtherCommitModalFeatureProps {

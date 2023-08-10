@@ -7,7 +7,7 @@ import { editApplication, postApplicationActionsRedeploy, selectApplicationById 
 import { ServiceTypeEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { ApplicationEntity, JobConfigureData } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
 export function PageSettingsConfigureJobFeature() {

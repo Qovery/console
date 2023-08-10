@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { deleteCustomRole, fetchAvailableRoles, selectOrganizationById } from '@qovery/domains/organization'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageOrganizationRoles from '../../ui/page-organization-roles/page-organization-roles'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 

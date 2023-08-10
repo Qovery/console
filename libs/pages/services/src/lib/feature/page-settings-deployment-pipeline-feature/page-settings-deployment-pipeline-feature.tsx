@@ -12,7 +12,7 @@ import {
   useFetchEnvironment,
 } from '@qovery/domains/environment'
 import { Icon, IconAwesomeEnum, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
 import StageOrderModalFeature from './stage-order-modal-feature/stage-order-modal-feature'

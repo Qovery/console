@@ -13,7 +13,7 @@ import {
 import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { AdvancedSettings, ApplicationEntity } from '@qovery/shared/interfaces'
 import { objectFlattener } from '@qovery/shared/utils'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import PageSettingsAdvanced from '../../ui/page-settings-advanced/page-settings-advanced'
 import { initFormValues } from './init-form-values/init-form-values'
 

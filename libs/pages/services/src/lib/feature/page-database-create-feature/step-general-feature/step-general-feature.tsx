@@ -13,7 +13,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, FunnelFlowHelpCard, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
 import { GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'

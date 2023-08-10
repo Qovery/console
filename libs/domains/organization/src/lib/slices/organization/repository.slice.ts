@@ -2,7 +2,7 @@ import { Update, createAsyncThunk, createEntityAdapter, createSelector, createSl
 import { GitProviderEnum, GitRepositoryBranch, OrganizationAccountGitRepositoriesApi } from 'qovery-typescript-axios'
 import { LoadingStatus, RepositoryEntity, RepositoryState } from '@qovery/shared/interfaces'
 import { toastError } from '@qovery/shared/ui'
-import { RootState } from '@qovery/store'
+import { RootState } from '@qovery/state/store'
 
 export const REPOSITORY_FEATURE_KEY = 'repository'
 

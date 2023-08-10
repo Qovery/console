@@ -11,7 +11,7 @@ import { ServiceTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch, RootState } from '@qovery/store'
+import { AppDispatch, RootState } from '@qovery/state/store'
 import CloneServiceModal from '../ui/clone-service-modal'
 
 export interface CloneServiceModalFeatureProps {

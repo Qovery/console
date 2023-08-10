@@ -8,7 +8,7 @@ import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/
 import { ProbeTypeEnum, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 
 export interface CrudModalFeatureProps {
   onClose: () => void

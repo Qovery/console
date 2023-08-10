@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { ModalProvider } from '@qovery/shared/ui'
-import { RootState, initialRootState, rootReducer } from '@qovery/store'
+import { RootState, initialRootState, rootReducer } from '@qovery/state/store'
 import ResizeObserver from './resize-observer'
 
 type Params = {

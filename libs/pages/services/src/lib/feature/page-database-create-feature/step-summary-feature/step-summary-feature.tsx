@@ -11,7 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
-import { AppDispatch } from '@qovery/store'
+import { AppDispatch } from '@qovery/state/store'
 import StepSummary from '../../../ui/page-database-create/step-summary/step-summary'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
