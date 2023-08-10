@@ -178,7 +178,7 @@ describe('PageApplicationPostFeature', () => {
         name: 'test',
         description: '',
         healthchecks: undefined,
-        ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP' }],
+        ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP', name: 'p80' }],
         cpu: 500,
         memory: 512,
         min_running_instances: 1,
