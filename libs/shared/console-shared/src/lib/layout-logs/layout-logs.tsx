@@ -117,7 +117,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-              DEPLOYMENT_LOGS_VERSION_URL(serviceId, versionId !== ':versionId' ? '' : versionId),
+              DEPLOYMENT_LOGS_VERSION_URL(serviceId, versionId),
             undefined,
             false
           )}
