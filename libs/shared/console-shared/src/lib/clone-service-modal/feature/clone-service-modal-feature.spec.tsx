@@ -1,5 +1,5 @@
 import selectEvent from 'react-select-event'
-import * as servicesDomains from '@qovery/domains/services'
+import * as servicesDomains from '@qovery/domains/services/feature'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CloneServiceModalFeature, { CloneServiceModalFeatureProps } from './clone-service-modal-feature'
