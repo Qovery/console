@@ -8,7 +8,7 @@ import { type QueryClient, useQueryClient } from 'react-query'
 export interface UseReactQueryWsSubscriptionProps {
   /** WebSocket origin and pathname */
   url: string
-  /** WebSocket searchParams is an object then converted to URLSearchParams. Note `bearer_token` is already handled by this hook */
+  /** WebSocket searchParams is an object converted to URLSearchParams. Note `bearer_token` is already handled by this hook */
   urlSearchParams?: SearchParams
   /** WebSocket onmessage will be automatically handled if they are aligned with the expected format (https://tkdodo.eu/blog/using-web-sockets-with-react-query#consuming-data) otherwise you should provide an handler */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
