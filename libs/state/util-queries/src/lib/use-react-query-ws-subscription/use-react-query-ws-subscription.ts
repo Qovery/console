@@ -9,7 +9,7 @@ export interface UseReactQueryWsSubscriptionProps {
   /** WebSocket origin and pathname */
   url: string
   /** WebSocket searchParams is an object converted to URLSearchParams. Note `bearer_token` is already handled by this hook */
-  urlSearchParams?: SearchParams
+  urlSearchParams?: string[][] | Record<string, string | undefined> | string | URLSearchParams
   /** WebSocket onmessage will be automatically handled if they are aligned with the expected format (https://tkdodo.eu/blog/using-web-sockets-with-react-query#consuming-data) otherwise you should provide an handler */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onMessage?: (queryClient: QueryClient, data: any) => void
@@ -20,26 +20,9 @@ interface InvalidateOperation {
   id?: string
 }
 
-interface SearchParams {
-  [key: string]: string | undefined
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isInvalidateOperation(data: any): data is InvalidateOperation {
   return Array.isArray(data?.entity)
-}
-
-function filterObject(obj: SearchParams) {
-  const filteredObject: Record<string, string> = {}
-
-  Object.keys(obj).forEach((key) => {
-    const value = obj[key]
-    if (value !== undefined && value.trim() !== '') {
-      filteredObject[key] = value.trim()
-    }
-  })
-
-  return filteredObject
 }
 
 export function useReactQueryWsSubscription({
@@ -50,7 +33,21 @@ export function useReactQueryWsSubscription({
   const queryClient = useQueryClient()
   const { getAccessTokenSilently } = useAuth0()
 
-  const searchParams = new URLSearchParams(filterObject(urlSearchParams || {}))
+  let _urlSearchParams: string[][] | Record<string, string> | string | URLSearchParams
+
+  if (urlSearchParams && !Array.isArray(urlSearchParams) && typeof urlSearchParams != 'string') {
+    let entries
+    if (urlSearchParams instanceof URLSearchParams) {
+      entries = [...urlSearchParams.entries()]
+    } else {
+      entries = Object.entries(urlSearchParams)
+    }
+    _urlSearchParams = Object.fromEntries(entries.filter((e): e is [string, string] => Boolean(e[1])))
+  } else {
+    _urlSearchParams = urlSearchParams ?? ''
+  }
+
+  const searchParams = new URLSearchParams(_urlSearchParams)
 
   useEffect(() => {
     let websocket: WebSocket | undefined
