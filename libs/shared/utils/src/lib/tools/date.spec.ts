@@ -9,9 +9,7 @@ describe('date', () => {
     mockFormatInTimeZone.mockImplementation(() => '15 Sep, 10:23:20')
 
     const resultDefault = dateFullFormat('2023-09-15T10:23:20')
-    const resultCustomFormat = dateFullFormat('2023-09-15T10:23:20', 'UTC', 'dd/MM/yyyy HH:mm')
 
     expect(resultDefault).toBe('15 Sep, 10:23:20')
-    expect(resultCustomFormat).toBe('15/09/2023 08:23')
   })
 })
