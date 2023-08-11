@@ -156,9 +156,7 @@ export function TableRowDeployment({
                   {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
-              {data?.name && !(data as ContainerApplicationEntity)?.image_name && (
-                <ButtonIconAction actions={buttonActionsDefault} />
-              )}
+              <ButtonIconAction actions={buttonActionsDefault} />
             </>
           </Skeleton>
         </div>
