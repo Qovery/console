@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query'
 import {
   ApplicationsApi,
   CloneApplicationRequest,
@@ -8,7 +9,6 @@ import {
   DatabasesApi,
   JobsApi,
 } from 'qovery-typescript-axios'
-import { useMutation } from 'react-query'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 

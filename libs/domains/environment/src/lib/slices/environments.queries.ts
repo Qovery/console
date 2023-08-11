@@ -1,3 +1,4 @@
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import download from 'downloadjs'
 import {
   CloneRequest,
@@ -16,7 +17,6 @@ import {
   EnvironmentStatus,
   EnvironmentsApi,
 } from 'qovery-typescript-axios'
-import { QueryClient, useMutation, useQuery, useQueryClient } from 'react-query'
 import { WebsocketRunningStatusInterface } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'

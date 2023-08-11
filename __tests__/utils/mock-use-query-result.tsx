@@ -1,4 +1,4 @@
-import { QueryObserverSuccessResult } from 'react-query'
+import { QueryObserverSuccessResult } from '@tanstack/react-query'
 
 export function mockUseQueryResult<T>(
   data: T,

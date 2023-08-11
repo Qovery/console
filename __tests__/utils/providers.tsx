@@ -1,7 +1,7 @@
 import { Auth0Provider } from '@auth0/auth0-react'
 import { configureStore } from '@reduxjs/toolkit'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ComponentType, type ReactNode } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 import { ModalProvider } from '@qovery/shared/ui'

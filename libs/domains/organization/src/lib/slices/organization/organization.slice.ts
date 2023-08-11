@@ -6,6 +6,7 @@ import {
   createSelector,
   createSlice,
 } from '@reduxjs/toolkit'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AvailableContainerRegistryResponse,
   ContainerRegistriesApi,
@@ -26,7 +27,6 @@ import {
   OrganizationWebhookCreateRequest,
   OrganizationWebhookResponse,
 } from 'qovery-typescript-axios'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { OrganizationEntity, OrganizationState } from '@qovery/shared/interfaces'
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/utils'

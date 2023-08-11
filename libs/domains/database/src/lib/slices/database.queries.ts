@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { AxiosResponse } from 'axios'
 import {
   CloudProviderApi,
@@ -6,7 +7,6 @@ import {
   ManagedDatabaseInstanceTypeResponse,
   ManagedDatabaseInstanceTypeResponseList,
 } from 'qovery-typescript-axios'
-import { useQuery } from 'react-query'
 import { toastError } from '@qovery/shared/ui'
 
 const cloudProviderApi = new CloudProviderApi()
