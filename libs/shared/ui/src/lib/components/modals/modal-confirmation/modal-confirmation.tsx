@@ -4,6 +4,7 @@ import Button, { ButtonStyle } from '../../buttons/button/button'
 import { Icon } from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import InputTextSmall from '../../inputs/input-text-small/input-text-small'
+import useModal from '../../modal/use-modal/use-modal'
 import { Tooltip } from '../../tooltip/tooltip'
 
 export interface ModalConfirmationProps {
@@ -12,7 +13,6 @@ export interface ModalConfirmationProps {
   name?: string
   callback: () => void
   warning?: string
-  setOpen?: (open: boolean) => void
   placeholder?: string
   ctaButton?: string
   isDelete?: boolean
@@ -24,7 +24,6 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
     description,
     name,
     callback,
-    setOpen,
     warning,
     isDelete = false,
     placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
@@ -32,10 +31,11 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
   } = props
 
   const { handleSubmit, control } = useForm()
+  const { closeModal } = useModal()
 
   const onSubmit = handleSubmit((data) => {
     if (data) {
-      setOpen && setOpen(false)
+      closeModal()
       callback()
     }
   })
@@ -102,7 +102,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
           )}
         />
         <div className="flex gap-3 justify-end">
-          <Button className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => setOpen && setOpen(false)}>
+          <Button className="btn--no-min-w" style={ButtonStyle.STROKED} onClick={() => closeModal()}>
             Cancel
           </Button>
           <Button className="btn--no-min-w" style={isDelete ? ButtonStyle.ERROR : ButtonStyle.BASIC} type="submit">
