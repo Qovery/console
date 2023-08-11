@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { type QueryClient, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { type QueryClient, useQueryClient } from 'react-query'
 
 // Inspired by:
 // https://tkdodo.eu/blog/using-web-sockets-with-react-query

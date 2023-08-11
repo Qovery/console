@@ -1,5 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DeploymentStageMainCallsApi, DeploymentStageRequest, DeploymentStageResponse } from 'qovery-typescript-axios'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 

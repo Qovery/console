@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseServiceStatusesProps {

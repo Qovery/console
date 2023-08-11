@@ -1,6 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { Environment } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
-import { useQueryClient } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'

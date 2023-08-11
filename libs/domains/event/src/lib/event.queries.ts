@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import {
   OrganizationEventApi,
   OrganizationEventResponseList,
@@ -9,7 +10,6 @@ import {
   OrganizationEventTargetType,
   OrganizationEventType,
 } from 'qovery-typescript-axios/api'
-import { useQuery } from 'react-query'
 import { toastError } from '@qovery/shared/ui'
 
 const eventsApi = new OrganizationEventApi()

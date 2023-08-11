@@ -1,14 +1,14 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { renderHook } from '@testing-library/react'
 import WS from 'jest-websocket-mock'
-import { useQueryClient } from 'react-query'
 import useReactQueryWsSubscription from './use-react-query-ws-subscription'
 
-jest.mock('react-query', () => {
+jest.mock('@tanstack/react-query', () => {
   const queryClient = {
     invalidateQueries: jest.fn(),
   }
   return {
-    ...jest.requireActual('react-query'),
+    ...jest.requireActual('@tanstack/react-query'),
     useQueryClient: () => queryClient,
   }
 })
