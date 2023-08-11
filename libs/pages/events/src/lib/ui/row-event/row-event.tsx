@@ -1,7 +1,24 @@
-import { OrganizationEventOrigin, OrganizationEventResponse } from 'qovery-typescript-axios'
+import {
+  OrganizationEventOrigin,
+  OrganizationEventResponse,
+  OrganizationEventTargetType,
+  OrganizationEventType,
+} from 'qovery-typescript-axios'
+import { Link, useParams } from 'react-router-dom'
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { IconEnum } from '@qovery/shared/enums'
+import {
+  APPLICATION_URL,
+  DATABASE_GENERAL_URL,
+  DATABASE_URL,
+  ENVIRONMENTS_URL,
+  SERVICES_URL,
+  SETTINGS_MEMBERS_URL,
+  SETTINGS_PROJECT_GENERAL_URL,
+  SETTINGS_PROJECT_URL,
+  SETTINGS_URL,
+} from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, Skeleton, TagEvent, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 import CopyButton from '../copy-button/copy-button'
@@ -35,6 +52,44 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
 
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth } = props
+  const { organizationId = '' } = useParams()
+
+  const renderLink = (targetType?: OrganizationEventTargetType) => {
+    const { event_type, target_name, project_id, environment_id, target_id } = event
+
+    const customLink = (url: string, content = target_name) => (
+      <Link className="truncate cursor-pointer hover:text-text-400 transition" to={url}>
+        {content}
+      </Link>
+    )
+
+    if (event_type !== OrganizationEventType.DELETE) {
+      switch (targetType) {
+        case OrganizationEventTargetType.ORGANIZATION:
+          return customLink(SETTINGS_URL(organizationId))
+        case OrganizationEventTargetType.MEMBERS_AND_ROLES:
+          return customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL)
+        case OrganizationEventTargetType.PROJECT:
+          return customLink(
+            SETTINGS_URL(organizationId) + SETTINGS_PROJECT_URL(target_id!) + SETTINGS_PROJECT_GENERAL_URL
+          )
+        case OrganizationEventTargetType.ENVIRONMENT:
+          return customLink(SERVICES_URL(organizationId, project_id!, target_id!), target_name)
+        case OrganizationEventTargetType.APPLICATION:
+        case OrganizationEventTargetType.CONTAINER:
+        case OrganizationEventTargetType.JOB:
+          return customLink(APPLICATION_URL(organizationId, project_id!, environment_id!, target_id!))
+        case OrganizationEventTargetType.DATABASE:
+          return customLink(
+            DATABASE_URL(organizationId, project_id!, environment_id!, target_id!) + DATABASE_GENERAL_URL
+          )
+        default:
+          return <span className="truncate">{target_name}</span>
+      }
+    } else {
+      return <span className="truncate">{target_name}</span>
+    }
+  }
 
   return (
     <>
@@ -86,7 +141,7 @@ export function RowEvent(props: RowEventProps) {
                 </div>
               }
             >
-              <span className="truncate">{event.target_name}</span>
+              {renderLink(event.target_type)}
             </Tooltip>
           </Skeleton>
         </div>
