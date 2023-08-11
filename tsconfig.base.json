@@ -19,6 +19,7 @@
       "@qovery/domains/database": ["libs/domains/database/src/index.ts"],
       "@qovery/domains/environment": ["libs/domains/environment/src/index.ts"],
       "@qovery/domains/environment-variable": ["libs/domains/environment-variable/src/index.ts"],
+      "@qovery/domains/environments/feature": ["libs/domains/environments/feature/src/index.ts"],
       "@qovery/domains/event": ["libs/domains/event/src/index.ts"],
       "@qovery/domains/organization": ["libs/domains/organization/src/index.ts"],
       "@qovery/domains/projects": ["libs/domains/projects/src/index.ts"],
