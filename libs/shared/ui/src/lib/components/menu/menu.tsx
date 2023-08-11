@@ -1,5 +1,5 @@
 import { ControlledMenu, MenuCloseEvent } from '@szhsin/react-menu'
-import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react'
+import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import Tooltip from '../tooltip/tooltip'
 import MenuGroup from './menu-group/menu-group'
 import { MenuItemProps } from './menu-item/menu-item'
@@ -28,6 +28,24 @@ export type MenuData = {
   }
   search?: boolean
 }[]
+
+/*
+  Replacer function to JSON.stringify that ignores
+  circular references and internal React properties.
+  https://github.com/facebook/react/issues/8669#issuecomment-531515508
+*/
+const ignoreCircularReferences = () => {
+  const seen = new WeakSet()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (key: string, value: any) => {
+    if (key.startsWith('_')) return // Don't compare React's internal props.
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) return
+      seen.add(value)
+    }
+    return value
+  }
+}
 
 export interface MenuProps {
   trigger: ReactNode
@@ -67,6 +85,29 @@ export function Menu(props: MenuProps) {
 
   const ref = useRef(null)
   const [isOpen, setOpen] = useState(false)
+
+  // XXX: This is an ugly hack to solve poor design decision
+  // `menus` prop is an array without distinct ids/keys
+  // This is a trick to memoize menus items without ids coming from:
+  // https://www.youtube.com/watch?v=G3OyF-lRAWo
+  // https://github.com/samselikoff/2022-06-09-resizable-panel/commit/fe04a842367657b4acb1058c454d3eca739c419d
+  // https://github.com/facebook/react/issues/8669#issuecomment-531515508
+  const menusStringify = JSON.stringify(menus, ignoreCircularReferences())
+  const menusMemo = useMemo(
+    () =>
+      menus.map((menu, index) => (
+        <MenuGroup
+          key={index}
+          menu={menu}
+          isLast={index === menus.length - 1}
+          paddingMenuX={paddingMenuX}
+          paddingMenuY={paddingMenuY}
+          style={{ width }}
+          isFilter={isFilter}
+        />
+      )),
+    [menusStringify]
+  )
 
   const handleClick = (e: MenuCloseEvent | null) => {
     if (ref.current) {
@@ -151,17 +192,7 @@ export function Menu(props: MenuProps) {
         portal
       >
         {children}
-        {menus.map((menu, index) => (
-          <MenuGroup
-            key={index}
-            menu={menu}
-            isLast={index === menus.length - 1}
-            paddingMenuX={paddingMenuX}
-            paddingMenuY={paddingMenuY}
-            style={{ width }}
-            isFilter={isFilter}
-          />
-        ))}
+        {menusMemo}
       </ControlledMenu>
     </>
   )
