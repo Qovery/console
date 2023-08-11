@@ -61,9 +61,9 @@ export function Deployments(props: PageDeploymentsProps) {
         className="mt-2 rounded-sm"
       >
         <div>
-          {data?.map((currentData) => (
+          {data?.map((currentData, index) => (
             <TableRowDeployment
-              key={currentData.id}
+              key={index}
               data={currentData as DeploymentHistoryDatabase}
               filter={filter}
               dataHead={tableHead}

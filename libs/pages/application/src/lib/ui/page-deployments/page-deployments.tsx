@@ -65,9 +65,9 @@ export function Deployments(props: PageDeploymentsProps) {
         className="mt-2 rounded-sm flex-grow overflow-y-auto min-h-0"
       >
         <div>
-          {data?.map((currentData) => (
+          {data?.map((currentData, index) => (
             <TableRowDeployment
-              key={currentData.id}
+              key={index}
               data={currentData as DeploymentHistoryApplication}
               filter={filter}
               dataHead={tableHead}

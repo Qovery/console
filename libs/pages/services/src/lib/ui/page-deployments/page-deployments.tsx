@@ -85,7 +85,7 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
         <div>
           {data?.map((currentData, index) => (
             <TableRowDeployment
-              key={currentData.id}
+              key={index}
               data={currentData as DeploymentService}
               filter={filter}
               dataHead={tableHead}
