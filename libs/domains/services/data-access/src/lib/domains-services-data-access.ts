@@ -10,6 +10,7 @@ import {
   ContainersApi,
   DatabaseMainCallsApi,
   DatabasesApi,
+  EnvironmentMainCallsApi,
   JobMainCallsApi,
   JobsApi,
 } from 'qovery-typescript-axios'
@@ -23,6 +24,7 @@ const jobsApi = new JobsApi()
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
+const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const jobMainCallsApi = new JobMainCallsApi()
 
 // Use this type in param instead of ServiceTypeEnum
@@ -32,28 +34,7 @@ type ServiceType = keyof typeof ServiceTypeEnum
 export const services = createQueryKeys('services', {
   listStatuses: (environmentId: string) => ({
     queryKey: [environmentId],
-    async queryFn() {
-      return [
-        ...((await applicationsApi.getEnvironmentApplicationStatus(environmentId)).data.results ?? []).map(
-          (entity) => ({
-            ...entity,
-            serviceType: ServiceTypeEnum.APPLICATION,
-          })
-        ),
-        ...((await containersApi.getEnvironmentContainerStatus(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: ServiceTypeEnum.CONTAINER,
-        })),
-        ...((await databasesApi.getEnvironmentDatabaseStatus(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: ServiceTypeEnum.DATABASE,
-        })),
-        ...((await jobsApi.getEnvironmentJobStatus(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: ServiceTypeEnum.JOB,
-        })),
-      ]
-    },
+    queryFn: () => environmentMainCallsApi.getEnvironmentStatuses(environmentId),
   }),
   list: (environmentId: string) => ({
     queryKey: [environmentId],
