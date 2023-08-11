@@ -8,8 +8,8 @@ import { type QueryClient, useQueryClient } from 'react-query'
 export interface UseReactQueryWsSubscriptionProps {
   /** WebSocket origin and pathname */
   url: string
-  /** WebSocket searchParams to be append. Note `bearer_token` is already handled by this hook */
-  urlSearchParams?: URLSearchParams
+  /** WebSocket searchParams is an object converted to URLSearchParams. Note `bearer_token` is already handled by this hook */
+  urlSearchParams?: string[][] | Record<string, string | undefined> | string | URLSearchParams
   /** WebSocket onmessage will be automatically handled if they are aligned with the expected format (https://tkdodo.eu/blog/using-web-sockets-with-react-query#consuming-data) otherwise you should provide an handler */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onMessage?: (queryClient: QueryClient, data: any) => void
@@ -27,11 +27,27 @@ function isInvalidateOperation(data: any): data is InvalidateOperation {
 
 export function useReactQueryWsSubscription({
   url,
-  urlSearchParams = new URLSearchParams(),
+  urlSearchParams,
   onMessage = (_, data) => console.error('Unhandled websocket onmessage, data:', data),
 }: UseReactQueryWsSubscriptionProps) {
   const queryClient = useQueryClient()
   const { getAccessTokenSilently } = useAuth0()
+
+  let _urlSearchParams: string[][] | Record<string, string> | string | URLSearchParams
+
+  if (urlSearchParams && !Array.isArray(urlSearchParams) && typeof urlSearchParams != 'string') {
+    let entries
+    if (urlSearchParams instanceof URLSearchParams) {
+      entries = [...urlSearchParams.entries()]
+    } else {
+      entries = Object.entries(urlSearchParams)
+    }
+    _urlSearchParams = Object.fromEntries(entries.filter((e): e is [string, string] => Boolean(e[1])))
+  } else {
+    _urlSearchParams = urlSearchParams ?? ''
+  }
+
+  const searchParams = new URLSearchParams(_urlSearchParams)
 
   useEffect(() => {
     let websocket: WebSocket | undefined
@@ -40,8 +56,8 @@ export function useReactQueryWsSubscription({
       // https://github.com/auth0/auth0-react/issues/97#issuecomment-677690436
     ;(async () => {
       const token = await getAccessTokenSilently()
-      urlSearchParams.append('bearer_token', token)
-      websocket = new WebSocket(`${url}?${urlSearchParams.toString()}`)
+      searchParams.append('bearer_token', token)
+      websocket = new WebSocket(`${url}?${searchParams.toString()}`)
 
       websocket.onmessage = async (event) => {
         const data = JSON.parse(event.data)

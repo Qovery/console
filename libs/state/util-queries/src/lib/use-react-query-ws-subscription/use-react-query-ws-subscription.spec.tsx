@@ -48,10 +48,12 @@ describe('useReactQueryWsSubscription', () => {
     const { unmount } = renderHook(() =>
       useReactQueryWsSubscription({
         url: 'ws://localhost:1234',
-        urlSearchParams: new URLSearchParams({
+        urlSearchParams: {
           foo: 'bar',
           baz: '1',
-        }),
+          bar: undefined,
+          qux: '',
+        },
         onMessage: () => {},
       })
     )
