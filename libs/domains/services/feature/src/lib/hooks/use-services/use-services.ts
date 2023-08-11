@@ -8,7 +8,7 @@ export interface UseServicesProps {
 export function useServices({ environmentId }: UseServicesProps) {
   return useQuery({
     ...queries.services.list(environmentId!),
-    enabled: !!environmentId,
+    enabled: Boolean(environmentId),
   })
 }
 
