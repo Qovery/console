@@ -1,5 +1,5 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
-import { EnvironmentMainCallsApi, type EnvironmentStatus } from 'qovery-typescript-axios'
+import { EnvironmentMainCallsApi } from 'qovery-typescript-axios'
 import { type RunningState } from '@qovery/shared/enums'
 
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
@@ -8,8 +8,9 @@ export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket
   deploymentStatus: (environmentId: string) => ({
     queryKey: [environmentId],
-    queryFn(): EnvironmentStatus | null {
-      return null
+    async queryFn() {
+      const result = await environmentMainCallsApi.getEnvironmentStatus(environmentId)
+      return result.data
     },
   }),
   // NOTE: Value is set by WebSocket
