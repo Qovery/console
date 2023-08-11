@@ -61,14 +61,14 @@ export function Deployments(props: PageDeploymentsProps) {
         className="mt-2 rounded-sm"
       >
         <div>
-          {data?.map((currentData, index) => (
+          {data?.map((currentData) => (
             <TableRowDeployment
-              key={index}
+              key={currentData.id}
               data={currentData as DeploymentHistoryDatabase}
               filter={filter}
-              index={index}
               dataHead={tableHead}
               isLoading={isLoading}
+              fromService
               noCommit
             />
           ))}
