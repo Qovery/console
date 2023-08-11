@@ -1,22 +1,21 @@
 {
-  "name": "domains-services",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domains/services/src",
+  "name": "domains-services-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/services/data-access/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/domains/services/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/domains/services/data-access/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/domains/services/jest.config.ts",
+        "jestConfig": "libs/domains/services/data-access/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -26,5 +25,6 @@
         }
       }
     }
-  }
+  },
+  "tags": ["scope:domain", "type:data-access", "slice:services"]
 }
