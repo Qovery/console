@@ -8,7 +8,6 @@ export interface StatusChipProps {
   status: StateEnum | RunningStatus | DeploymentHistoryStatusEnum | undefined
   appendTooltipMessage?: string
   className?: string
-  isRunningStatus?: boolean
 }
 
 export function StatusChip(props: StatusChipProps) {
