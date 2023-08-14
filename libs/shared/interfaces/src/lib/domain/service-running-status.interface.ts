@@ -7,7 +7,7 @@ export interface ServiceRunningStatus {
   pods: {
     name: string
     state: RunningStatus
-    restart_count: 0
+    restart_count: number
     state_message: string
   }[]
 }
