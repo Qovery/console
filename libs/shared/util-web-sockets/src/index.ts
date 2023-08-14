@@ -1,1 +1,1 @@
-export * from './lib/shared-util-web-sockets'
+export * from './lib/use-status-web-sockets/use-status-web-sockets'
