@@ -5,7 +5,7 @@ import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
-  status: StateEnum | RunningStatus | DeploymentHistoryStatusEnum | undefined
+  status: keyof typeof StateEnum | keyof typeof RunningStatus | keyof typeof DeploymentHistoryStatusEnum | undefined
   appendTooltipMessage?: string
   className?: string
 }
