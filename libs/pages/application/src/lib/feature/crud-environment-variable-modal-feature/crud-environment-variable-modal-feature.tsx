@@ -60,7 +60,12 @@ export function CrudEnvironmentVariableModalFeature(props: CrudEnvironmentVariab
     setClosing(false)
   }, [closing, errorEnvironmentVariable, props])
 
-  const availableScopes = computeAvailableScope(variable?.scope, false, props.serviceType, true)
+  const availableScopes = computeAvailableScope(
+    variable?.scope,
+    false,
+    props.serviceType,
+    type === EnvironmentVariableType.OVERRIDE
+  )
   const defaultScope =
     variable?.scope === APIVariableScopeEnum.BUILT_IN
       ? undefined
