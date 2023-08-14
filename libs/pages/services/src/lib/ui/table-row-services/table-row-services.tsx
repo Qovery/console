@@ -1,4 +1,5 @@
 import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
+import { ServiceDeploymentStatusLabel } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import {
   IconEnum,
@@ -20,7 +21,6 @@ import {
   Icon,
   Skeleton,
   StatusChip,
-  StatusLabel,
   TableFilterProps,
   TableHeadProps,
   TableRow,
@@ -28,7 +28,7 @@ import {
   TagCommit,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo, upperCaseFirstLetter } from '@qovery/shared/utils'
+import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface TableRowServicesProps<T> {
   data: ApplicationEntity | DatabaseEntity
@@ -91,16 +91,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center gap-3">
-              <p className="flex items-center gap-3 leading-7 text-neutral-350 text-sm">
-                {data.status && data.status.state && <StatusLabel status={data.status && data.status.state} />}
-                {data.status?.last_deployment_date && (
-                  <Tooltip content={dateFullFormat(data.status.last_deployment_date)}>
-                    <span className="text-xs text-neutral-300 font-medium">
-                      {timeAgo(new Date(data.status.last_deployment_date))} ago
-                    </span>
-                  </Tooltip>
-                )}
-              </p>
+              <ServiceDeploymentStatusLabel environmentId={data.environment?.id} serviceId={data.id} />
               {data.name && (
                 <>
                   {(isApplication(type) || isContainer(type) || isJob(type)) && (

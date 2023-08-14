@@ -1,19 +1,18 @@
 import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
 import { useGetEnvironmentRunningStatusById } from '@qovery/domains/environment'
+import { EnvironmentDeploymentStatusLabel } from '@qovery/domains/environments/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { RunningState } from '@qovery/shared/enums'
 import {
   Icon,
   Skeleton,
   StatusChip,
-  StatusLabel,
   TableFilterProps,
   TableHeadProps,
   TableRow,
   TagMode,
   Tooltip,
 } from '@qovery/shared/ui'
-import { dateFullFormat, timeAgo } from '@qovery/shared/utils'
 
 export interface TableRowEnvironmentsProps {
   data: Environment
@@ -70,17 +69,8 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
         </div>
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
-            <div className="flex items-center">
-              <p className="flex items-center leading-7 text-neutral-350 text-sm">
-                <StatusLabel status={status && status.state} />
-                {status?.last_deployment_date && (
-                  <Tooltip content={dateFullFormat(status.last_deployment_date)}>
-                    <span className="text-xs text-neutral-300 mx-3 font-medium">
-                      {timeAgo(new Date(status.last_deployment_date))} ago
-                    </span>
-                  </Tooltip>
-                )}
-              </p>
+            <div className="flex items-center gap-3">
+              <EnvironmentDeploymentStatusLabel environmentId={data.id} />
               <EnvironmentButtonsActions environment={data} status={status} hasServices={true} />
             </div>
           </Skeleton>
