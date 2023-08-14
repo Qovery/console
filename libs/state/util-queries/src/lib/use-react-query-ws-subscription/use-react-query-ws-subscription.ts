@@ -76,7 +76,7 @@ export function useReactQueryWsSubscription({
         websocket.close()
       }
     }
-  }, [queryClient, getAccessTokenSilently, onMessage, url, urlSearchParams])
+  }, [queryClient, getAccessTokenSilently, onMessage, url, searchParams])
 }
 
 export default useReactQueryWsSubscription
