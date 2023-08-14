@@ -52,6 +52,7 @@
       "@qovery/shared/toast": ["libs/shared/toast/src/index.ts"],
       "@qovery/shared/ui": ["libs/shared/ui/src/index.ts"],
       "@qovery/shared/util-tests": ["libs/shared/util-tests/src/index.ts"],
+      "@qovery/shared/util-web-sockets": ["libs/shared/util-web-sockets/src/index.ts"],
       "@qovery/shared/utils": ["libs/shared/utils/src/index.ts"],
       "@qovery/shared/websockets": ["libs/shared/websockets/src/index.ts"],
       "@qovery/state/store": ["libs/state/store/src/index.ts"],
