@@ -89,12 +89,10 @@ export function RowEvent(props: RowEventProps) {
         customLink(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
     }
 
-    const defaultLink = () => <span className="truncate">{target_name}</span>
-
     if (event_type !== OrganizationEventType.DELETE) {
       return linkConfig[targetType]()
     } else {
-      return defaultLink()
+      return <span className="truncate">{target_name}</span>
     }
   }
 
