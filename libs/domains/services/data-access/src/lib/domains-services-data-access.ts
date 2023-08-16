@@ -11,7 +11,6 @@ import {
   DatabaseMainCallsApi,
   DatabasesApi,
   EnvironmentMainCallsApi,
-  type InlineResponse200,
   JobMainCallsApi,
   JobsApi,
 } from 'qovery-typescript-axios'
@@ -31,8 +30,6 @@ const jobMainCallsApi = new JobMainCallsApi()
 // Use this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param
 type ServiceType = keyof typeof ServiceTypeEnum
-
-export type ServiceStatuses = InlineResponse200
 
 export const services = createQueryKeys('services', {
   listStatuses: (environmentId: string) => ({
