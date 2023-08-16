@@ -2,7 +2,7 @@ import { render, screen } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum, StateEnum } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
-// eslint-disable-next-line @nx/enforce-module-boundaries
+// nx-ignore-next-line
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import TableRowDeployment, { TableRowDeploymentProps } from './table-row-deployment'
 

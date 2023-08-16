@@ -16,7 +16,9 @@ import { type PropsWithChildren, type ReactElement } from 'react'
 import { useChainProviders } from 'react-flat-providers'
 import { Provider as ReduxProvider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
+// nx-ignore-next-line
 import { ModalProvider } from '@qovery/shared/ui'
+// nx-ignore-next-line
 import { AppStore, type RootState, setupStore } from '@qovery/state/store'
 
 const allQueries = {
