@@ -1,7 +1,7 @@
 import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
 import { useGetEnvironmentRunningStatusById } from '@qovery/domains/environment'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
-import { RunningStatus } from '@qovery/shared/enums'
+import { RunningState } from '@qovery/shared/enums'
 import {
   Icon,
   Skeleton,
@@ -44,7 +44,7 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
       <>
         <div className="flex items-center px-4">
           <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-            <StatusChip status={runningStatus?.state || RunningStatus.STOPPED} />
+            <StatusChip status={runningStatus?.state || RunningState.STOPPED} />
           </Skeleton>
           <Tooltip
             content={

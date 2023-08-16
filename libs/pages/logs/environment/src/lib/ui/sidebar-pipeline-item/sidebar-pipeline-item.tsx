@@ -1,7 +1,7 @@
 import { DeploymentStageWithServicesStatuses, Status } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { RunningStatus, getServiceType } from '@qovery/shared/enums'
+import { RunningState, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { BadgeDeploymentOrder, BadgeService, Icon, IconAwesomeEnum, StatusChip } from '@qovery/shared/ui'
@@ -89,7 +89,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                       />
                       <span className="truncate max-w-[190px]">{currentApplication(service.id)?.name}</span>
                     </span>
-                    <StatusChip status={currentApplication(service.id)?.status?.state || RunningStatus.STOPPED} />
+                    <StatusChip status={currentApplication(service.id)?.status?.state || RunningState.STOPPED} />
                   </Link>
                 )}
               </div>

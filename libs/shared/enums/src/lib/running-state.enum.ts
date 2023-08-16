@@ -1,4 +1,4 @@
-export enum RunningStatus {
+export enum RunningState {
   STARTING = 'STARTING',
   DEPLOYED = 'DEPLOYED',
   RUNNING = 'RUNNING',

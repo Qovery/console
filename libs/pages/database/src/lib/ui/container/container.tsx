@@ -5,7 +5,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
-import { IconEnum, RunningStatus } from '@qovery/shared/enums'
+import { IconEnum, RunningState } from '@qovery/shared/enums'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   DATABASE_DEPLOYMENTS_URL,
@@ -70,7 +70,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   const tabsItems = [
     {
       icon: (
-        <StatusChip status={(database?.running_status && database?.running_status.state) || RunningStatus.STOPPED} />
+        <StatusChip status={(database?.running_status && database?.running_status.state) || RunningState.STOPPED} />
       ),
       name: 'Overview',
       active:

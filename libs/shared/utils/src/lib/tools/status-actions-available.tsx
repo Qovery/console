@@ -1,5 +1,5 @@
 import { StateEnum } from 'qovery-typescript-axios'
-import { RunningStatus } from '@qovery/shared/enums'
+import { RunningState } from '@qovery/shared/enums'
 
 export const isDeployAvailable = (status: StateEnum): boolean => {
   return (
@@ -8,9 +8,9 @@ export const isDeployAvailable = (status: StateEnum): boolean => {
   )
 }
 
-export const isRestartAvailable = (runningStatus: RunningStatus, status: StateEnum): boolean => {
+export const isRestartAvailable = (runningStatus: RunningState, status: StateEnum): boolean => {
   return (
-    (runningStatus === RunningStatus.RUNNING || runningStatus === RunningStatus.DEPLOYED) && isRedeployAvailable(status)
+    (runningStatus === RunningState.RUNNING || runningStatus === RunningState.DEPLOYED) && isRedeployAvailable(status)
   )
 }
 

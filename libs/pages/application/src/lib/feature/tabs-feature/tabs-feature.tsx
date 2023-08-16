@@ -4,7 +4,7 @@ import { type ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { getApplicationsState } from '@qovery/domains/application'
-import { RunningStatus, getServiceType } from '@qovery/shared/enums'
+import { RunningState, getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -51,9 +51,9 @@ export function TabsFeature() {
     {
       icon: (
         <StatusChip
-          status={(application?.running_status && application?.running_status.state) || RunningStatus.STOPPED}
+          status={(application?.running_status && application?.running_status.state) || RunningState.STOPPED}
           appendTooltipMessage={
-            application?.running_status?.state === RunningStatus.ERROR
+            application?.running_status?.state === RunningState.ERROR
               ? application.running_status.pods[0]?.state_message
               : ''
           }
