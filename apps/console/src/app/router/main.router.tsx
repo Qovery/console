@@ -62,10 +62,10 @@ export const ROUTER: RouterProps[] = [
     layout: false,
   },
   {
-    path: USER_URL,
+    path: `${USER_URL}/*`,
     component: <PageUser />,
     protected: true,
-    layout: true,
+    layout: false,
   },
   {
     path: ORGANIZATION_URL(),

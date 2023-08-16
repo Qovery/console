@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { SETTINGS_GENERAL_URL, USER_URL } from '@qovery/shared/routes'
+import { USER_GENERAL_URL, USER_URL } from '@qovery/shared/routes'
 import { IconAwesomeEnum } from '@qovery/shared/ui'
-import { ROUTER_SETTINGS } from './router/router'
+import { ROUTER_USER } from './router/router'
 import { Container } from './ui/container/container'
 
 export function PageUser() {
@@ -9,17 +9,17 @@ export function PageUser() {
     {
       title: 'General',
       icon: IconAwesomeEnum.WHEEL,
-      url: USER_URL + SETTINGS_GENERAL_URL,
+      url: USER_URL + USER_GENERAL_URL,
     },
   ]
 
   return (
     <Container userLinks={userLinks}>
       <Routes>
-        {ROUTER_SETTINGS.map((route) => (
+        {ROUTER_USER.map((route) => (
           <Route key={route.path} path={route.path} element={route.component} />
         ))}
-        <Route path="*" element={<Navigate replace to={USER_URL + SETTINGS_GENERAL_URL} />} />
+        <Route path="*" element={<Navigate replace to={USER_URL + USER_GENERAL_URL} />} />
       </Routes>
     </Container>
   )
