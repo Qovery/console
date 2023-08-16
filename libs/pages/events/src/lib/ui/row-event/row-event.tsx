@@ -92,7 +92,7 @@ export function RowEvent(props: RowEventProps) {
     const defaultLink = () => <span className="truncate">{target_name}</span>
 
     if (event_type !== OrganizationEventType.DELETE) {
-      return (linkConfig[targetType] || defaultLink)()
+      return linkConfig[targetType]()
     } else {
       return defaultLink()
     }
