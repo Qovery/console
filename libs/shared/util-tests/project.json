@@ -3,7 +3,8 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/util-tests/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["type:util"],
+  "implicitDependencies": ["!shared-ui", "!state-store"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
