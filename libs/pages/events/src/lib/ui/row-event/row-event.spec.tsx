@@ -1,16 +1,14 @@
 import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
-import { OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { debug } from 'console'
+import { OrganizationEventResponse } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 import RowEvent, { RowEventProps } from './row-event'
-
-const mockNavigate = jest.fn()
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
-  useNavigate: () => mockNavigate,
 }))
 
 const mockEvent: OrganizationEventResponse = eventsFactoryMock(1)[0]
@@ -62,10 +60,10 @@ describe('RowEvent', () => {
     expect(props.setExpanded).toHaveBeenCalledWith(true)
   })
 
-  it('should render link to project', () => {
-    props.event.target_type = OrganizationEventTargetType.PROJECT
+  it('should render link for target', () => {
+    renderWithProviders(<RowEvent {...props} />)
+    const target = screen.getByText(props.event?.target_name || '')
 
-    const { debug } = renderWithProviders(<RowEvent {...props} />)
-    debug()
+    expect(target).toHaveAttribute('href', '/organization/1/settings')
   })
 })

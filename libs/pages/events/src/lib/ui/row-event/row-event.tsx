@@ -64,6 +64,7 @@ export function RowEvent(props: RowEventProps) {
       </Link>
     )
 
+    // We don't display the link for delete event because we can't show pages
     if (event_type !== OrganizationEventType.DELETE) {
       switch (targetType) {
         case OrganizationEventTargetType.APPLICATION:
