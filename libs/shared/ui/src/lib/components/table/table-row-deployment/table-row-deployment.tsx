@@ -9,10 +9,13 @@ import {
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
+  SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import { timeAgo, trimId, upperCaseFirstLetter } from '@qovery/shared/utils'
-import ButtonIconAction from '../../buttons/button-icon-action/button-icon-action'
+import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
+import { ButtonSize } from '../../buttons/button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Skeleton from '../../skeleton/skeleton'
@@ -26,37 +29,30 @@ import TableRow from '../table-row/table-row'
 export interface TableRowDeploymentProps {
   dataHead: TableHeadProps<DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase>[]
   filter: TableFilterProps[]
+  isLoading: boolean
   data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase
   columnsWidth?: string
-  isLoading?: boolean
   startGroup?: boolean
   noCommit?: boolean
-  index?: number
+  fromService?: boolean
 }
 
-export function TableRowDeployment(props: TableRowDeploymentProps) {
-  const {
-    dataHead,
-    columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
-    isLoading,
-    startGroup,
-    data,
-    noCommit,
-    index,
-    filter,
-  } = props
-
+export function TableRowDeployment({
+  dataHead,
+  columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`,
+  isLoading,
+  startGroup,
+  data,
+  noCommit,
+  filter,
+  fromService,
+}: TableRowDeploymentProps) {
   const [copy, setCopy] = useState(false)
   const [hoverId, setHoverId] = useState(false)
   const { organizationId, projectId, environmentId } = useParams()
   const navigate = useNavigate()
 
-  const buttonActionsDefault = [
-    {
-      iconLeft: <Icon name={IconAwesomeEnum.SCROLL} />,
-      onClick: () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)),
-    },
-  ]
+  const pathEnvironmentLogs = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
   const handleCopy = (e: MouseEvent) => {
     e.preventDefault()
@@ -149,9 +145,22 @@ export function TableRowDeployment(props: TableRowDeploymentProps) {
                   {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
-              {index === 0 && data?.name && !(data as ContainerApplicationEntity)?.image_name && (
-                <ButtonIconAction actions={buttonActionsDefault} />
-              )}
+              <ButtonIcon
+                dataTestId="btn-logs"
+                icon={IconAwesomeEnum.SCROLL}
+                style={ButtonIconStyle.STROKED}
+                size={ButtonSize.SMALL}
+                onClick={() =>
+                  navigate(
+                    fromService
+                      ? pathEnvironmentLogs + SERVICE_LOGS_URL(data?.id)
+                      : pathEnvironmentLogs +
+                          DEPLOYMENT_LOGS_VERSION_URL(data?.id, (data as DeploymentService).execution_id)
+                  )
+                }
+                className="!w-7 !h-7 !border-r btn-icon-action__element"
+                iconClassName="!text-2xs"
+              />{' '}
             </>
           </Skeleton>
         </div>

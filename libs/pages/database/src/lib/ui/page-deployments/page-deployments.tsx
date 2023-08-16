@@ -66,9 +66,9 @@ export function Deployments(props: PageDeploymentsProps) {
               key={index}
               data={currentData as DeploymentHistoryDatabase}
               filter={filter}
-              index={index}
               dataHead={tableHead}
               isLoading={isLoading}
+              fromService
               noCommit
             />
           ))}

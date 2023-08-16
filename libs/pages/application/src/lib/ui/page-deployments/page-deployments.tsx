@@ -70,9 +70,9 @@ export function Deployments(props: PageDeploymentsProps) {
               key={index}
               data={currentData as DeploymentHistoryApplication}
               filter={filter}
-              index={index}
               dataHead={tableHead}
               isLoading={isLoading}
+              fromService
             />
           ))}
         </div>

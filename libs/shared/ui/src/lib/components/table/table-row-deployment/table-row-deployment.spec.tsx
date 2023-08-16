@@ -1,13 +1,24 @@
-import { render } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
+import { ServiceTypeEnum, StateEnum } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import TableRowDeployment, { TableRowDeploymentProps } from './table-row-deployment'
 
-let props: TableRowDeploymentProps
+const mockNavigate = jest.fn()
 
-beforeEach(() => {
-  props = {
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ organizationId: '0', projectId: '1', environmentId: '2' }),
+  useNavigate: () => mockNavigate,
+}))
+
+describe('TableRowDeployment', () => {
+  const props: TableRowDeploymentProps = {
     data: applicationDeploymentsFactoryMock(1)[0],
+    isLoading: false,
+    filter: [],
     dataHead: [
       {
         title: 'Execution ID',
@@ -44,11 +55,41 @@ beforeEach(() => {
       },
     ],
   }
-})
 
-describe('TableRowDeployment', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<TableRowDeployment {...props} />)
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should have link to pod logs', async () => {
+    props.fromService = true
+    const { userEvent } = renderWithProviders(<TableRowDeployment {...props} />)
+
+    const btnLogs = screen.getByTestId('btn-logs')
+    await userEvent.click(btnLogs)
+
+    expect(mockNavigate).toHaveBeenCalledWith('/organization/0/project/1/environment/2/logs/0/live-logs')
+  })
+
+  it('should have link to deployment logs with version', async () => {
+    props.fromService = false
+    props.data = {
+      id: '5',
+      created_at: new Date().toString(),
+      updated_at: new Date().toString(),
+      name: 'my-app',
+      status: StateEnum.BUILDING,
+      type: ServiceTypeEnum.APPLICATION,
+      execution_id: 'execution-id',
+    }
+
+    const { userEvent } = renderWithProviders(<TableRowDeployment {...props} />)
+
+    const btnLogs = screen.getByTestId('btn-logs')
+    await userEvent.click(btnLogs)
+
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/organization/0/project/1/environment/2/logs/5/deployment-logs/execution-id'
+    )
   })
 })
