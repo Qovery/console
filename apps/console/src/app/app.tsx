@@ -92,37 +92,32 @@ export function App() {
       <Routes>
         <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
         <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
-        {ROUTER.map(
-          (route) =>
-            !route.layout && (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
-              />
-            )
-        )}
-        {ROUTER.map(
-          (route) =>
-            route.layout && (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  !route.protected ? (
+        {ROUTER.map((route) =>
+          route.layout ? (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                !route.protected ? (
+                  <DarkModeEnabler isDarkMode={route.darkMode}>
+                    <Layout topBar={route.topBar}>{route.component}</Layout>
+                  </DarkModeEnabler>
+                ) : (
+                  <ProtectedRoute>
                     <DarkModeEnabler isDarkMode={route.darkMode}>
                       <Layout topBar={route.topBar}>{route.component}</Layout>
                     </DarkModeEnabler>
-                  ) : (
-                    <ProtectedRoute>
-                      <DarkModeEnabler isDarkMode={route.darkMode}>
-                        <Layout topBar={route.topBar}>{route.component}</Layout>
-                      </DarkModeEnabler>
-                    </ProtectedRoute>
-                  )
-                }
-              />
-            )
+                  </ProtectedRoute>
+                )
+              }
+            />
+          ) : (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
+            />
+          )
         )}
         <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
       </Routes>
