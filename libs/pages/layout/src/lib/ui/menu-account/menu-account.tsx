@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
+import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
 import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
@@ -56,7 +56,7 @@ export function MenuAccount(props: MenuAccountProps) {
       items: [
         {
           itemContentCustom: (
-            <div className="w-full flex items-center justify-between">
+            <Link className="w-full flex items-center justify-between" to={USER_URL}>
               <div className="flex">
                 <Avatar
                   className="mr-3"
@@ -73,7 +73,7 @@ export function MenuAccount(props: MenuAccountProps) {
                   <span className="text-text-400 text-xs">{user.email}</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ),
           containerClassName: '!h-14',
         },
