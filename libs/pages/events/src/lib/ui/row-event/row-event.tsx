@@ -10,9 +10,10 @@ import { dark } from 'react-syntax-highlighter/dist/cjs/styles/hljs'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_URL,
+  CLUSTER_SETTINGS_URL,
+  CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
-  ENVIRONMENTS_URL,
   SERVICES_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_GENERAL_URL,
@@ -65,6 +66,10 @@ export function RowEvent(props: RowEventProps) {
 
     if (event_type !== OrganizationEventType.DELETE) {
       switch (targetType) {
+        case OrganizationEventTargetType.APPLICATION:
+        case OrganizationEventTargetType.CONTAINER:
+        case OrganizationEventTargetType.JOB:
+          return customLink(APPLICATION_URL(organizationId, project_id!, environment_id!, target_id!))
         case OrganizationEventTargetType.ORGANIZATION:
           return customLink(SETTINGS_URL(organizationId))
         case OrganizationEventTargetType.MEMBERS_AND_ROLES:
@@ -75,14 +80,12 @@ export function RowEvent(props: RowEventProps) {
           )
         case OrganizationEventTargetType.ENVIRONMENT:
           return customLink(SERVICES_URL(organizationId, project_id!, target_id!), target_name)
-        case OrganizationEventTargetType.APPLICATION:
-        case OrganizationEventTargetType.CONTAINER:
-        case OrganizationEventTargetType.JOB:
-          return customLink(APPLICATION_URL(organizationId, project_id!, environment_id!, target_id!))
         case OrganizationEventTargetType.DATABASE:
           return customLink(
             DATABASE_URL(organizationId, project_id!, environment_id!, target_id!) + DATABASE_GENERAL_URL
           )
+        case OrganizationEventTargetType.CLUSTER:
+          return customLink(CLUSTER_URL(organizationId, target_id!) + CLUSTER_SETTINGS_URL)
         default:
           return <span className="truncate">{target_name}</span>
       }

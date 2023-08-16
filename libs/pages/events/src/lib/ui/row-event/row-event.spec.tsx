@@ -1,8 +1,17 @@
 import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
-import { OrganizationEventResponse } from 'qovery-typescript-axios'
+import { OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 import RowEvent, { RowEventProps } from './row-event'
+
+const mockNavigate = jest.fn()
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ organizationId: '1' }),
+  useNavigate: () => mockNavigate,
+}))
 
 const mockEvent: OrganizationEventResponse = eventsFactoryMock(1)[0]
 const props: RowEventProps = {
@@ -51,5 +60,12 @@ describe('RowEvent', () => {
       button.click()
     })
     expect(props.setExpanded).toHaveBeenCalledWith(true)
+  })
+
+  it('should render link to project', () => {
+    props.event.target_type = OrganizationEventTargetType.PROJECT
+
+    const { debug } = renderWithProviders(<RowEvent {...props} />)
+    debug()
   })
 })
