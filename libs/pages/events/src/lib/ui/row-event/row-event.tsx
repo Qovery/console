@@ -15,10 +15,12 @@ import {
   DATABASE_GENERAL_URL,
   DATABASE_URL,
   SERVICES_URL,
+  SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_MEMBERS_URL,
   SETTINGS_PROJECT_GENERAL_URL,
   SETTINGS_PROJECT_URL,
   SETTINGS_URL,
+  SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
 import { Icon, IconAwesomeEnum, Skeleton, TagEvent, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
@@ -55,7 +57,7 @@ export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth } = props
   const { organizationId = '' } = useParams()
 
-  const renderLink = (targetType?: OrganizationEventTargetType) => {
+  const renderLink = (targetType: OrganizationEventTargetType) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
     const customLink = (url: string, content = target_name) => (
@@ -64,34 +66,35 @@ export function RowEvent(props: RowEventProps) {
       </Link>
     )
 
-    // We don't display the link for delete event because we can't show pages
+    const generateApplicationLink = () =>
+      customLink(`${APPLICATION_URL(organizationId, project_id!, environment_id!, target_id!)}`)
+
+    const linkConfig: { [key in OrganizationEventTargetType]: () => JSX.Element } = {
+      [OrganizationEventTargetType.APPLICATION]: generateApplicationLink,
+      [OrganizationEventTargetType.CONTAINER]: generateApplicationLink,
+      [OrganizationEventTargetType.JOB]: generateApplicationLink,
+      [OrganizationEventTargetType.ORGANIZATION]: () => customLink(SETTINGS_URL(organizationId)),
+      [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () =>
+        customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
+      [OrganizationEventTargetType.PROJECT]: () =>
+        customLink(SETTINGS_URL(organizationId) + SETTINGS_PROJECT_URL(target_id!) + SETTINGS_PROJECT_GENERAL_URL),
+      [OrganizationEventTargetType.ENVIRONMENT]: () =>
+        customLink(SERVICES_URL(organizationId, project_id!, target_id!), target_name),
+      [OrganizationEventTargetType.DATABASE]: () =>
+        customLink(DATABASE_URL(organizationId, project_id!, environment_id!, target_id!) + DATABASE_GENERAL_URL),
+      [OrganizationEventTargetType.CLUSTER]: () =>
+        customLink(CLUSTER_URL(organizationId, target_id!) + CLUSTER_SETTINGS_URL),
+      [OrganizationEventTargetType.WEBHOOK]: () => customLink(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
+      [OrganizationEventTargetType.CONTAINER_REGISTRY]: () =>
+        customLink(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
+    }
+
+    const defaultLink = () => <span className="truncate">{target_name}</span>
+
     if (event_type !== OrganizationEventType.DELETE) {
-      switch (targetType) {
-        case OrganizationEventTargetType.APPLICATION:
-        case OrganizationEventTargetType.CONTAINER:
-        case OrganizationEventTargetType.JOB:
-          return customLink(APPLICATION_URL(organizationId, project_id!, environment_id!, target_id!))
-        case OrganizationEventTargetType.ORGANIZATION:
-          return customLink(SETTINGS_URL(organizationId))
-        case OrganizationEventTargetType.MEMBERS_AND_ROLES:
-          return customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL)
-        case OrganizationEventTargetType.PROJECT:
-          return customLink(
-            SETTINGS_URL(organizationId) + SETTINGS_PROJECT_URL(target_id!) + SETTINGS_PROJECT_GENERAL_URL
-          )
-        case OrganizationEventTargetType.ENVIRONMENT:
-          return customLink(SERVICES_URL(organizationId, project_id!, target_id!), target_name)
-        case OrganizationEventTargetType.DATABASE:
-          return customLink(
-            DATABASE_URL(organizationId, project_id!, environment_id!, target_id!) + DATABASE_GENERAL_URL
-          )
-        case OrganizationEventTargetType.CLUSTER:
-          return customLink(CLUSTER_URL(organizationId, target_id!) + CLUSTER_SETTINGS_URL)
-        default:
-          return <span className="truncate">{target_name}</span>
-      }
+      return (linkConfig[targetType] || defaultLink)()
     } else {
-      return <span className="truncate">{target_name}</span>
+      return defaultLink()
     }
   }
 
@@ -145,7 +148,7 @@ export function RowEvent(props: RowEventProps) {
                 </div>
               }
             >
-              {renderLink(event.target_type)}
+              {event.target_type && renderLink(event.target_type)}
             </Tooltip>
           </Skeleton>
         </div>
