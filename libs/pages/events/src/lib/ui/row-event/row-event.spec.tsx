@@ -1,8 +1,14 @@
 import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
 import { OrganizationEventResponse } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { dateYearMonthDayHourMinuteSecond, upperCaseFirstLetter } from '@qovery/shared/utils'
 import RowEvent, { RowEventProps } from './row-event'
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({ organizationId: '1' }),
+}))
 
 const mockEvent: OrganizationEventResponse = eventsFactoryMock(1)[0]
 const props: RowEventProps = {
@@ -51,5 +57,12 @@ describe('RowEvent', () => {
       button.click()
     })
     expect(props.setExpanded).toHaveBeenCalledWith(true)
+  })
+
+  it('should render link for target', () => {
+    renderWithProviders(<RowEvent {...props} />)
+    const target = screen.getByText(props.event?.target_name || '')
+
+    expect(target).toHaveAttribute('href', '/organization/1/settings')
   })
 })
