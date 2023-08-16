@@ -65,7 +65,8 @@ export const ROUTER: RouterProps[] = [
     path: `${USER_URL}/*`,
     component: <PageUser />,
     protected: true,
-    layout: false,
+    layout: true,
+    topBar: false,
   },
   {
     path: ORGANIZATION_URL(),
