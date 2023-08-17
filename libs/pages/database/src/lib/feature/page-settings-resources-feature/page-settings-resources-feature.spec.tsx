@@ -95,7 +95,7 @@ describe('PageSettingsResourcesFeature', () => {
 
     await userEvent.clear(screen.getByTestId('input-memory-memory'))
     await userEvent.type(screen.getByTestId('input-memory-memory'), '512')
-    await clear(screen.getByTestId('input-memory-storage'))
+    await userEvent.clear(screen.getByTestId('input-memory-storage'))
     await userEvent.type(screen.getByTestId('input-memory-storage'), '512')
 
     expect(submitButton).not.toBeDisabled()
