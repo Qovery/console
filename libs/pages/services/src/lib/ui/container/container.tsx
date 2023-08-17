@@ -97,7 +97,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         </div>
       </Skeleton>
       <Tag className="bg-element-light-lighter-300 gap-2 hidden">
-        <span className="w-2 h-2 rounded-lg bg-progressing-300"></span>
+        <span className="w-2 h-2 rounded-lg bg-orange-300"></span>
         <span className="w-2 h-2 rounded-lg bg-accent3-500"></span>
       </Tag>
     </>

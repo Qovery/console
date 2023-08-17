@@ -34,7 +34,7 @@ export function TagCommit(props: TagCommitProps) {
       data-testid="tag-commit"
       className={`border font-medium flex items-center justify-center ${withBackground ? 'bg-white' : ''} ${
         commitDeltaCount
-          ? 'border-progressing-500 text-progressing-500'
+          ? 'border-orange-500 text-orange-500'
           : 'border-element-light-lighter-500 text-text-400 hover:bg-element-light-lighter-400 w-[90px]'
       }`}
     >
@@ -49,9 +49,7 @@ export function TagCommit(props: TagCommitProps) {
       )}
       {commitId.substring(0, 7)}
       {commitDeltaCount ? (
-        <span className="bg-progressing-500 text-white px-1 h-4 rounded-[34px] ml-1 inline-block">
-          {commitDeltaCount}
-        </span>
+        <span className="bg-orange-500 text-white px-1 h-4 rounded-[34px] ml-1 inline-block">{commitDeltaCount}</span>
       ) : null}
     </Tag>
   )

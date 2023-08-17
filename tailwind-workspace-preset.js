@@ -155,7 +155,7 @@ module.exports = {
           800: '#157457',
           900: '#0D604F',
         },
-        progressing: {
+        orange: {
           50: '#FFF9ED',
           100: '#FFEFCC',
           200: '#FFDA99',
