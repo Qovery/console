@@ -1,6 +1,6 @@
 import { getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { RunningStatus } from '@qovery/shared/enums'
+import { RunningState } from '@qovery/shared/enums'
 import { applicationFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
 import { ApplicationButtonsActions, ApplicationButtonsActionsProps } from './application-buttons-actions'
 
@@ -20,7 +20,7 @@ describe('ApplicationButtonsActionsFeature', () => {
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
     mockApplication.running_status = {
-      state: RunningStatus.DEPLOYED,
+      state: RunningState.DEPLOYED,
       id: 'id',
       pods: [],
     }
@@ -77,7 +77,7 @@ describe('ApplicationButtonsActionsFeature', () => {
 
   it('should not render Restart Service if running status is not running', async () => {
     if (mockApplication.running_status) {
-      mockApplication.running_status.state = RunningStatus.STOPPED
+      mockApplication.running_status.state = RunningState.STOPPED
     }
 
     const { baseElement } = render(<ApplicationButtonsActions {...props} />)
@@ -94,7 +94,7 @@ describe('ApplicationButtonsActionsFeature', () => {
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
     mockJob.running_status = {
-      state: RunningStatus.DEPLOYED,
+      state: RunningState.DEPLOYED,
       id: 'id',
       pods: [],
     }

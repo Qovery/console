@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { StateEnum } from 'qovery-typescript-axios'
-import { RunningStatus } from '@qovery/shared/enums'
+import { RunningState } from '@qovery/shared/enums'
 import { StatusChip } from './status-chip'
 
-const AllStatus = [...Object.values(RunningStatus), ...Object.values(StateEnum)]
+const AllStatus = [...Object.values(RunningState), ...Object.values(StateEnum)]
 
 export default {
   component: StatusChip,
@@ -20,7 +20,7 @@ const Template: ComponentStory<typeof StatusChip> = (args) => <StatusChip {...ar
 
 export const Primary = Template.bind({})
 Primary.args = {
-  status: RunningStatus.ERROR,
+  status: RunningState.ERROR,
   appendTooltipMessage: '',
   className: '',
 }

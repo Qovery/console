@@ -2,7 +2,7 @@ import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
 import {
   IconEnum,
-  RunningStatus,
+  RunningState,
   ServiceTypeEnum,
   isApplication,
   isContainer,
@@ -67,14 +67,14 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
         <div className="flex items-center px-4 gap-1">
           {dataDatabase.mode === DatabaseModeEnum.MANAGED ? (
             <Skeleton show={isLoading} width={16} height={16} rounded={true}>
-              <StatusChip status={data.status?.state || RunningStatus.STOPPED} />
+              <StatusChip status={data.status?.state || RunningState.STOPPED} />
             </Skeleton>
           ) : (
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
               <StatusChip
-                status={data.running_status?.state || RunningStatus.STOPPED}
+                status={data.running_status?.state || RunningState.STOPPED}
                 appendTooltipMessage={
-                  data?.running_status?.state === RunningStatus.ERROR ? data.running_status.pods[0]?.state_message : ''
+                  data?.running_status?.state === RunningState.ERROR ? data.running_status.pods[0]?.state_message : ''
                 }
               />
             </Skeleton>

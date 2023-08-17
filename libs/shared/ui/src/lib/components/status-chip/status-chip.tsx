@@ -1,14 +1,13 @@
 import { DeploymentHistoryStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { IconEnum, RunningStatus } from '@qovery/shared/enums'
+import { IconEnum, RunningState } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
-  status: StateEnum | RunningStatus | DeploymentHistoryStatusEnum | undefined
+  status: keyof typeof StateEnum | keyof typeof RunningState | keyof typeof DeploymentHistoryStatusEnum | undefined
   appendTooltipMessage?: string
   className?: string
-  isRunningStatus?: boolean
 }
 
 export function StatusChip(props: StatusChipProps) {
@@ -17,8 +16,8 @@ export function StatusChip(props: StatusChipProps) {
   function showRunningIcon(): boolean {
     switch (status) {
       case StateEnum.DEPLOYED:
-      case RunningStatus.COMPLETED:
-      case RunningStatus.RUNNING:
+      case RunningState.COMPLETED:
+      case RunningState.RUNNING:
         return true
       default:
         return false
@@ -77,7 +76,7 @@ export function StatusChip(props: StatusChipProps) {
       case StateEnum.STOP_ERROR:
       case StateEnum.DELETE_ERROR:
       case StateEnum.RESTART_ERROR:
-      case RunningStatus.ERROR:
+      case RunningState.ERROR:
         return true
       default:
         return false
@@ -96,7 +95,7 @@ export function StatusChip(props: StatusChipProps) {
   function showStoppedIcon(): boolean {
     switch (status) {
       case StateEnum.STOPPED:
-      case RunningStatus.UNKNOWN:
+      case RunningState.UNKNOWN:
         return true
       case StateEnum.CANCELED:
         return true
@@ -116,8 +115,8 @@ export function StatusChip(props: StatusChipProps) {
 
   function showSpinner(): boolean {
     switch (status) {
-      case RunningStatus.STOPPING:
-      case RunningStatus.STARTING:
+      case RunningState.STOPPING:
+      case RunningState.STARTING:
         return true
       default:
         return false
@@ -126,7 +125,7 @@ export function StatusChip(props: StatusChipProps) {
 
   function showWarning(): boolean {
     switch (status) {
-      case RunningStatus.WARNING:
+      case RunningState.WARNING:
         return true
       default:
         return false

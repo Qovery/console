@@ -13,8 +13,10 @@ import {
   EnvironmentMainCallsApi,
   JobMainCallsApi,
   JobsApi,
+  type Status,
 } from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceRunningStatus } from '@qovery/shared/interfaces'
 
 const applicationsApi = new ApplicationsApi()
 const containersApi = new ContainersApi()
@@ -32,6 +34,20 @@ const jobMainCallsApi = new JobMainCallsApi()
 type ServiceType = keyof typeof ServiceTypeEnum
 
 export const services = createQueryKeys('services', {
+  deploymentStatus: (environmentId: string, serviceId: string) => ({
+    queryKey: [environmentId, serviceId],
+    // NOTE: Value is set by WebSocket
+    queryFn(): Status | null {
+      return null
+    },
+  }),
+  runningStatus: (environmentId: string, serviceId: string) => ({
+    queryKey: [environmentId, serviceId],
+    // NOTE: Value is set by WebSocket
+    queryFn(): ServiceRunningStatus | null {
+      return null
+    },
+  }),
   listStatuses: (environmentId: string) => ({
     queryKey: [environmentId],
     async queryFn() {
@@ -62,7 +78,7 @@ export const services = createQueryKeys('services', {
       ]
     },
   }),
-  getStatus: ({ id: serviceId, serviceType }: { id: string; serviceType: ServiceType }) => ({
+  status: ({ id: serviceId, serviceType }: { id: string; serviceType: ServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const mapper = {

@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceDeploymentStatusLabel should match snapshot 1`] = `
+<div>
+  <div
+    class="flex items-center gap-3 leading-7 text-text-400 text-sm"
+  >
+    <span
+      class="flex items-center px-3 h-8 border border-element-lighter-500 rounded-full text-text-500 text-xs font-medium truncate "
+      data-testid="status-label"
+    >
+      <svg
+        class="shrink-0 mr-2 mt-[1px]"
+        name="HAMMER"
+        viewBox="0 0 24 24"
+        width="0.875rem"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M21.39 7.686c.372.334.372.89.038 1.261l-3.377 3.34a.869.869 0 01-.631.26.869.869 0 01-.63-.26l-.854-.816c-.334-.371-.334-.928 0-1.262l.222-.223-.742-.742c-.186.037-.334.037-.52.037-.705 0-1.373-.26-1.892-.779l-1.819-1.818a2.73 2.73 0 01-.779-1.893v-.482L6.844 2.527l.297-.297C8.328 1.043 9.887.375 11.557.375c1.633 0 3.228.668 4.378 1.855l1.67 1.67c.631.631.891 1.522.706 2.413l.742.742.222-.223c.186-.148.409-.26.631-.26.223 0 .446.112.631.26l.854.854zm-11.058-.149l1.818 1.818c.112.149.26.26.446.372L4.84 18.596c-.557.52-1.262.779-1.893.779-.668 0-1.336-.26-1.892-.78a2.61 2.61 0 01.037-3.747L9.96 7.055c.111.185.26.334.371.482z"
+          fill="#43C9D5"
+        />
+      </svg>
+      Building
+    </span>
+  </div>
+</div>
+`;

@@ -1,13 +1,13 @@
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { RunningStatus } from '@qovery/shared/enums'
+import { RunningState } from '@qovery/shared/enums'
 
 export interface ServiceRunningStatus {
   id: string
-  state: RunningStatus
+  state: RunningState
   pods: {
     name: string
-    state: RunningStatus
-    restart_count: 0
+    state: RunningState
+    restart_count: number
     state_message: string
   }[]
 }

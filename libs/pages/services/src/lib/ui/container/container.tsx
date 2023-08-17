@@ -6,7 +6,7 @@ import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
-import { IconEnum, RunningStatus } from '@qovery/shared/enums'
+import { IconEnum, RunningState } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ClusterEntity,
@@ -105,7 +105,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const tabsItems = [
     {
-      icon: <StatusChip status={environmentRunningStatus?.state || RunningStatus.STOPPED} />,
+      icon: <StatusChip status={environmentRunningStatus?.state || RunningState.STOPPED} />,
       name: 'Services',
       active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,

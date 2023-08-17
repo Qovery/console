@@ -8,7 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { RunningStatus } from '@qovery/shared/enums'
+import { RunningState } from '@qovery/shared/enums'
 import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -91,9 +91,9 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
       >
         {displayStatusChip && (
           <StatusChip
-            status={(status as ServiceRunningStatus)?.state || RunningStatus.STOPPED}
+            status={(status as ServiceRunningStatus)?.state || RunningState.STOPPED}
             appendTooltipMessage={
-              (status as ServiceRunningStatus)?.state === RunningStatus.ERROR
+              (status as ServiceRunningStatus)?.state === RunningState.ERROR
                 ? (status as ServiceRunningStatus).pods[0]?.state_message
                 : ''
             }

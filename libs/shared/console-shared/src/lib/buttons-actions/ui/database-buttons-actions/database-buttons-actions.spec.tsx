@@ -1,6 +1,6 @@
 import { getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { DatabaseModeEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
-import { RunningStatus } from '@qovery/shared/enums'
+import { RunningState } from '@qovery/shared/enums'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { DatabaseButtonsActions, DatabaseButtonsActionsProps } from './database-buttons-actions'
 
@@ -19,7 +19,7 @@ describe('DatabaseButtonsActionsFeature', () => {
       service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
     }
     mockDatabase.running_status = {
-      state: RunningStatus.DEPLOYED,
+      state: RunningState.DEPLOYED,
       id: 'id',
       pods: [],
     }
@@ -63,7 +63,7 @@ describe('DatabaseButtonsActionsFeature', () => {
 
   it('should not render Restart Database if running status is not running', async () => {
     if (mockDatabase.running_status) {
-      mockDatabase.running_status.state = RunningStatus.STOPPED
+      mockDatabase.running_status.state = RunningState.STOPPED
     }
 
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
