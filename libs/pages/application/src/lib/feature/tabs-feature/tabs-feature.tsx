@@ -1,10 +1,10 @@
 import { ClickEvent } from '@szhsin/react-menu'
-import { StateEnum } from 'qovery-typescript-axios'
 import { type ReactNode, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { getApplicationsState } from '@qovery/domains/application'
-import { RunningState, getServiceType } from '@qovery/shared/enums'
+import { ServiceStateChip } from '@qovery/domains/services/feature'
+import { getServiceType } from '@qovery/shared/enums'
 import { ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -21,8 +21,6 @@ import {
   IconAwesomeEnum,
   IconFa,
   MenuData,
-  Skeleton,
-  StatusChip,
   Tabs,
   TabsItem,
   Tooltip,
@@ -50,14 +48,7 @@ export function TabsFeature() {
   const items: TabsItem[] = [
     {
       icon: (
-        <StatusChip
-          status={(application?.running_status && application?.running_status.state) || RunningState.STOPPED}
-          appendTooltipMessage={
-            application?.running_status?.state === RunningState.ERROR
-              ? application.running_status.pods[0]?.state_message
-              : ''
-          }
-        />
+        <ServiceStateChip mode="running" environmentId={application?.environment?.id} serviceId={application?.id} />
       ),
       name: 'Overview',
       active:
@@ -67,9 +58,7 @@ export function TabsFeature() {
     },
     {
       icon: (
-        <Skeleton show={application?.status?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip status={(application?.status && application?.status.state) || StateEnum.STOPPED} />
-        </Skeleton>
+        <ServiceStateChip mode="deployment" environmentId={application?.environment?.id} serviceId={application?.id} />
       ),
       name: 'Deployments',
       active:
