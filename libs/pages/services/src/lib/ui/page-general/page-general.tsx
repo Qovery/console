@@ -120,21 +120,4 @@ function PageGeneralMemo(props: PageGeneralProps) {
   )
 }
 
-export const PageGeneral = memo(PageGeneralMemo, (prevProps, nextProps) => {
-  // Stringify is necessary to avoid Redux selector behavior
-  const isEqual =
-    JSON.stringify(
-      prevProps.services.map((service) => ({
-        status: service.status?.state,
-        running_status: service.running_status?.state,
-      }))
-    ) ===
-    JSON.stringify(
-      nextProps.services.map((service) => ({
-        status: service.status?.state,
-        running_status: service.running_status?.state,
-      }))
-    )
-
-  return isEqual
-})
+export const PageGeneral = memo(PageGeneralMemo)
