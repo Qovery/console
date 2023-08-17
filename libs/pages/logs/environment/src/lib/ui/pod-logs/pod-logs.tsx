@@ -65,7 +65,7 @@ export function PodLogs(props: PodLogsProps) {
                   <Icon
                     name={IconAwesomeEnum.FILTER}
                     className={`text-ssm group-hover:text-text-100 ml-auto ${
-                      isActive ? 'text-warning-500' : 'text-transparent'
+                      isActive ? 'text-yellow-500' : 'text-transparent'
                     }`}
                   />
                 }

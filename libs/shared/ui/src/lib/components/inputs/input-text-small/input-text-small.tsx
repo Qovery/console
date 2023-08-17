@@ -54,7 +54,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
       {(error || warning) && errorMessagePosition === 'left' && (
         <Tooltip content={error || warning || ''} align="center" side="top">
           <div data-testid="warning-icon-left" className="flex item-center">
-            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="block text-warning-500 text-sm" />
+            <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="block text-yellow-500 text-sm" />
           </div>
         </Tooltip>
       )}

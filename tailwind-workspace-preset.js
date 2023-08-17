@@ -167,7 +167,7 @@ module.exports = {
           800: '#933100',
           900: '#7A2200',
         },
-        warning: {
+        yellow: {
           50: '#FFFDED',
           100: '#FEF8CC',
           200: '#FDEE9A',

@@ -74,7 +74,7 @@ describe('Row', () => {
 
     const cellDate = screen.getByTestId('cell-date')
 
-    expect(cellDate).toHaveClass('py-1 px-2 text-warning-500')
+    expect(cellDate).toHaveClass('py-1 px-2 text-yellow-500')
   })
 
   it('should have error cell date color', () => {

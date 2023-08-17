@@ -27,11 +27,11 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
 
   const statusBadgeClassNames: Record<InvoiceStatusEnum, string> = {
     [InvoiceStatusEnum.PAID]: 'bg-success-50 text-success-500 border-success-500',
-    [InvoiceStatusEnum.NOT_PAID]: 'bg-warning-50 text-warning-500 border-warning-500',
-    [InvoiceStatusEnum.PENDING]: 'bg-warning-50 text-warning-500 border-warning-500',
-    [InvoiceStatusEnum.POSTED]: 'bg-warning-50 text-warning-500 border-warning-500',
+    [InvoiceStatusEnum.NOT_PAID]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
+    [InvoiceStatusEnum.PENDING]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
+    [InvoiceStatusEnum.POSTED]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
     [InvoiceStatusEnum.UNKNOWN]: 'bg-brand-50 text-brand-500 border-brand-500',
-    [InvoiceStatusEnum.PAYMENT_DUE]: 'bg-warning-50 text-warning-500 border-warning-500',
+    [InvoiceStatusEnum.PAYMENT_DUE]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
     [InvoiceStatusEnum.VOIDED]: 'bg-brand-50 text-brand-500 border-brand-500',
   }
 
