@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseEnvironmentDetailProps {
+export interface UseEnvironmentProps {
   environmentId?: string
 }
 
-export function useEnvironment({ environmentId }: UseEnvironmentDetailProps) {
+export function useEnvironment({ environmentId }: UseEnvironmentProps) {
   return useQuery({
     // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
     ...queries.environments.detail(environmentId!!),
