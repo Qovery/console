@@ -1,5 +1,6 @@
 import { memo, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useListStatuses } from '@qovery/domains/services/feature'
 import { ApplicationEntity, DatabaseEntity, GitApplicationEntity } from '@qovery/shared/interfaces'
 import { APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL, SERVICES_GENERAL_URL } from '@qovery/shared/routes'
 import { BaseLink, EmptyState, HelpSection, Table, TableFilterProps } from '@qovery/shared/ui'
@@ -24,6 +25,14 @@ function PageGeneralMemo(props: PageGeneralProps) {
   useEffect(() => {
     setLoading(isLoading)
   }, [isLoading])
+
+  const { data: statuses } = useListStatuses({ environmentId })
+  const servicesStatuses = [
+    ...(statuses?.applications ?? []),
+    ...(statuses?.containers ?? []),
+    ...(statuses?.databases ?? []),
+    ...(statuses?.jobs ?? []),
+  ]
 
   const tableHead = [
     {
@@ -58,7 +67,12 @@ function PageGeneralMemo(props: PageGeneralProps) {
       {services.length ? (
         <Table
           dataHead={tableHead}
-          data={services}
+          data={
+            services.map((service) => ({
+              ...service,
+              status: servicesStatuses.find((status) => status.id === service.id),
+            })) as (ApplicationEntity | DatabaseEntity)[]
+          }
           setFilter={setFilter}
           filter={filter}
           setDataSort={setData}

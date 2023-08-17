@@ -1,4 +1,4 @@
-import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
+import { Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { selectClusterById } from '@qovery/domains/organization'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
@@ -38,14 +39,17 @@ import { RootState } from '@qovery/state/store'
 
 export interface ContainerProps {
   environment?: Environment
-  environmentStatus?: EnvironmentStatus
 }
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { environment, environmentStatus, children } = props
+  const { environment, children } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
+
+  const { isLoading: isLoadingDeploymentStatus } = useDeploymentStatus({
+    environmentId: environment?.id,
+  })
 
   const applicationsByEnv = useSelector<RootState, ApplicationEntity[]>((state: RootState) =>
     selectApplicationsEntitiesByEnvId(state, environment?.id || '')
@@ -70,7 +74,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
           <>
             <EnvironmentButtonsActions
               environment={environment}
-              status={environmentStatus}
               hasServices={Boolean(applicationsByEnv?.length || databasesByEnv?.length)}
             />
             <span className="ml-4 mr-1 mt-2 h-4 w-[1px] bg-neutral-200"></span>
@@ -162,20 +165,16 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const contentTabs = !matchSettingsRoute && (
     <div className="flex justify-center items-center px-5 border-l h-14 border-neutral-200">
-      <Skeleton width={154} height={40} show={!environmentStatus}>
-        {environmentStatus ? (
-          <Menu
-            trigger={
-              <Button size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
-                New service
-              </Button>
-            }
-            menus={newServicesMenu}
-            arrowAlign={MenuAlign.START}
-          />
-        ) : (
-          <div />
-        )}
+      <Skeleton width={154} height={40} show={isLoadingDeploymentStatus}>
+        <Menu
+          trigger={
+            <Button size={ButtonSize.LARGE} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
+              New service
+            </Button>
+          }
+          menus={newServicesMenu}
+          arrowAlign={MenuAlign.START}
+        />
       </Skeleton>
     </div>
   )
