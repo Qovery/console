@@ -17,7 +17,7 @@ export const getColorForStatus = (status?: StateEnum): string => {
     case StateEnum.STOPPING:
     case StateEnum.DELETE_QUEUED:
     case StateEnum.DELETING:
-      return 'text-progressing-500'
+      return 'text-orange-500'
     case StateEnum.STOP_ERROR:
     case StateEnum.DELETE_ERROR:
     case StateEnum.DEPLOYMENT_ERROR:

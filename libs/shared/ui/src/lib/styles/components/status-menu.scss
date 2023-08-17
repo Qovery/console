@@ -48,29 +48,29 @@
 }
 
 .status-menu--running {
-  @apply bg-progressing-50 border-progressing-400 text-progressing-500;
+  @apply bg-orange-50 border-orange-400 text-orange-500;
 
   .status-menu__trigger {
-    @apply border-progressing-400;
+    @apply border-orange-400;
   }
 
   &.status-menu--open {
     .status-menu__trigger {
-      @apply bg-progressing-100;
+      @apply bg-orange-100;
     }
   }
 }
 
 .status-menu--starting {
-  @apply bg-progressing-50 border-progressing-400 text-progressing-500;
+  @apply bg-orange-50 border-orange-400 text-orange-500;
 
   .status-menu__trigger {
-    @apply border-progressing-400;
+    @apply border-orange-400;
   }
 
   &.status-menu--open {
     .status-menu__trigger {
-      @apply bg-progressing-100;
+      @apply bg-orange-100;
     }
   }
 }
