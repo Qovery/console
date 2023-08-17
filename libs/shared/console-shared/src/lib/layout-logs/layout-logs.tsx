@@ -29,7 +29,7 @@ export interface LayoutLogsProps {
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
-  serviceRunningStatus?: ServiceRunningStatus
+  serviceRunningStatus?: ServiceRunningStatus | null
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
