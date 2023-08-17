@@ -1,9 +1,9 @@
-import { render } from '@testing-library/react'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import PagesUser from './pages-user'
 
 describe('PagesUser', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PagesUser />)
+    const { baseElement } = renderWithProviders(<PagesUser />)
     expect(baseElement).toBeTruthy()
   })
 })
