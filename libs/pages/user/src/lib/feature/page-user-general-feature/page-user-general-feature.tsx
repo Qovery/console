@@ -44,7 +44,7 @@ export function PageUserGeneralFeature() {
     }
   })
 
-  const userGitProvider = userToken.sub?.split('|')[0]
+  const userGitProvider = userToken.sub?.includes('Gitlab') ? 'gitlab' : userToken.sub?.split('|')[0]
 
   const accountOptions = [
     {
