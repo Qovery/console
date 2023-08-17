@@ -61,22 +61,6 @@ export const useFetchEnvironment = (projectId: string, environmentId: string) =>
     environments.find((environment) => environment.id === environmentId)
   )
 
-export const useFetchEnvironmentsStatus = (projectId: string, refetchInterval = 3000) => {
-  return useQuery<EnvironmentStatus[], Error>(
-    ['environmentsStatus', projectId],
-    async () => {
-      const response = await environmentsApi.getProjectEnvironmentsStatus(projectId)
-      return response.data.results as EnvironmentStatus[]
-    },
-    {
-      onError: (err) => toastError(err),
-      enabled: projectId !== '',
-      refetchInterval: refetchInterval,
-      staleTime: 60000,
-    }
-  )
-}
-
 export const getEnvironmentStatusById = (
   environmentId: string,
   status?: EnvironmentStatus[]
