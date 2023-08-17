@@ -60,24 +60,24 @@ $menuTiming: 0.6s;
     @apply mb-0;
   }
 
-  &.text-error-600 {
+  &.text-red-600 {
     .menu-item__name {
-      color: theme('colors.error.600');
+      color: theme('colors.red.600');
     }
   }
 
-  &.szh-menu__item--hover.text-error-600,
-  &.menu-item--hover.text-error-600,
-  &:hover.text-error-600 {
-    background: theme('colors.error.50');
+  &.szh-menu__item--hover.text-red-600,
+  &.menu-item--hover.text-red-600,
+  &:hover.text-red-600 {
+    background: theme('colors.red.50');
     .menu-item__name {
-      color: theme('colors.error.600');
+      color: theme('colors.red.600');
     }
   }
 
-  &.szh-menu__item--hover:not(.text-error-600),
-  &.menu-item--hover:not(.text-error-600),
-  &:hover:not(.text-error-600) {
+  &.szh-menu__item--hover:not(.text-red-600),
+  &.menu-item--hover:not(.text-red-600),
+  &:hover:not(.text-red-600) {
     background-color: theme('colors.brand.50');
     border: theme('borderRadius.sm');
     .menu-item__name {
@@ -93,9 +93,9 @@ $menuTiming: 0.6s;
     background: theme('colors.element.light.darker.500');
   }
   .menu-item {
-    &.szh-menu__item--hover:not(.text-error-600),
-    &.menu-item--hover:not(.text-error-600),
-    &:hover:not(.text-error-600) {
+    &.szh-menu__item--hover:not(.text-red-600),
+    &.menu-item--hover:not(.text-red-600),
+    &:hover:not(.text-red-600) {
       background-color: theme('colors.element.light.darker.200');
       .menu-item__name {
         color: theme('colors.text.200');

@@ -140,8 +140,8 @@ export function RowMember(props: RowMemberProps) {
                   action: () => deleteMember && deleteMember(member.id),
                 })
               },
-              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-error-600" />,
-              containerClassName: 'text-error-600',
+              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-red-600" />,
+              containerClassName: 'text-red-600',
             },
           ],
         },
@@ -184,8 +184,8 @@ export function RowMember(props: RowMemberProps) {
                   action: () => deleteInviteMember && deleteInviteMember(member.id),
                 })
               },
-              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-error-600" />,
-              containerClassName: 'text-error-600',
+              contentLeft: <Icon name={IconAwesomeEnum.BAN} className="text-sm text-red-600" />,
+              containerClassName: 'text-red-600',
             },
           ],
         },

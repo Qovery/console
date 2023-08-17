@@ -28,10 +28,10 @@
 
 // state
 .input-select--error {
-  @apply border-error-500;
+  @apply border-red-500;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
   &:hover {
-    @apply border-error-500;
+    @apply border-red-500;
   }
 }
 

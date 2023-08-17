@@ -30,9 +30,9 @@ describe('BannerBox', () => {
     const box = getByTestId('banner-box')
     const icon = queryByRole('img')
 
-    expect(box.classList.contains('border-error-500')).toBe(true)
-    expect(box.classList.contains('bg-error-50')).toBe(true)
-    expect(icon?.classList.contains('text-error-600')).toBe(true)
+    expect(box.classList.contains('border-red-500')).toBe(true)
+    expect(box.classList.contains('bg-red-50')).toBe(true)
+    expect(icon?.classList.contains('text-red-600')).toBe(true)
   })
 
   it('should render with default theme', () => {

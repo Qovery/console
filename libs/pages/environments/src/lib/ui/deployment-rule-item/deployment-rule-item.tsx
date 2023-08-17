@@ -41,8 +41,8 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       items: [
         {
           name: 'Delete rule',
-          textClassName: '!text-error-500',
-          contentLeft: <Icon name="icon-solid-trash" className="text-error-500 text-sm" />,
+          textClassName: '!text-red-500',
+          contentLeft: <Icon name="icon-solid-trash" className="text-red-500 text-sm" />,
           onClick: () => removeDeploymentRule(id),
         },
       ],

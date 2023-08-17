@@ -186,7 +186,7 @@ export function ClusterButtonsActions(props: ClusterButtonsActionsProps) {
                 items: [
                   {
                     name: 'Delete cluster',
-                    containerClassName: 'text-error-600',
+                    containerClassName: 'text-red-600',
                     contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
                     onClick: () => removeCluster(cluster.id, cluster.name),
                   },

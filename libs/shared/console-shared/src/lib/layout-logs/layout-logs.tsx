@@ -152,7 +152,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                   onClick={() => scrollToError()}
                   className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-text-200 hover:text-text-300 cursor-pointer mr-5"
                 >
-                  <Icon name="icon-solid-circle-exclamation" className="text-error-500 mr-3" />
+                  <Icon name="icon-solid-circle-exclamation" className="text-red-500 mr-3" />
                   An error occured line {errors[errors.length - 1]?.index}
                   <Icon name="icon-solid-arrow-circle-right" className="relative top-px ml-1.5" />
                 </p>

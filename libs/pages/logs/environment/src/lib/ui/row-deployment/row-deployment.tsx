@@ -23,14 +23,14 @@ export function RowDeployment(props: RowDeploymentProps) {
 
   const indexClassName = `${
     error
-      ? 'text-error-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400'
+      ? 'text-red-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400'
       : success
       ? 'text-success-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400'
       : 'bg-element-light-darker-500 text-text-500 group-hover:bg-element-light-darker-200'
   }`
 
   const colorsCellClassName = (date?: boolean) =>
-    `${error ? 'text-error-500' : success ? 'text-success-500' : `${date ? 'text-text-200' : 'text-text-400'}`}`
+    `${error ? 'text-red-500' : success ? 'text-success-500' : `${date ? 'text-text-200' : 'text-text-400'}`}`
 
   return (
     <div
