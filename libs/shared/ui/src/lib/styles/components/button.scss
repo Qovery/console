@@ -73,14 +73,14 @@
 
 .btn--confirm {
   color: theme('colors.text.100');
-  background-color: theme('colors.success.600');
+  background-color: theme('colors.green.600');
   &:hover {
-    background-color: theme('colors.success.700');
+    background-color: theme('colors.green.700');
   }
 
   &.btn--disabled {
-    color: theme('colors.success.400');
-    background-color: theme('colors.success.800');
+    color: theme('colors.green.400');
+    background-color: theme('colors.green.800');
   }
 }
 

@@ -57,7 +57,7 @@ export function TagCommit(props: TagCommitProps) {
   const copyTag = (
     <Tag
       data-testid="tag-commit"
-      className="bg-success-500 text-white font-medium h-7 w-[70px] flex items-center justify-center"
+      className="bg-green-500 text-white font-medium h-7 w-[70px] flex items-center justify-center"
     >
       <Icon name="icon-solid-check" className="mr-1 w-4" />
       Copied

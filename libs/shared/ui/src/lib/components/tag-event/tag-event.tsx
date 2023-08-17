@@ -14,13 +14,13 @@ export function TagEvent(props: TagEventProps) {
     switch (eventType) {
       case OrganizationEventType.ACCEPT:
         return (
-          <Tag fontWeight="font-medium" className="bg-success-50 text-success-500 border border-success-500 !h-6">
+          <Tag fontWeight="font-medium" className="bg-green-50 text-green-500 border border-green-500 !h-6">
             Accept <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>
         )
       case OrganizationEventType.CREATE:
         return (
-          <Tag fontWeight="font-medium" className="bg-success-50 text-success-500 border border-success-500 !h-6">
+          <Tag fontWeight="font-medium" className="bg-green-50 text-green-500 border border-green-500 !h-6">
             Create <Icon name={IconAwesomeEnum.CHECK} className="ml-1" />
           </Tag>
         )

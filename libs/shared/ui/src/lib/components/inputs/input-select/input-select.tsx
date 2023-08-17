@@ -136,7 +136,7 @@ export function InputSelect({
               {props.isSelected && <Icon name={IconAwesomeEnum.CHECK} className="text-xs" />}
             </span>
           ) : props.isSelected ? (
-            <Icon name={IconAwesomeEnum.CHECK} className="text-success-500" />
+            <Icon name={IconAwesomeEnum.CHECK} className="text-green-500" />
           ) : props.data.icon ? (
             <div className="w-4 h-full flex items-center justify-center">{props.data.icon}</div>
           ) : (

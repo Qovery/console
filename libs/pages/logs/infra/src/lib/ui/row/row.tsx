@@ -23,7 +23,7 @@ export function Row(props: RowProps) {
     type === LogsType.ERROR && realError
       ? 'bg-red-500 text-text-800 group-hover:bg-red-600'
       : success
-      ? 'bg-success-500 text-text-800 group-hover:bg-success-600'
+      ? 'bg-green-500 text-text-800 group-hover:bg-green-600'
       : 'bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200'
   }`
 
@@ -34,7 +34,7 @@ export function Row(props: RowProps) {
         : type === LogsType.WARNING
         ? 'text-yellow-500'
         : success
-        ? 'text-success-500'
+        ? 'text-green-500'
         : `${white ? 'text-text-200' : 'text-element-light-lighter-700'}`
     }`
 

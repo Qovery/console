@@ -18,7 +18,7 @@ export function PlanList(props: PlanListProps) {
       <ul className="mb-10">
         {lists.map((list, index) => (
           <li className="flex text-sm text-text-500 mb-2" key={index}>
-            <IconFa name="icon-solid-check" className="text-success-500 mr-4" />
+            <IconFa name="icon-solid-check" className="text-green-500 mr-4" />
             {list}
           </li>
         ))}

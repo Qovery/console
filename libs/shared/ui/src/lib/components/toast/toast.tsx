@@ -40,7 +40,7 @@ export const ToastContent = (
     <div data-testid="toast" className="toast" onClick={() => options && toastAction.dismiss(options.id)}>
       <div className="toast__wrapper">
         <div className="toast__icon">
-          {status === ToastEnum.SUCCESS && <Icon name="icon-solid-check" className="text-success-500" />}
+          {status === ToastEnum.SUCCESS && <Icon name="icon-solid-check" className="text-green-500" />}
           {status === ToastEnum.ERROR && <Icon name="icon-solid-circle-exclamation" className="text-red-500" />}
           {status === ToastEnum.WARNING && <Icon name="icon-solid-circle-exclamation" className="text-yellow-500" />}
         </div>

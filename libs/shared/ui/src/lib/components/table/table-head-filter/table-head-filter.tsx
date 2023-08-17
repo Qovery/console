@@ -82,7 +82,7 @@ export function groupBy<T>(
       contentLeft: (
         <Icon
           name={IconAwesomeEnum.CHECK}
-          className={`text-sm ${currentFilter === item ? 'text-success-400' : 'text-transparent'}`}
+          className={`text-sm ${currentFilter === item ? 'text-green-400' : 'text-transparent'}`}
         />
       ),
       onClick: () => {
@@ -162,7 +162,7 @@ export function groupBy<T>(
       contentLeft: (
         <Icon
           name={IconAwesomeEnum.CHECK}
-          className={`text-sm ${currentFilter === key ? 'text-success-400' : 'text-transparent'}`}
+          className={`text-sm ${currentFilter === key ? 'text-green-400' : 'text-transparent'}`}
         />
       ),
       contentRight: (

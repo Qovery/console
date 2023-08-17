@@ -78,7 +78,7 @@ export function FlowCreatePort({
                           <div className="mr-4 inline-flex items-center">
                             <Icon
                               name={IconAwesomeEnum.SHIELD_CHECK}
-                              className="flex justify-center w-5 text-success-500 hover:text-success-700"
+                              className="flex justify-center w-5 text-green-500 hover:text-green-700"
                             />
                           </div>
                         </Tooltip>

@@ -6,15 +6,15 @@
 
 // status
 .status-menu--available {
-  @apply bg-success-50 border-success-500 text-success-500;
+  @apply bg-green-50 border-green-500 text-green-500;
 
   .status-menu__trigger {
-    @apply border-success-500;
+    @apply border-green-500;
   }
 
   &.status-menu--open {
     .status-menu__trigger {
-      @apply bg-success-100;
+      @apply bg-green-100;
     }
   }
 }
