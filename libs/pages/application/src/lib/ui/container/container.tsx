@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { postApplicationActionsDeploy, postApplicationActionsRedeploy } from '@qovery/domains/application'
 import { selectClusterById } from '@qovery/domains/organization'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum, getServiceType, isCronJob, isLifeCycleJob } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity } from '@qovery/shared/interfaces'
@@ -47,10 +48,14 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   const dispatch = useDispatch<AppDispatch>()
+  const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
+    environmentId: application?.environment?.id,
+    serviceId: application?.id,
+  })
 
   const redeployApplication = () => {
     if (application) {
-      if (application?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+      if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         dispatch(
           postApplicationActionsDeploy({ environmentId, applicationId, serviceType: getServiceType(application) })
         )
@@ -103,9 +108,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const headerActions = (
     <>
-      <Skeleton width={150} height={32} show={!application?.status}>
+      <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
         <div className="flex">
-          {environment && application && application?.status && (
+          {environment && application && (
             <>
               <ApplicationButtonsActions
                 application={application}
@@ -157,11 +162,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         actions={headerActions}
       />
       <TabsFeature />
-      {application &&
-        application.status &&
-        application.status.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-          <NeedRedeployFlag service={application} onClickCTA={redeployApplication} />
-        )}
+      {application && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+        <NeedRedeployFlag service={application} onClickCTA={redeployApplication} />
+      )}
       {children}
     </ApplicationContext.Provider>
   )
