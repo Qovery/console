@@ -157,7 +157,7 @@ export function GitRepositorySettings(props: GitRepositorySettingsProps) {
             size={ButtonSize.REGULAR}
             style={ButtonStyle.STROKED}
             iconRight={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
-            iconRightClassName="text-warning-500 text-sm"
+            iconRightClassName="text-yellow-500 text-sm"
             onClick={() =>
               openModal({
                 content: (

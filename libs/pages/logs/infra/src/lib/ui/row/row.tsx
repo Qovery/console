@@ -32,7 +32,7 @@ export function Row(props: RowProps) {
       type === LogsType.ERROR
         ? 'text-red-500'
         : type === LogsType.WARNING
-        ? 'text-warning-500'
+        ? 'text-yellow-500'
         : success
         ? 'text-success-500'
         : `${white ? 'text-text-200' : 'text-element-light-lighter-700'}`

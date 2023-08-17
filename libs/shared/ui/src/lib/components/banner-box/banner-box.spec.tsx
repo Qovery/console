@@ -18,8 +18,8 @@ describe('BannerBox', () => {
     const box = getByTestId('banner-box')
     const icon = queryByRole('img')
 
-    expect(box.classList.contains('border-warning-500')).toBe(true)
-    expect(box.classList.contains('bg-warning-50')).toBe(true)
+    expect(box.classList.contains('border-yellow-500')).toBe(true)
+    expect(box.classList.contains('bg-yellow-50')).toBe(true)
     expect(icon?.classList.contains('text-warning-600')).toBe(true)
   })
 

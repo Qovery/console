@@ -10,8 +10,8 @@ describe('Banner', () => {
   it('should render in orange', () => {
     const { baseElement } = render(<Banner bannerStyle={BannerStyle.WARNING}>Hello</Banner>)
     const banner = getByTestId(baseElement, 'banner')
-    expect(banner).toHaveClass('bg-warning-500')
-    expect(banner).toHaveClass('text-warning-900')
+    expect(banner).toHaveClass('bg-yellow-500')
+    expect(banner).toHaveClass('text-yellow-900')
   })
 
   it('should render in brand color', () => {

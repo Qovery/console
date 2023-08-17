@@ -14,12 +14,12 @@ export function InputApprovalBadge(props: InputApprovalBadgeProps) {
   switch (status) {
     case CustomDomainStatusEnum.VALIDATION_PENDING:
       statusIcon = IconAwesomeEnum.TRIANGLE_EXCLAMATION
-      statusClass = 'text-warning-600'
+      statusClass = 'text-yellow-600'
       message = 'Validation pending'
       break
     default:
       statusIcon = IconAwesomeEnum.CHECK
-      statusClass = 'text-warning-600'
+      statusClass = 'text-yellow-600'
       message = 'Valid'
   }
 

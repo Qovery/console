@@ -42,7 +42,7 @@ export const ToastContent = (
         <div className="toast__icon">
           {status === ToastEnum.SUCCESS && <Icon name="icon-solid-check" className="text-success-500" />}
           {status === ToastEnum.ERROR && <Icon name="icon-solid-circle-exclamation" className="text-red-500" />}
-          {status === ToastEnum.WARNING && <Icon name="icon-solid-circle-exclamation" className="text-warning-500" />}
+          {status === ToastEnum.WARNING && <Icon name="icon-solid-circle-exclamation" className="text-yellow-500" />}
         </div>
         <div className="toast__content">
           {title && (

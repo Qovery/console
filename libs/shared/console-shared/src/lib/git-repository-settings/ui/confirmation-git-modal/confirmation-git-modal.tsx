@@ -28,7 +28,7 @@ export function ConfirmationGitModal(props: ConfirmationGitModalProps) {
             {props.currentAuthProvider?.split(' ')[1].replace('(', '').replace(')', '')}
           </p>
         </div>
-        <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="absolute top-3 right-4 text-warning-500" />
+        <Icon name={IconAwesomeEnum.TRIANGLE_EXCLAMATION} className="absolute top-3 right-4 text-yellow-500" />
       </div>
       <div className="flex gap-3 justify-end mt-6">
         <Button

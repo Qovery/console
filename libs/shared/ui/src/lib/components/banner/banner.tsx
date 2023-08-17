@@ -28,8 +28,8 @@ export function Banner(props: PropsWithChildren<BannerProps>) {
       break
     case BannerStyle.WARNING:
     default:
-      classNameStyle = `bg-warning-500 text-warning-900`
-      classNameButton = '!bg-warning-600/50 hover:!bg-warning-600/75 !text-warning-900'
+      classNameStyle = `bg-yellow-500 text-yellow-900`
+      classNameButton = '!bg-yellow-600/50 hover:!bg-yellow-600/75 !text-yellow-900'
       break
   }
 
