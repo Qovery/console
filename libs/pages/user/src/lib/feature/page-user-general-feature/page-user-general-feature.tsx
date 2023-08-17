@@ -1,25 +1,15 @@
-import { Organization } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectUser, selectUserSignUp } from '@qovery/domains/user'
+import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
+import { IconEnum } from '@qovery/shared/enums'
+import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/state/store'
 import PageUserGeneral from '../../ui/page-user-general/page-user-general'
 
-export const handleSubmit = (data: FieldValues, organization: Organization) => {
-  return {
-    ...organization,
-    logo_url: data['logo_url'],
-    name: data['name'],
-    description: data['description'],
-    website_url: data['website_url'] === '' ? undefined : data['website_url'],
-    admin_emails: data['admin_emails'],
-  }
-}
-
 export function PageUserGeneralFeature() {
-  useDocumentTitle('General - User settings')
+  useDocumentTitle('General - Account settings')
 
   const userToken = useSelector(selectUser)
   const user = useSelector(selectUserSignUp)
@@ -27,42 +17,54 @@ export function PageUserGeneralFeature() {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch<AppDispatch>()
 
-  console.log(user)
-  console.log(userToken)
-
   const methods = useForm({
     mode: 'onChange',
   })
-
-  console.log(user)
 
   useEffect(() => {
     methods.reset({
       firstName: user.first_name,
       lastName: user.last_name,
+      email: user.user_email,
+      account: userToken.sub,
     })
-  }, [methods, user?.first_name, user?.last_name])
+  }, [methods, user?.first_name, user?.last_name, user.user_email, userToken.sub])
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data) {
       setLoading(true)
-      // const cloneOrganization = handleSubmit(data, organization)
 
-      // dispatch(
-      //   editOrganization({
-      //     organizationId,
-      //     data: cloneOrganization,
-      //   })
-      // )
-      //   .unwrap()
-      //   .then(() => setLoading(false))
-      //   .catch(() => setLoading(false))
+      dispatch(
+        postUserSignUp({
+          ...user,
+          first_name: data['firstName'],
+          last_name: data['lastName'],
+          user_email: data['email'],
+        })
+      )
+        .unwrap()
+        .finally(() => setLoading(false))
     }
   })
 
+  const userGitProvider = userToken.sub?.split('|')[0]
+
+  const accountOptions = [
+    {
+      label: `${userToken.email} (${userGitProvider})`,
+      value: userToken.sub || '',
+      icon: <Icon name={userGitProvider?.toUpperCase() as IconEnum} className="w-4" />,
+    },
+  ]
+
   return (
     <FormProvider {...methods}>
-      <PageUserGeneral onSubmit={onSubmit} loading={loading} picture={userToken.picture as string} />
+      <PageUserGeneral
+        onSubmit={onSubmit}
+        loading={loading}
+        picture={userToken.picture as string}
+        accountOptions={accountOptions}
+      />
     </FormProvider>
   )
 }

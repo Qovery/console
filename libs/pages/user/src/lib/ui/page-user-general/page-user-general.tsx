@@ -1,20 +1,22 @@
 import { FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BlockContent, Button, ButtonSize, ButtonStyle, HelpSection, InputTags, InputText } from '@qovery/shared/ui'
+import { Value } from '@qovery/shared/interfaces'
+import { BlockContent, Button, ButtonSize, ButtonStyle, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface PageUserGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   loading: boolean
   picture: string
+  accountOptions: Value[]
 }
 
-export function PageUserGeneral({ onSubmit, loading, picture }: PageUserGeneralProps) {
+export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: PageUserGeneralProps) {
   const { control, formState, watch } = useFormContext()
 
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-text-700">General</h1>
+        <h1 className="h5 mb-10 text-text-700">General account settings</h1>
         <form onSubmit={onSubmit}>
           <BlockContent title="User profile">
             <div className="flex items-center">
@@ -32,73 +34,75 @@ export function PageUserGeneral({ onSubmit, loading, picture }: PageUserGeneralP
               </div>
             </div>
             <hr className="my-5 border-0 border-b border-element-light-lighter-500 relative -left-5 w-[calc(100%+41px)]" />
+            <div className="flex mb-3">
+              <Controller
+                name="firstName"
+                control={control}
+                rules={{ required: 'Please enter a first name.' }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    className="w-full mr-1.5"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="First name"
+                    error={error?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="lastName"
+                control={control}
+                rules={{ required: 'Please enter a last name.' }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    className="w-full ml-1.5"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Last name"
+                    error={error?.message}
+                  />
+                )}
+              />
+            </div>
             <Controller
-              name="firstName"
+              name="account"
               control={control}
               render={({ field, fieldState: { error } }) => (
-                <InputText
+                <InputSelect
+                  label="Account email"
                   className="mb-3"
-                  name={field.name}
+                  options={accountOptions}
                   onChange={field.onChange}
                   value={field.value}
-                  label="First name"
                   error={error?.message}
+                  disabled
                 />
               )}
             />
             <Controller
-              name="lastName"
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  className="mb-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Last name"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="website_url"
+              name="email"
               control={control}
               rules={{
+                required: 'Please enter a email.',
                 pattern: {
-                  // eslint-disable-next-line no-useless-escape
-                  value: /^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
-                  message: 'The url is not valid',
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Please enter a valid email.',
                 },
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
+                  type="email"
                   className="mb-3"
-                  dataTestId="input-website"
                   name={field.name}
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
-                  label="Website"
+                  label="Communication email"
                 />
               )}
             />
-            <Controller
-              name="admin_emails"
-              control={control}
-              render={({ field }) => (
-                <InputTags
-                  dataTestId="input-emails"
-                  label="Contact emails"
-                  placeholder="Add new email"
-                  onChange={field.onChange}
-                  tags={field.value}
-                />
-              )}
-            />
-            <p className="text-text-400 text-xs ml-4 mt-1">
-              Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
-              downtime...)
-            </p>
           </BlockContent>
           <div className="flex justify-end">
             <Button
@@ -115,16 +119,6 @@ export function PageUserGeneral({ onSubmit, loading, picture }: PageUserGeneralP
           </div>
         </form>
       </div>
-      <HelpSection
-        description="Need help? You may find these links useful"
-        links={[
-          {
-            link: 'https://hub.qovery.com/docs/using-qovery/configuration/organization/#creating-an-organization',
-            linkLabel: 'How to configure my organization',
-            external: true,
-          },
-        ]}
-      />
     </div>
   )
 }
