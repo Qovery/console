@@ -1,3 +1,5 @@
+import { StateEnum } from 'qovery-typescript-axios'
+import { RunningState } from '@qovery/shared/enums'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import ServiceStateChip from './service-state-chip'
 
@@ -6,8 +8,8 @@ jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
     ...jest.requireActual('../hooks/use-deployment-status/use-deployment-status'),
     useDeploymentStatus: () => ({
       data: {
-        state: 'BUILDING',
-        last_deployment_date: '',
+        state: StateEnum.BUILDING,
+        last_deployment_date: '2023-08-11T13:33:32.083371Z',
       },
     }),
   }
@@ -18,7 +20,7 @@ jest.mock('../hooks/use-running-status/use-running-status', () => {
     ...jest.requireActual('../hooks/use-running-status/use-running-status'),
     useRunningStatus: () => ({
       data: {
-        state: 'STARTING',
+        state: RunningState.STARTING,
       },
     }),
   }
