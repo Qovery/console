@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
@@ -19,16 +19,13 @@ export function PageUserGeneralFeature() {
 
   const methods = useForm({
     mode: 'onChange',
-  })
-
-  useEffect(() => {
-    methods.reset({
+    defaultValues: {
       firstName: user.first_name,
       lastName: user.last_name,
       email: user.user_email,
       account: userToken.sub,
-    })
-  }, [methods, user?.first_name, user?.last_name, user.user_email, userToken.sub])
+    },
+  })
 
   const onSubmit = methods.handleSubmit((data) => {
     if (data) {
