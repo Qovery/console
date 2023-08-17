@@ -1,6 +1,5 @@
 import { type ReactElement } from 'react'
-import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
-import Menu, { MenuAlign, MenuData } from '../../menu/menu'
+import { ButtonIcon, ButtonIconStyle, Menu, MenuAlign, type MenuData } from '@qovery/shared/ui'
 import BreadcrumbItemValue from './breadcrumb-item-value/breadcrumb-item-value'
 
 export interface BreadcrumbItemProps {

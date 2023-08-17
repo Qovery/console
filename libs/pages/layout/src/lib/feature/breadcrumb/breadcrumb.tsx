@@ -6,8 +6,9 @@ import { useFetchEnvironments, useFetchEnvironmentsStatus } from '@qovery/domain
 import { selectAllOrganization, selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { selectProjectsEntitiesByOrgId } from '@qovery/domains/projects'
 import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
-import { Breadcrumb, useModal } from '@qovery/shared/ui'
+import { useModal } from '@qovery/shared/ui'
 import { RootState } from '@qovery/state/store'
+import { Breadcrumb } from '../../ui/breadcrumb/breadcrumb'
 
 export function BreadcrumbFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()

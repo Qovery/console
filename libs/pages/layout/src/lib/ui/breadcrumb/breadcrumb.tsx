@@ -2,11 +2,9 @@ import equal from 'fast-deep-equal'
 import { Cluster, Database, Environment, Organization, Project } from 'qovery-typescript-axios'
 import { memo, useEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { getEnvironmentStatusById, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { IconEnum } from '@qovery/shared/enums'
 import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
@@ -22,14 +20,17 @@ import {
   SERVICES_GENERAL_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import ButtonIcon, { ButtonIconStyle } from '../../buttons/button-icon/button-icon'
-import { ButtonSize } from '../../buttons/button/button'
-import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
-import { MenuData } from '../../menu/menu'
-import { MenuItemProps } from '../../menu/menu-item/menu-item'
-import StatusChip from '../../status-chip/status-chip'
-import Tooltip from '../../tooltip/tooltip'
+import {
+  ButtonIcon,
+  ButtonIconStyle,
+  ButtonSize,
+  Icon,
+  IconAwesomeEnum,
+  type MenuData,
+  MenuItemProps,
+  StatusChip,
+  Tooltip,
+} from '@qovery/shared/ui'
 import BreadcrumbItem from '../breadcrumb-item/breadcrumb-item'
 
 export interface BreadcrumbProps {
