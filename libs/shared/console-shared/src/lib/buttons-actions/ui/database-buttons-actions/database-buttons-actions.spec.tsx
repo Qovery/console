@@ -1,5 +1,6 @@
 import { getByText, queryByText, render } from '__tests__/utils/setup-jest'
 import { DatabaseModeEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import * as domainsServicesFeature from '@qovery/domains/services/feature'
 import { RunningState } from '@qovery/shared/enums'
 import { databaseFactoryMock } from '@qovery/shared/factories'
 import { DatabaseButtonsActions, DatabaseButtonsActionsProps } from './database-buttons-actions'
@@ -12,17 +13,20 @@ const props: DatabaseButtonsActionsProps = {
 
 describe('DatabaseButtonsActionsFeature', () => {
   beforeEach(() => {
-    mockDatabase.status = {
-      state: StateEnum.STOPPED,
-      id: 'id',
-      message: 'message',
-      service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
-    }
-    mockDatabase.running_status = {
-      state: RunningState.DEPLOYED,
-      id: 'id',
-      pods: [],
-    }
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.STOPPED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
+    jest.spyOn(domainsServicesFeature, 'useRunningStatus').mockReturnValue({
+      data: {
+        state: RunningState.DEPLOYED,
+        id: 'id',
+        pods: [],
+      },
+    })
   })
 
   it('should render successfully', () => {
@@ -31,7 +35,13 @@ describe('DatabaseButtonsActionsFeature', () => {
   })
 
   it('should render actions for DEPLOYED status', async () => {
-    mockDatabase.status.state = StateEnum.DEPLOYED
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValueOnce({
+      data: {
+        state: StateEnum.DEPLOYED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
     getByText(baseElement, 'Redeploy')
@@ -43,7 +53,13 @@ describe('DatabaseButtonsActionsFeature', () => {
   })
 
   it('should render actions for STOPPED status', async () => {
-    mockDatabase.status.state = StateEnum.STOPPED
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValueOnce({
+      data: {
+        state: StateEnum.STOPPED,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
     getByText(baseElement, 'Deploy')
@@ -53,7 +69,13 @@ describe('DatabaseButtonsActionsFeature', () => {
   })
 
   it('should render actions for DELETING status', async () => {
-    mockDatabase.status.state = StateEnum.DELETING
+    jest.spyOn(domainsServicesFeature, 'useDeploymentStatus').mockReturnValue({
+      data: {
+        state: StateEnum.DELETING,
+        id: 'id',
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+    })
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 
     getByText(baseElement, 'See audit logs')
@@ -62,9 +84,13 @@ describe('DatabaseButtonsActionsFeature', () => {
   })
 
   it('should not render Restart Database if running status is not running', async () => {
-    if (mockDatabase.running_status) {
-      mockDatabase.running_status.state = RunningState.STOPPED
-    }
+    jest.spyOn(domainsServicesFeature, 'useRunningStatus').mockReturnValue({
+      data: {
+        state: RunningState.STOPPED,
+        id: 'id',
+        pods: [],
+      },
+    })
 
     const { baseElement } = render(<DatabaseButtonsActions {...props} />)
 

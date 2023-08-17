@@ -11,6 +11,7 @@ import {
   postDatabaseActionsStop,
 } from '@qovery/domains/database'
 import { useActionCancelEnvironment } from '@qovery/domains/environment'
+import { useDeploymentStatus, useRunningStatus } from '@qovery/domains/services/feature'
 import { DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   AUDIT_LOGS_PARAMS_URL,
@@ -63,6 +64,9 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DEPLOYMENTS_URL
   )
 
+  const { data: runningSatus } = useRunningStatus({ environmentId, serviceId: database.id })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: database.id })
+
   const removeDatabase = (id: string, name?: string, force = false) => {
     openModalConfirmation({
       title: `Delete database`,
@@ -88,8 +92,8 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
         ),
     }
 
-    const state = database.status?.state
-    const runningState = database.running_status?.state
+    const state = deploymentStatus?.state
+    const runningState = runningSatus?.state
     const topItems: MenuItemProps[] = []
     const bottomItems: MenuItemProps[] = []
 
@@ -185,9 +189,18 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
     }
 
     return [{ items: topItems }, { items: bottomItems }]
-  }, [actionCancelEnvironment, database, environmentMode, environmentId, dispatch, openModalConfirmation])
+  }, [
+    actionCancelEnvironment,
+    database,
+    environmentMode,
+    environmentId,
+    dispatch,
+    openModalConfirmation,
+    runningSatus?.state,
+    deploymentStatus?.state,
+  ])
 
-  const canDelete = database.status && isDeleteAvailable(database.status.state)
+  const canDelete = deploymentStatus && isDeleteAvailable(deploymentStatus.state)
 
   const copyContent = `Cluster ID: ${clusterId}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${database.id}`
 
@@ -263,7 +276,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
                     removeDatabase(
                       database.id,
                       database.name,
-                      database.status?.state && database.status?.state === StateEnum.READY
+                      deploymentStatus?.state && deploymentStatus?.state === StateEnum.READY
                     ),
                 },
               ],
