@@ -20,7 +20,7 @@ describe('BannerBox', () => {
 
     expect(box.classList.contains('border-yellow-500')).toBe(true)
     expect(box.classList.contains('bg-yellow-50')).toBe(true)
-    expect(icon?.classList.contains('text-warning-600')).toBe(true)
+    expect(icon?.classList.contains('text-yellow-600')).toBe(true)
   })
 
   it('should render with error colors', () => {
