@@ -11,6 +11,7 @@ import {
   selectDatabaseById,
 } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch, RootState } from '@qovery/state/store'
@@ -32,10 +33,14 @@ export function PageDatabase() {
 
   const dispatch = useDispatch<AppDispatch>()
 
-  const isDeployed = database && database?.status?.state === StateEnum.DEPLOYED
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId: database?.environment?.id,
+    serviceId: database?.id,
+  })
+  const isDeployed = deploymentStatus?.state === StateEnum.DEPLOYED
 
   useEffect(() => {
-    if (isDeployed && database.mode !== DatabaseModeEnum.MANAGED && databaseId && loadingStatus === 'loaded') {
+    if (isDeployed && database?.mode !== DatabaseModeEnum.MANAGED && databaseId && loadingStatus === 'loaded') {
       database?.metrics?.loadingStatus !== 'loaded' &&
         database?.metrics?.loadingStatus !== 'error' &&
         dispatch(fetchDatabaseMetrics({ databaseId }))

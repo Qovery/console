@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { postDatabaseActionsDeploy, postDatabaseActionsRedeploy } from '@qovery/domains/database'
 import { selectClusterById } from '@qovery/domains/organization'
-import { ServiceStateChip } from '@qovery/domains/services/feature'
+import { ServiceStateChip, useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DatabaseButtonsActions, NeedRedeployFlag } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
@@ -23,6 +23,7 @@ export interface ContainerProps {
 }
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
+  // TODO remove database.status
   const { database, environment, children } = props
 
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
@@ -33,12 +34,16 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
   )
 
   const dispatch = useDispatch<AppDispatch>()
+  const { data: serviceDeploymentStatus, isLoading: isLoadingServiceDeploymentStatus } = useDeploymentStatus({
+    environmentId: database?.environment?.id,
+    serviceId: database?.id,
+  })
 
   const headerActions = (
     <>
-      <Skeleton width={150} height={32} show={!database?.status}>
+      <Skeleton width={150} height={32} show={isLoadingServiceDeploymentStatus}>
         <div className="flex">
-          {environment && database && database?.status && (
+          {environment && database && (
             <>
               <DatabaseButtonsActions
                 database={database}
@@ -96,7 +101,7 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const redeployDatabase = () => {
     if (database) {
-      if (database?.status?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+      if (serviceDeploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
         dispatch(postDatabaseActionsDeploy({ environmentId, databaseId }))
       } else {
         dispatch(postDatabaseActionsRedeploy({ environmentId, databaseId }))
@@ -108,11 +113,9 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     <>
       <Header title={database?.name} icon={IconEnum.DATABASE} actions={headerActions} />
       <Tabs items={tabsItems} />
-      {database &&
-        database.status &&
-        database.status.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
-          <NeedRedeployFlag service={database} onClickCTA={redeployDatabase} />
-        )}
+      {database && serviceDeploymentStatus?.service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE && (
+        <NeedRedeployFlag service={database} onClickCTA={redeployDatabase} />
+      )}
       {children}
     </>
   )
