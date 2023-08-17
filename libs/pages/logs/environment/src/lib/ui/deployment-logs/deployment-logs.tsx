@@ -2,7 +2,7 @@ import { DeploymentHistoryEnvironment, EnvironmentLogs, ServiceDeploymentStatusE
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
-import { DeploymentService, LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
+import { DeploymentService, LoadingStatus } from '@qovery/shared/interfaces'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { LoaderSpinner, StatusChip } from '@qovery/shared/ui'
 import { dateFullFormat, mergeDeploymentServices, trimId } from '@qovery/shared/utils'
@@ -15,7 +15,6 @@ export interface DeploymentLogsProps {
   setPauseStatusLogs: (pause: boolean) => void
   errors: ErrorLogsProps[]
   hideDeploymentLogs?: boolean
-  serviceRunningStatus?: ServiceRunningStatus
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   serviceName?: string
   dataDeploymentHistory?: DeploymentHistoryEnvironment[]
@@ -27,7 +26,6 @@ export function DeploymentLogs({
   hideDeploymentLogs,
   pauseStatusLogs,
   setPauseStatusLogs,
-  serviceRunningStatus,
   serviceDeploymentStatus,
   loadingStatus,
   serviceName,
@@ -122,7 +120,6 @@ export function DeploymentLogs({
       placeholderDescription={displayPlaceholder(serviceDeploymentStatus)}
       pauseLogs={pauseStatusLogs}
       setPauseLogs={setPauseStatusLogs}
-      serviceRunningStatus={serviceRunningStatus}
       errors={errors}
       withLogsNavigation
       lineNumbers

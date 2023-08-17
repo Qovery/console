@@ -162,7 +162,6 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       errors={errors}
       pauseStatusLogs={pauseStatusLogs}
       setPauseStatusLogs={setPauseStatusLogs}
-      serviceRunningStatus={application?.running_status || database?.running_status}
       serviceDeploymentStatus={(getServiceStatuesById(statusStages, serviceId) as Status)?.service_deployment_status}
       serviceName={application?.name || database?.name}
       hideDeploymentLogs={hideDeploymentLogsBoolean}

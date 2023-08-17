@@ -8,11 +8,11 @@ import {
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { RunningState } from '@qovery/shared/enums'
-import { LoadingStatus, ServiceRunningStatus } from '@qovery/shared/interfaces'
+import { ServiceStateChip } from '@qovery/domains/services/feature'
+import { LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, IconFa, InputCheckbox, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/utils'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
 import MenuTimeFormat from './menu-time-format/menu-time-format'
@@ -29,7 +29,6 @@ export interface LayoutLogsProps {
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
-  serviceRunningStatus?: ServiceRunningStatus | null
   pauseLogs?: boolean
   setPauseLogs?: (pause: boolean) => void
   lineNumbers?: boolean
@@ -61,7 +60,6 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
     setEnabledNginx,
     clusterBanner,
     countNginx,
-    serviceRunningStatus,
     placeholderDescription = 'Logs not available',
   } = props
 
@@ -79,7 +77,13 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
     if (row) scrollParentToChild(section, row, 100)
   }
 
-  const LinkNavigation = (name: string, link: string, status?: ServiceRunningStatus, displayStatusChip = true) => {
+  const LinkNavigation = (
+    name: string,
+    link: string,
+    environmentId?: string,
+    serviceId?: string,
+    displayStatusChip = true
+  ) => {
     const isActive = location.pathname.includes(link)
     return (
       <Link
@@ -90,15 +94,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
         to={link}
       >
         {displayStatusChip && (
-          <StatusChip
-            status={(status as ServiceRunningStatus)?.state || RunningState.STOPPED}
-            appendTooltipMessage={
-              (status as ServiceRunningStatus)?.state === RunningState.ERROR
-                ? (status as ServiceRunningStatus).pods[0]?.state_message
-                : ''
-            }
-            className="mr-2"
-          />
+          <ServiceStateChip className="mr-2" mode="running" environmentId={environmentId} serviceId={serviceId} />
         )}
 
         <span className="truncate">{name}</span>
@@ -119,12 +115,14 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
               DEPLOYMENT_LOGS_VERSION_URL(serviceId, versionId),
             undefined,
+            undefined,
             false
           )}
           {LinkNavigation(
             'Live logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
-            serviceRunningStatus
+            environmentId,
+            serviceId
           )}
         </div>
       )}
