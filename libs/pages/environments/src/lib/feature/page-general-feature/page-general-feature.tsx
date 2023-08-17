@@ -1,7 +1,7 @@
 import { Cluster } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { useFetchEnvironments, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
+import { useFetchEnvironments } from '@qovery/domains/environment'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { BaseLink } from '@qovery/shared/ui'
@@ -19,7 +19,6 @@ export function PageGeneralFeature() {
   )
 
   const { isLoading, data: environments = [] } = useFetchEnvironments(projectId)
-  const environmentsStatus = useFetchEnvironmentsStatus(projectId)
 
   const listHelpfulLinks: BaseLink[] = [
     {
@@ -33,7 +32,6 @@ export function PageGeneralFeature() {
     <PageGeneral
       isLoading={isLoading}
       environments={isLoading ? loadingEnvironments : environments}
-      environmentsStatus={environmentsStatus.data}
       listHelpfulLinks={listHelpfulLinks}
       clusterAvailable={clusters.length > 0}
     />
