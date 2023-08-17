@@ -1,11 +1,9 @@
 import { render } from '__tests__/utils/setup-jest'
-
 import Navigation, { NavigationProps } from './navigation'
 
 describe('Navigation', () => {
   const props: NavigationProps = {
-    firstName: '',
-    lastName: '',
+    defaultOrganizationId: '111',
   }
 
   it('should render successfully', () => {

@@ -22,8 +22,12 @@ import {
 } from '@qovery/shared/ui'
 import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-feature'
 
-export function Navigation() {
-  const { organizationId = '', clusterId = '' } = useParams()
+export interface NavigationProps {
+  defaultOrganizationId: string
+}
+
+export function Navigation({ defaultOrganizationId }: NavigationProps) {
+  const { organizationId = defaultOrganizationId, clusterId = '' } = useParams()
   const { pathname } = useLocation()
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
