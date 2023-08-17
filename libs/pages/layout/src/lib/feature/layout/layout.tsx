@@ -9,6 +9,7 @@ import {
   fetchClustersStatus,
   fetchOrganization,
   fetchOrganizationById,
+  selectAllOrganization,
   selectClustersEntitiesByOrganizationId,
 } from '@qovery/domains/organization'
 import { fetchProjects } from '@qovery/domains/projects'
@@ -33,6 +34,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const clusters = useSelector<RootState, Cluster[]>((state) =>
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
+  const organizations = useSelector(selectAllOrganization)
 
   useEffect(() => {
     dispatch(fetchOrganization())
@@ -83,7 +85,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   }, [organizationId, projectId])
 
   return (
-    <LayoutPage topBar={topBar} cluster={clusters[0]}>
+    <LayoutPage topBar={topBar} cluster={clusters[0]} defaultOrganizationId={organizations[0]?.id}>
       <>
         <WebsocketContainer />
         {children}

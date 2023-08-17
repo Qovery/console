@@ -8,6 +8,7 @@ import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
 
 export interface LayoutPageProps {
+  defaultOrganizationId: string
   topBar?: boolean
   organization?: OrganizationEntity
   cluster?: ClusterEntity
@@ -24,7 +25,7 @@ export const displayClusterBanner = (status?: StateEnum): boolean => {
 }
 
 export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
-  const { children, topBar = true, cluster } = props
+  const { children, topBar = true, cluster, defaultOrganizationId } = props
 
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
@@ -42,7 +43,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       <main className="dark:bg-element-light-darker-700 dark:h-full bg-element-light-lighter-400">
         <div className="flex">
           <div className="h-full sticky top-0 z-30">
-            <Navigation />
+            <Navigation defaultOrganizationId={defaultOrganizationId} />
           </div>
           <div className="w-full">
             {topBar && <TopBar />}
