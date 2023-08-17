@@ -1,18 +1,7 @@
 import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
-import { useGetEnvironmentRunningStatusById } from '@qovery/domains/environment'
-import { EnvironmentDeploymentStatusLabel } from '@qovery/domains/environments/feature'
+import { EnvironmentDeploymentStatusLabel, EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
-import { RunningState } from '@qovery/shared/enums'
-import {
-  Icon,
-  Skeleton,
-  StatusChip,
-  TableFilterProps,
-  TableHeadProps,
-  TableRow,
-  TagMode,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Icon, Skeleton, TableFilterProps, TableHeadProps, TableRow, TagMode, Tooltip } from '@qovery/shared/ui'
 
 export interface TableRowEnvironmentsProps {
   data: Environment
@@ -35,16 +24,11 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
     isLoading = false,
   } = props
 
-  // todo: should be in TableRowEnvironmentFeature
-  const { data: runningStatus } = useGetEnvironmentRunningStatusById(data.id, isLoading)
-
   return (
     <TableRow data={data} filter={filter} columnsWidth={columnsWidth} link={link} disabled={isLoading}>
       <>
         <div className="flex items-center px-4">
-          <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-            <StatusChip status={runningStatus?.state || RunningState.STOPPED} />
-          </Skeleton>
+          <EnvironmentStateChip mode="running" environmentId={data.id} />
           <Tooltip
             content={
               <p className="flex">
