@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react'
 import { Link } from 'react-router-dom'
-import Truncate from '../../../truncate/truncate'
+import { Truncate } from '@qovery/shared/ui'
 
 export interface BreadcrumbItemValueProps {
   className?: string
