@@ -28,7 +28,7 @@ interface WSServiceStatus {
 }
 
 export function useStatusWebSockets() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', versionId = '' } = useParams()
   const { data: environment } = useEnvironment({ environmentId })
 
   useReactQueryWsSubscription({
@@ -38,6 +38,7 @@ export function useStatusWebSockets() {
       environment: environment?.id,
       cluster: environment?.cluster_id,
       project: projectId,
+      version: versionId,
     },
     onMessage(queryClient, message: WSDeploymentStatus) {
       const environmentId = message.environment.id
