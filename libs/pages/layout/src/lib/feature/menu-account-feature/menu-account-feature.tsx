@@ -17,8 +17,6 @@ export function MenuAccountFeature() {
   )
   const organizations = useSelector(selectAllOrganization)
 
-  if (!currentOrganization) return null
-
   return (
     <MenuAccount
       organizations={organizations}
