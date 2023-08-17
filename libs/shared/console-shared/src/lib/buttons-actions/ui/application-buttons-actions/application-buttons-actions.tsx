@@ -380,8 +380,8 @@ export function ApplicationButtonsActions(props: ApplicationButtonsActionsProps)
                 items: [
                   {
                     name: 'Delete service',
-                    containerClassName: 'text-error-600',
-                    contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
+                    containerClassName: 'text-red-600',
+                    contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-red-600" />,
                     onClick: () =>
                       removeService(
                         application.id,

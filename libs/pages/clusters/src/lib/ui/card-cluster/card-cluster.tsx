@@ -22,7 +22,7 @@ export const getColorForStatus = (status?: StateEnum): string => {
     case StateEnum.DELETE_ERROR:
     case StateEnum.DEPLOYMENT_ERROR:
     case StateEnum.BUILD_ERROR:
-      return 'text-error-500'
+      return 'text-red-500'
     case StateEnum.READY:
     case StateEnum.DELETED:
     case StateEnum.STOPPED:

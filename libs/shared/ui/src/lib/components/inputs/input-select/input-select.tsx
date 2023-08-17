@@ -269,7 +269,7 @@ export function InputSelect({
           </div>
         )}
       </div>
-      {error && <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>}
+      {error && <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>}
     </div>
   )
 }

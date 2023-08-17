@@ -46,7 +46,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
         <p className="font-medium text-sm">
           Error{' '}
           {errors && errors.length > 0 && (
-            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-error-500 text-text-100 rounded-sm">1</span>
+            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-red-500 text-text-100 rounded-sm">1</span>
           )}
         </p>
       ),
@@ -73,7 +73,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
               {currentError ? (
                 <>
                   <div className="flex items-center">
-                    <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-error-500 mr-3">
+                    <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-red-500 mr-3">
                       <Icon name="icon-solid-triangle-exclamation" className="text-text-100" />
                     </div>
                     <div>
@@ -100,11 +100,11 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                     }
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-error-500 text-xs font-medium">Full error</p>
+                      <p className="text-red-500 text-xs font-medium">Full error</p>
                       <div className="flex text-xs">
                         <p
                           onClick={() => scrollToError()}
-                          className="transition-colors cursor-pointer text-error-500 hover:text-error-600 font-bold mr-2.5"
+                          className="transition-colors cursor-pointer text-red-500 hover:text-red-600 font-bold mr-2.5"
                         >
                           <span className="text-2xs relative -top-px mr-1">{errors[errors.length - 1].index}</span>
                           <Icon name="icon-solid-arrow-circle-right" className="cursor-pointer" />

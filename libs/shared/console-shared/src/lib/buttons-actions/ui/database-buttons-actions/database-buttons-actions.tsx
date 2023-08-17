@@ -257,7 +257,7 @@ export function DatabaseButtonsActions(props: DatabaseButtonsActionsProps) {
               items: [
                 {
                   name: 'Delete database',
-                  containerClassName: 'text-error-600',
+                  containerClassName: 'text-red-600',
                   contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm" />,
                   onClick: () =>
                     removeDatabase(

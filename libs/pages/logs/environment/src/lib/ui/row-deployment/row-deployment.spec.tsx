@@ -52,7 +52,7 @@ describe('RowDeployment', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('text-error-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400')
+    expect(index).toHaveClass('text-red-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400')
   })
 
   it('should have error cell date color', () => {
@@ -70,7 +70,7 @@ describe('RowDeployment', () => {
 
     const cellDate = screen.getByTestId('cell-date')
 
-    expect(cellDate).toHaveClass('py-1 pl-2 pr-3 font-code shrink-0 w-[158px] text-error-500')
+    expect(cellDate).toHaveClass('py-1 pl-2 pr-3 font-code shrink-0 w-[158px] text-red-500')
   })
 
   it('should have success cell date color', () => {
@@ -134,7 +134,7 @@ describe('RowDeployment', () => {
 
     const cellMsg = screen.getByTestId('cell-msg')
 
-    expect(cellMsg).toHaveClass('py-1 pr-6 font-code relative w-full overflow-hidden text-error-500')
+    expect(cellMsg).toHaveClass('py-1 pr-6 font-code relative w-full overflow-hidden text-red-500')
     expect(cellMsg?.textContent).toBe(props.data.error?.user_log_message)
   })
 

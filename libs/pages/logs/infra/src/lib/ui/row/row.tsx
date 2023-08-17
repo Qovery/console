@@ -21,7 +21,7 @@ export function Row(props: RowProps) {
 
   const indexClassName = `${
     type === LogsType.ERROR && realError
-      ? 'bg-error-500 text-text-800 group-hover:bg-error-600'
+      ? 'bg-red-500 text-text-800 group-hover:bg-red-600'
       : success
       ? 'bg-success-500 text-text-800 group-hover:bg-success-600'
       : 'bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200'
@@ -30,7 +30,7 @@ export function Row(props: RowProps) {
   const colorsCellClassName = (white?: boolean) =>
     `${
       type === LogsType.ERROR
-        ? 'text-error-500'
+        ? 'text-red-500'
         : type === LogsType.WARNING
         ? 'text-warning-500'
         : success

@@ -183,7 +183,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
       items: [
         {
           name: 'Delete',
-          textClassName: '!text-error-600',
+          textClassName: '!text-red-600',
           onClick: () => {
             openModalConfirmation({
               title: 'Delete variable',
@@ -230,7 +230,7 @@ export function TableRowEnvironmentVariableFeature(props: TableRowEnvironmentVar
               },
             })
           },
-          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-error-600" />,
+          contentLeft: <Icon name={IconAwesomeEnum.TRASH} className="text-sm text-red-600" />,
         },
       ],
     })

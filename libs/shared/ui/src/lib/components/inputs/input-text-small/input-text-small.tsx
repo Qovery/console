@@ -88,7 +88,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
         )}
       </div>
       {error && errorMessagePosition === 'bottom' && (
-        <p className="px-4 mt-1 font-medium text-xs text-error-500">{error}</p>
+        <p className="px-4 mt-1 font-medium text-xs text-red-500">{error}</p>
       )}
     </div>
   )

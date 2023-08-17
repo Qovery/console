@@ -34,15 +34,15 @@
 }
 
 .status-menu--warning {
-  @apply bg-error-50 border-error-500 text-error-500;
+  @apply bg-red-50 border-red-500 text-red-500;
 
   .status-menu__trigger {
-    @apply border-error-500;
+    @apply border-red-500;
   }
 
   &.status-menu--open {
     .status-menu__trigger {
-      @apply bg-error-100;
+      @apply bg-red-100;
     }
   }
 }
