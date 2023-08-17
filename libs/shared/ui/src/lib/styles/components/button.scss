@@ -65,9 +65,9 @@
 
 .btn--error {
   color: theme('colors.text.100');
-  background-color: theme('colors.error.600');
+  background-color: theme('colors.red.600');
   &:hover {
-    background-color: theme('colors.error.700');
+    background-color: theme('colors.red.700');
   }
 }
 
