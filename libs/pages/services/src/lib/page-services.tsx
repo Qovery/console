@@ -1,12 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
-import {
-  getEnvironmentStatusById,
-  useEnvironmentRunningStatus,
-  useFetchEnvironment,
-  useFetchEnvironmentsStatus,
-} from '@qovery/domains/environment'
+import { getEnvironmentStatusById, useFetchEnvironment, useFetchEnvironmentsStatus } from '@qovery/domains/environment'
 import { APPLICATION_GENERAL_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/state/store'
@@ -21,7 +16,6 @@ export function PageServices() {
 
   const { data: environment } = useFetchEnvironment(projectId, environmentId)
   const environmentsStatus = useFetchEnvironmentsStatus(projectId)
-  const environmentRunningStatus = useEnvironmentRunningStatus(environmentId)
 
   const dispatch = useDispatch<AppDispatch>()
 
@@ -35,7 +29,6 @@ export function PageServices() {
     <Container
       environment={environment}
       environmentStatus={getEnvironmentStatusById(environmentId, environmentsStatus.data)}
-      environmentRunningStatus={environmentRunningStatus}
     >
       <Routes>
         {ROUTER_SERVICES.map((route) => (

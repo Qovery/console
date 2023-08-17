@@ -1,15 +1,7 @@
 import { BuildModeEnum, DatabaseModeEnum } from 'qovery-typescript-axios'
-import { ServiceDeploymentStatusLabel } from '@qovery/domains/services/feature'
+import { ServiceDeploymentStatusLabel, ServiceStateChip } from '@qovery/domains/services/feature'
 import { ApplicationButtonsActions, DatabaseButtonsActions } from '@qovery/shared/console-shared'
-import {
-  IconEnum,
-  RunningState,
-  ServiceTypeEnum,
-  isApplication,
-  isContainer,
-  isDatabase,
-  isJob,
-} from '@qovery/shared/enums'
+import { IconEnum, ServiceTypeEnum, isApplication, isContainer, isDatabase, isJob } from '@qovery/shared/enums'
 import {
   ApplicationEntity,
   ContainerApplicationEntity,
@@ -17,17 +9,7 @@ import {
   GitApplicationEntity,
   JobApplicationEntity,
 } from '@qovery/shared/interfaces'
-import {
-  Icon,
-  Skeleton,
-  StatusChip,
-  TableFilterProps,
-  TableHeadProps,
-  TableRow,
-  Tag,
-  TagCommit,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Icon, Skeleton, TableFilterProps, TableHeadProps, TableRow, Tag, TagCommit, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/utils'
 
 export interface TableRowServicesProps<T> {
@@ -66,18 +48,9 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
       <>
         <div className="flex items-center px-4 gap-1">
           {dataDatabase.mode === DatabaseModeEnum.MANAGED ? (
-            <Skeleton show={isLoading} width={16} height={16} rounded={true}>
-              <StatusChip status={data.status?.state || RunningState.STOPPED} />
-            </Skeleton>
+            <ServiceStateChip mode="deployment" environmentId={data.environment?.id} serviceId={data.id} />
           ) : (
-            <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>
-              <StatusChip
-                status={data.running_status?.state || RunningState.STOPPED}
-                appendTooltipMessage={
-                  data?.running_status?.state === RunningState.ERROR ? data.running_status.pods[0]?.state_message : ''
-                }
-              />
-            </Skeleton>
+            <ServiceStateChip mode="running" environmentId={data.environment?.id} serviceId={data.id} />
           )}
           <div className="ml-2 mr-2">
             <Skeleton className="shrink-0" show={isLoading} width={16} height={16}>

@@ -1,18 +1,14 @@
-import { Environment, EnvironmentStatus, StateEnum } from 'qovery-typescript-axios'
+import { Environment, EnvironmentStatus } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
+import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { selectClusterById } from '@qovery/domains/organization'
 import { EnvironmentButtonsActions } from '@qovery/shared/console-shared'
-import { IconEnum, RunningState } from '@qovery/shared/enums'
-import {
-  ApplicationEntity,
-  ClusterEntity,
-  DatabaseEntity,
-  WebsocketRunningStatusInterface,
-} from '@qovery/shared/interfaces'
+import { IconEnum } from '@qovery/shared/enums'
+import { ApplicationEntity, ClusterEntity, DatabaseEntity } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -33,7 +29,6 @@ import {
   MenuAlign,
   MenuData,
   Skeleton,
-  StatusChip,
   Tabs,
   Tag,
   TagMode,
@@ -44,11 +39,10 @@ import { RootState } from '@qovery/state/store'
 export interface ContainerProps {
   environment?: Environment
   environmentStatus?: EnvironmentStatus
-  environmentRunningStatus?: WebsocketRunningStatusInterface
 }
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
-  const { environment, environmentStatus, environmentRunningStatus, children } = props
+  const { environment, environmentStatus, children } = props
   const { organizationId, projectId, environmentId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -105,17 +99,13 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
 
   const tabsItems = [
     {
-      icon: <StatusChip status={environmentRunningStatus?.state || RunningState.STOPPED} />,
+      icon: <EnvironmentStateChip mode="running" environmentId={environmentId} />,
       name: 'Services',
       active: location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
     },
     {
-      icon: (
-        <Skeleton show={environmentStatus?.state === StateEnum.STOPPING} width={16} height={16} rounded={true}>
-          <StatusChip status={(environmentStatus && environmentStatus.state) || StateEnum.STOPPED} />
-        </Skeleton>
-      ),
+      icon: <EnvironmentStateChip mode="deployment" environmentId={environmentId} />,
       name: 'Deployments',
       active:
         location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
