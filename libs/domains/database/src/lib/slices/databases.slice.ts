@@ -67,6 +67,9 @@ export const createDatabase = createAsyncThunk<Database, { environmentId: string
   }
 )
 
+/**
+ * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+ */
 export const fetchDatabasesStatus = createAsyncThunk<Status[], { environmentId: string }>(
   'databases-status/fetch',
   async (data) => {
@@ -177,6 +180,8 @@ export const databasesSlice = createSlice({
       state,
       action: PayloadAction<{ servicesRunningStatus: ServiceRunningStatus[]; listEnvironmentIdFromCluster: string[] }>
     ) => {
+      // TODO
+
       // we have to force this reset change because of the way the socket works.
       // You can have information about an database (eg. if it's stopping)
       // But you can also lose the information about this database (eg. it it's stopped it won't appear in the socket result)
@@ -304,6 +309,7 @@ export const databasesSlice = createSlice({
         state.statusLoadingStatus = 'loading'
       })
       .addCase(fetchDatabasesStatus.fulfilled, (state: DatabasesState, action: PayloadAction<Status[]>) => {
+        // TODO
         const update: { id: string | undefined; changes: { status: Status } }[] = action.payload.map(
           (status: Status) => ({
             id: status.id,
