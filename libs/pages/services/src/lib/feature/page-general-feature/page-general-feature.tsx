@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { getApplicationsState, selectApplicationsEntitiesByEnvId } from '@qovery/domains/application'
 import { getDatabasesState, selectDatabasesEntitiesByEnvId } from '@qovery/domains/database'
 import { useFetchEnvironment } from '@qovery/domains/environment'
+import { useListStatuses } from '@qovery/domains/services/feature'
 import { applicationFactoryMock } from '@qovery/shared/factories'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { BaseLink } from '@qovery/shared/ui'
@@ -39,6 +40,20 @@ export function PageGeneralFeature() {
     },
   ]
 
+  let services = [...applicationsByEnv, ...databasesByEnv]
+
+  const { data: statuses } = useListStatuses({ environmentId })
+  const servicesStatuses = [
+    ...(statuses?.applications ?? []),
+    ...(statuses?.containers ?? []),
+    ...(statuses?.databases ?? []),
+    ...(statuses?.jobs ?? []),
+  ]
+  services = services.map((service) => ({
+    ...service,
+    status: servicesStatuses.find((status) => status.id === service.id),
+  })) as (ApplicationEntity | DatabaseEntity)[]
+
   function isLoading() {
     // if the two collections are loaded, we remove the loading state
     return !(applicationsLoadingStatus === 'loaded' && databasesLoadingStatus === 'loaded')
@@ -46,7 +61,7 @@ export function PageGeneralFeature() {
 
   return (
     <PageGeneral
-      services={isLoading() ? loadingServices : [...applicationsByEnv, ...databasesByEnv]}
+      services={isLoading() ? loadingServices : services}
       environmentMode={environment?.mode || ''}
       listHelpfulLinks={listHelpfulLinks}
       isLoading={isLoading()}
