@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { OrganizationEntity } from '@qovery/shared/interfaces'
-import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
+import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
 import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, MenuData, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
   organizations: OrganizationEntity[]
-  currentOrganization: OrganizationEntity
+  currentOrganization?: OrganizationEntity
   user: {
     firstName?: string
     lastName?: string
@@ -22,7 +22,7 @@ export function MenuAccount(props: MenuAccountProps) {
     <div data-testid={`content-${organization.id}`} className="flex items-center">
       <Icon
         name={IconAwesomeEnum.CHECK}
-        className={`mr-4 ${currentOrganization.id === organization.id ? 'text-green-500' : 'opacity-0'}`}
+        className={`mr-4 ${currentOrganization?.id === organization.id ? 'text-green-500' : 'opacity-0'}`}
       />
       <span className="w-8 h-8 rounded-sm flex items-center justify-center mr-3">
         {organization.logo_url ? (
@@ -76,6 +76,7 @@ export function MenuAccount(props: MenuAccountProps) {
             </div>
           ),
           containerClassName: '!h-14',
+          onClick: () => navigate(USER_URL),
         },
       ],
     },

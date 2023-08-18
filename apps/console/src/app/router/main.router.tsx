@@ -11,6 +11,7 @@ import { PageOnboarding } from '@qovery/pages/onboarding'
 import { OverviewPage } from '@qovery/pages/overview/feature'
 import { PageServices } from '@qovery/pages/services'
 import { PageSettings } from '@qovery/pages/settings'
+import { PageUser } from '@qovery/pages/user'
 import { AcceptInvitationFeature, GithubApplicationCallbackFeature } from '@qovery/shared/console-shared'
 import {
   ACCEPT_INVITATION_URL,
@@ -28,6 +29,7 @@ import {
   OVERVIEW_URL,
   SERVICES_URL,
   SETTINGS_URL,
+  USER_URL,
 } from '@qovery/shared/routes'
 import RedirectOverview from '../components/redirect-overview'
 
@@ -58,6 +60,13 @@ export const ROUTER: RouterProps[] = [
     component: <AcceptInvitationFeature />,
     protected: true,
     layout: false,
+  },
+  {
+    path: `${USER_URL}/*`,
+    component: <PageUser />,
+    protected: true,
+    layout: true,
+    topBar: false,
   },
   {
     path: ORGANIZATION_URL(),
