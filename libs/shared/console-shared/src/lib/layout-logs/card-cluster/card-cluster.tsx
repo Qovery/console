@@ -29,7 +29,7 @@ export function CardCluster(props: CardClusterProps) {
               <li className="flex mb-2">
                 <span className="text-text-300 w-16 mr-3">Cluster ID</span>
                 <div className="flex">
-                  <span className="text-accent2-400">{splitId(cluster.id)}</span>
+                  <span className="text-sky-400">{splitId(cluster.id)}</span>
                   <CopyToClipboard content={cluster.id} className="text-text-300 ml-1" />
                 </div>
               </li>
@@ -37,9 +37,7 @@ export function CardCluster(props: CardClusterProps) {
                 <li className="flex mb-2">
                   <span className="text-text-300 w-16 mr-3">Exec. ID</span>
                   <div className="flex">
-                    <span className="text-accent2-400">
-                      {splitId(cluster.extendedStatus?.status?.last_execution_id)}
-                    </span>
+                    <span className="text-sky-400">{splitId(cluster.extendedStatus?.status?.last_execution_id)}</span>
                     <CopyToClipboard
                       content={cluster.extendedStatus?.status?.last_execution_id}
                       className="text-text-300 ml-1"
@@ -54,7 +52,7 @@ export function CardCluster(props: CardClusterProps) {
               <li className="flex">
                 <span className="text-text-300 w-16 mr-3">Org. ID</span>
                 <div className="flex">
-                  <span className="text-accent2-400">{splitId(organizationId)}</span>
+                  <span className="text-sky-400">{splitId(organizationId)}</span>
                   <CopyToClipboard content={organizationId} className="text-text-300 ml-1" />
                 </div>
               </li>

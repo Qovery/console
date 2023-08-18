@@ -33,12 +33,7 @@ export function StepThanks(props: StepThanksProps) {
       </p>
       <p className="text-sm mb-5 text-text-500">
         In the meantime, have a look at{' '}
-        <a
-          href="https://hub.qovery.com/guides/"
-          target="_blank"
-          rel="noreferrer"
-          className="link text-accent2-500 text-sm"
-        >
+        <a href="https://hub.qovery.com/guides/" target="_blank" rel="noreferrer" className="link text-sky-500 text-sm">
           our guide <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>{' '}
         and{' '}
@@ -46,7 +41,7 @@ export function StepThanks(props: StepThanksProps) {
           href="https://hub.qovery.com/guides/tutorial/"
           target="_blank"
           rel="noreferrer"
-          className="link text-accent2-500 text-sm"
+          className="link text-sky-500 text-sm"
         >
           tutorial <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>{' '}

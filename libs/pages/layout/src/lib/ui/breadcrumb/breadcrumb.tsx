@@ -281,7 +281,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
         )}
         {matchLogsRoute && (
           <div className="flex">
-            <div className="flex items-center text-accent1-300 bg-accent1-800 font-medium text-ssm px-1.5 h-6 rounded-[3px] ml-3 mt-2">
+            <div className="flex items-center text-purple-300 bg-purple-800 font-medium text-ssm px-1.5 h-6 rounded-[3px] ml-3 mt-2">
               LOGS
             </div>
           </div>

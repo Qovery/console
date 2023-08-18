@@ -107,7 +107,7 @@ module.exports = {
           'lighten-200': '#F8F9FC',
           'lighten-100': '#FFFFFF',
         },
-        accent1: {
+        purple: {
           50: '#FCF4FF',
           100: '#F7DFFE',
           200: '#EDC0FD',
@@ -119,7 +119,7 @@ module.exports = {
           800: '#491E8B',
           900: '#331273',
         },
-        accent2: {
+        sky: {
           50: '#ECFBFE',
           100: '#CAF5FD',
           200: '#96E6FB',
@@ -131,7 +131,7 @@ module.exports = {
           800: '#00377F',
           900: '#002769',
         },
-        accent3: {
+        teal: {
           50: '#F2FEFB',
           100: '#DAFCF4',
           200: '#B6FAEF',

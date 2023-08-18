@@ -35,7 +35,7 @@ export function Login(props: ILoginProps) {
           <p className="text-sm mb-10 text-text-500">
             By registering and using Qovery, you agree to the processing of your personal data by Qovery as described in
             the
-            <a href="https://www.qovery.com/terms" className="link text-accent2-500 ml-1">
+            <a href="https://www.qovery.com/terms" className="link text-sky-500 ml-1">
               Privacy Policy
             </a>
             .

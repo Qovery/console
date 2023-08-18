@@ -92,7 +92,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
           <div>
             <div className="flex items-center mb-3">
               <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-              <span className="bg-accent3-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
+              <span className="bg-teal-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-3">
                 ALIAS
               </span>
             </div>

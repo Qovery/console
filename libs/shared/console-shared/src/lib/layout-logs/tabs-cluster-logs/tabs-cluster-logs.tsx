@@ -130,7 +130,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                   </div>
                   {currentError.hint_message && (
                     <div className="bg-element-light-darker-300 mt-3 p-2 rounded ml-8">
-                      <p className="text-xs text-accent2-400 font-medium mb-1">Solution</p>
+                      <p className="text-xs text-sky-400 font-medium mb-1">Solution</p>
                       <p data-testid="solution-msg" className="text-text-100 text-xs mb-2">
                         {currentError.hint_message}
                       </p>

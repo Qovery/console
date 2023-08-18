@@ -71,7 +71,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
               <span
                 data-testid="copy-cta"
                 onClick={copyToClipboard}
-                className="link inline cursor-pointer text-accent2-500 text-sm ml-1 truncate max-w-[250px]"
+                className="link inline cursor-pointer text-sky-500 text-sm ml-1 truncate max-w-[250px]"
               >
                 {name} <Icon name="icon-solid-copy" />
               </span>

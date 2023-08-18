@@ -42,9 +42,9 @@ describe('BannerBox', () => {
     const box = getByTestId('banner-box')
     const icon = queryByRole('img')
 
-    expect(box.classList.contains('border-accent2-500')).toBe(true)
-    expect(box.classList.contains('bg-accent2-50')).toBe(true)
-    expect(icon?.classList.contains('text-accent2-600')).toBe(true)
+    expect(box.classList.contains('border-sky-500')).toBe(true)
+    expect(box.classList.contains('bg-sky-50')).toBe(true)
+    expect(icon?.classList.contains('text-sky-600')).toBe(true)
   })
 
   it('should render with info theme', () => {
@@ -75,6 +75,6 @@ describe('BannerBox', () => {
 
     const icon = getByRole(baseElement, 'img')
 
-    expect(icon.classList).not.toContain('text-accent2-600')
+    expect(icon.classList).not.toContain('text-sky-600')
   })
 })

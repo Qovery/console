@@ -2,10 +2,10 @@
   a {
     display: inline-block;
     transition: 0.25s color $timing-cubic;
-    color: theme('colors.accent2.500');
+    color: theme('colors.sky.500');
 
     &:hover {
-      color: theme('colors.accent2.600');
+      color: theme('colors.sky.600');
     }
   }
 }

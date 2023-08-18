@@ -33,14 +33,14 @@ export function BannerBox(props: BannerBoxProps) {
   } = props
 
   const boxClasses = {
-    [BannerBoxEnum.DEFAULT]: 'bg-accent2-50 border-accent2-500',
+    [BannerBoxEnum.DEFAULT]: 'bg-sky-50 border-sky-500',
     [BannerBoxEnum.WARNING]: 'bg-yellow-50 border-yellow-500',
     [BannerBoxEnum.ERROR]: 'bg-red-50 border-red-500',
     [BannerBoxEnum.INFO]: 'bg-element-light-lighter-200 border-element-light-lighter-600',
   }
 
   const iconClasses = {
-    [BannerBoxEnum.DEFAULT]: 'text-accent2-600',
+    [BannerBoxEnum.DEFAULT]: 'text-sky-600',
     [BannerBoxEnum.WARNING]: 'text-yellow-600',
     [BannerBoxEnum.ERROR]: 'text-red-600',
     [BannerBoxEnum.INFO]: 'text-element-light-lighter-700',
