@@ -23,7 +23,6 @@ export interface ContainerProps {
 }
 
 export function Container(props: PropsWithChildren<ContainerProps>) {
-  // TODO remove database.status
   const { database, environment, children } = props
 
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
