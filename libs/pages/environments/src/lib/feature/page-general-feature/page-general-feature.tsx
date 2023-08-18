@@ -1,7 +1,8 @@
-import { Cluster } from 'qovery-typescript-axios'
+import { Cluster, type Environment } from 'qovery-typescript-axios'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { useFetchEnvironments } from '@qovery/domains/environment'
+import { useListStatuses } from '@qovery/domains/environments/feature'
 import { selectClustersEntitiesByOrganizationId } from '@qovery/domains/organization'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { BaseLink } from '@qovery/shared/ui'
@@ -18,7 +19,15 @@ export function PageGeneralFeature() {
     selectClustersEntitiesByOrganizationId(state, organizationId)
   )
 
-  const { isLoading, data: environments = [] } = useFetchEnvironments(projectId)
+  const res = useFetchEnvironments(projectId)
+  let { data: environments = [] } = res
+  const { isLoading } = res
+
+  const { data: statuses = [] } = useListStatuses({ projectId })
+  environments = environments.map((environment) => ({
+    ...environment,
+    status: statuses.find((status) => status.id === environment.id),
+  })) as Environment[]
 
   const listHelpfulLinks: BaseLink[] = [
     {

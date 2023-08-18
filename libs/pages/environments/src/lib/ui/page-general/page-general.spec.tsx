@@ -1,12 +1,23 @@
 import { render } from '__tests__/utils/setup-jest'
+import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { PageGeneral, PageGeneralProps } from './page-general'
 
 let props: PageGeneralProps
 
+const environments = environmentFactoryMock(2)
+
 beforeEach(() => {
   props = {
-    environments: environmentFactoryMock(2),
+    environments: environments.map(({ id, ...rest }) => ({
+      id,
+      status: {
+        state: StateEnum.STOPPED,
+        id,
+        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
+      },
+      ...rest,
+    })),
     buttonActions: [
       {
         name: 'redeploy',
