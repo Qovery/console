@@ -103,7 +103,7 @@ export function CrudModal({
               isMatchingHealthCheck && (
                 <Tooltip side="left" content="A health check is running on this port">
                   <div>
-                    <Icon name={IconAwesomeEnum.SHIELD_CHECK} className="text-success-500 hover:text-success-700" />
+                    <Icon name={IconAwesomeEnum.SHIELD_CHECK} className="text-green-500 hover:text-green-700" />
                   </div>
                 </Tooltip>
               )

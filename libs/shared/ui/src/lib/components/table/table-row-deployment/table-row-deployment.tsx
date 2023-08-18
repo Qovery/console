@@ -81,7 +81,7 @@ export function TableRowDeployment({
                 onMouseEnter={() => setHoverId(true)}
                 onMouseLeave={() => !copy && setHoverId(false)}
                 className={`text-2xs font-bold text-text-500 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
-                  copy ? 'bg-success-500 text-white' : 'bg-element-light-lighter-300'
+                  copy ? 'bg-green-500 text-white' : 'bg-element-light-lighter-300'
                 }`}
               >
                 {hoverId && !copy && (

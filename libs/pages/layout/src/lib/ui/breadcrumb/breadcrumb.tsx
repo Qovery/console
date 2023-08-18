@@ -83,7 +83,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             contentLeft: (
               <Icon
                 name="icon-solid-check"
-                className={`text-sm ${clusterId === cluster.id ? 'text-success-400' : 'text-transparent'}`}
+                className={`text-sm ${clusterId === cluster.id ? 'text-green-400' : 'text-transparent'}`}
               />
             ),
           }))
@@ -113,7 +113,7 @@ export function BreadcrumbMemo(props: BreadcrumbProps) {
             contentLeft: (
               <Icon
                 name="icon-solid-check"
-                className={`text-sm ${projectId === project.id ? 'text-success-400' : 'text-transparent'}`}
+                className={`text-sm ${projectId === project.id ? 'text-green-400' : 'text-transparent'}`}
               />
             ),
           }))

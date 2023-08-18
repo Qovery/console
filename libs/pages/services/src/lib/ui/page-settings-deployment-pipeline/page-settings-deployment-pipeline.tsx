@@ -72,7 +72,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
 
   const classNameGroup = (isDraggingOver: boolean) =>
     `grid gap-1 p-1 border border-element-light-lighter-500 border-t-0 rounded-b ${
-      isDraggingOver ? 'bg-success-100' : 'bg-element-light-lighter-400'
+      isDraggingOver ? 'bg-green-100' : 'bg-element-light-lighter-400'
     }`
 
   return (

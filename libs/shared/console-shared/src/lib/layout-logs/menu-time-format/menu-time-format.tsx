@@ -17,7 +17,7 @@ export function MenuTimeFormat(props: MenuTimeFormatProps) {
           contentLeft: (
             <Icon
               name={IconAwesomeEnum.CHECK}
-              className={`text-success-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+              className={`text-green-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
             />
           ),
           onClick: () => setUpdateTimeContext({ utc: false }),
@@ -27,7 +27,7 @@ export function MenuTimeFormat(props: MenuTimeFormatProps) {
           contentLeft: (
             <Icon
               name={IconAwesomeEnum.CHECK}
-              className={`text-success-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+              className={`text-green-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
             />
           ),
           onClick: () => setUpdateTimeContext({ utc: true }),

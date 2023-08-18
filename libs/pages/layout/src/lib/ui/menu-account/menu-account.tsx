@@ -22,7 +22,7 @@ export function MenuAccount(props: MenuAccountProps) {
     <div data-testid={`content-${organization.id}`} className="flex items-center">
       <Icon
         name={IconAwesomeEnum.CHECK}
-        className={`mr-4 ${currentOrganization.id === organization.id ? 'text-success-500' : 'opacity-0'}`}
+        className={`mr-4 ${currentOrganization.id === organization.id ? 'text-green-500' : 'opacity-0'}`}
       />
       <span className="w-8 h-8 rounded-sm flex items-center justify-center mr-3">
         {organization.logo_url ? (

@@ -26,7 +26,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
   const { dataHead, columnsWidth = `repeat(${dataHead.length},minmax(0,1fr))`, data, filter, downloadInvoice } = props
 
   const statusBadgeClassNames: Record<InvoiceStatusEnum, string> = {
-    [InvoiceStatusEnum.PAID]: 'bg-success-50 text-success-500 border-success-500',
+    [InvoiceStatusEnum.PAID]: 'bg-green-50 text-green-500 border-green-500',
     [InvoiceStatusEnum.NOT_PAID]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
     [InvoiceStatusEnum.PENDING]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
     [InvoiceStatusEnum.POSTED]: 'bg-yellow-50 text-yellow-500 border-yellow-500',
