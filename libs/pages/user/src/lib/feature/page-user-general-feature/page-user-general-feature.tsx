@@ -3,7 +3,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { postUserSignUp, selectUser, selectUserSignUp } from '@qovery/domains/user'
 import { IconEnum } from '@qovery/shared/enums'
-import { Icon } from '@qovery/shared/ui'
+import { ToastEnum } from '@qovery/shared/toast'
+import { Icon, toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { AppDispatch } from '@qovery/state/store'
 import PageUserGeneral from '../../ui/page-user-general/page-user-general'
@@ -40,6 +41,7 @@ export function PageUserGeneralFeature() {
         })
       )
         .unwrap()
+        .then(() => toast(ToastEnum.SUCCESS, 'User updated'))
         .finally(() => setLoading(false))
     }
   })
