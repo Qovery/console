@@ -61,6 +61,9 @@ export function PageEnvironmentLogs() {
   )
 
   useEffect(() => {
+    /**
+     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+     */
     const fetchServicesStatusByInterval = setInterval(() => {
       if (applications.length > 0) dispatch(fetchApplicationsStatus({ environmentId }))
       if (databases.length > 0) dispatch(fetchDatabasesStatus({ environmentId }))

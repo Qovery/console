@@ -22,6 +22,9 @@ export function PageClustersGeneralFeature() {
   useDocumentTitle('General - Clusters')
 
   useEffect(() => {
+    /**
+     * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+     */
     const fetchClustersStatusByInterval = setInterval(() => {
       if (clusters.length > 0) dispatch(fetchClustersStatus({ organizationId }))
     }, 3000)
