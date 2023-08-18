@@ -7,6 +7,9 @@ import { useRunningStatusWebsocket } from '@qovery/shared/utils'
 import { RootState } from '@qovery/state/store'
 import { ClusterWebSocket } from '../cluster-web-socket/cluster-web-socket'
 
+/**
+ * @deprecated This should be migrated to the new `use-status-web-sockets` hook
+ */
 export function WebsocketContainer() {
   const { organizationId = '' } = useParams()
   const { getAccessTokenSilently } = useAuth()
