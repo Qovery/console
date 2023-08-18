@@ -23,7 +23,7 @@ export function PageUserGeneralFeature() {
     defaultValues: {
       firstName: user.first_name,
       lastName: user.last_name,
-      email: user.user_email !== '' ? user.user_email : userToken.email!,
+      email: user.user_email ?? userToken.email,
       account: userToken.sub,
     },
   })
