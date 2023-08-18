@@ -43,14 +43,14 @@ export function PodLogsFeature(props: PodLogsFeatureProps) {
     const token = await getAccessTokenSilently()
     const url = `wss://ws.qovery.com/service/logs?organization=${organizationId}&cluster=${clusterId}&project=${projectId}&environment=${environmentId}&service=${serviceId}&bearer_token=${token}`
 
-    return new Promise((resolve) => resolve(url))
+    return Promise.resolve(url)
   }, [organizationId, clusterId, projectId, environmentId, serviceId, getAccessTokenSilently])
 
   const nginxLogsUrl: () => Promise<string> = useCallback(async () => {
     const token = await getAccessTokenSilently()
     const url = `wss://ws.qovery.com/infra/logs?organization=${organizationId}&cluster=${clusterId}&project=${projectId}&environment=${environmentId}&service=${serviceId}&infra_component_type=NGINX&bearer_token=${token}`
 
-    return new Promise((resolve) => resolve(url))
+    return Promise.resolve(url)
   }, [organizationId, clusterId, projectId, environmentId, serviceId, getAccessTokenSilently])
 
   const onMessageHandler = useCallback((message: MessageEvent) => {
