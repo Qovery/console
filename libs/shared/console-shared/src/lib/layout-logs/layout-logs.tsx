@@ -168,7 +168,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                     className="-ml-1"
                   />
                   {enabledNginx && countNginx !== undefined ? <span className="block ml-1">({countNginx})</span> : ''}
-                  <Tooltip content="Documentation about NGINX formats">
+                  <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX)">
                     <a
                       className="relative top-[1px] ml-2"
                       rel="noreferrer"
