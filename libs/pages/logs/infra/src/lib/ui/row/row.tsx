@@ -24,7 +24,7 @@ export function Row(props: RowProps) {
       ? 'bg-red-500 text-text-800 group-hover:bg-red-600'
       : success
       ? 'bg-green-500 text-text-800 group-hover:bg-green-600'
-      : 'bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200'
+      : 'bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200'
   }`
 
   const colorsCellClassName = (white?: boolean) =>

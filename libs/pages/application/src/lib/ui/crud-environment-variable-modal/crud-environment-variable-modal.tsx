@@ -38,7 +38,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
   return (
     <div className="p-6">
       <h2 className="h4 text-text-600 mb-2 max-w-sm">{props.title}</h2>
-      <p className="text-text-400 text-sm mb-6">{props.description}</p>
+      <p className="text-zinc-350 text-sm mb-6">{props.description}</p>
       <form onSubmit={props.onSubmit}>
         {props.type === EnvironmentVariableType.ALIAS || props.type === EnvironmentVariableType.OVERRIDE ? (
           <InputText className="mb-3" name="Variable" value={props.parentVariableName} label="Variable" disabled />
@@ -161,7 +161,7 @@ export function CrudEnvironmentVariableModal(props: CrudEnvironmentVariableModal
                 rightElement={
                   <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">
                     <div>
-                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400 text-sm" />
+                      <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350 text-sm" />
                     </div>
                   </Tooltip>
                 }

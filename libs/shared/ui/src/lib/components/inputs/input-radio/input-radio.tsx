@@ -58,7 +58,7 @@ export function InputRadio(props: InputRadioProps) {
       />
       <label htmlFor={value} className={`leading-5 text-text-600 font-medium ${big ? 'text-sm' : 'text-ssm'}`}>
         {label}
-        {description && <p className="text-text-400 mt-1 text-xs font-normal">{description}</p>}
+        {description && <p className="text-zinc-350 mt-1 text-xs font-normal">{description}</p>}
       </label>
     </div>
   )

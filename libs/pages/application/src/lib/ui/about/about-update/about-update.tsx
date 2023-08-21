@@ -8,7 +8,7 @@ export interface AboutUpdateProps {
 
 export function AboutUpdate(props: AboutUpdateProps) {
   return (
-    <div className="p-8 text-text-400 text-sm">
+    <div className="p-8 text-zinc-350 text-sm">
       {props.application?.created_at && (
         <div className="mb-2">
           Created: <span>{dateFullFormat(props.application.created_at)}</span>

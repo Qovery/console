@@ -167,7 +167,7 @@ export function CrudModal({
                   watchProtocol !== PortProtocolEnum.UDP && (
                     <Tooltip content="You cannot configure the port used externally" side="left">
                       <div>
-                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                        <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350" />
                       </div>
                     </Tooltip>
                   )
@@ -194,7 +194,7 @@ export function CrudModal({
                 />
               )}
             />
-            <p className="text-text-400 text-xs ml-4 mb-5">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
+            <p className="text-zinc-350 text-xs ml-4 mb-5">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
           </>
         </>
       )}

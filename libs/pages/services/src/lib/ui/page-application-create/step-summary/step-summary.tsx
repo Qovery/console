@@ -48,7 +48,7 @@ export function StepSummary({
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">General information</div>
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 Name: <strong className="font-medium">{generalData.name}</strong>
               </li>
@@ -112,7 +112,7 @@ export function StepSummary({
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 CPU: <strong className="font-medium">{resourcesData['cpu']}</strong>
               </li>
@@ -140,7 +140,7 @@ export function StepSummary({
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Ports</div>
-            <ul className="text-text-400 text-sm">
+            <ul className="text-zinc-350 text-sm">
               {portsData.ports && portsData.ports.length > 0 ? (
                 <>
                   {portsData.ports?.map((port, index) => (

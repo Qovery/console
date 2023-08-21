@@ -51,7 +51,7 @@ export function CustomFilter({
 
   return (
     <>
-      <p className="text-text-400 text-ssm font-medium mr-1.5">Select</p>
+      <p className="text-zinc-350 text-ssm font-medium mr-1.5">Select</p>
       <div className="mr-5">
         <DatePicker
           key={timestamps ? timestamps[0].toString() : 'timestamp'}
@@ -96,7 +96,7 @@ export function CustomFilter({
           )}
         </DatePicker>
       </div>
-      <div className="flex items-center relative z-20 text-text-400 text-ssm font-medium">
+      <div className="flex items-center relative z-20 text-zinc-350 text-ssm font-medium">
         <p className=" mr-1.5">Search</p>
         <div className="flex items-center gap-2">
           <InputFilter

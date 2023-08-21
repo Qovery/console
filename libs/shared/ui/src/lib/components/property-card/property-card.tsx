@@ -26,7 +26,7 @@ export function PropertyCard(props: PropertyCardProps) {
             {name}{' '}
             {helperText && (
               <Tooltip side="right" content={helperText}>
-                <div data-testid="icon-helper" className="ml-1 flex text-text-400 items-center">
+                <div data-testid="icon-helper" className="ml-1 flex text-zinc-350 items-center">
                   <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
                 </div>
               </Tooltip>
@@ -38,7 +38,7 @@ export function PropertyCard(props: PropertyCardProps) {
         icon={IconAwesomeEnum.WHEEL}
         style={ButtonIconStyle.FLAT}
         dataTestId="property-card-settings-button"
-        className=" flex-shrink-0 -mr-4 !text-text-400 hover:!text-text-600"
+        className=" flex-shrink-0 -mr-4 !text-zinc-350 hover:!text-text-600"
         iconClassName="cursor-pointer"
         onClick={onSettingsClick}
       />

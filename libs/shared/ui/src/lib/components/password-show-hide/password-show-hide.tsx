@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
+import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard'
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
-import CopyToClipboard from '../copy-to-clipboard/copy-to-clipboard'
 
 export interface PasswordShowHideProps {
   value: string
@@ -20,7 +20,7 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
   }, [defaultVisible])
 
   return (
-    <div className={`flex items-center text-xs text-text-400 ${className}`}>
+    <div className={`flex items-center text-xs text-zinc-350 ${className}`}>
       {isSecret ? (
         <Icon name="icon-solid-user-secret" className="mr-3 text-text-500 text-xs" />
       ) : (

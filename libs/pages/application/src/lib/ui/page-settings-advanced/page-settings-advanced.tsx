@@ -89,7 +89,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                       <div className="inline whitespace-nowrap overflow-hidden text-ellipsis">{displayValue}</div>
                     </Tooltip>
                     <CopyToClipboard
-                      className="ml-2 text-text-300 invisible group-hover:visible"
+                      className="ml-2 text-zinc-300 invisible group-hover:visible"
                       content={
                         (props.defaultAdvancedSettings &&
                           props.defaultAdvancedSettings[

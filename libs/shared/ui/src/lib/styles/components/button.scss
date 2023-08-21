@@ -36,12 +36,12 @@
 }
 
 .btn--alt {
-  @apply bg-transparent text-text-400 hover:bg-element-light-lighter-400 hover:text-brand-500;
+  @apply bg-transparent text-zinc-350 hover:bg-element-light-lighter-400 hover:text-brand-500;
 }
 
 .dark {
   .btn--dark {
-    color: theme('colors.text.300');
+    color: theme('colors.zinc.300');
 
     &.is-active,
     &:hover {
@@ -162,11 +162,11 @@
 }
 
 .btn-icon--alt {
-  @apply bg-transparent text-text-400 hover:bg-element-light-lighter-400 hover:text-brand-500;
+  @apply bg-transparent text-zinc-350 hover:bg-element-light-lighter-400 hover:text-brand-500;
 }
 
 .btn-icon--dark {
-  @apply bg-element-light-darker-100 text-text-300 hover:text-zinc-50 hover:bg-element-light-darker-200;
+  @apply bg-element-light-darker-100 text-zinc-300 hover:text-zinc-50 hover:bg-element-light-darker-200;
 }
 
 // size

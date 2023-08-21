@@ -46,7 +46,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
           )}
         />
         {application && (
-          <p className="text-text-400 text-xs mt-3">
+          <p className="text-zinc-350 text-xs mt-3">
             Minimum value is 10 milli vCPU. Maximum value allowed based on the selected cluster instance type:{' '}
             {application?.maximum_cpu} mili vCPU.{' '}
             {clusterId && (
@@ -92,7 +92,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
           )}
         />
         {application && (
-          <p className="text-text-400 text-xs mt-3">
+          <p className="text-zinc-350 text-xs mt-3">
             Minimum value is 1 MB. Maximum value allowed based on the selected cluster instance type:{' '}
             {application.maximum_memory} MB.{' '}
             {clusterId && (
@@ -116,7 +116,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
               <Slider min={minInstances} max={maxInstances} step={1} onChange={field.onChange} value={field.value} />
             )}
           />
-          <p className="text-text-400 text-xs mt-3">
+          <p className="text-zinc-350 text-xs mt-3">
             {application?.instances?.items && (
               <span className="flex mb-1">
                 Current consumption: {application.instances.items.length} instance

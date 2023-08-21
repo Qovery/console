@@ -55,7 +55,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
           icon={IconAwesomeEnum.TRIANGLE_EXCLAMATION}
         />
       )}
-      <div className="text-text-400 text-sm mb-6">
+      <div className="text-zinc-350 text-sm mb-6">
         {isDelete ? (
           description ? (
             description

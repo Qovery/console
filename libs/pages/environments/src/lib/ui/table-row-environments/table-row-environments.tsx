@@ -71,11 +71,11 @@ export function TableRowEnvironments(props: TableRowEnvironmentsProps) {
         <div className="flex justify-end justify-items-center px-3">
           <Skeleton show={isLoading} width={200} height={16}>
             <div className="flex items-center">
-              <p className="flex items-center leading-7 text-text-400 text-sm">
+              <p className="flex items-center leading-7 text-zinc-350 text-sm">
                 <StatusLabel status={status && status.state} />
                 {status?.last_deployment_date && (
                   <Tooltip content={dateFullFormat(status.last_deployment_date)}>
-                    <span className="text-xs text-text-300 mx-3 font-medium">
+                    <span className="text-xs text-zinc-300 mx-3 font-medium">
                       {timeAgo(new Date(status.last_deployment_date))} ago
                     </span>
                   </Tooltip>

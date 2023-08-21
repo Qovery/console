@@ -38,7 +38,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
               />
               <div className="ml-3">
                 <p className="text-text-600 font-medium mb-1">{watch('name')}</p>
-                <span className="block text-xs text-text-400">Created since {created_at.split('T')[0]}</span>
+                <span className="block text-xs text-zinc-350">Created since {created_at.split('T')[0]}</span>
               </div>
             </div>
             <hr className="my-5 border-0 border-b border-element-light-lighter-500 relative -left-5 w-[calc(100%+41px)]" />
@@ -107,7 +107,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 />
               )}
             />
-            <p className="text-text-400 text-xs ml-4 mt-1">
+            <p className="text-zinc-350 text-xs ml-4 mt-1">
               Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
               downtime...)
             </p>

@@ -82,7 +82,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           <Truncate text={currentError.tag || ''} truncateLimit={28} />
                         </p>
                       </Tooltip>
-                      <span data-testid="error-line" className="text-text-400 text-xs">
+                      <span data-testid="error-line" className="text-zinc-350 text-xs">
                         Line {errors[errors.length - 1].index} - After {errors[errors.length - 1].timeAgo} minute
                         {parseInt(errors[errors.length - 1].timeAgo || '', 10) > 1 ? 's' : ''}
                       </span>
@@ -110,7 +110,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           <Icon name="icon-solid-arrow-circle-right" className="cursor-pointer" />
                         </p>
                         <CopyToClipboard
-                          className="text-text-300 hover:text-zinc-50"
+                          className="text-zinc-300 hover:text-zinc-50"
                           content={`Transmitter: ${
                             (errors[0].error as ClusterLogsError).event_details?.transmitter?.name
                           } - ${errors[0].error?.underlying_error?.message}`}
@@ -160,8 +160,8 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                 </>
               ) : (
                 <div data-testid="no-error-screen" className="text-center px-3 py-6">
-                  <Icon name="icon-solid-wave-pulse" className="text-text-400" />
-                  <p className="text-text-400 font-medium text-xs mt-1">No error available</p>
+                  <Icon name="icon-solid-wave-pulse" className="text-zinc-350" />
+                  <p className="text-zinc-350 font-medium text-xs mt-1">No error available</p>
                 </div>
               )}
             </div>
@@ -170,7 +170,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
       </div>
       {section === TabsClusterLogsSection.ERROR && (
         <div className="px-5 py-6 border-t border-element-light-darker-200 mt-5">
-          <p className="text-text-400 text-sm mb-3">Need more help?</p>
+          <p className="text-zinc-350 text-sm mb-3">Need more help?</p>
           <Link
             className="font-medium"
             link="https://discuss.qovery.com"

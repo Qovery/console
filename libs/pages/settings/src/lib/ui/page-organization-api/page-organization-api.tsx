@@ -60,12 +60,12 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                       {token.description && (
                         <Tooltip content={token.description}>
                           <div className="ml-1 cursor-pointer">
-                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350" />
                           </div>
                         </Tooltip>
                       )}
                     </h2>
-                    <p className="text-xs text-text-400">
+                    <p className="text-xs text-zinc-350">
                       <span className="inline-block">
                         Created since {dateYearMonthDayHourMinuteSecond(new Date(token.created_at || ''), false)}
                       </span>
@@ -78,7 +78,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => onDelete(token)}
-                    className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                    className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"
                     dataTestId="delete-token"
                   />

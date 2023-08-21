@@ -23,7 +23,7 @@ export function EmptyState(props: EmptyStateProps) {
         />
         <p className="text-text-600 font-medium">{props.title}</p>
         {props.description && (
-          <p data-testid="placeholder-settings-description" className="text-sm text-text-400 mt-1">
+          <p data-testid="placeholder-settings-description" className="text-sm text-zinc-350 mt-1">
             {props.description}
           </p>
         )}

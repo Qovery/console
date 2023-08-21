@@ -80,7 +80,7 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                 />
               )}
             />
-            <p className="text-xs text-text-400 ml-4">
+            <p className="text-xs text-zinc-350 ml-4">
               Cluster cannot be changed. Clone the environment to deploy the same applications on another cluster.
             </p>
           </BlockContent>

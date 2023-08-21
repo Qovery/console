@@ -55,10 +55,10 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                   data-testid="form-row"
                 >
                   <div className="flex flex-col	">
-                    <p data-testid="form-row-target" className="text-xs text-text-400 mb-1">
+                    <p data-testid="form-row-target" className="text-xs text-zinc-350 mb-1">
                       Target: <span className="text-text-600 font-medium">{currentRoute.target}</span>
                     </p>
-                    <p data-testid="form-row-destination" className="text-xs text-text-400">
+                    <p data-testid="form-row-destination" className="text-xs text-zinc-350">
                       Destination: <span className="text-text-600 font-medium">{currentRoute.destination}</span>
                     </p>
                   </div>

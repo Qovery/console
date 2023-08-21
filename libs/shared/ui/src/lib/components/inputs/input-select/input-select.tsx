@@ -165,8 +165,8 @@ export function InputSelect({
     return (
       <components.NoOptionsMessage {...props}>
         <div className="text-center px-3 py-6">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-          <p className="text-text-400 font-medium text-xs mt-1">No result for this search</p>
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+          <p className="text-zinc-350 font-medium text-xs mt-1">No result for this search</p>
         </div>{' '}
       </components.NoOptionsMessage>
     )

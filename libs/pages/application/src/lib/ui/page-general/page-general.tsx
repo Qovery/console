@@ -35,7 +35,7 @@ export function PageGeneral(props: PageGeneralProps) {
                       {application?.instances?.items?.length || '–'}/{application?.max_running_instances || '-'}
                     </span>
                   </Skeleton>
-                  <span className="flex text-xs text-text-400 font-medium">
+                  <span className="flex text-xs text-zinc-350 font-medium">
                     Running instances{' '}
                     <Tooltip side="right" content="Number of running instances">
                       <div className="flex items-center">
@@ -49,7 +49,7 @@ export function PageGeneral(props: PageGeneralProps) {
                 </div>
                 <div className="flex-1 p-5">
                   <div className="text-text-600 font-bold mb-1">{serviceStability}</div>
-                  <span className="flex text-xs text-text-400 font-medium">
+                  <span className="flex text-xs text-zinc-350 font-medium">
                     Service stability
                     <Tooltip
                       side="right"

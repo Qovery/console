@@ -18,7 +18,7 @@ export function AboutContentContainer(props: AboutContentContainerProps) {
         <p className="text-text-500 mb-2">
           Latest deployed tag: {application.tag} {application.source?.image?.tag}
         </p>
-        <p className="text-text-400 text-sm">{timeAgo(new Date(application?.updated_at || ''))}</p>
+        <p className="text-zinc-350 text-sm">{timeAgo(new Date(application?.updated_at || ''))}</p>
       </div>
     </div>
   )

@@ -18,7 +18,7 @@ export function ValueModal(props: ValueModalProps) {
         className="mb-1"
         rightElement={<CopyToClipboard className="text-text-600 text-sm" content={props.token} />}
       />
-      <p className="ml-4 text-xs text-text-400">
+      <p className="ml-4 text-xs text-zinc-350">
         <strong className="text-text-500">Please keep this key safe</strong>, you will not be able to retrieve it
         after...
       </p>

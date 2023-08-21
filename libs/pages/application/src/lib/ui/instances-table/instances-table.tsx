@@ -9,7 +9,7 @@ export function InstancesTable(props: InstancesTableProps) {
   return (
     <table className="w-full border border-element-light-lighter-400">
       <thead>
-        <tr className="text-xs text-text-400 font-medium">
+        <tr className="text-xs text-zinc-350 font-medium">
           <td className="border border-element-light-lighter-400 px-6 py-4 text-text-600">Instance name</td>
           <td className="border border-element-light-lighter-400 px-6 py-4 text-text-600">RAM usage</td>
           <td className="border border-element-light-lighter-400 px-6 py-4 text-text-600">vCPU</td>

@@ -58,7 +58,7 @@ export function StepSummary(props: StepSummaryProps) {
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">General information</div>
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 Name: <strong className="font-medium">{props.generalData.name}</strong>
               </li>
@@ -92,7 +92,7 @@ export function StepSummary(props: StepSummaryProps) {
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               {props.generalData.mode !== DatabaseModeEnum.MANAGED ? (
                 <>
                   <li>

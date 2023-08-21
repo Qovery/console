@@ -43,7 +43,7 @@ export function StepSummary(props: StepSummaryProps) {
 
             <div className="text-text-600 text-ssm mb-2 font-medium">General</div>
 
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 <span className="font-medium">Name:</span> {props.generalData.name}
               </li>
@@ -55,7 +55,7 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
 
             {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
-              <ul className="text-text-400 text-sm list-none">
+              <ul className="text-zinc-350 text-sm list-none">
                 <li>
                   <span className="font-medium">Repository:</span> {props.generalData.repository}
                 </li>
@@ -73,7 +73,7 @@ export function StepSummary(props: StepSummaryProps) {
               </ul>
             )}
             {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
-              <ul className="text-text-400 text-sm list-none">
+              <ul className="text-zinc-350 text-sm list-none">
                 <li>
                   <span className="font-medium">Registry:</span> {props.selectedRegistryName}
                 </li>
@@ -110,7 +110,7 @@ export function StepSummary(props: StepSummaryProps) {
               <>
                 {props.configureData.on_start?.enabled && (
                   <>
-                    <ul className="text-text-400 text-sm list-none">
+                    <ul className="text-zinc-350 text-sm list-none">
                       <li>
                         <div className="font-medium text-ssm text-text-600">
                           <span className="mr-2 inline-block">Events</span>Environment Start
@@ -130,7 +130,7 @@ export function StepSummary(props: StepSummaryProps) {
                 )}
                 {props.configureData.on_stop?.enabled && (
                   <>
-                    <ul className="text-text-400 text-sm list-none">
+                    <ul className="text-zinc-350 text-sm list-none">
                       <li>
                         <div className="font-medium text-ssm text-text-600">
                           <span className="mr-2 inline-block">Events</span>Environment Stop
@@ -150,7 +150,7 @@ export function StepSummary(props: StepSummaryProps) {
                 )}
                 {props.configureData.on_delete?.enabled && (
                   <>
-                    <ul className="text-text-400 text-sm list-none">
+                    <ul className="text-zinc-350 text-sm list-none">
                       <li>
                         <div className="font-medium text-ssm text-text-600">
                           <span className="mr-2 inline-block">Events</span>Environment Delete
@@ -173,7 +173,7 @@ export function StepSummary(props: StepSummaryProps) {
 
             {props.jobType === ServiceTypeEnum.CRON_JOB && (
               <>
-                <ul className="text-text-400 text-sm list-none">
+                <ul className="text-zinc-350 text-sm list-none">
                   <li>
                     <span className="font-medium">Scheduled at:</span> {props.configureData.schedule}
                   </li>
@@ -194,7 +194,7 @@ export function StepSummary(props: StepSummaryProps) {
 
             <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
 
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 <span className="font-medium">Max restarts:</span> {props.configureData.nb_restarts}
               </li>
@@ -221,7 +221,7 @@ export function StepSummary(props: StepSummaryProps) {
             <div className="text-sm text-text-600 font-bold mb-5">Resources</div>
 
             <div className="text-text-600 text-ssm mb-2 font-medium">Parameters</div>
-            <ul className="text-text-400 text-sm list-none">
+            <ul className="text-zinc-350 text-sm list-none">
               <li>
                 <span className="font-medium">CPU:</span> {props.resourcesData['cpu']}
               </li>
@@ -250,7 +250,7 @@ export function StepSummary(props: StepSummaryProps) {
                 ? `(${props.variableData.variables.length})`
                 : ''}
             </div>
-            <ul className="text-text-400 text-sm">
+            <ul className="text-zinc-350 text-sm">
               {props.variableData.variables && props.variableData.variables.length > 0 ? (
                 props.variableData.variables?.map((variable, index) => (
                   <li key={index}>

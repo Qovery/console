@@ -150,7 +150,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                 <p
                   data-testid="error-layout-line"
                   onClick={() => scrollToError()}
-                  className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-zinc-100 hover:text-text-300 cursor-pointer mr-5"
+                  className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-zinc-100 hover:text-zinc-300 cursor-pointer mr-5"
                 >
                   <Icon name="icon-solid-circle-exclamation" className="text-red-500 mr-3" />
                   An error occured line {errors[errors.length - 1]?.index}
@@ -158,7 +158,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                 </p>
               )}
               {setEnabledNginx && (
-                <div key={serviceId} className="flex items-center shrink-0 text-text-300 text-xs font-medium">
+                <div key={serviceId} className="flex items-center shrink-0 text-zinc-300 text-xs font-medium">
                   <InputCheckbox
                     dataTestId="checkbox-debug"
                     name="checkbox-debug"

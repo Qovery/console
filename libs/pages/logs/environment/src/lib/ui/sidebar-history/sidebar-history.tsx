@@ -22,7 +22,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
           itemContentCustom: (
             <div
               className={`flex justify-between w-full py-2 text-xs ${
-                item.id === versionId || (!versionId && index === 0) ? 'text-brand-400' : 'text-text-300'
+                item.id === versionId || (!versionId && index === 0) ? 'text-brand-400' : 'text-zinc-300'
               }`}
             >
               <div className="flex">

@@ -43,7 +43,7 @@ export function StageOrderModal(props: StageOrderModalProps) {
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="p-6">
         <h2 className="h4 text-text-600 max-w-sm truncate mb-1">Edit execution order</h2>
-        <p className="mb-6 text-text-400 text-sm">You can drag and drop stages to modify their order.</p>
+        <p className="mb-6 text-zinc-350 text-sm">You can drag and drop stages to modify their order.</p>
         <ScrollShadowWrapper className="max-h-[500px]">
           <Droppable droppableId="0">
             {(provided) => (

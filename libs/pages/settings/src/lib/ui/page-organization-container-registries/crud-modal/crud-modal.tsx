@@ -95,7 +95,7 @@ export function CrudModal(props: CrudModalProps) {
               portal
             />
             {watch('kind') === ContainerRegistryKindEnum.DOCKER_HUB && (
-              <p className="text-xs text-text-400 my-1">
+              <p className="text-xs text-zinc-350 my-1">
                 We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
                 <Link
                   className="font-medium text-sky-500 block ml-1"

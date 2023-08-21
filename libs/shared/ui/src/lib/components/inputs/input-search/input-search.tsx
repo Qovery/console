@@ -46,13 +46,13 @@ export function InputSearch(props: InputSearchProps) {
       <div className={`relative w-full ${className}`}>
         <Icon
           name="icon-solid-magnifying-glass"
-          className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-text-400 leading-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 block text-xs text-zinc-350 leading-none"
         />
         <input
           data-testid="input-search"
           ref={ref}
           autoFocus={autofocus}
-          className={`w-full rounded border border-element-light-lighter-500 dark:border-element-light-lighter-800 bg-element-light-lighter-300 dark:bg-element-light-darker-500 text-text-600 dark:text-text-400 placeholder:text-text-400 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
+          className={`w-full rounded border border-element-light-lighter-500 dark:border-element-light-lighter-800 bg-element-light-lighter-300 dark:bg-element-light-darker-500 text-text-600 dark:text-zinc-350 placeholder:text-zinc-350 pl-8 pr-6 leading-none focus:outline-none focus:border-brand-400 focus:transition-[border-color] ${customSize}`}
           type="text"
           placeholder={placeholder}
           disabled={false}
@@ -61,7 +61,7 @@ export function InputSearch(props: InputSearchProps) {
         />
         {toggleDelete && (
           <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={deleteValue}>
-            <Icon className="text-text-400 text-sm" name={IconAwesomeEnum.CIRCLE_XMARK} />
+            <Icon className="text-zinc-350 text-sm" name={IconAwesomeEnum.CIRCLE_XMARK} />
           </button>
         )}
       </div>
@@ -71,8 +71,8 @@ export function InputSearch(props: InputSearchProps) {
             emptyContent
           ) : (
             <div className="text-center px-3 py-6">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-              <p className="text-text-400 font-medium text-xs mt-1">No result for this search</p>
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+              <p className="text-zinc-350 font-medium text-xs mt-1">No result for this search</p>
             </div>
           )}
         </div>

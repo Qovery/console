@@ -41,7 +41,7 @@ export function ModalCrud(props: ModalCrudProps) {
   return (
     <div className="p-6">
       <h2 className={`h4 text-text-600 max-w-sm truncate ${description ? 'mb-1' : 'mb-6'}`}>{title}</h2>
-      {description && <p className="mb-6 text-text-400 text-sm">{description}</p>}
+      {description && <p className="mb-6 text-zinc-350 text-sm">{description}</p>}
       {forService && (
         <div className={`text-text-500 text-sm mb-6 flex justify-between items-center -mt-2`}>
           <p>

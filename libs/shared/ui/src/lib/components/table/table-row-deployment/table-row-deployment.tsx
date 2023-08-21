@@ -112,7 +112,7 @@ export function TableRowDeployment({
             <StatusChip status={data?.status} />
           </Skeleton>
           <Skeleton show={isLoading} width={80} height={20}>
-            <p className="text-xs text-text-400 font-medium">
+            <p className="text-xs text-zinc-350 font-medium">
               {upperCaseFirstLetter(data?.status?.replace('_', ' ').toLowerCase())}
             </p>
           </Skeleton>
@@ -140,8 +140,8 @@ export function TableRowDeployment({
         <div className="flex justify-start items-center px-1 gap-2">
           <Skeleton show={isLoading} width={80} height={20}>
             <>
-              <p className="flex items-center leading-7 text-text-400 text-sm">
-                <span className="text-xs text-text-300 mx-3 font-medium">
+              <p className="flex items-center leading-7 text-zinc-350 text-sm">
+                <span className="text-xs text-zinc-300 mx-3 font-medium">
                   {timeAgo(data?.updated_at ? new Date(data?.updated_at) : new Date(data?.created_at || ''))} ago
                 </span>
               </p>
@@ -170,7 +170,7 @@ export function TableRowDeployment({
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as ContainerApplicationEntity).image_name && (
-              <Tag className="truncate border border-element-light-lighter-500 text-text-400 font-medium h-7">
+              <Tag className="truncate border border-element-light-lighter-500 text-zinc-350 font-medium h-7">
                 <span className="block truncate">
                   <Tooltip
                     side="left"

@@ -81,8 +81,8 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
             </div>
           ) : (
             <div data-testid="placeholder-credit-card" className="text-center px-3 py-6">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-              <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-credit-card">
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+              <p className="text-zinc-350 font-medium text-xs mt-1" data-testid="empty-credit-card">
                 No credit cards found. <br /> Please add one.
               </p>
             </div>

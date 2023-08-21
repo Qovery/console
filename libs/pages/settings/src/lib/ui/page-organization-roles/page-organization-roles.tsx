@@ -87,7 +87,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         <h2 className="flex text-xs text-text-600 font-medium">
                           {isDefaultRole(role.name) ? upperCaseFirstLetter(role.name) : role.name}
                         </h2>
-                        <p className="text-xs text-text-400 mt-1">
+                        <p className="text-xs text-zinc-350 mt-1">
                           {isDefaultRole(role.name) ? 'Basic Role' : 'Custom Role'}
                         </p>
                       </div>
@@ -99,7 +99,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
                           onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`)}
-                          className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                          className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
                           iconClassName="!text-xs"
                         />
                         <ButtonIcon
@@ -107,7 +107,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
                           onClick={() => onDeleteRole(role)}
-                          className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                          className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
                         />
                       </div>
@@ -117,7 +117,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           icon={IconAwesomeEnum.BOOK}
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
-                          className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                          className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
                           link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
                           external

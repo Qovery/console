@@ -77,17 +77,17 @@ export function CardCluster(props: CardClusterProps) {
           </Tag>
         )}
         <TagClusterType
-          className="text-text-400 border-element-light-lighter-500 mr-2"
+          className="text-zinc-350 border-element-light-lighter-500 mr-2"
           cloudProvider={cluster?.cloud_provider}
           kubernetes={cluster?.kubernetes}
         />
-        <Tag dataTestId="tag-region" className="text-text-400 border border-element-light-lighter-500 truncate mr-2">
+        <Tag dataTestId="tag-region" className="text-zinc-350 border border-element-light-lighter-500 truncate mr-2">
           {cluster.region}
         </Tag>
-        <Tag dataTestId="tag-version" className="text-text-400 border border-element-light-lighter-500 truncate mr-2">
+        <Tag dataTestId="tag-version" className="text-zinc-350 border border-element-light-lighter-500 truncate mr-2">
           {cluster.version}
         </Tag>
-        <Tag dataTestId="tag-instance" className="text-text-400 border border-element-light-lighter-500 truncate">
+        <Tag dataTestId="tag-instance" className="text-zinc-350 border border-element-light-lighter-500 truncate">
           {cluster.instance_type?.replace('_', '.').toLowerCase()}
         </Tag>
       </div>

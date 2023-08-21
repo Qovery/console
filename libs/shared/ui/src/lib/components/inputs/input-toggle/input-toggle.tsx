@@ -83,7 +83,7 @@ export function InputToggle(props: InputToggleProps) {
         className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''}`}
       >
         {title && <p className="text-text-600 text-ssm font-medium">{title}</p>}
-        {description && <div className="text-xs text-text-400">{description}</div>}
+        {description && <div className="text-xs text-zinc-350">{description}</div>}
       </div>
     </div>
   )

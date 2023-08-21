@@ -194,7 +194,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => props.deleteKey(key)}
-                    className="text-text-400 hover:text-text-500 !w-8 !h-8"
+                    className="text-zinc-350 hover:text-text-500 !w-8 !h-8"
                     iconClassName="!text-xs"
                   />
                 </div>

@@ -131,7 +131,7 @@ export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRule
                     )}
                   />
 
-                  <p className="text-xs text-text-400">
+                  <p className="text-xs text-zinc-350">
                     Use wildcards to specify just part of the name of the target environment (ex: [PR] Dev-*).
                   </p>
                 </BlockContent>

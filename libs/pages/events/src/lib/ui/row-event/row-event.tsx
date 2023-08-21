@@ -61,7 +61,7 @@ export function RowEvent(props: RowEventProps) {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
     const customLink = (url: string, content = target_name) => (
-      <Link className="truncate cursor-pointer hover:text-text-400 transition" to={url}>
+      <Link className="truncate cursor-pointer hover:text-zinc-350 transition" to={url}>
         {content}
       </Link>
     )

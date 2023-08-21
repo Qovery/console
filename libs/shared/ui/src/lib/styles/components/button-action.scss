@@ -73,7 +73,7 @@
 }
 
 .btn-icon-action__element {
-  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-element-light-lighter-100 border-r border-r-element-light-lighter-500 last:border-r-0 h-full min-w-[28px] text-2xs text-text-400 transition ease-in-out duration-150;
+  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-element-light-lighter-100 border-r border-r-element-light-lighter-500 last:border-r-0 h-full min-w-[28px] text-2xs text-zinc-350 transition ease-in-out duration-150;
 
   &.is-active,
   &:hover {

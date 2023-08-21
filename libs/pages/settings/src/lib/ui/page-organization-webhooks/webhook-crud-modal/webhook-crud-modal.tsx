@@ -146,7 +146,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
               />
             )}
           />
-          <p className="text-text-400 text-xs ml-4 mt-0.5">List all the events you want to be notified about.</p>
+          <p className="text-zinc-350 text-xs ml-4 mt-0.5">List all the events you want to be notified about.</p>
         </div>
       </div>
 
@@ -164,7 +164,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
             />
           )}
         />
-        <p className="text-text-400 text-xs ml-4 mt-0.5">
+        <p className="text-zinc-350 text-xs ml-4 mt-0.5">
           Webhook will be triggered only for projects whose names match or, if you're using a wildcard, start with one
           of the values from your list.
           <br />
@@ -205,7 +205,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
             />
           )}
         />
-        <p className="text-text-400 text-xs ml-4 mt-0.5">
+        <p className="text-zinc-350 text-xs ml-4 mt-0.5">
           Webhook will be triggered only for events happening on the environment with the selected environment type.
         </p>
       </div>

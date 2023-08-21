@@ -118,7 +118,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           <div className="flex justify-end justify-items-center px-3">
             <Skeleton show={isLoading} width={200} height={16}>
               <div className="flex items-center">
-                <p className="flex items-center leading-7 text-text-400 text-sm">
+                <p className="flex items-center leading-7 text-zinc-350 text-sm">
                   <Tooltip
                     content={
                       variable.updated_at
@@ -126,7 +126,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                         : dateYearMonthDayHourMinuteSecond(new Date(variable.created_at))
                     }
                   >
-                    <span className="text-xs text-text-300 mx-3 font-medium">
+                    <span className="text-xs text-zinc-300 mx-3 font-medium">
                       {timeAgo(variable.updated_at ? new Date(variable.updated_at) : new Date(variable.created_at))} ago
                     </span>
                   </Tooltip>

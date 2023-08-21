@@ -63,7 +63,7 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
               {feature.cost_per_month !== 0 ? `$${feature.cost_per_month}/month billed by ${cloudProvider}` : 'Free'}
             </span>
           </h4>
-          <p className="text-xs text-text-400 max-w-lg">{feature.description}</p>
+          <p className="text-xs text-zinc-350 max-w-lg">{feature.description}</p>
           {typeof feature.value === 'string' && (
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (

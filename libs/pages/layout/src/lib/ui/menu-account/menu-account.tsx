@@ -28,7 +28,7 @@ export function MenuAccount(props: MenuAccountProps) {
         {organization.logo_url ? (
           <img className="p-1" src={organization.logo_url} alt="Organization logo" />
         ) : (
-          <span className="w-full h-full font-medium text-xs text-text-400 bg-element-light-lighter-400 flex items-center justify-center uppercase rounded">
+          <span className="w-full h-full font-medium text-xs text-zinc-350 bg-element-light-lighter-400 flex items-center justify-center uppercase rounded">
             {organization.name.charAt(0)}
           </span>
         )}
@@ -70,7 +70,7 @@ export function MenuAccount(props: MenuAccountProps) {
                   <p className="text-text-700 dark:text-zinc-100 text-sm font-medium">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <span className="text-text-400 text-xs">{user.email}</span>
+                  <span className="text-zinc-350 text-xs">{user.email}</span>
                 </div>
               </div>
             </div>

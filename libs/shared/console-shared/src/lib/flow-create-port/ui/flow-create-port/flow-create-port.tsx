@@ -90,7 +90,7 @@ export function FlowCreatePort({
                         Application Port:{' '}
                         {(customPort as PortData).application_port || (customPort as ServicePort).internal_port}
                       </span>
-                      <p className="flex gap-3 text-text-400 mt-1">
+                      <p className="flex gap-3 text-zinc-350 mt-1">
                         <span>
                           Public:{' '}
                           {(customPort as PortData).is_public || (customPort as ServicePort).publicly_accessible

@@ -36,7 +36,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
 
         <div className="flex w-full gap-2 mb-3">
           <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
-            <div className="text-text-400 text-xs mb-1 font-medium">Current plan</div>
+            <div className="text-zinc-350 text-xs mb-1 font-medium">Current plan</div>
             <div className="text-text-600 font-bold text-sm mb-1">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
                 <div className="h-5">
@@ -51,7 +51,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             />
           </div>
           <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
-            <div className="text-text-400 text-xs mb-1 font-medium">Current monthly bill</div>
+            <div className="text-zinc-350 text-xs mb-1 font-medium">Current monthly bill</div>
             <div className="mb-2">
               <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
                 <div className="h-5">
@@ -61,12 +61,12 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                       props.organization?.currentCost?.value?.cost?.currency_code || 'USD'
                     )}
                   </strong>{' '}
-                  <span className="text-text-400 text-xs">/ m</span>
+                  <span className="text-zinc-350 text-xs">/ m</span>
                 </div>
               </Skeleton>
             </div>
             {props.organization?.currentCost?.value?.plan !== PlanEnum.FREE && (
-              <p className="text-text-400 text-xs font-medium">
+              <p className="text-zinc-350 text-xs font-medium">
                 Next invoice{' '}
                 <strong className="text-text-600">
                   {props.organization?.currentCost?.value?.paid_usage?.renewal_at &&
@@ -78,7 +78,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
 
           {props.organization?.currentCost?.value && props.organization.currentCost.value.plan !== PlanEnum.FREE && (
             <div className="flex-1  h-[114px]  border  p-5 border-element-light-lighter-400 rounded">
-              <div className="text-text-400 text-xs mb-3 font-medium">Payment method</div>
+              <div className="text-zinc-350 text-xs mb-3 font-medium">Payment method</div>
               <div className="mb-2">
                 <Skeleton height={20} width={100} show={props.creditCardLoading}>
                   <div className="flex gap-3">
@@ -104,18 +104,18 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
 
         <div className="flex w-full border gap-2 mb-8 border-element-light-lighter-400 rounded">
           <div className="flex-1 p-5 h-[114px]">
-            <div className="text-text-400 text-xs mb-1 font-medium">Seats</div>
+            <div className="text-zinc-350 text-xs mb-1 font-medium">Seats</div>
             <div className="text-text-600 font-bold text-sm mb-1">N/A</div>
           </div>
           <div className="flex-1 p-5 h-[114px]">
-            <div className="text-text-400 text-xs mb-1 font-medium">Cluster</div>
+            <div className="text-zinc-350 text-xs mb-1 font-medium">Cluster</div>
             <div className="mb-1">
               <Skeleton height={20} width={100} show={!props.numberOfClusters === undefined}>
                 <div className="h-5">
                   {props.numberOfClusters !== undefined && props.numberOfClusters > 0 ? (
                     <>
                       <strong className="text-text-600 font-bold text-sm">{props.numberOfRunningClusters}</strong>{' '}
-                      <span className="text-text-400 text-xs">/ {props.numberOfClusters}</span>
+                      <span className="text-zinc-350 text-xs">/ {props.numberOfClusters}</span>
                     </>
                   ) : (
                     <strong className="text-text-600 font-medium text-sm">No cluster found</strong>
@@ -130,13 +130,13 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             />
           </div>
           <div className="flex-1 p-5  h-[114px]">
-            <div className="text-text-400 text-xs mb-1 font-medium">Deployments</div>
+            <div className="text-zinc-350 text-xs mb-1 font-medium">Deployments</div>
             <Skeleton height={20} width={100} show={!props.organization?.currentCost?.value?.plan}>
               <div className="h-5">
                 <strong className="text-text-600 font-bold text-sm">
                   {props.organization?.currentCost?.value?.paid_usage?.consumed_deployments}
                 </strong>{' '}
-                <span className="text-text-400 text-xs">
+                <span className="text-zinc-350 text-xs">
                   / {props.organization?.currentCost?.value?.paid_usage?.max_deployments_per_month}
                 </span>
               </div>

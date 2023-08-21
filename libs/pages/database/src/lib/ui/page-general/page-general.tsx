@@ -65,13 +65,13 @@ export function PageGeneral(props: PageGeneralProps) {
                     : `${database?.status?.state === StateEnum.DEPLOYED ? 1 : 0} / 1`}
                 </div>
               </Skeleton>
-              <span className="text-xs text-text-400 font-medium">Running instances</span>
+              <span className="text-xs text-zinc-350 font-medium">Running instances</span>
             </div>
             <div className="flex-1 p-5">
               <div className="text-text-600 font-bold">
                 {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '-' /** TODO: implem real metrics **/}
               </div>
-              <span className="text-xs text-text-400 font-medium">Service restart</span>
+              <span className="text-xs text-zinc-350 font-medium">Service restart</span>
             </div>
           </div>
 

@@ -109,7 +109,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 error={error?.message}
                 options={props.instanceTypeOptions || []}
               />
-              <p className="text-text-400 text-xs my-3">Instance type to be used to run your Kubernetes nodes.</p>
+              <p className="text-zinc-350 text-xs my-3">Instance type to be used to run your Kubernetes nodes.</p>
               {warningInstance && (
                 <BannerBox
                   dataTestId="warning-instance"
@@ -139,7 +139,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
           )}
         />
-        <p className="text-text-400 text-xs my-3">
+        <p className="text-zinc-350 text-xs my-3">
           Storage allocated to your Kubernetes nodes to store files, application images etc..
         </p>
       </BlockContent>
@@ -158,7 +158,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   <p className="text-text-500 mb-3 font-medium">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
                 )}
                 <Slider onChange={field.onChange} value={field.value} max={200} min={1} step={1} />
-                <p className="text-text-400 text-xs mt-3">Cluster can scale up to “max” nodes depending on its usage</p>
+                <p className="text-zinc-350 text-xs mt-3">Cluster can scale up to “max” nodes depending on its usage</p>
               </div>
             )}
           />

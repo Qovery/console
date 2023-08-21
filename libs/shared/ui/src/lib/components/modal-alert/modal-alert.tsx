@@ -20,7 +20,7 @@ export function ModalAlert(props: ModalAlertProps) {
         >
           <div className="max-h-[80vh] overflow-auto p-6">
             <h2 className="h4 text-text-600 mb-2">Discard changes?</h2>
-            <p className="mb-6 text-text-400 text-sm">Are you sure you want to discard your changes?</p>
+            <p className="mb-6 text-zinc-350 text-sm">Are you sure you want to discard your changes?</p>
 
             <div className="flex gap-4 justify-end">
               <Button

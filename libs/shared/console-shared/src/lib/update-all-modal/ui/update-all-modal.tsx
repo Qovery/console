@@ -37,7 +37,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
   return (
     <div className="p-6">
       <h2 className={`h4 text-text-600 max-w-sm truncate mb-1`}>Deploy latest version for..</h2>
-      <p className="mb-4 text-text-400 text-sm">Select the services you want to update to the latest version</p>
+      <p className="mb-4 text-zinc-350 text-sm">Select the services you want to update to the latest version</p>
 
       <div className="text-text-500 text-sm mb-4 flex justify-between items-center">
         <p>
@@ -136,8 +136,8 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
         </ScrollShadowWrapper>
       ) : (
         <div className="text-center px-3 py-6" data-testid="empty-state">
-          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-          <p className="text-text-400 font-medium text-xs mt-1">No outdated services found</p>
+          <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+          <p className="text-zinc-350 font-medium text-xs mt-1">No outdated services found</p>
         </div>
       )}
 

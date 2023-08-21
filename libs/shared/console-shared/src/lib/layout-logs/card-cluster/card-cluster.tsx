@@ -15,7 +15,7 @@ export function CardCluster(props: CardClusterProps) {
 
   return (
     <div className="bg-element-light-darker-300 p-4 rounded">
-      <div data-testid="status" className="flex items-center text-text-300 font-bold text-xs">
+      <div data-testid="status" className="flex items-center text-zinc-300 font-bold text-xs">
         <StatusChip status={cluster.extendedStatus?.status?.status} className="mr-4" /> Cluster infra logs
       </div>
       <div className="mt-4">
@@ -27,33 +27,33 @@ export function CardCluster(props: CardClusterProps) {
             </p>
             <ul className="text-xs mt-5">
               <li className="flex mb-2">
-                <span className="text-text-300 w-16 mr-3">Cluster ID</span>
+                <span className="text-zinc-300 w-16 mr-3">Cluster ID</span>
                 <div className="flex">
                   <span className="text-sky-400">{splitId(cluster.id)}</span>
-                  <CopyToClipboard content={cluster.id} className="text-text-300 ml-1" />
+                  <CopyToClipboard content={cluster.id} className="text-zinc-300 ml-1" />
                 </div>
               </li>
               {cluster.extendedStatus?.status?.last_execution_id && (
                 <li className="flex mb-2">
-                  <span className="text-text-300 w-16 mr-3">Exec. ID</span>
+                  <span className="text-zinc-300 w-16 mr-3">Exec. ID</span>
                   <div className="flex">
                     <span className="text-sky-400">{splitId(cluster.extendedStatus?.status?.last_execution_id)}</span>
                     <CopyToClipboard
                       content={cluster.extendedStatus?.status?.last_execution_id}
-                      className="text-text-300 ml-1"
+                      className="text-zinc-300 ml-1"
                     />
                   </div>
                 </li>
               )}
               <li className="flex mb-2">
-                <span className="text-text-300 w-16 mr-3">Version</span>
-                <span className="text-text-300">{cluster.version}</span>
+                <span className="text-zinc-300 w-16 mr-3">Version</span>
+                <span className="text-zinc-300">{cluster.version}</span>
               </li>
               <li className="flex">
-                <span className="text-text-300 w-16 mr-3">Org. ID</span>
+                <span className="text-zinc-300 w-16 mr-3">Org. ID</span>
                 <div className="flex">
                   <span className="text-sky-400">{splitId(organizationId)}</span>
-                  <CopyToClipboard content={organizationId} className="text-text-300 ml-1" />
+                  <CopyToClipboard content={organizationId} className="text-zinc-300 ml-1" />
                 </div>
               </li>
             </ul>

@@ -65,12 +65,12 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       {webhook.description && (
                         <Tooltip content={webhook.description}>
                           <div className="ml-1 cursor-pointer">
-                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350" />
                           </div>
                         </Tooltip>
                       )}
                     </p>
-                    <div className="text-xs text-text-400 flex gap-3">
+                    <div className="text-xs text-zinc-350 flex gap-3">
                       <span className="flex gap-2">
                         <Icon
                           name={
@@ -97,7 +97,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       style={ButtonIconStyle.STROKED}
                       size={ButtonSize.TINY}
                       onClick={() => props.openEdit(webhook)}
-                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                      className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
                       iconClassName="!text-xs"
                       dataTestId="edit-webhook"
                     />
@@ -107,7 +107,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       size={ButtonSize.TINY}
                       onClick={() => props.onDelete(webhook)}
                       dataTestId="delete-webhook"
-                      className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                      className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
                       iconClassName="!text-xs"
                     />
                   </div>
@@ -116,8 +116,8 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
             </ul>
           ) : (
             <div className="text-center py-4 px-5">
-              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-              <p className="text-text-400 font-medium text-xs mt-1" data-testid="empty-webhook">
+              <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+              <p className="text-zinc-350 font-medium text-xs mt-1" data-testid="empty-webhook">
                 No webhook found. <br /> Please add one.
               </p>
             </div>

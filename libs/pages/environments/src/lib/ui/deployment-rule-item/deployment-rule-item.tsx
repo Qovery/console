@@ -83,7 +83,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       </div>
       <Skeleton show={isLoading} width={58} height={30}>
         <div className="flex border border-element-light-lighter-500 rounded h-[34px] overflow-hidden">
-          <span className="w-8 h-8 flex items-center bg-white justify-center border-r border-element-light-lighter-500 text-text-400 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition">
+          <span className="w-8 h-8 flex items-center bg-white justify-center border-r border-element-light-lighter-500 text-zinc-350 text-xs cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition">
             <Icon name="icon-solid-grip-lines" />
           </span>
           <Menu
@@ -93,7 +93,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
             trigger={
               <span
                 className={`w-8 h-8 flex items-center justify-center text-xs bg-white cursor-pointer hover:bg-brand-50 hover:text-brand-500 transition ${
-                  menuOpen ? 'bg-element-light-lighter-300 text-brand-500' : 'text-text-400'
+                  menuOpen ? 'bg-element-light-lighter-300 text-brand-500' : 'text-zinc-350'
                 }`}
               >
                 <Icon name="icon-solid-ellipsis-v" />

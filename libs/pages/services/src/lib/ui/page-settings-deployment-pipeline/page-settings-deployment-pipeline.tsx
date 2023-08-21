@@ -133,7 +133,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               <div>
                                 <Icon
                                   name={IconAwesomeEnum.CIRCLE_INFO}
-                                  className="text-text-400 text-xs ml-1 relative -top-[2px]"
+                                  className="text-zinc-350 text-xs ml-1 relative -top-[2px]"
                                 />
                               </div>
                             </Tooltip>
@@ -181,8 +181,8 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                             {provided.placeholder}
                             {stage.services?.length === 0 && !snapshot.isDraggingOver && (
                               <div data-testid="placeholder-stage" className="text-center px-3 py-6">
-                                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-text-400" />
-                                <p className="text-text-400 font-medium text-xs mt-1">
+                                <Icon name={IconAwesomeEnum.WAVE_PULSE} className="text-zinc-350" />
+                                <p className="text-zinc-350 font-medium text-xs mt-1">
                                   No service for this stage. <br /> Please drag and drop a service.
                                 </p>
                               </div>

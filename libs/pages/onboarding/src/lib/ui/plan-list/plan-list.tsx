@@ -23,7 +23,7 @@ export function PlanList(props: PlanListProps) {
           </li>
         ))}
       </ul>
-      <p className="text-sm text-text-400">{infos}</p>
+      <p className="text-sm text-zinc-350">{infos}</p>
     </div>
   )
 }

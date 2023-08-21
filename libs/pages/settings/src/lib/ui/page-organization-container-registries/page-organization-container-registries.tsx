@@ -75,12 +75,12 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       {registry.description && (
                         <Tooltip content={registry.description}>
                           <div className="ml-1 cursor-pointer">
-                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-text-400" />
+                            <Icon name={IconAwesomeEnum.CIRCLE_INFO} className="text-zinc-350" />
                           </div>
                         </Tooltip>
                       )}
                     </h2>
-                    <p className="text-xs text-text-400">
+                    <p className="text-xs text-zinc-350">
                       {registry.kind}{' '}
                       <span className="inline-block ml-3">
                         Last updated {timeAgo(new Date(registry.updated_at || ''))}
@@ -97,7 +97,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => onEdit(registry)}
-                    className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                    className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
                     iconClassName="!text-xs"
                   />
                   <ButtonIcon
@@ -105,7 +105,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => onDelete(registry)}
-                    className="text-text-400 hover:text-text-500 bg-transparent !w-9 !h-8"
+                    className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"
                   />
                 </div>

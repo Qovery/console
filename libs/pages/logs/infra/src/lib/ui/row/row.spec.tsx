@@ -25,7 +25,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
+    expect(index).toHaveClass('bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200')
   })
 
   it('should have error index color', () => {
@@ -37,7 +37,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-element-light-darker-300 text-text-400 group-hover:bg-element-light-darker-200')
+    expect(index).toHaveClass('bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200')
   })
 
   it('should have real error index color', () => {

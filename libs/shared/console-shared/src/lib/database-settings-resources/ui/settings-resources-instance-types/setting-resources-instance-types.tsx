@@ -31,7 +31,7 @@ export function SettingsResourcesInstanceTypes({
               error={error?.message}
               options={databaseInstanceTypes}
             />
-            <p className="text-text-400 text-xs mt-3">
+            <p className="text-zinc-350 text-xs mt-3">
               The chosen instance type has a direct impact on your cloud provider cost.
             </p>
           </div>

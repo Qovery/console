@@ -71,7 +71,7 @@
   .input-select__placeholder {
     display: block !important;
     font-size: theme('fontSize.ssm') !important;
-    color: theme('colors.text.300') !important;
+    color: theme('colors.zinc.300') !important;
     font-weight: 400;
   }
 }
@@ -81,7 +81,7 @@
   box-shadow: none !important;
 
   label {
-    @apply text-text-400;
+    @apply text-zinc-350;
   }
 
   .input__button--focused {
