@@ -1,5 +1,5 @@
 import { DeploymentStageWithServicesStatuses, Environment, EnvironmentLogs, Status } from 'qovery-typescript-axios'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { memo, useCallback, useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import useWebSocket from 'react-use-websocket'
@@ -10,13 +10,15 @@ import { useAuth } from '@qovery/shared/auth'
 import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/utils'
 import { RootState } from '@qovery/state/store'
-import DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
+import _DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 
 export interface DeploymentLogsFeatureProps {
   environment: Environment
   statusStages?: DeploymentStageWithServicesStatuses[]
 }
+
+const DeploymentLogs = memo(_DeploymentLogs)
 
 export function getServiceStatuesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
   if (services) {
