@@ -21,9 +21,9 @@ export function Row(props: RowProps) {
 
   const indexClassName = `${
     type === LogsType.ERROR && realError
-      ? 'bg-red-500 text-text-800 group-hover:bg-red-600'
+      ? 'bg-red-500 text-zinc-800 group-hover:bg-red-600'
       : success
-      ? 'bg-green-500 text-text-800 group-hover:bg-green-600'
+      ? 'bg-green-500 text-zinc-800 group-hover:bg-green-600'
       : 'bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200'
   }`
 

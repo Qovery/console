@@ -50,7 +50,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-red-500 text-text-800 group-hover:bg-red-600')
+    expect(index).toHaveClass('bg-red-500 text-zinc-800 group-hover:bg-red-600')
   })
 
   it('should have success index color', () => {
@@ -62,7 +62,7 @@ describe('Row', () => {
 
     const index = screen.getByTestId('index')
 
-    expect(index).toHaveClass('bg-green-500 text-text-800 group-hover:bg-green-600')
+    expect(index).toHaveClass('bg-green-500 text-zinc-800 group-hover:bg-green-600')
   })
 
   it('should have warning cell date color', () => {

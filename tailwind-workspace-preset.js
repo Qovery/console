@@ -208,9 +208,6 @@ module.exports = {
           800: '#0B0E16',
           900: '#000000',
         },
-        text: {
-          800: '#151529',
-        },
         element: {
           light: {
             darker: {
