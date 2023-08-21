@@ -3,7 +3,7 @@
   transition: 120ms all $timing-cubic, 0 outline;
 
   label {
-    @apply absolute ease-in-out transition-label duration-[120ms] text-zinc-400 text-sm translate-y-2 select-none;
+    @apply absolute ease-in-out transition-label duration-[120ms] text-zinc-350 text-sm translate-y-2 select-none;
   }
 
   input:focus,
