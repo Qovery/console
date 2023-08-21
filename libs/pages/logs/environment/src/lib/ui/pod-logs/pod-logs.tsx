@@ -5,6 +5,12 @@ import { ApplicationEntity, DatabaseEntity, LoadingStatus } from '@qovery/shared
 import { Icon, IconAwesomeEnum, StatusChip, Table, TableFilterProps, TableHeadProps } from '@qovery/shared/ui'
 import RowPod from '../row-pod/row-pod'
 
+declare module 'csstype' {
+  interface Properties {
+    containIntrinsicHeight?: string
+  }
+}
+
 export interface PodLogsProps {
   loadingStatus: LoadingStatus
   logs: Log[]
@@ -94,9 +100,11 @@ export function PodLogs(props: PodLogsProps) {
 
   const memoRow = useMemo(
     () =>
-      logs?.map((log: Log, index: number) => {
-        return <RowPod key={log.id} index={index} data={log} filter={filter} />
-      }),
+      logs?.map((log: Log, index: number) => (
+        <div key={index} style={{ contentVisibility: 'auto', containIntrinsicHeight: 'auto 25px' }}>
+          <RowPod key={log.id} index={index} data={log} filter={filter} />
+        </div>
+      )),
     [logs, filter]
   )
 

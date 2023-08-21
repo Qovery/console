@@ -36,7 +36,12 @@ export function DeploymentLogs({
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
 
   const memoRow = useMemo(
-    () => logs?.map((log: EnvironmentLogs, index: number) => <RowDeployment key={index} index={index} data={log} />),
+    () =>
+      logs?.map((log: EnvironmentLogs, index: number) => (
+        <div key={index} style={{ contentVisibility: 'auto', containIntrinsicHeight: 'auto 25px' }}>
+          <RowDeployment index={index} data={log} />
+        </div>
+      )),
     [logs]
   )
 
