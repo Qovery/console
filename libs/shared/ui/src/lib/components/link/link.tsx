@@ -30,7 +30,7 @@ export function Link(props: LinkProps) {
     iconRightClassName = 'ml-0.5 text-xs leading-5 ',
   } = props
 
-  const currentClassName = `${className} ${size} text-accent2-500 inline-flex flex-center gap-1 hover:underline`
+  const currentClassName = `${className} ${size} text-sky-500 inline-flex flex-center gap-1 hover:underline`
 
   const content = () => (
     <>

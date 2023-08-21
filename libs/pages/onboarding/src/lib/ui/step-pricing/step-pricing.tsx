@@ -23,7 +23,7 @@ export function StepPricing(props: StepPricingProps) {
           href="https://qovery.com/pricing"
           target="_blank"
           rel="noreferrer"
-          className="link text-accent2-500 text-sm ml-1"
+          className="link text-sky-500 text-sm ml-1"
         >
           see details plan
           <Icon name="icon-solid-arrow-up-right-from-square" className="ml-1" />

@@ -72,10 +72,7 @@ export function CardCluster(props: CardClusterProps) {
           </Tag>
         )}
         {cluster.is_default && (
-          <Tag
-            dataTestId="tag-default"
-            className="text-accent2-500 border border-accent2-500 bg-accent2-50 truncate mr-2"
-          >
+          <Tag dataTestId="tag-default" className="text-sky-500 border border-sky-500 bg-sky-50 truncate mr-2">
             DEFAULT
           </Tag>
         )}

@@ -145,7 +145,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       )}
       {props.cloudProvider === CloudProviderEnum.AWS && (
         <Link
-          className="font-medium text-accent2-500 text-sm"
+          className="font-medium text-sky-500 text-sm"
           link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/amazon-web-services/"
           linkLabel="How to configure credentials"
           iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}
@@ -154,7 +154,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       )}
       {props.cloudProvider === CloudProviderEnum.SCW && (
         <Link
-          className="font-medium text-accent2-500 text-sm"
+          className="font-medium text-sky-500 text-sm"
           link="https://hub.qovery.com/docs/using-qovery/configuration/cloud-service-provider/scaleway/"
           linkLabel="How to configure credentials"
           iconRight={IconAwesomeEnum.ARROW_UP_RIGHT_FROM_SQUARE}

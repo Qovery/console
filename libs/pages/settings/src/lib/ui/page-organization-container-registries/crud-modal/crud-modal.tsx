@@ -98,7 +98,7 @@ export function CrudModal(props: CrudModalProps) {
               <p className="text-xs text-text-400 my-1">
                 We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
                 <Link
-                  className="font-medium text-accent2-500 block ml-1"
+                  className="font-medium text-sky-500 block ml-1"
                   size="text-xs"
                   link="https://www.docker.com/increase-rate-limits"
                   linkLabel="See here"

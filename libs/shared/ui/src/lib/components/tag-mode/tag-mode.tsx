@@ -25,7 +25,7 @@ export function TagMode(props: TagModeProps) {
         )
       case EnvironmentModeEnum.PREVIEW:
         return (
-          <Tag size={size} className="bg-accent1-50 text-accent1-500 border border-accent1-500">
+          <Tag size={size} className="bg-purple-50 text-purple-500 border border-purple-500">
             PREVIEW
           </Tag>
         )

@@ -79,7 +79,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                   (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-accent3-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
+                      <span className="bg-teal-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
                         ALIAS
                       </span>
                     </>
@@ -95,7 +95,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     ''
                   )}
                   {(variable as EnvironmentVariableEntity).mount_path ? (
-                    <span className="bg-accent1-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
+                    <span className="bg-purple-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
                       FILE
                     </span>
                   ) : (
@@ -152,7 +152,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                       // <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LOCK} />
                       <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
                     )}
-                    <span className="text-accent2-500 hover:underline cursor-pointer">
+                    <span className="text-sky-500 hover:underline cursor-pointer">
                       {getEnvironmentVariableFileMountPath(variable)}
                     </span>
                   </div>

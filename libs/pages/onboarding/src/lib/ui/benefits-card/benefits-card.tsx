@@ -30,7 +30,7 @@ export function BenefitsCard() {
           href="https://hub.qovery.com/docs/using-qovery/configuration/environment/"
           target="_blank"
           rel="noreferrer"
-          className="link text-accent2-500 text-sm block mb-3"
+          className="link text-sky-500 text-sm block mb-3"
         >
           How to configure an environment <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>
@@ -38,7 +38,7 @@ export function BenefitsCard() {
           href="https://hub.qovery.com/docs/using-qovery/configuration/environment/"
           target="_blank"
           rel="noreferrer"
-          className="link text-accent2-500 text-sm block"
+          className="link text-sky-500 text-sm block"
         >
           Set parameters on my environment <Icon name="icon-solid-arrow-up-right-from-square" />
         </a>
