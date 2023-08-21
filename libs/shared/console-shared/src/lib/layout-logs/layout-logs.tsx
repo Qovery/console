@@ -84,7 +84,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
     return (
       <Link
         data-testid="nav"
-        className={`flex items-center h-full px-6 text-sm font-medium text-text-100 transition-colors transition-timing duration-250 hover:bg-element-light-darker-500 rounded-t ${
+        className={`flex items-center h-full px-6 text-sm font-medium text-zinc-50 transition-colors transition-timing duration-250 hover:bg-element-light-darker-500 rounded-t ${
           isActive ? 'bg-element-light-darker-400' : ''
         }`}
         to={link}
@@ -134,7 +134,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
             <LoaderSpinner className="w-6 h-6" theme="dark" />
           ) : (
             <div className="flex flex-col items-center">
-              <div className="text-text-100 font-medium text-center">{placeholderDescription}</div>
+              <div className="text-zinc-50 font-medium text-center">{placeholderDescription}</div>
             </div>
           )}
         </div>
@@ -150,7 +150,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
                 <p
                   data-testid="error-layout-line"
                   onClick={() => scrollToError()}
-                  className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-text-200 hover:text-text-300 cursor-pointer mr-5"
+                  className="flex items-center w-full ml-1 text-xs font-bold transition-colors text-zinc-100 hover:text-text-300 cursor-pointer mr-5"
                 >
                   <Icon name="icon-solid-circle-exclamation" className="text-red-500 mr-3" />
                   An error occured line {errors[errors.length - 1]?.index}

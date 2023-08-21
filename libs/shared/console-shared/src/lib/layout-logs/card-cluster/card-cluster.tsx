@@ -22,7 +22,7 @@ export function CardCluster(props: CardClusterProps) {
         <div className="flex mt-1">
           <Icon data-testid="icon" name={`${cluster.cloud_provider}_GRAY`} className="mr-4 mt-0.5" />
           <div>
-            <p className="text-text-200 text-sm font-medium">
+            <p className="text-zinc-100 text-sm font-medium">
               {cluster.name} ({cluster.region})
             </p>
             <ul className="text-xs mt-5">

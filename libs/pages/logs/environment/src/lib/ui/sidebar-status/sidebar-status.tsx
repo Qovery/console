@@ -31,12 +31,12 @@ export function SidebarStatus(props: SidebarStatusProps) {
       {environmentStatus?.last_deployment_date && (
         <p className="flex items-center justify-between text-text-300 text-xs">
           Deployment start time:
-          <span className="text-text-100">{dateFullFormat(environmentStatus?.last_deployment_date || '')}</span>
+          <span className="text-zinc-50">{dateFullFormat(environmentStatus?.last_deployment_date || '')}</span>
         </p>
       )}
       <p className="flex items-center justify-between text-text-300 text-xs mt-2">
         Parallel Deployment:
-        <span className="flex text-text-100">
+        <span className="flex text-zinc-50">
           4{' '}
           <Tooltip side="right" content="Number of services deployed in parallel on each pipeline stage">
             <span className="flex items-center">

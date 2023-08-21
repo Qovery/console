@@ -37,7 +37,7 @@ export function Tooltip(props: PropsWithChildren<TooltipProps>) {
           {children}
         </TooltipPrimitive.Trigger>
         <TooltipPrimitive.Content
-          className="bg-element-dark-400 text-text-100 dark:bg-element-light-lighter-200 dark:text-text-700 rounded-sm px-2 py-1 text-xs font-medium z-[100]"
+          className="bg-element-dark-400 text-zinc-50 dark:bg-element-light-lighter-200 dark:text-text-700 rounded-sm px-2 py-1 text-xs font-medium z-[100]"
           side={side}
           sideOffset={6}
           align={align}

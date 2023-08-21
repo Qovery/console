@@ -70,7 +70,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                     <span
                       data-testid="doppler-tag"
-                      className="bg-[#3391FB] font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2"
+                      className="bg-[#3391FB] font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2"
                     >
                       {variable.owned_by}
                     </span>
@@ -79,7 +79,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                   (variable as SecretEnvironmentVariableEntity).aliased_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-teal-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
+                      <span className="bg-teal-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2">
                         ALIAS
                       </span>
                     </>
@@ -87,7 +87,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     (variable as SecretEnvironmentVariableEntity).overridden_secret ? (
                     <>
                       <Icon name={IconEnum.CHILDREN_ARROW} className="mr-2 ml-1" />
-                      <span className="bg-brand-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
+                      <span className="bg-brand-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2">
                         OVERRIDE
                       </span>
                     </>
@@ -95,7 +95,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     ''
                   )}
                   {(variable as EnvironmentVariableEntity).mount_path ? (
-                    <span className="bg-purple-500 font-bold rounded-sm text-2xs text-text-100 px-1 inline-flex items-center h-4 mr-2">
+                    <span className="bg-purple-500 font-bold rounded-sm text-2xs text-zinc-50 px-1 inline-flex items-center h-4 mr-2">
                       FILE
                     </span>
                   ) : (

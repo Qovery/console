@@ -52,11 +52,11 @@ export function PodLogs(props: PodLogsProps) {
                 <div className="w-4 mr-2.5">
                   <StatusChip status={currentPod?.state} />
                 </div>
-                <p className="text-xs font-medium text-text-200 mr-5 truncate">{data.pod_name}</p>
+                <p className="text-xs font-medium text-zinc-100 mr-5 truncate">{data.pod_name}</p>
                 <span className="block text-2xs text-text-400 mr-2">
                   {data.version && (
                     <>
-                      <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-text-100" />
+                      <Icon name={IconAwesomeEnum.CODE_COMMIT} className="mr-2 text-zinc-50" />
                       {data.version?.substring(0, 6)}
                     </>
                   )}
@@ -64,7 +64,7 @@ export function PodLogs(props: PodLogsProps) {
                 {
                   <Icon
                     name={IconAwesomeEnum.FILTER}
-                    className={`text-ssm group-hover:text-text-100 ml-auto ${
+                    className={`text-ssm group-hover:text-zinc-50 ml-auto ${
                       isActive ? 'text-yellow-500' : 'text-transparent'
                     }`}
                   />

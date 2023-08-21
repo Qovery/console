@@ -267,7 +267,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
       {hasFilter && (
         <span
           role="button"
-          className="flex items-center h-6 px-2 relative -left-6 text-text-100 text-xs cursor-pointer"
+          className="flex items-center h-6 px-2 relative -left-6 text-zinc-50 text-xs cursor-pointer"
           onClick={(event) => cleanFilter(event)}
         >
           <Icon name={IconAwesomeEnum.XMARK} />

@@ -46,25 +46,25 @@
     &.is-active,
     &:hover {
       background-color: theme('colors.brand.500');
-      color: theme('colors.text.100');
+      color: theme('colors.zinc.100');
     }
   }
 }
 
 .btn--dark {
-  color: theme('colors.text.200');
+  color: theme('colors.zinc.200');
   background-color: theme('colors.element.light.darker.100');
   border: 1px solid theme('colors.element.light.lighter.800');
 
   &.is-active,
   &:hover {
-    color: theme('colors.text.100');
+    color: theme('colors.zinc.100');
     background-color: theme('colors.element.light.darker.200');
   }
 }
 
 .btn--error {
-  color: theme('colors.text.100');
+  color: theme('colors.zinc.100');
   background-color: theme('colors.red.600');
   &:hover {
     background-color: theme('colors.red.700');
@@ -72,7 +72,7 @@
 }
 
 .btn--confirm {
-  color: theme('colors.text.100');
+  color: theme('colors.zinc.100');
   background-color: theme('colors.green.600');
   &:hover {
     background-color: theme('colors.green.700');
@@ -120,7 +120,7 @@
   }
   &.btn.is-active,
   &:hover {
-    @apply bg-element-light-lighter-400 text-brand-500 dark:bg-brand-500 dark:text-text-100;
+    @apply bg-element-light-lighter-400 text-brand-500 dark:bg-brand-500 dark:text-zinc-50;
   }
 
   &.btn-icon--small {
@@ -139,7 +139,7 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-text-500 dark:border-0 dark:bg-element-light-darker-200 dark:hover:bg-element-light-darker-400 dark:text-text-100;
+  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-text-500 dark:border-0 dark:bg-element-light-darker-200 dark:hover:bg-element-light-darker-400 dark:text-zinc-50;
 
   &.bg-transparent {
     background-color: transparent;
@@ -166,7 +166,7 @@
 }
 
 .btn-icon--dark {
-  @apply bg-element-light-darker-100 text-text-300 hover:text-text-100 hover:bg-element-light-darker-200;
+  @apply bg-element-light-darker-100 text-text-300 hover:text-zinc-50 hover:bg-element-light-darker-200;
 }
 
 // size

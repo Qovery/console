@@ -32,7 +32,7 @@ export function Tabs(props: TabsProps) {
     )
   }
 
-  const btnClassName = `h-14 border-b-2 px-4 flex gap-3 items-center group transition ease-in-out duration-200 ${classNameBtn} dark:hover:border-text-100 dark:hover:text-text-100 hover:border-brand-500 hover:text-brand-500`
+  const btnClassName = `h-14 border-b-2 px-4 flex gap-3 items-center group transition ease-in-out duration-200 ${classNameBtn} dark:hover:border-zinc-50 dark:hover:text-zinc-50 hover:border-brand-500 hover:text-brand-500`
 
   const btnClassNameActive = (item: TabsItem) =>
     `${

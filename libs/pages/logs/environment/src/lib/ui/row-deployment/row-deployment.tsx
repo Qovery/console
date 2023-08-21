@@ -30,7 +30,7 @@ export function RowDeployment(props: RowDeploymentProps) {
   }`
 
   const colorsCellClassName = (date?: boolean) =>
-    `${error ? 'text-red-500' : success ? 'text-green-500' : `${date ? 'text-text-200' : 'text-text-400'}`}`
+    `${error ? 'text-red-500' : success ? 'text-green-500' : `${date ? 'text-zinc-100' : 'text-text-400'}`}`
 
   return (
     <div

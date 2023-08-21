@@ -98,7 +98,7 @@ $menuTiming: 0.6s;
     &:hover:not(.text-red-600) {
       background-color: theme('colors.element.light.darker.200');
       .menu-item__name {
-        color: theme('colors.text.200');
+        color: theme('colors.zinc.200');
       }
     }
   }

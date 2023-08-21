@@ -55,7 +55,7 @@ export function SidebarHistory({ data, serviceId, versionId, pathLogs }: Sidebar
             <div
               role="button"
               className={`text-xs font-medium hover:text-brand-400 transition ${
-                open ? 'text-brand-400' : 'text-text-100'
+                open ? 'text-brand-400' : 'text-zinc-50'
               }`}
             >
               <span className="inline-block mr-1">

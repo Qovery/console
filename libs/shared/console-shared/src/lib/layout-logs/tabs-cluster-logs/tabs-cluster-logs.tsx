@@ -46,7 +46,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
         <p className="font-medium text-sm">
           Error{' '}
           {errors && errors.length > 0 && (
-            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-red-500 text-text-100 rounded-sm">1</span>
+            <span className="relative -top-px text-xs ml-2 px-1 h-4 bg-red-500 text-zinc-50 rounded-sm">1</span>
           )}
         </p>
       ),
@@ -74,11 +74,11 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                 <>
                   <div className="flex items-center">
                     <div className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-red-500 mr-3">
-                      <Icon name="icon-solid-triangle-exclamation" className="text-text-100" />
+                      <Icon name="icon-solid-triangle-exclamation" className="text-zinc-50" />
                     </div>
                     <div>
                       <Tooltip content={currentError.tag || ''}>
-                        <p className="text-text-100 font-medium">
+                        <p className="text-zinc-50 font-medium">
                           <Truncate text={currentError.tag || ''} truncateLimit={28} />
                         </p>
                       </Tooltip>
@@ -110,14 +110,14 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                           <Icon name="icon-solid-arrow-circle-right" className="cursor-pointer" />
                         </p>
                         <CopyToClipboard
-                          className="text-text-300 hover:text-text-100"
+                          className="text-text-300 hover:text-zinc-50"
                           content={`Transmitter: ${
                             (errors[0].error as ClusterLogsError).event_details?.transmitter?.name
                           } - ${errors[0].error?.underlying_error?.message}`}
                         />
                       </div>
                     </div>
-                    <p data-testid="error-msg" className="relative text-text-200 text-xs">
+                    <p data-testid="error-msg" className="relative text-zinc-100 text-xs">
                       Transmitter: {(currentError as ClusterLogsError).event_details?.transmitter?.name} -{' '}
                       {truncateErrorMessage}
                       {!displayFullError && (currentError.underlying_error?.message || '').length > 240 && (
@@ -131,7 +131,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                   {currentError.hint_message && (
                     <div className="bg-element-light-darker-300 mt-3 p-2 rounded ml-8">
                       <p className="text-xs text-sky-400 font-medium mb-1">Solution</p>
-                      <p data-testid="solution-msg" className="text-text-100 text-xs mb-2">
+                      <p data-testid="solution-msg" className="text-zinc-50 text-xs mb-2">
                         {currentError.hint_message}
                       </p>
                       <Button
