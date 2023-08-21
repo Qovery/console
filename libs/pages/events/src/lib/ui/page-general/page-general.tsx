@@ -88,7 +88,7 @@ export function PageGeneral({
     <>
       <div className="px-5">
         <div className="py-6 flex justify-between">
-          <h2 className="h5 text-text-700">Audit Logs</h2>
+          <h2 className="h5 text-zinc-400">Audit Logs</h2>
         </div>
         <div className="flex items-center mb-4 h-9">
           <CustomFilterFeature handleClearFilter={handleClearFilter} />

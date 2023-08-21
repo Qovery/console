@@ -66,7 +66,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           <div className="flex items-center px-4">
             <div className="mx-3 w-full">
               <Skeleton show={isLoading} width={250} height={16}>
-                <div className="cursor-pointer w-full mt-0.5 text-text-600 text-ssm font-medium flex items-center">
+                <div className="cursor-pointer w-full mt-0.5 text-zinc-400 text-ssm font-medium flex items-center">
                   {variable.owned_by === ExternalServiceEnum.DOPPLER && (
                     <span
                       data-testid="doppler-tag"
@@ -137,7 +137,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
           </div>
           <div className="flex items-center px-4 border-b-element-light-lighter-400 border-l h-full max-w-3xl">
             <Skeleton show={isLoading} width={30} height={16} className="w-full">
-              <div className="text-xs text-text-600 w-full">
+              <div className="text-xs text-zinc-400 w-full">
                 {environmentVariableFile(variable) ? (
                   <div
                     className="flex items-center gap-3"
@@ -146,11 +146,11 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
                     }}
                   >
                     {variable.variable_kind === 'public' ? (
-                      <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
+                      <Icon className="ml-0.5 text-zinc-400" name={IconAwesomeEnum.FILE_LINES} />
                     ) : (
                       /* todo put FILE_LOCK back when we managed to update font awesome to the pro version */
-                      // <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LOCK} />
-                      <Icon className="ml-0.5 text-text-500" name={IconAwesomeEnum.FILE_LINES} />
+                      // <Icon className="ml-0.5 text-zinc-400" name={IconAwesomeEnum.FILE_LOCK} />
+                      <Icon className="ml-0.5 text-zinc-400" name={IconAwesomeEnum.FILE_LINES} />
                     )}
                     <span className="text-sky-500 hover:underline cursor-pointer">
                       {getEnvironmentVariableFileMountPath(variable)}
@@ -168,7 +168,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               </div>
             </Skeleton>
           </div>
-          <div className="text-text-600 text-ssm font-medium px-4">
+          <div className="text-zinc-400 text-ssm font-medium px-4">
             {variable.service_name && variable.service_type && variable.service_id ? (
               <NavLink
                 className="flex gap-2 items-center"
@@ -188,7 +188,7 @@ export function TableRowEnvironmentVariable(props: TableRowEnvironmentVariablePr
               ''
             )}
           </div>
-          <div className="text-text-600 text-ssm capitalize font-medium px-4 ">{variable.scope.toLowerCase()}</div>
+          <div className="text-zinc-400 text-ssm capitalize font-medium px-4 ">{variable.scope.toLowerCase()}</div>
         </>
       </TableRow>
     </>

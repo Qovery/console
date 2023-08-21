@@ -20,7 +20,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h2 className="h5 text-text-700 mb-2">Preview environments</h2>
+            <h2 className="h5 text-zinc-400 mb-2">Preview environments</h2>
           </div>
         </div>
         <form onSubmit={onSubmit}>
@@ -62,7 +62,7 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
             />
             <div data-testid="toggles" className={applications && applications.length > 0 ? 'mt-5' : ''}>
               {applications && applications.length > 0 && (
-                <h2 data-testid="applications-title" className="font-medium text-text-600 text-ssm mb-5">
+                <h2 data-testid="applications-title" className="font-medium text-zinc-400 text-ssm mb-5">
                   Create Preview for PR opened on those services
                 </h2>
               )}

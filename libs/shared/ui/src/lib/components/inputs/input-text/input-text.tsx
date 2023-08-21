@@ -91,12 +91,12 @@ export function InputText(props: InputTextProps) {
             />
             {isInputDate && (
               <div className="absolute top-1/2 -translate-y-1/2 right-4">
-                <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-sm text-text-500" />
+                <Icon name={IconAwesomeEnum.ANGLE_DOWN} className="text-sm text-zinc-400" />
               </div>
             )}
             {(currentValue as string)?.length > 0 && type === 'password' && (
               <div
-                className="absolute top-1/2 -translate-y-1/2 right-4 transition-colors text-text-600 hover:text-text-700"
+                className="absolute top-1/2 -translate-y-1/2 right-4 transition-colors text-zinc-400 hover:text-zinc-400"
                 onClick={() => (currentType === 'password' ? setCurrentType('text') : setCurrentType('password'))}
               >
                 {currentType === 'password' && <Icon name={IconAwesomeEnum.EYE} className="text-sm" />}

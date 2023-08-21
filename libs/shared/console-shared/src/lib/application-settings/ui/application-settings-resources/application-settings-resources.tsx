@@ -108,7 +108,7 @@ export function ApplicationSettingsResources(props: ApplicationSettingsResources
 
       {!isJob(application) && watchInstances && (
         <BlockContent title="Instances">
-          <p className="text-text-600 mb-3 font-medium">{`${watchInstances[0]} - ${watchInstances[1]}`}</p>
+          <p className="text-zinc-400 mb-3 font-medium">{`${watchInstances[0]} - ${watchInstances[1]}`}</p>
           <Controller
             name="instances"
             control={control}

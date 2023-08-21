@@ -46,7 +46,7 @@ export function ModalConfirmation(props: ModalConfirmationProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-text-600 mb-2 max-w-sm">{title}</h2>
+      <h2 className="h4 text-zinc-400 mb-2 max-w-sm">{title}</h2>
       {warning && (
         <BannerBox
           className="mb-2"

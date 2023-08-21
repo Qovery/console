@@ -24,7 +24,7 @@ export function Login(props: ILoginProps) {
       <div className="flex-[2_1_0%] px-4 md:px-20">
         <div className="max-w-lg mt-28 mx-auto">
           {!displayInvitation ? (
-            <h1 className="h3 text-text-700 mb-3" data-testid="welcome-title">
+            <h1 className="h3 text-zinc-400 mb-3" data-testid="welcome-title">
               Welcome to Qovery
             </h1>
           ) : (
@@ -32,7 +32,7 @@ export function Login(props: ILoginProps) {
               <InviteDetailsFeature />
             </div>
           )}
-          <p className="text-sm mb-10 text-text-500">
+          <p className="text-sm mb-10 text-zinc-400">
             By registering and using Qovery, you agree to the processing of your personal data by Qovery as described in
             the
             <a href="https://www.qovery.com/terms" className="link text-sky-500 ml-1">
@@ -56,11 +56,11 @@ export function Login(props: ILoginProps) {
       </div>
       <div className="hidden xl:block flex-[1_1_0%] bg-element-light-lighter-300 px-20 before:absolute before:top-0 before:w-full before:h-full before:bg-element-light-lighter-300">
         <div className="max-w-md relative z-10">
-          <h2 className="h1 text-text-700 mt-44 mb-6">Deliver Self-Service Infrastructure, Faster!</h2>
-          <p className="text-text-500 mb-6 text-sm">Built for DevOps, Loved by Developers ✨</p>
+          <h2 className="h1 text-zinc-400 mt-44 mb-6">Deliver Self-Service Infrastructure, Faster!</h2>
+          <p className="text-zinc-400 mb-6 text-sm">Built for DevOps, Loved by Developers ✨</p>
           <ul className="list-disc pl-4 text-sm">
-            <li className="font-bold text-text-500 mb-2">Fast Environment Provisioning</li>
-            <li className="font-bold text-text-500 mb-2">
+            <li className="font-bold text-zinc-400 mb-2">Fast Environment Provisioning</li>
+            <li className="font-bold text-zinc-400 mb-2">
               <a
                 href="https://hub.qovery.com/docs/using-qovery/configuration/environment/#preview-environment"
                 className="link text-brand-500 mr-1"
@@ -68,8 +68,8 @@ export function Login(props: ILoginProps) {
                 Instant Preview Environments
               </a>
             </li>
-            <li className="font-bold text-text-500 mb-2">Keep Governance and Control</li>
-            <li className="font-bold text-text-500">
+            <li className="font-bold text-zinc-400 mb-2">Keep Governance and Control</li>
+            <li className="font-bold text-zinc-400">
               <a href="https://hub.qovery.com/docs/using-qovery/integration" className="link text-brand-500 mr-1">
                 100+ Integrations
               </a>

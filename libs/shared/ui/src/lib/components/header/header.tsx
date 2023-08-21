@@ -24,7 +24,7 @@ export function Header(props: HeaderProps) {
         <div className="flex flex-col gap-3">
           <div className="flex gap-2 items-center max-w-3xl">
             <Skeleton height={36} width={150} show={!title}>
-              <h1 className="font-bold text-text-700 text-3xl max-w-3xl truncate">
+              <h1 className="font-bold text-zinc-400 text-3xl max-w-3xl truncate">
                 {title && <Truncate text={title} truncateLimit={50} />}
               </h1>
             </Skeleton>

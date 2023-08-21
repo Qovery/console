@@ -3,7 +3,7 @@
   transition: 120ms all $timing-cubic, 0 outline;
 
   label {
-    @apply absolute ease-in-out transition-label duration-[120ms] text-text-500 text-sm translate-y-2 select-none;
+    @apply absolute ease-in-out transition-label duration-[120ms] text-zinc-400 text-sm translate-y-2 select-none;
   }
 
   input:focus,
@@ -29,7 +29,7 @@
 }
 
 .input__value {
-  @apply absolute left-0 bottom-[7px] w-full px-4 bg-transparent appearance-none ring-0 text-sm text-text-700;
+  @apply absolute left-0 bottom-[7px] w-full px-4 bg-transparent appearance-none ring-0 text-sm text-zinc-400;
 }
 
 .input__value[type='time'] {
@@ -125,7 +125,7 @@
 }
 
 .input__list {
-  @apply mt-2 bg-white p-2 rounded pointer-events-auto border-element-light-lighter-500 text-text-600 focus-within:outline-none w-full list-none max-h-96 overflow-scroll;
+  @apply mt-2 bg-white p-2 rounded pointer-events-auto border-element-light-lighter-500 text-zinc-400 focus-within:outline-none w-full list-none max-h-96 overflow-scroll;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 
   ul {
@@ -134,21 +134,21 @@
 }
 
 .input__item {
-  @apply text-sm text-text-600 cursor-pointer font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-text-600 select-none mb-1 last:mb-0;
+  @apply text-sm text-zinc-400 cursor-pointer font-medium px-3 py-2 rounded hover:bg-element-light-lighter-300 hover:text-zinc-400 select-none mb-1 last:mb-0;
 
   &.is-active,
   &[data-current-selected],
   &[data-current-nav] {
-    @apply bg-element-light-lighter-300 text-text-600;
+    @apply bg-element-light-lighter-300 text-zinc-400;
   }
 }
 
 .input__arrow {
-  @apply absolute top-1/2 -translate-y-1/2 text-sm text-text-500 right-4;
+  @apply absolute top-1/2 -translate-y-1/2 text-sm text-zinc-400 right-4;
 }
 
 .input__select--small {
-  @apply pl-2 pr-6 pt-2 pb-2 bg-element-light-lighter-200 border border-element-light-lighter-500 text-text-700 rounded text-sm appearance-none w-full min-h-0;
+  @apply pl-2 pr-6 pt-2 pb-2 bg-element-light-lighter-200 border border-element-light-lighter-500 text-zinc-400 rounded text-sm appearance-none w-full min-h-0;
 
   @apply focus:outline-brand-500 focus:border-transparent focus:outline-2;
 }

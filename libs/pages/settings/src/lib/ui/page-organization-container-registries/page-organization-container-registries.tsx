@@ -46,8 +46,8 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Container registries</h1>
-            <p className="text-text-500 text-xs">
+            <h1 className="h5 text-zinc-400 mb-2">Container registries</h1>
+            <p className="text-zinc-400 text-xs">
               Define and manage the container registry to be used within your organization to deploy applications.
             </p>
           </div>
@@ -70,7 +70,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                 <div className="flex">
                   <Icon name={logoByRegistryKind(registry.kind)} width="20" height="20" />
                   <div className="ml-4">
-                    <h2 className="flex text-xs text-text-600 font-medium mb-1">
+                    <h2 className="flex text-xs text-zinc-400 font-medium mb-1">
                       <Truncate truncateLimit={60} text={registry.name || ''} />
                       {registry.description && (
                         <Tooltip content={registry.description}>
@@ -97,7 +97,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => onEdit(registry)}
-                    className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                    className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8 mr-2"
                     iconClassName="!text-xs"
                   />
                   <ButtonIcon
@@ -105,7 +105,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                     style={ButtonIconStyle.STROKED}
                     size={ButtonSize.TINY}
                     onClick={() => onDelete(registry)}
-                    className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
+                    className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
                     iconClassName="!text-xs"
                   />
                 </div>

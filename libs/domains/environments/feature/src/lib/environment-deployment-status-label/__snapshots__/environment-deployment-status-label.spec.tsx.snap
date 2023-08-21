@@ -6,7 +6,7 @@ exports[`EnvironmentDeploymentStatusLabel should match snapshot 1`] = `
     class="flex items-center gap-3 leading-7 text-zinc-350 text-sm"
   >
     <span
-      class="flex items-center px-3 h-8 border border-element-lighter-500 rounded-full text-text-500 text-xs font-medium truncate "
+      class="flex items-center px-3 h-8 border border-element-lighter-500 rounded-full text-zinc-400 text-xs font-medium truncate "
       data-testid="status-label"
     >
       <svg

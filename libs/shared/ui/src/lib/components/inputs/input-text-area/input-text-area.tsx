@@ -48,7 +48,7 @@ export function InputTextArea(props: InputTextAreaProps) {
         <textarea
           name={name}
           id={label}
-          className="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-text-700 outline-0"
+          className="w-full min-h-[52px] mt-5 pr-3 bg-transparent appearance-none text-sm text-zinc-400 outline-0"
           value={currentValue}
           onChange={(e) => {
             if (onChange) onChange(e)

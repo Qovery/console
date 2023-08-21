@@ -26,7 +26,7 @@ export function RowDeployment(props: RowDeploymentProps) {
       ? 'text-red-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400'
       : success
       ? 'text-green-500 bg-element-light-darker-200 group-hover:bg-element-light-darker-400'
-      : 'bg-element-light-darker-500 text-text-500 group-hover:bg-element-light-darker-200'
+      : 'bg-element-light-darker-500 text-zinc-400 group-hover:bg-element-light-darker-200'
   }`
 
   const colorsCellClassName = (date?: boolean) =>

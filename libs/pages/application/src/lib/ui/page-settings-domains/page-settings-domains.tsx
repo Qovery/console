@@ -27,8 +27,8 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
       <div className="p-8  max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Domain</h1>
-            <p className="text-sm text-text-500">Add custom domains to your application.</p>
+            <h1 className="h5 text-zinc-400 mb-2">Domain</h1>
+            <p className="text-sm text-zinc-400">Add custom domains to your application.</p>
           </div>
 
           <Button onClick={() => props.onAddDomain()} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>

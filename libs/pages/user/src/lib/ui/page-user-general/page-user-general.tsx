@@ -16,7 +16,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-text-700">General account settings</h1>
+        <h1 className="h5 mb-10 text-zinc-400">General account settings</h1>
         <form onSubmit={onSubmit}>
           <BlockContent title="User profile">
             <div className="flex items-center">
@@ -28,7 +28,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
                 />
               </div>
               <div className="ml-5">
-                <p className="text-text-600 font-medium ml-5">
+                <p className="text-zinc-400 font-medium ml-5">
                   {watch('firstName')} {watch('lastName')}
                 </p>
               </div>

@@ -37,7 +37,7 @@ export function InvoicesList(props: InvoicesListProps) {
   return (
     <div className="mb-3">
       <div className="flex items-center justify-between mb-3 py-5 ">
-        <h1 className="h5 text-text-700 mb-2">Invoices</h1>
+        <h1 className="h5 text-zinc-400 mb-2">Invoices</h1>
         <div className="flex gap-3">
           <InputSelectSmall
             dataTestId="year-select"

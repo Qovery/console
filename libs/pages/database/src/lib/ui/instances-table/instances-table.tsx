@@ -21,16 +21,16 @@ export function InstancesTable(props: InstancesTableProps) {
     <table className="w-full border border-element-light-lighter-400">
       <thead>
         <tr className="text-xs text-zinc-350 font-medium">
-          <td className="border border-element-light-lighter-400 px-6 py-4 text-text-600">Instance name</td>
-          <td className="border border-element-light-lighter-400 px-6 py-4 text-text-600">RAM usage</td>
-          <td className="border border-element-light-lighter-400 px-6 py-4 text-text-600">vCPU</td>
-          <td className="border border-element-light-lighter-400 px-6 py-4 text-text-600">Storage</td>
+          <td className="border border-element-light-lighter-400 px-6 py-4 text-zinc-400">Instance name</td>
+          <td className="border border-element-light-lighter-400 px-6 py-4 text-zinc-400">RAM usage</td>
+          <td className="border border-element-light-lighter-400 px-6 py-4 text-zinc-400">vCPU</td>
+          <td className="border border-element-light-lighter-400 px-6 py-4 text-zinc-400">Storage</td>
         </tr>
       </thead>
       <tbody>
         {instances?.map((instance) => {
           return (
-            <tr className="text-xs text-text-500 font-medium" key={instance.name}>
+            <tr className="text-xs text-zinc-400 font-medium" key={instance.name}>
               <td className="border border-element-light-lighter-400 px-6 py-4">
                 {
                   mode && mode === DatabaseModeEnum.CONTAINER

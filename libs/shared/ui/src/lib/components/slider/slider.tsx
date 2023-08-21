@@ -24,7 +24,7 @@ export function Slider(props: SliderProps) {
       {label && (
         <div className="flex justify-between items-center mb-2">
           {label && (
-            <p data-testid="label" className="text-text-500 text-sm">
+            <p data-testid="label" className="text-zinc-400 text-sm">
               {label}
             </p>
           )}

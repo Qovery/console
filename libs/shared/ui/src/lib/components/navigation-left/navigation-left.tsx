@@ -30,7 +30,7 @@ export const linkClassName = (pathname: string, url?: string, badge?: string) =>
   `flex items-center py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
     url === pathname
       ? 'is-active text-brand-500 bg-brand-50 hover:text-brand-600 hover:bg-brand-100'
-      : 'text-zinc-350 hover:text-text-500 hover:bg-element-light-lighter-300'
+      : 'text-zinc-350 hover:text-zinc-400 hover:bg-element-light-lighter-300'
   } ${badge ? 'justify-between' : ''} `
 
 export function NavigationLeft(props: NavigationLeftProps) {

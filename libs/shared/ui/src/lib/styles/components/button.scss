@@ -22,7 +22,7 @@
 }
 
 .btn--stroked {
-  @apply bg-element-light-lighter-200 hover:bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 text-text-500;
+  @apply bg-element-light-lighter-200 hover:bg-element-light-lighter-300 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400;
 
   &.btn--active {
     color: theme('colors.brand.500');
@@ -100,7 +100,7 @@
 }
 
 .btn-login--default {
-  @apply bg-element-light-lighter-300 text-text-700 border border-element-light-lighter-500 hover:bg-element-light-lighter-400;
+  @apply bg-element-light-lighter-300 text-zinc-400 border border-element-light-lighter-500 hover:bg-element-light-lighter-400;
 }
 
 // icon
@@ -139,12 +139,12 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-text-500 dark:border-0 dark:bg-element-light-darker-200 dark:hover:bg-element-light-darker-400 dark:text-zinc-50;
+  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-element-light-darker-200 dark:hover:bg-element-light-darker-400 dark:text-zinc-50;
 
   &.bg-transparent {
     background-color: transparent;
     &:hover {
-      color: theme('colors.text.600');
+      color: theme('colors.zinc.400');
       background-color: theme('colors.white');
     }
   }
@@ -153,10 +153,10 @@
 .btn-icon--flat {
   @apply bg-transparent text-brand-500 hover:bg-transparent hover:text-brand-700;
 
-  &.text-text-500 {
-    color: theme('colors.text.500');
+  &.text-zinc-400 {
+    color: theme('colors.zinc.400');
     &:hover {
-      color: theme('colors.text.700');
+      color: theme('colors.zinc.400');
     }
   }
 }

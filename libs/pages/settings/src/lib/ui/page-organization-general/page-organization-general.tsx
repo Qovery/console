@@ -25,7 +25,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
   return (
     <div className="flex flex-col justify-between w-full">
       <div className="p-8 max-w-content-with-navigation-left">
-        <h1 className="h5 mb-10 text-text-700">General</h1>
+        <h1 className="h5 mb-10 text-zinc-400">General</h1>
         <form onSubmit={onSubmit}>
           <BlockContent title="Organization profile">
             <div className="flex items-center">
@@ -37,7 +37,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 )}
               />
               <div className="ml-3">
-                <p className="text-text-600 font-medium mb-1">{watch('name')}</p>
+                <p className="text-zinc-400 font-medium mb-1">{watch('name')}</p>
                 <span className="block text-xs text-zinc-350">Created since {created_at.split('T')[0]}</span>
               </div>
             </div>

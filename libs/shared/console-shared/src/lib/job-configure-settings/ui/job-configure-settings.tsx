@@ -61,7 +61,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             )}
           />
           <div className="mb-3 flex justify-between">
-            <p className="text-text-500 text-xs">{cronDescription}</p>
+            <p className="text-zinc-400 text-xs">{cronDescription}</p>
             <Link
               external
               link="https://crontab.guru/"
@@ -74,7 +74,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
       ) : (
         <div className="mb-10">
           <h3 className="text-sm font-semibold mb-1">Event</h3>
-          <p className="text-text-500 text-sm mb-3">
+          <p className="text-zinc-400 text-sm mb-3">
             Select one or more environment event where the job should be executed
           </p>
 

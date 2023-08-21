@@ -52,8 +52,8 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
       <div className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Manage your roles</h1>
-            <p className="text-text-500 text-xs">Manage the existing custom roles or create a new one.</p>
+            <h1 className="h5 text-zinc-400 mb-2">Manage your roles</h1>
+            <p className="text-zinc-400 text-xs">Manage the existing custom roles or create a new one.</p>
           </div>
           <Button onClick={onAddRole} iconRight={IconAwesomeEnum.CIRCLE_PLUS}>
             Add new role
@@ -84,7 +84,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         className="text-brand-500"
                       />
                       <div className="ml-4">
-                        <h2 className="flex text-xs text-text-600 font-medium">
+                        <h2 className="flex text-xs text-zinc-400 font-medium">
                           {isDefaultRole(role.name) ? upperCaseFirstLetter(role.name) : role.name}
                         </h2>
                         <p className="text-xs text-zinc-350 mt-1">
@@ -99,7 +99,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
                           onClick={() => navigate(`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`)}
-                          className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                          className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8 mr-2"
                           iconClassName="!text-xs"
                         />
                         <ButtonIcon
@@ -107,7 +107,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
                           onClick={() => onDeleteRole(role)}
-                          className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
+                          className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
                         />
                       </div>
@@ -117,7 +117,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           icon={IconAwesomeEnum.BOOK}
                           style={ButtonIconStyle.STROKED}
                           size={ButtonSize.TINY}
-                          className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
+                          className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
                           iconClassName="!text-xs"
                           link="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
                           external

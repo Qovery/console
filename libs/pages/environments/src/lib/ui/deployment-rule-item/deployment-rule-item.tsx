@@ -70,10 +70,10 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
     >
       <div>
         <Skeleton show={isLoading} width={180} height={20} className="mb-1">
-          <h3 className="text-sm text-text-500 font-medium max-w-full truncate">{name}</h3>
+          <h3 className="text-sm text-zinc-400 font-medium max-w-full truncate">{name}</h3>
         </Skeleton>
         <Skeleton show={isLoading} width={300} height={20}>
-          <p data-testid="time" className="text-xs text-text-500 max-w-full truncate">
+          <p data-testid="time" className="text-xs text-zinc-400 max-w-full truncate">
             {dateToHours(startTime)} - {dateToHours(stopTime)}
             {isWeekdays() && weekDays.length < 7 ? ' - Running every weekday' : ''}
             {weekDays.length === 7 && ' - Running everyday'}

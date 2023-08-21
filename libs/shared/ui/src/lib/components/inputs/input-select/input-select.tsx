@@ -151,14 +151,14 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className="text-sm text-text-600 mr-1">
+    <span className="text-sm text-zinc-400 mr-1">
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="text-sm text-text-600 mr-1">{props.data.label}</span>
+    <span className="text-sm text-zinc-400 mr-1">{props.data.label}</span>
   )
 
   const NoOptionsMessage = (props: NoticeProps<Value>) => {
@@ -221,7 +221,7 @@ export function InputSelect({
         {currentIcon?.onClickEditable && (
           <div
             data-testid="selected-edit-icon"
-            className="cursor-pointer flex items-center justify-center text-sm text-text-500 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
+            className="cursor-pointer flex items-center justify-center text-sm text-zinc-400 hover:text-brand-500 w-8 h-8 absolute z-10 right-8 top-[10px]"
             onClick={(event) => {
               event.stopPropagation()
               currentIcon.onClickEditable && currentIcon.onClickEditable()
@@ -265,7 +265,7 @@ export function InputSelect({
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
           <div className="absolute top-1/2 -translate-y-1/2 right-4 pointer-events-none">
-            <Icon name="icon-solid-angle-down" className="text-sm text-text-500" />
+            <Icon name="icon-solid-angle-down" className="text-sm text-zinc-400" />
           </div>
         )}
       </div>

@@ -31,8 +31,8 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
       <div className="p-8 max-w-content-with-navigation-left">
         <div className="flex justify-between mb-8 gap-3">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Webhook</h1>
-            <p className="text-text-500 text-xs">
+            <h1 className="h5 text-zinc-400 mb-2">Webhook</h1>
+            <p className="text-zinc-400 text-xs">
               Qovery allows you to create webhooks at organization-level so that, when an event happens on an
               environment within your organization, you can get notified on external applications (for instance, Slack).
             </p>
@@ -60,7 +60,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                   className="flex items-center justify-between border-b border-element-light-lighter-500 py-4 px-5 last:border-0"
                 >
                   <div className="flex flex-col">
-                    <p className="flex text-text-600 font-medium text-xs mb-1">
+                    <p className="flex text-zinc-400 font-medium text-xs mb-1">
                       <Truncate truncateLimit={60} text={webhook.target_url || ''} />
                       {webhook.description && (
                         <Tooltip content={webhook.description}>
@@ -97,7 +97,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       style={ButtonIconStyle.STROKED}
                       size={ButtonSize.TINY}
                       onClick={() => props.openEdit(webhook)}
-                      className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8 mr-2"
+                      className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8 mr-2"
                       iconClassName="!text-xs"
                       dataTestId="edit-webhook"
                     />
@@ -107,7 +107,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       size={ButtonSize.TINY}
                       onClick={() => props.onDelete(webhook)}
                       dataTestId="delete-webhook"
-                      className="text-zinc-350 hover:text-text-500 bg-transparent !w-9 !h-8"
+                      className="text-zinc-350 hover:text-zinc-400 bg-transparent !w-9 !h-8"
                       iconClassName="!text-xs"
                     />
                   </div>

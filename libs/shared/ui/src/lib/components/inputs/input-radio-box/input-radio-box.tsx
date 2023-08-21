@@ -24,7 +24,7 @@ export function InputRadioBox(props: InputRadioBoxProps) {
       }`}
     >
       <InputRadio big name={name} value={value} label={label} onChange={onChange} formValue={fieldValue} />
-      {description && <div className="ml-[31px] text-text-500 text-sm mt-1">{description}</div>}
+      {description && <div className="ml-[31px] text-zinc-400 text-sm mt-1">{description}</div>}
     </div>
   )
 }

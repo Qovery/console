@@ -85,7 +85,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
             </Skeleton>
           </div>
           <Skeleton show={isLoading} width={400} height={16} truncate>
-            <span className="text-sm text-text-500 font-medium truncate">{data.name}</span>
+            <span className="text-sm text-zinc-400 font-medium truncate">{data.name}</span>
           </Skeleton>
         </div>
         <div className="flex justify-end justify-items-center px-3">
@@ -150,7 +150,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 </Tag>
               )}
               {isDatabase(type) && (
-                <span className="block text-xs ml-2 text-text-600 font-medium">{dataDatabase.version}</span>
+                <span className="block text-xs ml-2 text-zinc-400 font-medium">{dataDatabase.version}</span>
               )}
             </div>
           </Skeleton>

@@ -55,8 +55,8 @@ export function PageOrganizationRolesEdit(props: PageOrganizationRolesEditProps)
                     <Icon name={IconAwesomeEnum.ARROW_LEFT} className="mr-1 text-xs" />
                     Back
                   </Button>
-                  <h1 className="h5 text-text-700 mb-2">Edit your custom role: {currentRole.name}</h1>
-                  <p className="text-text-500 text-xs">
+                  <h1 className="h5 text-zinc-400 mb-2">Edit your custom role: {currentRole.name}</h1>
+                  <p className="text-zinc-400 text-xs">
                     Set permissions for your custom role. Cluster level permissions allow you to define access
                     permission to each cluster of your organization (default is "Read-only"). Project Level permissions
                     allow you to customize the access to each project and its environments based on its type (PROD,DEV

@@ -43,7 +43,7 @@ export function CardCluster(props: CardClusterProps) {
           <Icon className="mr-3" name={cluster.cloud_provider} />
           <div className="flex flex-col">
             <div className="flex">
-              <h2 className="flex items-center text-xs text-text-600 font-medium">
+              <h2 className="flex items-center text-xs text-zinc-400 font-medium">
                 <span className="block mr-2">{cluster.name}</span>
                 <StatusChip status={cluster.extendedStatus?.status?.status} />
               </h2>

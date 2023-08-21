@@ -33,7 +33,7 @@ export function MenuAccount(props: MenuAccountProps) {
           </span>
         )}
       </span>
-      <span className="text-text-700 dark:text-zinc-100 text-sm font-medium">{organization.name}</span>
+      <span className="text-zinc-400 dark:text-zinc-100 text-sm font-medium">{organization.name}</span>
     </div>
   )
 
@@ -67,7 +67,7 @@ export function MenuAccount(props: MenuAccountProps) {
                   noTooltip
                 />
                 <div>
-                  <p className="text-text-700 dark:text-zinc-100 text-sm font-medium">
+                  <p className="text-zinc-400 dark:text-zinc-100 text-sm font-medium">
                     {user?.firstName} {user?.lastName}
                   </p>
                   <span className="text-zinc-350 text-xs">{user.email}</span>
@@ -84,7 +84,7 @@ export function MenuAccount(props: MenuAccountProps) {
       items: [
         {
           itemContentCustom: (
-            <div className="text-text-500 dark:text-zinc-100 text-ssm font-medium">
+            <div className="text-zinc-400 dark:text-zinc-100 text-ssm font-medium">
               <Icon name={IconAwesomeEnum.ARROW_RIGHT_FROM_BRACKET} className="text-brand-500 mr-3" />
               Logout
             </div>

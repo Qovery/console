@@ -38,7 +38,7 @@ export function Tabs(props: TabsProps) {
     `${
       item?.active
         ? `dark:text-brand-50 dark:border-brand-50 text-brand-500 border-brand-500`
-        : `dark:text-text-500 dark:border-text-500 text-zinc-350 border-element-light-lighter-500`
+        : `dark:text-zinc-400 dark:border-zinc-400 text-zinc-350 border-element-light-lighter-500`
     }`
 
   const contentTab = (item: TabsItem, index: number) => {

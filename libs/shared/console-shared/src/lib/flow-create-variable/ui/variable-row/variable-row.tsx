@@ -105,7 +105,7 @@ export function VariableRow(props: VariableRowProps) {
             style={ButtonIconStyle.STROKED}
             size={ButtonSize.TINY}
             onClick={() => props.onDelete(index)}
-            className="text-zinc-350 hover:text-text-500 !w-8 !h-8"
+            className="text-zinc-350 hover:text-zinc-400 !w-8 !h-8"
             iconClassName="!text-xs"
           />
         </div>

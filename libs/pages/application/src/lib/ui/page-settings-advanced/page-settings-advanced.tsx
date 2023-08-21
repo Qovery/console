@@ -149,8 +149,8 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
       <div className="p-8 ">
         <div className="flex justify-between mb-4">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Advanced Settings</h1>
-            <p className="text-sm text-text-500 max-w-content-with-navigation-left">
+            <h1 className="h5 text-zinc-400 mb-2">Advanced Settings</h1>
+            <p className="text-sm text-zinc-400 max-w-content-with-navigation-left">
               Settings are injected at the build and run time of your application and thus any change on this section
               will be applied on the next manual/automatic deploy.
             </p>

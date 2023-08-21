@@ -75,7 +75,7 @@ export function RowPod(props: RowPodProps) {
       >
         <div
           data-testid="index"
-          className="bg-element-light-darker-500 text-text-500 group-hover:bg-element-light-darker-200"
+          className="bg-element-light-darker-500 text-zinc-400 group-hover:bg-element-light-darker-200"
         >
           <div className="text-right w-10 h-5 px-2 pt-0.5 font-code">{index + 1}</div>
         </div>

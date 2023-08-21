@@ -100,7 +100,7 @@ export function RowEvent(props: RowEventProps) {
     <>
       <div
         data-testid="row-event"
-        className="grid h-11 py-2.5 items-center text-xs text-text-500 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
+        className="grid h-11 py-2.5 items-center text-xs text-zinc-400 font-medium border-b-element-light-lighter-400 border-b hover:bg-element-light-lighter-200 last:border-b-0"
         style={{ gridTemplateColumns: columnsWidth }}
         onClick={() => setExpanded(!expanded)}
       >
@@ -165,7 +165,7 @@ export function RowEvent(props: RowEventProps) {
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
             <div className="truncate">
-              <span className="inline-block text-text-500 mr-1.5">{getSourceIcon(event.origin)}</span>
+              <span className="inline-block text-zinc-400 mr-1.5">{getSourceIcon(event.origin)}</span>
               {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
             </div>
           </Skeleton>

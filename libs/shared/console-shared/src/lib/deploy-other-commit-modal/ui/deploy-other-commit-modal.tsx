@@ -46,9 +46,9 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
 
   return (
     <div className="p-6">
-      <h2 className="h4 text-text-600 max-w-sm truncate mb-1">Deploy another version</h2>
+      <h2 className="h4 text-zinc-400 max-w-sm truncate mb-1">Deploy another version</h2>
       <p className="mb-2 text-zinc-350 text-sm">Select the commit you want to deploy.</p>
-      <p className="mb-6 text-text-500 text-sm">
+      <p className="mb-6 text-zinc-400 text-sm">
         For <strong className="font-medium">{serviceName}</strong>
       </p>
 
@@ -92,7 +92,7 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                       >
                         <div className="w-full">
                           <div className="flex justify-between w-full">
-                            <p className="text-text-500 font-medium mb-1.5">
+                            <p className="text-zinc-400 font-medium mb-1.5">
                               <a
                                 href={commit.commit_page_url}
                                 target="_blank"

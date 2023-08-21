@@ -20,8 +20,8 @@ export function StepMore(props: StepMoreProps) {
 
   return (
     <div className="pb-10">
-      <h1 className="h3 text-text-700 mb-3">Tell us more</h1>
-      <p className="text-sm mb-10 text-text-500">We need more information to proceed with your account creation.</p>
+      <h1 className="h3 text-zinc-400 mb-3">Tell us more</h1>
+      <p className="text-sm mb-10 text-zinc-400">We need more information to proceed with your account creation.</p>
       <form onSubmit={onSubmit}>
         <Controller
           name="qovery_usage"

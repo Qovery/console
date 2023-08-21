@@ -63,7 +63,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           {label}
         </label>
         <input
-          className={`absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-zinc-350 rounded px-2 ${
+          className={`absolute text-sm top-0 left-0 h-full w-full text-zinc-400 placeholder:text-zinc-350 rounded px-2 ${
             hasShowPasswordButton ? 'pr-8' : ''
           }`}
           name={name}
@@ -81,7 +81,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           <div
             data-testid="show-password-button"
             onClick={() => setCurrentType(currentType === 'password' ? 'text' : 'password')}
-            className="text-sm text-text-500 absolute right-2 transform -translate-y-0.5"
+            className="text-sm text-zinc-400 absolute right-2 transform -translate-y-0.5"
           >
             <Icon name={currentType === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
           </div>

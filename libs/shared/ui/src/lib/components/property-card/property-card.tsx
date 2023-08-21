@@ -19,10 +19,10 @@ export function PropertyCard(props: PropertyCardProps) {
     <div data-testid={dataTestId} className="px-5 py-4 rounded border border-element-light-lighter-500 bg-white flex">
       <div className="flex-grow">
         <Skeleton height={24} width={100} show={isLoading}>
-          <h3 className="font-medium text-xl text-text-600 mb-1">{value}</h3>
+          <h3 className="font-medium text-xl text-zinc-400 mb-1">{value}</h3>
         </Skeleton>
         <Skeleton height={24} width={100} show={isLoading}>
-          <div className="text-xs text-text-600 flex">
+          <div className="text-xs text-zinc-400 flex">
             {name}{' '}
             {helperText && (
               <Tooltip side="right" content={helperText}>
@@ -38,7 +38,7 @@ export function PropertyCard(props: PropertyCardProps) {
         icon={IconAwesomeEnum.WHEEL}
         style={ButtonIconStyle.FLAT}
         dataTestId="property-card-settings-button"
-        className=" flex-shrink-0 -mr-4 !text-zinc-350 hover:!text-text-600"
+        className=" flex-shrink-0 -mr-4 !text-zinc-350 hover:!text-zinc-400"
         iconClassName="cursor-pointer"
         onClick={onSettingsClick}
       />

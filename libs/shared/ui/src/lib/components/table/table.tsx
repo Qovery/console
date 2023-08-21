@@ -71,7 +71,7 @@ export function Table<T>({
         style={{ gridTemplateColumns: columnsWidth }}
       >
         {dataHead.map(
-          ({ title, className = 'px-4 py-2', classNameTitle = 'text-text-600 ', filter: hasFilter, sort }, index) => (
+          ({ title, className = 'px-4 py-2', classNameTitle = 'text-zinc-400 ', filter: hasFilter, sort }, index) => (
             <div key={index} className={className}>
               {!sort && !hasFilter && (
                 <span data-testid="table-head-title" className={`text-xs font-medium ${classNameTitle}`}>

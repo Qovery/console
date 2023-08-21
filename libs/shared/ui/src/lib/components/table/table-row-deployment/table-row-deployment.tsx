@@ -80,7 +80,7 @@ export function TableRowDeployment({
                 onClick={handleCopy}
                 onMouseEnter={() => setHoverId(true)}
                 onMouseLeave={() => !copy && setHoverId(false)}
-                className={`text-2xs font-bold text-text-500 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
+                className={`text-2xs font-bold text-zinc-400 py-0.5 w-16 px-1 inline-flex gap-1 text-center rounded-sm cursor-pointer ${
                   copy ? 'bg-green-500 text-white' : 'bg-element-light-lighter-300'
                 }`}
               >
@@ -131,7 +131,7 @@ export function TableRowDeployment({
                   <div className="w-8 text-center">
                     <Icon name={(data as DeploymentService)?.type || ServiceTypeEnum.APPLICATION} className="w-5 h-5" />
                   </div>
-                  <p className="text-xs text-text-600 font-medium">{data?.name}</p>
+                  <p className="text-xs text-zinc-400 font-medium">{data?.name}</p>
                 </div>
               </Link>
             </Skeleton>

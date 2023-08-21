@@ -79,7 +79,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
     <div className="w-[calc(100vw-368px)]">
       <div className="flex flex-col w-full h-[calc(100%-128px)] bg-element-light-lighter-200 rounded-tr-sm">
         <div className="flex justify-between items-center px-5 my-5">
-          <p className="text-xs text-text-500">
+          <p className="text-xs text-zinc-400">
             Stages allow to define deployment order within the deployment pipeline of your environment. Default stages
             are available based on the service type, you can edit/remove them based on your need.
             <span className="block text-2xs mt-1">
@@ -125,7 +125,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       <div className="h-11 flex justify-between items-center bg-element-light-lighter-200 px-3 py-2 border border-element-light-lighter-500 rounded-t">
                         <div className="flex items-center">
                           <BadgeDeploymentOrder order={stage.deployment_order} />
-                          <span className="block truncate text-text-500 text-2xs font-bold">
+                          <span className="block truncate text-zinc-400 text-2xs font-bold">
                             <Truncate truncateLimit={28} text={stage.name || ''} />
                           </span>
                           {stage.description && (
@@ -143,7 +143,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                           width={256}
                           trigger={
                             <ButtonIcon
-                              className="text-text-500 !px-1 !w-7"
+                              className="text-zinc-400 !px-1 !w-7"
                               style={ButtonIconStyle.FLAT}
                               icon={IconAwesomeEnum.ELLIPSIS}
                               size={ButtonSize.TINY}

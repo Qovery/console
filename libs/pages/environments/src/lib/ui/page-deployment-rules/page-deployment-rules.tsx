@@ -59,7 +59,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
       {listRules.length >= 1 && isLoading === 'loaded' && (
         <div className="py-7 px-10 flex-grow overflow-y-auto min-h-0">
           <div className="flex justify-between items-center mb-8 w-[640px]">
-            <p className="text-text-500 text-xs">
+            <p className="text-zinc-400 text-xs">
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
 
@@ -75,7 +75,7 @@ export function PageDeploymentRules(props: PageDeploymentRulesProps) {
 
           <div className={`w-[640px] bg-element-light-lighter-200 rounded ${listRules?.length === 0 ? 'hidden' : ''}`}>
             <div className="border-t border-l border-r rounded-t border-element-light-lighter-500">
-              <h2 className="text-sm text-text-500 font-medium py-2 px-4 border-b border-element-light-lighter-500 bg-element-light-lighter-200 rounded-t">
+              <h2 className="text-sm text-zinc-400 font-medium py-2 px-4 border-b border-element-light-lighter-500 bg-element-light-lighter-200 rounded-t">
                 Deployment Rules
               </h2>
             </div>

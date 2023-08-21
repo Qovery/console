@@ -52,7 +52,7 @@ export function Avatar(props: AvatarProps) {
         <img src={url} alt={alt} className="w-full h-full rounded-full" />
       ) : (
         <div className="w-full h-full rounded-full bg-element-light-lighter-400 text-center flex justify-center items-center">
-          <span className="text-xs text-text-500 font-medium relative">
+          <span className="text-xs text-zinc-400 font-medium relative">
             {firstName && firstName.charAt(0).toUpperCase()}
             {lastName && lastName.charAt(0).toUpperCase()}
           </span>

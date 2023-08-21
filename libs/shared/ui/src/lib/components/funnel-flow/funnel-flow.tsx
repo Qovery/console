@@ -25,7 +25,7 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
             <div className="h-5 px-1 bg-element-light-lighter-400 font-medium rounded-sm text-zinc-350 text-xs flex items-center">
               {props.currentStep}/{props.totalSteps}
             </div>
-            <h4 className="text-text-600 text-sm font-medium">{props.currentTitle}</h4>
+            <h4 className="text-zinc-400 text-sm font-medium">{props.currentTitle}</h4>
           </div>
         </div>
         {props.onExit && (

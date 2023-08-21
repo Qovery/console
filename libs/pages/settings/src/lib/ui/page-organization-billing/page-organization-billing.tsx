@@ -26,7 +26,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
       <div className="p-8">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="h5 text-text-700 mb-2">Payment method</h1>
+            <h1 className="h5 text-zinc-400 mb-2">Payment method</h1>
           </div>
           <Button
             dataTestId="add-new-card-button"
@@ -44,7 +44,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
             </div>
           ) : props.creditCards.length > 0 ? (
             <div className="flex flex-col">
-              <p className="text-xs text-text-500 mb-5">
+              <p className="text-xs text-zinc-400 mb-5">
                 You will be charged in USD / EUR - contact us for more details.
               </p>
               {props.creditCards.map((creditCard) => (

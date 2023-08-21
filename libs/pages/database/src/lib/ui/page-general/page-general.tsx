@@ -52,14 +52,14 @@ export function PageGeneral(props: PageGeneralProps) {
       <div className="flex h-full flex-col flex-grow">
         <div className="py-7 px-10 flex-grow overflow-auto">
           {database?.mode && database?.mode === DatabaseModeEnum.MANAGED && (
-            <p className="text-sm text-text-700 font-medium mb-4">
+            <p className="text-sm text-zinc-400 font-medium mb-4">
               Metrics for Managed Databases can be found directly on your cloud provider dashboard
             </p>
           )}
           <div className="flex border border-element-light-lighter-400 mb-4">
             <div className="flex-1 border-r border-element-light-lighter-400 p-5">
               <Skeleton height={16} width={48} show={false}>
-                <div className="text-text-600 font-bold">
+                <div className="text-zinc-400 font-bold">
                   {database?.mode === DatabaseModeEnum.MANAGED
                     ? 'N / A'
                     : `${database?.status?.state === StateEnum.DEPLOYED ? 1 : 0} / 1`}
@@ -68,7 +68,7 @@ export function PageGeneral(props: PageGeneralProps) {
               <span className="text-xs text-zinc-350 font-medium">Running instances</span>
             </div>
             <div className="flex-1 p-5">
-              <div className="text-text-600 font-bold">
+              <div className="text-zinc-400 font-bold">
                 {database?.mode === DatabaseModeEnum.MANAGED ? 'N / A' : '-' /** TODO: implem real metrics **/}
               </div>
               <span className="text-xs text-zinc-350 font-medium">Service restart</span>

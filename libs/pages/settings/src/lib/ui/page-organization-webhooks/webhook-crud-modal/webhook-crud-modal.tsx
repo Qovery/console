@@ -28,7 +28,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
       submitLabel={isEdition ? 'Update' : 'Create'}
       loading={isLoading}
     >
-      <div className="text-text-600 font-bold mb-3">General</div>
+      <div className="text-zinc-400 font-bold mb-3">General</div>
 
       <Controller
         name="target_url"
@@ -107,7 +107,7 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         )}
       />
 
-      <div className="text-text-600 font-bold mb-3">Event & filters</div>
+      <div className="text-zinc-400 font-bold mb-3">Event & filters</div>
 
       <div className="mb-3">
         <div data-testid="test-debug">

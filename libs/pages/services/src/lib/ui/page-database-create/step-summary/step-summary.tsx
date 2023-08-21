@@ -32,9 +32,9 @@ export function StepSummary(props: StepSummaryProps) {
     <div>
       <div className="mb-10">
         <div className="flex justify-between mb-2 items-center">
-          <h3 className="text-text-700 text-lg">Ready to install your database</h3>
+          <h3 className="text-zinc-400 text-lg">Ready to install your database</h3>
         </div>
-        <p className="text-xs text-text-500 mb-2">
+        <p className="text-xs text-zinc-400 mb-2">
           The basic database setup is done, you can now deploy your database or move forward with some advanced setup.
         </p>
       </div>
@@ -57,7 +57,7 @@ export function StepSummary(props: StepSummaryProps) {
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">General information</div>
+            <div className="text-sm text-zinc-400 font-bold mb-2">General information</div>
             <ul className="text-zinc-350 text-sm list-none">
               <li>
                 Name: <strong className="font-medium">{props.generalData.name}</strong>
@@ -84,14 +84,14 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.gotoGlobalInformation}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 
         <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-element-light-lighter-200 mb-10">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
-            <div className="text-sm text-text-600 font-bold mb-2">Resources</div>
+            <div className="text-sm text-zinc-400 font-bold mb-2">Resources</div>
             <ul className="text-zinc-350 text-sm list-none">
               {props.generalData.mode !== DatabaseModeEnum.MANAGED ? (
                 <>
@@ -116,7 +116,7 @@ export function StepSummary(props: StepSummaryProps) {
             onClick={props.gotoResources}
             icon={IconAwesomeEnum.WHEEL}
             style={ButtonIconStyle.FLAT}
-            className="text-text-500 hover:text-text-700"
+            className="text-zinc-400 hover:text-zinc-400"
           />
         </div>
 

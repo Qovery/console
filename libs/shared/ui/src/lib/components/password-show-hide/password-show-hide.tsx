@@ -22,11 +22,11 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
   return (
     <div className={`flex items-center text-xs text-zinc-350 ${className}`}>
       {isSecret ? (
-        <Icon name="icon-solid-user-secret" className="mr-3 text-text-500 text-xs" />
+        <Icon name="icon-solid-user-secret" className="mr-3 text-zinc-400 text-xs" />
       ) : (
         <button
           data-testid="toggle-button"
-          className="flex items-center mr-3 text-text-500"
+          className="flex items-center mr-3 text-zinc-400"
           onClick={() => {
             setVisible(!visible)
           }}
@@ -41,7 +41,7 @@ export function PasswordShowHide(props: PasswordShowHideProps) {
       <div className="flex grow  text-ellipsis overflow-hidden">
         <Tooltip content={value}>
           {visible ? (
-            <div data-testid="visible_value" className="truncate text-text-600">
+            <div data-testid="visible_value" className="truncate text-zinc-400">
               {value}
             </div>
           ) : (

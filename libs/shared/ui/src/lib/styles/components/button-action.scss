@@ -36,11 +36,11 @@
 }
 
 .btn-action--stroked {
-  @apply border border-element-light-lighter-500 text-text-500;
+  @apply border border-element-light-lighter-500 text-zinc-400;
 
   .btn-action__trigger,
   .btn-action__content {
-    @apply bg-element-light-lighter-300 hover:bg-element-light-lighter-400 text-text-500;
+    @apply bg-element-light-lighter-300 hover:bg-element-light-lighter-400 text-zinc-400;
   }
 
   .btn-action__trigger {

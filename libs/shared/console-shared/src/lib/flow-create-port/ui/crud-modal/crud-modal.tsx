@@ -138,7 +138,7 @@ export function CrudModal({
             className="flex items-center mr-4 mb-5"
           >
             <InputToggle onChange={field.onChange} value={field.value} title={field.value} small />
-            <span className="text-text-600 text-ssm font-medium cursor-pointer">Publicly exposed</span>
+            <span className="text-zinc-400 text-ssm font-medium cursor-pointer">Publicly exposed</span>
           </div>
         )}
       />

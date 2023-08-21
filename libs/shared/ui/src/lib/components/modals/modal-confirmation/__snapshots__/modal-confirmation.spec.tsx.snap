@@ -6,7 +6,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 text-text-600 mb-2 max-w-sm"
+      class="h4 text-zinc-400 mb-2 max-w-sm"
     >
       my title
     </h2>
@@ -40,7 +40,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-zinc-350 rounded px-2 "
+            class="absolute text-sm top-0 left-0 h-full w-full text-zinc-400 placeholder:text-zinc-350 rounded px-2 "
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
@@ -82,7 +82,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 text-text-600 mb-2 max-w-sm"
+      class="h4 text-zinc-400 mb-2 max-w-sm"
     >
       my title
     </h2>
@@ -104,7 +104,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-zinc-350 rounded px-2 "
+            class="absolute text-sm top-0 left-0 h-full w-full text-zinc-400 placeholder:text-zinc-350 rounded px-2 "
             data-testid="input-value"
             name="name"
             placeholder="Enter "delete""
@@ -146,7 +146,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 text-text-600 mb-2 max-w-sm"
+      class="h4 text-zinc-400 mb-2 max-w-sm"
     >
       my title
     </h2>
@@ -172,7 +172,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
             class="hidden"
           />
           <input
-            class="absolute text-sm top-0 left-0 h-full w-full text-text-600 placeholder:text-zinc-350 rounded px-2 "
+            class="absolute text-sm top-0 left-0 h-full w-full text-zinc-400 placeholder:text-zinc-350 rounded px-2 "
             data-testid="input-value"
             name="name"
             placeholder="Enter "delete""

@@ -25,7 +25,7 @@ beforeEach(() => {
             title: 'Filter by date',
             key: 'created_at',
             itemContentCustom: (item) => (
-              <span className="text-text-500 text-sm font-medium">{dateToFormat(item.created_at, 'MMM dd, Y')}</span>
+              <span className="text-zinc-400 text-sm font-medium">{dateToFormat(item.created_at, 'MMM dd, Y')}</span>
             ),
           },
         ],
