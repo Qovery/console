@@ -1,5 +1,7 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  ApplicationDeploymentRestrictionApi,
+  type ApplicationDeploymentRestrictionRequest,
   ApplicationMainCallsApi,
   ApplicationsApi,
   type CloneApplicationRequest,
@@ -28,6 +30,8 @@ const containerMainCallsApi = new ContainerMainCallsApi()
 const databaseMainCallsApi = new DatabaseMainCallsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const jobMainCallsApi = new JobMainCallsApi()
+
+const applicationDeploymentApi = new ApplicationDeploymentRestrictionApi()
 
 // Use this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param
@@ -99,6 +103,25 @@ export const services = createQueryKeys('services', {
       return response.data
     },
   }),
+  deploymentRestrictions: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const mapper = {
+        APPLICATION: applicationDeploymentApi.getApplicationDeploymentRestrictions.bind(applicationMainCallsApi),
+        CONTAINER: null,
+        DATABASE: null,
+        JOB: null, // Waiting on https://qovery.atlassian.net/browse/COR-573
+        CRON_JOB: null,
+        LIFECYCLE_JOB: null,
+      } as const
+      const fn = mapper[serviceType]
+      if (!fn) {
+        throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
+      }
+      const response = await fn(serviceId)
+      return response.data.results
+    },
+  }),
 })
 
 type CloneServiceRequest =
@@ -123,6 +146,13 @@ type CloneServiceRequest =
       payload: CloneJobRequest
     }
 
+type DeploymentRestrictionRequest = {
+  serviceId: string
+  serviceType: ApplicationType
+  deploymentRestrictionId: string
+  payload: ApplicationDeploymentRestrictionRequest
+}
+
 export const mutations = {
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const mapper = {
@@ -135,6 +165,52 @@ export const mutations = {
     } as const
     const mutation = mapper[serviceType]
     const response = await mutation(serviceId, payload)
+    return response.data
+  },
+  async editDeploymentRestriction({
+    serviceId,
+    serviceType,
+    deploymentRestrictionId,
+    payload,
+  }: DeploymentRestrictionRequest) {
+    const mapper = {
+      APPLICATION: applicationDeploymentApi.editApplicationDeploymentRestriction.bind(applicationDeploymentApi),
+    } as const
+    const mutation = mapper[serviceType]
+    if (!mutation) {
+      throw new Error(`editDeploymentRestriction unsupported for serviceType: ${serviceType}`)
+    }
+    const response = await mutation(serviceId, deploymentRestrictionId, payload)
+    return response.data
+  },
+  async createDeploymentRestriction({
+    serviceId,
+    serviceType,
+    payload,
+  }: Omit<DeploymentRestrictionRequest, 'deploymentRestrictionId'>) {
+    const mapper = {
+      APPLICATION: applicationDeploymentApi.createApplicationDeploymentRestriction.bind(applicationDeploymentApi),
+    } as const
+    const mutation = mapper[serviceType]
+    if (!mutation) {
+      throw new Error(`createDeploymentRestriction unsupported for serviceType: ${serviceType}`)
+    }
+    const response = await mutation(serviceId, payload)
+    return response.data
+  },
+  async deleteDeploymentRestriction({
+    serviceId,
+    serviceType,
+    deploymentRestrictionId,
+  }: Omit<DeploymentRestrictionRequest, 'payload'>) {
+    const mapper = {
+      APPLICATION: applicationDeploymentApi.deleteApplicationDeploymentRestriction.bind(applicationDeploymentApi),
+    } as const
+    const mutation = mapper[serviceType]
+    if (!mutation) {
+      throw new Error(`deleteDeploymentRestriction unsupported for serviceType: ${serviceType}`)
+    }
+    const response = await mutation(serviceId, deploymentRestrictionId)
     return response.data
   },
 }
