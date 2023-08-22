@@ -46,7 +46,7 @@ export function PodLogs(props: PodLogsProps) {
             return (
               <div
                 className={`group flex items-center w-[calc(100%+24px)] rounded-sm px-3 -mx-3 h-full ${
-                  isActive ? 'bg-element-light-darker-600' : ''
+                  isActive ? 'bg-zinc-800' : ''
                 }`}
               >
                 <div className="w-4 mr-2.5">

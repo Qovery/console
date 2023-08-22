@@ -113,7 +113,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
       }`}
     >
       {withLogsNavigation && (
-        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-zinc-550 bg-element-light-darker-700">
+        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-zinc-550 bg-zinc-900">
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +

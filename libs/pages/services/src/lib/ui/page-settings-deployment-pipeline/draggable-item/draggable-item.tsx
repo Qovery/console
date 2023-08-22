@@ -27,7 +27,7 @@ export function DraggableItem(props: DraggableItemProps) {
   const serviceType = getServiceType(service)
 
   const classNameItem = (isDragging: boolean) =>
-    `flex items-center bg-element-light-lighter-100 rounded px-2 py-3 border ${
+    `flex items-center bg-zinc-50 rounded px-2 py-3 border ${
       isDragging ? 'border-2 border-green-500' : 'border-element-light-lighter-400'
     }`
 

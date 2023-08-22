@@ -1,5 +1,5 @@
 .toast {
-  @apply relative bg-element-light-darker-700 rounded cursor-pointer;
+  @apply relative bg-zinc-900 rounded cursor-pointer;
   box-shadow: 0 16px 24px rgba(0, 0, 0, 0.12);
 
   &:hover {

@@ -13,7 +13,7 @@ exports[`InputFilter should match input filter with loading 1`] = `
           class="flex justify-center w-12"
         >
           <div
-            class="aspect-square border-2  rounded-full border-solid border-element-light-lighter-700 border-r-element-light-lighter-100 animate-spin w-4 "
+            class="aspect-square border-2  rounded-full border-solid border-element-light-lighter-700 border-r-zinc-50 animate-spin w-4 "
             data-testid="spinner"
           />
         </div>

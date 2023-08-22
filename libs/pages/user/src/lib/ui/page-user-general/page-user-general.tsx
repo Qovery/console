@@ -21,11 +21,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
           <BlockContent title="User profile">
             <div className="flex items-center">
               <div>
-                <img
-                  className="rounded-full w-16 h-16 border border-element-light-lighter-100"
-                  src={picture}
-                  alt="User profile"
-                />
+                <img className="rounded-full w-16 h-16 border border-zinc-50" src={picture} alt="User profile" />
               </div>
               <div className="ml-5">
                 <p className="text-zinc-400 font-medium ml-5">
