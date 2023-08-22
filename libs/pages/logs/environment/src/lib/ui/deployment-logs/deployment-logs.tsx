@@ -75,13 +75,13 @@ export function DeploymentLogs({
               </p>
             </div>
             <div className="bg-element-light-darker-500 border border-zinc-500 rounded-lg overflow-hidden w-[484px]">
-              <div className="py-3 bg-element-light-darker-300 border-b border-zinc-500">Last deployment logs</div>
+              <div className="py-3 bg-zinc-600 border-b border-zinc-500">Last deployment logs</div>
               <div className="overflow-y-auto max-h-96 p-2">
                 {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
                   <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
                     <Link
-                      className={`flex justify-between transition bg-element-light-darker-200 hover:bg-element-light-darker-300 w-full p-3 rounded ${
-                        versionId === deploymentHistory.execution_id ? 'bg-element-light-darker-300' : ''
+                      className={`flex justify-between transition bg-zinc-550 hover:bg-zinc-600 w-full p-3 rounded ${
+                        versionId === deploymentHistory.execution_id ? 'bg-zinc-600' : ''
                       }`}
                       to={
                         ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -97,7 +97,7 @@ export function DeploymentLogs({
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-center bg-element-light-darker-300 h-9 border-t border-zinc-500">
+              <div className="flex items-center justify-center bg-zinc-600 h-9 border-t border-zinc-500">
                 <p className="text-zinc-350 text-xs font-normal">
                   Only the last 20 deployments of the environment over the last 30 days are available.
                 </p>

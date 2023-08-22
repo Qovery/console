@@ -73,9 +73,7 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                       DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId ? versionId : '')
                     }
                     className={`flex justify-between items-center w-full text-ssm transition-all font-medium py-1.5 px-2.5 hover:text-zinc-50 rounded-[3px] ${
-                      serviceId === service.id
-                        ? 'bg-zinc-500 !text-zinc-50'
-                        : 'text-zinc-100 hover:bg-element-light-darker-300'
+                      serviceId === service.id ? 'bg-zinc-500 !text-zinc-50' : 'text-zinc-100 hover:bg-zinc-600'
                     } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >
                     <span className="flex">

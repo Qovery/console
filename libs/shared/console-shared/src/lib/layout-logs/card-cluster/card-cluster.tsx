@@ -14,7 +14,7 @@ export function CardCluster(props: CardClusterProps) {
   if (!cluster) return null
 
   return (
-    <div className="bg-element-light-darker-300 p-4 rounded">
+    <div className="bg-zinc-600 p-4 rounded">
       <div data-testid="status" className="flex items-center text-zinc-300 font-bold text-xs">
         <StatusChip status={cluster.extendedStatus?.status?.status} className="mr-4" /> Cluster infra logs
       </div>

@@ -59,7 +59,7 @@
   &.is-active,
   &:hover {
     color: theme('colors.zinc.100');
-    background-color: theme('colors.element.light.darker.200');
+    background-color: theme('colors.zinc.550');
   }
 }
 
@@ -139,7 +139,7 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-element-light-darker-200 dark:hover:bg-element-light-darker-400 dark:text-zinc-50;
+  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-zinc-550 dark:hover:bg-element-light-darker-400 dark:text-zinc-50;
 
   &.bg-transparent {
     background-color: transparent;
@@ -166,7 +166,7 @@
 }
 
 .btn-icon--dark {
-  @apply bg-zinc-500 text-zinc-300 hover:text-zinc-50 hover:bg-element-light-darker-200;
+  @apply bg-zinc-500 text-zinc-300 hover:text-zinc-50 hover:bg-zinc-550;
 }
 
 // size

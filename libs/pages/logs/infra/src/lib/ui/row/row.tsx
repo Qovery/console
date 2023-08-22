@@ -24,7 +24,7 @@ export function Row(props: RowProps) {
       ? 'bg-red-500 text-zinc-800 group-hover:bg-red-600'
       : success
       ? 'bg-green-500 text-zinc-800 group-hover:bg-green-600'
-      : 'bg-element-light-darker-300 text-zinc-350 group-hover:bg-element-light-darker-200'
+      : 'bg-zinc-600 text-zinc-350 group-hover:bg-zinc-550'
   }`
 
   const colorsCellClassName = (white?: boolean) =>
@@ -41,7 +41,7 @@ export function Row(props: RowProps) {
   return (
     <div
       className={`group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 select-none ${
-        realError || success ? 'bg-element-light-darker-300' : ''
+        realError || success ? 'bg-zinc-600' : ''
       } ${realError ? 'row-error' : ''}`}
     >
       <div className="flex">

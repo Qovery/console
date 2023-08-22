@@ -22,5 +22,5 @@
 }
 
 .toast__close {
-  @apply opacity-0 w-6 h-6 flex justify-center items-center absolute top-[-8px] left-[-8px] hover:bg-element-light-darker-500 text-white ease-out duration-150 bg-element-light-darker-300 border border-element-light-lighter-800 rounded-full;
+  @apply opacity-0 w-6 h-6 flex justify-center items-center absolute top-[-8px] left-[-8px] hover:bg-element-light-darker-500 text-white ease-out duration-150 bg-zinc-600 border border-element-light-lighter-800 rounded-full;
 }

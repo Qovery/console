@@ -113,7 +113,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
       }`}
     >
       {withLogsNavigation && (
-        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-element-light-darker-200 bg-element-light-darker-700">
+        <div className="absolute z-20 overflow-y-auto left-1 flex items-center w-[calc(100%-8px)] h-11 border-b border-zinc-550 bg-element-light-darker-700">
           {LinkNavigation(
             'Deployment logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -141,7 +141,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
       ) : (
         <>
           <div
-            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-element-light-darker-400 px-5 border-b border-element-light-darker-200 ${
+            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-element-light-darker-400 px-5 border-b border-zinc-550 ${
               tabInformation ? 'w-[calc(100%-360px)]' : 'w-[calc(100%-8px)]'
             } ${withLogsNavigation ? 'top-12' : ''}`}
           >
