@@ -54,7 +54,7 @@
 .btn--dark {
   color: theme('colors.zinc.200');
   background-color: theme('colors.zinc.500');
-  border: 1px solid theme('colors.element.light.lighter.800');
+  border: 1px solid theme('colors.zinc.400');
 
   &.is-active,
   &:hover {
@@ -197,9 +197,9 @@
 }
 
 .btn-icon--circle {
-  @apply w-6 h-6 rounded-full flex items-center justify-center text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-zinc-200 dark:hover:bg-zinc-500;
+  @apply w-6 h-6 rounded-full flex items-center justify-center text-zinc-400 hover:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-500;
 
   &.btn.is-active {
-    @apply text-element-light-lighter-800 hover:text-element-light-lighter-800 hover:bg-zinc-200 dark:bg-zinc-500;
+    @apply text-zinc-400 hover:text-zinc-400 hover:bg-zinc-200 dark:bg-zinc-500;
   }
 }
