@@ -32,7 +32,7 @@ export function Sidebar({
 
   return (
     <div
-      className={`flex shrink-0 border-x border-zinc-500 bg-element-light-darker-400 
+      className={`flex shrink-0 border-x border-zinc-500 bg-zinc-650 
       ${clusterBanner ? 'h-[calc(100vh-8rem)]' : 'h-[calc(100vh-4rem)]'} ${openSidebar ? 'w-[340px]' : 'w-5'}`}
     >
       <div data-testid="sidebar" className={`w-full h-full overflow-x-scroll ${!openSidebar ? 'hidden' : ''}`}>

@@ -60,10 +60,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
     currentError && currentError.underlying_error?.message?.slice(0, !displayFullError ? 240 : Infinity)
 
   return (
-    <div
-      data-testid="tabs-logs"
-      className="w-[360px] h-[calc(100%+0.5rem)] shrink-0 bg-element-light-darker-400 relative z-20"
-    >
+    <div data-testid="tabs-logs" className="w-[360px] h-[calc(100%+0.5rem)] shrink-0 bg-zinc-650 relative z-20">
       <div className="py-2 px-5">
         <Tabs className="bg-transparent" classNameBtn="grow justify-center" items={items} fullWidth />
         <div data-testid="sections" className="mt-6">
@@ -91,7 +88,7 @@ export function TabsClusterLogs(props: TabsClusterLogsProps) {
                   <div
                     className={`bg-element-light-darker-500 mt-4 p-2 rounded ml-8 ${
                       (currentError.underlying_error?.message || '').length > 240
-                        ? 'cursor-pointer select-none hover:bg-element-light-darker-400 transition-all ease-in-out duration-150'
+                        ? 'cursor-pointer select-none hover:bg-zinc-650 transition-all ease-in-out duration-150'
                         : ''
                     }`}
                     onClick={() =>

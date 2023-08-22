@@ -80,7 +80,7 @@ export function Navigation({ defaultOrganizationId }: NavigationProps) {
   ]
 
   return (
-    <div className="w-16 h-screen dark:bg-element-light-darker-400 bg-white flex flex-col">
+    <div className="w-16 h-screen dark:bg-zinc-650 bg-white flex flex-col">
       <Link
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
         className="flex w-16 h-16 items-center justify-center border-b z-10 dark:border-zinc-500 border-element-light-lighter-400"

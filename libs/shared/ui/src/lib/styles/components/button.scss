@@ -96,7 +96,7 @@
 }
 
 .btn-login--github {
-  @apply bg-black text-white hover:bg-element-light-darker-400;
+  @apply bg-black text-white hover:bg-zinc-650;
 }
 
 .btn-login--default {
@@ -139,7 +139,7 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-zinc-550 dark:hover:bg-element-light-darker-400 dark:text-zinc-50;
+  @apply bg-white hover:bg-element-light-lighter-400 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-zinc-550 dark:hover:bg-zinc-650 dark:text-zinc-50;
 
   &.bg-transparent {
     background-color: transparent;

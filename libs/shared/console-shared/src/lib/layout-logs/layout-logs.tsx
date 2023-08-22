@@ -85,7 +85,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
       <Link
         data-testid="nav"
         className={`flex items-center h-full px-6 text-sm font-medium text-zinc-50 transition-colors transition-timing duration-250 hover:bg-element-light-darker-500 rounded-t ${
-          isActive ? 'bg-element-light-darker-400' : ''
+          isActive ? 'bg-zinc-650' : ''
         }`}
         to={link}
       >
@@ -141,7 +141,7 @@ export function LayoutLogs(props: PropsWithChildren<LayoutLogsProps>) {
       ) : (
         <>
           <div
-            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-element-light-darker-400 px-5 border-b border-zinc-550 ${
+            className={`absolute left-1 z-20 flex justify-end items-center h-11 bg-zinc-650 px-5 border-b border-zinc-550 ${
               tabInformation ? 'w-[calc(100%-360px)]' : 'w-[calc(100%-8px)]'
             } ${withLogsNavigation ? 'top-12' : ''}`}
           >

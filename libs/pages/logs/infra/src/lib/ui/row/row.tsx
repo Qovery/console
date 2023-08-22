@@ -40,7 +40,7 @@ export function Row(props: RowProps) {
 
   return (
     <div
-      className={`group flex justify-between min-h-6 font-code text-xs hover:bg-element-light-darker-400 select-none ${
+      className={`group flex justify-between min-h-6 font-code text-xs hover:bg-zinc-650 select-none ${
         realError || success ? 'bg-zinc-600' : ''
       } ${realError ? 'row-error' : ''}`}
     >
