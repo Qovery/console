@@ -3,7 +3,7 @@ import ButtonIconActionElement, {
 } from './button-icon-action-element/button-icon-action-element'
 
 export interface ButtonIconActionProps {
-  actions?: ButtonIconActionElementProps[]
+  actions?: Omit<ButtonIconActionElementProps, 'isLast'>[]
   className?: string
 }
 
@@ -18,7 +18,10 @@ export function ButtonIconAction(props: ButtonIconActionProps) {
     >
       {actions &&
         actions.map(
-          (action, index) => (action.menus || action.onClick) && <ButtonIconActionElement key={index} {...action} />
+          (action, index) =>
+            (action.menus || action.onClick) && (
+              <ButtonIconActionElement key={index} {...action} isLast={index === actions.length - 1} />
+            )
         )}
     </div>
   )

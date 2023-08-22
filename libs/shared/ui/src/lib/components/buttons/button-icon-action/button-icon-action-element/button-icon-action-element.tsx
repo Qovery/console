@@ -11,6 +11,7 @@ export interface ButtonIconActionElementProps {
   menusClassName?: string
   menuAlign?: MenuAlign
   triggerClassName?: string
+  isLast?: boolean
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
@@ -23,6 +24,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
     menusClassName = '',
     triggerClassName = '',
     menuAlign = MenuAlign.START,
+    isLast = false,
   } = props
 
   const [open, setOpen] = useState(false)
@@ -67,7 +69,7 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
             {iconLeft}
             {iconRight}
           </div>,
-          true
+          !isLast
         )}
       </>
     )
