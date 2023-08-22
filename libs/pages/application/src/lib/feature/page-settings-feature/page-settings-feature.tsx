@@ -3,12 +3,13 @@ import { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { selectApplicationById } from '@qovery/domains/application'
-import { isJob } from '@qovery/shared/enums'
+import { isApplication, isJob } from '@qovery/shared/enums'
 import { type ApplicationEntity } from '@qovery/shared/interfaces'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
   APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
+  APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
   APPLICATION_SETTINGS_DOMAIN_URL,
   APPLICATION_SETTINGS_GENERAL_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
@@ -87,6 +88,14 @@ export function PageSettingsFeature() {
           url: pathSettings + APPLICATION_SETTINGS_HEALTHCHECKS_URL,
         }
       )
+    }
+
+    if (isApplication(application)) {
+      links.push({
+        title: 'Deployment restrictions',
+        icon: IconAwesomeEnum.CART_FLATBED,
+        url: pathSettings + APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
+      })
     }
 
     links.push(
