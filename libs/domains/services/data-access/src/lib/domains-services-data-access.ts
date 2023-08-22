@@ -31,7 +31,12 @@ const jobMainCallsApi = new JobMainCallsApi()
 
 // Use this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param
-type ServiceType = keyof typeof ServiceTypeEnum
+export type ServiceType = keyof typeof ServiceTypeEnum
+
+export type ApplicationType = Extract<keyof typeof ServiceTypeEnum, 'APPLICATION'>
+export type ContainerType = Extract<ServiceType, 'CONTAINER'>
+export type DatabaseType = Extract<ServiceType, 'Database'>
+export type JobType = Extract<ServiceType, 'JOB' | 'LIFECYCLE_JOB' | 'CRON_JOB'>
 
 export const services = createQueryKeys('services', {
   deploymentStatus: (environmentId: string, serviceId: string) => ({
@@ -99,22 +104,22 @@ export const services = createQueryKeys('services', {
 type CloneServiceProps =
   | {
       serviceId: string
-      serviceType: Extract<ServiceType, 'APPLICATION'>
+      serviceType: ApplicationType
       cloneRequest: CloneApplicationRequest
     }
   | {
       serviceId: string
-      serviceType: Extract<ServiceType, 'CONTAINER'>
+      serviceType: ContainerType
       cloneRequest: CloneContainerRequest
     }
   | {
       serviceId: string
-      serviceType: Extract<ServiceType, 'DATABASE'>
+      serviceType: DatabaseType
       cloneRequest: CloneDatabaseRequest
     }
   | {
       serviceId: string
-      serviceType: Extract<ServiceType, 'JOB' | 'LIFECYCLE_JOB' | 'CRON_JOB'>
+      serviceType: JobType
       cloneRequest: CloneJobRequest
     }
 
