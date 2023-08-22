@@ -44,7 +44,7 @@ export function StepSummary({
       </div>
 
       <div className="mb-10">
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
+        <div className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-2">General information</div>
@@ -108,7 +108,7 @@ export function StepSummary({
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
+        <div className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-2">Resources</div>
@@ -136,7 +136,7 @@ export function StepSummary({
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
+        <div className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-2">Ports</div>
@@ -166,7 +166,7 @@ export function StepSummary({
                         portsData.healthchecks.typeLiveness !== ProbeTypeEnum.NONE && (
                           <li className="flex flex-col mt-1">
                             <span className="font-bold text-zinc-400">Liveness</span>
-                            <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                            <ul className="relative border-l border-zinc-250 mt-2 mb-1">
                               <li className="pl-5">
                                 Type: <strong className="font-medium">{portsData.healthchecks.typeLiveness}</strong>
                               </li>
@@ -207,7 +207,7 @@ export function StepSummary({
                         portsData.healthchecks.typeReadiness !== ProbeTypeEnum.NONE && (
                           <li className="flex flex-col mt-1">
                             <span className="font-bold text-zinc-400">Readiness</span>
-                            <ul className="relative border-l border-element-light-lighter-500 mt-2 mb-1">
+                            <ul className="relative border-l border-zinc-250 mt-2 mb-1">
                               <li className="pl-5">
                                 Type: <strong className="font-medium">{portsData.healthchecks.typeReadiness}</strong>
                               </li>

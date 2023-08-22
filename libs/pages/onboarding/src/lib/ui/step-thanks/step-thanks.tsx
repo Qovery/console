@@ -21,7 +21,7 @@ export function StepThanks(props: StepThanksProps) {
       <p className="text-sm mb-5 text-zinc-400">
         We will get back to you as soon as possible on the following email address:
       </p>
-      <div className="text-sm text-center border border-element-light-lighter-500 bg-zinc-100 text-zinc-400 px-4 py-2.5 rounded mb-5">
+      <div className="text-sm text-center border border-zinc-250 bg-zinc-100 text-zinc-400 px-4 py-2.5 rounded mb-5">
         {email}
       </div>
       <p className="text-sm mb-5 text-zinc-400">

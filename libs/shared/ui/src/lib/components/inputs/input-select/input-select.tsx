@@ -179,7 +179,7 @@ export function InputSelect({
     hasFocus && !disabled
       ? '!border-brand-500 !shadow-[0_2px_2px_rgba(0, 0, 0, 0.05)] input--focused'
       : disabled
-      ? '!bg-zinc-100 !border-element-light-lighter-500 !pointer-events-none'
+      ? '!bg-zinc-100 !border-zinc-250 !pointer-events-none'
       : hasError
       ? 'input--error'
       : ''
@@ -194,7 +194,7 @@ export function InputSelect({
     <div className={className}>
       <div
         className={`input input--select ${hasIcon ? 'input--has-icon' : ''} ${inputActions} ${
-          disabled ? '!bg-zinc-100 !border-element-light-lighter-500' : ''
+          disabled ? '!bg-zinc-100 !border-zinc-250' : ''
         } ${isFilter ? 'input--filter' : ''}`}
         data-testid={dataTestId || 'select'}
       >

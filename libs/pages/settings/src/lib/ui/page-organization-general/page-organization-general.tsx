@@ -41,7 +41,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 <span className="block text-xs text-zinc-350">Created since {created_at.split('T')[0]}</span>
               </div>
             </div>
-            <hr className="my-5 border-0 border-b border-element-light-lighter-500 relative -left-5 w-[calc(100%+41px)]" />
+            <hr className="my-5 border-0 border-b border-zinc-250 relative -left-5 w-[calc(100%+41px)]" />
             <Controller
               name="name"
               control={control}

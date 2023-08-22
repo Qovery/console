@@ -130,7 +130,7 @@ export function TableRowServices<T>(props: TableRowServicesProps<T>) {
                 <TagCommit commitId={dataJobs.source?.docker?.git_repository?.deployed_commit_id} />
               )}
               {(isContainer(type) || dataJobs.source?.image) && (
-                <Tag className="truncate border border-element-light-lighter-500 text-zinc-350 font-medium h-7">
+                <Tag className="truncate border border-zinc-250 text-zinc-350 font-medium h-7">
                   <div className="block truncate">
                     {dataContainer.image_name && (
                       <Tooltip content={`${dataContainer.image_name}:${dataContainer.tag}`}>

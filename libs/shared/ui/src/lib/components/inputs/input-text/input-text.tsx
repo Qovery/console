@@ -48,7 +48,7 @@ export function InputText(props: InputTextProps) {
 
   const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
 
-  const isDisabled = disabled ? 'input--disabled !border-element-light-lighter-500' : ''
+  const isDisabled = disabled ? 'input--disabled !border-zinc-250' : ''
 
   const displayPicker = () => {
     const input = inputRef.current?.querySelector('input')

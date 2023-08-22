@@ -29,7 +29,7 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
                 </p>
               </div>
             </div>
-            <hr className="my-5 border-0 border-b border-element-light-lighter-500 relative -left-5 w-[calc(100%+41px)]" />
+            <hr className="my-5 border-0 border-b border-zinc-250 relative -left-5 w-[calc(100%+41px)]" />
             <div className="flex mb-3">
               <Controller
                 name="firstName"

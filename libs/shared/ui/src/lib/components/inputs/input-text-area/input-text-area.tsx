@@ -29,7 +29,7 @@ export function InputTextArea(props: InputTextAreaProps) {
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const inputActions = hasFocus ? 'input--focused' : ''
 
-  const isDisabled = props.disabled ? 'input--disabled !border-element-light-lighter-500' : ''
+  const isDisabled = props.disabled ? 'input--disabled !border-zinc-250' : ''
 
   return (
     <div

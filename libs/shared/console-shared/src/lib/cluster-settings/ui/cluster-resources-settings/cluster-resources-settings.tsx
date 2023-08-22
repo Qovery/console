@@ -85,7 +85,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             )}
           />
         ) : (
-          <div className="border border-element-light-lighter-500 rounded p-4 text-zinc-400 text-sm">
+          <div className="border border-zinc-250 rounded p-4 text-zinc-400 text-sm">
             {props.clusterTypeOptions &&
               props.clusterTypeOptions[0] &&
               `${props.clusterTypeOptions[0].label} - ${props.clusterTypeOptions[0].description}`}

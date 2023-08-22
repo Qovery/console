@@ -57,7 +57,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                 <li
                   key={webhook.id}
                   data-testid="webhook-row"
-                  className="flex items-center justify-between border-b border-element-light-lighter-500 py-4 px-5 last:border-0"
+                  className="flex items-center justify-between border-b border-zinc-250 py-4 px-5 last:border-0"
                 >
                   <div className="flex flex-col">
                     <p className="flex text-zinc-400 font-medium text-xs mb-1">

@@ -35,7 +35,7 @@ export function CardClusterFeature(props: CardClusterFeatureProps) {
       data-testid="feature"
       className={`flex justify-between px-4 py-3 ${
         control ? 'rounded border bg-zinc-100' : 'border-b last:border-0'
-      } border-element-light-lighter-500 mb-3 last:mb-0`}
+      } border-zinc-250 mb-3 last:mb-0`}
       onClick={() => {
         if (feature.id && !disabled && getValues && setValue && control) {
           const active = getValues()[feature.id].value

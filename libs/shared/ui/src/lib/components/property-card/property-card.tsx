@@ -16,7 +16,7 @@ export interface PropertyCardProps {
 export function PropertyCard(props: PropertyCardProps) {
   const { name, value, isLoading, helperText, onSettingsClick, dataTestId = 'property-card' } = props
   return (
-    <div data-testid={dataTestId} className="px-5 py-4 rounded border border-element-light-lighter-500 bg-white flex">
+    <div data-testid={dataTestId} className="px-5 py-4 rounded border border-zinc-250 bg-white flex">
       <div className="flex-grow">
         <Skeleton height={24} width={100} show={isLoading}>
           <h3 className="font-medium text-xl text-zinc-400 mb-1">{value}</h3>

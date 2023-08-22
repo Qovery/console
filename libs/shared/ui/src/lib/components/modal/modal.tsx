@@ -97,7 +97,7 @@ export const Modal = (props: ModalProps) => {
             })}
             {buttonClose && (
               <Dialog.Close className="absolute top-4 right-4">
-                <span className="flex w-7 h-7 items-center justify-center bg-zinc-200 text-zinc-350 hover:text-zinc-400 hover:bg-element-light-lighter-500 ease-out duration-300 rounded-full">
+                <span className="flex w-7 h-7 items-center justify-center bg-zinc-200 text-zinc-350 hover:text-zinc-400 hover:bg-zinc-250 ease-out duration-300 rounded-full">
                   <Icon name="icon-solid-xmark" />
                 </span>
               </Dialog.Close>

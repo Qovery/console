@@ -170,7 +170,7 @@ export function TableRowDeployment({
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as ContainerApplicationEntity).image_name && (
-              <Tag className="truncate border border-element-light-lighter-500 text-zinc-350 font-medium h-7">
+              <Tag className="truncate border border-zinc-250 text-zinc-350 font-medium h-7">
                 <span className="block truncate">
                   <Tooltip
                     side="left"

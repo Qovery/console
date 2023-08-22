@@ -22,7 +22,7 @@
 }
 
 .btn--stroked {
-  @apply bg-zinc-100 hover:bg-zinc-150 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400;
+  @apply bg-zinc-100 hover:bg-zinc-150 border-solid border-x border-y border-zinc-250 text-zinc-400;
 
   &.btn--active {
     color: theme('colors.brand.500');
@@ -100,7 +100,7 @@
 }
 
 .btn-login--default {
-  @apply bg-zinc-150 text-zinc-400 border border-element-light-lighter-500 hover:bg-zinc-200;
+  @apply bg-zinc-150 text-zinc-400 border border-zinc-250 hover:bg-zinc-200;
 }
 
 // icon
@@ -130,7 +130,7 @@
   }
 
   &.btn--disabled {
-    color: theme('colors.element.light.lighter.500');
+    color: theme('colors.zinc.250');
   }
 }
 
@@ -139,7 +139,7 @@
 }
 
 .btn-icon--stroked {
-  @apply bg-white hover:bg-zinc-200 border-solid border-x border-y border-element-light-lighter-500 text-zinc-400 dark:border-0 dark:bg-zinc-550 dark:hover:bg-zinc-650 dark:text-zinc-50;
+  @apply bg-white hover:bg-zinc-200 border-solid border-x border-y border-zinc-250 text-zinc-400 dark:border-0 dark:bg-zinc-550 dark:hover:bg-zinc-650 dark:text-zinc-50;
 
   &.bg-transparent {
     background-color: transparent;

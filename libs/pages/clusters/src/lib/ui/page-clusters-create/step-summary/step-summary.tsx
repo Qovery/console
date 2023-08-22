@@ -81,10 +81,7 @@ export function StepSummary(props: StepSummaryProps) {
           }
           type={BannerBoxEnum.WARNING}
         />
-        <div
-          data-testid="summary-general"
-          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
-        >
+        <div data-testid="summary-general" className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-2">General information</div>
@@ -119,7 +116,7 @@ export function StepSummary(props: StepSummaryProps) {
 
         <div
           data-testid="summary-resources"
-          className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
+          className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2"
         >
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
@@ -155,10 +152,7 @@ export function StepSummary(props: StepSummaryProps) {
         </div>
 
         {props.remoteData && props.remoteData.ssh_key.length > 0 && (
-          <div
-            data-testid="summary-remote"
-            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
-          >
+          <div data-testid="summary-remote" className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">
               <div className="text-sm text-zinc-400 font-bold mb-2">Remote access</div>
@@ -180,7 +174,7 @@ export function StepSummary(props: StepSummaryProps) {
         {props.featuresData && checkIfFeaturesAvailable() && (
           <div
             data-testid="summary-features"
-            className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2"
+            className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2"
           >
             <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
             <div className="flex-grow mr-2">

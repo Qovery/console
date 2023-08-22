@@ -71,9 +71,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
   }
 
   const classNameGroup = (isDraggingOver: boolean) =>
-    `grid gap-1 p-1 border border-element-light-lighter-500 border-t-0 rounded-b ${
-      isDraggingOver ? 'bg-green-100' : 'bg-zinc-200'
-    }`
+    `grid gap-1 p-1 border border-zinc-250 border-t-0 rounded-b ${isDraggingOver ? 'bg-green-100' : 'bg-zinc-200'}`
 
   return (
     <div className="w-[calc(100vw-368px)]">
@@ -122,7 +120,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                       </svg>
                     )}
                     <div className="w-60 shrink-0 rounded">
-                      <div className="h-11 flex justify-between items-center bg-zinc-100 px-3 py-2 border border-element-light-lighter-500 rounded-t">
+                      <div className="h-11 flex justify-between items-center bg-zinc-100 px-3 py-2 border border-zinc-250 rounded-t">
                         <div className="flex items-center">
                           <BadgeDeploymentOrder order={stage.deployment_order} />
                           <span className="block truncate text-zinc-400 text-2xs font-bold">

@@ -36,7 +36,7 @@
 }
 
 .btn-action--stroked {
-  @apply border border-element-light-lighter-500 text-zinc-400;
+  @apply border border-zinc-250 text-zinc-400;
 
   .btn-action__trigger,
   .btn-action__content {
@@ -44,7 +44,7 @@
   }
 
   .btn-action__trigger {
-    @apply border-element-light-lighter-500;
+    @apply border-zinc-250;
 
     &.btn-action__trigger--open {
       @apply bg-zinc-200;
@@ -69,11 +69,11 @@
 
 // btn icon actions
 .btn-icon-action {
-  @apply inline-flex h-7 border border-element-light-lighter-500 rounded overflow-hidden;
+  @apply inline-flex h-7 border border-zinc-250 rounded overflow-hidden;
 }
 
 .btn-icon-action__element {
-  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-zinc-50 border-r border-r-element-light-lighter-500 last:border-r-0 h-full min-w-[28px] text-2xs text-zinc-350 transition ease-in-out duration-150;
+  @apply flex items-center justify-center gap-2.5 px-2 cursor-pointer bg-zinc-50 border-r border-r-zinc-250 last:border-r-0 h-full min-w-[28px] text-2xs text-zinc-350 transition ease-in-out duration-150;
 
   &.is-active,
   &:hover {

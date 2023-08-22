@@ -77,7 +77,7 @@ export function InputCreditCard(props: InputCreditCardProps) {
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
-  const isDisabled = disabled ? 'input--disabled !border-element-light-lighter-500' : ''
+  const isDisabled = disabled ? 'input--disabled !border-zinc-250' : ''
 
   useEffect(() => {
     switch (props.type) {

@@ -70,15 +70,15 @@ export function DeployOtherCommitModal(props: DeployOtherCommitModalProps) {
                 <Icon name={IconAwesomeEnum.CODE_COMMIT} className="absolute left-0 text-zinc-300 -translate-x-1/2" />
                 Commit{commitsByDay[date].length > 1 ? 's' : ''} on {dateToFormat(date, 'MMM dd, yyyy')}
               </h3>
-              <div className="border-l border-element-light-lighter-500 pt-2">
+              <div className="border-l border-zinc-250 pt-2">
                 <div className="pl-5 pb-4">
-                  <div className="flex flex-col rounded-md border border-element-light-lighter-500">
+                  <div className="flex flex-col rounded-md border border-zinc-250">
                     {commitsByDay[date].map((commit, index) => (
                       <div
                         data-testid="commit-box"
                         key={commit.git_commit_id}
                         onClick={() => setSelectedCommitId(commit.git_commit_id)}
-                        className={`h-[5.5rem] flex items-center transition-all justify-between cursor-pointer px-5 border-element-light-lighter-500 ${
+                        className={`h-[5.5rem] flex items-center transition-all justify-between cursor-pointer px-5 border-zinc-250 ${
                           currentCommitId !== commit.git_commit_id && selectedCommitId === commit.git_commit_id
                             ? 'bg-brand-50 outline-brand-500 outline'
                             : ''

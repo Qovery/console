@@ -82,7 +82,7 @@ export function UpdateAllModal(props: UpdateAllModalProps) {
                 className={`${index === 0 ? 'rounded-t' : ''} ${
                   props.applications && props.applications.length - 1 === index ? 'rounded-b !border-b' : ''
                 } border border-b-0  p-4 flex justify-between ${
-                  isChecked(application.id) ? `bg-brand-50 border border-brand-500` : 'border-element-light-lighter-500'
+                  isChecked(application.id) ? `bg-brand-50 border border-brand-500` : 'border-zinc-250'
                 } ${props.applications && isChecked(props.applications[index - 1]?.id) && 'border-t-brand-500'}`}
               >
                 <div className="text-zinc-400 font-medium flex">

@@ -36,7 +36,7 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
           </div>
         )}
       </header>
-      <div data-testid="progress-bar-wrapper" className="h-[6px] bg-element-light-lighter-500 relative shrink-0">
+      <div data-testid="progress-bar-wrapper" className="h-[6px] bg-zinc-250 relative shrink-0">
         <div
           data-testid="progress-bar"
           style={{ transform: `scaleX(${props.currentStep / props.totalSteps})` }}

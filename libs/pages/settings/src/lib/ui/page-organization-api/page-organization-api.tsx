@@ -51,7 +51,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
               <div
                 data-testid={`token-list-${token.id}`}
                 key={token.id}
-                className="flex justify-between items-center px-5 py-4 border-b border-element-light-lighter-500 last:border-0"
+                className="flex justify-between items-center px-5 py-4 border-b border-zinc-250 last:border-0"
               >
                 <div className="flex">
                   <div className="">

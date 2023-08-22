@@ -28,7 +28,7 @@ export function Navbar(props: NavbarProps) {
         </div>
         <div
           aria-label="progress-container"
-          className={`${progress > 0 ? 'bg-element-light-lighter-500' : ''} w-full h-[6px] absolute bottom-[-6px]`}
+          className={`${progress > 0 ? 'bg-zinc-250' : ''} w-full h-[6px] absolute bottom-[-6px]`}
         >
           <div className="h-[6px] bg-brand-500 transition-timing duration-150" style={{ width: `${progress}%` }}></div>
         </div>

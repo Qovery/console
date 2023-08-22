@@ -67,7 +67,7 @@ export function FlowCreatePort({
               ports.map((customPort, i) => (
                 <div
                   key={i}
-                  className="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-element-light-lighter-500 last:border-0"
+                  className="flex justify-between w-full items-center gap-3 px-5 py-4 border-b border-zinc-250 last:border-0"
                   data-testid="form-row"
                 >
                   <div className="flex flex-row">

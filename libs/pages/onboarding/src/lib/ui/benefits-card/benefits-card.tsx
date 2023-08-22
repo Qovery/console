@@ -7,7 +7,7 @@ export function BenefitsCard() {
   ]
 
   return (
-    <div className="w-80 bg-white border border-element-light-lighter-500 rounded-md">
+    <div className="w-80 bg-white border border-zinc-250 rounded-md">
       <div className="p-8">
         <span className="text-4xl" role="img" aria-label="light">
           💡

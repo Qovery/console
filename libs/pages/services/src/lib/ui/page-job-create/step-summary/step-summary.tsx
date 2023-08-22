@@ -36,7 +36,7 @@ export function StepSummary(props: StepSummaryProps) {
       </div>
 
       <div className="mb-10">
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
+        <div className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-5">General information</div>
@@ -52,7 +52,7 @@ export function StepSummary(props: StepSummaryProps) {
               </li>
             </ul>
 
-            <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+            <div className="my-4 border-b border-zinc-250 border-dashed" />
 
             {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
               <ul className="text-zinc-350 text-sm list-none">
@@ -101,7 +101,7 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
+        <div className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-5">Configure job</div>
@@ -125,7 +125,7 @@ export function StepSummary(props: StepSummaryProps) {
                         {props.configureData.on_start?.arguments || 'null'}
                       </li>
                     </ul>
-                    <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+                    <div className="my-4 border-b border-zinc-250 border-dashed" />
                   </>
                 )}
                 {props.configureData.on_stop?.enabled && (
@@ -145,7 +145,7 @@ export function StepSummary(props: StepSummaryProps) {
                         {props.configureData.on_stop?.arguments || 'null'}
                       </li>
                     </ul>
-                    <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+                    <div className="my-4 border-b border-zinc-250 border-dashed" />
                   </>
                 )}
                 {props.configureData.on_delete?.enabled && (
@@ -165,7 +165,7 @@ export function StepSummary(props: StepSummaryProps) {
                         {props.configureData.on_delete?.arguments || 'null'}
                       </li>
                     </ul>
-                    <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+                    <div className="my-4 border-b border-zinc-250 border-dashed" />
                   </>
                 )}
               </>
@@ -188,7 +188,7 @@ export function StepSummary(props: StepSummaryProps) {
                     </li>
                   )}
                 </ul>
-                <div className="my-4 border-b border-element-light-lighter-500 border-dashed" />
+                <div className="my-4 border-b border-zinc-250 border-dashed" />
               </>
             )}
 
@@ -215,7 +215,7 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
+        <div className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-5">Resources</div>
@@ -239,7 +239,7 @@ export function StepSummary(props: StepSummaryProps) {
           />
         </div>
 
-        <div className="flex p-4 w-full border rounded border-element-light-lighter-500 bg-zinc-100 mb-2">
+        <div className="flex p-4 w-full border rounded border-zinc-250 bg-zinc-100 mb-2">
           <Icon name={IconAwesomeEnum.CHECK} className="text-green-500 mr-2" />
           <div className="flex-grow mr-2">
             <div className="text-sm text-zinc-400 font-bold mb-5">Environment variables</div>

@@ -28,7 +28,7 @@ export function About(props: AboutProps) {
       <div className="text-subtitle mb-3 text-zinc-400">About</div>
       <p className="text-zinc-400 mb-5">{description ? description : 'No description provided yet'}</p>
       <Skeleton height={24} width={120} show={!loadingStatus || loadingStatus === 'loading'} className="mb-5">
-        <div className="flex gap-2 items-center px-2 h-6 capitalize border leading-0 rounded border-element-light-lighter-500 text-zinc-400 text-sm font-medium">
+        <div className="flex gap-2 items-center px-2 h-6 capitalize border leading-0 rounded border-zinc-250 text-zinc-400 text-sm font-medium">
           <Icon name={type || ''} className="w-4" />
           {type && type} v{version && version}
         </div>
