@@ -10,6 +10,8 @@
     "mattpocock.ts-error-translator",
     "eamodio.gitlens",
     "figma.figma-vscode-extension",
-    "wix.vscode-import-cost"
+    "wix.vscode-import-cost",
+    "GitHub.vscode-github-actions",
+    "GitHub.vscode-pull-request-github"
   ]
 }
